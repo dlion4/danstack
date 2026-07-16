@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import appCss from '../styles.css?url'
 import homeLayoutCss from '../components/LayoutStyles/HomeLayout.css?url'
-import Header from '../components/homeLayout/Header'
-import Footer from '../components/homeLayout/Footer'
 import BackgroundCanvas from '../components/homeLayout/BackgroundCanvas'
 
 const queryClient = new QueryClient({
@@ -63,21 +61,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="relative min-h-screen bg-[#07090e] text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950">
-        {/* Ambient Particle Background */}
+        {/* Ambient Particle Background (global) */}
         <BackgroundCanvas />
 
-        {/* Floating Capsule Header & Zero-Flicker Mega Dropdown */}
-        <Header />
-
         {/* Main Route Body Outlet (Displays active page content) */}
+        {/* NOTE: Header/Footer live in the _home layout route, NOT here,
+            so auth pages render with zero chrome. */}
         <QueryClientProvider client={queryClient}>
-          <main className="min-h-screen pt-32 pb-20">
-            {children}
-          </main>
+          {children}
         </QueryClientProvider>
-
-        {/* Global Footer */}
-        <Footer />
 
         <TanStackDevtools
           config={{

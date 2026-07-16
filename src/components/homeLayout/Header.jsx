@@ -429,7 +429,7 @@ export default function Header() {
                 <span className="px-1.5 py-0.2 bg-white/10 text-[10px] text-white/60 rounded">⌘K</span>
               </div>
               
-              <a href="/login" className="hidden sm:inline-block text-xs font-semibold text-white/70 hover:text-white transition-colors px-2">Sign In</a>
+              <a href="/auth/login" className="hidden sm:inline-block text-xs font-semibold text-white/70 hover:text-white transition-colors px-2">Sign In</a>
               
               <a href="/contact" className="btn-primary">
                 <span className="border-ring"></span>
@@ -501,8 +501,8 @@ export default function Header() {
         </div>
 
         <div className="pt-6 border-t border-white/10 space-y-3">
-          <a href="/signup" className="btn-primary w-full text-center justify-center">Get Started</a>
-          <a href="/login" className="btn-secondary w-full text-center justify-center">Sign In</a>
+          <a href="/auth/signup" className="btn-primary w-full text-center justify-center">Get Started</a>
+          <a href="/auth/login" className="btn-secondary w-full text-center justify-center">Sign In</a>
         </div>
       </div>
     </>
