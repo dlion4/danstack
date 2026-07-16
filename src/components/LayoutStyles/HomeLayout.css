@@ -1,0 +1,349 @@
+/* ============================================================================
+ * HomeLayout.css — HOME LAYOUT CHROME (Header + Footer + nav + glass + buttons)
+ * ----------------------------------------------------------------------------
+ * Linked once in src/routes/__root.tsx via the root route `head.links`.
+ * Covers the persistent chrome rendered by:
+ *   - src/components/homeLayout/Header.jsx
+ *   - src/components/homeLayout/Footer.jsx
+ *   - src/components/homeLayout/BackgroundCanvas.tsx
+ *
+ * RULES:
+ *   - NO `@import "tailwindcss"` here (Tailwind is already imported globally).
+ *   - Plain class names are fine because these components are only mounted once
+ *     at the root, so there is no risk of clashing with per-page styles.
+ * ========================================================================== */
+
+/* ============================================================
+   GLASSMORPHISM & AMBIENT LIGHTING
+   ============================================================ */
+.glass-pill {
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(16, 185, 129, 0.05);
+}
+
+.glass-panel {
+  background: rgba(11, 15, 23, 0.95);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 40px rgba(16, 185, 129, 0.1);
+}
+
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 40% at 20% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================================
+   NAV ITEMS & DYNAMIC COLORED BORDER TRACE RING ON HOVER
+   ============================================================ */
+.nav-item {
+  position: relative;
+  border-radius: 9999px;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav-item:hover, .nav-item.is-active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item.is-active {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+/* Dynamic Cursor-Angle Border Line Ring */
+.border-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    #10b981 0deg,
+    #34d399 60deg,
+    #0ea5e9 120deg,
+    #a855f7 180deg,
+    #ec4899 240deg,
+    #10b981 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.nav-item:hover .border-ring,
+.panel-card:hover .border-ring,
+.btn-primary:hover .border-ring,
+.btn-secondary:hover .border-ring,
+.social-icon:hover .border-ring,
+.top-tab:hover .border-ring {
+  opacity: 1;
+  animation: borderSpin 3.5s linear infinite;
+}
+
+@keyframes borderSpin {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* ============================================================
+   ZERO-FLICKER MEGA DROPDOWN PANEL & BRIDGE
+   ============================================================ */
+.nav-zone {
+  position: relative;
+}
+
+.nav-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  width: min(780px, calc(100vw - 2rem));
+  transform: translateX(-50%) translateY(-8px) scale(0.98);
+  transform-origin: top center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, visibility 0.2s;
+  z-index: 100;
+}
+
+.nav-panel.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.nav-bridge {
+  position: absolute;
+  top: 100%;
+  left: -30px;
+  right: -30px;
+  height: 24px;
+  display: none;
+  z-index: 90;
+}
+.nav-zone.is-open .nav-bridge { display: block; }
+
+/* Split Featured Card Layout */
+.panel-split {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 360px;
+}
+
+.panel-featured {
+  position: relative;
+  background: linear-gradient(160deg, #062419 0%, #04120d 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.vector-wave-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  pointer-events: none;
+  background-image: radial-gradient(#10b981 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.animated-svg-wave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.panel-pane { display: none; }
+.panel-pane.active {
+  display: block;
+  animation: paneFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes paneFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Menu Cards */
+.panel-card {
+  position: relative;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.panel-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 15px rgba(16, 185, 129, 0.1);
+}
+
+.panel-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.panel-card:hover .panel-card-icon {
+  transform: scale(1.1);
+}
+
+/* Top Bar Tabs & Buttons */
+.top-tab {
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.top-tab:hover, .top-tab.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+.top-tab.active {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  color: #04120d;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(16, 185, 129, 0.5);
+}
+
+.btn-secondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Ticker & Social Icons */
+.fx-ticker { display: flex; gap: 1.5rem; animation: ticker 28s linear infinite; }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.fx-pair { display: flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+.fx-change.positive { color: #34d399; }
+.fx-change.negative { color: #f87171; }
+
+.social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+.social-icon:hover {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 50;
+}
+.nav-backdrop.open { opacity: 1; visibility: visible; }
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-menu.open { transform: translateX(0); }

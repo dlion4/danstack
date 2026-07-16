@@ -1,0 +1,30 @@
+/* ============================================================================
+ * styles.css — GLOBAL BASE (loaded once for the whole app)
+ * ----------------------------------------------------------------------------
+ * KEEP THIS FILE TINY. It holds ONLY:
+ *   1. Tailwind import
+ *   2. Box-sizing + body resets + base typography
+ *   3. Shared CSS custom properties (design tokens) if you add them later
+ *
+ * All Header/Footer/nav/glass/button chrome lives in
+ *   src/components/LayoutStyles/HomeLayout.css
+ * All page-specific styles live in
+ *   src/features/<feature>/styles/*.module.css   (CSS Modules → no clashes)
+ * ========================================================================== */
+
+@import "tailwindcss";
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #07090e;
+    color: #e6edf3;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+}

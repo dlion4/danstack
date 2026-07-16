@@ -1,0 +1,22 @@
+/*
+ * HOMEPAGE-ONLY STYLES (scoped CSS module)
+ * --------------------------------------------------
+ * Classes here are LOCAL to the home page — they cannot leak to other routes,
+ * and other routes' classes cannot leak here. Reference them as:
+ *   import styles from './Home.module.css'
+ *   <div className={styles.page}>
+ *
+ * NOTE: Shared chrome (Header / Footer / nav / .btn-primary / .glass-pill etc.)
+ * lives in src/styles.css and is loaded globally for every page.
+ * Put ONLY styles unique to the homepage below.
+ */
+
+/* The homepage's root wrapper — add home-specific layout here */
+.page {
+  position: relative;
+}
+
+/* Example home-only block — rename / extend as you build out the homepage */
+.hero {
+  /* e.g. background, padding, min-heights specific to the home hero */
+}
