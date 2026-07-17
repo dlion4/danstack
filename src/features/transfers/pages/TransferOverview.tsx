@@ -30,10 +30,10 @@
  * ========================================================================== */
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { cx, fetchShellContent, initialMockData } from '../shell/data/shellData';
+import { cx, fetchShellContent, initialMockData } from '../../shell/data/shellData';
 import styles from '../styles/transferOverview.module.css';
 import TransferModals from '../components/TransferModals';
-import type { ModalId } from './TransferModals';
+import type { ModalId } from '../components/TransferModals';
 
 const s = styles as Record<string, string>;
 

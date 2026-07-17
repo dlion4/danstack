@@ -23,8 +23,8 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
 import { Route as AuthHubRouteImport } from './routes/auth/hub'
 import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
+import { Route as AppZSectionRouteImport } from './routes/app.z-section'
 import { Route as AppTransfersRouteImport } from './routes/app.transfers'
-import { Route as AppSectionRouteImport } from './routes/app.$section'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 
 const LoginRoute = LoginRouteImport.update({
@@ -96,14 +96,14 @@ const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
   path: '/auth/account-status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppZSectionRoute = AppZSectionRouteImport.update({
+  id: '/z-section',
+  path: '/z-section',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTransfersRoute = AppTransfersRouteImport.update({
   id: '/transfers',
   path: '/transfers',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSectionRoute = AppSectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
   getParentRoute: () => AppRoute,
 } as any)
 const HomeBusinessRoute = HomeBusinessRouteImport.update({
@@ -117,8 +117,8 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
   '/app/transfers': typeof AppTransfersRoute
+  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -133,8 +133,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
   '/app/transfers': typeof AppTransfersRoute
+  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -153,8 +153,8 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_home/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
   '/app/transfers': typeof AppTransfersRoute
+  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -174,8 +174,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/business'
-    | '/app/$section'
     | '/app/transfers'
+    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -190,8 +190,8 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/business'
-    | '/app/$section'
     | '/app/transfers'
+    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -209,8 +209,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/_home/business'
-    | '/app/$section'
     | '/app/transfers'
+    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -339,18 +339,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/z-section': {
+      id: '/app/z-section'
+      path: '/z-section'
+      fullPath: '/app/z-section'
+      preLoaderRoute: typeof AppZSectionRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/transfers': {
       id: '/app/transfers'
       path: '/transfers'
       fullPath: '/app/transfers'
       preLoaderRoute: typeof AppTransfersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/$section': {
-      id: '/app/$section'
-      path: '/$section'
-      fullPath: '/app/$section'
-      preLoaderRoute: typeof AppSectionRouteImport
       parentRoute: typeof AppRoute
     }
     '/_home/business': {
@@ -376,14 +376,14 @@ const HomeRouteChildren: HomeRouteChildren = {
 const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
 interface AppRouteChildren {
-  AppSectionRoute: typeof AppSectionRoute
   AppTransfersRoute: typeof AppTransfersRoute
+  AppZSectionRoute: typeof AppZSectionRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppSectionRoute: AppSectionRoute,
   AppTransfersRoute: AppTransfersRoute,
+  AppZSectionRoute: AppZSectionRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

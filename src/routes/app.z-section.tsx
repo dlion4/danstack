@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import ModulePage from '../features/shell/pages/ModulePage';
 
-export const Route = createFileRoute('/app/$section')({
+export const Route = createFileRoute('/app/z-section')({
   component: ModuleRoute,
 });
 
