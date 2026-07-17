@@ -1,0 +1,620 @@
+/* ============================================================================
+ * recovery.module.css — Paymo BAAS Account Recovery (Emerald Glass Edition)
+ * ----------------------------------------------------------------------------
+ * Converted 1:1 from the inline <style> block of legacy page53.html.
+ * Legacy deep-space BLUE theme (#04081a / #22d3ee / #60a5fa / #a78bfa) was
+ * re-themed to the Paymo emerald glass palette (#020c07 / #2ee6a0 / #7cf5c8 /
+ * #14b981) used by Home / Login / Register. All tokens live on .recoveryPage
+ * so nothing leaks into other pages of the app.
+ * ========================================================================== */
+
+.recoveryPage {
+  /* layout tokens */
+  --rc-bg-0: #020c07;
+  --rc-bg-1: #04160e;
+  --rc-bg-2: #06231a;
+  --rc-ink-0: #ffffff;
+  --rc-ink-1: #e9f7ef;
+  --rc-ink-2: #a9c6b6;
+  --rc-ink-3: #6f9382;
+  --rc-accent: #2ee6a0;
+  --rc-accent-2: #7cf5c8;
+  --rc-accent-3: #a78bfa;
+  --rc-accent-4: #fbbf24;
+  --rc-success: #14b981;
+  --rc-danger: #ef4444;
+  --rc-glass-bg: rgba(255, 255, 255, 0.04);
+  --rc-glass-border: rgba(255, 255, 255, 0.10);
+  --rc-glass-strong: rgba(255, 255, 255, 0.08);
+  --rc-glass-border-strong: rgba(255, 255, 255, 0.16);
+  --rc-radius-lg: 22px;
+  --rc-radius-md: 14px;
+
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  color: var(--rc-ink-1);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(46, 230, 160, 0.20), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(18, 122, 84, 0.28), transparent 60%),
+    radial-gradient(800px 500px at 50% 110%, rgba(124, 245, 200, 0.14), transparent 60%),
+    linear-gradient(180deg, #020c07 0%, #04160e 30%, #06231a 70%, #020c07 100%);
+}
+
+.recoveryPage a {
+  color: var(--rc-accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.recoveryPage a:hover {
+  color: var(--rc-accent-2);
+}
+
+/* ---------- background blobs ---------- */
+@keyframes rcFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(40px, -30px) scale(1.08); }
+}
+
+@keyframes rcPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 230, 160, 0.35); }
+  50%      { box-shadow: 0 0 0 14px rgba(46, 230, 160, 0); }
+}
+
+@keyframes rcShake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-10px); }
+  75%      { transform: translateX(10px); }
+}
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: rcFloat 14s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* ---------- glass ---------- */
+.glass {
+  background: var(--rc-glass-bg);
+  border: 1px solid var(--rc-glass-border);
+  border-radius: var(--rc-radius-lg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+}
+
+.glassStrong {
+  background: var(--rc-glass-strong);
+  border: 1px solid var(--rc-glass-border-strong);
+  border-radius: var(--rc-radius-lg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.textGradient {
+  background: linear-gradient(135deg, #7cf5c8 0%, #2ee6a0 50%, #0f9d6c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- buttons (legacy .btn-primary-paymo / .btn-outline-paymo) ---------- */
+.btnPaymo {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+  border: none;
+  min-height: 48px; /* tap target never squishes */
+  background: linear-gradient(135deg, #2ee6a0 0%, #14b981 100%);
+  color: #02120a;
+  box-shadow: 0 10px 30px -10px rgba(46, 230, 160, 0.55);
+}
+
+.btnPaymo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px -10px rgba(46, 230, 160, 0.75);
+  color: #02120a;
+}
+
+.btnPaymo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btnOutline {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  letter-spacing: -0.01em;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--rc-ink-1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.25s ease;
+}
+
+.btnOutline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--rc-accent);
+  color: var(--rc-ink-0);
+}
+
+.logoMark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px; /* icon never squeezes on mobile */
+  border-radius: 10px;
+  background: linear-gradient(135deg, #35f0a8, #14b981, #0a7a54);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #02120a;
+  font-weight: 900;
+  box-shadow: 0 8px 24px -8px rgba(46, 230, 160, 0.6);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(46, 230, 160, 0.09);
+  border: 1px solid rgba(46, 230, 160, 0.28);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #bdf5d8;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--rc-accent);
+  box-shadow: 0 0 10px var(--rc-accent);
+  animation: rcPulseGlow 2s infinite;
+}
+
+/* ---------- text helpers ---------- */
+.inkStrong { color: var(--rc-ink-0); }
+.mutedText { color: var(--rc-ink-2); }
+.dimText   { color: var(--rc-ink-3); }
+
+/* ---------- feature rows (left panel) ---------- */
+.featRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.featIcon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px; /* icon tiles never cram */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.featMint   { background: rgba(46, 230, 160, 0.15); color: #bdf5d8; }
+.featPurple { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; }
+.featGreen  { background: rgba(34, 197, 94, 0.15);  color: #86efac; }
+
+/* ---------- brand panel art ---------- */
+.brandArt {
+  position: absolute;
+  inset: 0;
+  background: url('/assets/emerald-network.jpg') center/cover;
+  border-radius: var(--rc-radius-lg);
+  opacity: 0.6;
+  filter: blur(2px);
+}
+
+.brandShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2, 12, 7, 0.3) 0%, rgba(2, 12, 7, 0.9) 100%);
+  border-radius: var(--rc-radius-lg);
+}
+
+/* ---------- method tabs ---------- */
+.tabContainer {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  flex: 1 1 0;
+  min-width: 118px;
+  min-height: 46px;
+  padding: 0.8rem 1rem;
+  background: var(--rc-glass-bg);
+  border: 1px solid var(--rc-glass-border);
+  border-radius: var(--rc-radius-md);
+  color: var(--rc-ink-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tabBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--rc-accent);
+  color: var(--rc-ink-0);
+}
+
+.tabBtn.active {
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.14));
+  border-color: rgba(46, 230, 160, 0.5);
+  color: #bdf5d8;
+}
+
+.tabBtn i {
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+}
+
+/* ---------- forms ---------- */
+.formGroup {
+  margin-bottom: 1.2rem;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--rc-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--rc-glass-border);
+  border-radius: var(--rc-radius-md);
+  color: var(--rc-ink-1);
+  font-size: 0.9rem;
+  transition: all 0.25s;
+}
+
+.formInput:focus {
+  border-color: var(--rc-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15);
+  outline: none;
+}
+
+.formInput::placeholder {
+  color: var(--rc-ink-3);
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--rc-ink-3);
+  cursor: pointer;
+  padding: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.eyeBtn:hover {
+  color: var(--rc-accent);
+}
+
+/* ---------- step indicator ---------- */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.stepDot {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: var(--rc-glass-bg);
+  border: 2px solid var(--rc-glass-border);
+  color: var(--rc-ink-3);
+  transition: all 0.3s;
+}
+
+.stepDot.active {
+  background: linear-gradient(135deg, #2ee6a0, #14b981);
+  border-color: transparent;
+  color: #02120a;
+}
+
+.stepDot.completed {
+  background: var(--rc-success);
+  border-color: transparent;
+  color: #fff;
+}
+
+.stepLine {
+  width: 40px;
+  height: 2px;
+  background: var(--rc-glass-border);
+}
+
+/* ---------- OTP boxes ---------- */
+.otpContainer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.otpInput {
+  width: 50px;
+  height: 56px;
+  flex: 0 1 50px;
+  min-width: 0; /* shrink as one row, never wrap or squish text */
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--rc-glass-bg);
+  border: 1px solid var(--rc-glass-border);
+  border-radius: var(--rc-radius-md);
+  color: var(--rc-ink-0);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.otpInput:focus {
+  border-color: var(--rc-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15);
+  outline: none;
+}
+
+/* ---------- password strength ---------- */
+.strengthTrack {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--rc-glass-border);
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.strengthBar {
+  height: 100%;
+  transition: all 0.3s;
+  width: 0;
+}
+
+.reqRow {
+  font-size: 0.8rem;
+  color: var(--rc-ink-3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.reqRow i {
+  font-size: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.reqRow.met {
+  color: var(--rc-ink-2);
+}
+
+.reqRow.met i {
+  color: var(--rc-success);
+}
+
+/* ---------- timer ---------- */
+.timerText {
+  font-size: 0.85rem;
+  color: var(--rc-ink-3);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.countdown {
+  color: var(--rc-accent);
+  font-weight: 600;
+}
+
+/* ---------- success ---------- */
+@keyframes rcSuccessPulse {
+  0%   { transform: scale(0.8); opacity: 0; }
+  50%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2ee6a0, #0f9d6c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  animation: rcSuccessPulse 0.6s ease;
+  box-shadow: 0 18px 44px -16px rgba(46, 230, 160, 0.65);
+}
+
+.successIcon i {
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+/* verify / reset header medallion */
+.medallion {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.medallionMint {
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.2), rgba(20, 185, 129, 0.1));
+  border: 1px solid rgba(46, 230, 160, 0.3);
+}
+
+.medallionMint i { color: #bdf5d8; font-size: 1.5rem; }
+
+.medallionPurple {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(96, 165, 250, 0.1));
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.medallionPurple i { color: #c4b5fd; font-size: 1.5rem; }
+
+/* info callout */
+.infoBox {
+  padding: 0.9rem;
+  background: rgba(46, 230, 160, 0.06);
+  border-left: 3px solid var(--rc-accent);
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+/* shake */
+.shake {
+  animation: rcShake 0.4s ease;
+}
+
+/* Bootstrap checkbox tint (module-scoped, no global leak) */
+.recoveryPage :global(.form-check-input) {
+  background-color: var(--rc-glass-bg);
+  border-color: var(--rc-glass-border);
+}
+
+.recoveryPage :global(.form-check-input:checked) {
+  background-color: var(--rc-accent);
+  border-color: var(--rc-accent);
+}
+
+.recoveryPage :global(.form-check-input:focus) {
+  border-color: var(--rc-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15);
+}
+
+/* ---------- TanStack Query states ---------- */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  background: rgba(2, 12, 7, 0.72);
+  backdrop-filter: blur(6px);
+  color: #bdf5d8;
+  font-weight: 600;
+}
+
+.loadingOverlay :global(.spinner-border) {
+  color: var(--rc-accent);
+}
+
+.errorBanner {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1080;
+  width: min(680px, calc(100vw - 24px));
+  background: rgba(60, 12, 12, 0.92);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  backdrop-filter: blur(8px);
+}
+
+/* ---------- responsive hardening ---------- */
+@media (max-width: 991px) {
+  .tabContainer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tabBtn {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .stepLine {
+    width: 24px;
+  }
+
+  .otpInput {
+    height: 52px;
+    font-size: 1.25rem;
+  }
+
+  .brandTitleSm {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .tabContainer {
+    grid-template-columns: 1fr; /* one per row: icons+labels stay readable */
+  }
+
+  .otpInput {
+    height: 50px;
+    font-size: 1.15rem;
+  }
+
+  .stepDot {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .pillDot,
+  .successIcon,
+  .shake {
+    animation: none !important;
+  }
+}

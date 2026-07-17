@@ -10,10 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as HomeRouteImport } from './routes/_home'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
+import { Route as AuthSecurityRouteImport } from './routes/auth/security'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
+import { Route as AuthPasskeysRouteImport } from './routes/auth/passkeys'
+import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
+import { Route as AuthHubRouteImport } from './routes/auth/hub'
+import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
+import { Route as AppTransfersRouteImport } from './routes/app.transfers'
+import { Route as AppSectionRouteImport } from './routes/app.$section'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 
 const LoginRoute = LoginRouteImport.update({
@@ -21,24 +32,79 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/_home',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => HomeRoute,
 } as any)
+const AuthSecurityRoute = AuthSecurityRouteImport.update({
+  id: '/auth/security',
+  path: '/auth/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
+  id: '/auth/recovery',
+  path: '/auth/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthPasskeysRoute = AuthPasskeysRouteImport.update({
+  id: '/auth/passkeys',
+  path: '/auth/passkeys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthMfaRoute = AuthMfaRouteImport.update({
+  id: '/auth/mfa',
+  path: '/auth/mfa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIdentityRoute = AuthIdentityRouteImport.update({
+  id: '/auth/identity',
+  path: '/auth/identity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthHubRoute = AuthHubRouteImport.update({
+  id: '/auth/hub',
+  path: '/auth/hub',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
+  id: '/auth/account-status',
+  path: '/auth/account-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppTransfersRoute = AppTransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSectionRoute = AppSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => AppRoute,
 } as any)
 const HomeBusinessRoute = HomeBusinessRouteImport.update({
   id: '/business',
@@ -48,47 +114,129 @@ const HomeBusinessRoute = HomeBusinessRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
+  '/app/transfers': typeof AppTransfersRoute
+  '/auth/account-status': typeof AuthAccountStatusRoute
+  '/auth/hub': typeof AuthHubRoute
+  '/auth/identity': typeof AuthIdentityRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa': typeof AuthMfaRoute
+  '/auth/passkeys': typeof AuthPasskeysRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/security': typeof AuthSecurityRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
+  '/app/transfers': typeof AppTransfersRoute
+  '/auth/account-status': typeof AuthAccountStatusRoute
+  '/auth/hub': typeof AuthHubRoute
+  '/auth/identity': typeof AuthIdentityRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa': typeof AuthMfaRoute
+  '/auth/passkeys': typeof AuthPasskeysRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/security': typeof AuthSecurityRoute
   '/': typeof HomeIndexRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_home/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
+  '/app/transfers': typeof AppTransfersRoute
+  '/auth/account-status': typeof AuthAccountStatusRoute
+  '/auth/hub': typeof AuthHubRoute
+  '/auth/identity': typeof AuthIdentityRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa': typeof AuthMfaRoute
+  '/auth/passkeys': typeof AuthPasskeysRoute
+  '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/security': typeof AuthSecurityRoute
   '/_home/': typeof HomeIndexRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/business' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/business'
+    | '/app/$section'
+    | '/app/transfers'
+    | '/auth/account-status'
+    | '/auth/hub'
+    | '/auth/identity'
+    | '/auth/login'
+    | '/auth/mfa'
+    | '/auth/passkeys'
+    | '/auth/recovery'
+    | '/auth/register'
+    | '/auth/security'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/business' | '/auth/login' | '/auth/register' | '/'
+  to:
+    | '/login'
+    | '/business'
+    | '/app/$section'
+    | '/app/transfers'
+    | '/auth/account-status'
+    | '/auth/hub'
+    | '/auth/identity'
+    | '/auth/login'
+    | '/auth/mfa'
+    | '/auth/passkeys'
+    | '/auth/recovery'
+    | '/auth/register'
+    | '/auth/security'
+    | '/'
+    | '/app'
   id:
     | '__root__'
     | '/_home'
+    | '/app'
     | '/login'
     | '/_home/business'
+    | '/app/$section'
+    | '/app/transfers'
+    | '/auth/account-status'
+    | '/auth/hub'
+    | '/auth/identity'
     | '/auth/login'
+    | '/auth/mfa'
+    | '/auth/passkeys'
+    | '/auth/recovery'
     | '/auth/register'
+    | '/auth/security'
     | '/_home/'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  AuthAccountStatusRoute: typeof AuthAccountStatusRoute
+  AuthHubRoute: typeof AuthHubRoute
+  AuthIdentityRoute: typeof AuthIdentityRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthMfaRoute: typeof AuthMfaRoute
+  AuthPasskeysRoute: typeof AuthPasskeysRoute
+  AuthRecoveryRoute: typeof AuthRecoveryRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthSecurityRoute: typeof AuthSecurityRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -100,12 +248,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_home': {
       id: '/_home'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_home/': {
       id: '/_home/'
@@ -114,11 +276,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRoute
     }
+    '/auth/security': {
+      id: '/auth/security'
+      path: '/auth/security'
+      fullPath: '/auth/security'
+      preLoaderRoute: typeof AuthSecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/register': {
       id: '/auth/register'
       path: '/auth/register'
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/recovery': {
+      id: '/auth/recovery'
+      path: '/auth/recovery'
+      fullPath: '/auth/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/passkeys': {
+      id: '/auth/passkeys'
+      path: '/auth/passkeys'
+      fullPath: '/auth/passkeys'
+      preLoaderRoute: typeof AuthPasskeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/mfa': {
+      id: '/auth/mfa'
+      path: '/auth/mfa'
+      fullPath: '/auth/mfa'
+      preLoaderRoute: typeof AuthMfaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -127,6 +317,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/identity': {
+      id: '/auth/identity'
+      path: '/auth/identity'
+      fullPath: '/auth/identity'
+      preLoaderRoute: typeof AuthIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/hub': {
+      id: '/auth/hub'
+      path: '/auth/hub'
+      fullPath: '/auth/hub'
+      preLoaderRoute: typeof AuthHubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/account-status': {
+      id: '/auth/account-status'
+      path: '/auth/account-status'
+      fullPath: '/auth/account-status'
+      preLoaderRoute: typeof AuthAccountStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/transfers': {
+      id: '/app/transfers'
+      path: '/transfers'
+      fullPath: '/app/transfers'
+      preLoaderRoute: typeof AppTransfersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/$section': {
+      id: '/app/$section'
+      path: '/$section'
+      fullPath: '/app/$section'
+      preLoaderRoute: typeof AppSectionRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_home/business': {
       id: '/_home/business'
@@ -150,11 +375,33 @@ const HomeRouteChildren: HomeRouteChildren = {
 
 const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
+interface AppRouteChildren {
+  AppSectionRoute: typeof AppSectionRoute
+  AppTransfersRoute: typeof AppTransfersRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppSectionRoute: AppSectionRoute,
+  AppTransfersRoute: AppTransfersRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  AuthAccountStatusRoute: AuthAccountStatusRoute,
+  AuthHubRoute: AuthHubRoute,
+  AuthIdentityRoute: AuthIdentityRoute,
   AuthLoginRoute: AuthLoginRoute,
+  AuthMfaRoute: AuthMfaRoute,
+  AuthPasskeysRoute: AuthPasskeysRoute,
+  AuthRecoveryRoute: AuthRecoveryRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthSecurityRoute: AuthSecurityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

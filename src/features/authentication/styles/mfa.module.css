@@ -1,0 +1,733 @@
+/* ============================================================================
+ * mfa.module.css — Paymo BAAS MFA Challenge (Emerald Glass Edition)
+ * ----------------------------------------------------------------------------
+ * Converted 1:1 from the inline <style> block of legacy page54.html.
+ * Legacy deep-space BLUE theme (#04081a / #22d3ee / #60a5fa / #a78bfa) was
+ * re-themed to the Paymo emerald glass palette (#020c07 / #2ee6a0 / #7cf5c8 /
+ * #14b981) used by Home / Login / Register. All tokens live on .mfaPage so
+ * nothing leaks into other pages of the app.
+ * ========================================================================== */
+
+.mfaPage {
+  --mf-bg-0: #020c07;
+  --mf-bg-1: #04160e;
+  --mf-ink-0: #ffffff;
+  --mf-ink-1: #e9f7ef;
+  --mf-ink-2: #a9c6b6;
+  --mf-ink-3: #6f9382;
+  --mf-accent: #2ee6a0;
+  --mf-accent-2: #7cf5c8;
+  --mf-accent-3: #a78bfa;
+  --mf-accent-4: #fbbf24;
+  --mf-success: #14b981;
+  --mf-danger: #ef4444;
+  --mf-glass-bg: rgba(255, 255, 255, 0.04);
+  --mf-glass-border: rgba(255, 255, 255, 0.10);
+  --mf-glass-strong: rgba(255, 255, 255, 0.08);
+  --mf-glass-border-strong: rgba(255, 255, 255, 0.16);
+  --mf-radius-lg: 22px;
+  --mf-radius-md: 14px;
+
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  color: var(--mf-ink-1);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(46, 230, 160, 0.20), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(18, 122, 84, 0.28), transparent 60%),
+    radial-gradient(800px 500px at 50% 110%, rgba(124, 245, 200, 0.14), transparent 60%),
+    linear-gradient(180deg, #020c07 0%, #04160e 30%, #06231a 70%, #020c07 100%);
+}
+
+.mfaPage a {
+  color: var(--mf-accent);
+  text-decoration: none;
+}
+
+.gridOverlay {
+  background-image:
+    linear-gradient(rgba(46, 230, 160, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 230, 160, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+@keyframes mfFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(40px, -30px) scale(1.08); }
+}
+
+@keyframes mfPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 230, 160, 0.35); }
+  50%      { box-shadow: 0 0 0 14px rgba(46, 230, 160, 0); }
+}
+
+@keyframes mfScanLine {
+  0%   { transform: translateY(-110%); }
+  100% { transform: translateY(110%); }
+}
+
+@keyframes mfShake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-10px); }
+  75%      { transform: translateX(10px); }
+}
+
+@keyframes mfSlideIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes mfDrawDash {
+  to { stroke-dashoffset: -120; }
+}
+
+@keyframes mfSuccessPop {
+  0%   { transform: scale(0.65); opacity: 0; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: mfFloat 14s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* ---------- glass ---------- */
+.glass {
+  background: var(--mf-glass-bg);
+  border: 1px solid var(--mf-glass-border);
+  border-radius: var(--mf-radius-lg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+}
+
+.glassStrong {
+  background: var(--mf-glass-strong);
+  border: 1px solid var(--mf-glass-border-strong);
+  border-radius: var(--mf-radius-lg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.textGradient {
+  background: linear-gradient(135deg, #7cf5c8 0%, #2ee6a0 50%, #0f9d6c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- buttons ---------- */
+.btnPaymo {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+  border: none;
+  min-height: 46px;
+  background: linear-gradient(135deg, #2ee6a0 0%, #14b981 100%);
+  color: #02120a;
+  box-shadow: 0 10px 30px -10px rgba(46, 230, 160, 0.55);
+}
+
+.btnPaymo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px -10px rgba(46, 230, 160, 0.75);
+  color: #02120a;
+}
+
+.btnPaymo:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btnOutline {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  letter-spacing: -0.01em;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--mf-ink-1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.25s ease;
+}
+
+.btnOutline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--mf-accent);
+  color: var(--mf-ink-0);
+}
+
+.logoMark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #35f0a8, #14b981, #0a7a54);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #02120a;
+  font-weight: 900;
+  box-shadow: 0 8px 24px -8px rgba(46, 230, 160, 0.6);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(46, 230, 160, 0.09);
+  border: 1px solid rgba(46, 230, 160, 0.28);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #bdf5d8;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--mf-accent);
+  box-shadow: 0 0 10px var(--mf-accent);
+  animation: mfPulseGlow 2s infinite;
+}
+
+/* ---------- badges ---------- */
+.badgeMini {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badgeOk     { background: rgba(34, 197, 94, 0.15);  color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+.badgeAdv    { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); }
+.badgeNative { background: rgba(46, 230, 160, 0.15);  color: #bdf5d8; border: 1px solid rgba(46, 230, 160, 0.3); }
+.badgeSoon   { background: rgba(251, 191, 36, 0.15);  color: #fcd34d; border: 1px solid rgba(251, 191, 36, 0.3); }
+.badgeWarn   { background: rgba(239, 68, 68, 0.15);   color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* ---------- auth layout ---------- */
+.authWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.brandPanel {
+  position: relative;
+  min-height: 760px;
+  overflow: hidden;
+  border-radius: var(--mf-radius-lg);
+}
+
+.brandPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/assets/emerald-network.jpg') center/cover;
+  opacity: 0.55;
+  filter: saturate(1.1);
+}
+
+.brandPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 12, 7, 0.1), rgba(2, 12, 7, 0.92)),
+    radial-gradient(600px 320px at 70% 20%, rgba(46, 230, 160, 0.18), transparent 65%);
+}
+
+.brandContent {
+  position: relative;
+  z-index: 2;
+  padding: 3rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.brandTitle {
+  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  line-height: 1.03;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--mf-ink-0);
+}
+
+.flowFrame {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--mf-glass-border-strong);
+  background: #020f08;
+}
+
+.flowFrame img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  opacity: 0.8;
+  mix-blend-mode: screen;
+  filter: hue-rotate(-15deg) saturate(120%);
+}
+
+/* ---------- method cards ---------- */
+.methodGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.methodCard {
+  padding: 1rem;
+  border-radius: var(--mf-radius-md);
+  border: 1px solid var(--mf-glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.25s;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+}
+
+.methodCard:hover {
+  border-color: rgba(46, 230, 160, 0.4);
+  background: rgba(46, 230, 160, 0.05);
+  transform: translateY(-2px);
+}
+
+.methodCard.active {
+  border-color: rgba(46, 230, 160, 0.65);
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.12), rgba(20, 185, 129, 0.07));
+  box-shadow: 0 0 34px -18px rgba(46, 230, 160, 0.7);
+}
+
+.methodCard.last::after {
+  content: "Last used";
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fcd34d;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.26);
+  padding: 0.14rem 0.45rem;
+  border-radius: 999px;
+}
+
+.methodIcon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  margin-bottom: 0.7rem;
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.1));
+  border: 1px solid rgba(46, 230, 160, 0.28);
+  color: #bdf5d8;
+}
+
+.challengePanel {
+  animation: mfSlideIn 0.35s ease;
+}
+
+/* ---------- OTP boxes ---------- */
+.otpContainer {
+  display: flex;
+  gap: 0.45rem;
+  justify-content: center;
+  margin: 1.25rem 0;
+}
+
+.otpInput {
+  width: 48px;
+  height: 56px;
+  flex: 0 1 48px;
+  min-width: 0;
+  padding: 0;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--mf-glass-border);
+  border-radius: var(--mf-radius-md);
+  color: var(--mf-ink-0);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  transition: all 0.2s;
+}
+
+.otpInput:focus {
+  outline: none;
+  border-color: var(--mf-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15);
+  background: rgba(46, 230, 160, 0.04);
+}
+
+.shake {
+  animation: mfShake 0.4s ease;
+}
+
+/* ---------- TOTP ring ---------- */
+.totpRing {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  position: relative;
+  background: conic-gradient(var(--mf-accent) var(--progress, 100%), rgba(255, 255, 255, 0.08) 0);
+}
+
+.totpRing::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: rgba(2, 12, 7, 0.92);
+  border: 1px solid var(--mf-glass-border);
+}
+
+.totpTime {
+  position: relative;
+  z-index: 1;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: var(--mf-ink-0);
+}
+
+/* ---------- push device mock ---------- */
+.pushDevice {
+  border-radius: 18px;
+  border: 1px solid var(--mf-glass-border-strong);
+  background: linear-gradient(180deg, rgba(6, 35, 26, 0.72), rgba(2, 12, 7, 0.72));
+  padding: 1.2rem;
+  max-width: 280px;
+  margin: 0 auto;
+  box-shadow: 0 28px 70px -38px rgba(46, 230, 160, 0.55);
+}
+
+.pushScreen {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(1, 8, 5, 0.8);
+  padding: 1rem;
+  min-height: 210px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pushScreen::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(180deg, transparent, rgba(46, 230, 160, 0.08), transparent);
+  animation: mfScanLine 3s linear infinite;
+}
+
+/* ---------- hardware key ---------- */
+.hardwareSlot {
+  border: 1px dashed rgba(46, 230, 160, 0.35);
+  border-radius: 18px;
+  padding: 1.2rem;
+  background: rgba(46, 230, 160, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.hardwareSlot svg .dash {
+  stroke-dasharray: 8 8;
+  animation: mfDrawDash 2s linear infinite;
+}
+
+/* ---------- inputs ---------- */
+.labelPaymo {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--mf-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.inputPaymo {
+  width: 100%;
+  padding: 0.78rem 0.95rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--mf-glass-border);
+  border-radius: var(--mf-radius-md);
+  color: var(--mf-ink-1);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.inputPaymo:focus {
+  outline: none;
+  border-color: var(--mf-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15);
+  background: rgba(46, 230, 160, 0.04);
+}
+
+.inputPaymo::placeholder {
+  color: var(--mf-ink-3);
+}
+
+.recoveryCodeInput {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- risk rows / security strip ---------- */
+.riskRow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--mf-glass-border);
+  font-size: 0.82rem;
+  color: var(--mf-ink-2);
+}
+
+.riskRow i {
+  flex: 0 0 auto;
+}
+
+.securityStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.securityItem {
+  padding: 0.8rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--mf-glass-border);
+  font-size: 0.74rem;
+  color: var(--mf-ink-2);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.securityItem i {
+  flex: 0 0 auto;
+}
+
+/* ---------- inline alerts / errors ---------- */
+.inlineAlert {
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.22);
+  color: #fcd34d;
+  font-size: 0.83rem;
+}
+
+.inlineError {
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  font-size: 0.86rem;
+  margin-top: 1rem;
+}
+
+/* ---------- success ---------- */
+.successState {
+  text-align: center;
+  padding: 2.5rem 0;
+  animation: mfSlideIn 0.4s ease;
+}
+
+.successIcon {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2ee6a0, #0f9d6c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  animation: mfSuccessPop 0.65s ease;
+  box-shadow: 0 18px 44px -16px rgba(46, 230, 160, 0.65);
+}
+
+.successIcon i {
+  font-size: 2.7rem;
+  color: #fff;
+}
+
+/* ---------- help modal (Module-scoped Bootstrap modal theming) ---------- */
+.modalContent {
+  background: var(--mf-bg-1);
+  border: 1px solid var(--mf-glass-border-strong);
+  border-radius: 22px;
+  color: var(--mf-ink-1);
+}
+
+/* ---------- TanStack Query states ---------- */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  background: rgba(2, 12, 7, 0.72);
+  backdrop-filter: blur(6px);
+  color: #bdf5d8;
+  font-weight: 600;
+}
+
+.loadingOverlay :global(.spinner-border) {
+  color: var(--mf-accent);
+}
+
+.errorBanner {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1080;
+  width: min(680px, calc(100vw - 24px));
+  background: rgba(60, 12, 12, 0.92);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  backdrop-filter: blur(8px);
+}
+
+/* ---------- text helpers ---------- */
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.mutedText { color: var(--mf-ink-2); }
+.dimText { color: var(--mf-ink-3); }
+
+/* ---------- responsive hardening ---------- */
+@media (max-width: 991px) {
+  .brandPanel {
+    min-height: 340px;
+  }
+
+  .brandContent {
+    padding: 2rem;
+  }
+
+  .authWrap {
+    padding: 1rem 0;
+  }
+
+  .securityStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .methodGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .otpInput {
+    height: 52px;
+    font-size: 1.2rem;
+  }
+
+  .methodCard {
+    padding: 0.85rem;
+  }
+
+  .methodCard.last::after {
+    position: static;
+    display: inline-flex;
+    margin-top: 0.5rem;
+  }
+
+  .securityStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .glassStrong {
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 430px) {
+  .methodGrid {
+    grid-template-columns: 1fr; /* full-width cards: icons/labels never cram */
+  }
+
+  .methodCard {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .methodIcon {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 350px) {
+  .otpInput {
+    height: 48px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .pillDot,
+  .successIcon,
+  .challengePanel,
+  .shake,
+  .pushScreen::before,
+  .hardwareSlot svg .dash {
+    animation: none !important;
+  }
+}

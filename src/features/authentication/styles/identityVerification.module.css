@@ -1,0 +1,761 @@
+/* ============================================================
+   Paymo BAAS — Identity Verification (page59)
+   CSS Module scoped to .kycPage — emerald-glass dark theme
+   ============================================================ */
+
+.kycPage {
+  --iv-bg0: #020c07;
+  --iv-bg1: #04160e;
+  --iv-bg2: #06231a;
+  --iv-ink0: #fff;
+  --iv-ink1: #e9f7ef;
+  --iv-ink2: #a9c6b6;
+  --iv-ink3: #6f9382;
+  --iv-accent: #2ee6a0;
+  --iv-glass-bg: rgba(255, 255, 255, 0.04);
+  --iv-glass-border: rgba(255, 255, 255, 0.1);
+  --iv-glass-strong: rgba(255, 255, 255, 0.08);
+  --iv-glass-border-strong: rgba(255, 255, 255, 0.16);
+  --iv-radius-lg: 22px;
+  --iv-radius-md: 14px;
+
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 0;
+  color: var(--iv-ink1);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.55;
+  overflow-x: hidden;
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(46, 230, 160, 0.13), transparent 60%),
+    radial-gradient(900px 500px at -8% 22%, rgba(20, 185, 129, 0.12), transparent 60%),
+    radial-gradient(800px 520px at 50% 112%, rgba(124, 245, 200, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--iv-bg0) 0%, var(--iv-bg1) 30%, var(--iv-bg2) 70%, var(--iv-bg0) 100%);
+}
+
+.kycPage h1,
+.kycPage h2,
+.kycPage h3,
+.kycPage h4,
+.kycPage h5,
+.kycPage h6 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--iv-ink0);
+}
+
+.gridOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(46, 230, 160, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 230, 160, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.36;
+  pointer-events: none;
+  animation: ivFloat 14s ease-in-out infinite;
+}
+
+@keyframes ivFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.08); }
+}
+
+@keyframes ivPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 230, 160, 0.35); }
+  50% { box-shadow: 0 0 0 14px rgba(46, 230, 160, 0); }
+}
+
+@keyframes ivScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(420%); }
+}
+
+@keyframes ivPop {
+  0% { transform: scale(0.86); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- glass & type ---------- */
+.glass {
+  background: var(--iv-glass-bg);
+  border: 1px solid var(--iv-glass-border);
+  border-radius: var(--iv-radius-lg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+}
+
+.glassStrong {
+  background: var(--iv-glass-strong);
+  border: 1px solid var(--iv-glass-border-strong);
+  border-radius: var(--iv-radius-lg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.textGradient {
+  background: linear-gradient(135deg, #7cf5c8 0%, #2ee6a0 50%, #0f9d6c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.logoMark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #35f0a8, #14b981, #0a7a54);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #02120a;
+  font-weight: 900;
+  box-shadow: 0 8px 24px -8px rgba(46, 230, 160, 0.55);
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(46, 230, 160, 0.09);
+  border: 1px solid rgba(46, 230, 160, 0.25);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #bdf5d8;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--iv-accent);
+  box-shadow: 0 0 10px var(--iv-accent);
+  animation: ivPulseGlow 2s infinite;
+  flex-shrink: 0;
+}
+
+/* ---------- badges ---------- */
+.badgeMini {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badgeOk {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badgeAdv {
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.badgeNative {
+  background: rgba(46, 230, 160, 0.13);
+  color: #bdf5d8;
+  border: 1px solid rgba(46, 230, 160, 0.3);
+}
+
+.badgeSoon {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badgeWarn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ---------- buttons ---------- */
+.kycPage :global(.btn) {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+.kycPage :global(.btn):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btnPrimaryPaymo {
+  background: linear-gradient(135deg, #2ee6a0 0%, #14b981 100%) !important;
+  color: #02120a !important;
+  border: none !important;
+  box-shadow: 0 10px 30px -10px rgba(46, 230, 160, 0.55) !important;
+}
+
+.btnPrimaryPaymo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px -10px rgba(46, 230, 160, 0.75) !important;
+}
+
+.btnOutlinePaymo {
+  background: transparent !important;
+  color: var(--iv-ink1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+.btnOutlinePaymo:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--iv-accent) !important;
+  color: var(--iv-ink0) !important;
+}
+
+/* ---------- hero panel (sticky) ---------- */
+.contentWrap {
+  position: relative;
+  z-index: 1;
+}
+
+.heroPanel {
+  position: sticky;
+  top: 2rem;
+  min-height: calc(100vh - 4rem);
+  overflow: hidden;
+}
+
+.heroPanel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/assets/emerald-network.jpg') center/cover no-repeat;
+  opacity: 0.24;
+  mix-blend-mode: screen;
+}
+
+.heroPanel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2, 12, 7, 0.35), rgba(2, 12, 7, 0.92));
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--iv-ink3);
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- method cards ---------- */
+.methodCard {
+  padding: 1.25rem;
+  border-radius: var(--iv-radius-md);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--iv-glass-border);
+  cursor: pointer;
+  height: 100%;
+  transition: 0.28s;
+}
+
+.methodCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(46, 230, 160, 0.4);
+  background: rgba(46, 230, 160, 0.045);
+}
+
+.methodCardActive {
+  border-color: rgba(46, 230, 160, 0.65);
+  background: linear-gradient(140deg, rgba(46, 230, 160, 0.11), rgba(20, 185, 129, 0.055));
+  box-shadow: 0 0 34px -18px rgba(46, 230, 160, 0.8);
+}
+
+.methodIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.1));
+  border: 1px solid rgba(46, 230, 160, 0.28);
+  color: #bdf5d8;
+  flex-shrink: 0;
+}
+
+.checkDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  transition: 0.25s;
+  flex-shrink: 0;
+}
+
+.methodCardActive .checkDot {
+  border-color: transparent;
+  background: linear-gradient(135deg, #2ee6a0, #14b981);
+  box-shadow: 0 0 13px rgba(46, 230, 160, 0.55);
+}
+
+/* ---------- step rail ---------- */
+.stepRail {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.stepChip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid var(--iv-glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.75rem;
+  color: var(--iv-ink3);
+  font-weight: 700;
+}
+
+.stepChipActive {
+  color: #bdf5d8;
+  border-color: rgba(46, 230, 160, 0.5);
+  background: rgba(46, 230, 160, 0.08);
+}
+
+.stepChipDone {
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+/* ---------- forms (page-scoped Bootstrap overrides) ---------- */
+.formLabelPaymo {
+  font-size: 0.73rem;
+  color: var(--iv-ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  margin-bottom: 0.38rem;
+  display: block;
+}
+
+.kycPage :global(.form-control),
+.kycPage :global(.form-select) {
+  background: rgba(255, 255, 255, 0.035) !important;
+  border: 1px solid var(--iv-glass-border) !important;
+  color: var(--iv-ink1) !important;
+  border-radius: var(--iv-radius-md);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.kycPage :global(.form-control:focus),
+.kycPage :global(.form-select:focus) {
+  border-color: var(--iv-accent) !important;
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.15) !important;
+}
+
+.kycPage :global(.form-control::placeholder) {
+  color: var(--iv-ink3);
+}
+
+.kycPage :global(.form-select) option {
+  background: #04160e;
+  color: var(--iv-ink1);
+}
+
+/* ---------- upload & camera ---------- */
+.uploadZone {
+  border: 1.5px dashed rgba(46, 230, 160, 0.32);
+  border-radius: var(--iv-radius-lg);
+  background: rgba(46, 230, 160, 0.04);
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.uploadZone:hover {
+  background: rgba(46, 230, 160, 0.08);
+  border-color: rgba(46, 230, 160, 0.6);
+}
+
+.uploadZoneLoaded {
+  border-style: solid;
+  border-color: rgba(34, 197, 94, 0.55);
+  background: rgba(34, 197, 94, 0.07);
+}
+
+.uploadZoneError {
+  border-color: rgba(239, 68, 68, 0.65) !important;
+}
+
+.qualityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.62rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--iv-glass-border);
+  margin-bottom: 0.45rem;
+}
+
+.cameraBox {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: var(--iv-radius-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(420px 300px at 50% 40%, rgba(46, 230, 160, 0.14), transparent 65%),
+    #020d07;
+  border: 1px solid var(--iv-glass-border-strong);
+}
+
+.cameraIcon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  color: rgba(46, 230, 160, 0.3);
+}
+
+.scanLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--iv-accent), transparent);
+  animation: ivScan 2.5s linear infinite;
+}
+
+.faceFrame {
+  position: absolute;
+  inset: 18% 27%;
+  border: 2px solid rgba(46, 230, 160, 0.8);
+  border-radius: 45%;
+  box-shadow: 0 0 30px rgba(46, 230, 160, 0.22);
+}
+
+/* ---------- slots ---------- */
+.slot {
+  padding: 0.62rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--iv-glass-border);
+  cursor: pointer;
+  text-align: center;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+  font-size: 0.82rem;
+  transition: 0.2s;
+}
+
+.slot:hover,
+.slotActive {
+  background: linear-gradient(135deg, #2ee6a0, #14b981);
+  border-color: transparent;
+  color: #02120a;
+  font-weight: 800;
+}
+
+/* ---------- status lines ---------- */
+.statusLine {
+  position: relative;
+  padding-left: 2.2rem;
+  padding-bottom: 1.2rem;
+}
+
+.statusLine::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 28px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(46, 230, 160, 0.65), transparent);
+}
+
+.statusLine:last-child::before {
+  display: none;
+}
+
+.statusDot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--iv-glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--iv-ink3);
+}
+
+.statusLineDone .statusDot {
+  background: rgba(34, 197, 94, 0.16);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.statusLineActive .statusDot {
+  background: rgba(46, 230, 160, 0.16);
+  color: #bdf5d8;
+  border-color: rgba(46, 230, 160, 0.45);
+}
+
+/* ---------- stats / progress ---------- */
+.detailStat {
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--iv-glass-border);
+}
+
+.detailStatLbl {
+  font-size: 0.65rem;
+  color: var(--iv-ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.detailStatVal {
+  font-weight: 700;
+  color: var(--iv-ink0);
+  font-size: 0.94rem;
+  margin-top: 0.18rem;
+}
+
+.kycPage :global(.progress) {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.kycPage :global(.progress-bar) {
+  background: linear-gradient(90deg, #7cf5c8, #2ee6a0, #0f9d6c);
+  transition: width 0.65s ease;
+}
+
+/* ---------- panels ---------- */
+.hiddenPanel {
+  display: none;
+}
+
+.hiddenPanelActive {
+  display: block;
+  animation: ivPop 0.35s ease;
+}
+
+.successCard {
+  text-align: center;
+  padding: 2rem;
+  animation: ivPop 0.45s ease;
+}
+
+.successIcon {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: #fff;
+  font-size: 2.4rem;
+  box-shadow: 0 0 46px -8px rgba(34, 197, 94, 0.6);
+}
+
+/* ---------- flow frame ---------- */
+.flowFrame {
+  position: relative;
+  border-radius: var(--iv-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--iv-glass-border-strong);
+  background:
+    radial-gradient(640px 400px at 30% 80%, rgba(20, 185, 129, 0.2), transparent 60%),
+    url('/assets/flow-3d.jpg') center/cover no-repeat,
+    #020d07;
+  min-height: 260px;
+}
+
+.flowFrame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(2, 12, 7, 0.72));
+  z-index: 1;
+}
+
+.flowLabel {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+/* ---------- misc ---------- */
+.mono {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+}
+
+.mutedBody {
+  color: var(--iv-ink2);
+  font-size: 0.92rem;
+}
+
+.mutedSmall {
+  color: var(--iv-ink3);
+  font-size: 0.82rem;
+}
+
+.reasonCard {
+  border-radius: 16px;
+}
+
+.callConfirm {
+  border-radius: 14px;
+}
+
+.faceScoreOk {
+  color: #86efac;
+}
+
+/* ---------- loading & error states ---------- */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 12, 7, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.loadingBox {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.4rem;
+  border-radius: 16px;
+  background: rgba(4, 22, 14, 0.92);
+  border: 1px solid rgba(46, 230, 160, 0.3);
+  color: #bdf5d8;
+  font-weight: 600;
+}
+
+.errorBanner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2100;
+  width: min(680px, calc(100vw - 2rem));
+  background: rgba(60, 12, 12, 0.92);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 991px) {
+  .heroPanel {
+    position: relative;
+    top: 0;
+    min-height: auto;
+  }
+
+  .kycPage {
+    padding: 1rem 0;
+  }
+
+  .heroContent {
+    padding: 1.4rem;
+  }
+
+  .methodCard {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .stepChip {
+    width: 100%;
+    justify-content: center;
+    min-height: 42px;
+  }
+
+  .slot {
+    font-size: 0.78rem;
+    padding: 0.55rem;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .heroContent h1 {
+    font-size: 2rem !important;
+  }
+
+  .methodIcon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .pillDot,
+  .scanLine {
+    animation: none !important;
+  }
+
+  .hiddenPanelActive,
+  .successCard {
+    animation: none;
+  }
+}

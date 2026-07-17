@@ -1,0 +1,833 @@
+/* ============================================================
+   Paymo BAAS — Biometric Setup & Passkey Management (page58)
+   CSS Module scoped to .passkeysPage — emerald-glass dark theme
+   ============================================================ */
+
+.passkeysPage {
+  --pk-bg0: #020c07;
+  --pk-bg1: #04160e;
+  --pk-bg2: #06231a;
+  --pk-ink0: #fff;
+  --pk-ink1: #e9f7ef;
+  --pk-ink2: #a9c6b6;
+  --pk-ink3: #6f9382;
+  --pk-accent: #2ee6a0;
+  --pk-accent-2: #14b981;
+  --pk-accent-light: #7cf5c8;
+  --pk-danger: #ef4444;
+  --pk-glass-bg: rgba(255, 255, 255, 0.04);
+  --pk-glass-border: rgba(255, 255, 255, 0.1);
+  --pk-glass-strong: rgba(255, 255, 255, 0.08);
+  --pk-glass-border-strong: rgba(255, 255, 255, 0.16);
+  --pk-radius-lg: 22px;
+  --pk-radius-md: 14px;
+  --pk-shadow-glow: 0 0 40px rgba(46, 230, 160, 0.18);
+
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 0 4rem;
+  color: var(--pk-ink1);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.55;
+  overflow-x: hidden;
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(46, 230, 160, 0.13), transparent 60%),
+    radial-gradient(900px 500px at -8% 22%, rgba(20, 185, 129, 0.12), transparent 60%),
+    radial-gradient(800px 520px at 50% 112%, rgba(124, 245, 200, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--pk-bg0) 0%, var(--pk-bg1) 30%, var(--pk-bg2) 70%, var(--pk-bg0) 100%);
+}
+
+.passkeysPage h1,
+.passkeysPage h2,
+.passkeysPage h3,
+.passkeysPage h4,
+.passkeysPage h5,
+.passkeysPage h6 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--pk-ink0);
+}
+
+.gridOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(46, 230, 160, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 230, 160, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.38;
+  pointer-events: none;
+  animation: pkFloat 14s ease-in-out infinite;
+}
+
+@keyframes pkFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.08); }
+}
+
+@keyframes pkPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 230, 160, 0.35); }
+  50% { box-shadow: 0 0 0 14px rgba(46, 230, 160, 0); }
+}
+
+@keyframes pkScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(520%); }
+}
+
+@keyframes pkOrbit {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.revealIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- glass ---------- */
+.glass {
+  background: var(--pk-glass-bg);
+  border: 1px solid var(--pk-glass-border);
+  border-radius: var(--pk-radius-lg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+}
+
+.glassStrong {
+  background: var(--pk-glass-strong);
+  border: 1px solid var(--pk-glass-border-strong);
+  border-radius: var(--pk-radius-lg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+/* ---------- type & brand ---------- */
+.textGradient {
+  background: linear-gradient(135deg, #7cf5c8 0%, #2ee6a0 50%, #0f9d6c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.textGradientGold {
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.logoMark {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #35f0a8, #14b981, #0a7a54);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #02120a;
+  font-weight: 900;
+  box-shadow: 0 8px 24px -8px rgba(46, 230, 160, 0.55);
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(46, 230, 160, 0.09);
+  border: 1px solid rgba(46, 230, 160, 0.25);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #bdf5d8;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pk-accent);
+  box-shadow: 0 0 10px var(--pk-accent);
+  animation: pkPulseGlow 2s infinite;
+  flex-shrink: 0;
+}
+
+/* ---------- badges ---------- */
+.badgeMini {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badgeOk {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badgeAdv {
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.badgeNative {
+  background: rgba(46, 230, 160, 0.13);
+  color: #bdf5d8;
+  border: 1px solid rgba(46, 230, 160, 0.3);
+}
+
+.badgeSoon {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badgeWarn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ---------- buttons ---------- */
+.passkeysPage :global(.btn) {
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.4rem;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+.btnPrimaryPaymo {
+  background: linear-gradient(135deg, #2ee6a0 0%, #14b981 100%) !important;
+  color: #02120a !important;
+  border: none !important;
+  box-shadow: 0 10px 30px -10px rgba(46, 230, 160, 0.55) !important;
+}
+
+.btnPrimaryPaymo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px -10px rgba(46, 230, 160, 0.75) !important;
+}
+
+.btnPrimaryPaymo:disabled {
+  opacity: 0.7;
+  transform: none !important;
+}
+
+.btnOutlinePaymo {
+  background: transparent !important;
+  color: var(--pk-ink1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+.btnOutlinePaymo:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--pk-accent) !important;
+  color: var(--pk-ink0) !important;
+}
+
+.btnDangerSoft {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+.btnDangerSoft:hover {
+  background: rgba(239, 68, 68, 0.22) !important;
+  color: #fecaca !important;
+}
+
+/* ---------- layout ---------- */
+.authPanel {
+  max-width: 1180px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.sectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--pk-ink3);
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+}
+
+.sectionLabel::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: var(--pk-accent);
+}
+
+/* ---------- hero ---------- */
+.heroVisual {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: var(--pk-radius-lg);
+  border: 1px solid var(--pk-glass-border-strong);
+  background:
+    radial-gradient(700px 420px at 70% 20%, rgba(46, 230, 160, 0.16), transparent 60%),
+    url('/assets/emerald-network.jpg') center/cover no-repeat,
+    #020d07;
+  background-blend-mode: screen, normal, normal;
+}
+
+.heroVisual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2, 12, 7, 0.25), rgba(2, 12, 7, 0.88));
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+}
+
+.shieldOrbit {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  border: 1px dashed rgba(46, 230, 160, 0.3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pkOrbit 44s linear infinite;
+}
+
+.shieldCore {
+  width: 116px;
+  height: 116px;
+  border-radius: 34px;
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.22), rgba(20, 185, 129, 0.14));
+  border: 1px solid rgba(46, 230, 160, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bdf5d8;
+  font-size: 3rem;
+  box-shadow: var(--pk-shadow-glow);
+  animation: pkOrbit 44s linear infinite reverse;
+}
+
+.orbitChip {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  background: rgba(2, 12, 7, 0.85);
+  border: 1px solid var(--pk-glass-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7cf5c8;
+}
+
+.orbitChip:nth-child(2) { top: -18px; left: 50%; transform: translateX(-50%); }
+.orbitChip:nth-child(3) { bottom: -18px; left: 50%; transform: translateX(-50%); }
+.orbitChip:nth-child(4) { left: -18px; top: 50%; transform: translateY(-50%); }
+.orbitChip:nth-child(5) { right: -18px; top: 50%; transform: translateY(-50%); }
+
+/* ---------- tabs (biometric panels) ---------- */
+.tabsWrap {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  border: 1px solid var(--pk-glass-border);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--pk-ink2);
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.86rem;
+  transition: all 0.25s;
+}
+
+.tabBtn:hover,
+.tabBtnActive {
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.12));
+  border-color: rgba(46, 230, 160, 0.45);
+  color: #bdf5d8;
+}
+
+.tabPanel { display: none; }
+.tabPanelActive { display: block; }
+
+/* ---------- compare table ---------- */
+.compareTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+}
+
+.compareTable th {
+  background: rgba(6, 35, 26, 0.8);
+  color: var(--pk-ink2);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.85rem;
+  border-bottom: 1px solid var(--pk-glass-border-strong);
+}
+
+.compareTable td {
+  padding: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--pk-ink2);
+}
+
+.compareTable tr:hover td {
+  background: rgba(46, 230, 160, 0.04);
+}
+
+.compareTable strong {
+  color: var(--pk-ink0);
+}
+
+/* ---------- wizard ---------- */
+.wizardStep {
+  padding: 1rem;
+  border: 1px solid var(--pk-glass-border);
+  border-radius: var(--pk-radius-md);
+  background: rgba(255, 255, 255, 0.025);
+  transition: all 0.25s;
+}
+
+.wizardStepActive {
+  border-color: rgba(46, 230, 160, 0.5);
+  background: rgba(46, 230, 160, 0.06);
+}
+
+.wizardStepDone {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.055);
+}
+
+.stepNum {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.1));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #bdf5d8;
+  border: 1px solid rgba(46, 230, 160, 0.28);
+  flex-shrink: 0;
+}
+
+/* ---------- forms ---------- */
+.formInput {
+  width: 100%;
+  padding: 0.72rem 0.9rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--pk-glass-border);
+  border-radius: 12px;
+  color: var(--pk-ink1);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.formInput:focus {
+  border-color: var(--pk-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 160, 0.13);
+}
+
+.formLabelPaymo {
+  font-size: 0.72rem;
+  color: var(--pk-ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+/* ---------- cards ---------- */
+.deviceCard,
+.passkeyCard,
+.enterpriseCard {
+  padding: 1rem;
+  border: 1px solid var(--pk-glass-border);
+  border-radius: var(--pk-radius-md);
+  background: rgba(255, 255, 255, 0.028);
+  transition: all 0.25s;
+}
+
+.deviceCard:hover,
+.passkeyCard:hover,
+.enterpriseCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(46, 230, 160, 0.35);
+  background: rgba(46, 230, 160, 0.04);
+}
+
+.passkeyCardPrimary {
+  border-color: rgba(46, 230, 160, 0.5);
+  background: rgba(46, 230, 160, 0.06);
+}
+
+.passkeyIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(46, 230, 160, 0.18), rgba(20, 185, 129, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bdf5d8;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.emptyList {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--pk-ink3);
+}
+
+/* ---------- toggle ---------- */
+.toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--pk-glass-border);
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: var(--pk-ink2);
+  transition: 0.25s;
+}
+
+.toggle input:checked + .slider {
+  background: linear-gradient(135deg, #2ee6a0, #14b981);
+  border-color: transparent;
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(24px);
+  background: #02120a;
+}
+
+/* ---------- QR ---------- */
+.qrBox {
+  width: 190px;
+  height: 190px;
+  margin: auto;
+  border-radius: 20px;
+  padding: 14px;
+  background: #e9f7ef;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  gap: 4px;
+}
+
+.qrCell {
+  border-radius: 3px;
+  background: #04160e;
+}
+
+.qrCellOff {
+  background: transparent;
+}
+
+.scanLine {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #2ee6a0, transparent);
+  top: 10%;
+  animation: pkScan 2.2s linear infinite;
+  box-shadow: 0 0 18px #2ee6a0;
+}
+
+.progressThin {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progressThinFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #7cf5c8, #2ee6a0, #0f9d6c);
+  border-radius: 999px;
+  transition: width 0.5s;
+}
+
+/* ---------- flow frame ---------- */
+.flowFrame {
+  position: relative;
+  border-radius: var(--pk-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--pk-glass-border-strong);
+  background:
+    radial-gradient(640px 400px at 30% 80%, rgba(20, 185, 129, 0.2), transparent 60%),
+    url('/assets/flow-3d.jpg') center/cover no-repeat,
+    #020d07;
+  min-height: 240px;
+}
+
+.flowFrame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(2, 12, 7, 0.75) 100%);
+  z-index: 1;
+}
+
+.flowLabel {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+/* ---------- modal (React-driven, Bootstrap classes) ---------- */
+.passkeysPage :global(.modal-content) {
+  background: #04160e;
+  border: 1px solid var(--pk-glass-border-strong);
+  color: var(--pk-ink1);
+  border-radius: 20px;
+}
+
+.passkeysPage :global(.btn-close) {
+  filter: invert(1);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(1, 8, 5, 0.72);
+  backdrop-filter: blur(4px);
+  z-index: 1055;
+}
+
+.modalWrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1075;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modalBox {
+  width: 100%;
+  max-width: 480px;
+  background: #04160e;
+  border: 1px solid var(--pk-glass-border-strong);
+  color: var(--pk-ink1);
+  border-radius: 20px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.8), 0 0 50px -18px rgba(46, 230, 160, 0.35);
+}
+
+/* ---------- notices / states ---------- */
+.mono {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+}
+
+.mutedSmall {
+  color: var(--pk-ink3);
+  font-size: 0.78rem;
+}
+
+.mutedBody {
+  color: var(--pk-ink2);
+  font-size: 0.9rem;
+}
+
+.cardDesc {
+  font-size: 0.83rem;
+  color: var(--pk-ink2);
+  margin-bottom: 0;
+}
+
+.checkRule {
+  color: #86efac;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.hrSoft {
+  border: 0;
+  border-top: 1px solid var(--pk-glass-border);
+  margin: 1rem 0;
+}
+
+.compatCard {
+  max-width: 380px;
+}
+
+.successOrb {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 2.4rem;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 44px -8px rgba(34, 197, 94, 0.6);
+}
+
+.bigFingerprint {
+  font-size: 4rem;
+}
+
+/* ---------- loading & error states ---------- */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 12, 7, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.loadingBox {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.4rem;
+  border-radius: 16px;
+  background: rgba(4, 22, 14, 0.92);
+  border: 1px solid rgba(46, 230, 160, 0.3);
+  color: #bdf5d8;
+  font-weight: 600;
+}
+
+.errorBanner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2100;
+  width: min(680px, calc(100vw - 2rem));
+  background: rgba(60, 12, 12, 0.92);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 991px) {
+  .passkeysPage { padding: 1rem 0 3rem; }
+  .heroVisual { min-height: 320px; }
+  .shieldOrbit { width: 170px; height: 170px; }
+  .shieldCore { width: 92px; height: 92px; font-size: 2.2rem; }
+}
+
+@media (max-width: 575px) {
+  .tabsWrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .tabBtn {
+    font-size: 0.78rem;
+    padding: 0.65rem 0.5rem;
+    min-height: 46px;
+  }
+
+  .compareTable { font-size: 0.78rem; }
+  .compareTable th,
+  .compareTable td { padding: 0.62rem; }
+
+  .qrBox { width: 160px; height: 160px; }
+
+  /* action buttons wrap without cramping icon tiles */
+  .passkeyCard .passkeyIcon { width: 42px; height: 42px; }
+}
+
+@media (max-width: 380px) {
+  .heroVisual { min-height: 280px; }
+  .shieldOrbit { width: 150px; height: 150px; }
+  .pill { font-size: 0.72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .shieldOrbit,
+  .shieldCore,
+  .pillDot,
+  .scanLine {
+    animation: none !important;
+  }
+
+  .reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
