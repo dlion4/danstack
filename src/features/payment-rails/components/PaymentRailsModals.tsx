@@ -15,7 +15,7 @@ import {
 	TabbedModal,
 } from "../../../shared/components/modals";
 import shared from "../../../shared/styles/appPage.module.css";
-import { cx } from "../../../shell/data/shellData";
+import { cx } from "../../shell/data/shellData";
 import type { PaymentRailsContent } from "../pages/PaymentRails";
 
 const s = shared as Record<string, string>;
@@ -38,8 +38,6 @@ export function PaymentRailsModals({
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
 	const open = (id: string) => openModal(id);
-
-	const bankNames = data.banks.map((b) => b.name);
 
 	return (
 		<>

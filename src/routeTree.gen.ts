@@ -23,10 +23,13 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
 import { Route as AuthHubRouteImport } from './routes/auth/hub'
 import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
-import { Route as AppZSectionRouteImport } from './routes/app.z-section'
 import { Route as AppTransfersRouteImport } from './routes/app.transfers'
 import { Route as AppTransferManagementRouteImport } from './routes/app.transfer-management'
+import { Route as AppReconciliationRouteImport } from './routes/app.reconciliation'
+import { Route as AppPaymentRailsRouteImport } from './routes/app.payment-rails'
+import { Route as AppLiquidityRouteImport } from './routes/app.liquidity'
 import { Route as AppInitiateTransferRouteImport } from './routes/app.initiate-transfer'
+import { Route as AppSectionRouteImport } from './routes/app.$section'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 
 const LoginRoute = LoginRouteImport.update({
@@ -98,11 +101,6 @@ const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
   path: '/auth/account-status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppZSectionRoute = AppZSectionRouteImport.update({
-  id: '/z-section',
-  path: '/z-section',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppTransfersRoute = AppTransfersRouteImport.update({
   id: '/transfers',
   path: '/transfers',
@@ -113,9 +111,29 @@ const AppTransferManagementRoute = AppTransferManagementRouteImport.update({
   path: '/transfer-management',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReconciliationRoute = AppReconciliationRouteImport.update({
+  id: '/reconciliation',
+  path: '/reconciliation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentRailsRoute = AppPaymentRailsRouteImport.update({
+  id: '/payment-rails',
+  path: '/payment-rails',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLiquidityRoute = AppLiquidityRouteImport.update({
+  id: '/liquidity',
+  path: '/liquidity',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInitiateTransferRoute = AppInitiateTransferRouteImport.update({
   id: '/initiate-transfer',
   path: '/initiate-transfer',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSectionRoute = AppSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
   getParentRoute: () => AppRoute,
 } as any)
 const HomeBusinessRoute = HomeBusinessRouteImport.update({
@@ -129,10 +147,13 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
+  '/app/liquidity': typeof AppLiquidityRoute
+  '/app/payment-rails': typeof AppPaymentRailsRoute
+  '/app/reconciliation': typeof AppReconciliationRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
   '/app/transfers': typeof AppTransfersRoute
-  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -147,10 +168,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
+  '/app/liquidity': typeof AppLiquidityRoute
+  '/app/payment-rails': typeof AppPaymentRailsRoute
+  '/app/reconciliation': typeof AppReconciliationRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
   '/app/transfers': typeof AppTransfersRoute
-  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -169,10 +193,13 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_home/business': typeof HomeBusinessRoute
+  '/app/$section': typeof AppSectionRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
+  '/app/liquidity': typeof AppLiquidityRoute
+  '/app/payment-rails': typeof AppPaymentRailsRoute
+  '/app/reconciliation': typeof AppReconciliationRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
   '/app/transfers': typeof AppTransfersRoute
-  '/app/z-section': typeof AppZSectionRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -192,10 +219,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/business'
+    | '/app/$section'
     | '/app/initiate-transfer'
+    | '/app/liquidity'
+    | '/app/payment-rails'
+    | '/app/reconciliation'
     | '/app/transfer-management'
     | '/app/transfers'
-    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -210,10 +240,13 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/business'
+    | '/app/$section'
     | '/app/initiate-transfer'
+    | '/app/liquidity'
+    | '/app/payment-rails'
+    | '/app/reconciliation'
     | '/app/transfer-management'
     | '/app/transfers'
-    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -231,10 +264,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/_home/business'
+    | '/app/$section'
     | '/app/initiate-transfer'
+    | '/app/liquidity'
+    | '/app/payment-rails'
+    | '/app/reconciliation'
     | '/app/transfer-management'
     | '/app/transfers'
-    | '/app/z-section'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -363,13 +399,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/z-section': {
-      id: '/app/z-section'
-      path: '/z-section'
-      fullPath: '/app/z-section'
-      preLoaderRoute: typeof AppZSectionRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/transfers': {
       id: '/app/transfers'
       path: '/transfers'
@@ -384,11 +413,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTransferManagementRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/reconciliation': {
+      id: '/app/reconciliation'
+      path: '/reconciliation'
+      fullPath: '/app/reconciliation'
+      preLoaderRoute: typeof AppReconciliationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/payment-rails': {
+      id: '/app/payment-rails'
+      path: '/payment-rails'
+      fullPath: '/app/payment-rails'
+      preLoaderRoute: typeof AppPaymentRailsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/liquidity': {
+      id: '/app/liquidity'
+      path: '/liquidity'
+      fullPath: '/app/liquidity'
+      preLoaderRoute: typeof AppLiquidityRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/initiate-transfer': {
       id: '/app/initiate-transfer'
       path: '/initiate-transfer'
       fullPath: '/app/initiate-transfer'
       preLoaderRoute: typeof AppInitiateTransferRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/$section': {
+      id: '/app/$section'
+      path: '/$section'
+      fullPath: '/app/$section'
+      preLoaderRoute: typeof AppSectionRouteImport
       parentRoute: typeof AppRoute
     }
     '/_home/business': {
@@ -414,18 +471,24 @@ const HomeRouteChildren: HomeRouteChildren = {
 const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
 interface AppRouteChildren {
+  AppSectionRoute: typeof AppSectionRoute
   AppInitiateTransferRoute: typeof AppInitiateTransferRoute
+  AppLiquidityRoute: typeof AppLiquidityRoute
+  AppPaymentRailsRoute: typeof AppPaymentRailsRoute
+  AppReconciliationRoute: typeof AppReconciliationRoute
   AppTransferManagementRoute: typeof AppTransferManagementRoute
   AppTransfersRoute: typeof AppTransfersRoute
-  AppZSectionRoute: typeof AppZSectionRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppSectionRoute: AppSectionRoute,
   AppInitiateTransferRoute: AppInitiateTransferRoute,
+  AppLiquidityRoute: AppLiquidityRoute,
+  AppPaymentRailsRoute: AppPaymentRailsRoute,
+  AppReconciliationRoute: AppReconciliationRoute,
   AppTransferManagementRoute: AppTransferManagementRoute,
   AppTransfersRoute: AppTransfersRoute,
-  AppZSectionRoute: AppZSectionRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

@@ -51,7 +51,7 @@ let toastIdSeq = 0;
 
 export default function AppShell() {
   /* ---------- TanStack Query: backend-ready shell content ---------- */
-  const { data: apiData, error, isLoading } = useQuery({
+  const { data: apiData, isLoading } = useQuery({
     queryKey: ['paymo-shell-content'],
     queryFn: fetchShellContent,
     staleTime: 5 * 60_000,
@@ -97,10 +97,10 @@ export default function AppShell() {
     leavingTimersRef.current.set(id, timer);
   }, []);
 
-  const showToast = useCallback((toast: ToastInput | string) => {
+  const showToast = useCallback((toast: ToastInput | string, tone?: ToastTone) => {
     const input: ToastInput = typeof toast === 'string' ? { message: toast } : toast;
     const id = (toastIdSeq += 1);
-    const type: ToastTone = input.type ?? 'info';
+    const type: ToastTone = input.type ?? tone ?? 'info';
     const record: ToastRecord = {
       id,
       message: input.message,
@@ -151,7 +151,7 @@ export default function AppShell() {
    * ACCOUNT / LOGOUT / COPY actions
    * ==================================================================== */
   const handleSwitchAccount = useCallback(
-    (accountId: string, accountName: string) => {
+    (_accountId: string, accountName: string) => {
       showToast(`Switched to ${accountName}`, 'info');
       closeAllDropdowns();
     },
