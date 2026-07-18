@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Reconciliation Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bank2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-arrow-left-right"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-clipboard-check"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-gear"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Reconciliation Center</h1>
+                            <p>Bank-to-bank transaction matching, exceptions, auto-rules & audit trail</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search transactions, references, banks, discrepancies..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('reconcileNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">14</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Finance Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">B2B Transactions</a> /
+                        <strong>Reconciliation Center</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.6 — Reconciliation Center</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Match incoming and outgoing bank
+                        transfers across Equity, KCB, Co-op, Stanbic, M-Pesa and international corridors. Resolve
+                        discrepancies, run auto-rules and maintain full audit trail.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('uploadStatementModal')"><i class="bi bi-upload"></i> Upload
+                        Statement</button><button class="btn-pm" onclick="openM('runAutoReconModal')"><i
+                            class="bi bi-magic"></i> Run Auto-Recon</button><button class="btn-pm"
+                        onclick="openM('bulkMatchModal')"><i class="bi bi-collection"></i> Bulk Match</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('manualMatchModal')"><i class="bi bi-hand-index"></i>
+                        Manual Match</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Reconciliation engine is live
+                                <span style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">94.7% match rate</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">8,412 of 8,882 transactions
+                                reconciled today across 6 banks. 47 exceptions awaiting review.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('runAutoReconModal')">Auto-Reconcile</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('exportReportModal')">Export</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('ruleEngineModal')">Rules</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">MATCHED TODAY</p>
+                            <div class="SV" style="margin:6px 0">8,412</div><span class="B B-s"><i
+                                    class="bi bi-check-circle"></i> +312 since morning</span>
+                            <div class="pm-progress mt-2">
+                                <div class="pm-progress-bar" style="width:94.7%;background:var(--pm-accent)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-warning)">PENDING / EXCEPTIONS</p>
+                            <div class="SV" style="margin:6px 0">47</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> 12 high-value</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">KES 18.4M in unmatched
+                                transfers<br>3 international SWIFT items</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-info)">
+                            <p class="SL" style="color:var(--pm-info)">AUDIT TRAIL</p>
+                            <div class="SV" style="margin:6px 0">124,892</div><span class="B B-i"><i
+                                    class="bi bi-clock-history"></i> entries this month</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Last reconciliation run:
+                                27 Jun 2025, 14:12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionFullModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-bank"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Equity Bank credit not matched</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 2.8M • Ref EQ-882910</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('manualMatchModal')">Match</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">KCB debit duplicate detected</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 450,000 • Same ref twice
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('discrepancyModal')">Review</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-globe"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">SWIFT inbound pending FX rate</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">USD 125,000 • Rate lock
+                                            expired</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('fxRateModal')">Resolve</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-magic"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Run auto-match on 34 pending items
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Confidence > 92%</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('runAutoReconModal')">Run</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-link-45deg"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Create rule for recurring payroll
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 8.2M every 25th</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('ruleEngineModal')">Create</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-text"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Export June reconciliation report
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Ready for auditors</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('exportReportModal')">Export</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent reconciliation workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('manualMatchModal')"><i
+                                        class="bi bi-hand-index text-primary me-1"></i> Manual Match</button><button
+                                    class="quick-btn" onclick="openM('discrepancyModal')"><i
+                                        class="bi bi-exclamation-triangle text-warning me-1"></i> Flag
+                                    Exception</button><button class="quick-btn"
+                                    onclick="openM('uploadStatementModal')"><i
+                                        class="bi bi-upload text-success me-1"></i> Upload Statement</button><button
+                                    class="quick-btn" onclick="openM('bulkMatchModal')"><i
+                                        class="bi bi-collection text-info me-1"></i> Bulk Match</button><button
+                                    class="quick-btn" onclick="openM('ruleEngineModal')"><i class="bi bi-magic me-1"
+                                        style="color:var(--pm-purple)"></i> Auto-Rule</button><button class="quick-btn"
+                                    onclick="openM('fxRateModal')"><i
+                                        class="bi bi-currency-exchange text-danger me-1"></i> FX Rate</button><button
+                                    class="quick-btn" onclick="openM('auditLogModal')"><i
+                                        class="bi bi-clock-history me-1" style="color:var(--pm-muted)"></i> Audit
+                                    Log</button><button class="quick-btn" onclick="openM('exportReportModal')"><i
+                                        class="bi bi-download me-1" style="color:var(--pm-accent)"></i> Reports</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: Overview Dashboard -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-speedometer2" style="color:var(--pm-primary)"></i> 1.6.1 —
+                                Reconciliation Overview Dashboard</h3>
+                            <p class="ss">Real-time status across all connected bank accounts and corridors.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('healthCheckModal')"><i class="bi bi-heart-pulse"></i>
+                                Health</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('runAutoReconModal')"><i class="bi bi-play-fill"></i> Run Now</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Bank Coverage</h4>
+                                <div class="sr">
+                                    <div>Equity Bank</div><span class="B B-s">98.4%</span>
+                                </div>
+                                <div class="sr">
+                                    <div>KCB Bank</div><span class="B B-s">96.1%</span>
+                                </div>
+                                <div class="sr">
+                                    <div>Co-op Bank</div><span class="B B-s">94.8%</span>
+                                </div>
+                                <div class="sr">
+                                    <div>Stanbic Bank</div><span class="B B-w">89.2%</span>
+                                </div>
+                                <div class="sr">
+                                    <div>M-Pesa B2B</div><span class="B B-s">99.1%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Today's Activity</h4>
+                                <div class="chart-bars" style="height:80px">
+                                    <div class="chart-bar" style="height:85%;background:var(--pm-primary)"
+                                        title="Equity"></div>
+                                    <div class="chart-bar" style="height:72%;background:var(--pm-info)" title="KCB">
+                                    </div>
+                                    <div class="chart-bar" style="height:68%;background:var(--pm-accent)" title="Co-op">
+                                    </div>
+                                    <div class="chart-bar" style="height:55%;background:var(--pm-warning)"
+                                        title="Stanbic"></div>
+                                    <div class="chart-bar" style="height:90%;background:var(--pm-purple)"
+                                        title="M-Pesa"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2" style="font-size:11px">
+                                    <span>Equity</span><span>M-Pesa</span></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Exception Breakdown</h4>
+                                <div class="sr">
+                                    <div><span class="B B-d">Amount mismatch</span></div><strong>18</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><span class="B B-w">Duplicate</span></div><strong>9</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><span class="B B-i">Missing reference</span></div><strong>12</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><span class="B B-p">FX rate pending</span></div><strong>5</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><span class="B B-s">Timing difference</span></div><strong>3</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Reconciliation Health</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;color:#047857;font-weight:700">AUTO-MATCH RATE</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">94.7%</div>
+                                </div>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:11px;color:#1D4ED8;font-weight:700">MANUAL REVIEW NEEDED</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-info)">47 items</div>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;color:#B45309;font-weight:700">AVG RESOLUTION TIME</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">14 min</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Pending Reconciliations -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-warning)"></i> 1.6.2 —
+                                Pending Reconciliations Workbench</h3>
+                            <p class="ss">All unmatched transactions requiring attention. Use filters, search and quick
+                                actions.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('filterModal')"><i class="bi bi-funnel"></i> Filters</button><button
+                                class="btn-pm btn-sm btn-pm-p" onclick="openM('bulkMatchModal')"><i
+                                    class="bi bi-check2-all"></i> Bulk Match</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bank</th>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Direction</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Matched Transactions -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-check2-circle" style="color:var(--pm-accent)"></i> 1.6.3 —
+                                Matched Transactions</h3>
+                            <p class="ss">Successfully reconciled items with full audit trail.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('matchedFilterModal')"><i class="bi bi-funnel"></i>
+                                Filter</button><button class="btn-pm btn-sm" onclick="openM('exportReportModal')"><i
+                                    class="bi bi-download"></i> Export</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Match ID</th>
+                                    <th>Date</th>
+                                    <th>Bank A</th>
+                                    <th>Bank B</th>
+                                    <th>Amount</th>
+                                    <th>Matched By</th>
+                                    <th>Time</th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody id="matchedTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Discrepancies & Exceptions -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-exclamation-triangle" style="color:var(--pm-danger)"></i>
+                                1.6.4 — Discrepancies & Exceptions</h3>
+                            <p class="ss">Investigate, flag, dispute or resolve unmatched items.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('discrepancyModal')"><i class="bi bi-plus-lg"></i> New
+                                Exception</button><button class="btn-pm btn-sm" onclick="openM('disputeModal')"><i
+                                    class="bi bi-flag"></i> Dispute</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Exception ID</th>
+                                    <th>Ref</th>
+                                    <th>Issue</th>
+                                    <th>Amount</th>
+                                    <th>Priority</th>
+                                    <th>Assigned</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exceptionTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: Auto-Reconciliation Rules -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-magic" style="color:var(--pm-purple)"></i> 1.6.5 —
+                                Auto-Reconciliation Rules Engine</h3>
+                            <p class="ss">Create, edit and monitor intelligent matching rules.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('ruleEngineModal')"><i class="bi bi-plus-lg"></i> New
+                                Rule</button><button class="btn-pm btn-sm" onclick="openM('rulePerformanceModal')"><i
+                                    class="bi bi-graph-up"></i> Performance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="table-responsive">
+                                <table class="T">
+                                    <thead>
+                                        <tr>
+                                            <th>Rule Name</th>
+                                            <th>Conditions</th>
+                                            <th>Match Rate</th>
+                                            <th>Last Run</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ruleTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Top Performing Rules</h4>
+                                <div class="sr">
+                                    <div><strong>Payroll Auto-Match</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Exact amount + ref prefix
+                                        </div>
+                                    </div><span class="B B-s">99.2%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Supplier Invoice</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Amount ±2% + date window</div>
+                                    </div><span class="B B-s">97.8%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Internal Transfer</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Same bank, same day</div>
+                                    </div><span class="B B-s">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 6: Reports & Audit -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-bar-graph" style="color:var(--pm-info)"></i>
+                                1.6.6 — Reports, Exports & Audit Trail</h3>
+                            <p class="ss">Generate compliance reports, audit logs and reconciliation certificates.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('exportReportModal')"><i class="bi bi-download"></i>
+                                Export</button><button class="btn-pm btn-sm" onclick="openM('auditLogModal')"><i
+                                    class="bi bi-clock-history"></i> Audit Log</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Quick Reports</h4>
+                                <div class="quick-grid"><button class="quick-btn"
+                                        onclick="openM('exportReportModal')">Daily Reconciliation</button><button
+                                        class="quick-btn" onclick="openM('exportReportModal')">Monthly
+                                        Summary</button><button class="quick-btn"
+                                        onclick="openM('exportReportModal')">Exception Report</button><button
+                                        class="quick-btn" onclick="openM('exportReportModal')">Audit
+                                        Certificate</button></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Audit Activity</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>User</th>
+                                                <th>Action</th>
+                                                <th>Item</th>
+                                                <th>Result</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>14:32</td>
+                                                <td>James K.</td>
+                                                <td>Manual Match</td>
+                                                <td>EQ-882910</td>
+                                                <td><span class="B B-s">Matched</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:28</td>
+                                                <td>System</td>
+                                                <td>Auto-Rule</td>
+                                                <td>47 items</td>
+                                                <td><span class="B B-s">Success</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>13:55</td>
+                                                <td>Grace M.</td>
+                                                <td>Flag Exception</td>
+                                                <td>KCB-99102</td>
+                                                <td><span class="B B-w">Flagged</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 7: Settings & Automation -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-gear-fill" style="color:var(--pm-muted)"></i> 1.6.7 —
+                                Reconciliation Settings & Automation</h3>
+                            <p class="ss">Configure matching tolerances, notification rules and team permissions.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('reconSettingsModal')"><i class="bi bi-sliders"></i>
+                                Settings</button><button class="btn-pm btn-sm" onclick="openM('teamAccessModal')"><i
+                                    class="bi bi-people"></i> Team</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Matching Tolerances</h4>
+                                <div class="sr">
+                                    <div>Amount tolerance</div><strong>± KES 100</strong>
+                                </div>
+                                <div class="sr">
+                                    <div>Date window</div><strong>± 3 days</strong>
+                                </div>
+                                <div class="sr">
+                                    <div>Reference similarity</div><strong>85%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Notifications</h4>
+                                <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                                        checked><label class="form-check-label" style="font-size:13px">High-value
+                                        exceptions</label></div>
+                                <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                                        checked><label class="form-check-label" style="font-size:13px">Auto-match
+                                        success</label></div>
+                                <div class="form-check form-switch"><input class="form-check-input"
+                                        type="checkbox"><label class="form-check-label" style="font-size:13px">Daily
+                                        summary email</label></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Team Permissions</h4>
+                                <div class="sr">
+                                    <div><strong>Finance Team</strong></div><span class="B B-s">Full access</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Auditors</strong></div><span class="B B-i">View only</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Ops Staff</strong></div><span class="B B-w">Match only</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- pm-content -->
+    </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ==================== 25+ MODALS ==================== -->
+
+    <!-- M1: Manual Match (multi-step) -->
+    <div class="modal fade R" id="manualMatchModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-hand-index text-primary me-2"></i>Manual Transaction Match
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="matchStepper"></div>
+                    <div id="matchS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Unmatched Items</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded">
+                                    <h6 style="font-size:13px;font-weight:700">Debit (Equity Bank)</h6>
+                                    <div class="sr">
+                                        <div><strong>EQ-882910</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">27 Jun • Payroll transfer
+                                            </div>
+                                        </div><strong>KES 2,800,000</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded">
+                                    <h6 style="font-size:13px;font-weight:700">Credit (KCB Bank)</h6>
+                                    <div class="sr">
+                                        <div><strong>KCB-991028</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">27 Jun • Incoming transfer
+                                            </div>
+                                        </div><strong>KES 2,800,000</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3"><label class="FL">Match Confidence</label>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width:96%"></div>
+                            </div>
+                            <div style="font-size:12px;color:var(--pm-muted)">96% — Amount, date and reference prefix
+                                match</div>
+                        </div>
+                    </div>
+                    <div id="matchS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Confirm Details & Notes</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Match Type</label><select class="FC">
+                                    <option>Exact match</option>
+                                    <option>Amount tolerance match</option>
+                                    <option>Reference similarity match</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Internal Reference</label><input class="FC"
+                                    value="PAY-2025-0627-001"></div>
+                            <div class="col-12"><label class="FL">Notes</label><textarea class="FC"
+                                    rows="3">Payroll transfer from Equity to KCB for June salaries. Approved by Finance on 26 Jun.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="matchS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Match Confirmed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Transaction EQ-882910 successfully
+                                matched to KCB-991028.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Match
+                                        ID</span><strong>MATCH-20250627-88291</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Amount</span><strong>KES 2,800,000</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Matched
+                                        By</span><strong>James K. (Manual)</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="matchFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="matchNext"
+                        onclick="nextFlow('match',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Discrepancy / Exception -->
+    <div class="modal fade R" id="discrepancyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Flag Discrepancy
+                        / Exception</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="discStepper"></div>
+                    <div id="discS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Transaction Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Bank</label><select class="FC">
+                                    <option>Equity Bank</option>
+                                    <option>KCB Bank</option>
+                                    <option>Co-op Bank</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Reference</label><input class="FC"
+                                    value="EQ-991022"></div>
+                            <div class="col-md-6"><label class="FL">Amount</label><input class="FC" value="1,450,000">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Date</label><input type="date" class="FC"
+                                    value="2025-06-26"></div>
+                        </div>
+                    </div>
+                    <div id="discS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Issue & Priority</h6>
+                        <div class="mb-3"><label class="FL">Issue Type</label><select class="FC">
+                                <option>Amount mismatch</option>
+                                <option>Duplicate transaction</option>
+                                <option>Missing reference</option>
+                                <option>FX rate difference</option>
+                                <option>Timing difference</option>
+                            </select></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Priority</label><select class="FC">
+                                    <option>High</option>
+                                    <option>Medium</option>
+                                    <option>Low</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Assigned To</label><select class="FC">
+                                    <option>James K.</option>
+                                    <option>Grace M.</option>
+                                    <option>Auto-assign</option>
+                                </select></div>
+                        </div>
+                        <div class="mb-3 mt-3"><label class="FL">Description</label><textarea class="FC"
+                                rows="3">Amount on statement is KES 1,450,000 but expected was KES 1,500,000. Difference of KES 50,000 needs investigation.</textarea>
+                        </div>
+                    </div>
+                    <div id="discS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-flag"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Exception Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Exception EXC-20250627-9910 has been
+                                logged and assigned.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="discFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="discNext"
+                        onclick="nextFlow('disc',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Rule Engine (multi-tab + multi-step) -->
+    <div class="modal fade R" id="ruleEngineModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-magic text-purple me-2"></i>Auto-Reconciliation Rules Engine
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('rule','create',this)">Create
+                            Rule</button><button class="pill" onclick="sw('rule','list',this)">Active
+                            Rules</button><button class="pill" onclick="sw('rule','test',this)">Test Rule</button></div>
+                    <div id="rule-create" class="tpanel active">
+                        <div class="stepper" id="ruleStepper"></div>
+                        <div id="ruleS1" class="fstep active">
+                            <h6 style="font-weight:700">Step 1: Rule Basics</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="FL">Rule Name</label><input class="FC"
+                                        value="Payroll Auto-Match v2"></div>
+                                <div class="col-md-6"><label class="FL">Applies To</label><select class="FC">
+                                        <option>Equity → KCB</option>
+                                        <option>All Banks</option>
+                                        <option>M-Pesa B2B</option>
+                                    </select></div>
+                            </div>
+                        </div>
+                        <div id="ruleS2" class="fstep">
+                            <h6 style="font-weight:700">Step 2: Matching Conditions</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4"><label class="FL">Amount Tolerance</label><input class="FC"
+                                        value="± KES 500"></div>
+                                <div class="col-md-4"><label class="FL">Date Window</label><select class="FC">
+                                        <option>± 1 day</option>
+                                        <option>± 3 days</option>
+                                        <option>Same day only</option>
+                                    </select></div>
+                                <div class="col-md-4"><label class="FL">Reference Prefix</label><input class="FC"
+                                        value="PAY-"></div>
+                            </div>
+                            <div class="mt-3"><label class="FL">Additional Conditions</label>
+                                <div class="form-check mb-1"><input class="form-check-input" type="checkbox"
+                                        checked><label class="form-check-label" style="font-size:13px">Must be credit on
+                                        receiving bank</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                        class="form-check-label" style="font-size:13px">Description contains
+                                        "payroll"</label></div>
+                            </div>
+                        </div>
+                        <div id="ruleS3" class="fstep">
+                            <h6 style="font-weight:700">Step 3: Actions & Notifications</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="FL">On Match</label><select class="FC">
+                                        <option>Auto-confirm</option>
+                                        <option>Require review</option>
+                                        <option>Notify team</option>
+                                    </select></div>
+                                <div class="col-md-6"><label class="FL">Notify On</label><select class="FC">
+                                        <option>Match success</option>
+                                        <option>Match failure</option>
+                                        <option>Both</option>
+                                    </select></div>
+                            </div>
+                        </div>
+                        <div id="ruleS4" class="fstep">
+                            <div class="receipt">
+                                <div class="ri"><i class="bi bi-check-lg"></i></div>
+                                <h5 style="font-weight:700;color:var(--pm-accent)">Rule Created Successfully</h5>
+                                <p style="font-size:13px;color:var(--pm-ink-soft)">Payroll Auto-Match v2 will run on
+                                    every incoming statement.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rule-list" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rule</th>
+                                        <th>Conditions</th>
+                                        <th>Match Rate</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Payroll Auto-Match v2</td>
+                                        <td>Amount ±500, Ref PAY-</td>
+                                        <td>99.2%</td>
+                                        <td><span class="B B-s">Active</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('rulePerformanceModal')">Edit</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supplier Invoice</td>
+                                        <td>Amount ±2%, 3-day window</td>
+                                        <td>97.8%</td>
+                                        <td><span class="B B-s">Active</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('rulePerformanceModal')">Edit</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="rule-test" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <h6 style="font-weight:700">Test Rule Against Sample</h6>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6"><label class="FL">Test Amount</label><input class="FC"
+                                        value="2,800,500"></div>
+                                <div class="col-md-6"><label class="FL">Test Reference</label><input class="FC"
+                                        value="PAY-2025-0627-001"></div>
+                            </div>
+                            <div class="mt-3"><button class="btn-pm btn-pm-p"
+                                    onclick="doAction('ruleEngineModal','Rule test passed! Match confidence 98%.','')">Run
+                                    Test</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="ruleFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button><button class="btn-pm btn-pm-p" id="ruleNext"
+                        onclick="nextFlow('rule',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Bulk Match -->
+    <div class="modal fade R" id="bulkMatchModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-collection text-info me-2"></i>Bulk Transaction Matching
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="bulkStepper"></div>
+                    <div id="bulkS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Items</h6>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span>EQ-882910 • KES
+                                    2,800,000</span><span class="B B-s">96% match</span></label></div>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span>KCB-991028 •
+                                    KES 2,800,000</span><span class="B B-s">94% match</span></label></div>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input"
+                                type="checkbox"><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span>COOP-77102 •
+                                    KES 450,000</span><span class="B B-w">72% match</span></label></div>
+                        <div class="mt-2"><strong>Selected: 2 items • Total KES 5,600,000</strong></div>
+                    </div>
+                    <div id="bulkS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Review & Confirm</h6>
+                        <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                            <div class="d-flex justify-content-between mb-1"><span>Items to
+                                    match</span><strong>2</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>Estimated time</span><strong>12
+                                    seconds</strong></div>
+                            <div class="d-flex justify-content-between"><span>Confidence</span><strong>95%+</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="bulkS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check2-all"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Match Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">2 transactions matched successfully. 0
+                                exceptions created.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="bulkFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="bulkNext"
+                        onclick="nextFlow('bulk',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Upload Statement -->
+    <div class="modal fade R" id="uploadStatementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload text-success me-2"></i>Upload Bank Statement</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Bank</label><select class="FC">
+                            <option>Equity Bank</option>
+                            <option>KCB Bank</option>
+                            <option>Co-op Bank</option>
+                            <option>Stanbic Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Statement Date Range</label>
+                        <div class="row g-3">
+                            <div class="col-6"><input type="date" class="FC" value="2025-06-01"></div>
+                            <div class="col-6"><input type="date" class="FC" value="2025-06-27"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Upload File (PDF / CSV / MT940)</label><input type="file"
+                            class="FC"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Supported formats: PDF (Equity, KCB), CSV (Co-op), MT940
+                        (Stanbic, international).</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('uploadStatementModal','Statement uploaded and queued for processing. You will be notified when reconciliation is ready.','STMT-20250627-001')">Upload
+                        & Process</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: FX Rate Resolution -->
+    <div class="modal fade R" id="fxRateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange text-danger me-2"></i>Resolve FX Rate
+                        Difference</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <div class="d-flex justify-content-between mb-1"><span
+                                class="text-muted">Transaction</span><strong>SWIFT-IN-88291</strong></div>
+                        <div class="d-flex justify-content-between mb-1"><span
+                                class="text-muted">Amount</span><strong>USD 125,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Expected
+                                Rate</span><strong>129.45 KES/USD</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Actual Rate Applied</label><input class="FC" value="128.80">
+                    </div>
+                    <div class="mb-3"><label class="FL">Difference</label>
+                        <div class="p-2 rounded" style="background:var(--pm-warning-soft)"><strong>KES 81,250
+                                difference</strong> — Bank used lower rate</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Resolution Action</label><select class="FC">
+                            <option>Accept bank rate (write-off)</option>
+                            <option>Dispute with bank</option>
+                            <option>Adjust internal records</option>
+                            <option>Request rate correction</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('fxRateModal','FX discrepancy resolved. Case logged for audit.','FX-20250627-001')">Resolve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Export Report -->
+    <div class="modal fade R" id="exportReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download text-accent me-2"></i>Export Reconciliation Report
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Daily Reconciliation Summary</option>
+                            <option>Monthly Reconciliation Report</option>
+                            <option>Exception & Discrepancy Report</option>
+                            <option>Audit Trail Export</option>
+                            <option>Bank Reconciliation Certificate</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-06-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF (Signed)</option>
+                            <option>Excel (.xlsx)</option>
+                            <option>CSV</option>
+                            <option>MT940</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Delivery</label><select class="FC">
+                            <option>Download now</option>
+                            <option>Email to finance@company.co.ke</option>
+                            <option>WhatsApp link</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('exportReportModal','Report generated and downloading...','RPT-20250627-001')">Generate
+                        Export</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Audit Log -->
+    <div class="modal fade R" id="auditLogModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Audit Trail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3 flex-wrap" style="gap:8px"><select class="FC" style="width:auto">
+                            <option>All Users</option>
+                            <option>James K.</option>
+                            <option>Grace M.</option>
+                            <option>System</option>
+                        </select><select class="FC" style="width:auto">
+                            <option>All Actions</option>
+                            <option>Match</option>
+                            <option>Flag</option>
+                            <option>Rule Run</option>
+                        </select><input class="FC" style="width:220px" placeholder="Search reference..."></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Item</th>
+                                    <th>Details</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:32</td>
+                                    <td>James K.</td>
+                                    <td>Manual Match</td>
+                                    <td>EQ-882910</td>
+                                    <td>Matched to KCB-991028</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 14:28</td>
+                                    <td>System</td>
+                                    <td>Auto-Rule</td>
+                                    <td>47 items</td>
+                                    <td>Payroll rule applied</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 13:55</td>
+                                    <td>Grace M.</td>
+                                    <td>Flag Exception</td>
+                                    <td>KCB-99102</td>
+                                    <td>Amount mismatch KES 50k</td>
+                                    <td><span class="B B-w">Flagged</span></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 12:10</td>
+                                    <td>System</td>
+                                    <td>Statement Upload</td>
+                                    <td>Equity 27 Jun</td>
+                                    <td>1,284 transactions</td>
+                                    <td><span class="B B-s">Processed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('auditLogModal','Audit log exported to PDF.','')">Export Log</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Rule Performance -->
+    <div class="modal fade R" id="rulePerformanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up text-purple me-2"></i>Rule Performance Dashboard
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;color:#047857;font-weight:700">MATCH RATE</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-accent)">99.2%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;color:#1D4ED8;font-weight:700">ITEMS PROCESSED</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-info)">12,481</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:11px;color:#B45309;font-weight:700">FALSE POSITIVES</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-warning)">0.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th>Matches</th>
+                                    <th>Exceptions</th>
+                                    <th>Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Week 26</td>
+                                    <td>2,841</td>
+                                    <td>12</td>
+                                    <td>99.6%</td>
+                                </tr>
+                                <tr>
+                                    <td>Week 25</td>
+                                    <td>2,712</td>
+                                    <td>18</td>
+                                    <td>99.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>Week 24</td>
+                                    <td>2,654</td>
+                                    <td>21</td>
+                                    <td>99.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('ruleEngineModal')">Edit Rule</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Matched Filter Modal -->
+    <div class="modal fade R" id="matchedFilterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-funnel me-2"></i>Filter Matched Items</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Bank Pair</label><select class="FC">
+                                <option>All Pairs</option>
+                                <option>Equity ↔ KCB</option>
+                                <option>KCB ↔ M-Pesa</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Matched By</label><select class="FC">
+                                <option>All</option>
+                                <option>System</option>
+                                <option>Manual</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('matchedFilterModal','Filters applied.','')">Apply</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Reconcile Notifications -->
+    <div class="modal fade R" id="reconcileNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Reconciliation Notifications (14)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:400px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>High-value exception flagged</strong>
+                        <div style="font-size:11px;color:#7F1D1D">KES 2.8M • EQ-882910</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Auto-recon completed</strong>
+                        <div style="font-size:11px;color:#92400E">42 items matched • 5 exceptions</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px">
+                        <strong>Statement processed</strong>
+                        <div style="font-size:11px;color:#065F46">Equity Bank • 1,284 transactions</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('reconSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Reconciliation Settings -->
+    <div class="modal fade R" id="reconSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Reconciliation Settings</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Default Amount Tolerance</label><input class="FC"
+                            value="KES 500"></div>
+                    <div class="mb-3"><label class="FL">Default Date Window</label><select class="FC">
+                            <option>± 3 days</option>
+                            <option>± 1 day</option>
+                            <option>Same day</option>
+                        </select></div>
+                    <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label" style="font-size:13px">Auto-run on statement
+                            upload</label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Email daily summary</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reconSettingsModal','Settings saved successfully.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Team Access -->
+    <div class="modal fade R" id="teamAccessModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people me-2"></i>Team Access & Permissions</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Access</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>James K.</td>
+                                    <td>Finance Manager</td>
+                                    <td><span class="B B-s">Full</span></td>
+                                    <td><button class="btn-pm btn-sm">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Grace M.</td>
+                                    <td>Reconciliation Lead</td>
+                                    <td><span class="B B-i">Match + Flag</span></td>
+                                    <td><button class="btn-pm btn-sm">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Auditor Team</td>
+                                    <td>External Auditors</td>
+                                    <td><span class="B B-w">View Only</span></td>
+                                    <td><button class="btn-pm btn-sm">Edit</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="doAction('teamAccessModal','Permissions updated.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Dispute Modal -->
+    <div class="modal fade R" id="disputeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-flag text-danger me-2"></i>Raise Bank Dispute</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Bank</label><select class="FC">
+                            <option>Equity Bank</option>
+                            <option>KCB Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reference</label><input class="FC" value="EQ-882910"></div>
+                    <div class="mb-3"><label class="FL">Dispute Reason</label><select class="FC">
+                            <option>Incorrect amount</option>
+                            <option>Duplicate debit</option>
+                            <option>Failed credit</option>
+                            <option>FX error</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Description</label><textarea class="FC"
+                            rows="3">Bank debited KES 2,800,000 but only KES 2,750,000 was authorized.</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('disputeModal','Dispute filed with bank. Ticket #DISP-88291 created.','DISP-88291')">Submit
+                        Dispute</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Filter Modal -->
+    <div class="modal fade R" id="filterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-funnel me-2"></i>Advanced Filters</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Status</label><select class="FC">
+                                <option>All</option>
+                                <option>Unmatched</option>
+                                <option>Exception</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Priority</label><select class="FC">
+                                <option>All</option>
+                                <option>High</option>
+                                <option>Medium</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('filterModal','Filters applied to workbench.','')">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional supporting modals for completeness -->
+    <div class="modal fade R" id="runAutoReconModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-magic me-2"></i>Run Auto-Reconciliation</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Auto-reconciliation will process all pending items using active rules.</p>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                        <div class="d-flex justify-content-between"><span>Items to process</span><strong>47</strong>
+                        </div>
+                        <div class="d-flex justify-content-between"><span>Estimated time</span><strong>45
+                                seconds</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('runAutoReconModal','Auto-reconciliation completed. 42 items matched, 5 exceptions created.','AUTO-20250627-001')">Start
+                        Auto-Recon</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="filterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-funnel me-2"></i>Filter Pending Items</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Bank</label><select class="FC">
+                                <option>All Banks</option>
+                                <option>Equity</option>
+                                <option>KCB</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Amount Range</label><input class="FC"
+                                placeholder="Min - Max"></div>
+                        <div class="col-md-6"><label class="FL">Date From</label><input type="date" class="FC"></div>
+                        <div class="col-md-6"><label class="FL">Date To</label><input type="date" class="FC"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('filterModal','Filters applied to workbench.','')">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="attentionFullModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Equity credit not matched</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 2.8M</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('manualMatchModal')">Match</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>KCB debit duplicate</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 450k</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('discrepancyModal')">Review</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>SWIFT FX rate pending</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">USD 125k</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('fxRateModal')">Resolve</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Reconciliation Health
+                        Check</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    94.7</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">MATCH RATE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">6</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">BANKS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">47</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">EXCEPTIONS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">14m</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">AVG RESOLVE</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+                            class="bi bi-check-circle me-1"></i> All systems operational. Last full reconciliation
+                        completed successfully at 14:12.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.k@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Finance Manager</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Reconciliations</span><br><strong>124,892</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mock data population
+        const pendingData = [
+            { date: '27 Jun', bank: 'Equity', ref: 'EQ-882910', desc: 'Payroll transfer', amt: 'KES 2,800,000', dir: 'Debit', status: '<span class="B B-w">Unmatched</span>' },
+            { date: '27 Jun', bank: 'KCB', ref: 'KCB-991028', desc: 'Incoming transfer', amt: 'KES 2,800,000', dir: 'Credit', status: '<span class="B B-w">Unmatched</span>' },
+            { date: '26 Jun', bank: 'Co-op', ref: 'COOP-77102', desc: 'Supplier payment', amt: 'KES 450,000', dir: 'Debit', status: '<span class="B B-d">Exception</span>' }
+        ];
+        const matchedData = [
+            { id: 'MATCH-88291', date: '27 Jun', bankA: 'Equity', bankB: 'KCB', amt: 'KES 2,800,000', by: 'James K.', time: '14:32', result: '<span class="B B-s">Matched</span>' },
+            { id: 'MATCH-88290', date: '27 Jun', bankA: 'KCB', bankB: 'M-Pesa', amt: 'KES 1,200,000', by: 'System', time: '14:28', result: '<span class="B B-s">Matched</span>' }
+        ];
+        const exceptionData = [
+            { id: 'EXC-9910', ref: 'KCB-99102', issue: 'Amount mismatch', amt: 'KES 50,000', pri: '<span class="B B-d">High</span>', assigned: 'James K.' },
+            { id: 'EXC-9909', ref: 'EQ-882901', issue: 'Duplicate', amt: 'KES 120,000', pri: '<span class="B B-w">Medium</span>', assigned: 'Grace M.' }
+        ];
+        const ruleData = [
+            { name: 'Payroll Auto-Match v2', cond: 'Amount ±500, Ref PAY-', rate: '99.2%', last: '27 Jun 14:28', status: '<span class="B B-s">Active</span>' },
+            { name: 'Supplier Invoice', cond: 'Amount ±2%, 3-day window', rate: '97.8%', last: '27 Jun 09:15', status: '<span class="B B-s">Active</span>' }
+        ];
+
+        function populateTables() {
+            const pT = document.getElementById('pendingTable');
+            if (pT) pT.innerHTML = pendingData.map(d => `<tr><td>${d.date}</td><td>${d.bank}</td><td><code>${d.ref}</code></td><td>${d.desc}</td><td><strong>${d.amt}</strong></td><td>${d.dir}</td><td>${d.status}</td><td><div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm" onclick="openM('manualMatchModal')">Match</button><button class="btn-pm btn-sm" onclick="openM('discrepancyModal')">Flag</button></div></td></tr>`).join('');
+
+            const mT = document.getElementById('matchedTable');
+            if (mT) mT.innerHTML = matchedData.map(d => `<tr><td><code>${d.id}</code></td><td>${d.date}</td><td>${d.bankA}</td><td>${d.bankB}</td><td><strong>${d.amt}</strong></td><td>${d.by}</td><td>${d.time}</td><td><button class="btn-pm btn-sm" onclick="openM('auditLogModal')">View</button></td></tr>`).join('');
+
+            const eT = document.getElementById('exceptionTable');
+            if (eT) eT.innerHTML = exceptionData.map(d => `<tr><td><code>${d.id}</code></td><td>${d.ref}</td><td>${d.issue}</td><td><strong>${d.amt}</strong></td><td>${d.pri}</td><td>${d.assigned}</td><td><div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm" onclick="openM('manualMatchModal')">Resolve</button><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Dispute</button></div></td></tr>`).join('');
+
+            const rT = document.getElementById('ruleTable');
+            if (rT) rT.innerHTML = ruleData.map(d => `<tr><td>${d.name}</td><td>${d.cond}</td><td>${d.rate}</td><td>${d.last}</td><td>${d.status}</td><td><button class="btn-pm btn-sm" onclick="openM('rulePerformanceModal')">View</button></td></tr>`).join('');
+        }
+
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+
+        // Multi-step flows
+        const flows = { match: { current: 1, total: 3, labels: ['Select', 'Confirm', 'Done'] }, disc: { current: 1, total: 3, labels: ['Details', 'Issue', 'Done'] }, rule: { current: 1, total: 4, labels: ['Basics', 'Conditions', 'Actions', 'Done'] }, bulk: { current: 1, total: 3, labels: ['Select', 'Review', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { match: 'manualMatchModal', disc: 'discrepancyModal', rule: 'ruleEngineModal', bulk: 'bulkMatchModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); btn.innerHTML = 'Confirm <i class="bi bi-check-lg"></i>'; } }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { populateTables(); Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

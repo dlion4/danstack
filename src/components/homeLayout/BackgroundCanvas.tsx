@@ -64,10 +64,17 @@ export default function BackgroundCanvas() {
     window.addEventListener('resize', handleResize);
 
     let animationFrameId: number;
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
+      
+      // Update the timer by feeding it high-resolution timestamps
+      timer.update(performance.now());
+      
+      // Access elapsed time via the .time property
+      const t = timer.time;
+      
       points.rotation.y = t * 0.02 + mouseX * 0.2;
       points.rotation.x = t * 0.01 + mouseY * 0.2;
       renderer.render(scene, camera);

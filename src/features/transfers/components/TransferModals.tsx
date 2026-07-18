@@ -13,6 +13,7 @@
  * Bootstrap's Modal JS is driven via data-bs-* attributes + data-bs-dismiss,
  * bridged safely through React refs + useEffect (see useBootstrapModal).
  * ========================================================================== */
+'use client';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { cx } from '../../shell/data/shellData';
@@ -43,40 +44,32 @@ const FLOWS: Record<FlowKey, FlowDef> = {
 };
 
 /* --------------------------------------------------------------------------
- * Bootstrap Modal bridge
- *   - shows on mount when `show` is true
- *   - on 'hidden.bs.modal', calls onClose() so React controls remount
- *   - safe with React lifecycle (no manual .show() on stale nodes)
+ * Pure CSS/React Modal - no Bootstrap JS dependency
+ *   - shows/hides based on `show` prop with CSS transitions
+ *   - backdrop click closes modal
+ *   - ESC key closes modal
  * ------------------------------------------------------------------------ */
-function useBootstrapModal(show: boolean, onClose: () => void) {
-  const ref = useRef<HTMLDivElement | null>(null);
+function useReactModal(show: boolean, onClose: () => void) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    // dynamically import avoids SSR issues and keeps this self-contained
-    let modal: { show: () => void; hide: () => void; dispose: () => void } | null = null;
-    const onHidden = () => onClose();
+    setMounted(true);
+  }, []);
 
-    if (show) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      import('bootstrap').then((bs) => {
-        const Modal = (bs as typeof import('bootstrap')).Modal;
-        modal = Modal.getOrCreateInstance(el, { backdrop: true });
-        el.addEventListener('hidden.bs.modal', onHidden);
-        modal.show();
-      });
-    }
-
-    return () => {
-      el.removeEventListener('hidden.bs.modal', onHidden);
-      if (modal) {
-        modal.hide();
-        modal.dispose();
-      }
+  useEffect(() => {
+    if (!show) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show]);
-  return ref;
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [show, onClose]);
+
+  return mounted;
 }
 
 /* ==========================================================================
@@ -93,7 +86,7 @@ function FlowModal({
   title: string;
   children: (step: number) => ReactNode;
 }) {
-  const ref = useBootstrapModal(show, onClose);
+  const mounted = useReactModal(show, onClose);
   const def = FLOWS[flowKey];
   const [step, setStep] = useState(1);
   const [phase, setPhase] = useState<Phase>('form');
@@ -127,17 +120,22 @@ function FlowModal({
     return 'Continue';
   })();
 
+  if (!mounted) return null;
+  if (!show) return null;
+
   return (
-    <div className="modal fade" id={`m-${id}`} tabIndex={-1} aria-hidden="true" ref={ref}>
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className={cx('modal-content', s.modalContent)}>
-          <div className={cx('modal-header', s.modalHeader)}>
-            <h5 className={cx('modal-title', s.modalTitle)}>
+    <div className={s.modalOverlay} onClick={onClose}>
+      <div className={cx(s.modalWrapper, 'modal-lg')} onClick={(e) => e.stopPropagation()}>
+        <div className={cx(s.modalContent, s.modalAnimated)}>
+          <div className={s.modalHeader}>
+            <h5 className={s.modalTitle}>
               <i className={cx(iconCls)} /> {title}
             </h5>
-            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" />
+            <button type="button" className={s.modalClose} onClick={onClose} aria-label="Close">
+              <i className="bi bi-x-lg" />
+            </button>
           </div>
-          <div className={cx('modal-body', s.modalBody)} style={{ position: 'relative', minHeight: 200 }}>
+          <div className={s.modalBody} style={{ position: 'relative', minHeight: 200 }}>
             {phase === 'form' && (
               <>
                 <div className={s.stepper}>
@@ -162,20 +160,20 @@ function FlowModal({
               <div className={s.receipt}>
                 <div className={s.receiptIcon}><i className="bi bi-check-lg" /></div>
                 <h5 className={s.receiptTitle}>{title} Successful</h5>
-                <p style={{ fontSize: 13, color: 'var(--tr-ink-2)', marginTop: 6 }}>
+                <p style={{ fontSize: 14, color: 'var(--ink-500)', marginTop: 8 }}>
                   Your request has been processed.
                 </p>
               </div>
             )}
             {loading && (
               <div className={s.loadingOverlay}>
-                <div className="spinner-border" role="status" />
-                <p style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: 'var(--tr-accent-2)' }}>Processing…</p>
+                <div className="spinner-border" role="status" style={{ width: '3rem', height: '3rem' }} />
+                <p style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: 'var(--pri)' }}>Processing…</p>
               </div>
             )}
           </div>
-          <div className={cx('modal-footer', s.modalFooter)}>
-            <button type="button" className={cx(s.btn)} data-bs-dismiss="modal">Cancel</button>
+          <div className={s.modalFooter}>
+            <button type="button" className={cx(s.btn, s.btnSecondary)} onClick={onClose}>Cancel</button>
             <button type="button" className={cx(s.btn, s.btnPrimary)} onClick={next}>
               {nextLabel} {!isLastStep && <i className="bi bi-arrow-right" />}
             </button>
@@ -204,11 +202,11 @@ function SimpleModal({
   submitLabel?: string;
   submitPrimary?: boolean;
 }) {
-  const ref = useBootstrapModal(show, onClose);
+  const mounted = useReactModal(show, onClose);
   const [phase, setPhase] = useState<Phase>('form');
   useEffect(() => { if (show) setPhase('form'); }, [show]);
 
-  const sizeCls = size === 'lg' ? 'modal-lg' : size === 'xl' ? 'modal-xl' : '';
+  const sizeCls = size === 'lg' ? 'modal-lg' : size === 'xl' ? 'modal-xl' : size === 'sm' ? 'modal-sm' : '';
 
   const handleSubmit = () => {
     if (!onSubmit || !successMsg) { onClose(); return; }
@@ -216,20 +214,25 @@ function SimpleModal({
     setTimeout(() => { setPhase('success'); }, 1500);
   };
 
+  if (!mounted) return null;
+  if (!show) return null;
+
   return (
-    <div className="modal fade" id={`m-${id}`} tabIndex={-1} aria-hidden="true" ref={ref}>
-      <div className={cx('modal-dialog modal-dialog-centered', sizeCls)}>
-        <div className={cx('modal-content', s.modalContent)}>
-          <div className={cx('modal-header', s.modalHeader)}>
-            <h5 className={cx('modal-title', s.modalTitle)}><i className={cx(iconCls)} /> {title}</h5>
-            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" />
+    <div className={s.modalOverlay} onClick={onClose}>
+      <div className={cx(s.modalWrapper, sizeCls)} onClick={(e) => e.stopPropagation()}>
+        <div className={cx(s.modalContent, s.modalAnimated)}>
+          <div className={s.modalHeader}>
+            <h5 className={s.modalTitle}><i className={cx(iconCls)} /> {title}</h5>
+            <button type="button" className={s.modalClose} onClick={onClose} aria-label="Close">
+              <i className="bi bi-x-lg" />
+            </button>
           </div>
-          <div className={cx('modal-body', s.modalBody)} style={{ position: 'relative', minHeight: 120 }}>
+          <div className={s.modalBody} style={{ position: 'relative', minHeight: 120 }}>
             {phase === 'form' && children}
             {phase === 'loading' && (
               <div className={s.loadingOverlay}>
-                <div className="spinner-border" role="status" />
-                <p style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: 'var(--tr-accent-2)' }}>Processing…</p>
+                <div className="spinner-border" role="status" style={{ width: '3rem', height: '3rem' }} />
+                <p style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: 'var(--pri)' }}>Processing…</p>
               </div>
             )}
             {phase === 'success' && (
@@ -239,14 +242,14 @@ function SimpleModal({
               </div>
             )}
           </div>
-          <div className={cx('modal-footer', s.modalFooter)}>
+          <div className={s.modalFooter}>
             {phase === 'success' ? (
-              <button type="button" className={cx(s.btn, s.btnPrimary)} data-bs-dismiss="modal">Done</button>
+              <button type="button" className={cx(s.btn, s.btnPrimary)} onClick={onClose}>Done</button>
             ) : (
               <>
-                <button type="button" className={s.btn} data-bs-dismiss="modal">Cancel</button>
+                <button type="button" className={cx(s.btn, s.btnSecondary)} onClick={onClose}>Cancel</button>
                 {submitLabel && (
-                  <button type="button" className={cx(s.btn, submitPrimary && s.btnPrimary)} onClick={handleSubmit}>
+                  <button type="button" className={cx(s.btn, submitPrimary ? s.btnPrimary : s.btnSecondary)} onClick={handleSubmit}>
                     {submitLabel}
                   </button>
                 )}
@@ -274,19 +277,24 @@ function TabbedModal({
   size?: 'md' | 'lg' | 'xl';
   footer?: ReactNode;
 }) {
-  const ref = useBootstrapModal(show, onClose);
+  const mounted = useReactModal(show, onClose);
   const [active, setActive] = useState(tabs[0]?.key);
-  useEffect(() => { if (show) setActive(tabs[0]?.key); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [show]);
+  useEffect(() => { if (show) setActive(tabs[0]?.key); }, [show]);
   const sizeCls = size === 'xl' ? 'modal-xl' : size === 'md' ? '' : 'modal-lg';
+  if (!mounted) return null;
+  if (!show) return null;
+
   return (
-    <div className="modal fade" id={`m-${id}`} tabIndex={-1} aria-hidden="true" ref={ref}>
-      <div className={cx('modal-dialog modal-dialog-centered', sizeCls)}>
-        <div className={cx('modal-content', s.modalContent)}>
-          <div className={cx('modal-header', s.modalHeader)}>
-            <h5 className={cx('modal-title', s.modalTitle)}><i className={cx(iconCls)} /> {title}</h5>
-            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" />
+    <div className={s.modalOverlay} onClick={onClose}>
+      <div className={cx(s.modalWrapper, sizeCls)} onClick={(e) => e.stopPropagation()}>
+        <div className={cx(s.modalContent, s.modalAnimated)}>
+          <div className={s.modalHeader}>
+            <h5 className={s.modalTitle}><i className={cx(iconCls)} /> {title}</h5>
+            <button type="button" className={s.modalClose} onClick={onClose} aria-label="Close">
+              <i className="bi bi-x-lg" />
+            </button>
           </div>
-          <div className={cx('modal-body', s.modalBody)}>
+          <div className={s.modalBody}>
             <div className={s.pills} style={{ marginBottom: 16 }}>
               {tabs.map((tab) => (
                 <button
@@ -301,7 +309,7 @@ function TabbedModal({
             </div>
             {tabs.find((t) => t.key === active)?.render()}
           </div>
-          {footer && <div className={cx('modal-footer', s.modalFooter)}>{footer}</div>}
+          {footer && <div className={s.modalFooter}>{footer}</div>}
         </div>
       </div>
     </div>
@@ -316,16 +324,18 @@ export interface TransferModalsProps {
   content: ShellContent;
   active: ModalId | null;
   onClose: () => void;
+  onOpenModal: (id: ModalId) => void;
 }
 
-export default function TransferModals({ content, active, onClose }: TransferModalsProps) {
+export default function TransferModals({ content, active, onClose, onOpenModal }: TransferModalsProps) {
   const isOpen = (id: ModalId) => active === id;
   const close = onClose;
+  const openModal = onOpenModal;
 
   return (
     <>
       {/* M1: Initiate Transfer (multi-step) */}
-      <FlowModal id="initiate" show={isOpen('initiate')} onClose={close} flowKey="init" iconCls="bi bi-send text-primary" title="Initiate Transfer">
+      <FlowModal id="initiate" show={isOpen('initiate')} onClose={close} flowKey="init" iconCls="bi bi-send" title="Initiate Transfer">
         {(step) => (
           <>
             {step === 1 && (
@@ -378,8 +388,8 @@ export default function TransferModals({ content, active, onClose }: TransferMod
               <div className={s.receipt}>
                 <div className={s.receiptIcon}><i className="bi bi-check-lg" /></div>
                 <h5 className={s.receiptTitle}>Transfer Successful!</h5>
-                <p style={{ fontSize: 13, color: 'var(--tr-ink-2)' }}>KES 12,500 sent to Grace Kamau via M-Pesa.</p>
-                <div style={{ background: '#04160e', padding: 16, borderRadius: 12, fontSize: 13, marginTop: 16, textAlign: 'left' }}>
+                <p style={{ fontSize: 14, color: 'var(--ink-500)' }}>KES 12,500 sent to Grace Kamau via M-Pesa.</p>
+                <div style={{ background: 'var(--ink-100)', padding: 16, borderRadius: 12, fontSize: 13, marginTop: 16, textAlign: 'left' }}>
                   <ReviewRow label="Reference" value="TRF-448291" />
                   <ReviewRow label="Transaction ID" value="MPESA-9K2M4P" />
                   <ReviewRow label="Time" value="27 Jun 2025, 14:32" />
@@ -391,7 +401,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       </FlowModal>
 
       {/* M2: Bulk Transfer (multi-step) */}
-      <FlowModal id="bulk" show={isOpen('bulk')} onClose={close} flowKey="bulk" iconCls="bi bi-collection text-info" title="Bulk Transfer">
+      <FlowModal id="bulk" show={isOpen('bulk')} onClose={close} flowKey="bulk" iconCls="bi bi-collection" title="Bulk Transfer">
         {(step) => (
           <>
             {step === 1 && (
@@ -423,7 +433,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
               <div className={s.receipt}>
                 <div className={s.receiptIcon}><i className="bi bi-check-all" /></div>
                 <h5 className={s.receiptTitle}>Bulk Transfer Complete</h5>
-                <p style={{ fontSize: 13, color: 'var(--tr-ink-2)' }}>3 transfers processed successfully.</p>
+                <p style={{ fontSize: 14, color: 'var(--ink-500)' }}>3 transfers processed successfully.</p>
               </div>
             )}
           </>
@@ -431,7 +441,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       </FlowModal>
 
       {/* M3: Schedule Transfer (multi-step) */}
-      <FlowModal id="schedule" show={isOpen('schedule')} onClose={close} flowKey="sched" iconCls="bi bi-calendar-event text-success" title="Schedule Transfer">
+      <FlowModal id="schedule" show={isOpen('schedule')} onClose={close} flowKey="sched" iconCls="bi bi-calendar-event" title="Schedule Transfer">
         {(step) => (
           <>
             {step === 1 && (
@@ -465,7 +475,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
               <div className={s.receipt}>
                 <div className={s.receiptIcon}><i className="bi bi-check-lg" /></div>
                 <h5 className={s.receiptTitle}>Schedule Created</h5>
-                <p style={{ fontSize: 13, color: 'var(--tr-ink-2)' }}>Your recurring transfer has been scheduled successfully.</p>
+                <p style={{ fontSize: 14, color: 'var(--ink-500)' }}>Your recurring transfer has been scheduled successfully.</p>
               </div>
             )}
           </>
@@ -477,11 +487,11 @@ export default function TransferModals({ content, active, onClose }: TransferMod
         id="manageBeneficiaries"
         show={isOpen('manageBeneficiaries')}
         onClose={close}
-        iconCls="bi bi-person-plus text-warning"
+        iconCls="bi bi-person-plus"
         title="Manage Beneficiaries"
         footer={
           <>
-            <button type="button" className={s.btn} data-bs-dismiss="modal">Close</button>
+            <button type="button" className={cx(s.btn, s.btnSecondary)} data-bs-dismiss="modal">Close</button>
           </>
         }
         tabs={[
@@ -491,7 +501,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
                 <table className={s.table}>
                   <thead><tr><th>Name</th><th>Account</th><th>Type</th><th>Actions</th></tr></thead>
                   <tbody>
-                    <tr><td>Grace Kamau</td><td>0712 345 890</td><td>M-Pesa</td><td><span className={s.badge + ' ' + s.badgeInfo}>2 actions</span></td></tr>
+                    <tr><td>Grace Kamau</td><td>0712 345 890</td><td>M-Pesa</td><td><span className={cx(s.badge, s.badgeInfo)}>2 actions</span></td></tr>
                     <tr><td>Landlord Properties</td><td>Bank 0012345678</td><td>Bank</td><td><span className={cx(s.badge, s.badgeInfo)}>2 actions</span></td></tr>
                   </tbody>
                 </table>
@@ -501,14 +511,14 @@ export default function TransferModals({ content, active, onClose }: TransferMod
           {
             key: 'favorites', label: 'Favorites', render: () => (
               <>
-                <div className={s.rowItem}><div><strong>Grace Kamau</strong></div><button className={cx(s.btn, s.btnSm)}>Remove from Favorites</button></div>
-                <div className={s.rowItem}><div><strong>Landlord Properties</strong></div><button className={cx(s.btn, s.btnSm)}>Remove from Favorites</button></div>
+                <div className={s.rowItem}><div><strong>Grace Kamau</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('editBeneficiary')}>Remove from Favorites</button></div>
+                <div className={s.rowItem}><div><strong>Landlord Properties</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('editBeneficiary')}>Remove from Favorites</button></div>
               </>
             ),
           },
           {
             key: 'recent', label: 'Recent', render: () => (
-              <div className={s.rowItem}><div><strong>James Ochieng</strong></div><button className={cx(s.btn, s.btnSm)}>Add to Favorites</button></div>
+              <div className={s.rowItem}><div><strong>James Ochieng</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('addToFavorites')}>Add to Favorites</button></div>
             ),
           },
         ]}
@@ -517,7 +527,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       {/* M5: Add Beneficiary */}
       <SimpleModal
         id="addBeneficiary" show={isOpen('addBeneficiary')} onClose={close}
-        iconCls="bi bi-person-plus text-success" title="Add Beneficiary"
+        iconCls="bi bi-person-plus" title="Add Beneficiary"
         submitLabel="Add Beneficiary" successMsg="Beneficiary added successfully!"
       >
         <div className="mb-3"><label className={s.fieldLabel}>Name</label><input className={s.field} defaultValue="Mary Wanjiku" /></div>
@@ -528,7 +538,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
 
       {/* M6: Transfer Detail */}
       <SimpleModal id="transferDetail" show={isOpen('transferDetail')} onClose={close} iconCls="bi bi-file-earmark-text" title="Transfer Details">
-        <div style={{ background: 'var(--tr-glass-bg)', padding: 16, borderRadius: 12, marginBottom: 16 }}>
+        <div style={{ background: 'var(--ink-100)', padding: 16, borderRadius: 12, marginBottom: 16 }}>
           <ReviewRow label="Reference" value="TRF-448291" />
           <ReviewRow label="Amount" value="KES 12,500" />
           <ReviewRow label="To" value="Grace Kamau" />
@@ -551,7 +561,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       </SimpleModal>
 
       {/* M8: International Transfer (multi-step) */}
-      <FlowModal id="international" show={isOpen('international')} onClose={close} flowKey="intl" iconCls="bi bi-globe text-danger" title="International Transfer">
+      <FlowModal id="international" show={isOpen('international')} onClose={close} flowKey="intl" iconCls="bi bi-globe" title="International Transfer">
         {(step) => (
           <>
             {step === 1 && (
@@ -580,7 +590,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
               <div className={s.receipt}>
                 <div className={s.receiptIcon}><i className="bi bi-check-lg" /></div>
                 <h5 className={s.receiptTitle}>International Transfer Initiated</h5>
-                <p style={{ fontSize: 13, color: 'var(--tr-ink-2)' }}>Your transfer is being processed. Expected delivery: 1-3 business days.</p>
+                <p style={{ fontSize: 14, color: 'var(--ink-500)' }}>Your transfer is being processed. Expected delivery: 1-3 business days.</p>
               </div>
             )}
           </>
@@ -588,10 +598,10 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       </FlowModal>
 
       {/* M9: QR Pay */}
-      <SimpleModal id="qrPay" show={isOpen('qrPay')} onClose={close} iconCls="bi bi-qr-code text-primary" title="QR Pay" submitLabel="Generate QR" successMsg="QR code generated! Recipient can scan to pay.">
+      <SimpleModal id="qrPay" show={isOpen('qrPay')} onClose={close} iconCls="bi bi-qr-code" title="QR Pay" submitLabel="Generate QR" successMsg="QR code generated! Recipient can scan to pay.">
         <div className="text-center">
-          <div style={{ background: 'var(--tr-glass-bg)', padding: 16, borderRadius: 12, marginBottom: 16 }}>
-            <div style={{ width: 180, height: 180, background: 'linear-gradient(135deg, #14b981, #0a7a54)', margin: '0 auto', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexDirection: 'column' }}>
+          <div style={{ background: 'var(--ink-100)', padding: 16, borderRadius: 12, marginBottom: 16 }}>
+            <div style={{ width: 180, height: 180, background: 'linear-gradient(135deg, var(--pri), var(--sec))', margin: '0 auto', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexDirection: 'column' }}>
               <i className="bi bi-qr-code" style={{ fontSize: 80 }} />
               <div style={{ marginTop: 8, fontWeight: 700 }}>Scan to Pay</div>
             </div>
@@ -611,11 +621,11 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       </SimpleModal>
 
       {/* M11: Retry Transfer */}
-      <SimpleModal id="retry" show={isOpen('retry')} onClose={close} iconCls="bi bi-arrow-repeat text-warning" title="Retry Failed Transfer" submitLabel="Retry Now" successMsg="Transfer retried successfully!">
+      <SimpleModal id="retry" show={isOpen('retry')} onClose={close} iconCls="bi bi-arrow-repeat" title="Retry Failed Transfer" submitLabel="Retry Now" successMsg="Transfer retried successfully!">
         <div className={cx(s.hintBox, s.hintBoxWarn, 'mb-3')}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--tr-warning)' }}>Failed Transfer Details</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--warning)' }}>Failed Transfer Details</div>
           <div style={{ fontSize: 14, marginTop: 4 }}>Landlord Properties — KES 35,000</div>
-          <div style={{ fontSize: 12, color: 'var(--tr-warning)' }}>Reason: Insufficient funds in M-Pesa</div>
+          <div style={{ fontSize: 12, color: 'var(--warning)' }}>Reason: Insufficient funds in M-Pesa</div>
         </div>
         <div className="mb-3"><label className={s.fieldLabel}>New Funding Source</label><select className={s.field}><option>PayMo Wallet (KES 24,500)</option><option>Equity Bank ****4521</option></select></div>
       </SimpleModal>
@@ -628,7 +638,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
             key: 'volume', label: 'Volume', render: () => (
               <div className={s.chartBars} style={{ height: 120 }}>
                 {[60, 75, 90, 82, 100, 95].map((h, i) => (
-                  <div key={i} className={s.chartBar} style={{ height: `${h}%`, background: i === 4 ? 'var(--tr-accent)' : 'var(--tr-info)' }}>
+                  <div key={i} className={s.chartBar} style={{ height: `${h}%`, background: i === 4 ? 'var(--pri)' : 'var(--info)' }}>
                     <span className={s.barLabel}>{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i]}</span>
                   </div>
                 ))}
@@ -643,7 +653,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
                   <tbody>
                     <tr><td>M-Pesa</td><td><span className={cx(s.badge, s.badgeSuccess)}>99.4%</span></td><td>7</td></tr>
                     <tr><td>Bank</td><td><span className={cx(s.badge, s.badgeSuccess)}>97.8%</span></td><td>12</td></tr>
-                    <tr><td>International</td><td><span className={cx(s.badge, s.badgeWarn)}>94.1%</span></td><td>3</td></tr>
+                    <tr><td>International</td><td><span className={cx(s.badge, s.badgeWarning)}>94.1%</span></td><td>3</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -661,11 +671,11 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       />
 
       {/* M13: Security Check */}
-      <SimpleModal id="security" show={isOpen('security')} onClose={close} iconCls="bi bi-shield-check text-success" title="Transfer Security">
+      <SimpleModal id="security" show={isOpen('security')} onClose={close} iconCls="bi bi-shield-check" title="Transfer Security">
         <div className="row g-3">
-          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: 'rgba(46,230,160,0.14)' }}><div style={{ fontSize: 28, fontWeight: 800, color: 'var(--tr-accent)' }}>96</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--tr-accent)' }}>SECURITY SCORE</div></div></div>
-          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: 'rgba(96,165,250,0.14)' }}><div style={{ fontSize: 24, fontWeight: 700, color: 'var(--tr-info)' }}>2FA</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--tr-info)' }}>ENABLED</div></div></div>
-          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: 'rgba(251,191,36,0.14)' }}><div style={{ fontSize: 24, fontWeight: 700, color: 'var(--tr-warning)' }}>14d</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--tr-warning)' }}>LAST REVIEW</div></div></div>
+          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: '#F0F4FF' }}><div style={{ fontSize: 28, fontWeight: 800, color: 'var(--pri)' }}>96</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--pri)' }}>SECURITY SCORE</div></div></div>
+          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: '#F5F0FF' }}><div style={{ fontSize: 24, fontWeight: 700, color: 'var(--sec)' }}>2FA</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--sec)' }}>ENABLED</div></div></div>
+          <div className="col-md-4"><div className="p-3 rounded text-center" style={{ background: '#FFF8F0' }}><div style={{ fontSize: 24, fontWeight: 700, color: 'var(--warning)' }}>14d</div><div style={{ fontSize: 10, fontWeight: 700, color: 'var(--warning)' }}>LAST REVIEW</div></div></div>
         </div>
       </SimpleModal>
 
@@ -674,7 +684,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
         <>
           {content.notifications.map((n) => (
             <div key={n.id} className={cx(s.hintBox, 'mb-2')}>
-              <strong style={{ color: 'var(--tr-ink-0)' }}>{n.title}</strong>
+              <strong style={{ color: 'var(--ink-900)' }}>{n.title}</strong>
               <div style={{ fontSize: 11 }}>{n.desc}</div>
             </div>
           ))}
@@ -684,27 +694,27 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       {/* M15: Profile */}
       <SimpleModal id="profile" show={isOpen('profile')} onClose={close} iconCls="bi bi-person-circle" title="Profile">
         <div className="text-center">
-          <div style={{ width: 64, height: 64, margin: '0 auto 12px', borderRadius: '50%', background: 'linear-gradient(135deg, #7cf5c8, #14b981)', color: '#03180e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24 }}>{content.user.initials}</div>
-          <h5 style={{ fontWeight: 700, marginBottom: 2, color: 'var(--tr-ink-0)' }}>{content.user.name}</h5>
-          <p style={{ fontSize: 13, color: 'var(--tr-ink-3)' }}>{content.user.email}</p>
+          <div style={{ width: 64, height: 64, margin: '0 auto 12px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--pri), var(--sec))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24 }}>{content.user.initials}</div>
+          <h5 style={{ fontWeight: 700, marginBottom: 2, color: 'var(--ink-900)' }}>{content.user.name}</h5>
+          <p style={{ fontSize: 13, color: 'var(--ink-500)' }}>{content.user.email}</p>
           <div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-            <div className="col-6"><div className="p-2 rounded" style={{ background: 'var(--tr-glass-bg)' }}><span className="text-muted">Transfers</span><br /><strong>1,248 this month</strong></div></div>
-            <div className="col-6"><div className="p-2 rounded" style={{ background: 'var(--tr-glass-bg)' }}><span className="text-muted">Security</span><br /><strong style={{ color: 'var(--tr-accent)' }}>96/100</strong></div></div>
+            <div className="col-6"><div className="p-2 rounded" style={{ background: 'var(--ink-100)' }}><span className="text-muted">Transfers</span><br /><strong>1,248 this month</strong></div></div>
+            <div className="col-6"><div className="p-2 rounded" style={{ background: 'var(--ink-100)' }}><span className="text-muted">Security</span><br /><strong style={{ color: 'var(--pri)' }}>96/100</strong></div></div>
           </div>
         </div>
       </SimpleModal>
 
       {/* M16: Attention Full */}
-      <SimpleModal id="attention" show={isOpen('attention')} onClose={close} iconCls="bi bi-exclamation-circle text-warning" title="All Attention Items">
+      <SimpleModal id="attention" show={isOpen('attention')} onClose={close} iconCls="bi bi-exclamation-circle" title="All Attention Items">
         <>
-          <div className={s.rowItem}><div><strong>Scheduled transfer failed</strong></div><button className={cx(s.btn, s.btnSm)}>Retry</button></div>
-          <div className={s.rowItem}><div><strong>3 recurring payments need funding source</strong></div><button className={cx(s.btn, s.btnSm)}>Update</button></div>
-          <div className={s.rowItem}><div><strong>Large transfer pending approval</strong></div><button className={cx(s.btn, s.btnSm)}>Approve</button></div>
+          <div className={s.rowItem}><div><strong>Scheduled transfer failed</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('retry')}>Retry</button></div>
+          <div className={s.rowItem}><div><strong>3 recurring payments need funding source</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('manageBeneficiaries')}>Update</button></div>
+          <div className={s.rowItem}><div><strong>Large transfer pending approval</strong></div><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('initiate')}>Approve</button></div>
         </>
       </SimpleModal>
 
       {/* M17: Dispute Transfer */}
-      <SimpleModal id="dispute" show={isOpen('dispute')} onClose={close} iconCls="bi bi-exclamation-triangle text-danger" title="Report Transfer Issue" submitLabel="Submit" successMsg="Dispute submitted. Reference: DSP-88291">
+      <SimpleModal id="dispute" show={isOpen('dispute')} onClose={close} iconCls="bi bi-exclamation-triangle" title="Report Transfer Issue" submitLabel="Submit" successMsg="Dispute submitted. Reference: DSP-88291">
         <div className="mb-3"><label className={s.fieldLabel}>Issue Type</label><select className={s.field}><option>Wrong amount sent</option><option>Transfer not received</option><option>Wrong beneficiary</option><option>Duplicate transfer</option></select></div>
         <div className="mb-3"><label className={s.fieldLabel}>Description</label><textarea className={s.field} rows={3} defaultValue="The transfer was sent to the wrong number." /></div>
       </SimpleModal>
@@ -720,7 +730,7 @@ export default function TransferModals({ content, active, onClose }: TransferMod
       <SimpleModal id="feeCalc" show={isOpen('feeCalc')} onClose={close} iconCls="bi bi-calculator" title="Transfer Fee Calculator">
         <div className="mb-3"><label className={s.fieldLabel}>Amount (KES)</label><input className={s.field} defaultValue="50000" /></div>
         <div className="mb-3"><label className={s.fieldLabel}>Method</label><select className={s.field}><option>M-Pesa</option><option>Bank Transfer</option><option>International</option></select></div>
-        <div className="p-3 rounded" style={{ background: 'var(--tr-glass-bg)' }}><div className="d-flex justify-content-between"><span>Estimated Fee</span><strong>KES 35</strong></div></div>
+        <div className="p-3 rounded" style={{ background: 'var(--ink-100)' }}><div className="d-flex justify-content-between"><span>Estimated Fee</span><strong>KES 35</strong></div></div>
       </SimpleModal>
 
       {/* M20: Transfer History */}
@@ -764,7 +774,7 @@ function ReviewRow({ label, value, highlight }: { label: string; value: string; 
   return (
     <div className="d-flex justify-content-between mb-2">
       <span className="text-muted">{label}</span>
-      <strong style={highlight ? { color: 'var(--tr-accent-2)' } : undefined}>{value}</strong>
+      <strong style={highlight ? { color: 'var(--pri)' } : undefined}>{value}</strong>
     </div>
   );
 }

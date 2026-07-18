@@ -28,12 +28,22 @@
  *   doAction() loading + success innerHTML ............. SimpleModal phase state
  *   cacheAndReset() body restore on hidden ............. React remounts cleanly
  * ========================================================================== */
-import { useState } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { cx, fetchShellContent, initialMockData } from '../../shell/data/shellData';
 import styles from '../styles/transferOverview.module.css';
-import TransferModals from '../components/TransferModals';
-import type { ModalId } from '../components/TransferModals';
+import type { ModalId } from './TransferModals';
+
+// Client-only lazy import for modals (uses Bootstrap JS + hooks)
+const TransferModals = lazy(() => import('../components/TransferModals'));
+
+// Client-only wrapper - prevents SSR of modals
+function ClientOnlyModals({ content, active, onClose, onOpenModal }: { content: any; active: ModalId | null; onClose: () => void; onOpenModal: (id: ModalId) => void }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+  return <TransferModals content={content} active={active} onClose={onClose} onOpenModal={onOpenModal} />;
+}
 
 const s = styles as Record<string, string>;
 
@@ -214,9 +224,15 @@ export default function TransferOverview() {
           </p>
         </div>
         <div className="d-flex flex-wrap" style={{ gap: 8 }}>
-          <button className={s.btn} onClick={() => openModal('history')}><i className="bi bi-clock-history" /> History</button>
-          <button className={s.btn} onClick={() => openModal('schedule')}><i className="bi bi-calendar-event" /> Schedule</button>
-          <button className={cx(s.btn, s.btnPrimary)} onClick={() => openModal('initiate')}><i className="bi bi-send" /> Send Money</button>
+          <button className={s.btn} onClick={() => openModal('history')}>
+            <i className="bi bi-clock-history" /> History
+          </button>
+          <button className={s.btn} onClick={() => openModal('schedule')}>
+            <i className="bi bi-calendar-event" /> Schedule
+          </button>
+          <button className={cx(s.btn, s.btnPrimary)} onClick={() => openModal('initiate')}>
+            <i className="bi bi-send" /> Send Money
+          </button>
         </div>
       </div>
 
@@ -242,7 +258,9 @@ export default function TransferOverview() {
           <div className={s.card} style={{ minHeight: 170 }}>
             <p className={s.statLabel} style={{ color: 'var(--tr-accent)' }}>COMPLETED</p>
             <div className={s.statValue}>1,189</div>
-            <span className={cx(s.badge, s.badgeSuccess)}><i className="bi bi-check-circle" /> 98.7%</span>
+            <span className={cx(s.badge, s.badgeSuccess)}>
+              <i className="bi bi-check-circle" /> 98.7%
+            </span>
             <div className={s.statSub}>Avg time: <strong>12 seconds</strong></div>
           </div>
         </div>
@@ -250,7 +268,9 @@ export default function TransferOverview() {
           <div className={s.card} style={{ minHeight: 170 }}>
             <p className={s.statLabel} style={{ color: 'var(--tr-info)' }}>PENDING / SCHEDULED</p>
             <div className={s.statValue}>47</div>
-            <span className={cx(s.badge, s.badgeInfo)}><i className="bi bi-clock" /> 32 today</span>
+            <span className={cx(s.badge, s.badgeInfo)}>
+              <i className="bi bi-clock" /> 32 today
+            </span>
             <div className={s.statSub}>Next execution: <strong>Today 3:00 PM</strong></div>
           </div>
         </div>
@@ -258,7 +278,9 @@ export default function TransferOverview() {
           <div className={cx(s.card, s.cardWarnEdge)} style={{ minHeight: 170 }}>
             <p className={s.statLabel} style={{ color: 'var(--tr-warning)' }}>FAILED / REJECTED</p>
             <div className={s.statValue}>12</div>
-            <span className={cx(s.badge, s.badgeWarn)}><i className="bi bi-exclamation-triangle" /> 1.0%</span>
+            <span className={cx(s.badge, s.badgeWarn)}>
+              <i className="bi bi-exclamation-triangle" /> 1.0%
+            </span>
             <div className={s.statSub}>Most common: <strong>Insufficient funds</strong></div>
           </div>
         </div>
@@ -269,19 +291,25 @@ export default function TransferOverview() {
         <div className="col-lg-4">
           <div className={s.card}>
             <div className={s.sectionHead}>
-              <h3 className={s.sectionTitle}><i className="bi bi-bell" /> Attention Required</h3>
+              <h3 className={s.sectionTitle}>
+                <i className="bi bi-bell" /> Attention Required
+              </h3>
               <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('attention')}>View all</button>
             </div>
             {content.attention.map((item) => (
               <div className={s.rowItem} key={item.title}>
                 <div className={s.rowLead}>
-                  <div className={cx(s.rowIcon, toneIcon[item.tone])}><i className={cx('bi', item.icon)} /></div>
+                  <div className={cx(s.rowIcon, toneIcon[item.tone])}>
+                    <i className={cx('bi', item.icon)} />
+                  </div>
                   <div>
                     <div className={s.rowTitle}>{item.title}</div>
                     <div className={s.rowSub}>{item.sub}</div>
                   </div>
                 </div>
-                <button className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>{item.action}</button>
+                <button className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>
+                  {item.action}
+                </button>
               </div>
             ))}
           </div>
@@ -289,19 +317,27 @@ export default function TransferOverview() {
         <div className="col-lg-4">
           <div className={s.card}>
             <div className={s.sectionHead}>
-              <h3 className={s.sectionTitle}><i className="bi bi-stars" /> Smart Suggestions</h3>
-              <span className={cx(s.badge, s.badgePurple)}><i className="bi bi-stars" /> AI</span>
+              <h3 className={s.sectionTitle}>
+                <i className="bi bi-stars" /> Smart Suggestions
+              </h3>
+              <span className={cx(s.badge, s.badgePurple)}>
+                <i className="bi bi-stars" /> AI
+              </span>
             </div>
             {content.suggestions.map((item) => (
               <div className={s.rowItem} key={item.title}>
                 <div className={s.rowLead}>
-                  <div className={cx(s.rowIcon, toneIcon[item.tone])}><i className={cx('bi', item.icon)} /></div>
+                  <div className={cx(s.rowIcon, toneIcon[item.tone])}>
+                    <i className={cx('bi', item.icon)} />
+                  </div>
                   <div>
                     <div className={s.rowTitle}>{item.title}</div>
                     <div className={s.rowSub}>{item.sub}</div>
                   </div>
                 </div>
-                <button className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>{item.action}</button>
+                <button className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>
+                  {item.action}
+                </button>
               </div>
             ))}
           </div>
@@ -309,7 +345,9 @@ export default function TransferOverview() {
         <div className="col-lg-4">
           <div className={s.card}>
             <div style={{ marginBottom: 16 }}>
-              <h3 className={s.sectionTitle}><i className="bi bi-lightning-charge" /> Quick Actions</h3>
+              <h3 className={s.sectionTitle}>
+                <i className="bi bi-lightning-charge" /> Quick Actions
+              </h3>
               <p className={s.sectionSub}>Frequent transfer workflows</p>
             </div>
             <div className={s.quickGrid}>
@@ -327,12 +365,18 @@ export default function TransferOverview() {
       <div className={s.card}>
         <div className={s.sectionHead}>
           <div>
-            <h3 className={s.sectionTitle}><i className="bi bi-speedometer2" /> Transfer Portfolio Overview</h3>
+            <h3 className={s.sectionTitle}>
+              <i className="bi bi-speedometer2" /> Transfer Portfolio Overview
+            </h3>
             <p className={s.sectionSub}>Real-time view of all transfer activity, success rates, and spending patterns.</p>
           </div>
           <div className="d-flex" style={{ gap: 8 }}>
-            <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('analytics')}><i className="bi bi-bar-chart" /> Analytics</button>
-            <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('initiate')}><i className="bi bi-plus-lg" /> New Transfer</button>
+            <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('analytics')}>
+              <i className="bi bi-bar-chart" /> Analytics
+            </button>
+            <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('initiate')}>
+              <i className="bi bi-plus-lg" /> New Transfer
+            </button>
           </div>
         </div>
         <div className="row g-3">
@@ -382,19 +426,27 @@ export default function TransferOverview() {
       <div className={s.card}>
         <div className={s.sectionHead}>
           <div>
-            <h3 className={s.sectionTitle}><i className="bi bi-star-fill" style={{ color: 'var(--tr-warning)' }} /> Favorites & Frequent Beneficiaries</h3>
+            <h3 className={s.sectionTitle}>
+              <i className="bi bi-star-fill" style={{ color: 'var(--tr-warning)' }} /> Favorites & Frequent Beneficiaries
+            </h3>
             <p className={s.sectionSub}>Quick-send to your most used recipients with one tap.</p>
           </div>
           <div className="d-flex" style={{ gap: 8 }}>
-            <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('manageBeneficiaries')}><i className="bi bi-gear" /> Manage</button>
-            <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('addBeneficiary')}><i className="bi bi-plus-lg" /> Add</button>
+            <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('manageBeneficiaries')}>
+              <i className="bi bi-gear" /> Manage
+            </button>
+            <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('addBeneficiary')}>
+              <i className="bi bi-plus-lg" /> Add
+            </button>
           </div>
         </div>
         <div className={s.favGrid}>
           {content.favorites.map((fav) => (
             <div className={s.favCard} key={fav.name} onClick={() => openModal('favoritesQuick')} role="button" tabIndex={0}>
               <div className={s.favLead}>
-                <div className={s.favAvatar} style={{ background: fav.color }}><i className="bi bi-person" /></div>
+                <div className={s.favAvatar} style={{ background: fav.color }}>
+                  <i className="bi bi-person" />
+                </div>
                 <div style={{ minWidth: 0 }}>
                   <div className={s.favName}>{fav.name}</div>
                   <div className={s.favAcc}>{fav.account}</div>
@@ -409,10 +461,14 @@ export default function TransferOverview() {
       <div className={s.card}>
         <div className={s.sectionHead}>
           <div>
-            <h3 className={s.sectionTitle}><i className="bi bi-calendar-check" /> Scheduled & Recurring Transfers</h3>
+            <h3 className={s.sectionTitle}>
+              <i className="bi bi-calendar-check" /> Scheduled & Recurring Transfers
+            </h3>
             <p className={s.sectionSub}>Manage your automated payments and upcoming scheduled transfers.</p>
           </div>
-          <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('schedule')}><i className="bi bi-plus-lg" /> New Schedule</button>
+          <button className={cx(s.btn, s.btnSm, s.btnPrimary)} onClick={() => openModal('schedule')}>
+            <i className="bi bi-plus-lg" /> New Schedule
+          </button>
         </div>
         <div className={s.tableWrap}>
           <table className={s.table}>
@@ -427,8 +483,16 @@ export default function TransferOverview() {
                   <td><strong>{row.amount}</strong></td>
                   <td>{row.frequency}</td>
                   <td>{row.nextRun}</td>
-                  <td><span className={cx(s.badge, row.status === 'active' ? s.badgeSuccess : s.badgeWarn)}>{row.status === 'active' ? 'Active' : 'Paused'}</span></td>
-                  <td><button className={cx(s.btn, s.btnSm)} onClick={() => openModal('editSchedule')}>{row.status === 'active' ? 'Edit' : 'Resume'}</button></td>
+                  <td>
+                    <span className={cx(s.badge, row.status === 'active' ? s.badgeSuccess : s.badgeWarn)}>
+                      {row.status === 'active' ? 'Active' : 'Paused'}
+                    </span>
+                  </td>
+                  <td>
+                    <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('editSchedule')}>
+                      {row.status === 'active' ? 'Edit' : 'Resume'}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -440,10 +504,14 @@ export default function TransferOverview() {
       <div className={s.card}>
         <div className={s.sectionHead}>
           <div>
-            <h3 className={s.sectionTitle}><i className="bi bi-graph-up-arrow" style={{ color: 'var(--tr-info)' }} /> Transfer Analytics Snapshot</h3>
+            <h3 className={s.sectionTitle}>
+              <i className="bi bi-graph-up-arrow" style={{ color: 'var(--tr-info)' }} /> Transfer Analytics Snapshot
+            </h3>
             <p className={s.sectionSub}>Spending patterns, success rates, and top recipients.</p>
           </div>
-          <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('analytics')}>Full Analytics</button>
+          <button className={cx(s.btn, s.btnSm)} onClick={() => openModal('analytics')}>
+            Full Analytics
+          </button>
         </div>
         <div className="row g-3">
           <div className="col-lg-4">
@@ -460,7 +528,9 @@ export default function TransferOverview() {
             {content.successByChannel.map((r) => (
               <div className={s.rowItem} key={r.channel}>
                 <div><strong>{r.channel}</strong></div>
-                <span className={cx(s.badge, r.tone === 'success' ? s.badgeSuccess : s.badgeWarn)}>{r.rate}</span>
+                <span className={cx(s.badge, r.tone === 'success' ? s.badgeSuccess : s.badgeWarn)}>
+                  {r.rate}
+                </span>
               </div>
             ))}
           </div>
@@ -477,8 +547,10 @@ export default function TransferOverview() {
         </div>
       </div>
 
-      {/* ---------- ALL MODALS ---------- */}
-      <TransferModals content={shell} active={activeModal} onClose={closeModal} />
+      {/* ---------- ALL MODALS (client-only) ---------- */}
+      <Suspense fallback={null}>
+        <ClientOnlyModals content={shell} active={activeModal} onClose={closeModal} onOpenModal={openModal} />
+      </Suspense>
     </div>
   );
 }
