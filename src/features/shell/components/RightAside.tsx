@@ -94,7 +94,7 @@ export default function RightAside({
               <button type="button" className={s.btnGhost} onClick={onClose}>
                 <i className="bi bi-lock" /> Change password
               </button>
-              <LinkToSettings />
+              <LinkToSettings label="Security settings" afterClose={onClose} />
               <LinkToSettings icon="bi-box-arrow-up-right" label="View security logs" afterClose={onClose} />
             </div>
           </div>

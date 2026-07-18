@@ -135,6 +135,14 @@ export const initialMockData: ShellContent = {
       ],
     },
     {
+      title: 'Treasury',
+      items: [
+        { key: 'liquidity', label: 'Liquidity & Float', icon: 'bi-droplet', badge: 14 },
+        { key: 'reconciliation', label: 'Reconciliation', icon: 'bi-clipboard-check' },
+        { key: 'payment-rails', label: 'Payment Rails', icon: 'bi-signpost-split' },
+      ],
+    },
+    {
       title: 'Banking',
       items: [
         { key: 'beneficiaries', label: 'Beneficiaries', icon: 'bi-people' },
@@ -249,6 +257,84 @@ export const initialMockData: ShellContent = {
       actions: [
         { icon: 'bi-plus-lg', label: 'New transfer', tone: 'primary' },
         { icon: 'bi-list-check', label: 'Bulk upload', tone: 'ghost' },
+      ],
+    },
+    {
+      key: 'liquidity',
+      label: 'Liquidity & Float',
+      icon: 'bi-droplet',
+      pill: 'TREASURY OPS',
+      titlePre: 'Float, ',
+      titleAccent: 'always funded.',
+      copy: 'Bank float accounts, agent liquidity, rebalancing, forecasting and emergency liquidity controls with full audit trails.',
+      c1: '#2ee6a0', c2: '#60a5fa',
+      stats: [
+        { label: 'Total float', value: 'KES 1.84B' },
+        { label: 'Critical float', value: 'KES 42.8M', delta: '7 accounts', up: false },
+        { label: 'Settlements today', value: 'KES 318.4M', delta: '94%', up: true },
+        { label: 'Forecast shortfall', value: 'KES 87.5M', delta: '48h', up: false },
+      ],
+      features: [
+        { icon: 'bi-bank', text: 'Real-time bank float accounts across 12 partner banks' },
+        { icon: 'bi-people', text: 'Agent and partner float top-ups with auto-replenishment rules' },
+        { icon: 'bi-graph-up-arrow', text: 'AI forecast of shortfalls with recommended top-up actions' },
+        { icon: 'bi-shield-lock', text: 'Emergency liquidity lines with dual executive approval' },
+      ],
+      actions: [
+        { icon: 'bi-arrow-left-right', label: 'Rebalance', tone: 'primary' },
+        { icon: 'bi-lightning-charge', label: 'Emergency', tone: 'ghost' },
+      ],
+    },
+    {
+      key: 'reconciliation',
+      label: 'Reconciliation',
+      icon: 'bi-clipboard-check',
+      pill: 'MATCHING ENGINE',
+      titlePre: 'Every shilling, ',
+      titleAccent: 'accounted for.',
+      copy: 'Bank-to-bank transaction matching, exception handling, auto-reconciliation rules and a complete audit trail across all corridors.',
+      c1: '#a78bfa', c2: '#2ee6a0',
+      stats: [
+        { label: 'Match rate', value: '94.7%', delta: '+0.6%', up: true },
+        { label: 'Matched today', value: '8,412', delta: '+312', up: true },
+        { label: 'Exceptions', value: '47', delta: '12 high-value', up: false },
+        { label: 'Audit entries', value: '124,892' },
+      ],
+      features: [
+        { icon: 'bi-hand-index', text: 'Manual and bulk matching with confidence scoring' },
+        { icon: 'bi-magic', text: 'Auto-reconciliation rules with tolerances and prefixes' },
+        { icon: 'bi-exclamation-triangle', text: 'Exception workbench with disputes and FX resolution' },
+        { icon: 'bi-file-earmark-bar-graph', text: 'Signed audit exports and reconciliation certificates' },
+      ],
+      actions: [
+        { icon: 'bi-magic', label: 'Run auto-recon', tone: 'primary' },
+        { icon: 'bi-upload', label: 'Upload statement', tone: 'ghost' },
+      ],
+    },
+    {
+      key: 'payment-rails',
+      label: 'Payment Rails',
+      icon: 'bi-signpost-split',
+      pill: 'ROUTING FABRIC',
+      titlePre: 'Route every payment, ',
+      titleAccent: 'the optimal way.',
+      copy: 'Connected banks, rail configurations, routing rules, fees and nostro positions across M-Pesa, PesaLink, RTGS, SWIFT and cards.',
+      c1: '#60a5fa', c2: '#2ee6a0',
+      stats: [
+        { label: 'Connected banks', value: '12' },
+        { label: 'Active rails', value: '9' },
+        { label: 'Routing success', value: '99.2%', delta: '+0.3%', up: true },
+        { label: 'Avg fee', value: '0.42%' },
+      ],
+      features: [
+        { icon: 'bi-bank', text: 'Bank connections with health and settlement visibility' },
+        { icon: 'bi-shuffle', text: 'Priority routing rules with automatic fallbacks' },
+        { icon: 'bi-cash-coin', text: 'Per-rail fees, limits and cutoff configuration' },
+        { icon: 'bi-globe', text: 'Nostro positions and corridor liquidity tracking' },
+      ],
+      actions: [
+        { icon: 'bi-plus-lg', label: 'Connect bank', tone: 'primary' },
+        { icon: 'bi-sliders', label: 'Routing rules', tone: 'ghost' },
       ],
     },
     {

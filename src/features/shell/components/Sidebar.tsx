@@ -33,7 +33,6 @@ export default function Sidebar({
   expanded,
   mobileOpen,
   activeSection,
-  onToggle,
   onCloseMobile,
   onOpenAside,
   onLogout,
@@ -146,7 +145,7 @@ export default function Sidebar({
         ))}
       </div>
 
-      <Link to="/app/settings" className={s.sidebarAccount} onClick={() => { if (!isDesktop) onCloseMobile(); }}>
+      <Link to="/app/$section" params={{ section: 'settings' }} className={s.sidebarAccount} onClick={() => { if (!isDesktop) onCloseMobile(); }}>
         <div className={s.avatar}>{content.user.initials}</div>
         <div className={s.accountDetails}>
           <div className={s.accountName}>{content.user.name}</div>

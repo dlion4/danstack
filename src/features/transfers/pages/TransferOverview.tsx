@@ -32,7 +32,7 @@ import { useState, useEffect, Suspense, lazy } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { cx, fetchShellContent, initialMockData } from '../../shell/data/shellData';
 import styles from '../styles/transferOverview.module.css';
-import type { ModalId } from './TransferModals';
+import type { ModalId } from '../components/TransferModals';
 
 // Client-only lazy import for modals (uses Bootstrap JS + hooks)
 const TransferModals = lazy(() => import('../components/TransferModals'));
