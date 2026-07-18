@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import AppShell from '../features/shell/components/AppShell';
 
 /**
@@ -15,9 +15,6 @@ export const Route = createFileRoute('/app')({
 });
 
 function AppLayout() {
-  return (
-    <AppShell>
-      <Outlet />
-    </AppShell>
-  );
+  // AppShell renders its own <Outlet /> for child pages.
+  return <AppShell />;
 }

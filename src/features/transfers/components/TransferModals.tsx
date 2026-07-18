@@ -14,7 +14,7 @@
  * bridged safely through React refs + useEffect (see useBootstrapModal).
  * ========================================================================== */
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { cx } from '../../shell/data/shellData';
 import type { ShellContent } from '../../shell/data/shellData';
@@ -76,7 +76,7 @@ function useReactModal(show: boolean, onClose: () => void) {
  * Multi-step flow modal (init / bulk / sched / intl)
  * ======================================================================= */
 function FlowModal({
-  id, show, onClose, flowKey, iconCls, title, children,
+  show, onClose, flowKey, iconCls, title, children,
 }: {
   id: ModalId;
   show: boolean;
@@ -188,7 +188,7 @@ function FlowModal({
  * Generic simple modal (form -> loading -> success, or static)
  * ======================================================================= */
 function SimpleModal({
-  id, show, onClose, iconCls, title, size = 'md', successMsg, onSubmit, children, submitLabel, submitPrimary = true,
+  show, onClose, iconCls, title, size = 'md', successMsg, onSubmit, children, submitLabel, submitPrimary = true,
 }: {
   id: ModalId;
   show: boolean;
@@ -266,7 +266,7 @@ function SimpleModal({
  * Tabbed modal (Beneficiaries list/favorites/recent, Analytics volume/etc)
  * ======================================================================= */
 function TabbedModal({
-  id, show, onClose, iconCls, title, tabs, size = 'lg', footer,
+  show, onClose, iconCls, title, tabs, size = 'lg', footer,
 }: {
   id: ModalId;
   show: boolean;

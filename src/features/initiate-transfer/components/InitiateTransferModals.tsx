@@ -14,8 +14,8 @@ import {
 	SelectField,
 	SimpleModal,
 	TabbedModal,
-} from "../../shared/components/modals";
-import shared from "../../shared/styles/appPage.module.css";
+} from "../../../shared/components/modals";
+import shared from "../../../shared/styles/appPage.module.css";
  
 const s = shared as Record<string, string>;
  
