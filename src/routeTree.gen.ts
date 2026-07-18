@@ -9,8 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettlementRouteImport } from './routes/settlement'
+import { Route as MobileMoneyRouteImport } from './routes/mobile-money'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ComplianceRouteImport } from './routes/compliance'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as HomeRouteImport } from './routes/_home'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
@@ -29,14 +33,34 @@ import { Route as AppTransferManagementRouteImport } from './routes/app.transfer
 import { Route as AppInitiateTransferRouteImport } from './routes/app.initiate-transfer'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 
+const SettlementRoute = SettlementRouteImport.update({
+  id: '/settlement',
+  path: '/settlement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MobileMoneyRoute = MobileMoneyRouteImport.update({
+  id: '/mobile-money',
+  path: '/mobile-money',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplianceRoute = ComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
@@ -126,8 +150,12 @@ const HomeBusinessRoute = HomeBusinessRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/app': typeof AppRouteWithChildren
+  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
+  '/mobile-money': typeof MobileMoneyRoute
+  '/settlement': typeof SettlementRoute
   '/business': typeof HomeBusinessRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
@@ -145,7 +173,11 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
+  '/analytics': typeof AnalyticsRoute
+  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
+  '/mobile-money': typeof MobileMoneyRoute
+  '/settlement': typeof SettlementRoute
   '/business': typeof HomeBusinessRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
@@ -166,8 +198,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
+  '/analytics': typeof AnalyticsRoute
   '/app': typeof AppRouteWithChildren
+  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
+  '/mobile-money': typeof MobileMoneyRoute
+  '/settlement': typeof SettlementRoute
   '/_home/business': typeof HomeBusinessRoute
   '/app/initiate-transfer': typeof AppInitiateTransferRoute
   '/app/transfer-management': typeof AppTransferManagementRoute
@@ -189,8 +225,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/app'
+    | '/compliance'
     | '/login'
+    | '/mobile-money'
+    | '/settlement'
     | '/business'
     | '/app/initiate-transfer'
     | '/app/transfer-management'
@@ -208,7 +248,11 @@ export interface FileRouteTypes {
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/analytics'
+    | '/compliance'
     | '/login'
+    | '/mobile-money'
+    | '/settlement'
     | '/business'
     | '/app/initiate-transfer'
     | '/app/transfer-management'
@@ -228,8 +272,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_home'
+    | '/analytics'
     | '/app'
+    | '/compliance'
     | '/login'
+    | '/mobile-money'
+    | '/settlement'
     | '/_home/business'
     | '/app/initiate-transfer'
     | '/app/transfer-management'
@@ -250,8 +298,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
+  AnalyticsRoute: typeof AnalyticsRoute
   AppRoute: typeof AppRouteWithChildren
+  ComplianceRoute: typeof ComplianceRoute
   LoginRoute: typeof LoginRoute
+  MobileMoneyRoute: typeof MobileMoneyRoute
+  SettlementRoute: typeof SettlementRoute
   AuthAccountStatusRoute: typeof AuthAccountStatusRoute
   AuthHubRoute: typeof AuthHubRoute
   AuthIdentityRoute: typeof AuthIdentityRoute
@@ -265,6 +317,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settlement': {
+      id: '/settlement'
+      path: '/settlement'
+      fullPath: '/settlement'
+      preLoaderRoute: typeof SettlementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mobile-money': {
+      id: '/mobile-money'
+      path: '/mobile-money'
+      fullPath: '/mobile-money'
+      preLoaderRoute: typeof MobileMoneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -272,11 +338,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compliance': {
+      id: '/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_home': {
@@ -433,8 +513,12 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
+  AnalyticsRoute: AnalyticsRoute,
   AppRoute: AppRouteWithChildren,
+  ComplianceRoute: ComplianceRoute,
   LoginRoute: LoginRoute,
+  MobileMoneyRoute: MobileMoneyRoute,
+  SettlementRoute: SettlementRoute,
   AuthAccountStatusRoute: AuthAccountStatusRoute,
   AuthHubRoute: AuthHubRoute,
   AuthIdentityRoute: AuthIdentityRoute,
