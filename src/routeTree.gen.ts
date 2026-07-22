@@ -9,11 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UtilityRouteImport } from './routes/utility'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DevRouteImport } from './routes/dev'
+import { Route as BusinessRouteImport } from './routes/business'
 import { Route as HomeRouteImport } from './routes/_home'
+import { Route as UtilityIndexRouteImport } from './routes/utility/index'
+import { Route as DevIndexRouteImport } from './routes/dev/index'
+import { Route as BusinessIndexRouteImport } from './routes/business/index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
+import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
 import { Route as Transaction_dashboardAppRouteImport } from './routes/transaction_dashboard/app'
+import { Route as DevModuleRouteImport } from './routes/dev/$module'
 import { Route as CardsAppRouteImport } from './routes/cards/app'
+import { Route as BusinessModuleRouteImport } from './routes/business/$module'
 import { Route as AuthSecurityRouteImport } from './routes/auth/security'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
@@ -56,19 +65,54 @@ import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/ap
 import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
 import { Route as CardsAppAccountSettingsRouteImport } from './routes/cards/app/account-settings'
 
+const UtilityRoute = UtilityRouteImport.update({
+  id: '/utility',
+  path: '/utility',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevRoute = DevRouteImport.update({
+  id: '/dev',
+  path: '/dev',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/_home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UtilityIndexRoute = UtilityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const DevIndexRoute = DevIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DevRoute,
+} as any)
+const BusinessIndexRoute = BusinessIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BusinessRoute,
+} as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => HomeRoute,
+} as any)
+const UtilityModuleRoute = UtilityModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => UtilityRoute,
 } as any)
 const Transaction_dashboardAppRoute =
   Transaction_dashboardAppRouteImport.update({
@@ -76,10 +120,20 @@ const Transaction_dashboardAppRoute =
     path: '/transaction_dashboard/app',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DevModuleRoute = DevModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => DevRoute,
+} as any)
 const CardsAppRoute = CardsAppRouteImport.update({
   id: '/cards/app',
   path: '/cards/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessModuleRoute = BusinessModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => BusinessRoute,
 } as any)
 const AuthSecurityRoute = AuthSecurityRouteImport.update({
   id: '/auth/security',
@@ -318,8 +372,10 @@ const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
-  '/login': typeof LoginRoute
   '/business': typeof HomeBusinessRoute
+  '/dev': typeof DevRouteWithChildren
+  '/login': typeof LoginRoute
+  '/utility': typeof UtilityRouteWithChildren
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -329,8 +385,14 @@ export interface FileRoutesByFullPath {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
+  '/utility/$module': typeof UtilityModuleRoute
+  '/business/': typeof BusinessIndexRoute
+  '/dev/': typeof DevIndexRoute
+  '/utility/': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -365,7 +427,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/business': typeof HomeBusinessRoute
+  '/business': typeof BusinessIndexRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -375,8 +437,13 @@ export interface FileRoutesByTo {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev/$module': typeof DevModuleRoute
+  '/utility/$module': typeof UtilityModuleRoute
   '/': typeof HomeIndexRoute
+  '/dev': typeof DevIndexRoute
+  '/utility': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -412,7 +479,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
+  '/business': typeof BusinessRouteWithChildren
+  '/dev': typeof DevRouteWithChildren
   '/login': typeof LoginRoute
+  '/utility': typeof UtilityRouteWithChildren
   '/_home/business': typeof HomeBusinessRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
@@ -423,9 +493,15 @@ export interface FileRoutesById {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
+  '/utility/$module': typeof UtilityModuleRoute
   '/_home/': typeof HomeIndexRoute
+  '/business/': typeof BusinessIndexRoute
+  '/dev/': typeof DevIndexRoute
+  '/utility/': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -462,8 +538,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/login'
     | '/business'
+    | '/dev'
+    | '/login'
+    | '/utility'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -473,8 +551,14 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business/$module'
     | '/cards/app'
+    | '/dev/$module'
     | '/transaction_dashboard/app'
+    | '/utility/$module'
+    | '/business/'
+    | '/dev/'
+    | '/utility/'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -519,8 +603,13 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business/$module'
     | '/cards/app'
+    | '/dev/$module'
+    | '/utility/$module'
     | '/'
+    | '/dev'
+    | '/utility'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -555,7 +644,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_home'
+    | '/business'
+    | '/dev'
     | '/login'
+    | '/utility'
     | '/_home/business'
     | '/auth/account-status'
     | '/auth/hub'
@@ -566,9 +658,15 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business/$module'
     | '/cards/app'
+    | '/dev/$module'
     | '/transaction_dashboard/app'
+    | '/utility/$module'
     | '/_home/'
+    | '/business/'
+    | '/dev/'
+    | '/utility/'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -604,7 +702,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
+  BusinessRoute: typeof BusinessRouteWithChildren
+  DevRoute: typeof DevRouteWithChildren
   LoginRoute: typeof LoginRoute
+  UtilityRoute: typeof UtilityRouteWithChildren
   AuthAccountStatusRoute: typeof AuthAccountStatusRoute
   AuthHubRoute: typeof AuthHubRoute
   AuthIdentityRoute: typeof AuthIdentityRoute
@@ -620,11 +721,32 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/utility': {
+      id: '/utility'
+      path: '/utility'
+      fullPath: '/utility'
+      preLoaderRoute: typeof UtilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev': {
+      id: '/dev'
+      path: '/dev'
+      fullPath: '/dev'
+      preLoaderRoute: typeof DevRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_home': {
@@ -634,12 +756,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/utility/': {
+      id: '/utility/'
+      path: '/'
+      fullPath: '/utility/'
+      preLoaderRoute: typeof UtilityIndexRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/dev/': {
+      id: '/dev/'
+      path: '/'
+      fullPath: '/dev/'
+      preLoaderRoute: typeof DevIndexRouteImport
+      parentRoute: typeof DevRoute
+    }
+    '/business/': {
+      id: '/business/'
+      path: '/'
+      fullPath: '/business/'
+      preLoaderRoute: typeof BusinessIndexRouteImport
+      parentRoute: typeof BusinessRoute
+    }
     '/_home/': {
       id: '/_home/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRoute
+    }
+    '/utility/$module': {
+      id: '/utility/$module'
+      path: '/$module'
+      fullPath: '/utility/$module'
+      preLoaderRoute: typeof UtilityModuleRouteImport
+      parentRoute: typeof UtilityRoute
     }
     '/transaction_dashboard/app': {
       id: '/transaction_dashboard/app'
@@ -648,12 +798,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Transaction_dashboardAppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/$module': {
+      id: '/dev/$module'
+      path: '/$module'
+      fullPath: '/dev/$module'
+      preLoaderRoute: typeof DevModuleRouteImport
+      parentRoute: typeof DevRoute
+    }
     '/cards/app': {
       id: '/cards/app'
       path: '/cards/app'
       fullPath: '/cards/app'
       preLoaderRoute: typeof CardsAppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/business/$module': {
+      id: '/business/$module'
+      path: '/$module'
+      fullPath: '/business/$module'
+      preLoaderRoute: typeof BusinessModuleRouteImport
+      parentRoute: typeof BusinessRoute
     }
     '/auth/security': {
       id: '/auth/security'
@@ -957,6 +1121,45 @@ const HomeRouteChildren: HomeRouteChildren = {
 
 const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
+interface BusinessRouteChildren {
+  BusinessModuleRoute: typeof BusinessModuleRoute
+  BusinessIndexRoute: typeof BusinessIndexRoute
+}
+
+const BusinessRouteChildren: BusinessRouteChildren = {
+  BusinessModuleRoute: BusinessModuleRoute,
+  BusinessIndexRoute: BusinessIndexRoute,
+}
+
+const BusinessRouteWithChildren = BusinessRoute._addFileChildren(
+  BusinessRouteChildren,
+)
+
+interface DevRouteChildren {
+  DevModuleRoute: typeof DevModuleRoute
+  DevIndexRoute: typeof DevIndexRoute
+}
+
+const DevRouteChildren: DevRouteChildren = {
+  DevModuleRoute: DevModuleRoute,
+  DevIndexRoute: DevIndexRoute,
+}
+
+const DevRouteWithChildren = DevRoute._addFileChildren(DevRouteChildren)
+
+interface UtilityRouteChildren {
+  UtilityModuleRoute: typeof UtilityModuleRoute
+  UtilityIndexRoute: typeof UtilityIndexRoute
+}
+
+const UtilityRouteChildren: UtilityRouteChildren = {
+  UtilityModuleRoute: UtilityModuleRoute,
+  UtilityIndexRoute: UtilityIndexRoute,
+}
+
+const UtilityRouteWithChildren =
+  UtilityRoute._addFileChildren(UtilityRouteChildren)
+
 interface CardsAppRouteChildren {
   CardsAppAccountSettingsRoute: typeof CardsAppAccountSettingsRoute
   CardsAppCardAnalyticsReportingRoute: typeof CardsAppCardAnalyticsReportingRoute
@@ -1060,7 +1263,10 @@ const Transaction_dashboardAppRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
+  BusinessRoute: BusinessRouteWithChildren,
+  DevRoute: DevRouteWithChildren,
   LoginRoute: LoginRoute,
+  UtilityRoute: UtilityRouteWithChildren,
   AuthAccountStatusRoute: AuthAccountStatusRoute,
   AuthHubRoute: AuthHubRoute,
   AuthIdentityRoute: AuthIdentityRoute,
