@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Card Program Administration</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PAYMO BaaS — Master Advanced Stylesheet (Extended)
+   ============================================================ */
+:root {
+    --pm-primary: #4F46E5;
+    --pm-primary-dark: #3730A3;
+    --pm-primary-light: #818CF8;
+    --pm-accent: #10B981;
+    --pm-accent-soft: #D1FAE5;
+    --pm-warning: #F59E0B;
+    --pm-warning-soft: #FEF3C7;
+    --pm-danger: #EF4444;
+    --pm-danger-soft: #FEE2E2;
+    --pm-info: #3B82F6;
+    --pm-info-soft: #DBEAFE;
+    --pm-purple: #8B5CF6;
+    --pm-purple-soft: #EDE9FE;
+
+    --pm-bg: #F5F1EC;
+    --pm-bg-2: #EEE8DF;
+    --pm-surface: #FFFFFF;
+    --pm-surface-2: #FAF7F3;
+    --pm-ink: #1A1F2E;
+    --pm-ink-soft: #4B5563;
+    --pm-muted: #9CA3AF;
+    --pm-border: #E5E2DC;
+    --pm-border-2: #D4D0C8;
+
+    --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+    --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+    --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+    --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+    --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+    --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+    --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+
+    --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+    --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+    --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+    --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+    --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+
+    --pm-r-sm: 8px;
+    --pm-r-md: 14px;
+    --pm-r-lg: 20px;
+    --pm-r-xl: 28px;
+    --pm-r-pill: 999px;
+
+    --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+    font-family: var(--pm-font-sans);
+    background: var(--pm-bg);
+    color: var(--pm-ink);
+    overflow-x: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ================ LAYOUT ================ */
+.pm-app {
+    display: flex;
+    min-height: 100vh;
+    background:
+        radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.08), transparent 60%),
+        radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, 0.06), transparent 60%),
+        radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.06), transparent 60%),
+        var(--pm-bg);
+}
+
+.pm-sidebar {
+    width: 88px;
+    flex-shrink: 0;
+    background: var(--pm-gradient-slate);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 100;
+}
+
+.pm-sidebar-logo {
+    width: 48px;
+    height: 48px;
+    background: var(--pm-gradient-hero);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 22px;
+    font-family: var(--pm-font-display);
+    box-shadow: var(--pm-shadow-lg);
+    margin-bottom: 24px;
+}
+
+.pm-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    width: 100%;
+    padding: 0 12px;
+}
+
+.pm-nav-item {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    transition: all .2s;
+    position: relative;
+}
+
+.pm-nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
+}
+
+.pm-nav-item.active {
+    color: #fff;
+    background: var(--pm-primary);
+    box-shadow: var(--pm-shadow-md);
+}
+
+.pm-nav-item .badge-dot {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    background: var(--pm-danger);
+    border-radius: 50%;
+    border: 2px solid #334155;
+    animation: pm-pulse 2s infinite;
+}
+
+@keyframes pm-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .6; transform: scale(1.2); }
+}
+
+.pm-main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-x: hidden; }
+
+/* ================ HEADER ================ */
+.pm-header {
+    background: rgba(245, 241, 236, .7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--pm-border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.pm-header-title h1 { font-family: var(--pm-font-display); font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+.pm-header-title p { margin: 0; font-size: 12px; color: var(--pm-ink-soft); }
+
+.pm-header-search { flex: 1; max-width: 440px; position: relative; }
+.pm-header-search input { width: 100%; height: 40px; padding: 0 16px 0 40px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-md); background: white; font-size: 13px; transition: all .2s; }
+.pm-header-search input:focus { outline: none; border-color: var(--pm-primary); box-shadow: var(--pm-shadow-glow); }
+.pm-header-search .bi { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--pm-muted); }
+
+.pm-header-actions { display: flex; align-items: center; gap: 8px; }
+
+.pm-header-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--pm-border);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    color: var(--pm-ink-soft);
+    position: relative;
+}
+.pm-header-btn:hover { background: var(--pm-surface-2); color: var(--pm-primary); border-color: var(--pm-primary-light); }
+.pm-header-btn .counter {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    background: var(--pm-danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid var(--pm-bg);
+}
+
+.pm-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px 5px 5px;
+    border: 1px solid var(--pm-border);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s;
+}
+.pm-profile-btn:hover { background: var(--pm-surface-2); }
+.pm-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--pm-gradient-hero);
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pm-font-display);
+}
+.pm-profile-btn .pm-name { font-size: 13px; font-weight: 600; }
+.pm-profile-btn .pm-role { font-size: 11px; color: var(--pm-muted); }
+
+/* ================ PAGE CONTENT ================ */
+.pm-page-bar { padding: 20px 32px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.pm-breadcrumb { font-size: 12px; color: var(--pm-muted); }
+.pm-breadcrumb a { color: var(--pm-primary); text-decoration: none; }
+.pm-breadcrumb a:hover { text-decoration: underline; }
+
+.pm-content { padding: 16px 32px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+.pm-card { background: var(--pm-surface); border: 1px solid var(--pm-border); border-radius: var(--pm-r-lg); padding: 20px; box-shadow: var(--pm-shadow-sm); transition: all .2s; }
+.pm-card:hover { box-shadow: var(--pm-shadow-md); }
+.pm-card-dark { background: var(--pm-gradient-slate); color: white; border: none; }
+
+.pm-stat-value { font-family: var(--pm-font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.pm-stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--pm-muted); font-weight: 600; }
+
+.pm-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--pm-r-pill); font-size: 11px; font-weight: 600; }
+.pm-badge-success { background: var(--pm-accent-soft); color: #047857; }
+.pm-badge-warning { background: var(--pm-warning-soft); color: #B45309; }
+.pm-badge-danger { background: var(--pm-danger-soft); color: #DC2626; }
+.pm-badge-info { background: var(--pm-info-soft); color: #1D4ED8; }
+.pm-badge-purple { background: var(--pm-purple-soft); color: #6D28D9; }
+.pm-badge-outline { border: 1px solid var(--pm-border); background: #fff; color: var(--pm-ink-soft); }
+
+.pm-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--pm-r-sm);
+    font-size: 13px; font-weight: 600; border: 1px solid var(--pm-border); background: white;
+    cursor: pointer; transition: all .2s; color: var(--pm-ink); text-decoration: none;
+}
+.pm-btn:hover { background: var(--pm-surface-2); transform: translateY(-1px); box-shadow: var(--pm-shadow-sm); }
+.pm-btn-primary { background: var(--pm-primary); color: white; border-color: var(--pm-primary); }
+.pm-btn-primary:hover { background: var(--pm-primary-dark); border-color: var(--pm-primary-dark); color: white; }
+.pm-btn-accent { background: var(--pm-accent); color: white; border-color: var(--pm-accent); }
+.pm-btn-danger { background: var(--pm-danger); color: white; border-color: var(--pm-danger); }
+.pm-btn-sm { padding: 5px 12px; font-size: 12px; }
+
+.pm-icon-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.pm-section-title { font-family: var(--pm-font-display); font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+.pm-section-sub { font-size: 12px; color: var(--pm-ink-soft); margin: 2px 0 0; }
+
+.pm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pm-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: var(--pm-muted); border-bottom: 1px solid var(--pm-border); background: var(--pm-surface-2); }
+.pm-table td { padding: 12px; border-bottom: 1px solid var(--pm-border); vertical-align: middle; }
+.pm-table tr:last-child td { border-bottom: none; }
+.pm-table tr:hover td { background: var(--pm-surface-2); }
+
+.pm-tab-pills { display: flex; gap: 4px; padding: 4px; background: var(--pm-surface-2); border-radius: var(--pm-r-sm); overflow-x: auto; }
+.pm-tab-pill { padding: 8px 16px; border-radius: 6px; border: none; background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .2s; color: var(--pm-ink-soft); }
+.pm-tab-pill.active { background: white; color: var(--pm-primary); box-shadow: var(--pm-shadow-sm); font-weight: 600; }
+
+.quick-action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.quick-action-btn { padding: 10px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); background: white; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; transition: all .2s; }
+.quick-action-btn:hover { border-color: var(--pm-primary); background: rgba(79, 70, 229, .04); transform: translateY(-1px); }
+
+.status-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--pm-border); }
+.status-row:last-child { border-bottom: none; }
+.feed-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--pm-border); }
+.feed-item:last-child { border-bottom: none; }
+
+.modal-content { border: none; border-radius: var(--pm-r-lg); box-shadow: var(--pm-shadow-xl); }
+.modal-header { border-bottom: 1px solid var(--pm-border); padding: 20px 24px; }
+.modal-body { padding: 24px; }
+.modal-footer { border-top: 1px solid var(--pm-border); padding: 16px 24px; }
+.pm-form-label { font-size: 12px; font-weight: 600; color: var(--pm-ink-soft); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+.pm-form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); font-size: 14px; transition: all .2s; background: white; }
+.pm-form-control:focus { outline: none; border-color: var(--pm-primary); box-shadow: var(--pm-shadow-glow); }
+
+.pm-stepper { display: flex; align-items: center; gap: 0; margin-bottom: 24px; flex-wrap: wrap; }
+.pm-step { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 90px; }
+.pm-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: var(--pm-border); color: var(--pm-muted); transition: all .3s; }
+.pm-step.active .pm-step-num { background: var(--pm-primary); color: white; }
+.pm-step.completed .pm-step-num { background: var(--pm-accent); color: white; }
+.pm-step-label { font-size: 11px; font-weight: 600; color: var(--pm-muted); }
+.pm-step.active .pm-step-label { color: var(--pm-primary); }
+.pm-step.completed .pm-step-label { color: var(--pm-accent); }
+.pm-step-line { flex: 1; height: 2px; background: var(--pm-border); margin: 0 8px; }
+
+.fade-step { display: none; }
+.fade-step.active { display: block; animation: fadeIn .3s; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn .3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.pm-loading-overlay { position: absolute; inset: 0; background: rgba(255, 255, 255, .85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: var(--pm-r-lg); }
+.pm-spinner { width: 40px; height: 40px; border: 3px solid var(--pm-border); border-top-color: var(--pm-primary); border-radius: 50%; animation: spin .8s linear infinite; }
+
+.pm-progress { height: 6px; background: var(--pm-border); border-radius: 3px; overflow: hidden; }
+.pm-progress-bar { height: 100%; border-radius: 3px; transition: width .4s; }
+
+.card-replica { width: 100%; height: 180px; border-radius: 12px; padding: 20px; color: white; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.card-replica::before { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: rgba(255,255,255,0.1); top: -100px; right: -50px; }
+.card-replica.bg-dark { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); }
+.card-replica.bg-gold { background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); }
+.card-replica.bg-purple { background: linear-gradient(135deg, #8B5CF6 0%, #5B21B6 100%); }
+
+.utility-block { background: var(--pm-surface-2); border-radius: var(--pm-r-md); padding: 16px; height: 100%; }
+
+@media(max-width: 768px) {
+    .pm-sidebar { display: none; }
+    .pm-header { padding: 12px 16px; flex-wrap: wrap; }
+    .pm-header-search { max-width: 100%; order: 3; flex-basis: 100%; }
+    .pm-content { padding: 12px 16px 24px; }
+    .pm-page-bar { padding: 12px 16px 0; }
+    .pm-stat-value { font-size: 22px; }
+    .quick-action-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-credit-card"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-people"></i></button>
+<button class="pm-nav-item"><i class="bi bi-bar-chart"></i></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-slate)">CA</div>
+<div>
+<h1>Card Program Administration</h1>
+<p>BaaS Operator & Issuer Card Management Console</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search cardholder, PAN, program ID, BIN, or dispute...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-heart-pulse"></i></button>
+<button class="pm-header-btn" onclick="openModal('inboxModal')"><i class="bi bi-envelope"></i><span class="counter">3</span></button>
+<button class="pm-header-btn" onclick="openModal('notificationsModal')"><i class="bi bi-bell"></i><span class="counter">8</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')">
+<div class="pm-avatar">AO</div>
+<div>
+<div class="pm-name">Amina O.</div>
+<div class="pm-role">BaaS Card Operator</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Program Administration</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 5.9 — Card Program Admin (Issuer/BaaS)</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage BIN sponsorships, cardholder lifecycles, global limits, compliance rules, and fee schedules for your enterprise card programs.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-shield-check"></i> Compliance Check</button>
+<button class="pm-btn" onclick="openModal('exportReportModal')"><i class="bi bi-download"></i> Reports</button>
+<button class="pm-btn" onclick="openModal('cardholderSearchModal')"><i class="bi bi-search"></i> Find Cardholder</button>
+<button class="pm-btn pm-btn-primary" onclick="openModal('issueBatchModal')"><i class="bi bi-plus-lg"></i> Issue Cards Batch</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-dark" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.7)">BaaS Issuing Platform <span style="color:#34D399">● Live</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">24,850 Active Cards</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.7)">Operating across 3 BIN programs (Corporate, Standard Debit, Premium Credit).</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="openModal('issueBatchModal')">New batch</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="openModal('binConfigModal')">BIN config</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">30D ISSUANCE VOL</p>
+<div class="pm-stat-value" style="margin:6px 0">1,420</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-graph-up-arrow"></i> +12% MoM</span>
+<div class="mt-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:11px;color:var(--pm-muted)"><span>Virtual</span><span>1,100</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:78%;background:var(--pm-info)"></div></div>
+<div class="d-flex justify-content-between mt-2 mb-1" style="font-size:11px;color:var(--pm-muted)"><span>Physical</span><span>320</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:22%;background:var(--pm-warning)"></div></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-danger)">RISK & FRAUD ALERTS</p>
+<div class="pm-stat-value" style="margin:6px 0">28</div>
+<span class="pm-badge pm-badge-danger"><i class="bi bi-shield-exclamation"></i> 5 critical</span>
+<div class="mt-3" style="font-size:12px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Velocity breaches</span><strong>12</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Geo-mismatch</span><strong>11</strong></div>
+<div class="d-flex justify-content-between"><span>AML flags</span><strong style="color:var(--pm-danger)">5</strong></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-primary)">
+<p class="pm-stat-label" style="color:var(--pm-primary)">PROGRAM REVENUE (YTD)</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 14.2M</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-cash-stack"></i> Interchange & Fees</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Interchange fee</span><strong>KES 8.4M</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Issuance & FX</span><strong>KES 4.2M</strong></div>
+<div class="d-flex justify-content-between"><span>ATM & Penalty</span><strong>KES 1.6M</strong></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ALERTS & QUICK ACTIONS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title">Attention Required</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('notificationsModal')">View all</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">AM</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">5 High-Risk AML Alerts</div>
+<div style="font-size:11px;color:var(--pm-muted)">Requires manual review & unblock</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('amlReviewModal')">Review</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">B2</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Batch Issuance #8892 Pending</div>
+<div style="font-size:11px;color:var(--pm-muted)">250 Corporate virtual cards</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approveBatchModal')">Approve</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">DS</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">14 New Chargeback Disputes</div>
+<div style="font-size:11px;color:var(--pm-muted)">Deadline approaching for 3 cases</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('disputeResolutionModal')">Resolve</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">ST</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Low Settlement Balance</div>
+<div style="font-size:11px;color:var(--pm-muted)">BIN 441011 settlement account < 10%</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('settlementDetailsModal')">Top-up</button>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title">System Suggestions</h3>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> System AI</span>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">LM</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Update Velocity Limits</div>
+<div style="font-size:11px;color:var(--pm-muted)">Increase daily limits for corporate BINs based on usage</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('velocityLimitsModal')">Update</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">MC</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Review MCC Blocklist</div>
+<div style="font-size:11px;color:var(--pm-muted)">High failure rate on MCC 5411 (Grocery)</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('mccBlocklistModal')">Review</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">FX</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Optimize FX Fee Schedule</div>
+<div style="font-size:11px;color:var(--pm-muted)">Consider lowering cross-border fees by 0.5%</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('feeScheduleModal')">Model</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-primary-light);color:white;font-size:12px">WH</div>
+<div style="flex:1">
+<div style="font-weight:600;font-size:13px">Webhook Failures Detected</div>
+<div style="font-size:11px;color:var(--pm-muted)">3 endpoint timeouts in the last 24h</div>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('webhookSettingsModal')">Check</button>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3">
+<h3 class="pm-section-title">Operator Actions</h3>
+<p class="pm-section-sub">Administrative and compliance controls</p>
+</div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('cardholderSearchModal')"><i class="bi bi-search text-primary me-1"></i> Find Card</button>
+<button class="quick-action-btn" onclick="openModal('binConfigModal')"><i class="bi bi-credit-card-2-front text-info me-1"></i> Manage BIN</button>
+<button class="quick-action-btn" onclick="openModal('velocityLimitsModal')"><i class="bi bi-speedometer2 text-warning me-1"></i> Limits</button>
+<button class="quick-action-btn" onclick="openModal('feeScheduleModal')"><i class="bi bi-tags text-success me-1"></i> Fee Engine</button>
+<button class="quick-action-btn" onclick="openModal('mccBlocklistModal')"><i class="bi bi-slash-circle text-danger me-1"></i> Global MCC</button>
+<button class="quick-action-btn" onclick="openModal('amlReviewModal')"><i class="bi bi-shield-lock" style="color:var(--pm-purple)"></i> AML Review</button>
+<button class="quick-action-btn" onclick="openModal('issueBatchModal')"><i class="bi bi-file-earmark-spreadsheet text-secondary me-1"></i> Batch Issue</button>
+<button class="quick-action-btn" onclick="openModal('settlementDetailsModal')"><i class="bi bi-bank text-primary me-1"></i> Settlements</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.9.1 — Program Overview & BIN Management -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-credit-card-2-front-fill" style="color:var(--pm-primary)"></i> 5.9.1 — Program Overview & BIN Management</h3>
+<p class="pm-section-sub">Manage active card programs, view BIN performance, and configure issuing parameters.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('addBinModal')"><i class="bi bi-plus"></i> Request New BIN</button>
+</div>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead>
+<tr><th>BIN / IIN</th><th>Program Name</th><th>Type</th><th>Network</th><th>Issued Cards</th><th>30D Spend</th><th>Status</th><th>Actions</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>4410 11**</code></td>
+<td>Corporate Expense</td>
+<td>Virtual Credit</td>
+<td><span class="pm-badge" style="background:#1434CB;color:white">Visa</span></td>
+<td>12,450</td>
+<td>KES 85.2M</td>
+<td><span class="pm-badge pm-badge-success">Active</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('binConfigModal')">Config</button></td>
+</tr>
+<tr>
+<td><code>5529 00**</code></td>
+<td>Standard Retail</td>
+<td>Physical Debit</td>
+<td><span class="pm-badge" style="background:#EB001B;color:white">Mastercard</span></td>
+<td>8,200</td>
+<td>KES 42.1M</td>
+<td><span class="pm-badge pm-badge-success">Active</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('binConfigModal')">Config</button></td>
+</tr>
+<tr>
+<td><code>4288 99**</code></td>
+<td>Premium Travel</td>
+<td>Physical Credit</td>
+<td><span class="pm-badge" style="background:#1434CB;color:white">Visa</span></td>
+<td>4,200</td>
+<td>KES 61.5M</td>
+<td><span class="pm-badge pm-badge-success">Active</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('binConfigModal')">Config</button></td>
+</tr>
+<tr>
+<td><code>5399 21**</code></td>
+<td>Student Prepaid</td>
+<td>Virtual Prepaid</td>
+<td><span class="pm-badge" style="background:#EB001B;color:white">Mastercard</span></td>
+<td>0</td>
+<td>KES 0</td>
+<td><span class="pm-badge pm-badge-warning">Awaiting Setup</span></td>
+<td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('binConfigModal')">Setup</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.9.2 — Cardholder & Lifecycle Management -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-people-fill" style="color:var(--pm-info)"></i> 5.9.2 — Cardholder & Lifecycle Management</h3>
+<p class="pm-section-sub">Support end-users, execute forced actions, track card deliveries, and manage batch requests.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('cardholderSearchModal')"><i class="bi bi-search"></i> Search User</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('issueBatchModal')"><i class="bi bi-upload"></i> Issue Batch</button>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-2">
+<h4 style="font-size:14px;font-weight:700;margin:0">Recent Cardholder Support Actions</h4>
+</div>
+<div class="status-row">
+<div><strong>James Kamau (Corporate)</strong><div style="font-size:11px;color:var(--pm-muted)">Card *4421 · PIN reset requested</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('resetPinModal')">Action</button>
+</div>
+<div class="status-row">
+<div><strong>Amina Hassan (Retail)</strong><div style="font-size:11px;color:var(--pm-muted)">Card *8812 · Reported stolen</div></div>
+<button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('forceFreezeModal')">Freeze</button>
+</div>
+<div class="status-row">
+<div><strong>TechCorp Ltd (Expense)</strong><div style="font-size:11px;color:var(--pm-muted)">Card *9923 · Replacement damaged</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('replaceCardModal')">Initiate</button>
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-2">
+<h4 style="font-size:14px;font-weight:700;margin:0">Batch Issuance Queue</h4>
+</div>
+<div class="status-row">
+<div><strong>Batch #8892</strong> · <span class="pm-badge pm-badge-warning">Pending Approval</span><div style="font-size:11px;color:var(--pm-muted)">250 Virtual · Corp Expense BIN · by John D.</div></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approveBatchModal')">Review</button>
+</div>
+<div class="status-row">
+<div><strong>Batch #8891</strong> · <span class="pm-badge pm-badge-info">In Production</span><div style="font-size:11px;color:var(--pm-muted)">150 Physical · Premium BIN · 40% printed</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('batchStatusModal')">Track</button>
+</div>
+<div class="status-row">
+<div><strong>Batch #8890</strong> · <span class="pm-badge pm-badge-success">Completed</span><div style="font-size:11px;color:var(--pm-muted)">500 Virtual · Standard BIN · 12 Jun 2025</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('batchStatusModal')">Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.9.3 — Compliance, Limits & Fee Configuration -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-shield-check" style="color:var(--pm-accent)"></i> 5.9.3 — Compliance, Limits & Fee Configuration</h3>
+<p class="pm-section-sub">Define global velocity limits, construct fee schedules, and apply fraud and AML constraints.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('geoFencingModal')"><i class="bi bi-globe"></i> Geo-Rules</button>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block text-center" style="cursor:pointer" onclick="openModal('velocityLimitsModal')">
+<div class="pm-icon-circle mx-auto mb-2" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-speedometer2"></i></div>
+<h4 style="font-size:14px;font-weight:700">Velocity Limits</h4>
+<p style="font-size:12px;color:var(--pm-muted);margin:0">Set daily, weekly, monthly transaction caps and frequency rules across programs.</p>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block text-center" style="cursor:pointer" onclick="openModal('feeScheduleModal')">
+<div class="pm-icon-circle mx-auto mb-2" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-tags"></i></div>
+<h4 style="font-size:14px;font-weight:700">Fee Schedule Engine</h4>
+<p style="font-size:12px;color:var(--pm-muted);margin:0">Configure issuance, ATM, cross-border, and maintenance fees per BIN.</p>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block text-center" style="cursor:pointer" onclick="openModal('mccBlocklistModal')">
+<div class="pm-icon-circle mx-auto mb-2" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-slash-circle"></i></div>
+<h4 style="font-size:14px;font-weight:700">Global MCC & Fraud Rules</h4>
+<p style="font-size:12px;color:var(--pm-muted);margin:0">Block restricted categories (e.g. gambling, crypto) and setup 3DS enforcement.</p>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- pm-content -->
+</div><!-- pm-main -->
+</div><!-- pm-app -->
+
+<!-- ============================================================ -->
+<!-- 25+ MODALS FOR EXHAUSTIVE FUNCTIONALITY -->
+<!-- ============================================================ -->
+
+<!-- 1. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Platform Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-3"><span style="font-weight:600">Mastercard Gateway</span><span class="pm-badge pm-badge-success">100% Uptime</span></div><div class="d-flex justify-content-between mb-3"><span style="font-weight:600">Visa Gateway</span><span class="pm-badge pm-badge-success">100% Uptime</span></div><div class="d-flex justify-content-between mb-3"><span style="font-weight:600">Core Ledger Sync</span><span class="pm-badge pm-badge-success">Syncing (4ms lag)</span></div><div class="d-flex justify-content-between mb-3"><span style="font-weight:600">KYC/AML Oracle</span><span class="pm-badge pm-badge-warning">Degraded (1.2s delay)</span></div><div class="d-flex justify-content-between mb-3"><span style="font-weight:600">Settlement Accounts</span><span class="pm-badge pm-badge-success">Funded</span></div><hr><p style="font-size:12px;color:var(--pm-muted)">Last automated check: 2 minutes ago. All issuing endpoints are active and accepting payload requests.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('healthCheckModal','Health diagnostics exported!','HC-9921')">Download Report</button></div></div></div></div>
+
+<!-- 2. Cardholder Search -->
+<div class="modal fade resettable" id="cardholderSearchModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-search text-primary me-2"></i>Find Cardholder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="text" class="pm-form-control" placeholder="Enter Name, Email, Phone, or Last 4 PAN"><button class="pm-btn pm-btn-primary" onclick="document.getElementById('searchResult').style.display='block'">Search</button></div><div id="searchResult" style="display:none;"><div class="table-responsive"><table class="pm-table"><thead><tr><th>User / Entity</th><th>Card PAN</th><th>Type</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>James Kamau (TechCorp)</td><td><code>4410 **** 4421</code></td><td>Virtual</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="closeModal('cardholderSearchModal');openModal('cardholderDetailModal')">View</button></td></tr><tr><td>Amina Hassan</td><td><code>5529 **** 8812</code></td><td>Physical</td><td><span class="pm-badge pm-badge-danger">Frozen</span></td><td><button class="pm-btn pm-btn-sm" onclick="closeModal('cardholderSearchModal');openModal('cardholderDetailModal')">View</button></td></tr></tbody></table></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 3. Cardholder Detail -->
+<div class="modal fade resettable" id="cardholderDetailModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-vcard text-info me-2"></i>Cardholder Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-4"><div class="p-3 border rounded h-100"><div class="pm-avatar mb-3" style="width:48px;height:48px;font-size:18px">JK</div><h6 style="font-weight:700;margin:0">James Kamau</h6><p style="font-size:12px;color:var(--pm-muted);margin-bottom:12px">james@techcorp.co.ke | +254 712 345 678</p><div class="mb-2"><span class="pm-badge pm-badge-success">KYC Verified</span></div><div style="font-size:12px"><strong>Program:</strong> Corporate Expense (BIN 441011)</div><div style="font-size:12px"><strong>Linked Wallet:</strong> WAL-882193</div></div></div><div class="col-md-8"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('chTab','cards',this)">Active Cards</button><button class="pm-tab-pill" onclick="switchTab('chTab','txns',this)">Transactions</button><button class="pm-tab-pill" onclick="switchTab('chTab','limits',this)">Limits</button></div><div id="chTab-cards" class="tab-panel active"><div class="card-replica bg-dark mb-3"><div class="d-flex justify-content-between"><span><i class="bi bi-building"></i> TechCorp Expense</span><i class="bi bi-wifi"></i></div><h4 style="font-family:monospace;letter-spacing:2px;margin:20px 0">4410  11**  ****  4421</h4><div class="d-flex justify-content-between" style="font-size:12px"><span>JAMES KAMAU</span><span>12/28</span></div></div><div class="d-flex gap-2"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('forceFreezeModal')"><i class="bi bi-snow"></i> Force Freeze</button><button class="pm-btn pm-btn-sm" onclick="openModal('resetPinModal')"><i class="bi bi-key"></i> Reset PIN</button><button class="pm-btn pm-btn-sm" onclick="openModal('replaceCardModal')"><i class="bi bi-arrow-repeat"></i> Replace</button></div></div><div id="chTab-txns" class="tab-panel"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Merchant</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr><td>27 Jun</td><td>Uber Eats</td><td>KES 2,400</td><td><span class="pm-badge pm-badge-success">Settled</span></td></tr><tr><td>25 Jun</td><td>Shell Petrol</td><td>KES 5,000</td><td><span class="pm-badge pm-badge-success">Settled</span></td></tr><tr><td>24 Jun</td><td>AWS Cloud</td><td>$142.50</td><td><span class="pm-badge pm-badge-warning">Auth Hold</span></td></tr></tbody></table></div></div><div id="chTab-limits" class="tab-panel"><div class="mb-3"><label class="pm-form-label">Daily Spending Cap</label><input type="text" class="pm-form-control" value="KES 50,000"></div><div class="mb-3"><label class="pm-form-label">Single Transaction Cap</label><input type="text" class="pm-form-control" value="KES 20,000"></div><div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Online Transactions</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">International Transactions</label></div><button class="pm-btn pm-btn-sm pm-btn-primary mt-3">Save Overrides</button></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 4. Force Freeze Modal -->
+<div class="modal fade resettable" id="forceFreezeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-snow text-danger me-2"></i>Force Freeze Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">You are about to place an administrative block on card <strong>*4421</strong> for James Kamau. The cardholder will not be able to unblock this themselves.</p><div class="mb-3"><label class="pm-form-label">Reason Code</label><select class="pm-form-control"><option>Suspected Fraud (Permanent)</option><option>AML Investigation (Temporary)</option><option>Corporate Policy Breach (Temporary)</option><option>Lost / Stolen (Permanent)</option></select></div><div class="mb-3"><label class="pm-form-label">Operator Notes</label><textarea class="pm-form-control" rows="3">Multiple high-velocity transactions flagged in foreign jurisdiction.</textarea></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:12px">Send email notification to cardholder</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('forceFreezeModal','Card frozen successfully. Status updated to blocked.','')">Apply Freeze</button></div></div></div></div>
+
+<!-- 5. Reset PIN Modal -->
+<div class="modal fade resettable" id="resetPinModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-key text-primary me-2"></i>Reset Card PIN</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Initiate a secure PIN reset for card <strong>*4421</strong>. A secure link and OTP will be dispatched to the cardholder's verified contact methods.</p><div class="mb-3"><label class="pm-form-label">Delivery Channel</label><select class="pm-form-control"><option>Email (ja***@techcorp.co.ke)</option><option>SMS (+254 712 *** 678)</option><option>Both</option></select></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-shield-lock me-1"></i> Operator cannot set the PIN directly. The cardholder must use the portal to define a new PIN.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('resetPinModal','PIN reset instructions sent to cardholder.','')">Send Instructions</button></div></div></div></div>
+
+<!-- 6. Replace Card Modal -->
+<div class="modal fade resettable" id="replaceCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-info me-2"></i>Issue Replacement Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Card to Replace</label><input type="text" class="pm-form-control" value="*4421 (James Kamau)" disabled></div><div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control"><option>Lost / Stolen</option><option>Damaged / Unreadable</option><option>Compromised / Fraud</option><option>Name Change</option></select></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Block old card immediately</label></div><div class="form-check mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Migrate balance & recurring limits</label></div><div class="mb-3"><label class="pm-form-label">Replacement Fee</label><select class="pm-form-control"><option>Waive Fee (Operator Override)</option><option>Charge Standard Fee (KES 500)</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('replaceCardModal','Replacement issued. New virtual PAN generated instantly.','')">Process Replacement</button></div></div></div></div>
+
+<!-- 7. BIN Configuration Modal -->
+<div class="modal fade resettable" id="binConfigModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders text-primary me-2"></i>BIN Configuration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('binTab','general',this)">General</button><button class="pm-tab-pill" onclick="switchTab('binTab','auth',this)">Auth Rules</button><button class="pm-tab-pill" onclick="switchTab('binTab','settlement',this)">Settlement</button></div><div id="binTab-general" class="tab-panel active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">BIN / IIN</label><input type="text" class="pm-form-control" value="4410 11**" disabled></div><div class="col-md-6"><label class="pm-form-label">Program Name</label><input type="text" class="pm-form-control" value="Corporate Expense"></div><div class="col-md-6"><label class="pm-form-label">Card Type</label><select class="pm-form-control" disabled><option>Virtual Credit</option></select></div><div class="col-md-6"><label class="pm-form-label">Base Currency</label><select class="pm-form-control"><option>KES</option><option>USD</option></select></div></div></div><div id="binTab-auth" class="tab-panel"><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Require 3D Secure for online txns</label></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input"><label class="form-check-label">Allow ATM Withdrawals (PIN required)</label></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Allow Cross-Border (International)</label></div><div class="mb-3"><label class="pm-form-label">Max Card Balance (KES)</label><input type="text" class="pm-form-control" value="500,000"></div></div><div id="binTab-settlement" class="tab-panel"><div class="mb-3"><label class="pm-form-label">Prefunded Settlement Account</label><input type="text" class="pm-form-control" value="SET-9912048811"></div><div class="mb-3"><label class="pm-form-label">Low Balance Warning Alert (KES)</label><input type="text" class="pm-form-control" value="5,000,000"></div><div class="mb-3"><label class="pm-form-label">Settlement Frequency</label><select class="pm-form-control"><option>Daily (T+1)</option><option>Real-time</option></select></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('binConfigModal','BIN Configuration updated and synced to core ledger.','')">Save Configuration</button></div></div></div></div>
+
+<!-- 8. Add New BIN Modal -->
+<div class="modal fade resettable" id="addBinModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle text-success me-2"></i>Request New BIN Program</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Program Name</label><input type="text" class="pm-form-control" placeholder="e.g. Employee Benefits Prepard"></div><div class="mb-3"><label class="pm-form-label">Network</label><select class="pm-form-control"><option>Visa</option><option>Mastercard</option><option>UnionPay</option></select></div><div class="mb-3"><label class="pm-form-label">Form Factor</label><select class="pm-form-control"><option>Virtual Only</option><option>Physical Only</option><option>Virtual + Physical Companion</option></select></div><div class="mb-3"><label class="pm-form-label">Funding Model</label><select class="pm-form-control"><option>Prepaid (Cardholder funded)</option><option>Prepaid (Corporate funded)</option><option>Credit (Issuer ledger)</option></select></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> New BIN requests are subject to network SLA (approx 2-4 weeks setup).</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="processAction('addBinModal','BIN Request submitted to network. Ticket BIN-9921 created.','BIN-9921')">Submit Request</button></div></div></div></div>
+
+<!-- 9. Issue Batch (Multi-step) -->
+<div class="modal fade resettable" id="issueBatchModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-upload text-primary me-2"></i>Issue Card Batch</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="batchStepper"></div><div id="batchStep1" class="fade-step active"><h6 style="font-weight:700">Step 1: Select Program</h6><div class="mb-3"><label class="pm-form-label">BIN Program</label><select class="pm-form-control"><option>Corporate Expense (441011)</option><option>Standard Retail (552900)</option></select></div><div class="mb-3"><label class="pm-form-label">Card Format</label><select class="pm-form-control"><option>Virtual Cards (Instant issue)</option><option>Physical Cards (Requires printing & dispatch)</option></select></div></div><div id="batchStep2" class="fade-step"><h6 style="font-weight:700">Step 2: Upload Data</h6><div class="p-4 border rounded text-center mb-3 border-dashed" style="border-style:dashed;background:var(--pm-surface-2)"><i class="bi bi-file-earmark-spreadsheet text-muted mb-2 d-block" style="font-size:32px"></i><div style="font-size:13px;font-weight:600">Upload CSV or Excel File</div><div style="font-size:11px;color:var(--pm-muted)">Columns required: FirstName, LastName, Phone, Email, ID Number, InitLimit</div><input type="file" class="mt-3 form-control-sm w-50 mx-auto"></div><div class="d-flex justify-content-center"><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-download"></i> Download Template</button></div></div><div id="batchStep3" class="fade-step"><h6 style="font-weight:700">Step 3: Validation & Preview</h6><div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft);color:#047857;font-size:13px"><i class="bi bi-check-circle me-1"></i> Data validated successfully. No errors found.</div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Name</th><th>ID / Passport</th><th>Init Limit</th><th>Status</th></tr></thead><tbody><tr><td>Sarah Jenkins</td><td>29188211</td><td>KES 50,000</td><td><span class="pm-badge pm-badge-success">Valid</span></td></tr><tr><td>Peter Omondi</td><td>31002911</td><td>KES 20,000</td><td><span class="pm-badge pm-badge-success">Valid</span></td></tr><tr><td>...and 248 more</td><td></td><td></td><td></td></tr></tbody></table></div></div><div id="batchStep4" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Batch Submitted</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Batch #8893 containing 250 cards has been sent for final approval.</p></div></div></div><div class="modal-footer" id="batchFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="batchNextBtn" onclick="nextBatchStep()">Next Step <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 10. Approve Batch Modal -->
+<div class="modal fade resettable" id="approveBatchModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Approve Batch Issuance</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-1"><span class="text-muted">Batch ID</span><strong>#8892</strong></div><div class="d-flex justify-content-between mb-1"><span class="text-muted">Program</span><strong>Corporate Expense</strong></div><div class="d-flex justify-content-between mb-1"><span class="text-muted">Card Count</span><strong>250 Virtual</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Submitted By</span><strong>John Doe (Admin)</strong></div></div><div class="mb-3"><label class="pm-form-label">Approval Action</label><select class="pm-form-control"><option>Approve & Push to Production</option><option>Reject & Return to Maker</option></select></div><div class="mb-3"><label class="pm-form-label">Approver PIN / Password</label><input type="password" class="pm-form-control" placeholder="Verify identity"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="processAction('approveBatchModal','Batch #8892 approved. Issuance engine processing...','BAT-8892')">Confirm Action</button></div></div></div></div>
+
+<!-- 11. Batch Status Modal -->
+<div class="modal fade resettable" id="batchStatusModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-list-task text-primary me-2"></i>Batch Status #8891</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-1" style="font-size:12px;font-weight:600"><span>Progress: 40% Completed</span><span>60 / 150 Cards</span></div><div class="pm-progress mb-4"><div class="pm-progress-bar" style="width:40%;background:var(--pm-primary)"></div></div><ul style="font-size:13px;line-height:2;color:var(--pm-ink-soft);padding-left:16px"><li style="color:var(--pm-accent);font-weight:600">Data Validation (Done)</li><li style="color:var(--pm-accent);font-weight:600">Compliance & KYC Check (Done)</li><li style="color:var(--pm-primary);font-weight:600">PAN Generation (In Progress)</li><li>Personalization & Printing (Pending)</li><li>Dispatch (Pending)</li></ul></div><div class="modal-footer"><button class="pm-btn pm-btn-danger">Halt Batch</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 12. Velocity Limits Modal -->
+<div class="modal fade resettable" id="velocityLimitsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 text-warning me-2"></i>Global Velocity Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select Program BIN</label><select class="pm-form-control"><option>Corporate Expense (441011)</option><option>Standard Retail (552900)</option></select></div><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Daily Spend Limit (KES)</label><input type="text" class="pm-form-control" value="100,000"></div><div class="col-md-6"><label class="pm-form-label">Daily TXN Count Limit</label><input type="text" class="pm-form-control" value="20"></div><div class="col-md-6"><label class="pm-form-label">Monthly Spend Limit (KES)</label><input type="text" class="pm-form-control" value="1,000,000"></div><div class="col-md-6"><label class="pm-form-label">Max Single TXN Amount (KES)</label><input type="text" class="pm-form-control" value="50,000"></div></div><hr class="pm-divider"><div class="form-check form-switch mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Block transactions if velocity limit breached</label></div><div class="form-check form-switch"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Send email alert to BaaS admin on breach</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('velocityLimitsModal','Velocity limits updated and pushed to auth gateway.','')">Save Limits</button></div></div></div></div>
+
+<!-- 13. Fee Schedule Modal -->
+<div class="modal fade resettable" id="feeScheduleModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tags text-success me-2"></i>Fee Schedule Configuration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select Program</label><select class="pm-form-control"><option>Corporate Expense (441011)</option></select></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Fee Type</th><th>Amount / Percentage</th><th>Status</th></tr></thead><tbody><tr><td>Card Issuance (Physical)</td><td><input type="text" class="pm-form-control" value="KES 500" style="width:120px"></td><td><span class="pm-badge pm-badge-success">Active</span></td></tr><tr><td>Monthly Maintenance</td><td><input type="text" class="pm-form-control" value="KES 0" style="width:120px"></td><td><span class="pm-badge pm-badge-outline">Inactive</span></td></tr><tr><td>ATM Withdrawal (Local)</td><td><input type="text" class="pm-form-control" value="KES 35" style="width:120px"></td><td><span class="pm-badge pm-badge-success">Active</span></td></tr><tr><td>Cross-Border FX Markup</td><td><input type="text" class="pm-form-control" value="2.5%" style="width:120px"></td><td><span class="pm-badge pm-badge-success">Active</span></td></tr><tr><td>Replacement Fee</td><td><input type="text" class="pm-form-control" value="KES 500" style="width:120px"></td><td><span class="pm-badge pm-badge-success">Active</span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('feeScheduleModal','Fee table updated. Will apply to next billing cycle.','')">Update Fee Table</button></div></div></div></div>
+
+<!-- 14. Global MCC Blocklist Modal -->
+<div class="modal fade resettable" id="mccBlocklistModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-slash-circle text-danger me-2"></i>Global MCC Blocklist</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Select Merchant Category Codes (MCC) to decline across all cards in the program.</p><div class="mb-3"><label class="pm-form-label">Program</label><select class="pm-form-control"><option>Corporate Expense</option></select></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">7995 - Betting, Casino & Gambling</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">6051 - Crypto / Non-FI Fiat</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input"><label class="form-check-label" style="font-size:13px">5921 - Liquor Stores</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input"><label class="form-check-label" style="font-size:13px">5814 - Fast Food Restaurants</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input"><label class="form-check-label" style="font-size:13px">7273 - Dating & Escort Services</label></div><div class="mt-3"><label class="pm-form-label">Add Custom MCC</label><div class="d-flex gap-2"><input type="text" class="pm-form-control" placeholder="e.g. 5411"><button class="pm-btn pm-btn-outline">Add</button></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('mccBlocklistModal','MCC rules synced to authorization engine.','')">Save Rules</button></div></div></div></div>
+
+<!-- 15. AML Review Modal -->
+<div class="modal fade resettable" id="amlReviewModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-purple me-2" style="color:var(--pm-purple)"></i>AML / Fraud Alert Review</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><span class="pm-badge pm-badge-danger mb-1">High Risk</span><br><strong>Card *4421 (James Kamau)</strong><div style="font-size:11px;color:var(--pm-muted)">Suspicious geo-velocity: Nairobi -> Dubai in 30 mins</div></div><div class="text-end"><strong>$850.00 Auth Hold</strong><div class="mt-1 d-flex gap-1"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('forceFreezeModal')">Block Card</button><button class="pm-btn pm-btn-sm pm-btn-success" onclick="processAction('amlReviewModal','Alert cleared. Transaction approved.','')">Clear Alert</button></div></div></div><div class="status-row"><div><span class="pm-badge pm-badge-warning mb-1">Med Risk</span><br><strong>Card *1102 (TechCorp Marketing)</strong><div style="font-size:11px;color:var(--pm-muted)">Pattern deviation: 15 micro-transactions in 2 hours</div></div><div class="text-end"><strong>Facebook Ads</strong><div class="mt-1 d-flex gap-1"><button class="pm-btn pm-btn-sm pm-btn-danger">Block Card</button><button class="pm-btn pm-btn-sm pm-btn-success">Clear Alert</button></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 16. Dispute Resolution Modal -->
+<div class="modal fade resettable" id="disputeResolutionModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-return-left text-danger me-2"></i>Chargeback & Dispute Management</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active">Pending Action</button><button class="pm-tab-pill">Representment</button><button class="pm-tab-pill">Closed</button></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Case ID</th><th>Cardholder</th><th>Amount</th><th>Reason Code</th><th>Deadline</th><th>Action</th></tr></thead><tbody><tr><td>CB-1192</td><td>Sarah Jenkins</td><td>$45.00</td><td>Fraud (Not Authorized)</td><td>2 Days</td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="processAction('disputeResolutionModal','Chargeback accepted. Account credited.','CB-1192')">Review</button></td></tr><tr><td>CB-1188</td><td>Peter Omondi</td><td>KES 12,500</td><td>Services Not Rendered</td><td>5 Days</td><td><button class="pm-btn pm-btn-sm pm-btn-primary">Review</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 17. Settlement Details Modal -->
+<div class="modal fade resettable" id="settlementDetailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank text-primary me-2"></i>BIN Settlement Account</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2)"><div style="font-size:12px;color:var(--pm-muted);font-weight:600">AVAILABLE FUNDING BALANCE</div><div style="font-size:32px;font-weight:700;color:var(--pm-primary);margin:8px 0">KES 4,250,000</div><div style="font-size:12px;color:var(--pm-danger)"><i class="bi bi-exclamation-triangle"></i> Below target threshold (KES 5M)</div></div><div class="mb-3"><label class="pm-form-label">Top-Up Settlement Account</label><select class="pm-form-control"><option>Transfer from Main Treasury (Acc *8812)</option><option>Wire Transfer Instructions (PDF)</option></select></div><div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="text" class="pm-form-control" value="5,000,000"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('settlementDetailsModal','Settlement account topped up successfully.','')">Initiate Transfer</button></div></div></div></div>
+
+<!-- 18. Geo-Fencing Modal -->
+<div class="modal fade resettable" id="geoFencingModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe text-info me-2"></i>Geo-Fencing & Regional Rules</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Program</label><select class="pm-form-control"><option>Corporate Expense</option></select></div><div class="row g-3"><div class="col-md-6"><div class="p-3 border rounded"><div class="form-check form-switch mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-weight:600">East Africa Only Mode</label></div><p style="font-size:11px;color:var(--pm-muted);margin:0">Restrict physical transactions to Kenya, Uganda, Tanzania, Rwanda.</p></div></div><div class="col-md-6"><div class="p-3 border rounded"><div class="form-check form-switch mb-2"><input type="checkbox" class="form-check-input"><label class="form-check-label" style="font-weight:600">High-Risk Jurisdiction Block</label></div><p style="font-size:11px;color:var(--pm-muted);margin:0">Auto-decline CNP & POS transactions from FATF high-risk countries.</p></div></div></div><div class="mt-3"><label class="pm-form-label">Whitelist Specific Countries</label><input type="text" class="pm-form-control" placeholder="e.g. United States, United Kingdom"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('geoFencingModal','Geo-fencing rules applied to program BIN.','')">Save Rules</button></div></div></div></div>
+
+<!-- 19. Export Report Modal -->
+<div class="modal fade resettable" id="exportReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Program Reports</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control"><option>Settlement Reconciliation</option><option>Card Issuance Ledger</option><option>Fraud & Dispute Log</option><option>Interchange Revenue Statement</option></select></div><div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control" value="2025-06-01"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control" value="2025-06-27"></div></div><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>CSV</option><option>Excel</option><option>PDF</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportReportModal','Report compiled and downloading...','')">Generate Report</button></div></div></div></div>
+
+<!-- 20. Webhook Settings Modal -->
+<div class="modal fade resettable" id="webhookSettingsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-code-slash text-secondary me-2"></i>Webhook & API Integration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:12px;color:var(--pm-danger)"><i class="bi bi-exclamation-triangle me-1"></i> System detected 3 delivery failures to endpoint <code>https://api.techcorp.com/v1/cards/webhook</code>.</div><div class="mb-3"><label class="pm-form-label">Webhook URL</label><input type="text" class="pm-form-control" value="https://api.techcorp.com/v1/cards/webhook"></div><div class="mb-3"><label class="pm-form-label">Signing Secret</label><div class="d-flex gap-2"><input type="password" class="pm-form-control" value="whsec_1234567890abcdef" disabled><button class="pm-btn pm-btn-outline">Reveal</button><button class="pm-btn pm-btn-outline">Rotate</button></div></div><label class="pm-form-label">Subscribed Events</label><div class="row g-2"><div class="col-md-6"><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:12px">card.created</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:12px">card.status_changed</label></div></div><div class="col-md-6"><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:12px">transaction.authorized</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:12px">transaction.declined</label></div></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-outline">Test Endpoint</button><button class="pm-btn pm-btn-primary" onclick="processAction('webhookSettingsModal','Webhook settings updated successfully.','')">Save Settings</button></div></div></div></div>
+
+<!-- 21. Inbox Modal -->
+<div class="modal fade resettable" id="inboxModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-envelope me-2"></i>Operator Inbox</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><span class="pm-badge pm-badge-info mb-1">System</span><br><strong>Visa Gateway Maintenance Notice</strong><div style="font-size:11px;color:var(--pm-muted)">Scheduled downtime on 30 Jun 02:00 EAT</div></div><button class="pm-btn pm-btn-sm">Read</button></div><div class="status-row"><div><span class="pm-badge pm-badge-warning mb-1">Compliance</span><br><strong>Updated AML Guidelines Q3 2025</strong><div style="font-size:11px;color:var(--pm-muted)">New reporting requirements for cross-border TXNs</div></div><button class="pm-btn pm-btn-sm">Read</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 22. Notifications Modal -->
+<div class="modal fade resettable" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Recent Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:400px;overflow-y:auto"><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-danger)!important;font-size:13px"><strong>Velocity Breach</strong> — Corporate Card *9921 hit daily limit.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">10 mins ago</div></div><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-info)!important;font-size:13px"><strong>Batch Processed</strong> — Batch #8890 successfully issued 500 virtual cards.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">1 hour ago</div></div><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-warning)!important;font-size:13px"><strong>Low Settlement Balance</strong> — Corporate BIN dropping below threshold.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 hours ago</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>BaaS Operator Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)">AO</div><h5 style="font-weight:700;margin-bottom:2px">Amina O.</h5><p style="font-size:13px;color:var(--pm-muted)">admin@techcorp.co.ke · Super Admin</p><div class="p-3 rounded mt-3 text-start" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-2"><span>2FA Status</span><span class="pm-badge pm-badge-success">Enabled</span></div><div class="d-flex justify-content-between mb-2"><span>Last Login</span><strong>Today, 08:14 EAT</strong></div><div class="d-flex justify-content-between"><span>Access Level</span><strong>Level 4 (BIN Admin)</strong></div></div></div><div class="modal-footer"><button class="pm-btn" onclick="openModal('notificationPrefsModal');closeModal('profileModal')">Preferences</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 24. Notification Prefs Modal -->
+<div class="modal fade resettable" id="notificationPrefsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-gear me-2"></i>Operator Notification Preferences</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Email alerts for AML / Fraud flags</label></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Email alerts for Low Settlement Balance</label></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input"><label class="form-check-label">Daily summary report email</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('notificationPrefsModal','Preferences saved.','')">Save</button></div></div></div></div>
+
+<!-- 25. Suspend Program Modal -->
+<div class="modal fade resettable" id="suspendProgramModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Suspend BIN Program</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-danger);font-weight:600">WARNING: Suspending a BIN will immediately decline all authorizations for all cards under this program.</p><div class="mb-3"><label class="pm-form-label">Program to Suspend</label><select class="pm-form-control"><option>Corporate Expense (441011)</option></select></div><div class="mb-3"><label class="pm-form-label">Type YES to confirm</label><input type="text" class="pm-form-control"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('suspendProgramModal','Program suspended. All authorizations currently blocked.','')">Suspend Program</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id) { const el = document.getElementById(id); if(el) new bootstrap.Modal(el).show(); }
+function closeModal(id) { const el = document.getElementById(id); if(!el) return; const m = bootstrap.Modal.getInstance(el); if(m) m.hide(); }
+function switchTab(prefix, key, btn) {
+    btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById(prefix+'-'+key);
+    if(panel) panel.classList.add('active');
+}
+function selectRadioCard(card) {
+    card.parentElement.querySelectorAll('.border').forEach(b => {
+        b.style.borderColor = ''; b.style.background = '';
+        const r = b.querySelector('input[type=radio]'); if(r) r.checked = false;
+    });
+    card.style.borderColor = 'var(--pm-primary)'; card.style.background = 'rgba(79,70,229,.04)';
+    const radio = card.querySelector('input[type=radio]'); if(radio) radio.checked = true;
+}
+function showLoading(target, cb) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target;
+    if(!el) { cb(); return; }
+    const ov = document.createElement('div');
+    ov.className = 'pm-loading-overlay';
+    ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';
+    el.style.position = 'relative'; el.appendChild(ov);
+    setTimeout(() => { ov.remove(); cb(); }, 1200);
+}
+function processAction(modalId, msg, ref) {
+    const modal = document.getElementById(modalId);
+    const body = modal.querySelector('.modal-body');
+    const footer = modal.querySelector('.modal-footer');
+    showLoading(body, () => {
+        body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}</div>`;
+        footer.innerHTML = '<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';
+    });
+}
+function cacheResettable() {
+    document.querySelectorAll('.resettable').forEach(m => {
+        const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer');
+        if(b) m.dataset.originalBody = b.innerHTML; if(f) m.dataset.originalFooter = f.innerHTML;
+        m.addEventListener('hidden.bs.modal', () => {
+            if(m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody;
+            if(m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter;
+            resetFlows();
+        });
+    });
+}
+function renderStepper(elId, labels, current) {
+    const wrap = document.getElementById(elId); if(!wrap) return;
+    wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i+1) < current ? 'completed' : (i+1) === current ? 'active' : ''}"><div class="pm-step-num">${(i+1) < current ? '<i class="bi bi-check"></i>' : (i+1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length-1 ? '<div class="pm-step-line"></div>' : ''}`).join('');
+}
+function showFlow(prefix, current, total) {
+    for(let i=1; i<=total; i++) {
+        const el = document.getElementById(prefix+i);
+        if(el) { el.classList.remove('active'); el.style.display = 'none'; }
+    }
+    const a = document.getElementById(prefix+current);
+    if(a) { a.classList.add('active'); a.style.display = 'block'; }
+}
+
+let batchStep = 1;
+function nextBatchStep() {
+    if(batchStep === 3) {
+        showLoading('#issueBatchModal .modal-body', () => {
+            batchStep = 4; renderStepper('batchStepper', ['Program', 'Upload', 'Validate', 'Done'], batchStep);
+            showFlow('batchStep', batchStep, 4);
+            document.getElementById('batchNextBtn').textContent = 'Done';
+        });
+        return;
+    }
+    if(batchStep >= 4) { closeModal('issueBatchModal'); return; }
+    batchStep++; renderStepper('batchStepper', ['Program', 'Upload', 'Validate', 'Done'], batchStep);
+    showFlow('batchStep', batchStep, 4);
+    if(batchStep === 3) document.getElementById('batchNextBtn').innerHTML = 'Submit Batch <i class="bi bi-check2"></i>';
+}
+function resetFlows() {
+    batchStep = 1; renderStepper('batchStepper', ['Program', 'Upload', 'Validate', 'Done'], 1); showFlow('batchStep', 1, 4);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    cacheResettable(); resetFlows();
+});
+</script>
+</body>
+</html>

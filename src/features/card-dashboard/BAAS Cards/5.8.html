@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Card Analytics & Reporting</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-slate);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s;height:100%}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-card-hero{background:linear-gradient(135deg,#312e81 0%,#4F46E5 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}.pm-form-control[disabled]{background:var(--pm-surface-2)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:120px;padding:12px 0 18px;border-bottom:1px solid var(--pm-border)}.chart-bar{flex:1;border-radius:4px 4px 0 0;position:relative;min-width:14px;cursor:pointer;transition:all .2s}.chart-bar:hover{opacity:.85}.chart-bar .bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.pm-stat-value{font-size:22px}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-credit-card"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-bar-chart-line"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-building"></i></button>
+<button class="pm-nav-item"><i class="bi bi-shield-check"></i></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-hero)">CA</div>
+<div>
+<h1>Card Analytics & Reporting</h1>
+<p>Deep-dive insights, portfolio performance, compliance & predictive modeling</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search reports, metrics, accounts, or card insights...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('globalFilterModal')" title="Global Filter"><i class="bi bi-funnel"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-gradient-slate)">DA</div><div><div class="pm-name">David A.</div><div class="pm-role">BAAS Admin</div></div></div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <a href="#">Reporting</a> / <strong>Card Analytics</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 5.8 — Card Analytics & Reporting</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Analyze issuance, usage, merchant concentration, churn risk, and corporate compliance.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('predictiveEngineModal')"><i class="bi bi-stars" style="color:var(--pm-purple)"></i> AI Predict</button>
+<button class="pm-btn" onclick="openModal('scheduleReportModal')"><i class="bi bi-calendar-check text-info"></i> Schedule</button>
+<button class="pm-btn" onclick="openModal('buildReportModal')"><i class="bi bi-layout-text-window text-success"></i> Build Custom</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('exportReportModal')"><i class="bi bi-download"></i> Export Data</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-md-6">
+<div class="pm-card pm-card-hero">
+<p class="pm-stat-label" style="color:var(--pm-accent-soft)">TOTAL ACTIVE CARDS</p>
+<div class="pm-stat-value" style="margin:6px 0">45,210</div>
+<span class="pm-badge pm-badge-success" style="background:rgba(16,185,129,0.2);color:#A7F3D0"><i class="bi bi-arrow-up"></i> +1,200 this week</span>
+<div class="mt-3" style="font-size:11px;color:rgba(255,255,255,0.7)">
+<div class="d-flex justify-content-between mb-1"><span>Debit (Physical/Virtual)</span><strong>32,010</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Credit</span><strong>10,050</strong></div>
+<div class="d-flex justify-content-between"><span>Prepaid</span><strong>3,150</strong></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card">
+<p class="pm-stat-label" style="color:var(--pm-info)">MONTHLY CARD VOLUME</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 1.2B</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-graph-up-arrow"></i> +8.4% MoM</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Total Transactions</span><strong>2.1M</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Avg Ticket Size</span><strong>KES 571</strong></div>
+<div class="d-flex justify-content-between"><span>Auth Rate</span><strong style="color:var(--pm-accent)">98.2%</strong></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card">
+<p class="pm-stat-label" style="color:var(--pm-accent)">GROSS REVENUE (MTD)</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 18.5M</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-cash-coin"></i> +12.1% YoY</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Interchange</span><strong>KES 12.2M</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>FX Spread</span><strong>KES 4.1M</strong></div>
+<div class="d-flex justify-content-between"><span>Card Fees</span><strong>KES 2.2M</strong></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="border-left:3px solid var(--pm-warning)">
+<p class="pm-stat-label" style="color:var(--pm-warning)">RISK & COMPLIANCE</p>
+<div class="pm-stat-value" style="margin:6px 0">1,420</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-exclamation-triangle"></i> Cards at Churn Risk</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Corp. Policy Violations</span><strong style="color:var(--pm-danger)">42 Flags</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Chargebacks (Rate)</span><strong>18 (0.01%)</strong></div>
+<div class="d-flex justify-content-between"><span>Unactivated Cards</span><strong>890</strong></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.8.1: PORTFOLIO ANALYTICS -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-pie-chart-fill" style="color:var(--pm-info)"></i> 5.8.1 — Card Portfolio Analytics</h3>
+<p class="pm-section-sub">Analyze issuance pipelines, activation rates, replacements, and revenue drivers across the portfolio.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('issuanceAnalyticsModal')">Issuance Data</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('usageTrendsModal')">Usage Trends</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-5">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Issuance & Activation Funnel</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('activationDetailsModal')">Details</button>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Applications / Requested</span><strong>5,200</strong></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:100%;background:var(--pm-border-2)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Approved & Issued</span><strong>4,500 (86%)</strong></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:86%;background:var(--pm-info)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Activated</span><strong>3,690 (82%)</strong></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:71%;background:var(--pm-primary)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>First Transaction Made</span><strong>3,100 (84%)</strong></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:60%;background:var(--pm-accent)"></div></div>
+</div>
+<div class="d-flex justify-content-between align-items-center mt-4 p-2 rounded" style="background:#fff;border:1px solid var(--pm-border)">
+<div style="font-size:12px;color:var(--pm-muted)">Avg Time to Activate</div>
+<div style="font-weight:700;color:var(--pm-primary)">1.2 Days</div>
+</div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Revenue & Operations</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('revenueAnalyticsModal')"><i class="bi bi-box-arrow-up-right"></i></button>
+</div>
+<div class="p-3 rounded mb-2 text-center" style="background:var(--pm-accent-soft)">
+<div style="font-size:11px;font-weight:700;color:#047857">NET REVENUE / CARD</div>
+<div style="font-size:24px;font-weight:700;color:var(--pm-accent)">KES 410</div>
+</div>
+<div class="p-3 rounded mb-2 text-center" style="background:var(--pm-info-soft)">
+<div style="font-size:11px;font-weight:700;color:#1D4ED8">LIFETIME VALUE (EST)</div>
+<div style="font-size:24px;font-weight:700;color:var(--pm-info)">KES 12,400</div>
+</div>
+<div class="status-row">
+<div><strong>Replacement Rate</strong><div style="font-size:11px;color:var(--pm-muted)">Loss, damage, theft</div></div>
+<div class="text-end"><strong>2.4%</strong><br><a href="#" onclick="openModal('replacementLogModal');return false" style="font-size:11px">View Log</a></div>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Usage & Channel Mix</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('channelMixModal')">Drill Down</button>
+</div>
+<div class="chart-bars">
+<div class="chart-bar" style="height:45%;background:var(--pm-warning)" title="POS: 45%"><span class="bar-label">POS</span></div>
+<div class="chart-bar" style="height:35%;background:var(--pm-info)" title="Online: 35%"><span class="bar-label">Online</span></div>
+<div class="chart-bar" style="height:15%;background:var(--pm-primary)" title="ATM: 15%"><span class="bar-label">ATM</span></div>
+<div class="chart-bar" style="height:5%;background:var(--pm-accent)" title="Mobile: 5%"><span class="bar-label">Mobile</span></div>
+</div>
+<div class="d-flex flex-wrap mt-3" style="gap:10px;font-size:12px;justify-content:center">
+<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-warning);margin-right:5px"></span>POS (45%)</span>
+<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-info);margin-right:5px"></span>Online (35%)</span>
+<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-primary);margin-right:5px"></span>ATM (15%)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.8.2: SPEND ANALYTICS & INSIGHTS -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-cart-check-fill" style="color:var(--pm-purple)"></i> 5.8.2 — Spend Analytics & Insights</h3>
+<p class="pm-section-sub">Understand cardholder spending behavior, merchant concentration, recurring flows, and predictive risk factors.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('predictiveEngineModal')"><i class="bi bi-stars text-purple"></i> Predict Insights</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Consumer Insights</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('topCategoriesModal')">Categories</button>
+</div>
+<div class="status-row"><div><strong>Supermarkets & Grocery</strong><div style="font-size:11px;color:var(--pm-muted)">22% of total spend</div></div><div class="text-end"><strong>KES 264M</strong></div></div>
+<div class="status-row"><div><strong>Dining & Restaurants</strong><div style="font-size:11px;color:var(--pm-muted)">18% of total spend</div></div><div class="text-end"><strong>KES 216M</strong></div></div>
+<div class="status-row"><div><strong>Fuel & Auto</strong><div style="font-size:11px;color:var(--pm-muted)">14% of total spend</div></div><div class="text-end"><strong>KES 168M</strong></div></div>
+<div class="status-row"><div><strong>Travel & Airline</strong><div style="font-size:11px;color:var(--pm-muted)">10% of total spend</div></div><div class="text-end"><strong>KES 120M</strong></div></div>
+<div class="d-flex justify-content-between mt-3">
+<button class="pm-btn pm-btn-sm" onclick="openModal('geoSpendModal')"><i class="bi bi-globe"></i> Geo / Intl Spend</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('subscriptionTrackerModal')"><i class="bi bi-arrow-repeat"></i> Subscriptions</button>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Merchant Intelligence</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('merchantConcentrationModal')">View Top</button>
+</div>
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface);border:1px solid var(--pm-border)">
+<div style="font-size:11px;color:var(--pm-muted);font-weight:600">CONCENTRATION RISK</div>
+<div style="font-size:18px;font-weight:700;color:var(--pm-ink)">Top 10 = 45% Vol.</div>
+<div class="pm-progress mt-2"><div class="pm-progress-bar" style="width:45%;background:var(--pm-warning)"></div></div>
+</div>
+<div class="status-row"><div><strong>Naivas Supermarket</strong><div style="font-size:11px;color:var(--pm-muted)">98k txns · High Loyalty</div></div><div class="text-end"><strong>#1</strong></div></div>
+<div class="status-row"><div><strong>Safaricom Postpay/Airtime</strong><div style="font-size:11px;color:var(--pm-muted)">85k txns · Recurring</div></div><div class="text-end"><strong>#2</strong></div></div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('merchantCrossSellModal')"><i class="bi bi-link-45deg"></i> Partner / Cross-Sell Analysis</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-size:14px;font-weight:700;margin:0">Predictive & Churn Risk</h4>
+<button class="pm-btn pm-btn-sm" onclick="openModal('ltvAnalyticsModal')">LTV Model</button>
+</div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)">
+<div class="d-flex justify-content-between align-items-center">
+<div><div style="font-size:11px;font-weight:700;color:#991B1B">CHURN WARNING</div><div style="font-size:18px;font-weight:700;color:var(--pm-danger)">1,420 Cards</div></div>
+<button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('churnRiskModal')">Action</button>
+</div>
+<div style="font-size:11px;color:#7F1D1D;margin-top:4px">Cards with >30% volume drop last 60 days</div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+<div class="d-flex justify-content-between align-items-center">
+<div><div style="font-size:11px;font-weight:700;color:#047857">UPSELL OPPORTUNITIES</div><div style="font-size:18px;font-weight:700;color:var(--pm-accent)">412 Users</div></div>
+<button class="pm-btn pm-btn-sm pm-btn-accent" onclick="openModal('upsellOpportunityModal')">View</button>
+</div>
+<div style="font-size:11px;color:#065F46;margin-top:4px">Debit users eligible for Credit Limits</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.8.3: CORPORATE CARD REPORTING -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-building-fill-gear" style="color:var(--pm-warning)"></i> 5.8.3 — Corporate Card Reporting</h3>
+<p class="pm-section-sub">Monitor aggregate business spend, department budget utilization, compliance tracking, and policy violations.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('complianceTaxModal')"><i class="bi bi-file-earmark-ruled"></i> Compliance & Tax</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('corpSpendSummaryModal')"><i class="bi bi-building"></i> Corp Summary</button>
+</div>
+</div>
+
+<div class="table-responsive">
+<table class="pm-table">
+<thead>
+<tr>
+<th>Company / Department</th>
+<th>Active Cards</th>
+<th>Spend (MTD)</th>
+<th>Budget Utilization</th>
+<th>Violations</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Acme Logistics</strong><div style="font-size:11px;color:var(--pm-muted)">Fleet & Ops</div></td>
+<td>145</td>
+<td>KES 3.4M</td>
+<td>
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>78%</span><span>KES 4.3M</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:78%;background:var(--pm-info)"></div></div>
+</td>
+<td><span class="pm-badge pm-badge-warning">12 Flagged</span></td>
+<td>
+<div class="d-flex gap-1">
+<button class="pm-btn pm-btn-sm" onclick="openModal('deptBudgetModal')">Budgets</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('policyViolationModal')">Audit</button>
+</div>
+</td>
+</tr>
+<tr>
+<td><strong>TechStart Inc</strong><div style="font-size:11px;color:var(--pm-muted)">Engineering & SaaS</div></td>
+<td>42</td>
+<td>KES 1.8M</td>
+<td>
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>92%</span><span>KES 1.9M</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:92%;background:var(--pm-warning)"></div></div>
+</td>
+<td><span class="pm-badge pm-badge-danger">2 Critical</span></td>
+<td>
+<div class="d-flex gap-1">
+<button class="pm-btn pm-btn-sm" onclick="openModal('deptBudgetModal')">Budgets</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('policyViolationModal')">Audit</button>
+</div>
+</td>
+</tr>
+<tr>
+<td><strong>Nairobi Hospital</strong><div style="font-size:11px;color:var(--pm-muted)">Procurement</div></td>
+<td>18</td>
+<td>KES 8.5M</td>
+<td>
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>45%</span><span>KES 18.0M</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:45%;background:var(--pm-accent)"></div></div>
+</td>
+<td><span class="pm-badge pm-badge-success">0 Flags</span></td>
+<td>
+<div class="d-flex gap-1">
+<button class="pm-btn pm-btn-sm" onclick="openModal('deptBudgetModal')">Budgets</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('policyViolationModal')">Audit</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div><!-- end pm-content -->
+</div><!-- end pm-main -->
+</div><!-- end pm-app -->
+
+
+<!-- ============================================================ -->
+<!-- MODALS (24 UNIQUE MODALS FOR 5.8) -->
+<!-- ============================================================ -->
+<div id="modalsContainer">
+
+<!-- 1. Export Report Modal (Multi-step) -->
+<div class="modal fade resettable" id="exportReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2 text-primary"></i>Export Dashboard Data</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="exportStepper"></div><div id="exportStep1" class="fade-step active"><h6 style="font-weight:700">1. Select Datasets</h6><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Card Issuance & Activation</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Usage & Revenue Trends</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label">Merchant Concentration</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Corporate Spend & Violations</label></div></div><div id="exportStep2" class="fade-step"><h6 style="font-weight:700">2. Configure Options</h6><div class="mb-3"><label class="pm-form-label">Date Range</label><select class="pm-form-control"><option>Last 30 Days</option><option>Last 90 Days</option><option>Year to Date</option><option>Custom Range</option></select></div><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>Excel (.xlsx)</option><option>CSV</option><option>PDF Summary</option></select></div></div><div id="exportStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Export Ready</h5><p style="font-size:13px;color:var(--pm-muted)">Your report has been compiled successfully.</p><button class="pm-btn pm-btn-primary" onclick="closeModal('exportReportModal')">Download File</button></div></div></div><div class="modal-footer" id="exportFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="exportNextBtn" onclick="nextExportStep()">Continue</button></div></div></div></div>
+
+<!-- 2. Build Custom Report (Tabs) -->
+<div class="modal fade resettable" id="buildReportModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-layout-text-window me-2 text-success"></i>Build Custom Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('build','fields',this)">1. Data Fields</button><button class="pm-tab-pill" onclick="switchTab('build','group',this)">2. Grouping</button><button class="pm-tab-pill" onclick="switchTab('build','filter',this)">3. Filters</button></div><div id="build-fields" class="tab-panel active"><div class="row"><div class="col-6"><label class="pm-form-label">Available Fields</label><div class="p-2 border rounded mb-1" style="font-size:12px;cursor:pointer">Card PAN (Masked) <i class="bi bi-plus float-end"></i></div><div class="p-2 border rounded mb-1" style="font-size:12px;cursor:pointer">Transaction Amount <i class="bi bi-plus float-end"></i></div><div class="p-2 border rounded mb-1" style="font-size:12px;cursor:pointer">Merchant Category (MCC) <i class="bi bi-plus float-end"></i></div><div class="p-2 border rounded mb-1" style="font-size:12px;cursor:pointer">Authorization Status <i class="bi bi-plus float-end"></i></div></div><div class="col-6"><label class="pm-form-label">Selected Fields</label><div class="p-2 rounded mb-1" style="font-size:12px;background:var(--pm-surface-2)">Transaction Date <i class="bi bi-x float-end text-danger"></i></div><div class="p-2 rounded mb-1" style="font-size:12px;background:var(--pm-surface-2)">Cardholder Name <i class="bi bi-x float-end text-danger"></i></div><div class="p-2 rounded mb-1" style="font-size:12px;background:var(--pm-surface-2)">Settlement Amount <i class="bi bi-x float-end text-danger"></i></div></div></div></div><div id="build-group" class="tab-panel"><div class="mb-3"><label class="pm-form-label">Primary Grouping</label><select class="pm-form-control"><option>By Month</option><option>By Card Type</option><option>By Department (Corporate)</option></select></div><div class="mb-3"><label class="pm-form-label">Secondary Grouping</label><select class="pm-form-control"><option>None</option><option>By Merchant Category</option><option>By Status</option></select></div></div><div id="build-filter" class="tab-panel"><div class="mb-3"><label class="pm-form-label">Card Types to Include</label><select class="pm-form-control"><option>All Types</option><option>Debit Only</option><option>Credit Only</option><option>Virtual Only</option></select></div><div class="mb-3"><label class="pm-form-label">Amount Threshold</label><input class="pm-form-control" placeholder="> KES"></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success" onclick="processAction('buildReportModal','Custom Report Saved! You can now run or export it.','')">Save Report Template</button></div></div></div></div>
+
+<!-- 3. Schedule Report (Multi-step) -->
+<div class="modal fade resettable" id="scheduleReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-check me-2 text-info"></i>Schedule Automated Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="schedStepper"></div><div id="schedStep1" class="fade-step active"><h6 style="font-weight:700">1. Select Report</h6><select class="pm-form-control mb-3"><option>Monthly Executive Portfolio Summary</option><option>Daily Corporate Policy Violations</option><option>Weekly Churn Risk Alerts</option><option>Custom: Marketing Dept Spend</option></select></div><div id="schedStep2" class="fade-step"><h6 style="font-weight:700">2. Frequency & Timing</h6><div class="mb-3"><label class="pm-form-label">Frequency</label><select class="pm-form-control"><option>Daily</option><option>Weekly (Mondays)</option><option selected>Monthly (1st of Month)</option></select></div><div class="mb-3"><label class="pm-form-label">Delivery Time</label><input type="time" class="pm-form-control" value="08:00"></div></div><div id="schedStep3" class="fade-step"><h6 style="font-weight:700">3. Recipients & Format</h6><div class="mb-3"><label class="pm-form-label">Email Addresses (Comma separated)</label><textarea class="pm-form-control" rows="2">management@paymo.com, finance@paymo.com</textarea></div><div class="mb-3"><label class="pm-form-label">Attachment Format</label><select class="pm-form-control"><option>PDF</option><option>Excel</option><option>CSV link</option></select></div></div></div><div class="modal-footer" id="schedFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="schedNextBtn" onclick="nextSchedStep()">Continue</button></div></div></div></div>
+
+<!-- 4. Global Filter -->
+<div class="modal fade resettable" id="globalFilterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-funnel me-2"></i>Global Analytics Filter</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Time Period</label><select class="pm-form-control"><option>This Month (MTD)</option><option>Last Month</option><option>Last 90 Days</option><option>Year to Date</option><option>Custom Dates</option></select></div><div class="mb-3"><label class="pm-form-label">Card Portfolio Segment</label><select class="pm-form-control"><option>All Cards</option><option>Retail / Consumer</option><option>SME / Business</option><option>Enterprise / Corporate</option></select></div><div class="mb-3"><label class="pm-form-label">Currency View</label><select class="pm-form-control"><option>KES (Default)</option><option>USD</option><option>EUR</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Clear All</button><button class="pm-btn pm-btn-primary" onclick="processAction('globalFilterModal','Dashboard filters applied! Refreshing views...','')">Apply Filters</button></div></div></div></div>
+
+<!-- 5. Issuance Analytics -->
+<div class="modal fade resettable" id="issuanceAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card me-2"></i>Issuance Breakdown</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row mb-3"><div class="col-4"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">Total Issued MTD</div><div style="font-size:20px;font-weight:700">4,500</div></div></div><div class="col-4"><div class="p-3 rounded text-center" style="background:var(--pm-primary-soft);color:var(--pm-primary-dark)"><div style="font-size:11px">Virtual Share</div><div style="font-size:20px;font-weight:700">68%</div></div></div><div class="col-4"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft);color:#047857"><div style="font-size:11px">Credit Approved</div><div style="font-size:20px;font-weight:700">1,210</div></div></div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Card Type</th><th>Issued (MTD)</th><th>MoM Growth</th><th>Pending Review</th></tr></thead><tbody><tr><td>Virtual Debit (Single/Multi)</td><td>2,450</td><td><span class="text-success">+14%</span></td><td>0</td></tr><tr><td>Physical Debit (Premium/Std)</td><td>610</td><td><span class="text-danger">-2%</span></td><td>142</td></tr><tr><td>Virtual Credit</td><td>980</td><td><span class="text-success">+22%</span></td><td>310</td></tr><tr><td>Physical Credit</td><td>230</td><td><span class="text-success">+5%</span></td><td>85</td></tr><tr><td>Prepaid (GPR/Gift)</td><td>230</td><td><span class="text-muted">0%</span></td><td>12</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportReportModal'); closeModal('issuanceAnalyticsModal');">Export</button></div></div></div></div>
+
+<!-- 6. Activation Details -->
+<div class="modal fade resettable" id="activationDetailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightning me-2"></i>Activation Funnel Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">Analysis of 4,500 issued cards this month.</p><div class="status-row"><div><strong>Virtual Cards</strong><div style="font-size:11px;color:var(--pm-muted)">Auto-activated instantly</div></div><div class="text-end"><strong>100% Rate</strong><br><span style="font-size:11px;color:var(--pm-accent)">Avg: 0 mins</span></div></div><div class="status-row"><div><strong>Physical Delivery (Metro)</strong><div style="font-size:11px;color:var(--pm-muted)">Nairobi & Environs</div></div><div class="text-end"><strong>78% Rate</strong><br><span style="font-size:11px;color:var(--pm-warning)">Avg: 2.4 Days</span></div></div><div class="status-row"><div><strong>Physical Delivery (Regional)</strong><div style="font-size:11px;color:var(--pm-muted)">Courier network delays</div></div><div class="text-end"><strong>54% Rate</strong><br><span style="font-size:11px;color:var(--pm-danger)">Avg: 5.1 Days</span></div></div><div class="p-3 rounded mt-3" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-exclamation-triangle me-1"></i> Drop-off reason analysis: 65% of unactivated physical cards failed delivery OTP verification. Recommend SMS reminders.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 7. Replacement & Cancellation Log -->
+<div class="modal fade resettable" id="replacementLogModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Replacement & Cancellation Log</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('repl','reasons',this)">Replacement Reasons</button><button class="pm-tab-pill" onclick="switchTab('repl','cancellations',this)">Cancellation Log</button></div><div id="repl-reasons" class="tab-panel active"><div class="chart-bars"><div class="chart-bar" style="height:60%;background:var(--pm-danger)"><span class="bar-label">Lost/Stolen</span></div><div class="chart-bar" style="height:20%;background:var(--pm-warning)"><span class="bar-label">Damaged</span></div><div class="chart-bar" style="height:80%;background:var(--pm-info)"><span class="bar-label">Expired</span></div><div class="chart-bar" style="height:40%;background:var(--pm-purple)"><span class="bar-label">Fraud Susp.</span></div><div class="chart-bar" style="height:10%;background:var(--pm-muted)"><span class="bar-label">Other</span></div></div></div><div id="repl-cancellations" class="tab-panel"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Card Mask</th><th>Cardholder</th><th>Date</th><th>Reason Code</th><th>Action</th></tr></thead><tbody><tr><td>**** 4102</td><td>Grace Kamau</td><td>27 Jun</td><td>Customer Request</td><td>Closed</td></tr><tr><td>**** 8821</td><td>Acme Corp</td><td>26 Jun</td><td>Employee Terminated</td><td>Closed</td></tr><tr><td>**** 9011</td><td>David O.</td><td>24 Jun</td><td>Account Delinquent</td><td>Forced Closure</td></tr></tbody></table></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 8. Usage Volume & Value Trends -->
+<div class="modal fade resettable" id="usageTrendsModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up-arrow me-2"></i>Usage Trends (12 Months)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="chart-bars mb-3" style="height:150px"><div class="chart-bar" style="height:30%;background:var(--pm-primary-light)"><span class="bar-label">Jul</span></div><div class="chart-bar" style="height:35%;background:var(--pm-primary-light)"><span class="bar-label">Aug</span></div><div class="chart-bar" style="height:40%;background:var(--pm-primary-light)"><span class="bar-label">Sep</span></div><div class="chart-bar" style="height:42%;background:var(--pm-primary-light)"><span class="bar-label">Oct</span></div><div class="chart-bar" style="height:50%;background:var(--pm-primary-light)"><span class="bar-label">Nov</span></div><div class="chart-bar" style="height:65%;background:var(--pm-primary)"><span class="bar-label">Dec</span></div><div class="chart-bar" style="height:55%;background:var(--pm-primary-light)"><span class="bar-label">Jan</span></div><div class="chart-bar" style="height:60%;background:var(--pm-primary-light)"><span class="bar-label">Feb</span></div><div class="chart-bar" style="height:62%;background:var(--pm-primary-light)"><span class="bar-label">Mar</span></div><div class="chart-bar" style="height:70%;background:var(--pm-primary-light)"><span class="bar-label">Apr</span></div><div class="chart-bar" style="height:75%;background:var(--pm-primary-light)"><span class="bar-label">May</span></div><div class="chart-bar" style="height:85%;background:var(--pm-primary)"><span class="bar-label">Jun</span></div></div><div class="row text-center mt-4"><div class="col-4"><div style="font-size:11px;color:var(--pm-muted);font-weight:600">AVERAGE ACTIVE RATE</div><div style="font-size:20px;font-weight:700">74%</div></div><div class="col-4"><div style="font-size:11px;color:var(--pm-muted);font-weight:600">AVG TICKET SIZE YTD</div><div style="font-size:20px;font-weight:700">KES 520</div></div><div class="col-4"><div style="font-size:11px;color:var(--pm-muted);font-weight:600">TXNS PER ACTIVE CARD</div><div style="font-size:20px;font-weight:700">18.4 / mo</div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 9. Revenue Analytics -->
+<div class="modal fade resettable" id="revenueAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-coin me-2 text-success"></i>Revenue & Fee Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2)"><div style="font-size:12px;color:var(--pm-muted)">Total Gross Revenue MTD</div><div style="font-size:28px;font-weight:700;color:var(--pm-primary)">KES 18,500,000</div></div><div class="status-row"><div><strong>Interchange Revenue</strong><div style="font-size:11px;color:var(--pm-muted)">Merchant discount sharing</div></div><strong style="color:var(--pm-accent)">KES 12.2M</strong></div><div class="status-row"><div><strong>FX Spread / Cross-Border</strong><div style="font-size:11px;color:var(--pm-muted)">Markup on international spend</div></div><strong style="color:var(--pm-info)">KES 4.1M</strong></div><div class="status-row"><div><strong>Card Replacement Fees</strong><div style="font-size:11px;color:var(--pm-muted)">Lost/damaged re-issuance</div></div><strong>KES 850k</strong></div><div class="status-row"><div><strong>Late & Cash Advance Fees</strong><div style="font-size:11px;color:var(--pm-muted)">Credit portfolio penalties</div></div><strong style="color:var(--pm-warning)">KES 1.35M</strong></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 10. Top Spending Categories -->
+<div class="modal fade resettable" id="topCategoriesModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-basket me-2 text-info"></i>Top Category Drill-down</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Supermarkets & Grocery</span><strong>KES 264M (22%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:100%;background:var(--pm-primary)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Dining & Restaurants</span><strong>KES 216M (18%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:81%;background:var(--pm-info)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Fuel & Auto</span><strong>KES 168M (14%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:63%;background:var(--pm-accent)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Travel & Airlines</span><strong>KES 120M (10%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:45%;background:var(--pm-purple)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Digital Subscriptions & Media</span><strong>KES 85M (7%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:32%;background:var(--pm-warning)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Healthcare & Pharmacies</span><strong>KES 60M (5%)</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:22%;background:var(--pm-danger)"></div></div></div><div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-graph-up-arrow me-1"></i> Travel has grown 24% MoM, indicating seasonal holiday bookings. Recommended to push travel rewards campaign.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 11. Channel Mix Modal -->
+<div class="modal fade resettable" id="channelMixModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-phone-vibrate me-2"></i>Usage Channel Mix</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-warning-soft);border-left:3px solid var(--pm-warning)"><div style="font-size:11px;font-weight:700">POS TERMINALS</div><div style="font-size:20px;font-weight:700">45%</div><div style="font-size:11px;color:var(--pm-muted)">Physical Retail</div></div></div><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-info-soft);border-left:3px solid var(--pm-info)"><div style="font-size:11px;font-weight:700">ONLINE / E-COMMERCE</div><div style="font-size:20px;font-weight:700">35%</div><div style="font-size:11px;color:var(--pm-muted)">Card-Not-Present</div></div></div><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-primary-soft);border-left:3px solid var(--pm-primary);background:var(--pm-purple-soft)"><div style="font-size:11px;font-weight:700">ATM WITHDRAWALS</div><div style="font-size:20px;font-weight:700">15%</div><div style="font-size:11px;color:var(--pm-muted)">Cash Access</div></div></div><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-accent-soft);border-left:3px solid var(--pm-accent)"><div style="font-size:11px;font-weight:700">MOBILE WALLETS</div><div style="font-size:20px;font-weight:700">5%</div><div style="font-size:11px;color:var(--pm-muted)">Apple/Google Pay</div></div></div></div><div class="mt-3" style="font-size:13px"><p><strong>Insights:</strong></p><ul><li>Contactless (Tap-to-Pay) accounts for 68% of all POS transactions.</li><li>Mobile wallet usage has doubled since Apple Pay integration last quarter.</li></ul></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 12. Domestic vs International Geo Spend -->
+<div class="modal fade resettable" id="geoSpendModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe me-2 text-info"></i>Geographic Spend Analysis</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex align-items-center justify-content-between mb-4"><div class="text-center"><div style="font-size:24px;font-weight:700;color:var(--pm-primary)">88%</div><div style="font-size:11px;font-weight:600;color:var(--pm-muted)">DOMESTIC (KES)</div></div><div style="flex:1;height:4px;background:var(--pm-border);margin:0 15px;position:relative"><div style="position:absolute;left:0;top:0;height:100%;width:88%;background:var(--pm-primary)"></div></div><div class="text-center"><div style="font-size:24px;font-weight:700;color:var(--pm-warning)">12%</div><div style="font-size:11px;font-weight:600;color:var(--pm-muted)">INTERNATIONAL</div></div></div><h6 style="font-weight:700">Top International Destinations (Corridor)</h6><div class="table-responsive"><table class="pm-table"><thead><tr><th>Country / Currency</th><th>Volume</th><th>% of Intl</th></tr></thead><tbody><tr><td>United States (USD)</td><td>KES 72M</td><td>50%</td></tr><tr><td>United Kingdom (GBP)</td><td>KES 28M</td><td>20%</td></tr><tr><td>European Union (EUR)</td><td>KES 21M</td><td>15%</td></tr><tr><td>UAE (AED)</td><td>KES 10M</td><td>7%</td></tr><tr><td>Others</td><td>KES 13M</td><td>8%</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 13. Subscription Tracker -->
+<div class="modal fade resettable" id="subscriptionTrackerModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2 text-primary"></i>Recurring & Subscription Tracker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;color:var(--pm-muted)">Identified Monthly Subscription Volume</div><div style="font-size:20px;font-weight:700">KES 85.2M</div></div><span class="pm-badge pm-badge-info">7% of portfolio</span></div><h6 style="font-weight:700">Top Recurring Merchants</h6><div class="status-row"><div><strong>Netflix</strong><div style="font-size:11px;color:var(--pm-muted)">Entertainment</div></div><strong>12,400 cards</strong></div><div class="status-row"><div><strong>DSTV Multichoice</strong><div style="font-size:11px;color:var(--pm-muted)">Media</div></div><strong>9,850 cards</strong></div><div class="status-row"><div><strong>Spotify</strong><div style="font-size:11px;color:var(--pm-muted)">Audio</div></div><strong>8,100 cards</strong></div><div class="status-row"><div><strong>AWS / Google Cloud</strong><div style="font-size:11px;color:var(--pm-muted)">Tech / B2B</div></div><strong>4,200 cards</strong></div><div class="p-3 rounded mt-3" style="background:var(--pm-danger-soft);font-size:12px"><i class="bi bi-shield-x me-1 text-danger"></i> Failed subscription renewal rate is <strong>4.2%</strong>. Mostly due to insufficient funds on prepaid cards.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 14. Merchant Concentration Analysis -->
+<div class="modal fade resettable" id="merchantConcentrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop me-2 text-warning"></i>Merchant Concentration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Merchant Name</th><th>Category</th><th>Txn Volume</th><th>% of Total</th></tr></thead><tbody><tr><td>Naivas Supermarket</td><td>Groceries</td><td>98,420</td><td>8.2%</td></tr><tr><td>Safaricom PLC</td><td>Telco / Util</td><td>85,110</td><td>7.1%</td></tr><tr><td>Quickmart</td><td>Groceries</td><td>62,300</td><td>5.2%</td></tr><tr><td>Shell / Vivo Energy</td><td>Fuel</td><td>54,800</td><td>4.5%</td></tr><tr><td>Jumia Kenya</td><td>E-commerce</td><td>41,200</td><td>3.4%</td></tr><tr><td>Uber</td><td>Transport</td><td>38,900</td><td>3.2%</td></tr></tbody></table></div><div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px"><strong>Concentration Risk:</strong> Top 10 merchants account for 45% of total transaction volume, indicating high reliance on daily essentials and transport.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 15. Merchant Loyalty & Cross Sell -->
+<div class="modal fade resettable" id="merchantCrossSellModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-link-45deg me-2 text-success"></i>Loyalty & Cross-Sell Engine</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">AI-identified co-branding and reward partnership opportunities based on overlapping spend.</p><div class="status-row"><div><strong>Co-brand Opportunity: Fuel</strong><div style="font-size:11px;color:var(--pm-muted)">14% of users spend >KES 10k/mo at Shell</div></div><button class="pm-btn pm-btn-sm pm-btn-accent" onclick="processAction('merchantCrossSellModal','Initiated partnership workflow for Fuel Co-Brand.','')">Draft Proposal</button></div><div class="status-row"><div><strong>Cashback Tier: Groceries</strong><div style="font-size:11px;color:var(--pm-muted)">Naivas/Quickmart frequent shoppers (2x/week)</div></div><button class="pm-btn pm-btn-sm pm-btn-accent" onclick="processAction('merchantCrossSellModal','Added to Marketing Campaign queue.','')">Create Campaign</button></div><div class="status-row"><div><strong>Upsell: Travel Card</strong><div style="font-size:11px;color:var(--pm-muted)">Users with >2 international flight bookings YTD</div></div><button class="pm-btn pm-btn-sm pm-btn-accent" onclick="processAction('merchantCrossSellModal','Targeted 4,200 users for Premium Travel Card.','')">Target Users</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 16. Churn Risk Dashboard -->
+<div class="modal fade resettable" id="churnRiskModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Churn Risk Identification</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:11px;color:#991B1B;font-weight:700">IDENTIFIED AT RISK</div><div style="font-size:24px;font-weight:700;color:var(--pm-danger)">1,420 Cards</div></div><span class="pm-badge pm-badge-danger">3.1% of portfolio</span></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Risk Factor</th><th>Cards Affected</th><th>Avg Decline in Vol</th><th>Action Trigger</th></tr></thead><tbody><tr><td>Zero activity > 45 days</td><td>840</td><td>-100%</td><td><button class="pm-btn pm-btn-sm">Send 'We Miss You' Offer</button></td></tr><tr><td>Salary deposit stopped</td><td>310</td><td>-85%</td><td><button class="pm-btn pm-btn-sm">Call/Check Status</button></td></tr><tr><td>Multiple 3DS failures</td><td>150</td><td>-60%</td><td><button class="pm-btn pm-btn-sm">Support Intervention</button></td></tr><tr><td>Prepaid balance KES 0</td><td>120</td><td>-100%</td><td><button class="pm-btn pm-btn-sm">Reload Incentive (KES 100)</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('churnRiskModal','Automated retention campaigns activated for 1,420 users.','')">Run Auto-Retention Workflow</button></div></div></div></div>
+
+<!-- 17. Upsell Opportunity Modal -->
+<div class="modal fade resettable" id="upsellOpportunityModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up me-2 text-accent"></i>Credit Upsell Opportunities</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">Users exhibiting high debit volume, excellent balance histories, and clean KYC, eligible for Virtual Credit.</p><div class="table-responsive"><table class="pm-table"><thead><tr><th>Segment</th><th>Eligible Users</th><th>Suggested Limit</th><th>Conv. Est.</th><th>Action</th></tr></thead><tbody><tr><td>High Net Worth Debit</td><td>142</td><td>KES 500k+</td><td>45%</td><td><button class="pm-btn pm-btn-sm pm-btn-primary">Email Upgrade</button></td></tr><tr><td>Consistent Salary Deposits</td><td>180</td><td>KES 100k - 300k</td><td>60%</td><td><button class="pm-btn pm-btn-sm pm-btn-primary">Push Notification</button></td></tr><tr><td>Heavy E-commerce Shoppers</td><td>90</td><td>KES 50k</td><td>35%</td><td><button class="pm-btn pm-btn-sm pm-btn-primary">In-App Banner</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success" onclick="processAction('upsellOpportunityModal','Targeted upsell campaigns launched across all channels.','')">Launch All Campaigns</button></div></div></div></div>
+
+<!-- 18. Corporate Spend Summary -->
+<div class="modal fade resettable" id="corpSpendSummaryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-building me-2 text-warning"></i>Corporate Program Overview</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3 mb-3"><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">Total Active Companies</div><div style="font-size:24px;font-weight:700">124</div></div></div><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">Employee Cards Issued</div><div style="font-size:24px;font-weight:700">8,450</div></div></div><div class="col-12"><div class="p-3 rounded" style="background:var(--pm-warning-soft);color:#B45309"><div style="font-size:11px;font-weight:700">B2B SPEND MTD</div><div style="font-size:28px;font-weight:700">KES 412M</div></div></div></div><p style="font-size:13px;color:var(--pm-muted)">Corporate spend represents 34% of total dashboard volume, with highly profitable interchange margins.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportReportModal'); closeModal('corpSpendSummaryModal')">Export Data</button></div></div></div></div>
+
+<!-- 19. Department Budget Modal -->
+<div class="modal fade resettable" id="deptBudgetModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-wallet me-2"></i>Department Budget Breakdown (Acme Logistics)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Department</th><th>Allocated Budget</th><th>Actual Spend</th><th>Utilization</th></tr></thead><tbody><tr><td>Fleet Management</td><td>KES 2.5M</td><td>KES 2.1M</td><td><div class="pm-progress"><div class="pm-progress-bar" style="width:84%;background:var(--pm-warning)"></div></div></td></tr><tr><td>Sales & Marketing</td><td>KES 1.0M</td><td>KES 950k</td><td><div class="pm-progress"><div class="pm-progress-bar" style="width:95%;background:var(--pm-danger)"></div></div></td></tr><tr><td>Executive Travel</td><td>KES 800k</td><td>KES 350k</td><td><div class="pm-progress"><div class="pm-progress-bar" style="width:43%;background:var(--pm-info)"></div></div></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 20. Policy Violation Modal -->
+<div class="modal fade resettable" id="policyViolationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-x me-2 text-danger"></i>Policy Violation Audit</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Employee Card</th><th>Amount</th><th>Merchant</th><th>Violation Type</th><th>Action</th></tr></thead><tbody><tr><td>**** 4412 (J. Doe)</td><td>KES 45,000</td><td>Nairobi Serena</td><td>Over per-transaction limit</td><td><button class="pm-btn pm-btn-sm">Override</button></td></tr><tr><td>**** 8810 (S. Smith)</td><td>KES 12,000</td><td>Brew Bistro</td><td>Weekend/Alcohol MCC</td><td><button class="pm-btn pm-btn-sm">Flag to HR</button></td></tr><tr><td>**** 9921 (M. Kariuki)</td><td>KES 8,500</td><td>Total Petrol</td><td>Missing Receipt > 7 days</td><td><button class="pm-btn pm-btn-sm">Remind</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 21. Compliance & Tax Report -->
+<div class="modal fade resettable" id="complianceTaxModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-ruled me-2"></i>Compliance & Tax Data Export</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Report Form Type</label><select class="pm-form-control"><option>Tax-Deductible Business Expenses</option><option>VAT Withholding Report</option><option>CBK Transaction Volume Summary</option><option>Per Diem & Mileage Allowances</option></select></div><div class="mb-3"><label class="pm-form-label">Fiscal Quarter</label><select class="pm-form-control"><option>Q1 2025</option><option>Q2 2025</option><option>Q3 2025</option><option>Q4 2025</option><option>Full Year</option></select></div><div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> Data exported here is pre-formatted to align with Kenya Revenue Authority (KRA) standard iTax templates.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('complianceTaxModal','Compliance report generated and sent to finance@paymo.com.','')">Generate Compliance Form</button></div></div></div></div>
+
+<!-- 22. Notifications & Alerts -->
+<div class="modal fade resettable" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Analytics Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-warning)!important"><div style="font-weight:600;font-size:13px">Fraud Spike Detected</div><div style="font-size:11px;color:var(--pm-muted)">CNP transactions in Eastern Europe elevated by 400% in last 6 hours.</div></div><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-primary)!important"><div style="font-weight:600;font-size:13px">Report Successfully Generated</div><div style="font-size:11px;color:var(--pm-muted)">Monthly Portfolio Summary (June) is ready for download.</div></div><div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-danger)!important"><div style="font-weight:600;font-size:13px">Corporate Budget Exceeded</div><div style="font-size:11px;color:var(--pm-muted)">TechStart Inc has breached 90% of their monthly limit.</div></div><div class="p-3 border rounded" style="border-left:3px solid var(--pm-accent)!important"><div style="font-weight:600;font-size:13px">Scheduled Job Complete</div><div style="font-size:11px;color:var(--pm-muted)">Churn risk predictive model updated at 02:00 AM.</div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Profile & Settings -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Admin Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)">DA</div><h5 style="font-weight:700;margin-bottom:2px">David A.</h5><p style="font-size:13px;color:var(--pm-muted)">BAAS Admin · Card Center Data Owner</p><div class="row g-2 text-start mt-3" style="font-size:13px"><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Access Level</span><br><strong>Full Analytics</strong></div></div><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Last Login</span><br><strong>Today, 08:42 AM</strong></div></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-danger w-100" data-bs-dismiss="modal">Sign Out Session</button></div></div></div></div>
+
+<!-- 24. Predictive Engine Intro Modal -->
+<div class="modal fade resettable" id="predictiveEngineModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-stars text-purple me-2"></i>AI Predictive Engine Dashboard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-purple-soft);border:1px solid var(--pm-purple);cursor:pointer" onclick="closeModal('predictiveEngineModal'); openModal('churnRiskModal')"><i class="bi bi-exclamation-triangle d-block mb-2 text-danger" style="font-size:24px"></i><div style="font-weight:700">Churn Prediction</div><div style="font-size:11px;color:var(--pm-muted)">1,420 users at risk</div></div></div><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft);border:1px solid var(--pm-accent);cursor:pointer" onclick="closeModal('predictiveEngineModal'); openModal('upsellOpportunityModal')"><i class="bi bi-graph-up-arrow d-block mb-2 text-success" style="font-size:24px"></i><div style="font-weight:700">Credit Upsell</div><div style="font-size:11px;color:var(--pm-muted)">412 qualified users</div></div></div><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-warning-soft);border:1px solid var(--pm-warning);cursor:pointer" onclick="closeModal('predictiveEngineModal'); openModal('merchantCrossSellModal')"><i class="bi bi-link-45deg d-block mb-2 text-warning" style="font-size:24px"></i><div style="font-weight:700">Merchant Cross-Sell</div><div style="font-size:11px;color:var(--pm-muted)">3 active campaigns</div></div></div></div><div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:13px"><p><strong>Next Month Forecast:</strong></p><ul><li>Projected Volume: KES 1.35B (+12.5%)</li><li>Predicted Active Cards: 48,000</li><li>Machine Learning Confidence Score: 94.2%</li></ul></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 25. LTV Analytics Modal -->
+<div class="modal fade resettable" id="ltvAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Customer LTV Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between align-items-center mb-3"><div style="font-size:11px;font-weight:700;color:var(--pm-muted)">AVERAGE LIFETIME VALUE</div><div style="font-size:24px;font-weight:700;color:var(--pm-primary)">KES 12,400</div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Segment</th><th>Avg LTV</th><th>CAC</th><th>ROI Ratio</th></tr></thead><tbody><tr><td>Premium Credit</td><td>KES 45,000</td><td>KES 2,500</td><td>18x</td></tr><tr><td>Corporate Expense</td><td>KES 32,100</td><td>KES 1,200</td><td>26x</td></tr><tr><td>Standard Debit</td><td>KES 8,500</td><td>KES 800</td><td>10.6x</td></tr><tr><td>Virtual Only</td><td>KES 4,200</td><td>KES 150</td><td>28x</td></tr></tbody></table></div><div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px">Virtual cards have the lowest LTV but the highest ROI ratio due to zero physical acquisition costs. Focus acquisition budget here.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+</div><!-- end modalsContainer -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Done</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';});}
+
+let exportStep=1, schedStep=1;
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+
+function nextExportStep(){if(exportStep===2){showLoading('#exportReportModal .modal-body',()=>{exportStep=3;renderStepper('exportStepper',['Data','Options','Ready'],exportStep);showFlow('exportStep',exportStep,3);document.getElementById('exportNextBtn').style.display='none';});return;}if(exportStep>=3){closeModal('exportReportModal');return;}exportStep++;renderStepper('exportStepper',['Data','Options','Ready'],exportStep);showFlow('exportStep',exportStep,3);if(exportStep===2)document.getElementById('exportNextBtn').innerHTML='Compile Report';}
+function nextSchedStep(){if(schedStep===2){showLoading('#scheduleReportModal .modal-body',()=>{schedStep=3;renderStepper('schedStepper',['Report','Timing','Delivery'],schedStep);showFlow('schedStep',schedStep,3);document.getElementById('schedNextBtn').innerHTML='Save Schedule';});return;}if(schedStep>=3){processAction('scheduleReportModal','Automated schedule saved successfully!','');return;}schedStep++;renderStepper('schedStepper',['Report','Timing','Delivery'],schedStep);showFlow('schedStep',schedStep,3);}
+
+function resetFlows(){
+  exportStep=1; schedStep=1;
+  renderStepper('exportStepper',['Data','Options','Ready'],1);
+  renderStepper('schedStepper',['Report','Timing','Delivery'],1);
+  showFlow('exportStep',1,3);
+  showFlow('schedStep',1,3);
+  const exBtn=document.getElementById('exportNextBtn'); if(exBtn){exBtn.style.display='inline-flex';exBtn.innerHTML='Continue';}
+  const scBtn=document.getElementById('schedNextBtn'); if(scBtn){scBtn.style.display='inline-flex';scBtn.innerHTML='Continue';}
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.resettable').forEach(m=>{
+    const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');
+    if(b)m.dataset.origBody=b.innerHTML;if(f)m.dataset.origFooter=f.innerHTML;
+    m.addEventListener('hidden.bs.modal',()=>{
+      if(m.dataset.origBody)m.querySelector('.modal-body').innerHTML=m.dataset.origBody;
+      if(m.dataset.origFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.origFooter;
+      resetFlows();
+    });
+  });
+  resetFlows();
+});
+</script>
+</body>
+</html>

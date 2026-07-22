@@ -1,0 +1,2899 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Compliance & AML (Transactions)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #1E293B, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-shield-check"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-gear"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">CC</div>
+                        <div>
+                            <h1>Compliance & AML (Transactions)</h1>
+                            <p>Transaction monitoring, AML rules, sanctions screening, risk scoring, case management &
+                                regulatory reporting</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search transactions, alerts, cases, sanctions lists..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('amlHealthModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('regReportModal')"><i class="bi bi-file-earmark-text"></i><span
+                            class="counter">3</span></button><button class="pm-header-btn"
+                        onclick="openM('amlNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">17</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">AK</div>
+                        <div>
+                            <div class="pm-name">Amina K.</div>
+                            <div class="pm-role">Compliance Officer</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Transactions Hub</a> /
+                        <strong>Compliance & AML</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.9 — Compliance & AML (Transactions)</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Real-time transaction monitoring, AML
+                        rules engine, sanctions & PEP screening, risk scoring, investigation case management, and
+                        automated regulatory reporting.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('amlHealthModal')"><i class="bi bi-heart-pulse"></i> Health Check</button><button
+                        class="btn-pm" onclick="openM('regReportModal')"><i class="bi bi-file-earmark-text"></i>
+                        Regulatory Reports</button><button class="btn-pm" onclick="openM('newCaseModal')"><i
+                            class="bi bi-folder-plus"></i> New Case</button><button class="btn-pm btn-pm-d"
+                        onclick="openM('emergencyBlockModal')"><i class="bi bi-exclamation-triangle"></i> Emergency
+                        Block</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">AML engine is live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">47,291 transactions monitored today</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Real-time screening across 12
+                                payment rails. 17 alerts generated. 4 cases under active investigation.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('amlRulesModal')">Rules</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('sanctionsSearchModal')">Sanctions</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('riskScoringModal')">Risk Engine</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-danger)">HIGH RISK ALERTS</p>
+                            <div class="SV" style="margin:6px 0">17</div><span class="B B-d"><i
+                                    class="bi bi-exclamation-triangle"></i> 4 require immediate action</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">STRs filed today:
+                                <strong>2</strong><br>CTR threshold breaches: <strong>9</strong></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-warning)">AML DETECTION RATE</p>
+                            <div class="SV" style="margin:6px 0">98.7%</div><span class="B B-s"><i
+                                    class="bi bi-graph-up-arrow"></i> +1.2% vs last month</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">False positive rate:
+                                4.1%<br>Avg investigation time: 2.4 hrs</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+                            <p class="SL" style="color:var(--pm-accent)">REGULATORY FILINGS</p>
+                            <div class="SV" style="margin:6px 0">142</div><span class="B B-i"><i
+                                    class="bi bi-file-earmark-check"></i> This month</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">STRs: 31 | CTRs: 89 |
+                                SARs: 22<br>Next CBK report due: <strong>30 Jun</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionFullModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Structuring detected — 3 linked txns
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KSh 2.8M in 48h via multiple
+                                            accounts</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm btn-pm-d"
+                                    onclick="openM('newCaseModal')">Investigate</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-person-x"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">PEP match on beneficiary</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">TXN-884291 — Requires enhanced
+                                            due diligence</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('pepDetailModal')">Review</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-globe"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Sanctions list update — 47 new
+                                            entries</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Screening in progress (12,400
+                                            txns)</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('sanctionsSearchModal')">Scan</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-text"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">STR draft ready for review</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Case #AML-44892 — Due in 18
+                                            hours</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">Open</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-robot"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Tighten velocity rule for
+                                            cross-border</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce false positives by 18%
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('amlRulesModal')">Tune Rule</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Increase risk score weight for
+                                            crypto exchanges</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Current weight: 25% →
+                                            Suggested: 40%</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('riskScoringModal')">Adjust</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-link-45deg"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable real-time sanctions screening
+                                            on PesaLink</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Currently batch (every 15 min)
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('railConfigModal')">Enable</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent compliance workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('newCaseModal')"><i
+                                        class="bi bi-folder-plus text-danger me-1"></i> New
+                                    Investigation</button><button class="quick-btn"
+                                    onclick="openM('sanctionsSearchModal')"><i
+                                        class="bi bi-globe text-warning me-1"></i> Sanctions Search</button><button
+                                    class="quick-btn" onclick="openM('amlRulesModal')"><i
+                                        class="bi bi-sliders text-primary me-1"></i> Edit Rules</button><button
+                                    class="quick-btn" onclick="openM('regReportModal')"><i
+                                        class="bi bi-file-earmark-text me-1" style="color:var(--pm-purple)"></i> File
+                                    STR/CTR</button><button class="quick-btn" onclick="openM('riskScoringModal')"><i
+                                        class="bi bi-speedometer2 me-1" style="color:var(--pm-info)"></i> Risk
+                                    Engine</button><button class="quick-btn" onclick="openM('auditTrailModal')"><i
+                                        class="bi bi-clock-history me-1" style="color:var(--pm-accent)"></i> Audit
+                                    Log</button><button class="quick-btn" onclick="openM('bulkScreeningModal')"><i
+                                        class="bi bi-people me-1" style="color:var(--pm-warning)"></i> Bulk
+                                    Screen</button><button class="quick-btn" onclick="openM('evidenceLockerModal')"><i
+                                        class="bi bi-archive me-1" style="color:var(--pm-muted)"></i> Evidence
+                                    Locker</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: Transaction Monitoring Dashboard -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-activity" style="color:var(--pm-primary)"></i> 1.9.1 —
+                                Real-Time Transaction Monitoring Dashboard</h3>
+                            <p class="ss">Live feed of all bank-to-bank transactions with risk scoring, alerts, and
+                                immediate action capabilities.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('monitorSettingsModal')"><i class="bi bi-gear"></i>
+                                Settings</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('liveAlertsModal')"><i class="bi bi-bell"></i> Live Alerts (17)</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Live Transaction Feed</h4>
+                                <div class="table-responsive" style="max-height:320px;overflow-y:auto">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Reference</th>
+                                                <th>From → To</th>
+                                                <th>Amount</th>
+                                                <th>Rail</th>
+                                                <th>Risk</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>14:32</td>
+                                                <td>TXN-992184</td>
+                                                <td>Equity → KCB</td>
+                                                <td><strong>KES 2,450,000</strong></td>
+                                                <td>PesaLink</td>
+                                                <td><span class="B B-d">92</span></td>
+                                                <td><span class="B B-d">Alert</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('caseDetailModal')">Investigate</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:31</td>
+                                                <td>TXN-992183</td>
+                                                <td>Co-op → Stanbic</td>
+                                                <td><strong>KES 185,000</strong></td>
+                                                <td>RTGS</td>
+                                                <td><span class="B B-w">48</span></td>
+                                                <td><span class="B B-s">Cleared</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('txnDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:30</td>
+                                                <td>TXN-992182</td>
+                                                <td>Absa → Family</td>
+                                                <td><strong>KES 47,500</strong></td>
+                                                <td>ACH</td>
+                                                <td><span class="B B-s">12</span></td>
+                                                <td><span class="B B-s">Cleared</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('txnDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:29</td>
+                                                <td>TXN-992181</td>
+                                                <td>NCBA → Equity</td>
+                                                <td><strong>USD 125,000</strong></td>
+                                                <td>SWIFT</td>
+                                                <td><span class="B B-d">78</span></td>
+                                                <td><span class="B B-w">Hold</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('sanctionsSearchModal')">Screen</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:28</td>
+                                                <td>TXN-992180</td>
+                                                <td>KCB → I&M</td>
+                                                <td><strong>KES 890,000</strong></td>
+                                                <td>PesaLink</td>
+                                                <td><span class="B B-w">55</span></td>
+                                                <td><span class="B B-s">Cleared</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('txnDetailModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Risk Distribution (Today)
+                                </h4>
+                                <div class="d-flex justify-content-between mb-2"><span>Low Risk
+                                        (0-30)</span><strong>41,882 (88.5%)</strong></div>
+                                <div class="pm-progress mb-3">
+                                    <div class="pm-progress-bar" style="width:88.5%;background:var(--pm-accent)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>Medium Risk
+                                        (31-60)</span><strong>4,392 (9.3%)</strong></div>
+                                <div class="pm-progress mb-3">
+                                    <div class="pm-progress-bar" style="width:9.3%;background:var(--pm-warning)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>High Risk
+                                        (61-100)</span><strong>1,017 (2.2%)</strong></div>
+                                <div class="pm-progress mb-3">
+                                    <div class="pm-progress-bar" style="width:2.2%;background:var(--pm-danger)"></div>
+                                </div>
+                                <div class="p-3 rounded mt-3" style="background:var(--pm-danger-soft);font-size:12px">
+                                    <strong>4 transactions</strong> currently flagged for immediate review. Average risk
+                                    score: <strong>47.2</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: AML Rules Engine -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-sliders" style="color:var(--pm-purple)"></i> 1.9.2 — AML
+                                Rules Engine & Threshold Configuration</h3>
+                            <p class="ss">Create, tune, and A/B test detection rules for structuring, velocity,
+                                round-tripping, and sanctions evasion.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('amlRulesModal')"><i class="bi bi-plus-lg"></i> New Rule</button><button
+                                class="btn-pm btn-sm" onclick="openM('ruleTestModal')"><i class="bi bi-play"></i> Test
+                                Rules</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Detection Rules</h4>
+                                <div class="sr">
+                                    <div><strong>Structuring Detection</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Multiple transactions just
+                                            below threshold in 48h</div>
+                                    </div>
+                                    <div><span class="B B-s">Active</span> <span class="B B-p">98.4%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Velocity Rule — Cross-border</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">>3 international txns in 24h
+                                            from same originator</div>
+                                    </div>
+                                    <div><span class="B B-s">Active</span> <span class="B B-p">94.1%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Round-Tripping Detection</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Funds returning to originator
+                                            within 7 days</div>
+                                    </div>
+                                    <div><span class="B B-s">Active</span> <span class="B B-p">87.6%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PEP Transaction Spike</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">PEP-linked account >300% avg
+                                            volume</div>
+                                    </div>
+                                    <div><span class="B B-s">Active</span> <span class="B B-p">91.2%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Crypto Exchange Concentration</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">>40% monthly volume to crypto
+                                            exchanges</div>
+                                    </div>
+                                    <div><span class="B B-w">Paused</span> <span class="B B-p">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Rule Performance (30 days)
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Rule</th>
+                                                <th>Alerts</th>
+                                                <th>Confirmed</th>
+                                                <th>Precision</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Structuring</td>
+                                                <td>412</td>
+                                                <td>89</td>
+                                                <td><strong>21.6%</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Velocity (Intl)</td>
+                                                <td>187</td>
+                                                <td>61</td>
+                                                <td><strong>32.6%</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Round-Trip</td>
+                                                <td>94</td>
+                                                <td>38</td>
+                                                <td><strong>40.4%</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>PEP Spike</td>
+                                                <td>31</td>
+                                                <td>19</td>
+                                                <td><strong>61.3%</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Sanctions & PEP Screening -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-globe" style="color:var(--pm-info)"></i> 1.9.3 — Sanctions &
+                                PEP Screening</h3>
+                            <p class="ss">Real-time and batch screening against UN, OFAC, EU, UK, and local sanctions
+                                lists plus PEP databases.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('sanctionsSearchModal')"><i class="bi bi-search"></i>
+                                Search</button><button class="btn-pm btn-sm" onclick="openM('bulkScreeningModal')"><i
+                                    class="bi bi-people"></i> Bulk Screen</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Screening Summary (Today)
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Total Screened</strong></div><strong>47,291</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Matches Found</strong></div><strong>47</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>False Positives</strong></div><strong>38</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>True Matches (Confirmed)</strong></div><strong>9</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PEP Hits</strong></div><strong>12</strong>
+                                </div>
+                                <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                                        class="bi bi-info-circle me-1"></i> Last full sanctions list refresh: <strong>27
+                                        Jun 2025, 06:00 EAT</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Matches</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Entity</th>
+                                                <th>List</th>
+                                                <th>Match Score</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>John Kamau (Beneficiary)</td>
+                                                <td>UN Consolidated</td>
+                                                <td><span class="B B-d">98%</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('pepDetailModal')">Review</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Global Trade Ltd (Originator)</td>
+                                                <td>OFAC SDN</td>
+                                                <td><span class="B B-d">94%</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('pepDetailModal')">Review</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hon. Peter Ochieng (Director)</td>
+                                                <td>Local PEP DB</td>
+                                                <td><span class="B B-w">72%</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('pepDetailModal')">Review</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Risk Scoring -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-speedometer2" style="color:var(--pm-warning)"></i> 1.9.4 —
+                                Risk Scoring & Customer Risk Profiles</h3>
+                            <p class="ss">Dynamic risk scoring engine with explainable AI, customer risk profiles, and
+                                automated risk-based controls.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('riskScoringModal')"><i class="bi bi-gear"></i> Configure</button><button
+                                class="btn-pm btn-sm" onclick="openM('riskModelModal')"><i class="bi bi-robot"></i> AI
+                                Model</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Risk Score Distribution</h4>
+                                <div class="d-flex justify-content-between mb-2"><span>0-20 (Very
+                                        Low)</span><strong>18,442 (39%)</strong></div>
+                                <div class="pm-progress mb-2">
+                                    <div class="pm-progress-bar" style="width:39%;background:var(--pm-accent)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>21-40 (Low)</span><strong>14,188
+                                        (30%)</strong></div>
+                                <div class="pm-progress mb-2">
+                                    <div class="pm-progress-bar" style="width:30%;background:#34D399"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>41-60
+                                        (Medium)</span><strong>9,458 (20%)</strong></div>
+                                <div class="pm-progress mb-2">
+                                    <div class="pm-progress-bar" style="width:20%;background:var(--pm-warning)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>61-80 (High)</span><strong>3,776
+                                        (8%)</strong></div>
+                                <div class="pm-progress mb-2">
+                                    <div class="pm-progress-bar" style="width:8%;background:var(--pm-danger)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span>81-100
+                                        (Critical)</span><strong>1,427 (3%)</strong></div>
+                                <div class="pm-progress">
+                                    <div class="pm-progress-bar" style="width:3%;background:#DC2626"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Top Risk Factors (This Month)
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>High-risk jurisdiction</strong></div><strong>2,841 txns</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PEP relationship</strong></div><strong>1,992 txns</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Crypto exchange exposure</strong></div><strong>1,447 txns</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Structuring pattern</strong></div><strong>892 txns</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Adverse media hit</strong></div><strong>611 txns</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: Case Management -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-folder-check" style="color:var(--pm-info)"></i> 1.9.5 —
+                                Investigation Case Management</h3>
+                            <p class="ss">End-to-end case lifecycle: creation, evidence gathering, collaboration,
+                                escalation, and regulatory filing.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('newCaseModal')"><i class="bi bi-folder-plus"></i> New
+                                Case</button><button class="btn-pm btn-sm" onclick="openM('caseExportModal')"><i
+                                    class="bi bi-download"></i> Export</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Case ID</th>
+                                    <th>Type</th>
+                                    <th>Subject</th>
+                                    <th>Risk</th>
+                                    <th>Status</th>
+                                    <th>Opened</th>
+                                    <th>Owner</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>AML-44892</td>
+                                    <td>Structuring</td>
+                                    <td>John K. & 3 linked accounts</td>
+                                    <td><span class="B B-d">92</span></td>
+                                    <td><span class="B B-d">Investigation</span></td>
+                                    <td>24 Jun</td>
+                                    <td>Sarah M.</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">Open</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AML-44885</td>
+                                    <td>Sanctions</td>
+                                    <td>Global Trade Ltd</td>
+                                    <td><span class="B B-d">94</span></td>
+                                    <td><span class="B B-w">Escalated</span></td>
+                                    <td>23 Jun</td>
+                                    <td>David O.</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">Open</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AML-44871</td>
+                                    <td>PEP</td>
+                                    <td>Hon. Peter Ochieng</td>
+                                    <td><span class="B B-w">72</span></td>
+                                    <td><span class="B B-s">Under Review</span></td>
+                                    <td>22 Jun</td>
+                                    <td>Amina K.</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">Open</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AML-44860</td>
+                                    <td>Round-Trip</td>
+                                    <td>TechFlow Solutions</td>
+                                    <td><span class="B B-w">61</span></td>
+                                    <td><span class="B B-s">Closed</span></td>
+                                    <td>18 Jun</td>
+                                    <td>James K.</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION 6: Regulatory Reporting -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-text" style="color:var(--pm-purple)"></i> 1.9.6
+                                — Regulatory Reporting (STR / CTR / SAR)</h3>
+                            <p class="ss">Automated generation, review, and submission of Suspicious Transaction
+                                Reports, Currency Transaction Reports, and Suspicious Activity Reports.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('regReportModal')"><i class="bi bi-plus-lg"></i> New
+                                Filing</button><button class="btn-pm btn-sm" onclick="openM('reportCalendarModal')"><i
+                                    class="bi bi-calendar"></i> Calendar</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Filings</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Report ID</th>
+                                                <th>Type</th>
+                                                <th>Subject</th>
+                                                <th>Filed</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>STR-2025-0612</td>
+                                                <td>STR</td>
+                                                <td>Structuring — John K. network</td>
+                                                <td>26 Jun</td>
+                                                <td><span class="B B-s">Submitted</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reportDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>CTR-2025-0611</td>
+                                                <td>CTR</td>
+                                                <td>Cash deposits > KES 1M</td>
+                                                <td>25 Jun</td>
+                                                <td><span class="B B-s">Acknowledged</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reportDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>SAR-2025-0608</td>
+                                                <td>SAR</td>
+                                                <td>PEP adverse media</td>
+                                                <td>22 Jun</td>
+                                                <td><span class="B B-s">Submitted</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reportDetailModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Filing Deadlines</h4>
+                                <div class="sr">
+                                    <div><strong>STR Draft #AML-44892</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Due in 18 hours</div>
+                                    </div><button class="btn-pm btn-sm btn-pm-d"
+                                        onclick="openM('caseDetailModal')">Complete</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Monthly CBK Summary</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Due 30 Jun 2025</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('regReportModal')">Prepare</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Quarterly AML Report</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Due 15 Jul 2025</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('regReportModal')">Start</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 7: Audit Trail & Evidence -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-archive" style="color:var(--pm-muted)"></i> 1.9.7 — Audit
+                                Trail & Evidence Locker</h3>
+                            <p class="ss">Immutable audit log of all compliance actions, evidence management, chain of
+                                custody, and regulatory inspection readiness.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('auditTrailModal')"><i class="bi bi-clock-history"></i> Full
+                                Log</button><button class="btn-pm btn-sm" onclick="openM('evidenceLockerModal')"><i
+                                    class="bi bi-archive"></i> Evidence Locker</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Entity</th>
+                                    <th>Evidence</th>
+                                    <th>IP / Device</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:28</td>
+                                    <td>Sarah M.</td>
+                                    <td>Case escalated to CBK</td>
+                                    <td>AML-44892</td>
+                                    <td>STR-2025-0612</td>
+                                    <td>102.68.XX.XX — MacBook</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 13:55</td>
+                                    <td>David O.</td>
+                                    <td>Added evidence file</td>
+                                    <td>AML-44885</td>
+                                    <td>bank_statements.pdf</td>
+                                    <td>102.68.XX.XX — Windows</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:42</td>
+                                    <td>Amina K.</td>
+                                    <td>Updated risk score</td>
+                                    <td>PEP-7721</td>
+                                    <td>—</td>
+                                    <td>102.68.XX.XX — iPhone</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 09:15</td>
+                                    <td>System</td>
+                                    <td>Auto-block triggered</td>
+                                    <td>TXN-992184</td>
+                                    <td>Rule: Velocity-INTL</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- 23+ MODALS -->
+
+    <!-- M1: New Case (multi-step) -->
+    <div class="modal fade R" id="newCaseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-folder-plus text-danger me-2"></i>Create New Investigation
+                        Case</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="caseStepper"></div>
+                    <div id="caseS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Case Type & Trigger</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Case Type</label><select class="FC">
+                                    <option>Structuring / Smurfing</option>
+                                    <option>Sanctions / PEP Hit</option>
+                                    <option>Round-Tripping</option>
+                                    <option>Adverse Media</option>
+                                    <option>Internal Referral</option>
+                                    <option>Regulatory Request</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Priority</label><select class="FC">
+                                    <option>Critical — Immediate</option>
+                                    <option>High — 24h</option>
+                                    <option>Normal — 72h</option>
+                                </select></div>
+                        </div>
+                        <div class="mb-3 mt-3"><label class="FL">Triggering Transaction(s)</label><input class="FC"
+                                value="TXN-992184, TXN-992185, TXN-992186"></div>
+                    </div>
+                    <div id="caseS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Subjects & Scope</h6>
+                        <div class="mb-3"><label class="FL">Primary Subject</label><input class="FC"
+                                value="John Kamau (ID: 28471920)"></div>
+                        <div class="mb-3"><label class="FL">Linked Entities</label><textarea class="FC"
+                                rows="2">Mary Wanjiku (Spouse), TechFlow Solutions Ltd, Global Trade EA</textarea></div>
+                        <div class="mb-3"><label class="FL">Date Range</label>
+                            <div class="row g-3">
+                                <div class="col-6"><input type="date" class="FC" value="2025-05-01"></div>
+                                <div class="col-6"><input type="date" class="FC" value="2025-06-27"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="caseS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Initial Actions</h6>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Freeze all linked accounts</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Request bank statements (last 90 days)</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Submit SAR to CBK within 24h</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Assign to investigation team</label></div>
+                    </div>
+                    <div id="caseS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-folder-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Case Created Successfully</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Case AML-44901 has been created and
+                                assigned to Sarah M. (Lead Investigator).</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Case
+                                        ID</span><strong>AML-44901</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Priority</span><span class="B B-d">Critical</span></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Due</span><strong>28 Jun 2025, 14:32</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="caseFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-d" id="caseNext"
+                        onclick="nextFlow('case',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Case Detail (multi-tab) -->
+    <div class="modal fade R" id="caseDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-folder me-2"></i>Case AML-44892 — Structuring Investigation
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('caseD','overview',this)">Overview</button><button class="pill"
+                            onclick="sw('caseD','timeline',this)">Timeline</button><button class="pill"
+                            onclick="sw('caseD','evidence',this)">Evidence</button><button class="pill"
+                            onclick="sw('caseD','network',this)">Network</button><button class="pill"
+                            onclick="sw('caseD','report',this)">Report</button></div>
+                    <div id="caseD-overview" class="tpanel active">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div class="d-flex justify-content-between mb-2"><span
+                                            class="text-muted">Status</span><span class="B B-d">Active
+                                            Investigation</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span
+                                            class="text-muted">Opened</span><strong>24 Jun 2025</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span
+                                            class="text-muted">Owner</span><strong>Sarah M. (Lead)</strong></div>
+                                    <div class="d-flex justify-content-between"><span class="text-muted">Risk
+                                            Score</span><span class="B B-d">92</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#991B1B">SUBJECTS</div>
+                                    <div style="font-size:14px;font-weight:700;color:var(--pm-danger)">John Kamau + 7
+                                        linked entities</div>
+                                    <div style="font-size:12px;color:#7F1D1D">3 accounts frozen • KES 4.2M under review
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="caseD-timeline" class="tpanel">
+                        <div class="sr">
+                            <div><strong>24 Jun 09:12</strong> — Case created by system (Structuring rule triggered)
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>24 Jun 10:45</strong> — Sarah M. assigned as lead investigator</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>24 Jun 14:30</strong> — Account freeze executed on 3 accounts</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>25 Jun 11:20</strong> — Bank statements received (Equity, KCB, NCBA)</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>26 Jun 16:05</strong> — Evidence uploaded: 47 transaction screenshots</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>27 Jun 08:40</strong> — STR draft submitted for internal review</div>
+                        </div>
+                    </div>
+                    <div id="caseD-evidence" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Type</th>
+                                        <th>Uploaded</th>
+                                        <th>Hash</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>equity_statements_jun25.pdf</td>
+                                        <td>Bank Statement</td>
+                                        <td>25 Jun</td>
+                                        <td>SHA256: a3f2...</td>
+                                        <td><button class="btn-pm btn-sm">Download</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>structuring_pattern.png</td>
+                                        <td>Analysis</td>
+                                        <td>26 Jun</td>
+                                        <td>SHA256: 9c81...</td>
+                                        <td><button class="btn-pm btn-sm">Download</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PEP_profile_john_kamau.pdf</td>
+                                        <td>Screening</td>
+                                        <td>26 Jun</td>
+                                        <td>SHA256: 4b92...</td>
+                                        <td><button class="btn-pm btn-sm">Download</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="caseD-network" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px"><strong>Entity
+                                Network (8 nodes)</strong>
+                            <ul class="mt-2 mb-0">
+                                <li>John Kamau (Primary) → Mary Wanjiku (Spouse) → TechFlow Ltd → Global Trade EA → 4
+                                    shell entities</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="caseD-report" class="tpanel">
+                        <div class="mb-3"><label class="FL">STR Narrative (Draft)</label><textarea class="FC"
+                                rows="6">Between 12–14 June 2025, John Kamau and linked entities conducted 14 transactions totaling KES 2.84M, all structured just below the KES 1M reporting threshold. Pattern consistent with structuring to evade CTR requirements.</textarea>
+                        </div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Include transaction timeline</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Attach evidence pack (47 files)</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Request asset freeze order</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('caseDetailModal','Case updated and saved. All changes logged to audit trail.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Sanctions Search -->
+    <div class="modal fade R" id="sanctionsSearchModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe text-info me-2"></i>Sanctions & PEP Search</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Search Term</label><input class="FC" value="John Kamau"
+                            placeholder="Name, ID, Company, Passport"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Lists to Check</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">UN Consolidated</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">OFAC SDN</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">EU Consolidated</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">UK Sanctions</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Local PEP Database</label></div>
+                        </div>
+                        <div class="col-md-6"><label class="FL">Match Threshold</label><select class="FC">
+                                <option>High (90%+)</option>
+                                <option>Medium (70%+)</option>
+                                <option>Low (50%+)</option>
+                            </select></div>
+                    </div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2)">
+                        <div style="font-size:13px;font-weight:700">Search Results (3 matches)</div>
+                        <div class="sr mt-2">
+                            <div><strong>John Kamau (Beneficiary)</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">UN Consolidated List — 98% match</div>
+                            </div><span class="B B-d">High Risk</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>John Kamau (Director, Global Trade Ltd)</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">OFAC SDN — 94% match</div>
+                            </div><span class="B B-d">High Risk</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>John Kamau (Spouse of PEP)</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Local PEP DB — 72% match</div>
+                            </div><span class="B B-w">Medium Risk</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('sanctionsSearchModal','Screening completed. 3 matches flagged for review.','')">Screen
+                        Again</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: AML Rules Modal (multi-tab) -->
+    <div class="modal fade R" id="amlRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders text-purple me-2"></i>AML Rules Engine</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('rule','active',this)">Active
+                            Rules</button><button class="pill" onclick="sw('rule','create',this)">Create
+                            Rule</button><button class="pill" onclick="sw('rule','test',this)">A/B Test</button></div>
+                    <div id="rule-active" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rule Name</th>
+                                        <th>Trigger</th>
+                                        <th>Threshold</th>
+                                        <th>Precision</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Structuring v4.2</td>
+                                        <td>Multiple txns &lt; threshold</td>
+                                        <td>48h / KES 1M</td>
+                                        <td>21.6%</td>
+                                        <td><span class="B B-s">Active</span></td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('ruleTestModal')">Edit</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Velocity-INTL v3.1</td>
+                                        <td>International velocity</td>
+                                        <td>24h / 3 txns</td>
+                                        <td>32.6%</td>
+                                        <td><span class="B B-s">Active</span></td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('ruleTestModal')">Edit</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>RoundTrip v2.8</td>
+                                        <td>Funds return to originator</td>
+                                        <td>7 days</td>
+                                        <td>40.4%</td>
+                                        <td><span class="B B-s">Active</span></td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('ruleTestModal')">Edit</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="rule-create" class="tpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Rule Name</label><input class="FC"
+                                    value="Crypto Exchange Velocity"></div>
+                            <div class="col-md-6"><label class="FL">Category</label><select class="FC">
+                                    <option>Velocity</option>
+                                    <option>Structuring</option>
+                                    <option>Round-Tripping</option>
+                                    <option>PEP</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Time Window</label><input class="FC"
+                                    value="24 hours"></div>
+                            <div class="col-md-6"><label class="FL">Threshold</label><input class="FC"
+                                    value="KES 5,000,000"></div>
+                            <div class="col-12"><label class="FL">Rule Logic</label><textarea class="FC"
+                                    rows="3">IF (destination == CryptoExchange) AND (amount > threshold) AND (count > 3 in window) THEN alert</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rule-test" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:13px"><strong>A/B Test
+                                Results (14 days)</strong>
+                            <div class="mt-2">Rule v4.2 vs v4.3: Precision improved from 21.6% → 28.4%. False positives
+                                reduced by 31%.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('amlRulesModal','Rule changes saved and deployed to production.','')">Save &
+                        Deploy</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Risk Scoring Modal -->
+    <div class="modal fade R" id="riskScoringModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-speedometer2 text-warning me-2"></i>Risk Scoring Engine</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('risk','factors',this)">Risk
+                            Factors</button><button class="pill"
+                            onclick="sw('risk','weights',this)">Weights</button><button class="pill"
+                            onclick="sw('risk','model',this)">AI Model</button></div>
+                    <div id="risk-factors" class="tpanel active">
+                        <div class="mb-3"><label class="FL">Factor</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">High-risk jurisdiction (weight 25)</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">PEP relationship (weight 20)</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Crypto exposure (weight 15)</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Adverse media (weight 10)</label></div>
+                        </div>
+                    </div>
+                    <div id="risk-weights" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Factor</th>
+                                        <th>Current Weight</th>
+                                        <th>Recommended</th>
+                                        <th>Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>High-risk jurisdiction</td>
+                                        <td>25</td>
+                                        <td>30</td>
+                                        <td>+12% precision</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PEP relationship</td>
+                                        <td>20</td>
+                                        <td>25</td>
+                                        <td>+8% precision</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Crypto exposure</td>
+                                        <td>15</td>
+                                        <td>20</td>
+                                        <td>+15% precision</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="risk-model" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div style="font-size:13px;font-weight:700">Explainable AI Model v3.4</div>
+                            <div style="font-size:12px;color:var(--pm-muted)">Last trained: 20 Jun 2025 • Accuracy:
+                                94.2% • Features: 47</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('riskScoringModal','Risk model weights updated. New scores will apply to future transactions.','')">Apply
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Regulatory Report Modal -->
+    <div class="modal fade R" id="regReportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text text-purple me-2"></i>File Regulatory
+                        Report</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>STR — Suspicious Transaction Report</option>
+                            <option>CTR — Currency Transaction Report</option>
+                            <option>SAR — Suspicious Activity Report</option>
+                            <option>Monthly CBK Summary</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Subject / Case</label><select class="FC">
+                            <option>AML-44892 — John Kamau Structuring</option>
+                            <option>AML-44885 — Global Trade Ltd</option>
+                            <option>AML-44871 — Hon. Peter Ochieng</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Narrative / Summary</label><textarea class="FC"
+                            rows="4">Multiple structured transactions detected across 3 accounts. Total value KES 2.84M within 48 hours. Pattern consistent with deliberate evasion of reporting thresholds.</textarea>
+                    </div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Include transaction timeline</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Attach evidence pack</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Request asset freeze</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('regReportModal','Report filed successfully. Confirmation received from CBK (Ref: CBK-STR-2025-0612).','CBK-STR-2025-0612')">Submit
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Evidence Locker -->
+    <div class="modal fade R" id="evidenceLockerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-archive me-2"></i>Evidence Locker</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Case</label><select class="FC">
+                            <option>AML-44892 — Structuring</option>
+                            <option>AML-44885 — Sanctions</option>
+                        </select></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Type</th>
+                                    <th>Uploaded</th>
+                                    <th>Hash (SHA256)</th>
+                                    <th>Chain</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>equity_jun25.pdf</td>
+                                    <td>Statement</td>
+                                    <td>25 Jun</td>
+                                    <td>a3f2c9e1...</td>
+                                    <td>Verified</td>
+                                    <td><button class="btn-pm btn-sm">Download</button></td>
+                                </tr>
+                                <tr>
+                                    <td>structuring_map.png</td>
+                                    <td>Analysis</td>
+                                    <td>26 Jun</td>
+                                    <td>9c81b4d2...</td>
+                                    <td>Verified</td>
+                                    <td><button class="btn-pm btn-sm">Download</button></td>
+                                </tr>
+                                <tr>
+                                    <td>PEP_profile.pdf</td>
+                                    <td>Screening</td>
+                                    <td>26 Jun</td>
+                                    <td>4b92f7a3...</td>
+                                    <td>Verified</td>
+                                    <td><button class="btn-pm btn-sm">Download</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3"><label class="FL">Upload New Evidence</label><input type="file" class="FC"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('evidenceLockerModal','Evidence uploaded and hashed. Chain of custody recorded.','')">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Audit Trail -->
+    <div class="modal fade R" id="auditTrailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Compliance Audit Trail</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive" style="max-height:500px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Entity</th>
+                                    <th>IP/Device</th>
+                                    <th>Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:28</td>
+                                    <td>Sarah M.</td>
+                                    <td>Escalated to CBK</td>
+                                    <td>AML-44892</td>
+                                    <td>102.68.XX.XX (Mac)</td>
+                                    <td>Verified</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 13:55</td>
+                                    <td>David O.</td>
+                                    <td>Uploaded evidence</td>
+                                    <td>AML-44885</td>
+                                    <td>102.68.XX.XX (Win)</td>
+                                    <td>Verified</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:42</td>
+                                    <td>Amina K.</td>
+                                    <td>Updated risk score</td>
+                                    <td>PEP-7721</td>
+                                    <td>102.68.XX.XX (iOS)</td>
+                                    <td>Verified</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 09:15</td>
+                                    <td>System</td>
+                                    <td>Auto-block</td>
+                                    <td>TXN-992184</td>
+                                    <td>—</td>
+                                    <td>System</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 16:40</td>
+                                    <td>James K.</td>
+                                    <td>Closed case</td>
+                                    <td>AML-44860</td>
+                                    <td>102.68.XX.XX (Mac)</td>
+                                    <td>Verified</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('auditTrailModal','Audit trail exported to PDF with digital signature.','')">Export
+                        PDF</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: PEP Detail -->
+    <div class="modal fade R" id="pepDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-x text-warning me-2"></i>PEP Profile — John Kamau
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Full
+                                        Name</span><strong>John Kamau</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">ID
+                                        Number</span><strong>28471920</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">PEP
+                                        Status</span><span class="B B-d">Active</span></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Position</span><strong>Director, Global Trade Ltd</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#991B1B">MATCHED LISTS</div>
+                                <div style="font-size:14px;font-weight:700;color:var(--pm-danger)">UN Consolidated (98%)
+                                </div>
+                                <div style="font-size:14px;font-weight:700;color:var(--pm-danger)">OFAC SDN (94%)</div>
+                                <div style="font-size:14px;font-weight:700;color:var(--pm-warning)">Local PEP DB (72%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3"><label class="FL">Risk Notes</label><textarea class="FC"
+                            rows="3">Subject appears on UN sanctions list under alias "J. Kamau". Multiple accounts show structuring pattern. Spouse (Mary Wanjiku) also flagged.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-d" onclick="openM('newCaseModal')">Open Investigation</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Live Alerts -->
+    <div class="modal fade R" id="liveAlertsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell text-danger me-2"></i>Live AML Alerts (17)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)">
+                        <div class="d-flex justify-content-between">
+                            <div><strong>Structuring detected</strong>
+                                <div style="font-size:11px;color:#7F1D1D">TXN-992184, 992185, 992186 — KES 2.45M in 48h
+                                </div>
+                            </div><button class="btn-pm btn-sm btn-pm-d"
+                                onclick="openM('newCaseModal')">Investigate</button>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft)">
+                        <div class="d-flex justify-content-between">
+                            <div><strong>PEP transaction spike</strong>
+                                <div style="font-size:11px;color:#92400E">Hon. Peter Ochieng — 340% above average</div>
+                            </div><button class="btn-pm btn-sm" onclick="openM('pepDetailModal')">Review</button>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft)">
+                        <div class="d-flex justify-content-between">
+                            <div><strong>Sanctions match</strong>
+                                <div style="font-size:11px;color:#1E40AF">Global Trade Ltd — OFAC SDN hit</div>
+                            </div><button class="btn-pm btn-sm" onclick="openM('sanctionsSearchModal')">Screen</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('amlRulesModal')">Tune Alert Rules</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Bulk Screening -->
+    <div class="modal fade R" id="bulkScreeningModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-warning me-2"></i>Bulk Sanctions & PEP Screening
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Upload File (CSV/Excel)</label><input type="file" class="FC">
+                    </div>
+                    <div class="mb-3"><label class="FL">Lists to Screen Against</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">UN + OFAC + EU + UK</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Local PEP Database</label></div>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Estimated screening time: <strong>12–18 minutes</strong>
+                        for 50,000 records.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bulkScreeningModal','Bulk screening started. You will be notified when complete. 47,291 records queued.','BULK-20250627-001')">Start
+                        Screening</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Emergency Block -->
+    <div class="modal fade R" id="emergencyBlockModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background:var(--pm-danger);color:#fff;border:none">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Emergency Transaction Block
+                    </h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Block Type</label><select class="FC">
+                            <option>Single Transaction</option>
+                            <option>All Transactions from Originator</option>
+                            <option>All Transactions to Beneficiary</option>
+                            <option>Entire Account / Entity</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reference / Account</label><input class="FC"
+                            value="TXN-992184 or John Kamau (28471920)"></div>
+                    <div class="mb-3"><label class="FL">Reason</label><textarea class="FC"
+                            rows="2">Active sanctions hit — immediate block required per CBK directive.</textarea></div>
+                    <div class="p-3 rounded" style="background:var(--pm-danger-soft);font-size:12px"><i
+                            class="bi bi-shield-x me-1"></i> <strong>Warning:</strong> This action is irreversible and
+                        will be logged to the audit trail with your digital signature.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-d"
+                        onclick="doAction('emergencyBlockModal','Emergency block executed. 14 transactions frozen across 3 accounts. CBK notified.','EMB-20250627-0001')">Execute
+                        Block</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Rule Test -->
+    <div class="modal fade R" id="ruleTestModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-play text-primary me-2"></i>Test AML Rule</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Rule</label><select class="FC">
+                            <option>Structuring v4.2</option>
+                            <option>Velocity-INTL v3.1</option>
+                            <option>RoundTrip v2.8</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Test Dataset</label><select class="FC">
+                            <option>Last 30 days (47,291 txns)</option>
+                            <option>Last 7 days (12,844 txns)</option>
+                            <option>Custom range</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Estimated runtime: <strong>45 seconds</strong>. Results
+                        will show precision, recall, and false positive rate.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('ruleTestModal','Rule test completed. Precision: 28.4% (+6.8%). False positives reduced by 31%.','')">Run
+                        Test</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Report Detail -->
+    <div class="modal fade R" id="reportDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>STR-2025-0612 — Detailed View
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Submitted to CBK</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Filed</span><strong>26
+                                Jun 2025, 14:32</strong></div>
+                        <div class="d-flex justify-content-between"><span
+                                class="text-muted">Confirmation</span><strong>CBK-STR-2025-0612</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Narrative</label>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">Between 12–14
+                            June 2025, John Kamau and linked entities conducted 14 transactions totaling KES 2.84M, all
+                            structured just below the KES 1M reporting threshold. Pattern consistent with structuring to
+                            evade CTR requirements.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reportDetailModal','Report downloaded with digital signature and chain of custody certificate.','')">Download
+                        PDF</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Report Calendar -->
+    <div class="modal fade R" id="reportCalendarModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar me-2"></i>Regulatory Filing Calendar</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>28 Jun 2025</strong> — STR Draft #AML-44892 (Due in 18h)</div><span
+                            class="B B-d">Critical</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>30 Jun 2025</strong> — Monthly CBK Summary</div><span class="B B-w">High</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>15 Jul 2025</strong> — Quarterly AML Report to CBK</div><span
+                            class="B B-i">Normal</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>31 Jul 2025</strong> — PEP Annual Review</div><span class="B B-i">Normal</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Monitor Settings -->
+    <div class="modal fade R" id="monitorSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Monitoring Settings</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Real-time monitoring enabled</label></div>
+                    <div class="mb-3"><label class="FL">Alert Threshold (Risk Score)</label><input class="FC"
+                            value="65"></div>
+                    <div class="mb-3"><label class="FL">Auto-block Threshold</label><input class="FC" value="85"></div>
+                    <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Auto-notify CBK on critical alerts</label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Enable AI-assisted triage</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('monitorSettingsModal','Monitoring settings saved. Changes effective immediately.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Txn Detail -->
+    <div class="modal fade R" id="txnDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction TXN-992184</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">From</span><strong>Equity Bank — John Kamau</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">To</span><strong>KCB — Mary Wanjiku</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Amount</span><strong>KES 2,450,000</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Rail</span><strong>PesaLink</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#991B1B">RISK SCORE</div>
+                                <div style="font-size:28px;font-weight:800;color:var(--pm-danger)">92</div>
+                                <div style="font-size:12px;color:#7F1D1D">Structuring pattern detected</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-d" onclick="openM('newCaseModal')">Open Investigation</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Attention Full -->
+    <div class="modal fade R" id="attentionFullModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Compliance
+                        Items</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Structuring — John Kamau network</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">AML-44892 • Due in 18h</div>
+                        </div><button class="btn-pm btn-sm btn-pm-d" onclick="openM('caseDetailModal')">Open</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Sanctions match — Global Trade Ltd</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">AML-44885 • Escalated</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('caseDetailModal')">Open</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>PEP profile review</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Hon. Peter Ochieng • 72% match</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('pepDetailModal')">Review</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>STR draft pending</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">AML-44892 • Due 28 Jun</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('regReportModal')">File</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: AML Health -->
+    <div class="modal fade R" id="amlHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>AML System Health Check
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    98.7</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">DETECTION RATE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">4.1%</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">FALSE POSITIVE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">2.4h</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">AVG INVESTIGATION</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">142</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">FILINGS THIS MONTH</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px"><strong>System
+                            Status:</strong> All 12 payment rails connected. Sanctions lists last updated 27 Jun 06:00.
+                        AI model v3.4 running normally.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('amlRulesModal')">Tune Rules</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Case Export -->
+    <div class="modal fade R" id="caseExportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Cases</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Export Type</label><select class="FC">
+                            <option>All active cases</option>
+                            <option>Closed cases (last 90 days)</option>
+                            <option>Full audit log</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('caseExportModal','Export generated and downloading...','')">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: AML Notifications -->
+    <div class="modal fade R" id="amlNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Compliance Notifications (17)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Structuring alert — 3 linked txns</strong>
+                        <div style="font-size:11px;color:#7F1D1D">KES 2.45M in 48h • Case opened</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>PEP
+                            match on beneficiary</strong>
+                        <div style="font-size:11px;color:#92400E">TXN-884291 • EDD required</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px">
+                        <strong>Sanctions list updated</strong>
+                        <div style="font-size:11px;color:#1E40AF">47 new entries • Screening in progress</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>STR
+                            draft ready</strong>
+                        <div style="font-size:11px;color:#065F46">AML-44892 • Due in 18 hours</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('notifSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">AK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Amina Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">amina.k@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Compliance Officer</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Cases Managed</span><br><strong>142 this year</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Member Since</span><br><strong>Mar 2022</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Certifications</span><br><strong>CAMS, CFCS</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Notif Settings -->
+    <div class="modal fade R" id="notifSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Notification Preferences</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Alert Type</th>
+                                    <th>Push</th>
+                                    <th>SMS</th>
+                                    <th>Email</th>
+                                    <th>WhatsApp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>High-risk alerts</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>PEP matches</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Sanctions hits</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Case updates</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Regulatory deadlines</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('notifSettingsModal','Notification preferences saved.','')">Save
+                        Preferences</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M24: Rule Test Result (placeholder for completeness) -->
+    <div class="modal fade R" id="ruleTestResultModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check-lg text-success me-2"></i>Rule Test Results</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#047857">Structuring v4.2 Test Complete</div>
+                        <div class="mt-2">Precision: <strong>28.4%</strong> (+6.8%)<br>Recall:
+                            <strong>91.2%</strong><br>False Positive Rate: <strong>3.1%</strong> (-31%)</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { case: { current: 1, total: 4, labels: ['Type', 'Scope', 'Actions', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { const modalBody = document.querySelector('#newCaseModal .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM('newCaseModal'); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

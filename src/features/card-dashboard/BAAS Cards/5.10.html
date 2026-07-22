@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Card Settings & Support</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .card-widget {
+            width: 100%;
+            max-width: 340px;
+            aspect-ratio: 1.586;
+            border-radius: 16px;
+            padding: 24px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--pm-font-display)
+        }
+
+        .card-widget::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .12) 0%, transparent 60%)
+        }
+
+        .card-widget .cw-logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            opacity: .9
+        }
+
+        .card-widget .cw-number {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: .15em;
+            margin: 8px 0
+        }
+
+        .card-widget .cw-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 12px
+        }
+
+        .card-widget .cw-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: .7;
+            letter-spacing: .08em
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .card-widget {
+                max-width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-credit-card-2-front"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-gear"></i></button></nav><button class="pm-nav-item" style="margin-top:auto"><i
+                    class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">CC</div>
+                        <div>
+                            <h1>Card Settings & Support</h1>
+                            <p>Preferences, defaults, notifications, help center and emergency services</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search card settings, FAQ, disputes, support tickets..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('securityCheckModal')"><i
+                            class="bi bi-shield-check"></i></button><button class="pm-header-btn"
+                        onclick="openM('cardNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">8</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">AK</div>
+                        <div>
+                            <div class="pm-name">Amina K.</div>
+                            <div class="pm-role">Card Holder</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Settings &
+                            Support</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        5.10 — Card Settings & Support</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Configure card defaults, personalize
+                        alert preferences, access self-service help, troubleshoot declined transactions and reach
+                        emergency support.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('changePinModal')"><i class="bi bi-key"></i> Change PIN</button><button
+                        class="btn-pm" onclick="openM('freezeCardModal')"><i class="bi bi-snow2"></i> Freeze
+                        Card</button><button class="btn-pm" onclick="openM('troubleshootModal')"><i
+                            class="bi bi-wrench"></i> Troubleshoot</button><button class="btn-pm btn-pm-d"
+                        onclick="openM('emergencyModal')"><i class="bi bi-telephone"></i> Emergency</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Card portfolio configured
+                                <span style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">7 cards managed</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">2 physical debit, 3 virtual
+                                debit, 1 virtual credit and 1 prepaid card — all preferences and alerts centralised
+                                here.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('defaultCardsModal')">Defaults</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('cardNamingModal')">Organise</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('notifSettingsModal')">Alerts</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">SECURITY SCORE</p>
+                            <div class="SV" style="margin:6px 0">91<span
+                                    style="font-size:14px;color:var(--pm-muted)">/100</span></div><span class="B B-s"><i
+                                    class="bi bi-shield-check"></i> Excellent</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">3D Secure on all
+                                cards<br>PIN updated 14 days ago</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">OPEN SUPPORT CASES</p>
+                            <div class="SV" style="margin:6px 0">2</div><span class="B B-w"><i class="bi bi-clock"></i>
+                                1 awaiting response</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Dispute #CDP-44892<br>PIN
+                                reset request #PR-11228</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">CARDS NEEDING ACTION</p>
+                            <div class="SV" style="margin:6px 0">3</div><span class="B B-d"><i
+                                    class="bi bi-exclamation-triangle"></i> Review below</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">1 expiring, 1 frozen, 1
+                                PIN change due</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionFullModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-credit-card"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Visa Debit expires in 28 days</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">****4521 · renew or replace
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('renewCardModal')">Renew</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-snow2"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Travel prepaid card frozen</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">****8890 · unfreeze to use
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('freezeCardModal')">Unfreeze</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-key"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">PIN change recommended</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Corporate card ****6677 · 90+
+                                            days</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('changePinModal')">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-bell"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable transaction alerts on 2 cards
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Increase fraud detection
+                                            coverage</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('notifSettingsModal')">Enable</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-globe"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Lock international on daily-use card
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Only enable when travelling
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('cardControlsModal')">Configure</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-star"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Set default contactless card</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">No default contactless card
+                                            selected</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('defaultCardsModal')">Set</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent card settings workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('changePinModal')"><i
+                                        class="bi bi-key text-primary me-1"></i> Change PIN</button><button
+                                    class="quick-btn" onclick="openM('freezeCardModal')"><i
+                                        class="bi bi-snow2 text-info me-1"></i> Freeze/Unfreeze</button><button
+                                    class="quick-btn" onclick="openM('reportLostModal')"><i
+                                        class="bi bi-exclamation-diamond text-danger me-1"></i> Report
+                                    Lost</button><button class="quick-btn" onclick="openM('cardControlsModal')"><i
+                                        class="bi bi-sliders me-1" style="color:var(--pm-purple)"></i> Card
+                                    Controls</button><button class="quick-btn" onclick="openM('disputeModal')"><i
+                                        class="bi bi-shield-exclamation text-warning me-1"></i> Dispute</button><button
+                                    class="quick-btn" onclick="openM('faqModal')"><i class="bi bi-question-circle me-1"
+                                        style="color:var(--pm-accent)"></i> FAQ & Help</button><button class="quick-btn"
+                                    onclick="openM('feeCalcModal')"><i class="bi bi-calculator text-muted me-1"></i> Fee
+                                    Calculator</button><button class="quick-btn"
+                                    onclick="openM('contactSupportModal')"><i
+                                        class="bi bi-headset text-primary me-1"></i> Live Support</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5.10.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-gear-fill" style="color:var(--pm-primary)"></i> 5.10.1 — Card
+                                Preferences & Defaults</h3>
+                            <p class="ss">Configure default payment cards, organise your portfolio, set naming
+                                conventions, colour codes and quick-access ordering.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('defaultCardsModal')"><i class="bi bi-check2-circle"></i>
+                                Defaults</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('cardNamingModal')"><i class="bi bi-pencil"></i> Organise</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Default Card Assignments</h4>
+                                <div class="sr">
+                                    <div><strong>Online Payments</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Primary card for e-commerce
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><span class="B B-p">Visa
+                                            ****4521</span><button class="btn-pm btn-sm"
+                                            onclick="openM('defaultCardsModal')"><i
+                                                class="bi bi-arrow-repeat"></i></button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Contactless / Tap</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">NFC tap-to-pay default</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><span class="B B-i">MC
+                                            ****3392</span><button class="btn-pm btn-sm"
+                                            onclick="openM('defaultCardsModal')"><i
+                                                class="bi bi-arrow-repeat"></i></button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>ATM Withdrawals</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Primary cash card</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><span class="B B-s">Visa
+                                            ****4521</span><button class="btn-pm btn-sm"
+                                            onclick="openM('defaultCardsModal')"><i
+                                                class="bi bi-arrow-repeat"></i></button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Virtual Card Funding</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Source for new virtual cards
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><span class="B B-w">PayMo
+                                            Wallet</span><button class="btn-pm btn-sm"
+                                            onclick="openM('defaultCardsModal')"><i
+                                                class="bi bi-arrow-repeat"></i></button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>International Currency</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Default FX currency</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><strong>USD</strong><button
+                                            class="btn-pm btn-sm" onclick="openM('defaultCardsModal')"><i
+                                                class="bi bi-arrow-repeat"></i></button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Card Portfolio</h4>
+                                <div id="cardPortfolioList"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Visual Preview</h4>
+                                <div class="card-widget mb-3"
+                                    style="background:linear-gradient(135deg,#4F46E5,#7C3AED)">
+                                    <div class="cw-logo">PAYMO VISA</div>
+                                    <div class="cw-number">•••• •••• •••• 4521</div>
+                                    <div class="cw-row">
+                                        <div>
+                                            <div class="cw-label">Cardholder</div>AMINA KAMAU
+                                        </div>
+                                        <div>
+                                            <div class="cw-label">Expires</div>07/25
+                                        </div>
+                                        <div>
+                                            <div class="cw-label">Type</div>Debit
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm btn-sm"
+                                        onclick="openM('revealPanModal')"><i class="bi bi-eye"></i>
+                                        Reveal</button><button class="btn-pm btn-sm"
+                                        onclick="openM('cardControlsModal')"><i class="bi bi-sliders"></i>
+                                        Controls</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5.10.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bell-fill" style="color:var(--pm-warning)"></i> 5.10.2 —
+                                Notification & Alert Settings</h3>
+                            <p class="ss">Fine-tune transaction alerts, security notifications, billing reminders,
+                                expiry warnings and delivery updates per card and per channel.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('notifSettingsModal')"><i class="bi bi-sliders"></i> Configure
+                                All</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Transaction Alerts</h4>
+                                <div class="sr">
+                                    <div><strong>All transactions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Notify on every card
+                                            transaction</div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Large transactions only</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Notify if amount exceeds
+                                            threshold</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2"><input class="FC"
+                                            style="width:100px;padding:6px 10px;font-size:12px" value="10,000">
+                                        <div class="form-check form-switch"><input class="form-check-input"
+                                                type="checkbox"></div>
+                                    </div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>International transactions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Alert for non-KES payments
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Declined transactions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">With decline reason code</div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Contactless limit reached</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">When tap-to-pay limit hit
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Security & Billing Alerts
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>New device login</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PIN / password change</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Card freeze / unfreeze</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Statement ready</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Payment due reminder</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Expiry reminders</strong></div>
+                                    <div class="d-flex align-items-center gap-2"><select class="FC"
+                                            style="width:auto;padding:6px 10px;font-size:12px">
+                                            <option>90, 60, 30, 7 days</option>
+                                            <option>60, 30, 7 days</option>
+                                            <option>30, 7 days</option>
+                                        </select>
+                                        <div class="form-check form-switch"><input class="form-check-input"
+                                                type="checkbox" checked></div>
+                                    </div>
+                                </div>
+                                <hr class="divider">
+                                <h5 style="font-size:13px;font-weight:700;margin:0 0 8px">Delivery Channels</h5>
+                                <div class="d-flex flex-wrap" style="gap:8px">
+                                    <div class="form-check form-check-inline"><input class="form-check-input"
+                                            type="checkbox" checked><label class="form-check-label"
+                                            style="font-size:12px">Push</label></div>
+                                    <div class="form-check form-check-inline"><input class="form-check-input"
+                                            type="checkbox" checked><label class="form-check-label"
+                                            style="font-size:12px">SMS</label></div>
+                                    <div class="form-check form-check-inline"><input class="form-check-input"
+                                            type="checkbox"><label class="form-check-label"
+                                            style="font-size:12px">Email</label></div>
+                                    <div class="form-check form-check-inline"><input class="form-check-input"
+                                            type="checkbox"><label class="form-check-label"
+                                            style="font-size:12px">WhatsApp</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5.10.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-headset" style="color:var(--pm-accent)"></i> 5.10.3 — Card
+                                Support & Dispute Help</h3>
+                            <p class="ss">Self-service FAQ, troubleshooting wizard, dispute filing, emergency hotlines,
+                                live chat and branch locator.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('troubleshootModal')"><i class="bi bi-wrench"></i>
+                                Troubleshoot</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('contactSupportModal')"><i class="bi bi-headset"></i> Contact</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px"><i
+                                        class="bi bi-question-circle text-primary me-1"></i> Self-Service Help</h4>
+                                <div class="sr" style="cursor:pointer" onclick="openM('faqModal')">
+                                    <div><strong>FAQ by card type</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">120+ answered questions</div>
+                                    </div><i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('troubleshootModal')">
+                                    <div><strong>Troubleshoot wizard</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Step-by-step decline diagnosis
+                                        </div>
+                                    </div><i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('cardStatusModal')">
+                                    <div><strong>Card status checker</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Real-time card health</div>
+                                    </div><i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('binLookupModal')">
+                                    <div><strong>BIN lookup tool</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Verify card issuer / type
+                                        </div>
+                                    </div><i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('feeCalcModal')">
+                                    <div><strong>Fee calculator</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Estimate fees before action
+                                        </div>
+                                    </div><i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px"><i
+                                        class="bi bi-chat-dots text-info me-1"></i> Support Channels</h4>
+                                <div class="sr" style="cursor:pointer" onclick="openM('contactSupportModal')">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--pm-primary);color:#fff;display:flex;align-items:center;justify-content:center">
+                                            <i class="bi bi-chat-left-text"></i></div>
+                                        <div><strong>In-app chat</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">Avg response: 45 seconds
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('contactSupportModal')">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--pm-accent);color:#fff;display:flex;align-items:center;justify-content:center">
+                                            <i class="bi bi-telephone"></i></div>
+                                        <div><strong>Card hotline</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">+254 800 723 001 · 24/7
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('contactSupportModal')">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--pm-warning);color:#fff;display:flex;align-items:center;justify-content:center">
+                                            <i class="bi bi-envelope"></i></div>
+                                        <div><strong>Email support</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">cards@paymo.co.ke</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('contactSupportModal')">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center">
+                                            <i class="bi bi-whatsapp"></i></div>
+                                        <div><strong>WhatsApp</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">+254 712 000 001</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sr" style="cursor:pointer" onclick="openM('branchLocatorModal')">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--pm-purple);color:#fff;display:flex;align-items:center;justify-content:center">
+                                            <i class="bi bi-geo-alt"></i></div>
+                                        <div><strong>Branch locator</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">In-person card assistance
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px"><i
+                                        class="bi bi-exclamation-triangle text-danger me-1"></i> Emergency Services</h4>
+                                <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#991B1B">24/7 LOST / STOLEN HOTLINE
+                                    </div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-danger)">+254 800 999 001
+                                    </div><button class="btn-pm btn-sm btn-pm-d mt-2"
+                                        onclick="openM('reportLostModal')">Report Lost / Stolen Now</button>
+                                </div>
+                                <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#B45309">EMERGENCY REPLACEMENT
+                                    </div>
+                                    <div style="font-size:14px;font-weight:700;color:var(--pm-warning)">Express courier
+                                        within 4 hours</div><button class="btn-pm btn-sm mt-2"
+                                        onclick="openM('renewCardModal')">Request Replacement</button>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#1D4ED8">TRAVEL EMERGENCY</div>
+                                    <div style="font-size:14px;font-weight:700;color:var(--pm-info)">Cash advance &
+                                        concierge</div><button class="btn-pm btn-sm mt-2"
+                                        onclick="openM('emergencyModal')">Get Help Abroad</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="UB">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap"
+                                style="gap:8px">
+                                <h4 style="font-size:14px;font-weight:700;margin:0">Open Cases & Dispute Tracker</h4>
+                                <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                        onclick="openM('disputeModal')"><i class="bi bi-plus-lg"></i> New
+                                        Dispute</button><button class="btn-pm btn-sm"
+                                        onclick="openM('caseExportModal')"><i class="bi bi-download"></i>
+                                        Export</button></div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="T">
+                                    <thead>
+                                        <tr>
+                                            <th>Case ID</th>
+                                            <th>Type</th>
+                                            <th>Card</th>
+                                            <th>Status</th>
+                                            <th>Opened</th>
+                                            <th>Next Step</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>CDP-44892</td>
+                                            <td>Chargeback</td>
+                                            <td>Visa ****4521</td>
+                                            <td><span class="B B-w">Awaiting evidence</span></td>
+                                            <td>24 Jun 2025</td>
+                                            <td>Upload merchant receipt</td>
+                                            <td><button class="btn-pm btn-sm"
+                                                    onclick="openM('disputeModal')">Respond</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>PR-11228</td>
+                                            <td>PIN Reset</td>
+                                            <td>MC ****3392</td>
+                                            <td><span class="B B-i">Processing</span></td>
+                                            <td>26 Jun 2025</td>
+                                            <td>OTP verification pending</td>
+                                            <td><button class="btn-pm btn-sm"
+                                                    onclick="openM('changePinModal')">Complete</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>FRZ-88100</td>
+                                            <td>Freeze request</td>
+                                            <td>Prepaid ****8890</td>
+                                            <td><span class="B B-s">Resolved</span></td>
+                                            <td>20 Jun 2025</td>
+                                            <td>Card re-frozen by cardholder</td>
+                                            <td><button class="btn-pm btn-sm"
+                                                    onclick="openM('freezeCardModal')">Review</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>RPL-22019</td>
+                                            <td>Replacement</td>
+                                            <td>Visa ****4521</td>
+                                            <td><span class="B B-p">Awaiting dispatch</span></td>
+                                            <td>22 Jun 2025</td>
+                                            <td>Card personalised, courier pending</td>
+                                            <td><button class="btn-pm btn-sm"
+                                                    onclick="openM('renewCardModal')">Track</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- pm-content -->
+    </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ======= MODALS ======= -->
+
+    <!-- M1: Change PIN (multi-step) -->
+    <div class="modal fade R" id="changePinModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-key text-primary me-2"></i>Change Card PIN</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="pinStepper"></div>
+                    <div id="pinS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Card</h6>
+                        <div class="mb-3"><label class="FL">Card</label><select class="FC">
+                                <option>Visa Debit ****4521</option>
+                                <option>Mastercard ****3392</option>
+                                <option>Corporate ****6677</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Enter Current PIN</label>
+                            <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                    type="password" maxlength="1" oninput="nf(this)"><input type="password"
+                                    maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                    oninput="nf(this)"></div>
+                        </div>
+                    </div>
+                    <div id="pinS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Set New PIN</h6><label class="FL">New PIN</label>
+                        <div class="pin-row mb-3"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div><label
+                            class="FL">Confirm New PIN</label>
+                        <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> PIN must not contain sequential (1234) or repeated
+                            (1111) digits.</div>
+                    </div>
+                    <div id="pinS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">PIN Changed Successfully</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your card PIN has been updated. Use the
+                                new PIN at ATMs and POS terminals.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Card</span><strong>Visa ****4521</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Updated</span><strong>27 Jun 2025, 14:32 EAT</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="pinFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="pinNext"
+                        onclick="nextFlow('pin',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Freeze / Unfreeze -->
+    <div class="modal fade R" id="freezeCardModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-snow2 text-info me-2"></i>Freeze / Unfreeze Card</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select Card</label><select class="FC">
+                            <option>Visa Debit ****4521 — Active</option>
+                            <option>Mastercard ****3392 — Active</option>
+                            <option>Prepaid ****8890 — Frozen</option>
+                            <option>Virtual Credit ****1190 — Active</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Action</label><select class="FC" id="freezeAction">
+                            <option value="freeze">Freeze (temporarily block)</option>
+                            <option value="unfreeze">Unfreeze (reactivate)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Temporary hold</option>
+                            <option>Lost — searching</option>
+                            <option>Suspected fraud</option>
+                            <option>Security precaution</option>
+                            <option>Travel security</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Frozen cards reject all transactions instantly. Unfreeze
+                        to resume normal use.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('freezeCardModal','Card status updated successfully. Change is effective immediately.','')">Apply
+                        Change</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Report Lost/Stolen (multi-step) -->
+    <div class="modal fade R" id="reportLostModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-diamond text-danger me-2"></i>Report Lost or
+                        Stolen Card</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="lostStepper"></div>
+                    <div id="lostS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Identify Card</h6>
+                        <div class="mb-3"><label class="FL">Card</label><select class="FC">
+                                <option>Visa Debit ****4521</option>
+                                <option>Mastercard ****3392</option>
+                                <option>Prepaid Travel ****8890</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Report Type</label>
+                            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="lostType"
+                                    checked><label class="form-check-label">Lost — unable to locate</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="lostType"><label
+                                    class="form-check-label">Stolen — taken by another person</label></div>
+                        </div>
+                        <div class="p-3 rounded" style="background:var(--pm-danger-soft);font-size:12px"><i
+                                class="bi bi-shield-x me-1"></i> <strong>Immediate block:</strong> Reporting a card as
+                            lost or stolen will permanently block it. This action cannot be undone.</div>
+                    </div>
+                    <div id="lostS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Details & Replacement</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">When did you last use it?</label><input type="date"
+                                    class="FC" value="2025-06-26"></div>
+                            <div class="col-md-6"><label class="FL">Last known location</label><input class="FC"
+                                    value="Nairobi CBD"></div>
+                            <div class="col-12"><label class="FL">Description</label><textarea class="FC"
+                                    rows="3">Card was in my wallet when I noticed it missing this morning.</textarea>
+                            </div>
+                            <div class="col-md-6"><label class="FL">Need replacement?</label><select class="FC">
+                                    <option>Yes — express courier (4 hours)</option>
+                                    <option>Yes — standard mail (5–7 days)</option>
+                                    <option>Yes — branch pickup (same day)</option>
+                                    <option>No replacement needed</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Delivery address</label><input class="FC"
+                                    value="Apt 3A, Lavington Green, Nairobi"></div>
+                        </div>
+                    </div>
+                    <div id="lostS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Identity Verification</h6>
+                        <div class="mb-3"><label class="FL">Verify via OTP</label>
+                            <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                    type="password" maxlength="1" oninput="nf(this)"><input type="password"
+                                    maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                    oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                    type="password" maxlength="1" oninput="nf(this)"></div>
+                        </div>
+                        <p style="font-size:12px;color:var(--pm-muted);text-align:center">OTP sent to +254 712***890</p>
+                    </div>
+                    <div id="lostS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-shield-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Card Blocked & Replacement Ordered</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Visa ****4521 has been permanently
+                                blocked. A replacement card will be dispatched via express courier.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Blocked
+                                        Card</span><strong>****4521</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Case
+                                        ID</span><strong>LST-20250627-9914</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Replacement</span><strong>Express — est. 4 hours</strong>
+                                </div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Balance</span><strong>Transferred to replacement</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="lostFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-d" id="lostNext"
+                        onclick="nextFlow('lost',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Card Controls -->
+    <div class="modal fade R" id="cardControlsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2" style="color:var(--pm-purple)"></i>Card
+                        Controls & Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('ctrl','txn',this)">Transaction</button><button class="pill"
+                            onclick="sw('ctrl','geo',this)">Geographic</button><button class="pill"
+                            onclick="sw('ctrl','time',this)">Time</button><button class="pill"
+                            onclick="sw('ctrl','merchant',this)">Merchant</button></div>
+                    <div id="ctrl-txn" class="tpanel active">
+                        <div class="mb-3"><label class="FL">Card</label><select class="FC">
+                                <option>Visa Debit ****4521</option>
+                                <option>Mastercard ****3392</option>
+                                <option>Virtual Credit ****1190</option>
+                            </select></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Daily Spending Limit</label><input class="FC"
+                                    value="50,000"></div>
+                            <div class="col-md-6"><label class="FL">Per-Transaction Limit</label><input class="FC"
+                                    value="25,000"></div>
+                            <div class="col-md-6"><label class="FL">Contactless Limit</label><input class="FC"
+                                    value="5,000"></div>
+                            <div class="col-md-6"><label class="FL">ATM Withdrawal Limit</label><input class="FC"
+                                    value="40,000"></div>
+                        </div>
+                        <hr class="divider">
+                        <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Online transactions</label></div>
+                        <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">International transactions</label></div>
+                        <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">ATM withdrawals</label></div>
+                        <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Recurring payments</label></div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Contactless / NFC</label></div>
+                    </div>
+                    <div id="ctrl-geo" class="tpanel">
+                        <div class="mb-3"><label class="FL">Geographic Mode</label><select class="FC">
+                                <option>Global (all countries)</option>
+                                <option>East Africa only</option>
+                                <option>Kenya only</option>
+                                <option>Custom country list</option>
+                            </select></div>
+                        <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Enable geo-fencing (block outside 50km radius)</label></div>
+                        <div class="mb-3"><label class="FL">Travel Mode</label>
+                            <div class="row g-3">
+                                <div class="col-6"><label class="FL" style="text-transform:none;font-size:11px">Travel
+                                        start</label><input type="date" class="FC" value="2025-07-15"></div>
+                                <div class="col-6"><label class="FL" style="text-transform:none;font-size:11px">Travel
+                                        end</label><input type="date" class="FC" value="2025-07-22"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Destination Countries</label><input class="FC"
+                                value="United Kingdom, Germany, France"></div>
+                    </div>
+                    <div id="ctrl-time" class="tpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Allowed Hours Start</label><select class="FC">
+                                    <option>6:00 AM</option>
+                                    <option>7:00 AM</option>
+                                    <option>8:00 AM</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Allowed Hours End</label><select class="FC">
+                                    <option>10:00 PM</option>
+                                    <option>11:00 PM</option>
+                                    <option>Midnight</option>
+                                </select></div>
+                        </div>
+                        <div class="form-check form-switch mt-3 mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Allow weekend transactions</label></div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Allow holiday transactions</label></div>
+                    </div>
+                    <div id="ctrl-merchant" class="tpanel">
+                        <div class="mb-3"><label class="FL">Block by Category (MCC)</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label" style="font-size:13px">Gambling / Betting</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label" style="font-size:13px">Alcohol / Bars</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label" style="font-size:13px">Adult Content</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label" style="font-size:13px">Crypto Exchanges</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Blocklist Specific Merchants</label><input class="FC"
+                                placeholder="Enter merchant names separated by commas"></div>
+                        <div class="mb-3"><label class="FL">Allowlist Specific Merchants</label><input class="FC"
+                                placeholder="Only these merchants allowed"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('cardControlsModal','Card controls updated. Changes take effect immediately.','')">Save
+                        Controls</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Default Cards -->
+    <div class="modal fade R" id="defaultCardsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-circle me-2"></i>Default Card Assignments</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Default for Online Payments</label><select class="FC">
+                            <option>Visa Debit ****4521</option>
+                            <option>Mastercard ****3392</option>
+                            <option>Virtual Credit ****1190</option>
+                            <option>Prepaid ****8890</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Default for Contactless / NFC</label><select class="FC">
+                            <option>Mastercard ****3392</option>
+                            <option>Visa Debit ****4521</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Default for ATM</label><select class="FC">
+                            <option>Visa Debit ****4521</option>
+                            <option>Mastercard ****3392</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Default Funding Source for Virtual Cards</label><select
+                            class="FC">
+                            <option>PayMo Wallet (KES 24,500)</option>
+                            <option>Visa Debit ****4521</option>
+                            <option>M-Pesa (0712***890)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Preferred International Currency</label><select class="FC">
+                            <option>USD — US Dollar</option>
+                            <option>EUR — Euro</option>
+                            <option>GBP — British Pound</option>
+                            <option>KES — Kenyan Shilling</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('defaultCardsModal','Default card assignments saved!','')">Save
+                        Defaults</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Card Naming & Org -->
+    <div class="modal fade R" id="cardNamingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Organise Card Portfolio</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('org','names',this)">Nicknames</button><button class="pill"
+                            onclick="sw('org','groups',this)">Groups</button><button class="pill"
+                            onclick="sw('org','order',this)">Quick-Access</button></div>
+                    <div id="org-names" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Card</th>
+                                        <th>Current Name</th>
+                                        <th>New Nickname</th>
+                                        <th>Colour</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Visa ****4521</td>
+                                        <td>Primary Debit</td>
+                                        <td><input class="FC" style="padding:6px 10px" value="Daily Driver"></td>
+                                        <td><input type="color" value="#4F46E5"
+                                                style="width:36px;height:30px;border:none;cursor:pointer"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>MC ****3392</td>
+                                        <td>Mastercard</td>
+                                        <td><input class="FC" style="padding:6px 10px" value="Tap-Pay Card"></td>
+                                        <td><input type="color" value="#10B981"
+                                                style="width:36px;height:30px;border:none;cursor:pointer"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Virtual ****1190</td>
+                                        <td>Credit Card</td>
+                                        <td><input class="FC" style="padding:6px 10px" value="Online Shopping"></td>
+                                        <td><input type="color" value="#8B5CF6"
+                                                style="width:36px;height:30px;border:none;cursor:pointer"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Prepaid ****8890</td>
+                                        <td>Travel Prepaid</td>
+                                        <td><input class="FC" style="padding:6px 10px" value="Travel Fund"></td>
+                                        <td><input type="color" value="#F59E0B"
+                                                style="width:36px;height:30px;border:none;cursor:pointer"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="org-groups" class="tpanel">
+                        <div class="mb-3"><label class="FL">Personal Cards</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Visa ****4521</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">MC ****3392</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Online / Subscriptions</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Virtual Credit ****1190</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">Netflix Card ****5501</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Travel</label>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Prepaid ****8890</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Business</label>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">Corporate ****6677</label></div>
+                        </div>
+                    </div>
+                    <div id="org-order" class="tpanel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Drag cards to set your preferred dashboard
+                            order:</p>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"><i
+                                class="bi bi-grip-vertical text-muted"></i> <span class="B B-p">1</span> Visa ****4521 —
+                            Daily Driver</div>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"><i
+                                class="bi bi-grip-vertical text-muted"></i> <span class="B B-i">2</span> MC ****3392 —
+                            Tap-Pay Card</div>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"><i
+                                class="bi bi-grip-vertical text-muted"></i> <span class="B B-s">3</span> Virtual
+                            ****1190 — Online Shopping</div>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"><i
+                                class="bi bi-grip-vertical text-muted"></i> <span class="B B-w">4</span> Prepaid
+                            ****8890 — Travel Fund</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('cardNamingModal','Card portfolio organized! Nicknames and groups saved.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Notification Settings -->
+    <div class="modal fade R" id="notifSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Full Alert Configuration</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Alert Type</th>
+                                    <th>Push</th>
+                                    <th>SMS</th>
+                                    <th>Email</th>
+                                    <th>WhatsApp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>All transactions</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Large transactions (&gt;KES 10K)</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>International transactions</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Declined transactions</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Suspected fraud (CNP)</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Security changes (PIN/freeze)</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Credit statement ready</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Payment due reminder</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Card expiry</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Card delivery updates</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('notifSettingsModal','Alert preferences saved across all cards and channels.','')">Save
+                        Preferences</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Dispute -->
+    <div class="modal fade R" id="disputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation text-warning me-2"></i>File Card Dispute
+                        / Chargeback</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="dispStepper"></div>
+                    <div id="dispS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Transaction</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Card</label><select class="FC">
+                                    <option>Visa ****4521</option>
+                                    <option>MC ****3392</option>
+                                    <option>Virtual ****1190</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Transaction Date</label><input type="date"
+                                    class="FC" value="2025-06-20"></div>
+                            <div class="col-md-6"><label class="FL">Merchant</label><input class="FC"
+                                    value="Online Store XYZ"></div>
+                            <div class="col-md-6"><label class="FL">Amount</label><input class="FC" value="4,500"></div>
+                        </div>
+                        <div class="mb-3 mt-3"><label class="FL">Dispute Reason</label><select class="FC">
+                                <option>Unauthorised transaction</option>
+                                <option>Goods not received</option>
+                                <option>Goods not as described</option>
+                                <option>Duplicate charge</option>
+                                <option>Incorrect amount</option>
+                                <option>Cancelled recurring charge</option>
+                                <option>Refund not processed</option>
+                            </select></div>
+                    </div>
+                    <div id="dispS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Evidence</h6>
+                        <div class="mb-3"><label class="FL">Description</label><textarea class="FC"
+                                rows="4">I did not authorise this transaction. The charge appeared without my knowledge. I did not share card details with anyone.</textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Upload Receipt / Evidence</label><input type="file"
+                                    class="FC"></div>
+                            <div class="col-md-6"><label class="FL">Upload Police Report (if fraud)</label><input
+                                    type="file" class="FC"></div>
+                        </div>
+                        <div class="mb-3 mt-3"><label class="FL">Merchant Communication</label><textarea class="FC"
+                                rows="2">Attempted to contact merchant on 22 Jun via email. No response received.</textarea>
+                        </div>
+                    </div>
+                    <div id="dispS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Dispute Filed Successfully</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your dispute has been submitted to the
+                                card network. Expected resolution: 45–90 days.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Case
+                                        ID</span><strong>CDP-44923</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Amount</span><strong>KES 4,500</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Status</span><span class="B B-i">Under Review</span></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">SLA</span><strong>45–90 business days</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="dispFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="dispNext"
+                        onclick="nextFlow('disp',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: FAQ -->
+    <div class="modal fade R" id="faqModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>Card FAQ & Help Center</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('faq','general',this)">General</button><button class="pill"
+                            onclick="sw('faq','security',this)">Security</button><button class="pill"
+                            onclick="sw('faq','virtual',this)">Virtual Cards</button><button class="pill"
+                            onclick="sw('faq','credit',this)">Credit Cards</button></div>
+                    <div id="faq-general" class="tpanel active">
+                        <div class="sr">
+                            <div><strong>How do I activate my new card?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">In-app: Go to Card
+                                    Center → select card → tap Activate. Enter last 4 digits and the OTP sent to your
+                                    phone. Your card is ready to use immediately.</div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>What is the daily spending limit?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Default limit is KES
+                                    50,000/day for debit cards. You can adjust this in Card Controls → Transaction tab
+                                    up to KES 200,000/day.</div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>How do I change my card PIN?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Go to Card Settings
+                                    → Change PIN. Enter your current PIN, then set a new 4-digit PIN. Changes take
+                                    effect at the next ATM/POS use.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="faq-security" class="tpanel">
+                        <div class="sr">
+                            <div><strong>What is 3D Secure?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">3D Secure adds an
+                                    extra authentication step for online payments. You'll receive an OTP or biometric
+                                    prompt to confirm each online transaction.</div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>How do I report a fraudulent transaction?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Immediately freeze
+                                    the card, then file a dispute from Support → Dispute. You can also call our 24/7
+                                    fraud hotline at +254 800 999 001.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="faq-virtual" class="tpanel">
+                        <div class="sr">
+                            <div><strong>How do single-use virtual cards work?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">A single-use card is
+                                    created for one transaction. After the first successful charge, the card
+                                    auto-destroys. Unused balance is refunded to your funding source.</div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Can I lock a virtual card to one merchant?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Yes. Merchant-locked
+                                    cards only accept charges from the specified merchant MCC or name. This prevents
+                                    misuse if card details are compromised.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="faq-credit" class="tpanel">
+                        <div class="sr">
+                            <div><strong>When is my credit card payment due?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Payment is due on
+                                    the statement date shown in your billing cycle. You have a 30-day grace period.
+                                    Minimum payment is KES 2,000 or 5% of balance.</div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>How do I increase my credit limit?</strong>
+                                <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">Go to Credit Card →
+                                    Request Limit Increase. Upload recent income proof. Decisions are typically made
+                                    within 24 hours.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('contactSupportModal')">Can't find your answer? Chat with
+                        us</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Troubleshoot Wizard -->
+    <div class="modal fade R" id="troubleshootModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-wrench me-2"></i>Card Troubleshoot Wizard</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="tshootStepper"></div>
+                    <div id="tshootS1" class="fstep active">
+                        <h6 style="font-weight:700">What happened?</h6>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><i class="bi bi-x-circle d-block mb-1"
+                                        style="font-size:22px;color:var(--pm-danger)"></i><strong
+                                        style="font-size:12px">Card Declined</strong></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><i class="bi bi-wifi-off d-block mb-1"
+                                        style="font-size:22px;color:var(--pm-warning)"></i><strong
+                                        style="font-size:12px">Contactless Not Working</strong></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><i class="bi bi-cash-stack d-block mb-1"
+                                        style="font-size:22px;color:var(--pm-info)"></i><strong
+                                        style="font-size:12px">ATM Issue</strong></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><i class="bi bi-globe d-block mb-1"
+                                        style="font-size:22px;color:var(--pm-purple)"></i><strong
+                                        style="font-size:12px">Online Payment Failed</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tshootS2" class="fstep">
+                        <h6 style="font-weight:700">Diagnosis</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                            <div style="font-size:13px;font-weight:700;color:#B45309">Possible Causes Identified:</div>
+                            <ul style="font-size:13px;margin:8px 0 0;padding-left:18px;color:var(--pm-ink-soft)">
+                                <li>Daily spending limit may have been reached (KES 50,000)</li>
+                                <li>Online transactions may be toggled off</li>
+                                <li>International transactions disabled (if merchant is overseas)</li>
+                                <li>3D Secure challenge may have timed out</li>
+                            </ul>
+                        </div>
+                        <h6 style="font-weight:700">Recommended Fixes:</h6>
+                        <div class="sr">
+                            <div><strong>Check & increase daily limit</strong></div><button class="btn-pm btn-sm"
+                                onclick="openM('cardControlsModal')">Open Controls</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Enable online transactions</strong></div><button class="btn-pm btn-sm"
+                                onclick="openM('cardControlsModal')">Toggle</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Verify 3D Secure enrollment</strong></div><button class="btn-pm btn-sm"
+                                onclick="openM('securityCheckModal')">Check</button>
+                        </div>
+                    </div>
+                    <div id="tshootS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Issue Resolved?</h5>
+                            <div class="d-flex justify-content-center mt-3" style="gap:12px"><button
+                                    class="btn-pm btn-pm-a"
+                                    onclick="doAction('troubleshootModal','Great! Glad the issue is resolved. Your card is ready to use.','')">Yes,
+                                    resolved!</button><button class="btn-pm" onclick="openM('contactSupportModal')">No,
+                                    contact support</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="tshootFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="tshootNext"
+                        onclick="nextFlow('tshoot',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Reveal PAN -->
+    <div class="modal fade R" id="revealPanModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-eye me-2"></i>Reveal Card Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select Card</label><select class="FC">
+                            <option>Visa Debit ****4521</option>
+                            <option>Virtual Credit ****1190</option>
+                            <option>Netflix Card ****5501</option>
+                        </select></div><label class="FL">Enter PIN to reveal</label>
+                    <div class="pin-row mb-3"><input type="password" maxlength="1" oninput="nf(this)"><input
+                            type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                            oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                    <div id="revealedDetails" style="display:none">
+                        <div class="p-3 rounded"
+                            style="background:var(--pm-surface-2);font-family:monospace;font-size:14px">
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">PAN</span><strong>4521 6788 9012 4521</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Expiry</span><strong>07/25</strong></div>
+                            <div class="d-flex justify-content-between"><span
+                                    class="text-muted">CVV</span><strong>841</strong></div>
+                        </div>
+                        <p style="font-size:11px;color:var(--pm-danger);text-align:center;margin-top:8px"><i
+                                class="bi bi-clock"></i> Details auto-hide in 30 seconds</p>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="document.getElementById('revealedDetails').style.display='block'">Reveal
+                        Details</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Security Check -->
+    <div class="modal fade R" id="securityCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Card Security Posture
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    91</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">OVERALL SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">7/7</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">3D SECURE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">14d</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">LAST PIN CHANGE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">2</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">DEVICES BOUND</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Card</th>
+                                    <th>3D Secure</th>
+                                    <th>PIN Age</th>
+                                    <th>Online</th>
+                                    <th>Intl.</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Visa ****4521</td>
+                                    <td><span class="B B-s">Enrolled</span></td>
+                                    <td>14 days</td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><strong>94</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>MC ****3392</td>
+                                    <td><span class="B B-s">Enrolled</span></td>
+                                    <td>32 days</td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><strong>90</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Virtual ****1190</td>
+                                    <td><span class="B B-s">Enrolled</span></td>
+                                    <td>N/A</td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><span class="B B-w">Off</span></td>
+                                    <td><strong>88</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Corporate ****6677</td>
+                                    <td><span class="B B-s">Enrolled</span></td>
+                                    <td>91 days</td>
+                                    <td><span class="B B-s">On</span></td>
+                                    <td><span class="B B-w">Off</span></td>
+                                    <td><strong>79</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-lightbulb me-1"></i> Improve score: Update PIN on Corporate card (91 days old)
+                        and enable biometric binding.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('changePinModal')">Update PIN Now</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Contact Support -->
+    <div class="modal fade R" id="contactSupportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-headset me-2"></i>Contact Card Support</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Subject</label><select class="FC">
+                            <option>Transaction issue</option>
+                            <option>Card not working</option>
+                            <option>Billing query</option>
+                            <option>Dispute follow-up</option>
+                            <option>General enquiry</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Card (if relevant)</label><select class="FC">
+                            <option>Visa ****4521</option>
+                            <option>MC ****3392</option>
+                            <option>All cards</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Message</label><textarea class="FC"
+                            rows="4">I need assistance with my card. Please advise on next steps.</textarea></div>
+                    <div class="mb-3"><label class="FL">Preferred Channel</label><select class="FC">
+                            <option>In-app chat (fastest)</option>
+                            <option>Phone callback</option>
+                            <option>Email reply</option>
+                            <option>WhatsApp</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('contactSupportModal','Support request submitted. A specialist will respond within 2 minutes via in-app chat.','SUPP-20250627-3321')">Send
+                        Request</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Emergency -->
+    <div class="modal fade R" id="emergencyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background:var(--pm-danger);color:#fff;border:none">
+                    <h5 class="modal-title"><i class="bi bi-telephone me-2"></i>Emergency Card Services</h5><button
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <h6 style="font-weight:700;color:#991B1B;margin:0 0 4px">Lost/Stolen Card?</h6>
+                        <p style="font-size:13px;color:#7F1D1D;margin:0">Call <strong>+254 800 999 001</strong> (24/7,
+                            toll-free) or tap the button below to instantly block your card.</p><button
+                            class="btn-pm btn-sm btn-pm-d mt-2" onclick="openM('reportLostModal')">Block Card
+                            Now</button>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                        <h6 style="font-weight:700;color:#B45309;margin:0 0 4px">Emergency Replacement</h6>
+                        <p style="font-size:13px;color:#92400E;margin:0">Express courier delivery within <strong>4
+                                hours</strong> in Nairobi. Nationwide within <strong>24 hours</strong>.</p><button
+                            class="btn-pm btn-sm mt-2" onclick="openM('renewCardModal')">Request Now</button>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                        <h6 style="font-weight:700;color:#1D4ED8;margin:0 0 4px">Emergency Cash Advance (Credit
+                            Cardholders)</h6>
+                        <p style="font-size:13px;color:#1E40AF;margin:0">Access emergency cash up to <strong>30% of your
+                                credit limit</strong> via M-Pesa or partner ATMs worldwide.</p><button
+                            class="btn-pm btn-sm mt-2"
+                            onclick="doAction('emergencyModal','Emergency cash advance of KES 15,000 sent to M-Pesa 0712***890.','ECA-20250627-0001')">Request
+                            Cash</button>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-purple-soft)">
+                        <h6 style="font-weight:700;color:#6D28D9;margin:0 0 4px">Travel Assistance (Premium Cardholders)
+                        </h6>
+                        <p style="font-size:13px;color:#4C1D95;margin:0">Concierge, hotel booking, medical referral and
+                            embassy coordination available 24/7.</p><button class="btn-pm btn-sm mt-2"
+                            onclick="doAction('emergencyModal','Travel concierge request submitted. An agent will call you within 5 minutes.','TRV-20250627-0001')">Contact
+                            Concierge</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Renew / Replace Card -->
+    <div class="modal fade R" id="renewCardModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Renew / Replace Card</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Card</label><select class="FC">
+                            <option>Visa Debit ****4521 (expiring 07/25)</option>
+                            <option>Prepaid ****8890</option>
+                            <option>Corporate ****6677</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Expiring soon</option>
+                            <option>Damaged (chip/stripe)</option>
+                            <option>Lost or stolen</option>
+                            <option>Name change</option>
+                            <option>Design upgrade</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Delivery</label><select class="FC">
+                            <option>Express courier — 4 hours (KES 500)</option>
+                            <option>Standard mail — 5-7 days (free)</option>
+                            <option>Branch pickup — same day (free)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Delivery Address</label><input class="FC"
+                            value="Apt 3A, Lavington Green, Nairobi"></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Transfer balance to new card</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Migrate linked recurring payments</label>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('renewCardModal','Replacement card ordered! Express delivery estimated by 6:30 PM today.','RPL-20250627-4421')">Order
+                        Replacement</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Card Notifications -->
+    <div class="modal fade R" id="cardNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Card Notifications (8)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Visa
+                            ****4521 expiring in 28 days</strong>
+                        <div style="font-size:11px;color:#7F1D1D;margin-top:2px">Renew or request replacement to
+                            maintain service.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Dispute CDP-44892 needs your evidence</strong>
+                        <div style="font-size:11px;color:#92400E;margin-top:2px">Upload merchant receipt before 30 Jun
+                            deadline.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>PIN
+                            reset PR-11228 processing</strong>
+                        <div style="font-size:11px;color:#1E40AF;margin-top:2px">OTP verification required to complete
+                            reset.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>Credit
+                            statement ready</strong>
+                        <div style="font-size:11px;color:#065F46;margin-top:2px">Virtual Credit ****1190 — June
+                            statement available.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Replacement
+                            card RPL-22019 dispatched</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:2px">Courier tracking available.
+                            Expected today by 5 PM.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Transaction
+                            declined at Amazon</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:2px">KES 3,200 · Reason: 3D Secure
+                            timeout.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" onclick="openM('notifSettingsModal')"><i
+                            class="bi bi-gear"></i> Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Card Status Checker -->
+    <div class="modal fade R" id="cardStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check-circle me-2"></i>Card Status Checker</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select Card</label><select class="FC">
+                            <option>Visa Debit ****4521</option>
+                            <option>MC ****3392</option>
+                            <option>Virtual Credit ****1190</option>
+                            <option>Prepaid ****8890</option>
+                            <option>Corporate ****6677</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Active</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Expiry</span><strong>07/2025 <span style="color:var(--pm-danger)">(28
+                                    days)</span></strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">3D Secure</span><span
+                                class="B B-s">Enrolled</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Contactless</span><span class="B B-s">Enabled</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Online</span><span
+                                class="B B-s">Enabled</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">International</span><span class="B B-s">Enabled</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Daily
+                                Limit</span><strong>KES 50,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Today's
+                                Usage</span><strong>KES 12,400 (24.8%)</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('cardControlsModal')">Edit Controls</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: BIN Lookup -->
+    <div class="modal fade R" id="binLookupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-search me-2"></i>BIN Lookup Tool</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Enter first 6–8 digits of card number</label><input class="FC"
+                            value="452167" placeholder="e.g. 452167"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Network</span><strong>Visa</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Type</span><strong>Debit</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Issuer</span><strong>PayMo Digital Bank</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Country</span><strong>Kenya (KE)</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Level</span><strong>Classic
+                                / Standard</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Fee Calculator -->
+    <div class="modal fade R" id="feeCalcModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Card Fee Calculator</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Action</label><select class="FC">
+                            <option>ATM withdrawal (domestic)</option>
+                            <option>ATM withdrawal (international)</option>
+                            <option>Card replacement (express)</option>
+                            <option>Card replacement (standard)</option>
+                            <option>Cash advance (credit card)</option>
+                            <option>Foreign exchange transaction</option>
+                            <option>Late payment fee</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="5000"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Withdrawal
+                                Amount</span><strong>KES 5,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">ATM
+                                Fee</span><strong>KES 35</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Network
+                                Fee</span><strong>KES 0</strong></div>
+                        <hr class="divider">
+                        <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                Deducted</span><strong style="color:var(--pm-primary)">KES 5,035</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Branch Locator -->
+    <div class="modal fade R" id="branchLocatorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-geo-alt me-2"></i>Branch & ATM Locator</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Search Location</label><input class="FC"
+                            placeholder="Enter area, city or landmark" value="Nairobi"></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Branch / ATM</th>
+                                    <th>Address</th>
+                                    <th>Services</th>
+                                    <th>Hours</th>
+                                    <th>Distance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>PayMo Westlands</strong></td>
+                                    <td>Sarit Centre, Level 2</td>
+                                    <td>Card issue, PIN reset, Pickup</td>
+                                    <td>8AM – 5PM</td>
+                                    <td>1.2 km</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PayMo CBD Kenyatta Ave</strong></td>
+                                    <td>Koinange / Kenyatta corner</td>
+                                    <td>Card issue, PIN reset, Disputes</td>
+                                    <td>8AM – 6PM</td>
+                                    <td>3.4 km</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ATM — Galleria Mall</strong></td>
+                                    <td>Langata Road</td>
+                                    <td>Cash, Balance inquiry</td>
+                                    <td>24/7</td>
+                                    <td>5.1 km</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ATM — JKIA Terminal 1</strong></td>
+                                    <td>Airport arrivals</td>
+                                    <td>Cash, Balance inquiry</td>
+                                    <td>24/7</td>
+                                    <td>14.8 km</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Attention Full -->
+    <div class="modal fade R" id="attentionFullModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Visa ****4521 expiring in 28 days</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Renew to avoid service disruption</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('renewCardModal')">Renew</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Prepaid ****8890 frozen</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Unfreeze to resume transactions</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('freezeCardModal')">Unfreeze</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Corporate ****6677 PIN overdue</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">91 days since last PIN change</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('changePinModal')">Change PIN</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Dispute CDP-44892 evidence needed</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Upload before 30 Jun deadline</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Respond</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Credit card payment due in 3 days</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Virtual Credit ****1190 · KES 8,200</div>
+                        </div><button class="btn-pm btn-sm btn-pm-p"
+                            onclick="doAction('attentionFullModal','Credit card payment of KES 8,200 scheduled for 30 Jun.','')">Pay
+                            Now</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Case Export -->
+    <div class="modal fade R" id="caseExportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Support Cases</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>All open cases</option>
+                            <option>Dispute history</option>
+                            <option>Full support log</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-01-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('caseExportModal','Report generated and downloading...','')">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">AK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Amina Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">amina.k@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Cards</span><br><strong>7 active</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Security</span><br><strong
+                                    style="color:var(--pm-accent)">91/100</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Member Since</span><br><strong>Jan 2023</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Disputes</span><br><strong>2 open</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const cards = [
+            { name: 'Daily Driver', last4: '4521', type: 'Visa Debit', status: 'active', expiry: '07/25', color: '#4F46E5', icon: 'bi-credit-card-2-front' },
+            { name: 'Tap-Pay Card', last4: '3392', type: 'MC Debit', status: 'active', expiry: '11/26', color: '#10B981', icon: 'bi-nfc' },
+            { name: 'Online Shopping', last4: '1190', type: 'Virtual Credit', status: 'active', expiry: '12/27', color: '#8B5CF6', icon: 'bi-cart' },
+            { name: 'Travel Fund', last4: '8890', type: 'Prepaid', status: 'frozen', expiry: '03/27', color: '#F59E0B', icon: 'bi-airplane' },
+            { name: 'Corporate', last4: '6677', type: 'Business Debit', status: 'active', expiry: '09/26', color: '#3B82F6', icon: 'bi-briefcase' },
+            { name: 'Netflix Card', last4: '5501', type: 'Virtual Sub', status: 'active', expiry: '01/26', color: '#EF4444', icon: 'bi-tv' },
+            { name: 'Savings Topup', last4: '7744', type: 'Prepaid', status: 'active', expiry: '06/27', color: '#64748B', icon: 'bi-piggy-bank' }
+        ];
+        function renderPortfolio() {
+            const el = document.getElementById('cardPortfolioList');
+            el.innerHTML = cards.map(c => {
+                const stBadge = c.status === 'active' ? '<span class="B B-s">Active</span>' : c.status === 'frozen' ? '<span class="B B-w">Frozen</span>' : '<span class="B B-d">' + c.status + '</span>';
+                return `<div class="sr"><div class="d-flex align-items-center gap-2"><div style="width:32px;height:32px;border-radius:50%;background:${c.color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="bi ${c.icon}"></i></div><div><strong>${c.name}</strong><div style="font-size:11px;color:var(--pm-muted)">****${c.last4} · ${c.type}</div></div></div><div class="d-flex align-items-center gap-2">${stBadge}<button class="btn-pm btn-sm" onclick="openM('cardControlsModal')"><i class="bi bi-gear"></i></button></div></div>`;
+            }).join('');
+        }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        // Multi-step flows
+        const flows = { pin: { current: 1, total: 3, labels: ['Verify', 'New PIN', 'Done'] }, lost: { current: 1, total: 4, labels: ['Card', 'Details', 'Verify', 'Done'] }, disp: { current: 1, total: 3, labels: ['Transaction', 'Evidence', 'Done'] }, tshoot: { current: 1, total: 3, labels: ['Issue', 'Diagnosis', 'Confirm'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { pin: 'changePinModal', lost: 'reportLostModal', disp: 'disputeModal', tshoot: 'troubleshootModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'lost') btn.innerHTML = 'Block Card <i class="bi bi-shield-x"></i>'; else if (key === 'disp') btn.innerHTML = 'Submit Dispute <i class="bi bi-send"></i>'; else btn.innerHTML = 'Confirm <i class="bi bi-check-lg"></i>'; } }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { renderPortfolio(); Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

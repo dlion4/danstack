@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Financial Reporting, Audit & Analytics</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1e3a8a 0%,#1e40af 45%,#4F46E5 100%);color:#fff;border:none}
+.pm-card-dark{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:left;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;display:flex;align-items:center;gap:8px}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding:12px 0 18px}.chart-bar{flex:1;border-radius:5px 5px 0 0;position:relative;min-width:18px;cursor:pointer;transition:all .2s}.chart-bar:hover{opacity:.88}.chart-bar .bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.report-card{padding:14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}.report-card:hover{border-color:var(--pm-primary);box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Command Center"><i class="bi bi-speedometer2"></i></button>
+<button class="pm-nav-item" title="Collections"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item" title="Invoicing"><i class="bi bi-receipt"></i></button>
+<button class="pm-nav-item" title="Payroll"><i class="bi bi-people"></i></button>
+<button class="pm-nav-item" title="Bulk Pay"><i class="bi bi-send-check"></i></button>
+<button class="pm-nav-item active" title="Reporting & Audit"><i class="bi bi-bar-chart-line"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Settings"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Help"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">TG</div>
+<div>
+<h1>Financial Reporting & Analytics</h1>
+<p>Audit trails, standard reports, business intelligence & tax readiness</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search reports, audit logs, transactions, metrics...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('taxReadinessModal')" title="Tax Readiness"><i class="bi bi-bank"></i><span class="counter">2</span></button>
+<button class="pm-header-btn" onclick="openModal('reconciliationExceptionsModal')" title="Exceptions"><i class="bi bi-exclamation-triangle"></i><span class="counter" style="background:var(--pm-warning)">4</span></button>
+<button class="pm-header-btn" onclick="openModal('reportDeliverySettingsModal')" title="Report Settings"><i class="bi bi-sliders"></i></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-gradient-slate)">TG</div><div><div class="pm-name">Titus G.</div><div class="pm-role">Finance Director</div></div></div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Business Portal</a> / <strong>Financial Reporting, Audit & Analytics</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 3.8 — Financial Reporting, Audit & Analytics</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Generate compliance-ready financial statements, drill down into BI metrics, review immutable audit trails, and prepare statutory KRA/NSSF tax extracts.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('inviteAuditorModal')"><i class="bi bi-person-lock"></i> Auditor Access</button>
+<button class="pm-btn" onclick="openModal('runMonthEndModal')"><i class="bi bi-calendar2-check"></i> Month-End Close</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('generateCustomReportModal')"><i class="bi bi-file-earmark-plus"></i> Create Report</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Liquidity Position <span style="color:#86efac">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">KES 12,450,800</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Consolidated across PayMo Wallet, PesaLink buffers, and M-Pesa Tills.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('cashFlowForecastModal')">Forecast</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('downloadStatementModal')">Statements</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-primary)">YTD REVENUE</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 48.2M</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-graph-up-arrow"></i> 14% YoY</span>
+<div class="pm-mini-bars mt-3"><div class="pm-mini-bar" style="height:45%;background:var(--pm-primary)"></div><div class="pm-mini-bar" style="height:55%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:62%;background:var(--pm-primary)"></div><div class="pm-mini-bar" style="height:75%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:88%;background:var(--pm-primary)"></div><div class="pm-mini-bar" style="height:95%;background:var(--pm-accent)"></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">PENDING RECONCILIATIONS</p>
+<div class="pm-stat-value" style="margin:6px 0">4 Items</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-exclamation-triangle"></i> Action Required</span>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted)"><span>Amount unmatched</span><span>KES 142,500</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:12%;background:var(--pm-warning)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">COMPLIANCE & AUDIT SCORE</p>
+<div class="pm-stat-value" style="margin:6px 0">98 / 100</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Audit Ready</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)"><div>Next KRA VAT Due: <strong>20 Jul 2025</strong></div><div>e-TIMS invoices matched: <strong>100%</strong></div></div>
+</div>
+</div>
+</div>
+
+<!-- ATTENTION / QUICK ACTIONS -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Attention Required</h3><button class="pm-btn pm-btn-sm" onclick="openModal('reconciliationExceptionsModal')">View all</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">RC</div><div style="flex:1"><div style="font-weight:600;font-size:13px">4 Unmatched Bank Deposits</div><div style="font-size:11px;color:var(--pm-muted)">Totaling KES 142,500 · Require manual allocation</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('reconciliationExceptionsModal')">Match</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">TX</div><div style="flex:1"><div style="font-weight:600;font-size:13px">PAYE Return (P10) Due Soon</div><div style="font-size:11px;color:var(--pm-muted)">Due in 3 days · KES 450,200 pending extract</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('statutoryDeductionsModal')">Extract</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">AU</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Auditor access expiring</div><div style="font-size:11px;color:var(--pm-muted)">KPMG Audit Team · Expires in 48 hrs</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('inviteAuditorModal')">Extend</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Smart BI Insights</h3><span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">CS</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Top 5 clients driving 62% of revenue</div><div style="font-size:11px;color:var(--pm-muted)">High concentration risk identified</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('customerSpendAnalyticsModal')">Analyze</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">EX</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Software subscriptions up 18%</div><div style="font-size:11px;color:var(--pm-muted)">Unused SaaS licenses detected</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('vendorExpenseAnalyticsModal')">Review</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">CF</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Cash flow dip predicted next Friday</div><div style="font-size:11px;color:var(--pm-muted)">Payroll + supplier runs overlap</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('cashFlowForecastModal')">Forecast</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Quick Actions</h3><p class="pm-section-sub">Frequent reporting and audit workflows</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('generateCustomReportModal')"><i class="bi bi-file-earmark-plus text-primary"></i> Custom Report</button>
+<button class="quick-action-btn" onclick="openModal('runMonthEndModal')"><i class="bi bi-calendar2-check text-success"></i> Month-End</button>
+<button class="quick-action-btn" onclick="openModal('exportKRAVATModal')"><i class="bi bi-bank text-warning"></i> KRA VAT Extract</button>
+<button class="quick-action-btn" onclick="openModal('viewAuditLogModal')"><i class="bi bi-shield-lock text-purple" style="color:var(--pm-purple)"></i> Audit Trail</button>
+<button class="quick-action-btn" onclick="openModal('plSnapshotModal')"><i class="bi bi-graph-up-arrow text-info"></i> P&L Snapshot</button>
+<button class="quick-action-btn" onclick="openModal('exportTrialBalanceModal')"><i class="bi bi-file-spreadsheet text-danger"></i> Trial Balance</button>
+<button class="quick-action-btn" onclick="openModal('eTimsReconciliationModal')"><i class="bi bi-receipt text-secondary"></i> e-TIMS Recon</button>
+<button class="quick-action-btn" onclick="openModal('configureDashboardsModal')"><i class="bi bi-sliders text-primary"></i> Dashboards</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3.8.1: Real-Time Financial Dashboards & Cash Flow -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-cash-stack" style="color:var(--pm-accent)"></i> 3.8.1 — Real-Time Financial Dashboards & Cash Flow</h3><p class="pm-section-sub">Monitor liquidity, inbound vs outbound cash movements, and quick P&L snapshots.</p></div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('cashFlowForecastModal')"><i class="bi bi-graph-up"></i> Full Forecast</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('plSnapshotModal')"><i class="bi bi-file-bar-graph"></i> P&L View</button></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-7">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">30-Day Cash Movement (In vs Out)</h4><select class="pm-form-control pm-btn-sm" style="width:auto"><option>Last 30 Days</option><option>This Quarter</option></select></div>
+<div class="chart-bars" style="height:160px;align-items:flex-end">
+<!-- Mocking stacked bars logic via side-by-side div wrappers -->
+<div style="flex:1;display:flex;gap:2px;height:100%"><div class="chart-bar" style="height:40%;background:var(--pm-accent)" title="In: KES 1.2M"><span class="bar-label">W1</span></div><div class="chart-bar" style="height:25%;background:var(--pm-danger)" title="Out: KES 800K"></div></div>
+<div style="flex:1;display:flex;gap:2px;height:100%"><div class="chart-bar" style="height:65%;background:var(--pm-accent)" title="In: KES 2.1M"><span class="bar-label">W2</span></div><div class="chart-bar" style="height:80%;background:var(--pm-danger)" title="Out: KES 2.8M"></div></div>
+<div style="flex:1;display:flex;gap:2px;height:100%"><div class="chart-bar" style="height:90%;background:var(--pm-accent)" title="In: KES 3.5M"><span class="bar-label">W3</span></div><div class="chart-bar" style="height:35%;background:var(--pm-danger)" title="Out: KES 1.1M"></div></div>
+<div style="flex:1;display:flex;gap:2px;height:100%"><div class="chart-bar" style="height:55%;background:var(--pm-accent)" title="In: KES 1.8M"><span class="bar-label">W4</span></div><div class="chart-bar" style="height:45%;background:var(--pm-danger)" title="Out: KES 1.5M"></div></div>
+</div>
+<div class="d-flex justify-content-center mt-3" style="gap:16px;font-size:12px">
+<span><span style="display:inline-block;width:10px;height:10px;background:var(--pm-accent);border-radius:2px;margin-right:4px"></span>Cash Inflow</span>
+<span><span style="display:inline-block;width:10px;height:10px;background:var(--pm-danger);border-radius:2px;margin-right:4px"></span>Cash Outflow</span>
+</div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Liquidity Breakdown</h4>
+<div class="d-flex align-items-center mb-3">
+<div style="width:80px;height:80px;border-radius:50%;border:8px solid var(--pm-primary);border-right-color:var(--pm-info);border-bottom-color:var(--pm-warning);transform:rotate(45deg);margin-right:16px"></div>
+<div style="flex:1">
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span><span style="color:var(--pm-primary)">●</span> PayMo Wallet</span><strong>KES 8.2M</strong></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span><span style="color:var(--pm-info)">●</span> Equity Bank</span><strong>KES 3.1M</strong></div>
+<div class="d-flex justify-content-between" style="font-size:12px"><span><span style="color:var(--pm-warning)">●</span> M-Pesa Tills</span><strong>KES 1.15M</strong></div>
+</div>
+</div>
+<hr class="pm-divider">
+<div class="d-flex justify-content-between align-items-center" style="font-size:13px">
+<span class="text-muted">Working Capital Ratio</span><strong style="color:var(--pm-accent);font-size:16px">2.4x</strong>
+</div>
+<div class="d-flex justify-content-between align-items-center mt-2" style="font-size:13px">
+<span class="text-muted">Burn Rate (Monthly)</span><strong>KES 4.2M</strong>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3.8.2: Standard & Custom Reporting Engine -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-file-earmark-bar-graph" style="color:var(--pm-info)"></i> 3.8.2 — Standard & Custom Reporting Engine</h3><p class="pm-section-sub">Generate, schedule, and export standard accounting reports and custom operational data extracts.</p></div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('scheduleReportModal')"><i class="bi bi-clock"></i> Scheduled</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('generateCustomReportModal')"><i class="bi bi-plus-lg"></i> New Report</button></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-8">
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Report Name</th><th>Type</th><th>Generated By</th><th>Date</th><th>Format</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Q2 Income Statement</td><td>Financial</td><td>Titus G.</td><td>28 Jun 2025</td><td>PDF</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('downloadStatementModal')">Download</button></td></tr>
+<tr><td>May Payroll Extract</td><td>Operational</td><td>System (Auto)</td><td>01 Jun 2025</td><td>CSV</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('downloadStatementModal')">Download</button></td></tr>
+<tr><td>Trial Balance (YTD)</td><td>Financial</td><td>Grace M.</td><td>15 Jun 2025</td><td>Excel</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('exportTrialBalanceModal')">View</button></td></tr>
+<tr><td>Supplier Aging Summary</td><td>Operational</td><td>Titus G.</td><td>10 Jun 2025</td><td>PDF</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('downloadStatementModal')">Download</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block bg-light">
+<h4 style="font-size:13px;font-weight:700;margin:0 0 12px;text-transform:uppercase;color:var(--pm-muted)">Saved Templates</h4>
+<div class="report-card" onclick="openModal('exportTrialBalanceModal')">
+<div class="pm-icon-circle" style="background:var(--pm-primary-soft);color:var(--pm-primary)"><i class="bi bi-journal-text"></i></div>
+<div style="flex:1"><strong style="font-size:13px">Trial Balance</strong><div style="font-size:11px;color:var(--pm-muted)">Standard GL extract</div></div><i class="bi bi-chevron-right text-muted"></i>
+</div>
+<div class="report-card mt-2" onclick="openModal('plSnapshotModal')">
+<div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-graph-up"></i></div>
+<div style="flex:1"><strong style="font-size:13px">Profit & Loss</strong><div style="font-size:11px;color:var(--pm-muted)">Income statement</div></div><i class="bi bi-chevron-right text-muted"></i>
+</div>
+<div class="report-card mt-2" onclick="openModal('statutoryDeductionsModal')">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-shield-check"></i></div>
+<div style="flex:1"><strong style="font-size:13px">Statutory Deductions</strong><div style="font-size:11px;color:var(--pm-muted)">PAYE, NSSF, SHIF</div></div><i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3.8.3: Tax, Statutory & Compliance Reporting -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-bank" style="color:var(--pm-warning)"></i> 3.8.3 — Tax, Statutory & Compliance Reporting</h3><p class="pm-section-sub">Prepare KRA iTax reports, e-TIMS reconciliations, and view your business compliance score.</p></div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('eTimsReconciliationModal')"><i class="bi bi-receipt"></i> e-TIMS Check</button><button class="pm-btn pm-btn-sm pm-btn-warning" onclick="openModal('exportKRAVATModal')"><i class="bi bi-download"></i> KRA Extract</button></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block border border-success" style="background:var(--pm-accent-soft)">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<div><h4 style="font-size:14px;font-weight:700;margin:0;color:#047857">VAT Return (June 2025)</h4><div style="font-size:12px;color:#065F46">Due 20 Jul 2025</div></div>
+<i class="bi bi-check-circle-fill text-success" style="font-size:20px"></i>
+</div>
+<div style="font-size:24px;font-weight:700;color:var(--pm-accent);margin:12px 0">KES 840,500</div>
+<div style="font-size:12px;color:#065F46">Output VAT: KES 1.2M<br>Input VAT: KES 359.5K</div>
+<button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('exportKRAVATModal')">Download CSV for iTax</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block border" style="border-color:var(--pm-warning)!important;background:var(--pm-warning-soft)">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<div><h4 style="font-size:14px;font-weight:700;margin:0;color:#B45309">PAYE Return (June)</h4><div style="font-size:12px;color:#92400E">Due 09 Jul 2025</div></div>
+<i class="bi bi-exclamation-circle-fill text-warning" style="font-size:20px"></i>
+</div>
+<div style="font-size:24px;font-weight:700;color:var(--pm-warning);margin:12px 0">KES 450,200</div>
+<div style="font-size:12px;color:#92400E">Employees: 42<br>Status: Awaiting Payroll Lock</div>
+<button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('statutoryDeductionsModal')">View Payroll Extract</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Compliance Health</h4>
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span>e-TIMS invoices</span><span class="text-success fw-bold">100% Matched</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span>Withholding Tax (WHT)</span><span class="text-success fw-bold">Up to date</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span>CR12 Annual Returns</span><span class="text-warning fw-bold">Due in 45 days</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:12px"><span>County Business Permit</span><span class="text-success fw-bold">Valid (2025)</span></div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('taxReadinessModal')">Full Health Check</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3.8.4: Audit Trails, Logs & Access Control -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-shield-lock" style="color:var(--pm-purple)"></i> 3.8.4 — Audit Trails, Logs & Access Control</h3><p class="pm-section-sub">Immutable transaction logs, user activity tracking, and external auditor portal access.</p></div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('inviteAuditorModal')"><i class="bi bi-person-plus"></i> Invite Auditor</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('viewAuditLogModal')"><i class="bi bi-search"></i> Search Logs</button></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-8">
+<div class="table-responsive" style="max-height:300px;overflow-y:auto">
+<table class="pm-table">
+<thead><tr><th>Timestamp (EAT)</th><th>User / System</th><th>Action</th><th>IP Address</th><th>Status</th><th>View</th></tr></thead>
+<tbody>
+<tr><td>28 Jun, 14:32:01</td><td>Titus G. (Admin)</td><td>Approved Bulk Disbursement (ID: 9921)</td><td>197.232.14.8</td><td><span class="pm-badge pm-badge-success">Success</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('userActivityLogModal')"><i class="bi bi-eye"></i></button></td></tr>
+<tr><td>28 Jun, 10:15:44</td><td>System Automation</td><td>Generated VAT Extract (June)</td><td>Internal</td><td><span class="pm-badge pm-badge-success">Success</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('userActivityLogModal')"><i class="bi bi-eye"></i></button></td></tr>
+<tr><td>27 Jun, 16:45:12</td><td>Grace M. (Finance)</td><td>Initiated Payroll Run (June)</td><td>197.232.14.8</td><td><span class="pm-badge pm-badge-info">Pending Approval</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('userActivityLogModal')"><i class="bi bi-eye"></i></button></td></tr>
+<tr><td>27 Jun, 09:12:33</td><td>James K. (Sales)</td><td>Voided Invoice #INV-2041</td><td>105.161.88.2</td><td><span class="pm-badge pm-badge-warning">Logged</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('disputeAuditModal')"><i class="bi bi-eye"></i></button></td></tr>
+<tr><td>26 Jun, 23:55:01</td><td>System Automation</td><td>Daily EOD Ledger Lock</td><td>Internal</td><td><span class="pm-badge pm-badge-success">Success</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('userActivityLogModal')"><i class="bi bi-eye"></i></button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Auditor Access</h4>
+<div class="status-row"><div><strong>KPMG Kenya Team</strong><div style="font-size:11px;color:var(--pm-muted)">Read-only · Financials + Logs</div></div><span class="pm-badge pm-badge-warning">Exp. 48h</span></div>
+<div class="status-row"><div><strong>KRA Compliance Officer</strong><div style="font-size:11px;color:var(--pm-muted)">e-TIMS & VAT Scope only</div></div><span class="pm-badge pm-badge-success">Active</span></div>
+<button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('inviteAuditorModal')"><i class="bi bi-plus"></i> Grant New Access</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3.8.5: Business Intelligence & Advanced Analytics -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-pie-chart" style="color:var(--pm-primary)"></i> 3.8.5 — Business Intelligence & Advanced Analytics</h3><p class="pm-section-sub">Deep dive into customer spending, vendor expenses, branch performance, and financial health.</p></div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('branchPerformanceModal')"><i class="bi bi-shop"></i> Branches</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('financialHealthScoreModal')"><i class="bi bi-heart-pulse"></i> Health Score</button></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">Top Customers (By Revenue YTD)</h4><button class="pm-btn pm-btn-sm" onclick="openModal('customerSpendAnalyticsModal')">Analyze</button></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Acme Corp Ltd</span><strong>KES 12.5M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:100%;background:var(--pm-primary)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>TechFlow Solutions</span><strong>KES 8.2M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:65%;background:var(--pm-primary)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Global Logistics Ke</span><strong>KES 5.4M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:42%;background:var(--pm-primary)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>City Retail Chain</span><strong>KES 3.1M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:25%;background:var(--pm-primary)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="utility-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">Top Expense Categories (YTD)</h4><button class="pm-btn pm-btn-sm" onclick="openModal('vendorExpenseAnalyticsModal')">Analyze</button></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Payroll & Benefits</span><strong>KES 18.2M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:100%;background:var(--pm-danger)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Inventory & Suppliers</span><strong>KES 6.5M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:35%;background:var(--pm-danger)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Software & IT Subscriptions</span><strong>KES 1.8M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:10%;background:var(--pm-warning)"></div></div></div>
+<div class="mb-2"><div class="d-flex justify-content-between" style="font-size:12px;margin-bottom:2px"><span>Utilities (Power, Water, Net)</span><strong>KES 1.1M</strong></div><div class="pm-progress"><div class="pm-progress-bar" style="width:6%;background:var(--pm-warning)"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- content -->
+</div><!-- main -->
+</div><!-- app -->
+
+
+<!-- ============================================================ -->
+<!-- 22+ MODALS -->
+<!-- ============================================================ -->
+
+<!-- 1. Generate Custom Report -->
+<div class="modal fade resettable" id="generateCustomReportModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-plus text-primary me-2"></i>Generate Custom Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="gcrStepper"></div><div id="gcrStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: Select Report Type</h6><div class="row g-2"><div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><i class="bi bi-bank d-block mb-1" style="font-size:24px;color:var(--pm-primary)"></i><strong>Financials</strong><div style="font-size:11px;color:var(--pm-muted)">P&L, Balance Sheet, Cash Flow</div></div></div><div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><i class="bi bi-receipt d-block mb-1" style="font-size:24px;color:var(--pm-warning)"></i><strong>Tax & Statutory</strong><div style="font-size:11px;color:var(--pm-muted)">VAT, PAYE, WHT Extracts</div></div></div><div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><i class="bi bi-briefcase d-block mb-1" style="font-size:24px;color:var(--pm-accent)"></i><strong>Operational</strong><div style="font-size:11px;color:var(--pm-muted)">Sales, Aging, Payroll logs</div></div></div></div></div><div id="gcrStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Parameters & Filters</h6><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Specific Report</label><select class="pm-form-control"><option>Income Statement (P&L)</option><option>Trial Balance</option><option>General Ledger Extract</option></select></div><div class="col-md-6"><label class="pm-form-label">Branch/Location</label><select class="pm-form-control"><option>All Consolidated</option><option>Nairobi HQ</option><option>Mombasa Branch</option></select></div><div class="col-md-6"><label class="pm-form-label">From Date</label><input type="date" class="pm-form-control" value="2025-01-01"></div><div class="col-md-6"><label class="pm-form-label">To Date</label><input type="date" class="pm-form-control" value="2025-06-30"></div><div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Include zero-balance accounts</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">Compare to previous period</label></div></div></div></div><div id="gcrStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 3: Format & Delivery</h6><div class="mb-3"><label class="pm-form-label">Output Format</label><select class="pm-form-control"><option>PDF (Print ready)</option><option>Excel (.xlsx format with formulas)</option><option>CSV (Raw data)</option></select></div><div class="mb-3"><label class="pm-form-label">Delivery Method</label><select class="pm-form-control"><option>Download instantly</option><option>Email to me</option><option>Send to Auditor (KPMG)</option></select></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="gcrNextBtn" onclick="nextGcrStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 2. Run Month-End Close -->
+<div class="modal fade resettable" id="runMonthEndModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar2-check text-success me-2"></i>Month-End Close Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="mecStepper"></div><div id="mecStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: System Checks</h6><div class="status-row"><div><strong>Bank Reconciliations</strong><div style="font-size:11px;color:var(--pm-muted)">4 unmatched items detected</div></div><button class="pm-btn pm-btn-sm pm-btn-warning" onclick="openModal('reconciliationExceptionsModal')">Resolve</button></div><div class="status-row"><div><strong>Depreciation & Amortization</strong><div style="font-size:11px;color:var(--pm-muted)">Automated journal entries ready</div></div><span class="pm-badge pm-badge-success">Ready</span></div><div class="status-row"><div><strong>Payroll Disbursed</strong><div style="font-size:11px;color:var(--pm-muted)">All June salaries settled</div></div><span class="pm-badge pm-badge-success">Cleared</span></div></div><div id="mecStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Lock Ledgers</h6><p style="font-size:13px;color:var(--pm-ink-soft)">You are about to soft-lock the period <strong>June 2025</strong>. No further operational transactions can be backdated into this month.</p><div class="mb-3"><label class="pm-form-label">Closing Period</label><input class="pm-form-control" value="June 2025" disabled></div><div class="form-check mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I confirm all material adjustments have been posted.</label></div></div><div id="mecStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-lock"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Period Locked Successfully</h5><p style="font-size:13px;color:var(--pm-ink-soft)">June 2025 is now closed. Standard financial statements are being generated and archived.</p><div class="d-flex justify-content-center mt-3"><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="closeModal('runMonthEndModal');openModal('plSnapshotModal')">View June Financials</button></div></div></div></div><div class="modal-footer" id="mecFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="mecNextBtn" onclick="nextMecStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 3. Export KRA VAT -->
+<div class="modal fade resettable" id="exportKRAVATModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank text-warning me-2"></i>KRA VAT Return Extract</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> This tool generates a CSV file formatted specifically for the KRA iTax portal (VAT3 template).</div><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Tax Period</label><select class="pm-form-control"><option>June 2025</option><option>May 2025</option></select></div><div class="col-md-6"><label class="pm-form-label">KRA PIN</label><input class="pm-form-control" value="P051234567M" disabled></div><div class="col-12"><label class="pm-form-label">Extract Sections</label><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Output VAT (Sales)</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Input VAT (Purchases)</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Withholding VAT credits</label></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportKRAVATModal', 'VAT Extract Generated for iTax upload.', '')"><i class="bi bi-download"></i> Download CSV</button></div></div></div></div>
+
+<!-- 4. Schedule Report -->
+<div class="modal fade resettable" id="scheduleReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-clock me-2"></i>Schedule Report Delivery</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select Report Template</label><select class="pm-form-control"><option>Weekly Cash Flow Summary</option><option>Monthly Income Statement</option><option>Daily Collections & Reconciliations</option></select></div><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Frequency</label><select class="pm-form-control"><option>Daily</option><option>Weekly (Mondays)</option><option>Monthly (1st of month)</option></select></div><div class="col-md-6"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>PDF</option><option>Excel</option></select></div><div class="col-12"><label class="pm-form-label">Email Recipients (comma separated)</label><input class="pm-form-control" value="titus@company.com, audit@kpmg.co.ke"></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scheduleReportModal', 'Report scheduling configured successfully.', '')">Save Schedule</button></div></div></div></div>
+
+<!-- 5. View Audit Log -->
+<div class="modal fade resettable" id="viewAuditLogModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-purple me-2"></i>Immutable Audit Trail</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex flex-wrap mb-3" style="gap:8px"><input type="date" class="pm-form-control" style="width:150px" value="2025-06-28"><select class="pm-form-control" style="width:150px"><option>All Users</option><option>Titus G.</option><option>System API</option></select><select class="pm-form-control" style="width:180px"><option>All Modules</option><option>Payments</option><option>Payroll</option><option>Settings</option></select><input type="text" class="pm-form-control" style="width:200px" placeholder="Search hash, ID, IP..."></div><div class="table-responsive" style="max-height:400px;overflow-y:auto"><table class="pm-table"><thead><tr><th>Timestamp</th><th>User/IP</th><th>Module</th><th>Action</th><th>Verification Hash</th></tr></thead><tbody><tr><td>2025-06-28 14:32:01</td><td>Titus G. / 197.232.14.8</td><td>Disbursements</td><td>Approved Bulk Batch 9921</td><td><code style="font-size:10px">a4b1c2d3e4f5...</code></td></tr><tr><td>2025-06-28 14:30:15</td><td>Grace M. / 197.232.14.8</td><td>Disbursements</td><td>Created Bulk Batch 9921</td><td><code style="font-size:10px">b9x8y7z6a5b4...</code></td></tr><tr><td>2025-06-28 10:15:44</td><td>System API</td><td>Reporting</td><td>Generated VAT Extract</td><td><code style="font-size:10px">c1d2e3f4g5h6...</code></td></tr><tr><td>2025-06-27 16:45:12</td><td>Grace M. / 197.232.14.8</td><td>Payroll</td><td>Initiated June Payroll Run</td><td><code style="font-size:10px">z9y8x7w6v5u4...</code></td></tr><tr><td>2025-06-27 09:12:33</td><td>James K. / 105.161.88.2</td><td>Invoicing</td><td>Voided INV-2041</td><td><code style="font-size:10px">f5e4d3c2b1a0...</code></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('downloadStatementModal')">Export Cryptographic Log</button></div></div></div></div>
+
+<!-- 6. Invite Auditor -->
+<div class="modal fade resettable" id="inviteAuditorModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-lock me-2"></i>Grant Auditor Access</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Auditor Email Address</label><input type="email" class="pm-form-control" placeholder="auditor@firm.com"></div><div class="mb-3"><label class="pm-form-label">Access Duration</label><select class="pm-form-control"><option>24 Hours</option><option>7 Days</option><option>30 Days (Standard Audit)</option><option>Until Revoked</option></select></div><div class="mb-3"><label class="pm-form-label">Data Scope</label><div class="form-check"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">Read-only Financial Statements</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">View Transaction Level Data & Receipts</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Access Immutable Audit Logs</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">View Employee Payroll Data (PII)</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('inviteAuditorModal', 'Auditor invitation sent securely.', '')">Send Invitation</button></div></div></div></div>
+
+<!-- 7. Cash Flow Forecast -->
+<div class="modal fade resettable" id="cashFlowForecastModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up me-2"></i>90-Day Cash Flow Forecast</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('cfTab','7day',this)">7 Days</button><button class="pm-tab-pill" onclick="switchTab('cfTab','30day',this)">30 Days</button><button class="pm-tab-pill" onclick="switchTab('cfTab','90day',this)">90 Days</button></div><div id="cfTab-7day" class="tab-panel active"><div class="row g-3 mb-4"><div class="col-4"><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">STARTING BALANCE</div><strong style="font-size:18px">KES 12.45M</strong></div></div><div class="col-4"><div class="p-3 rounded" style="background:var(--pm-accent-soft)"><div style="font-size:11px;color:#047857">EXPECTED INFLOWS</div><strong style="font-size:18px;color:var(--pm-accent)">+ KES 3.2M</strong></div></div><div class="col-4"><div class="p-3 rounded" style="background:var(--pm-danger-soft)"><div style="font-size:11px;color:#991B1B">SCHEDULED OUTFLOWS</div><strong style="font-size:18px;color:var(--pm-danger)">- KES 4.8M</strong></div></div></div><h6 style="font-weight:700">Upcoming Major Movements</h6><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th></tr></thead><tbody><tr><td>30 Jun</td><td>Monthly Payroll Run</td><td><span class="pm-badge pm-badge-danger">Out</span></td><td>KES 3,250,000</td></tr><tr><td>02 Jul</td><td>Invoice #2201 (Acme)</td><td><span class="pm-badge pm-badge-success">In</span></td><td>KES 1,800,000</td></tr><tr><td>05 Jul</td><td>Supplier Run (Q2)</td><td><span class="pm-badge pm-badge-danger">Out</span></td><td>KES 1,150,000</td></tr></tbody></table></div></div><div id="cfTab-30day" class="tab-panel"><p class="text-center text-muted p-4">30-day chart visualization goes here...</p></div><div id="cfTab-90day" class="tab-panel"><p class="text-center text-muted p-4">90-day chart visualization goes here...</p></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('downloadStatementModal')">Export Forecast</button></div></div></div></div>
+
+<!-- 8. P&L Snapshot -->
+<div class="modal fade resettable" id="plSnapshotModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-bar-graph me-2"></i>Profit & Loss Snapshot (MTD)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-3"><span style="font-weight:700;font-size:16px">June 2025</span><span class="pm-badge pm-badge-info">Consolidated View</span></div><div class="p-3 border rounded mb-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Total Gross Revenue</span><strong>KES 8,240,000</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Cost of Goods Sold (COGS)</span><strong>- KES 2,100,000</strong></div><hr class="pm-divider"><div class="d-flex justify-content-between"><span style="font-weight:700">Gross Profit</span><strong style="color:var(--pm-accent)">KES 6,140,000 (74%)</strong></div></div><div class="p-3 border rounded mb-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Payroll & Employee Benefits</span><strong>- KES 3,250,000</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Marketing & Sales</span><strong>- KES 450,000</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Software & Subscriptions</span><strong>- KES 280,000</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Rent & Utilities</span><strong>- KES 320,000</strong></div><hr class="pm-divider"><div class="d-flex justify-content-between"><span style="font-weight:700">Total Opex</span><strong>KES 4,300,000</strong></div></div><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div class="d-flex justify-content-between"><span style="font-weight:700;font-size:16px">Net Operating Profit</span><strong style="font-size:18px;color:var(--pm-primary)">KES 1,840,000 (22%)</strong></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('downloadStatementModal')">Full P&L Report</button></div></div></div></div>
+
+<!-- 9. Tax Readiness -->
+<div class="modal fade resettable" id="taxReadinessModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Tax & Compliance Readiness</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-4"><div style="font-size:48px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display);line-height:1">98%</div><div style="font-size:12px;font-weight:700;color:var(--pm-muted);text-transform:uppercase">OVERALL COMPLIANCE SCORE</div></div><div class="status-row"><div><strong>KRA VAT (June)</strong><div style="font-size:11px;color:var(--pm-muted)">Extract generated, ready for iTax</div></div><span class="pm-badge pm-badge-success">Ready</span></div><div class="status-row"><div><strong>e-TIMS Integration</strong><div style="font-size:11px;color:var(--pm-muted)">API connection healthy, 100% matched</div></div><span class="pm-badge pm-badge-success">Active</span></div><div class="status-row"><div><strong>PAYE / NSSF / SHIF</strong><div style="font-size:11px;color:var(--pm-muted)">Pending June payroll execution</div></div><span class="pm-badge pm-badge-warning">Pending</span></div><div class="status-row"><div><strong>CR12 Annual Return</strong><div style="font-size:11px;color:var(--pm-muted)">Due August 2025</div></div><span class="pm-badge pm-badge-info">On Track</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 10. eTims Reconciliation -->
+<div class="modal fade resettable" id="eTimsReconciliationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt text-secondary me-2"></i>e-TIMS Invoice Reconciliation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3 mb-3"><div class="col-md-4"><div class="p-3 border rounded text-center"><div style="font-size:20px;font-weight:700">142</div><div style="font-size:11px;color:var(--pm-muted)">INVOICES (JUN)</div></div></div><div class="col-md-4"><div class="p-3 border rounded text-center border-success bg-success bg-opacity-10"><div style="font-size:20px;font-weight:700;color:#047857">142</div><div style="font-size:11px;color:#065F46">SYNCED TO KRA</div></div></div><div class="col-md-4"><div class="p-3 border rounded text-center"><div style="font-size:20px;font-weight:700">0</div><div style="font-size:11px;color:var(--pm-muted)">EXCEPTIONS</div></div></div></div><div class="table-responsive" style="max-height:250px;overflow-y:auto"><table class="pm-table"><thead><tr><th>Invoice #</th><th>Date</th><th>Amount</th><th>e-TIMS CU Number</th><th>Status</th></tr></thead><tbody><tr><td>INV-2045</td><td>28 Jun 2025</td><td>KES 45,000</td><td><code style="font-size:11px">KRA-CU-99812A</code></td><td><span class="pm-badge pm-badge-success">Synced</span></td></tr><tr><td>INV-2044</td><td>27 Jun 2025</td><td>KES 120,500</td><td><code style="font-size:11px">KRA-CU-99811B</code></td><td><span class="pm-badge pm-badge-success">Synced</span></td></tr><tr><td>INV-2043</td><td>26 Jun 2025</td><td>KES 15,000</td><td><code style="font-size:11px">KRA-CU-99810C</code></td><td><span class="pm-badge pm-badge-success">Synced</span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('eTimsReconciliationModal', 'Manual sync triggered. All invoices up to date.', '')">Force Sync Now</button></div></div></div></div>
+
+<!-- 11. Branch Performance -->
+<div class="modal fade resettable" id="branchPerformanceModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop me-2"></i>Branch Performance Comparison</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Metric</th><th style="background:var(--pm-info-soft)">Nairobi HQ</th><th style="background:var(--pm-warning-soft)">Mombasa Branch</th><th>Consolidated</th></tr></thead><tbody><tr><td>Gross Revenue (YTD)</td><td>KES 32.5M</td><td>KES 15.7M</td><td><strong>KES 48.2M</strong></td></tr><tr><td>Operating Expenses</td><td>KES 14.1M</td><td>KES 6.8M</td><td><strong>KES 20.9M</strong></td></tr><tr><td>Headcount</td><td>28</td><td>14</td><td><strong>42</strong></td></tr><tr><td>Profit Margin</td><td>56%</td><td>56%</td><td><strong>56%</strong></td></tr><tr><td>Collection Speed (DSO)</td><td>22 Days</td><td>34 Days</td><td><strong>26 Days</strong></td></tr></tbody></table></div><div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-lightbulb text-warning me-1"></i> <strong>Insight:</strong> Mombasa branch has slower collection times (DSO 34 vs 22). Consider implementing automated payment reminders for coastal clients.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 12. Customer Spend Analytics -->
+<div class="modal fade resettable" id="customerSpendAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-people me-2"></i>Customer Revenue Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3 mb-3"><div class="col-md-6"><div class="p-3 border rounded"><div style="font-size:11px;color:var(--pm-muted)">TOP CLIENT</div><div style="font-size:18px;font-weight:700;color:var(--pm-primary)">Acme Corp Ltd</div><div style="font-size:12px;color:var(--pm-muted)">KES 12.5M (26% of Total)</div></div></div><div class="col-md-6"><div class="p-3 border rounded"><div style="font-size:11px;color:var(--pm-muted)">FASTEST PAYING</div><div style="font-size:18px;font-weight:700;color:var(--pm-accent)">TechFlow Solutions</div><div style="font-size:12px;color:var(--pm-muted)">Avg. 4 Days to Pay</div></div></div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Customer Name</th><th>Revenue (YTD)</th><th>Invoices</th><th>Avg Time to Pay</th><th>Status</th></tr></thead><tbody><tr><td>Acme Corp Ltd</td><td>KES 12,500,000</td><td>14</td><td>28 Days</td><td><span class="pm-badge pm-badge-success">Healthy</span></td></tr><tr><td>TechFlow Solutions</td><td>KES 8,200,000</td><td>42</td><td>4 Days</td><td><span class="pm-badge pm-badge-success">VIP</span></td></tr><tr><td>Global Logistics Ke</td><td>KES 5,400,000</td><td>6</td><td>65 Days</td><td><span class="pm-badge pm-badge-warning">Slow Payer</span></td></tr><tr><td>City Retail Chain</td><td>KES 3,100,000</td><td>22</td><td>18 Days</td><td><span class="pm-badge pm-badge-success">Healthy</span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('downloadStatementModal')">Export Data</button></div></div></div></div>
+
+<!-- 13. Vendor Expense Analytics -->
+<div class="modal fade resettable" id="vendorExpenseAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cart me-2"></i>Supplier & Expense Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('veTab','category',this)">By Category</button><button class="pm-tab-pill" onclick="switchTab('veTab','supplier',this)">By Supplier</button></div><div id="veTab-category" class="tab-panel active"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Category</th><th>Amount (YTD)</th><th>% of Opex</th><th>Trend (vs Last Year)</th></tr></thead><tbody><tr><td>Payroll & Benefits</td><td>KES 18.2M</td><td>64%</td><td>+12% <i class="bi bi-arrow-up-right text-danger"></i></td></tr><tr><td>Inventory & Raw Mat</td><td>KES 6.5M</td><td>23%</td><td>+4% <i class="bi bi-arrow-up-right text-warning"></i></td></tr><tr><td>Software & IT</td><td>KES 1.8M</td><td>6%</td><td>+18% <i class="bi bi-arrow-up-right text-danger"></i></td></tr><tr><td>Utilities</td><td>KES 1.1M</td><td>4%</td><td>-2% <i class="bi bi-arrow-down-right text-success"></i></td></tr></tbody></table></div></div><div id="veTab-supplier" class="tab-panel"><p class="text-center text-muted p-4">Supplier breakdown table visualization goes here...</p></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 14. Reconciliation Exceptions -->
+<div class="modal fade resettable" id="reconciliationExceptionsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Reconciliation Exceptions</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">The following incoming bank deposits could not be automatically matched to an open invoice.</p><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Bank Reference</th><th>Amount</th><th>Suggested Match</th><th>Action</th></tr></thead><tbody><tr><td>28 Jun</td><td>EQU-RTGS-9912A</td><td>KES 45,000</td><td>INV-2045 (Acme Corp)?</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('reconciliationExceptionsModal','Matched to INV-2045 successfully.','')">Accept</button></td></tr><tr><td>27 Jun</td><td>KCB-EFT-4412X</td><td>KES 32,500</td><td>No match found</td><td><button class="pm-btn pm-btn-sm">Manual Map</button></td></tr><tr><td>25 Jun</td><td>MPESA-P9212K</td><td>KES 15,000</td><td>INV-2043 (Retail)?</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('reconciliationExceptionsModal','Matched to INV-2043 successfully.','')">Accept</button></td></tr><tr><td>22 Jun</td><td>EQU-DEP-CASH</td><td>KES 50,000</td><td>No match found</td><td><button class="pm-btn pm-btn-sm">Manual Map</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 15. Download Statement -->
+<div class="modal fade resettable" id="downloadStatementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Data / Statement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Data Source</label><select class="pm-form-control"><option>PayMo Wallet Statement</option><option>M-Pesa Collections</option><option>Consolidated Financial Report</option></select></div><div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control" value="2025-06-01"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control" value="2025-06-30"></div></div><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>PDF Document</option><option>Excel Spreadsheet</option><option>MT940 (Swift)</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('downloadStatementModal', 'File generated and download started.', '')">Download Now</button></div></div></div></div>
+
+<!-- 16. Configure Dashboards -->
+<div class="modal fade resettable" id="configureDashboardsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders text-primary me-2"></i>Configure Dashboard Widgets</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Select which metrics appear on your main Financial Reporting view.</p><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Liquidity Position</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">YTD Revenue</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Pending Reconciliations</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Compliance & Audit Score</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label">Top Expense Category Tracker</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label class="form-check-label">Live FX Rates (USD/KES)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('configureDashboardsModal', 'Dashboard configuration saved.', '')">Save Layout</button></div></div></div></div>
+
+<!-- 17. User Activity Log -->
+<div class="modal fade resettable" id="userActivityLogModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-eye text-primary me-2"></i>Activity Detail View</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">User</span><strong>Titus G. (Admin)</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Timestamp</span><strong>28 Jun 2025, 14:32:01 EAT</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">IP Address</span><strong>197.232.14.8 (Kenya)</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Device</span><strong>Mac OS X, Chrome 114</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Status</span><span class="pm-badge pm-badge-success">Success</span></div></div><h6 style="font-weight:700">Action Payload</h6><pre class="p-3 border rounded" style="background:#f8f9fa;font-size:11px;overflow-x:auto;margin:0">{
+  "action": "APPROVE_DISBURSEMENT_BATCH",
+  "batch_id": "9921",
+  "total_amount": 3250000,
+  "records": 42,
+  "verification_method": "MFA_OTP",
+  "hash": "a4b1c2d3e4f5..."
+}</pre></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 18. Statutory Deductions -->
+<div class="modal fade resettable" id="statutoryDeductionsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-warning me-2"></i>Statutory Deductions (June 2025)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3 mb-3"><div class="col-md-4"><div class="p-3 rounded" style="background:var(--pm-warning-soft)"><div style="font-size:11px;color:#B45309;font-weight:700">PAYE (KRA)</div><strong style="font-size:20px;color:var(--pm-warning)">KES 450,200</strong></div></div><div class="col-md-4"><div class="p-3 rounded" style="background:var(--pm-info-soft)"><div style="font-size:11px;color:#1D4ED8;font-weight:700">NSSF</div><strong style="font-size:20px;color:var(--pm-info)">KES 84,000</strong></div></div><div class="col-md-4"><div class="p-3 rounded" style="background:var(--pm-accent-soft)"><div style="font-size:11px;color:#047857;font-weight:700">SHIF</div><strong style="font-size:20px;color:var(--pm-accent)">KES 72,500</strong></div></div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Filing</th><th>Due Date</th><th>Employees</th><th>Total Due</th><th>Action</th></tr></thead><tbody><tr><td>PAYE (P10)</td><td>09 Jul 2025</td><td>42</td><td>KES 450,200</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('statutoryDeductionsModal','CSV Downloaded.','')">CSV Extract</button></td></tr><tr><td>NSSF</td><td>09 Jul 2025</td><td>42</td><td>KES 84,000</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('statutoryDeductionsModal','Excel Downloaded.','')">Excel Extract</button></td></tr><tr><td>SHIF</td><td>09 Jul 2025</td><td>42</td><td>KES 72,500</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('statutoryDeductionsModal','Excel Downloaded.','')">Excel Extract</button></td></tr><tr><td>Housing Levy</td><td>09 Jul 2025</td><td>42</td><td>KES 48,000</td><td><button class="pm-btn pm-btn-sm" onclick="processAction('statutoryDeductionsModal','CSV Downloaded.','')">CSV Extract</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('downloadStatementModal')">Export All ZIP</button></div></div></div></div>
+
+<!-- 19. Export Trial Balance -->
+<div class="modal fade resettable" id="exportTrialBalanceModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-spreadsheet text-danger me-2"></i>Trial Balance Preview</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-3"><span style="font-weight:700">As of: 28 Jun 2025</span><span class="pm-badge pm-badge-info">Consolidated</span></div><div class="table-responsive" style="max-height:300px;overflow-y:auto"><table class="pm-table"><thead><tr><th>GL Code</th><th>Account Name</th><th>Debit (KES)</th><th>Credit (KES)</th></tr></thead><tbody><tr><td>1001</td><td>PayMo Wallet</td><td>12,450,800</td><td>-</td></tr><tr><td>1100</td><td>Accounts Receivable</td><td>4,200,000</td><td>-</td></tr><tr><td>2001</td><td>Accounts Payable</td><td>-</td><td>2,150,000</td></tr><tr><td>3001</td><td>Retained Earnings</td><td>-</td><td>8,500,800</td></tr><tr><td>4001</td><td>Sales Revenue</td><td>-</td><td>48,200,000</td></tr><tr><td>5001</td><td>Payroll Expenses</td><td>18,200,000</td><td>-</td></tr><tr><td>5010</td><td>COGS</td><td>21,000,000</td><td>-</td></tr><tr style="font-weight:700"><td></td><td>TOTAL</td><td>55,850,800</td><td>55,850,800</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportTrialBalanceModal','Trial Balance downloaded successfully.','')"><i class="bi bi-download"></i> Download Excel</button></div></div></div></div>
+
+<!-- 20. Report Delivery Settings -->
+<div class="modal fade resettable" id="reportDeliverySettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders text-primary me-2"></i>Automated Delivery Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Delivery Channel</label><select class="pm-form-control"><option>Email (Secure Attachment)</option><option>SFTP Server</option><option>Webhook (JSON Payload)</option></select></div><div class="mb-3"><label class="pm-form-label">SFTP Host (If applicable)</label><input class="pm-form-control" placeholder="sftp.company.com"></div><div class="mb-3"><label class="pm-form-label">SFTP Port</label><input class="pm-form-control" placeholder="22"></div><div class="mb-3"><label class="pm-form-label">Security</label><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Password protect PDFs (using KRA PIN)</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">PGP Encrypt CSV/Excel files</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('reportDeliverySettingsModal','Delivery configuration saved.','')">Save Settings</button></div></div></div></div>
+
+<!-- 21. Dispute Audit -->
+<div class="modal fade resettable" id="disputeAuditModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-eye text-primary me-2"></i>Audit Log: Invoice Voided</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">User</span><strong>James K. (Sales)</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Target</span><strong>Invoice #INV-2041</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Action</span><strong>Status changed to VOID</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Reason Provided</span><strong>"Duplicate generated by error"</strong></div></div><div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">No financial impact recorded as payment had not been reconciled against this invoice. e-TIMS credit note auto-filed.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 22. Financial Health Score -->
+<div class="modal fade resettable" id="financialHealthScoreModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-heart-pulse text-accent me-2" style="color:var(--pm-accent)"></i>Business Financial Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-4"><div style="font-size:48px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display);line-height:1">Excellent</div><div style="font-size:12px;font-weight:700;color:var(--pm-muted);text-transform:uppercase">OVERALL RATING</div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Indicator</th><th>Status</th><th>Score</th></tr></thead><tbody><tr><td>Liquidity Ratio (Current)</td><td>2.4x (Very Healthy)</td><td><span class="pm-badge pm-badge-success">Strong</span></td></tr><tr><td>Days Sales Outstanding</td><td>26 Days</td><td><span class="pm-badge pm-badge-success">Strong</span></td></tr><tr><td>Expense to Revenue Ratio</td><td>43% (Within target)</td><td><span class="pm-badge pm-badge-success">Strong</span></td></tr><tr><td>Revenue Concentration</td><td>Top client is 26%</td><td><span class="pm-badge pm-badge-warning">Fair</span></td></tr></tbody></table></div><div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-stars text-purple me-1" style="color:var(--pm-purple)"></i> AI Suggestion: Your liquidity is strong enough to place KES 5M in a 30-day Money Market Fund to generate yield without impacting operational cash flow.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function selectBox(el){el.closest('.row').querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background=''});el.style.borderColor='var(--pm-primary)';el.style.background='rgba(79,70,229,.04)';}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1500);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;resetFlows();});});}
+
+let gcrStep=1, mecStep=1;
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+
+function nextGcrStep(){if(gcrStep===2){showLoading('#generateCustomReportModal .modal-body',()=>{gcrStep=3;renderStepper('gcrStepper',['Type','Filters','Delivery'],gcrStep);showFlow('gcrStep',gcrStep,3);document.getElementById('gcrNextBtn').innerHTML='Generate <i class="bi bi-check2"></i>';});return;}if(gcrStep>=3){processAction('generateCustomReportModal','Report generated and scheduled for delivery.','REP-19028');return;}gcrStep++;renderStepper('gcrStepper',['Type','Filters','Delivery'],gcrStep);showFlow('gcrStep',gcrStep,3);}
+function nextMecStep(){if(mecStep===2){showLoading('#runMonthEndModal .modal-body',()=>{mecStep=3;renderStepper('mecStepper',['Checks','Lock','Done'],mecStep);showFlow('mecStep',mecStep,3);document.getElementById('mecNextBtn').style.display='none';});return;}if(mecStep>=3){closeModal('runMonthEndModal');return;}mecStep++;renderStepper('mecStepper',['Checks','Lock','Done'],mecStep);showFlow('mecStep',mecStep,3);if(mecStep===2)document.getElementById('mecNextBtn').innerHTML='Lock Ledgers <i class="bi bi-lock"></i>';}
+
+function resetFlows(){gcrStep=1;mecStep=1;renderStepper('gcrStepper',['Type','Filters','Delivery'],1);renderStepper('mecStepper',['Checks','Lock','Done'],1);showFlow('gcrStep',1,3);showFlow('mecStep',1,3);}
+
+document.addEventListener('DOMContentLoaded',()=>{cacheResettable();resetFlows();});
+</script>
+</body>
+</html>

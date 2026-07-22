@@ -130,7 +130,7 @@ export default function Sidebar({
                 return (
                   <Link
                     key={item.key}
-                    to="/app/$section"
+                    to="/transaction_dashboard/app/$section"
                     params={{ section: item.key }}
                     className={className}
                     title={item.label}
@@ -145,7 +145,7 @@ export default function Sidebar({
         ))}
       </div>
 
-      <Link to="/app/$section" params={{ section: 'settings' }} className={s.sidebarAccount} onClick={() => { if (!isDesktop) onCloseMobile(); }}>
+      <Link to="/transaction_dashboard/app/$section" params={{ section: 'settings' }} className={s.sidebarAccount} onClick={() => { if (!isDesktop) onCloseMobile(); }}>
         <div className={s.avatar}>{content.user.initials}</div>
         <div className={s.accountDetails}>
           <div className={s.accountName}>{content.user.name}</div>

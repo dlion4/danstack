@@ -1051,9 +1051,24 @@
 	}
 }
 @media (max-width: 767.98px) {
+	.pageRoot {
+		padding: 12px 14px 24px;
+		overflow-x: hidden;
+	}
 	.pageBar {
 		flex-direction: column;
 		align-items: stretch;
+		gap: 10px;
+	}
+	.pageBar .d-flex {
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+	}
+	.pageBar .d-flex > .btn,
+	.pageBar .d-flex > button {
+		width: 100%;
+		justify-content: center;
 	}
 	.card {
 		padding: 20px;
@@ -1095,6 +1110,18 @@
 	}
 	.stepLabel {
 		font-size: 11px;
+	}
+	.quickGrid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 8px;
+	}
+	.quickBtn {
+		min-height: 80px;
+		padding: 12px 8px;
+		font-size: 13px;
+	}
+	.quickBtn i {
+		font-size: 20px;
 	}
 }
 @media (max-width: 575.98px) {
@@ -1163,21 +1190,36 @@
 	.btnSm {
 		width: auto;
 	}
-	.pageBar .d-flex {
-		flex-direction: column;
-	}
-	.pageBar .d-flex > .btn,
-	.pageBar .d-flex > button {
-		width: 100%;
-	}
 	.pills {
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	.pill {
 		flex: 1 1 auto;
 		min-width: 80px;
 		font-size: 13px;
 		padding: 8px 12px;
+	}
+}
+@media (max-width: 420px) {
+	.pageRoot {
+		padding: 8px 10px 16px;
+	}
+	.quickGrid {
+		grid-template-columns: 1fr;
+		gap: 6px;
+	}
+	.quickBtn {
+		min-height: 70px;
+		font-size: 12px;
+	}
+	.statValue {
+		font-size: 20px;
+	}
+	.btn {
+		padding: 8px 12px;
+		font-size: 12px;
 	}
 }
 @media (prefers-reduced-motion: reduce) {

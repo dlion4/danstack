@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Developer Portal — API Governance, Versioning & Roadmap</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 45%,#4F46E5 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px;max-height:80vh;overflow-y:auto;}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;display:block}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg);backdrop-filter:blur(2px)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+pre{background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;margin:10px 0;}
+.code-inline{font-family:monospace;background:var(--pm-border);padding:2px 4px;border-radius:4px;font-size:12px;}
+.kanban-col{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:12px;min-height:300px;}
+.roadmap-card{background:#fff;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;}
+.roadmap-card:hover{border-color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);transform:translateY(-1px);}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-diagram-3"></i></button>
+<button class="pm-nav-item"><i class="bi bi-code-slash"></i></button>
+<button class="pm-nav-item"><i class="bi bi-shield-lock"></i></button>
+<button class="pm-nav-item"><i class="bi bi-activity"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-rocket"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" onclick="openModal('healthCheckModal')"><i class="bi bi-heart-pulse"></i></button>
+</aside>
+
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-slate)"><i class="bi bi-terminal"></i></div>
+<div>
+<h1>API Governance & Roadmap</h1>
+<p>Manage API lifecycle, standards, versions, and product evolution</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search API endpoints, version docs, RFCs...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="System Status"><i class="bi bi-activity"></i></button>
+<button class="pm-header-btn" onclick="openModal('developerAlertsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">3</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')">
+<div class="pm-avatar">SD</div>
+<div><div class="pm-name">Sarah D.</div><div class="pm-role">Lead Architect</div></div>
+</div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Developer Portal</a> / <a href="#">Operations</a> / <strong>Governance & Roadmap</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.10 — API Governance, Versioning & Roadmap</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Control API lifecycles, enforce design standards (OpenAPI 3.0), publish release notes, and track the developer roadmap.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('exportSpecModal')"><i class="bi bi-download"></i> Export Spec</button>
+<button class="pm-btn" onclick="openModal('apiGovernanceAuditModal')"><i class="bi bi-shield-check"></i> Audit Report</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('publishReleaseModal')"><i class="bi bi-rocket-takeoff"></i> Publish Release</button>
+</div>
+</div>
+
+<div class="pm-content">
+<!-- HERO STATS -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">API Gateway routing is optimal <span style="color:#86efac">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">v2.4.1 (Current)</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Handling 94% of all production traffic. v1 deprecation scheduled in 180 days.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('changelogDetailModal')">View Changelog</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('migrationGuideModal')">Migration Docs</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('deprecateVersionModal')">Deprecate v1</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">ACTIVE VERSIONS</p>
+<div class="pm-stat-value" style="margin:6px 0">3 APIs</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-diagram-2"></i> v1, v2, v3-beta</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-muted)">
+<div class="d-flex justify-content-between mb-1"><span>v2.x Traffic</span><span>94%</span></div>
+<div class="pm-progress mb-2"><div class="pm-progress-bar" style="width:94%;background:var(--pm-info)"></div></div>
+<div class="d-flex justify-content-between mb-1"><span>v1.x Traffic</span><span>6%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:6%;background:var(--pm-warning)"></div></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">GOVERNANCE COMPLIANCE</p>
+<div class="pm-stat-value" style="margin:6px 0">98.5%</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Passed OAS 3.0</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between mb-1"><span>Linter Warnings</span><strong style="color:var(--pm-warning)">12</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Breaking Changes</span><strong>0</strong></div>
+<div class="mt-2"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('runLinterModal')">Run Linter</button></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-purple)">
+<p class="pm-stat-label" style="color:var(--pm-purple)">COMMUNITY FEEDBACK</p>
+<div class="pm-stat-value" style="margin:6px 0">142</div>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-chat-text"></i> Open Requests</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+<div>Highest voted: <strong>GraphQL Support (89 votes)</strong></div>
+<div class="mt-2"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('submitFeatureModal')">New Request</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="row g-3">
+<!-- SECTION 4.10.1 API Lifecycle Management -->
+<div class="col-lg-6">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-arrow-repeat text-primary"></i> 4.10.1 — API Lifecycle & Versions</h3>
+<p class="pm-section-sub">Manage version rollouts, deprecation policies, and backward compatibility.</p>
+</div>
+<div class="dropdown">
+<button class="pm-btn pm-btn-sm" onclick="openModal('versionActionModal')"><i class="bi bi-three-dots-vertical"></i> Actions</button>
+</div>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Version</th><th>Status</th><th>Adoption</th><th>Sunset Date</th><th>Actions</th></tr></thead>
+<tbody>
+<tr>
+<td><strong style="font-size:14px">v3.0.0-beta</strong><br><span style="font-size:10px;color:var(--pm-muted)">GraphQL + gRPC</span></td>
+<td><span class="pm-badge pm-badge-purple">Beta</span></td>
+<td><div class="pm-progress mt-1" style="width:50px"><div class="pm-progress-bar" style="width:2%;background:var(--pm-purple)"></div></div><span style="font-size:10px">2%</span></td>
+<td>—</td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('enrollBetaModal')">Manage Beta</button></td>
+</tr>
+<tr>
+<td><strong style="font-size:14px">v2.4.1</strong><br><span style="font-size:10px;color:var(--pm-muted)">Current GA Release</span></td>
+<td><span class="pm-badge pm-badge-success">Active</span></td>
+<td><div class="pm-progress mt-1" style="width:50px"><div class="pm-progress-bar" style="width:94%;background:var(--pm-success)"></div></div><span style="font-size:10px">94%</span></td>
+<td>—</td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('changelogDetailModal')">Changelog</button></td>
+</tr>
+<tr>
+<td><strong style="font-size:14px">v1.8.4</strong><br><span style="font-size:10px;color:var(--pm-muted)">Legacy API</span></td>
+<td><span class="pm-badge pm-badge-warning">Deprecated</span></td>
+<td><div class="pm-progress mt-1" style="width:50px"><div class="pm-progress-bar" style="width:6%;background:var(--pm-warning)"></div></div><span style="font-size:10px">6%</span></td>
+<td><strong style="color:var(--pm-danger);font-size:12px">Dec 31, 2026</strong></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('configureDeprecationModal')">Headers</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="d-flex gap-2 mt-3">
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('broadcastChangeModal')"><i class="bi bi-broadcast"></i> Notify Devs</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('migrationGuideModal')"><i class="bi bi-journal-code"></i> Migration Guides</button>
+</div>
+</div>
+</div>
+
+<!-- SECTION 4.10.2 API Governance -->
+<div class="col-lg-6">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-shield-check text-success"></i> 4.10.2 — API Governance & Standards</h3>
+<p class="pm-section-sub">Enforce REST principles, documentation quality, and performance targets.</p>
+</div>
+</div>
+<div class="row g-2 mb-3">
+<div class="col-6">
+<div class="utility-block text-center" style="padding:12px">
+<div style="font-size:11px;color:var(--pm-muted);font-weight:700">OAS 3.0 VALIDATION</div>
+<div style="font-size:20px;font-weight:700;color:var(--pm-accent)"><i class="bi bi-check-circle"></i> Passed</div>
+</div>
+</div>
+<div class="col-6">
+<div class="utility-block text-center" style="padding:12px">
+<div style="font-size:11px;color:var(--pm-muted);font-weight:700">DOC COVERAGE</div>
+<div style="font-size:20px;font-weight:700;color:var(--pm-info)">100%</div>
+</div>
+</div>
+<div class="col-6">
+<div class="utility-block text-center" style="padding:12px">
+<div style="font-size:11px;color:var(--pm-muted);font-weight:700">CONTRACT TESTS</div>
+<div style="font-size:20px;font-weight:700;color:var(--pm-accent)">482/482</div>
+</div>
+</div>
+<div class="col-6">
+<div class="utility-block text-center" style="padding:12px;cursor:pointer" onclick="openModal('performanceBenchmarkModal')">
+<div style="font-size:11px;color:var(--pm-muted);font-weight:700">P95 LATENCY</div>
+<div style="font-size:20px;font-weight:700;color:var(--pm-primary)">112ms</div>
+</div>
+</div>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('apiGovernanceAuditModal')">View Audit Checklist</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('testAutomationConfigModal')">Test Config</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('sdkGenerationModal')">Generate SDKs</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 4.10.3 Product Roadmap & Feedback -->
+<div class="pm-card mt-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-map text-warning"></i> 4.10.3 — Product Roadmap & Developer Feedback</h3>
+<p class="pm-section-sub">Public tracking of planned API features, beta programs, and community voting.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('featureListModal')"><i class="bi bi-list-ul"></i> All Requests</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('submitFeatureModal')"><i class="bi bi-plus-lg"></i> Submit Idea</button>
+</div>
+</div>
+
+<div class="row g-3">
+<!-- Under Review -->
+<div class="col-md-4">
+<div class="kanban-col">
+<h6 style="font-weight:700;font-size:13px;border-bottom:2px solid var(--pm-purple);padding-bottom:8px;margin-bottom:12px">UNDER REVIEW (Votes)</h6>
+<div class="roadmap-card" onclick="openModal('featureDetailModal')">
+<div class="d-flex justify-content-between"><strong>GraphQL API Support</strong><span class="pm-badge" style="background:#f3f4f6;color:var(--pm-ink)"><i class="bi bi-arrow-up"></i> 89</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Reduce over-fetching on mobile apps.</div>
+</div>
+<div class="roadmap-card" onclick="openModal('featureDetailModal')">
+<div class="d-flex justify-content-between"><strong>Idempotency Keys</strong><span class="pm-badge" style="background:#f3f4f6;color:var(--pm-ink)"><i class="bi bi-arrow-up"></i> 54</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Standardize across all POST endpoints.</div>
+</div>
+<div class="roadmap-card" onclick="openModal('featureDetailModal')">
+<div class="d-flex justify-content-between"><strong>Ruby SDK</strong><span class="pm-badge" style="background:#f3f4f6;color:var(--pm-ink)"><i class="bi bi-arrow-up"></i> 32</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Official support for Ruby on Rails.</div>
+</div>
+</div>
+</div>
+<!-- Planned -->
+<div class="col-md-4">
+<div class="kanban-col">
+<h6 style="font-weight:700;font-size:13px;border-bottom:2px solid var(--pm-info);padding-bottom:8px;margin-bottom:12px">PLANNED (Q3 2026)</h6>
+<div class="roadmap-card" onclick="openModal('roadmapItemModal')">
+<div class="d-flex justify-content-between"><strong>Webhooks v2</strong><span class="pm-badge pm-badge-info">Q3</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">HMAC verification and automatic retries.</div>
+<div class="mt-2"><div class="pm-progress"><div class="pm-progress-bar" style="width:15%;background:var(--pm-info)"></div></div></div>
+</div>
+<div class="roadmap-card" onclick="openModal('roadmapItemModal')">
+<div class="d-flex justify-content-between"><strong>Bulk Payroll Endpoints</strong><span class="pm-badge pm-badge-info">Q3</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Async processing for >10k employees.</div>
+<div class="mt-2"><div class="pm-progress"><div class="pm-progress-bar" style="width:5%;background:var(--pm-info)"></div></div></div>
+</div>
+</div>
+</div>
+<!-- Beta / Rollout -->
+<div class="col-md-4">
+<div class="kanban-col">
+<h6 style="font-weight:700;font-size:13px;border-bottom:2px solid var(--pm-accent);padding-bottom:8px;margin-bottom:12px">BETA / ROLLOUT</h6>
+<div class="roadmap-card" onclick="openModal('roadmapItemModal')">
+<div class="d-flex justify-content-between"><strong>PesaLink B2B API</strong><span class="pm-badge pm-badge-success">Beta</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Real-time corporate bank transfers.</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 mt-2" onclick="event.stopPropagation();openModal('enrollBetaModal')">Join Beta</button>
+</div>
+<div class="roadmap-card" onclick="openModal('roadmapItemModal')">
+<div class="d-flex justify-content-between"><strong>GoLang SDK v1.0</strong><span class="pm-badge pm-badge-success">RC1</span></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Release candidate available on GitHub.</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div><!-- End content -->
+</div><!-- End main -->
+</div><!-- End app -->
+
+<!-- MODAL 1: Publish Release -->
+<div class="modal fade resettable" id="publishReleaseModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-rocket-takeoff text-primary me-2"></i>Publish API Release</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="releaseStepper"></div>
+<div id="relStep1" class="fade-step active">
+<div class="mb-3"><label class="pm-form-label">Version Number (Semantic)</label><input class="pm-form-control" value="2.4.2" placeholder="Major.Minor.Patch"></div>
+<div class="mb-3"><label class="pm-form-label">Release Type</label><select class="pm-form-control"><option>Patch (Bug fixes, non-breaking)</option><option>Minor (New features, non-breaking)</option><option>Major (Breaking changes)</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Maintain backwards compatibility with v2.x</label></div>
+</div>
+<div id="relStep2" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Changelog Notes (Markdown)</label>
+<textarea class="pm-form-control" rows="6" style="font-family:monospace;font-size:12px">### Added
+- `GET /v2/payroll/status` endpoint to check async bulk processing
+### Fixed
+- Idempotency key conflict on `POST /v2/disbursements`
+- Webhook payload signature validation edge case</textarea></div>
+</div>
+<div id="relStep3" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Developer Notification</label>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Publish to Developer Portal Changelog</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Email notification to all registered developers</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Post to community Slack/Discord</label></div></div>
+</div>
+<div id="relStep4" class="fade-step">
+<div class="pm-receipt">
+<div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Release Ready</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft)">Version <strong>v2.4.2</strong> is ready to be published. The OpenAPI spec will be updated automatically.</p>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="relNextBtn" onclick="nextReleaseStep()">Next <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- MODAL 2: Deprecate Version -->
+<div class="modal fade resettable" id="deprecateVersionModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-trash text-warning me-2"></i>Deprecate API Version</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="depStepper"></div>
+<div id="depStep1" class="fade-step active">
+<div class="mb-3"><label class="pm-form-label">Select Version to Deprecate</label><select class="pm-form-control"><option>v1.8.4</option><option>v2.0.0 (Old Minor)</option></select></div>
+<div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-exclamation-triangle"></i> Deprecating a version initiates the sunset period. It does not immediately turn off the API.</div>
+</div>
+<div id="depStep2" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Sunset Date (Minimum 6 months)</label><input type="date" class="pm-form-control" value="2026-12-31"></div>
+<div class="mb-3"><label class="pm-form-label">Replacement Version</label><select class="pm-form-control"><option>v2.x</option><option>v3.x</option></select></div>
+</div>
+<div id="depStep3" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Automated Actions</label>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">Inject <code>Deprecation: true</code> header</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">Inject <code>Sunset: {Date}</code> header</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Send 6-month notice email to active consumers (6% traffic)</label></div>
+</div></div>
+<div id="depStep4" class="fade-step">
+<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Deprecation Scheduled</h5><p style="font-size:13px;color:var(--pm-ink-soft)">v1.8.4 sunset date set to Dec 31, 2026. Notices will be sent.</p></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-warning text-white" id="depNextBtn" onclick="nextDepStep()">Next <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- MODAL 3: Migration Guide -->
+<div class="modal fade resettable" id="migrationGuideModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-code me-2"></i>Migration Guides</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-tab-pills mb-3">
+<button class="pm-tab-pill active" onclick="switchTab('migTab','v1v2',this)">Migrating v1 to v2</button>
+<button class="pm-tab-pill" onclick="switchTab('migTab','v2v3',this)">Preparing for v3</button>
+</div>
+<div id="migTab-v1v2" class="tab-panel active">
+<h6 style="font-weight:700">Key Changes</h6>
+<ul style="font-size:13px">
+<li>All amount fields are now integers (minor units/cents) instead of floats.</li>
+<li><code>phoneNumber</code> must include country code without '+'.</li>
+<li>Idempotency keys are now mandatory in headers.</li>
+</ul>
+<label class="pm-form-label mt-3">Payload Example (v2)</label>
+<pre>{
+  "amount": 50000, 
+  "currency": "KES",
+  "phoneNumber": "254712345678"
+}</pre>
+</div>
+<div id="migTab-v2v3" class="tab-panel">
+<h6 style="font-weight:700">Looking Ahead to v3</h6>
+<p style="font-size:13px">v3 will introduce GraphQL alongside REST. The REST endpoints will adopt stricter JSON:API formatting for relationships.</p>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 4: Changelog Detail -->
+<div class="modal fade resettable" id="changelogDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-card-text me-2"></i>Release Notes: v2.4.1</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3"><span class="pm-badge pm-badge-success">Current Release</span><span style="font-size:12px;color:var(--pm-muted)">Released: Jun 15, 2025</span></div>
+<div style="font-size:13px">
+<h6 style="color:var(--pm-primary);font-weight:700">New Features</h6>
+<ul>
+<li>Added <code>GET /v2/analytics/cashflow</code> endpoint for group-level dashboarding.</li>
+<li>Enabled dynamic QR code generation via API for POS terminals.</li>
+</ul>
+<h6 style="color:var(--pm-accent);font-weight:700">Improvements</h6>
+<ul>
+<li>Webhooks now retry up to 5 times using exponential backoff.</li>
+<li>P95 latency on `POST /v2/collections` reduced from 300ms to 112ms.</li>
+</ul>
+<h6 style="color:var(--pm-warning);font-weight:700">Bug Fixes</h6>
+<ul>
+<li>Fixed issue where pagination cursor failed on large invoice sets.</li>
+</ul>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 5: Run Linter -->
+<div class="modal fade resettable" id="runLinterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>API Governance Linter</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" id="linterBody">
+<div class="text-center" id="linterPre">
+<i class="bi bi-braces text-muted" style="font-size:48px"></i>
+<p class="mt-3" style="font-size:13px">Scan the current OpenAPI specification against PayMo's REST governance policies (naming, security headers, responses).</p>
+<button class="pm-btn pm-btn-primary mt-2" onclick="simulateLinter()">Run Scan Now</button>
+</div>
+<div class="text-center" id="linterLoad" style="display:none;">
+<div class="pm-spinner mx-auto mb-3"></div>
+<p style="font-size:13px;color:var(--pm-primary)">Scanning 214 endpoints...</p>
+</div>
+<div id="linterResult" style="display:none;">
+<div class="p-3 rounded mb-3" style="background:var(--pm-success-soft);border:1px solid #10B981">
+<div style="font-size:18px;font-weight:700;color:#047857"><i class="bi bi-check-circle"></i> Passed (Score: 98/100)</div>
+</div>
+<h6 style="font-size:12px;font-weight:700">Warnings (2)</h6>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px;width:24px;height:24px"><i class="bi bi-exclamation"></i></div><div style="font-size:12px"><code>GET /v2/temp/stats</code> is missing a description.</div></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px;width:24px;height:24px"><i class="bi bi-exclamation"></i></div><div style="font-size:12px">Operation <code>cancelSubscription</code> should use <code>POST</code> not <code>PUT</code>.</div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 6: Export Spec -->
+<div class="modal fade resettable" id="exportSpecModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export API Specification</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select API Version</label><select class="pm-form-control"><option>v2.4.1 (Current)</option><option>v1.8.4 (Deprecated)</option><option>v3.0.0-beta</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Export Format</label>
+<div class="p-2 border rounded mb-2 d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="exportFmt" checked> <span style="font-size:13px;font-weight:600">OpenAPI 3.0 (JSON)</span></div>
+<div class="p-2 border rounded mb-2 d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="exportFmt"> <span style="font-size:13px;font-weight:600">OpenAPI 3.0 (YAML)</span></div>
+<div class="p-2 border rounded d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="exportFmt"> <span style="font-size:13px;font-weight:600">Postman Collection v2.1</span></div>
+</div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Include code generation extensions</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportSpecModal','Specification downloaded successfully.','')"><i class="bi bi-download"></i> Download File</button></div>
+</div></div></div>
+
+<!-- MODAL 7: Submit Feature Request -->
+<div class="modal fade resettable" id="submitFeatureModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightbulb text-warning me-2"></i>Submit Feature Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-12"><label class="pm-form-label">Feature Title</label><input class="pm-form-control" placeholder="e.g., Bulk employee import via API"></div>
+<div class="col-md-6"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>Payroll APIs</option><option>Collections</option><option>Webhooks</option><option>SDKs</option><option>Other</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Business Priority</label><select class="pm-form-control"><option>Nice to have</option><option>Important</option><option>Critical / Blocker</option></select></div>
+<div class="col-12"><label class="pm-form-label">Use Case / Problem Statement</label><textarea class="pm-form-control" rows="4" placeholder="Describe the problem you are trying to solve..."></textarea></div>
+<div class="col-12"><label class="pm-form-label">Proposed Solution (Optional)</label><textarea class="pm-form-control" rows="3" placeholder="How do you envision this working?"></textarea></div>
+</div>
+<div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-info-circle me-1"></i> Submissions are public and can be upvoted by other developers in the community.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('submitFeatureModal','Feature request submitted for review!','')">Submit Idea</button></div>
+</div></div></div>
+
+<!-- MODAL 8: Feature Detail & Vote -->
+<div class="modal fade resettable" id="featureDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-chat-text me-2"></i>Feature Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div>
+<h4 style="font-weight:700;font-size:18px;margin-bottom:4px">GraphQL API Support</h4>
+<span class="pm-badge" style="background:var(--pm-surface-2);color:var(--pm-ink)">Category: Core Architecture</span> <span class="pm-badge pm-badge-info">Under Review</span>
+</div>
+<div class="text-center p-2 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border);cursor:pointer" onclick="this.style.borderColor='var(--pm-primary)';this.style.color='var(--pm-primary)'">
+<i class="bi bi-arrow-up" style="font-size:20px"></i><br><strong>89</strong>
+</div>
+</div>
+<p style="font-size:13px;line-height:1.6"><strong>Use Case:</strong> Our mobile application requires data from 4 different REST endpoints to build the dashboard (wallet, invoices, stats, profile). This causes over-fetching and impacts performance on slower 3G networks. A GraphQL endpoint would solve this.</p>
+<hr class="pm-divider">
+<h6 style="font-weight:700;font-size:13px">Official Response</h6>
+<div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);border-left:3px solid var(--pm-info)">
+<div class="d-flex align-items-center gap-2 mb-2"><div class="pm-avatar" style="width:24px;height:24px;font-size:10px">SD</div><strong style="font-size:12px">Sarah D. (PM)</strong></div>
+<p style="font-size:12px;margin:0">Thanks for the feedback! We are aware of the payload size issues for mobile integrators. GraphQL support is officially moving to our "Planned" roadmap for v3.0, expected in Beta late next year.</p>
+</div>
+<div class="mb-3"><textarea class="pm-form-control" rows="2" placeholder="Add a comment or business case..."></textarea><button class="pm-btn pm-btn-sm mt-2">Post Comment</button></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 9: Roadmap Item -->
+<div class="modal fade resettable" id="roadmapItemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-map text-warning me-2"></i>Roadmap Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<h4 style="font-weight:700;font-size:18px;margin-bottom:4px">Webhooks v2</h4>
+<span class="pm-badge pm-badge-info">Target: Q3 2026</span> <span class="pm-badge" style="background:var(--pm-surface-2);color:var(--pm-muted)">Status: In Development</span>
+<p style="font-size:13px;margin-top:12px">Complete rewrite of the event notification system. Introduces HMAC-SHA256 signature verification, a visual delivery log dashboard, exponential backoff retries, and dead letter queues for failed deliveries.</p>
+<h6 style="font-weight:700;font-size:13px;margin-top:20px">Technical Specs</h6>
+<ul style="font-size:13px;color:var(--pm-ink-soft)">
+<li>New header: <code>X-PayMo-Signature</code></li>
+<li>Automatic retry interval: 1m, 5m, 1h, 6h, 24h</li>
+<li>Event type filtering at the UI level</li>
+</ul>
+<div class="pm-progress mt-3"><div class="pm-progress-bar" style="width:15%;background:var(--pm-info)"></div></div>
+<div style="font-size:11px;color:var(--pm-muted);text-align:right;margin-top:4px">15% Complete</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('roadmapItemModal','You are now following this roadmap item. You will be notified of changes.','')"><i class="bi bi-bell"></i> Follow Progress</button></div>
+</div></div></div>
+
+<!-- MODAL 10: Enroll Beta -->
+<div class="modal fade resettable" id="enrollBetaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-flask text-purple me-2"></i>Join Beta Program</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft);border:1px solid var(--pm-purple)">
+<h6 style="font-weight:700;color:var(--pm-purple-dark);margin:0 0 4px">PesaLink B2B API (Beta)</h6>
+<p style="font-size:12px;margin:0">Gain early access to real-time corporate bank transfers. High limits, automated reconciliation.</p>
+</div>
+<div class="mb-3"><label class="pm-form-label">Select Sandbox Environment</label><select class="pm-form-control"><option>Dev Sandbox A</option><option>Create new sandbox instance...</option></select></div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I understand beta APIs are subject to breaking changes without standard notice.</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I agree to provide engineering feedback during the beta period.</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('enrollBetaModal','Successfully enrolled in Beta! Credentials have been sent to your email.','')">Confirm Enrollment</button></div>
+</div></div></div>
+
+<!-- MODAL 11: Performance Benchmark -->
+<div class="modal fade resettable" id="performanceBenchmarkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-primary me-2"></i>API Performance Benchmarks</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3"><span style="font-size:13px">Region: <strong>Nairobi (af-east-1)</strong></span><span style="font-size:13px">SLA Target: <strong>< 200ms</strong></span></div>
+<div class="row g-3 mb-3">
+<div class="col-4"><div class="p-3 border rounded text-center"><div style="font-size:11px;color:var(--pm-muted)">P50 LATENCY</div><strong style="font-size:20px;color:var(--pm-success)">45ms</strong></div></div>
+<div class="col-4"><div class="p-3 border rounded text-center"><div style="font-size:11px;color:var(--pm-muted)">P95 LATENCY</div><strong style="font-size:20px;color:var(--pm-warning)">112ms</strong></div></div>
+<div class="col-4"><div class="p-3 border rounded text-center"><div style="font-size:11px;color:var(--pm-muted)">P99 LATENCY</div><strong style="font-size:20px;color:var(--pm-danger)">180ms</strong></div></div>
+</div>
+<h6 style="font-weight:700;font-size:13px">Throughput & Reliability</h6>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Service</th><th>Throughput (TPS)</th><th>Error Rate</th><th>Uptime (30d)</th></tr></thead><tbody>
+<tr><td>Collections API</td><td>1,240 req/s</td><td>0.01%</td><td>99.99%</td></tr>
+<tr><td>Disbursements API</td><td>850 req/s</td><td>0.03%</td><td>99.98%</td></tr>
+<tr><td>Webhooks Engine</td><td>4,500 ev/s</td><td>0.00%</td><td>100.0%</td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 12: Configure Deprecation Headers -->
+<div class="modal fade resettable" id="configureDeprecationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-clock-history text-warning me-2"></i>Configure Deprecation Headers</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">Target Version: <strong>v1.8.4 (Legacy)</strong></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Inject <code>Deprecation: true</code> header</label></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Inject <code>Sunset</code> header</label></div>
+<div class="mb-3"><label class="pm-form-label">Sunset Date/Time</label><input type="datetime-local" class="pm-form-control" value="2026-12-31T23:59"></div>
+<div class="mb-3"><label class="pm-form-label">Link Header (URI to migration guide)</label><input class="pm-form-control" value="https://dev.paymo.co.ke/docs/migrate-v2"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('configureDeprecationModal','Headers applied immediately to API Gateway.','')">Apply to Gateway</button></div>
+</div></div></div>
+
+<!-- MODAL 13: Broadcast Breaking Change -->
+<div class="modal fade resettable" id="broadcastChangeModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-broadcast text-danger me-2"></i>Broadcast Breaking Change Notice</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Target Audience</label><select class="pm-form-control"><option>Consumers of v1.x endpoints (8,412 devs)</option><option>All registered developers</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Notice Period</label><select class="pm-form-control"><option>6 Months (Standard Policy)</option><option>12 Months</option></select></div>
+<div class="col-12"><label class="pm-form-label">Subject Line</label><input class="pm-form-control" value="[ACTION REQUIRED] API v1.x Sunset Notice & Migration Instructions"></div>
+<div class="col-12"><label class="pm-form-label">Email Body (Markdown)</label><textarea class="pm-form-control" rows="6">Dear Developer,
+We are officially announcing the deprecation of PayMo API v1.x.
+Per our 6-month notice policy, this API will be sunset on Dec 31, 2026. 
+Please migrate to v2.x to avoid service disruption...</textarea></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('broadcastChangeModal','Emails queued for delivery. Compliance log updated.','')"><i class="bi bi-send"></i> Send Broadcast</button></div>
+</div></div></div>
+
+<!-- MODAL 14: API Governance Audit -->
+<div class="modal fade resettable" id="apiGovernanceAuditModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-clipboard-check text-success me-2"></i>Governance Compliance Checklist</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3"><span style="font-weight:700">Ruleset: PayMo Enterprise v4</span><span class="pm-badge pm-badge-success">Passing</span></div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Rule</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td><code>paths-kebab-case</code></td><td>All URL paths must be kebab-case.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+<tr><td><code>no-http-verbs-in-path</code></td><td>Do not use GET/POST in path names.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+<tr><td><code>require-security</code></td><td>All endpoints must have security schemas.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+<tr><td><code>pagination-format</code></td><td>Use limit/offset for list endpoints.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+<tr><td><code>error-response-jsonapi</code></td><td>4xx/5xx must return standardized error schema.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+<tr><td><code>version-header-present</code></td><td>Custom <code>X-API-Version</code> support check.</td><td><span class="text-success"><i class="bi bi-check"></i> Pass</span></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 15: Test Automation Config -->
+<div class="modal fade resettable" id="testAutomationConfigModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-robot text-primary me-2"></i>Test Automation & CI/CD</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Contract Testing Framework</label><select class="pm-form-control"><option>Pact (Consumer-Driven)</option><option>Postman Newman</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Trigger tests on</label>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Pull Request to <code>main</code> branch</label></div>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">New Release Tag</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Nightly Schedule</label></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Webhook URL for test results</label><input class="pm-form-control" value="https://ci.paymo.local/hooks/test-results"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('testAutomationConfigModal','CI/CD hooks updated successfully.','')">Save Config</button></div>
+</div></div></div>
+
+<!-- MODAL 16: SDK Generation -->
+<div class="modal fade resettable" id="sdkGenerationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-seam text-info me-2"></i>Generate Client SDKs</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">SDKs are automatically generated from the OpenAPI spec using OpenAPI Generator with custom PayMo templates.</div>
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Target Version</label><select class="pm-form-control"><option>v2.4.1 (Current)</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Languages / Frameworks</label>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">TypeScript / Node.js</label></div>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Python 3.x</label></div>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">PHP (Composer)</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Java (Maven)</label></div>
+</div>
+<div class="col-12"><label class="pm-form-label">Publishing Action</label><select class="pm-form-control"><option>Generate and download ZIP</option><option>Push to Github Repos automatically</option><option>Publish to package managers (npm, PyPI)</option></select></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('sdkGenerationModal','SDK generation initiated. You will receive an email when completed.','')"><i class="bi bi-gear"></i> Build SDKs</button></div>
+</div></div></div>
+
+<!-- MODAL 17: Developer Alerts -->
+<div class="modal fade resettable" id="developerAlertsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Developer Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="feed-item"><div><i class="bi bi-exclamation-triangle text-danger me-2"></i></div><div style="flex:1"><strong>High Error Rate Detected</strong><div style="font-size:11px;color:var(--pm-muted)"><code>POST /v2/disbursements</code> returned 5% 500s in last 10m.</div></div></div>
+<div class="feed-item"><div><i class="bi bi-info-circle text-info me-2"></i></div><div style="flex:1"><strong>Beta Enrollment Peak</strong><div style="font-size:11px;color:var(--pm-muted)">14 new integrators joined PesaLink Beta.</div></div></div>
+<div class="feed-item"><div><i class="bi bi-check-circle text-success me-2"></i></div><div style="flex:1"><strong>Certificates Renewed</strong><div style="font-size:11px;color:var(--pm-muted)">Sandbox mTLS certs auto-renewed successfully.</div></div></div>
+<hr class="pm-divider">
+<h6 style="font-weight:700;font-size:13px">Alert Rules</h6>
+<div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Notify on 5xx spike > 1%</label></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Notify on Latency P95 > 200ms</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 18: Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Developer Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)"><i class="bi bi-terminal"></i></div>
+<h5 style="font-weight:700;margin-bottom:2px">Sarah D.</h5>
+<p style="font-size:13px;color:var(--pm-muted)">sarah.d@paymo.co.ke · Lead Architect</p>
+<div class="row g-2 text-start mt-3" style="font-size:13px">
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Role</span><br><strong>System Admin</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">MFA Status</span><br><strong style="color:var(--pm-accent)">Enabled (App)</strong></div></div>
+</div>
+<button class="pm-btn pm-btn-outline w-100 mt-3">Manage API Keys</button>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 19: Health Check -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>System Status</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="text-center mb-4">
+<i class="bi bi-check-circle-fill" style="font-size:48px;color:var(--pm-accent)"></i>
+<h4 class="mt-2" style="font-weight:700">All Systems Operational</h4>
+<p style="font-size:13px;color:var(--pm-muted)">Uptime (last 30 days): 99.99%</p>
+</div>
+<div class="status-row"><span>REST APIs (v2.x)</span><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><span>Webhook Delivery Engine</span><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><span>Developer Sandbox</span><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><span>M-Pesa Upstream</span><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><span>PesaLink Upstream</span><span class="pm-badge pm-badge-warning">Degraded (15ms delay)</span></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 20: Feature List Modal -->
+<div class="modal fade resettable" id="featureListModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-list-ul me-2"></i>All Feature Requests</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><input class="pm-form-control" placeholder="Search requests..."></div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Votes</th><th>Feature</th><th>Category</th><th>Status</th></tr></thead><tbody>
+<tr><td>89</td><td><a href="#" onclick="openModal('featureDetailModal')">GraphQL Support</a></td><td>Core</td><td><span class="pm-badge pm-badge-info">Under Review</span></td></tr>
+<tr><td>54</td><td>Idempotency Keys</td><td>Core</td><td><span class="pm-badge pm-badge-info">Under Review</span></td></tr>
+<tr><td>32</td><td>Ruby SDK</td><td>SDKs</td><td><span class="pm-badge pm-badge-info">Under Review</span></td></tr>
+<tr><td>18</td><td>Custom Webhook Headers</td><td>Webhooks</td><td><span class="pm-badge pm-badge-warning">Backlog</span></td></tr>
+<tr><td>12</td><td>Sandbox Test Data Generator</td><td>Sandbox</td><td><span class="pm-badge pm-badge-success">Planned Q4</span></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- MODAL 21: Version Action Menu (Small modal) -->
+<div class="modal fade resettable" id="versionActionModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Version Actions</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center d-flex flex-column gap-2">
+<button class="pm-btn pm-btn-outline w-100 justify-content-center" onclick="openModal('publishReleaseModal')">Draft New Release</button>
+<button class="pm-btn pm-btn-outline w-100 justify-content-center" onclick="openModal('deprecateVersionModal')">Deprecate Version</button>
+<button class="pm-btn pm-btn-outline w-100 justify-content-center" onclick="openModal('broadcastChangeModal')">Broadcast Message</button>
+</div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){
+  // Hide current modals
+  document.querySelectorAll('.modal.show').forEach(m => {
+    let bsM = bootstrap.Modal.getInstance(m);
+    if(bsM) bsM.hide();
+  });
+  const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}
+}
+function selectRadioCard(card){
+  card.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background='';const r=b.querySelector('input[type=radio]');if(r)r.checked=false});
+  card.style.borderColor='var(--pm-primary)';card.style.background='rgba(79,70,229,.04)';
+  const radio=card.querySelector('input[type=radio]');if(radio)radio.checked=true;
+}
+function switchTab(prefix,key,btn){
+  btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');
+}
+function showLoading(target,cb){
+  const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}
+  const ov=document.createElement('div');ov.className='pm-loading-overlay';
+  ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';
+  el.style.position='relative';el.appendChild(ov);
+  setTimeout(()=>{ov.remove();cb();},1200);
+}
+function processAction(modalId,msg,ref){
+  const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');
+  showLoading(body,()=>{
+    body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p></div>`;
+    footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';
+  });
+}
+function cacheResettable(){
+  document.querySelectorAll('.resettable').forEach(m=>{
+    const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');
+    if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;
+    m.addEventListener('hidden.bs.modal',()=>{
+      if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;
+      if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;
+      resetFlows();
+    });
+  });
+}
+
+// Steppers logic
+let relStep=1, depStep=1;
+function renderStepper(elId,labels,current){
+  const wrap=document.getElementById(elId);if(!wrap)return;
+  wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');
+}
+function showFlow(prefix,current,total){
+  for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}
+  const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}
+}
+function nextReleaseStep(){
+  if(relStep===3){
+    showLoading('#publishReleaseModal .modal-body',()=>{
+      relStep=4;renderStepper('releaseStepper',['Details','Changelog','Notify','Done'],relStep);showFlow('relStep',relStep,4);
+      document.getElementById('relNextBtn').textContent='Done';
+    });return;
+  }
+  if(relStep>=4){ const m=bootstrap.Modal.getInstance(document.getElementById('publishReleaseModal')); if(m)m.hide(); return; }
+  relStep++;renderStepper('releaseStepper',['Details','Changelog','Notify','Done'],relStep);showFlow('relStep',relStep,4);
+  if(relStep===3)document.getElementById('relNextBtn').innerHTML='Publish <i class="bi bi-rocket"></i>';
+}
+function nextDepStep(){
+  if(depStep===3){
+    showLoading('#deprecateVersionModal .modal-body',()=>{
+      depStep=4;renderStepper('depStepper',['Version','Dates','Actions','Done'],depStep);showFlow('depStep',depStep,4);
+      document.getElementById('depNextBtn').textContent='Done';
+    });return;
+  }
+  if(depStep>=4){ const m=bootstrap.Modal.getInstance(document.getElementById('deprecateVersionModal')); if(m)m.hide(); return; }
+  depStep++;renderStepper('depStepper',['Version','Dates','Actions','Done'],depStep);showFlow('depStep',depStep,4);
+  if(depStep===3)document.getElementById('depNextBtn').innerHTML='Schedule Sunset <i class="bi bi-check"></i>';
+}
+function resetFlows(){
+  relStep=1;depStep=1;
+  renderStepper('releaseStepper',['Details','Changelog','Notify','Done'],1);
+  renderStepper('depStepper',['Version','Dates','Actions','Done'],1);
+  showFlow('relStep',1,4); showFlow('depStep',1,4);
+}
+
+// Linter Simulation
+function simulateLinter(){
+  document.getElementById('linterPre').style.display='none';
+  document.getElementById('linterLoad').style.display='block';
+  setTimeout(()=>{
+    document.getElementById('linterLoad').style.display='none';
+    document.getElementById('linterResult').style.display='block';
+  },1500);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  resetFlows();
+});
+</script>
+</body>
+</html>

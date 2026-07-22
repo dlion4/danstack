@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Business Onboarding & KYB/KYC Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #1E3A8A, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-briefcase"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-gear"></i></button></nav><button class="pm-nav-item" style="margin-top:auto"><i
+                    class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">BK</div>
+                        <div>
+                            <h1>Business Onboarding & KYB/KYC Center</h1>
+                            <p>Complete KYB/KYC intake, beneficial ownership, director verification, compliance scoring
+                                and approval workflows</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search businesses, directors, KRA PINs, compliance cases..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('complianceCheckModal')"><i
+                            class="bi bi-shield-check"></i></button><button class="pm-header-btn"
+                        onclick="openM('onboardNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">12</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JM</div>
+                        <div>
+                            <div class="pm-name">James M.</div>
+                            <div class="pm-role">Compliance Lead</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Business Portal</a> /
+                        <strong>Onboarding & KYB/KYC</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        3.12 — Business Onboarding & KYB/KYC Center</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Onboard sole proprietors, partnerships,
+                        LLCs, SACCOs and NGOs. Manage KYB/KYC intake, beneficial ownership declarations, director
+                        verification, compliance scoring and full audit trails.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('complianceCheckModal')"><i class="bi bi-shield-check"></i> Compliance
+                        Check</button><button class="btn-pm" onclick="openM('pendingQueueModal')"><i
+                            class="bi bi-list-task"></i> Pending Queue</button><button class="btn-pm"
+                        onclick="openM('onboardNewModal')"><i class="bi bi-plus-lg"></i> Onboard
+                        Business</button><button class="btn-pm btn-pm-p" onclick="openM('bulkOnboardModal')"><i
+                            class="bi bi-upload"></i> Bulk Onboard</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Onboarding pipeline live
+                                <span style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">84 businesses onboarded</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Sole props, partnerships,
+                                LLCs, SACCOs, NGOs & corporate groups with complete KYB/KYC records and audit trails.
+                            </p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('onboardNewModal')">New Onboarding</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('pendingQueueModal')">Review Queue</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('bulkOnboardModal')">Bulk Import</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">COMPLIANCE SCORE</p>
+                            <div class="SV" style="margin:6px 0">87<span
+                                    style="font-size:14px;color:var(--pm-muted)">/100</span></div><span class="B B-s"><i
+                                    class="bi bi-check2-circle"></i> Strong</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">TCC expiry alerts:
+                                9<br>Beneficial ownership: 94%</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">PENDING VERIFICATION</p>
+                            <div class="SV" style="margin:6px 0">18</div><span class="B B-w"><i class="bi bi-clock"></i>
+                                7 awaiting director KYC</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">12 new applications<br>6
+                                renewal reviews</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">EXPIRING DOCUMENTS</p>
+                            <div class="SV" style="margin:6px 0">11</div><span class="B B-d"><i
+                                    class="bi bi-exclamation-triangle"></i> Action required</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">TCC: 7 | Permits: 3 | ID:
+                                1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionFullModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-building"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Nairobi SACCO — TCC expires in 4
+                                            days</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KRA-TCC-88291 · Renewal
+                                            required</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('renewTCCModal')">Renew</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-person-badge"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Director KYC pending — 7 days</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Peter Ochieng · Huduma ID
+                                            upload</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('directorKYCModal')">Verify</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Beneficial ownership declaration
+                                            overdue</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Greenfield Logistics · 5
+                                            shareholders</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('beneficialOwnerModal')">Complete</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-lightning"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Auto-renew 4 expiring TCCs</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Prevent compliance gaps</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('bulkRenewalModal')">Auto-Renew</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-check"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Pre-fill 3 new applications from BRS
+                                            data</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">CR12 records available</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('preFillModal')">Pre-fill</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">High-risk business flagged</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Unusual ownership structure
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('riskAssessmentModal')">Review</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent KYB/KYC workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('onboardNewModal')"><i
+                                        class="bi bi-plus-circle text-primary me-1"></i> New Business</button><button
+                                    class="quick-btn" onclick="openM('directorKYCModal')"><i
+                                        class="bi bi-person-badge text-info me-1"></i> Director KYC</button><button
+                                    class="quick-btn" onclick="openM('beneficialOwnerModal')"><i
+                                        class="bi bi-people text-purple me-1"></i> Beneficial Owner</button><button
+                                    class="quick-btn" onclick="openM('uploadDocumentModal')"><i
+                                        class="bi bi-upload text-success me-1"></i> Upload Docs</button><button
+                                    class="quick-btn" onclick="openM('riskAssessmentModal')"><i
+                                        class="bi bi-shield-exclamation text-warning me-1"></i> Risk
+                                    Assessment</button><button class="quick-btn"
+                                    onclick="openM('complianceCheckModal')"><i
+                                        class="bi bi-check2-circle text-success me-1"></i> Compliance
+                                    Check</button><button class="quick-btn" onclick="openM('renewTCCModal')"><i
+                                        class="bi bi-file-earmark-text me-1" style="color:var(--pm-primary)"></i> Renew
+                                    TCC</button><button class="quick-btn" onclick="openM('auditTrailModal')"><i
+                                        class="bi bi-clock-history me-1" style="color:var(--pm-accent)"></i> Audit
+                                    Trail</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.12.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-building" style="color:var(--pm-primary)"></i> 3.12.1 —
+                                Business Onboarding Application & KYB Intake</h3>
+                            <p class="ss">Sole proprietor, partnership, LLC, SACCO, NGO and corporate group intake with
+                                automated CR12 validation, county permit lookup and KRA PIN verification.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('onboardNewModal')"><i class="bi bi-plus-lg"></i> Start
+                                Onboarding</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('bulkOnboardModal')"><i class="bi bi-upload"></i> Bulk Import</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Onboarding Pipeline
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Greenfield Logistics Ltd</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">LLC · CR12-88291 · 92%
+                                            complete</div>
+                                    </div><span class="B B-w">Docs Pending</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Shalom SACCO</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Cooperative · CR12-99102 · 78%
+                                            complete</div>
+                                    </div><span class="B B-i">KYC Review</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Mama Mboga Traders</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Sole Prop · CR12-77192 · 45%
+                                            complete</div>
+                                    </div><span class="B B-d">Incomplete</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Hope Children NGO</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">NGO · CR12-44821 · 100%
+                                            complete</div>
+                                    </div><span class="B B-s">Approved</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>TechNova Solutions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">LLC · CR12-99128 · 65%
+                                            complete</div>
+                                    </div><span class="B B-w">Director KYC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Application Types This Month
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Sole Proprietorship</strong></div>
+                                    <div><strong>28</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Limited Liability Company</strong></div>
+                                    <div><strong>19</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Partnership</strong></div>
+                                    <div><strong>11</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>SACCO / Cooperative</strong></div>
+                                    <div><strong>7</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>NGO / Trust</strong></div>
+                                    <div><strong>4</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Corporate Group</strong></div>
+                                    <div><strong>3</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Foreign Branch</strong></div>
+                                    <div><strong>2</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Auto-Validation Results</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;color:#047857;font-weight:700">CR12 VERIFIED</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-accent)">61</div>
+                                    <div style="font-size:12px;color:#065F46">Businesses matched with BRS</div>
+                                </div>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:11px;color:#1D4ED8;font-weight:700">KRA PIN VERIFIED</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-info)">57</div>
+                                    <div style="font-size:12px;color:#1E40AF">Active tax status confirmed</div>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;color:#B45309;font-weight:700">MANUAL REVIEW</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-warning)">12</div>
+                                    <div style="font-size:12px;color:#92400E">Ownership structure complex</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.12.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-check" style="color:var(--pm-info)"></i> 3.12.2
+                                — KYC/KYB Verification & Document Management</h3>
+                            <p class="ss">Certificate of incorporation, KRA PIN, TCC, county permits, director IDs,
+                                beneficial ownership declarations and automated compliance scoring.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('uploadDocumentModal')"><i class="bi bi-upload"></i>
+                                Upload</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('bulkDocumentModal')"><i class="bi bi-files"></i> Bulk Upload</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Document Verification Queue
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Business</th>
+                                                <th>Document</th>
+                                                <th>Status</th>
+                                                <th>Uploaded</th>
+                                                <th>Expiry</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Greenfield Logistics</strong></td>
+                                                <td>TCC (KRA)</td>
+                                                <td><span class="B B-w">Pending Review</span></td>
+                                                <td>25 Jun 2025</td>
+                                                <td>30 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('verifyDocumentModal')">Review</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Shalom SACCO</strong></td>
+                                                <td>Certificate of Registration</td>
+                                                <td><span class="B B-s">Verified</span></td>
+                                                <td>20 Jun 2025</td>
+                                                <td>—</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('viewDocumentModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Mama Mboga Traders</strong></td>
+                                                <td>County Single Business Permit</td>
+                                                <td><span class="B B-w">Pending Review</span></td>
+                                                <td>26 Jun 2025</td>
+                                                <td>31 Dec 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('verifyDocumentModal')">Review</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>TechNova Solutions</strong></td>
+                                                <td>Director ID (Huduma)</td>
+                                                <td><span class="B B-i">OCR Complete</span></td>
+                                                <td>24 Jun 2025</td>
+                                                <td>—</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('directorKYCModal')">Verify</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Hope Children NGO</strong></td>
+                                                <td>CR12 Extract</td>
+                                                <td><span class="B B-s">Verified</span></td>
+                                                <td>18 Jun 2025</td>
+                                                <td>—</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('viewDocumentModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Document Types Tracked</h4>
+                                <div class="sr">
+                                    <div><strong>Certificate of Incorporation</strong></div>
+                                    <div><span class="B B-s">61</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KRA PIN Certificate</strong></div>
+                                    <div><span class="B B-s">57</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Tax Compliance Certificate</strong></div>
+                                    <div><span class="B B-w">38</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>County Business Permit</strong></div>
+                                    <div><span class="B B-w">29</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Director IDs (Huduma/Passport)</strong></div>
+                                    <div><span class="B B-i">84</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Beneficial Ownership Declaration</strong></div>
+                                    <div><span class="B B-s">52</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>CR12 Extract</strong></div>
+                                    <div><span class="B B-s">61</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.12.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-people" style="color:var(--pm-purple)"></i> 3.12.3 —
+                                Beneficial Ownership & Director Verification</h3>
+                            <p class="ss">Ultimate beneficial owner (UBO) declaration, 25%+ ownership threshold
+                                tracking, director KYC, PEP screening and automated compliance scoring.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('beneficialOwnerModal')"><i class="bi bi-people"></i> Add
+                                UBO</button><button class="btn-pm btn-sm" onclick="openM('directorKYCModal')"><i
+                                    class="bi bi-person-badge"></i> Director KYC</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Beneficial Ownership
+                                    Dashboard</h4>
+                                <div class="sr">
+                                    <div><strong>Greenfield Logistics Ltd</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">5 shareholders · 3 UBOs
+                                            declared</div>
+                                    </div><span class="B B-s">Complete</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Shalom SACCO</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">12 board members · 2 UBOs
+                                        </div>
+                                    </div><span class="B B-w">Pending</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>TechNova Solutions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">3 shareholders · 2 UBOs</div>
+                                    </div><span class="B B-s">Complete</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Hope Children NGO</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">7 trustees · 1 UBO</div>
+                                    </div><span class="B B-s">Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Director Verification Status
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Peter Ochieng — Greenfield</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Huduma ID uploaded · PEP check
+                                            passed</div>
+                                    </div><span class="B B-s">Verified</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Grace Wanjiku — TechNova</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Passport uploaded · Awaiting
+                                            selfie</div>
+                                    </div><span class="B B-i">OCR Done</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>John Kamau — Shalom SACCO</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">No documents received</div>
+                                    </div><span class="B B-d">Missing</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Fatima Ali — Hope Children</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">ID + selfie verified</div>
+                                    </div><span class="B B-s">Verified</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.12.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clipboard-check" style="color:var(--pm-accent)"></i> 3.12.4 —
+                                Onboarding Status, Approvals & Ongoing Monitoring</h3>
+                            <p class="ss">Real-time onboarding status, multi-level approval workflows, compliance
+                                scoring, expiry monitoring and automated renewal triggers.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('approvalQueueModal')"><i class="bi bi-check2-all"></i>
+                                Approvals</button><button class="btn-pm btn-sm"
+                                onclick="openM('complianceCheckModal')"><i class="bi bi-shield-check"></i>
+                                Compliance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Onboarding Status</h4>
+                                <div class="sr">
+                                    <div><strong>Completed & Active</strong></div>
+                                    <div><strong>84</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Pending Director KYC</strong></div>
+                                    <div><strong>7</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Pending Document Review</strong></div>
+                                    <div><strong>11</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Under Compliance Review</strong></div>
+                                    <div><strong>4</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Rejected / Withdrawn</strong></div>
+                                    <div><strong>3</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Approval Workflow</h4>
+                                <div class="sr">
+                                    <div><strong>Level 1 — Intake Officer</strong></div>
+                                    <div><span class="B B-s">42</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Level 2 — Compliance Analyst</strong></div>
+                                    <div><span class="B B-w">18</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Level 3 — Senior Compliance</strong></div>
+                                    <div><span class="B B-i">9</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Level 4 — Head of Compliance</strong></div>
+                                    <div><span class="B B-p">3</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Board Approval Required</strong></div>
+                                    <div><span class="B B-d">2</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Compliance Alerts</h4>
+                                <div class="sr">
+                                    <div><strong>TCC Expiring (30 days)</strong></div>
+                                    <div><strong>7</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>County Permit Expiring</strong></div>
+                                    <div><strong>3</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Director ID Expiring</strong></div>
+                                    <div><strong>1</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PEP Flag Review</strong></div>
+                                    <div><strong>2</strong></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Adverse Media Alert</strong></div>
+                                    <div><strong>1</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent
+                            Onboarding Activity</h3><button class="btn-pm btn-sm"
+                            onclick="openM('auditTrailModal')">View Full Audit</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Business</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th>Reference</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 2025</td>
+                                    <td>Greenfield Logistics</td>
+                                    <td>TCC Upload</td>
+                                    <td>Compliance Analyst</td>
+                                    <td><span class="B B-w">Under Review</span></td>
+                                    <td>DOC-88291</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('verifyDocumentModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 2025</td>
+                                    <td>Shalom SACCO</td>
+                                    <td>Director KYC Verified</td>
+                                    <td>James M.</td>
+                                    <td><span class="B B-s">Verified</span></td>
+                                    <td>KYC-99102</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('directorKYCModal')">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 2025</td>
+                                    <td>TechNova Solutions</td>
+                                    <td>Beneficial Owner Added</td>
+                                    <td>Compliance Analyst</td>
+                                    <td><span class="B B-s">Complete</span></td>
+                                    <td>UBO-99128</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('beneficialOwnerModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 2025</td>
+                                    <td>Mama Mboga Traders</td>
+                                    <td>Application Submitted</td>
+                                    <td>Self-Service</td>
+                                    <td><span class="B B-d">Incomplete</span></td>
+                                    <td>APP-77192</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('onboardNewModal')">Continue</button></td>
+                                </tr>
+                                <tr>
+                                    <td>24 Jun 2025</td>
+                                    <td>Hope Children NGO</td>
+                                    <td>Approved</td>
+                                    <td>Head of Compliance</td>
+                                    <td><span class="B B-s">Active</span></td>
+                                    <td>APP-44821</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('viewBusinessModal')">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ======= 23+ MODALS ======= -->
+
+    <!-- M1: Onboard New Business (5-step) -->
+    <div class="modal fade R" id="onboardNewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Business Onboarding
+                        Application</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="onboardStepper"></div>
+                    <div id="onboardS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Business Identity</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Legal Business Name</label><input class="FC"
+                                    value="Greenfield Logistics Limited"></div>
+                            <div class="col-md-6"><label class="FL">Trading Name</label><input class="FC"
+                                    value="Greenfield Logistics"></div>
+                            <div class="col-md-6"><label class="FL">Business Type</label><select class="FC">
+                                    <option>Limited Liability Company</option>
+                                    <option>Sole Proprietorship</option>
+                                    <option>Partnership</option>
+                                    <option>SACCO / Cooperative</option>
+                                    <option>NGO / Trust</option>
+                                    <option>Foreign Branch</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Registration Number (CR12)</label><input class="FC"
+                                    value="PVT-88291"></div>
+                            <div class="col-md-6"><label class="FL">KRA PIN</label><input class="FC"
+                                    value="P051234567A"></div>
+                            <div class="col-md-6"><label class="FL">County of Operation</label><select class="FC">
+                                    <option>Nairobi</option>
+                                    <option>Kiambu</option>
+                                    <option>Nakuru</option>
+                                    <option>Mombasa</option>
+                                </select></div>
+                            <div class="col-12"><label class="FL">Business Address</label><input class="FC"
+                                    value="P.O. Box 1234-00100, Nairobi, Kenya"></div>
+                        </div>
+                    </div>
+                    <div id="onboardS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Ownership & Directors</h6>
+                        <div class="mb-3"><label class="FL">Number of Shareholders/Directors</label><select class="FC">
+                                <option>1 (Sole Proprietor)</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5+</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Upload CR12 Extract</label><input type="file" class="FC">
+                        </div>
+                        <div class="mb-3"><label class="FL">Upload Certificate of Incorporation</label><input
+                                type="file" class="FC"></div>
+                    </div>
+                    <div id="onboardS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: KYC/KYB Documents</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">KRA PIN Certificate</label><input type="file"
+                                    class="FC"></div>
+                            <div class="col-md-6"><label class="FL">Tax Compliance Certificate (TCC)</label><input
+                                    type="file" class="FC"></div>
+                            <div class="col-md-6"><label class="FL">County Single Business Permit</label><input
+                                    type="file" class="FC"></div>
+                            <div class="col-md-6"><label class="FL">Company Bank Statement (3 months)</label><input
+                                    type="file" class="FC"></div>
+                        </div>
+                    </div>
+                    <div id="onboardS4" class="fstep">
+                        <h6 style="font-weight:700">Step 4: Beneficial Ownership</h6>
+                        <div class="mb-3"><label class="FL">Ultimate Beneficial Owner (25%+)</label>
+                            <div class="sr">
+                                <div><strong>Peter Ochieng</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">45% ownership</div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('beneficialOwnerModal')">Edit</button>
+                            </div>
+                            <div class="sr">
+                                <div><strong>Grace Wanjiku</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">30% ownership</div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('beneficialOwnerModal')">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="onboardS5" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Application Submitted</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your business onboarding application has
+                                been submitted. Reference: APP-20250627-88291</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Business</span><strong>Greenfield Logistics Limited</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Status</span><span class="B B-w">Pending Director KYC</span>
+                                </div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Estimated
+                                        Completion</span><strong>3–5 business days</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="onboardFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="onboardNext"
+                        onclick="nextFlow('onboard',5)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Director KYC (multi-step) -->
+    <div class="modal fade R" id="directorKYCModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge text-info me-2"></i>Director / UBO KYC
+                        Verification</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="kycStepper"></div>
+                    <div id="kycS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Personal Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Full Name</label><input class="FC"
+                                    value="Peter Ochieng"></div>
+                            <div class="col-md-6"><label class="FL">ID Type</label><select class="FC">
+                                    <option>Huduma Namba</option>
+                                    <option>Kenyan Passport</option>
+                                    <option>Foreign Passport</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">ID Number</label><input class="FC" value="31245678">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Date of Birth</label><input type="date" class="FC"
+                                    value="1985-04-12"></div>
+                            <div class="col-md-6"><label class="FL">Phone</label><input class="FC" value="0712 345 890">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Email</label><input class="FC"
+                                    value="peter@greenfield.co.ke"></div>
+                        </div>
+                    </div>
+                    <div id="kycS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Document Upload</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">ID / Passport Front</label><input type="file"
+                                    class="FC"></div>
+                            <div class="col-md-6"><label class="FL">ID / Passport Back</label><input type="file"
+                                    class="FC"></div>
+                            <div class="col-md-6"><label class="FL">Selfie with ID</label><input type="file" class="FC">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Proof of Address</label><input type="file"
+                                    class="FC"></div>
+                        </div>
+                    </div>
+                    <div id="kycS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: PEP & Sanctions Screening</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+                            <div style="font-size:11px;color:#047857;font-weight:700">PEP SCREENING</div>
+                            <div style="font-size:18px;font-weight:700;color:var(--pm-accent)">Clear — No matches</div>
+                        </div>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+                            <div style="font-size:11px;color:#047857;font-weight:700">SANCTIONS LIST</div>
+                            <div style="font-size:18px;font-weight:700;color:var(--pm-accent)">Clear — No matches</div>
+                        </div>
+                        <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                            <div style="font-size:11px;color:#047857;font-weight:700">ADVERSE MEDIA</div>
+                            <div style="font-size:18px;font-weight:700;color:var(--pm-accent)">Clear — No matches</div>
+                        </div>
+                    </div>
+                    <div id="kycS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">KYC Verification Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Director Peter Ochieng has been
+                                successfully verified. Reference: KYC-20250627-44821</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="kycFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="kycNext"
+                        onclick="nextFlow('kyc',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Beneficial Owner -->
+    <div class="modal fade R" id="beneficialOwnerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-purple me-2"></i>Beneficial Ownership
+                        Declaration</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Business</label><select class="FC">
+                            <option>Greenfield Logistics Limited</option>
+                            <option>TechNova Solutions</option>
+                            <option>Shalom SACCO</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Full Name</label><input class="FC" value="Peter Ochieng"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Ownership Percentage</label><input class="FC"
+                                value="45"></div>
+                        <div class="col-md-6"><label class="FL">Relationship</label><select class="FC">
+                                <option>Director & Shareholder</option>
+                                <option>Shareholder only</option>
+                                <option>Trustee</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">ID Type</label><select class="FC">
+                                <option>Huduma Namba</option>
+                                <option>Passport</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">ID Number</label><input class="FC" value="31245678">
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Address</label><input class="FC"
+                            value="P.O. Box 1234-00100, Nairobi"></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">This UBO is a PEP (Politically Exposed
+                            Person)</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">This UBO has control over the
+                            business</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('beneficialOwnerModal','Beneficial owner declaration saved and linked to business record.','UBO-20250627-88291')">Save
+                        UBO</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Verify Document -->
+    <div class="modal fade R" id="verifyDocumentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-check me-2"></i>Document Verification</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Document</label><select class="FC">
+                            <option>TCC — KRA-TCC-88291 (Greenfield Logistics)</option>
+                            <option>County Permit — Nairobi (Mama Mboga)</option>
+                        </select></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">File
+                                Name</span><strong>TCC_Greenfield_2025.pdf</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Uploaded</span><strong>25 Jun 2025, 14:32</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">OCR Status</span><span
+                                class="B B-s">Extracted</span></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Verification Result</label>
+                        <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                            <div style="font-size:11px;color:#047857;font-weight:700">AUTO-VERIFIED</div>
+                            <div style="font-size:16px;font-weight:700;color:var(--pm-accent)">KRA Database Match —
+                                Valid until 30 Jun 2025</div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="3">Document appears authentic. Expiry date confirmed with KRA portal.</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('verifyDocumentModal','Document verified and marked as compliant.','DOC-88291')">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: View Document -->
+    <div class="modal fade R" id="viewDocumentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Document Viewer</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Document</span><strong>CR12_Extract_ShalomSACCO.pdf</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Verified</span><span
+                                class="B B-s">20 Jun 2025</span></div>
+                        <div class="d-flex justify-content-between"><span
+                                class="text-muted">Expiry</span><strong>—</strong></div>
+                    </div>
+                    <div class="text-center p-5"
+                        style="background:#f8f9fa;border:2px dashed var(--pm-border);border-radius:8px"><i
+                            class="bi bi-file-earmark-pdf" style="font-size:48px;color:var(--pm-primary)"></i>
+                        <div class="mt-2" style="font-size:13px;color:var(--pm-muted)">PDF preview would render here in
+                            production</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('viewDocumentModal','Document downloaded successfully.','')">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Upload Document -->
+    <div class="modal fade R" id="uploadDocumentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Upload Document</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Business</label><select class="FC">
+                            <option>Greenfield Logistics Limited</option>
+                            <option>TechNova Solutions</option>
+                            <option>Shalom SACCO</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Document Type</label><select class="FC">
+                            <option>Tax Compliance Certificate (TCC)</option>
+                            <option>Certificate of Incorporation</option>
+                            <option>County Business Permit</option>
+                            <option>Director ID</option>
+                            <option>Beneficial Ownership Declaration</option>
+                            <option>CR12 Extract</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">File</label><input type="file" class="FC"></div>
+                    <div class="mb-3"><label class="FL">Expiry Date (if applicable)</label><input type="date"
+                            class="FC"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('uploadDocumentModal','Document uploaded and queued for verification.','DOC-20250627-9912')">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Bulk Onboard -->
+    <div class="modal fade R" id="bulkOnboardModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Bulk Business Onboarding</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="bulkStepper"></div>
+                    <div id="bulkS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Upload File</h6>
+                        <div class="mb-3"><label class="FL">CSV / Excel File</label><input type="file" class="FC"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Download <a href="#">template</a> with required
+                            columns: Legal Name, Trading Name, Type, CR12, KRA PIN, County, Director Name, Director ID,
+                            Ownership %</div>
+                    </div>
+                    <div id="bulkS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Validation Results</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Business</th>
+                                        <th>Status</th>
+                                        <th>Issues</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ABC Traders Ltd</td>
+                                        <td><span class="B B-s">Valid</span></td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr>
+                                        <td>XYZ SACCO</td>
+                                        <td><span class="B B-w">Warning</span></td>
+                                        <td>Director ID mismatch</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delta Logistics</td>
+                                        <td><span class="B B-s">Valid</span></td>
+                                        <td>—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="bulkS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Import Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">47 businesses imported. 44 ready for
+                                processing, 3 require manual review.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="bulkFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="bulkNext"
+                        onclick="nextFlow('bulk',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Compliance Check -->
+    <div class="modal fade R" id="complianceCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Business Compliance
+                        Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    87</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">COMPLIANCE SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">61/84</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">TCC VALID</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">11</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">EXPIRING</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">94%</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">UBO DECLARED</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Business</th>
+                                    <th>TCC</th>
+                                    <th>Permit</th>
+                                    <th>UBO</th>
+                                    <th>Directors</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Greenfield Logistics</td>
+                                    <td><span class="B B-w">Expires 4d</span></td>
+                                    <td><span class="B B-s">Valid</span></td>
+                                    <td><span class="B B-s">3/3</span></td>
+                                    <td><span class="B B-s">4/4</span></td>
+                                    <td><strong>82</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Shalom SACCO</td>
+                                    <td><span class="B B-s">Valid</span></td>
+                                    <td><span class="B B-s">Valid</span></td>
+                                    <td><span class="B B-w">1/2</span></td>
+                                    <td><span class="B B-s">12/12</span></td>
+                                    <td><strong>91</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>TechNova Solutions</td>
+                                    <td><span class="B B-s">Valid</span></td>
+                                    <td><span class="B B-s">Valid</span></td>
+                                    <td><span class="B B-s">2/2</span></td>
+                                    <td><span class="B B-s">3/3</span></td>
+                                    <td><strong>96</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('pendingQueueModal')">Review Pending Items</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Pending Queue -->
+    <div class="modal fade R" id="pendingQueueModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-task me-2"></i>Pending Onboarding Queue</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('queue','all',this)">All
+                            (18)</button><button class="pill" onclick="sw('queue','kyc',this)">Director KYC
+                            (7)</button><button class="pill" onclick="sw('queue','docs',this)">Docs Review (11)</button>
+                    </div>
+                    <div id="queue-all" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Business</th>
+                                        <th>Type</th>
+                                        <th>Stage</th>
+                                        <th>Days Open</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Greenfield Logistics</td>
+                                        <td>LLC</td>
+                                        <td><span class="B B-w">Director KYC</span></td>
+                                        <td>7</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('directorKYCModal')">Continue</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shalom SACCO</td>
+                                        <td>Cooperative</td>
+                                        <td><span class="B B-i">Docs Review</span></td>
+                                        <td>3</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('verifyDocumentModal')">Review</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TechNova Solutions</td>
+                                        <td>LLC</td>
+                                        <td><span class="B B-w">Director KYC</span></td>
+                                        <td>5</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('directorKYCModal')">Continue</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="queue-kyc" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Director</th>
+                                        <th>Business</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Peter Ochieng</td>
+                                        <td>Greenfield Logistics</td>
+                                        <td><span class="B B-w">Pending Selfie</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('directorKYCModal')">Upload</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Grace Wanjiku</td>
+                                        <td>TechNova Solutions</td>
+                                        <td><span class="B B-i">OCR Complete</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('directorKYCModal')">Verify</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="queue-docs" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Document</th>
+                                        <th>Business</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>TCC</td>
+                                        <td>Greenfield Logistics</td>
+                                        <td><span class="B B-w">Pending Review</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('verifyDocumentModal')">Review</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>County Permit</td>
+                                        <td>Mama Mboga Traders</td>
+                                        <td><span class="B B-w">Pending Review</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('verifyDocumentModal')">Review</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Approval Queue -->
+    <div class="modal fade R" id="approvalQueueModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-all me-2"></i>Approval Workflow Queue</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Business</th>
+                                    <th>Level</th>
+                                    <th>Submitted</th>
+                                    <th>Approver</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Greenfield Logistics</td>
+                                    <td><span class="B B-i">Level 2</span></td>
+                                    <td>25 Jun 2025</td>
+                                    <td>James M.</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('approveBusinessModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Shalom SACCO</td>
+                                    <td><span class="B B-p">Level 3</span></td>
+                                    <td>22 Jun 2025</td>
+                                    <td>Sarah K.</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('approveBusinessModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td>TechNova Solutions</td>
+                                    <td><span class="B B-d">Board</span></td>
+                                    <td>20 Jun 2025</td>
+                                    <td>Board</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('approveBusinessModal')">Review</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Approve Business -->
+    <div class="modal fade R" id="approveBusinessModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-circle me-2"></i>Business Approval</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Business</label><input class="FC"
+                            value="Greenfield Logistics Limited" disabled></div>
+                    <div class="mb-3"><label class="FL">Approval Decision</label><select class="FC">
+                            <option>Approve — Full access granted</option>
+                            <option>Conditional — Director KYC required within 7 days</option>
+                            <option>Reject — Incomplete application</option>
+                            <option>Escalate — Board review required</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Comments</label><textarea class="FC"
+                            rows="3">Application complete. All directors verified. Recommend approval with standard monitoring.</textarea>
+                    </div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Enable enhanced transaction
+                            monitoring</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label" style="font-size:13px">Require quarterly compliance review</label>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('approveBusinessModal','Business approved and activated. Welcome email sent.','APP-20250627-88291')">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Risk Assessment -->
+    <div class="modal fade R" id="riskAssessmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation text-warning me-2"></i>Business Risk
+                        Assessment</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-warning);font-family:var(--pm-font-display)">
+                                    42</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">RISK SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">Medium</div>
+                                <div style="font-size:10px;font-weight:700;color:#991B1B">RISK LEVEL</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">Enhanced</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">MONITORING</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <h6 style="font-weight:700">Risk Factors Identified:</h6>
+                        <ul style="font-size:13px;color:var(--pm-ink-soft);margin:8px 0 0;padding-left:18px">
+                            <li>Complex ownership structure (5 shareholders across 3 jurisdictions)</li>
+                            <li>One UBO flagged as PEP (former county official)</li>
+                            <li>Recent adverse media mention (unrelated to business)</li>
+                            <li>High cash transaction volume in first month</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3"><label class="FL">Recommended Actions</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Enhanced transaction monitoring</label>
+                        </div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Quarterly compliance review</label>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label" style="font-size:13px">Source of funds verification</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('riskAssessmentModal','Risk assessment saved. Enhanced monitoring enabled.','RISK-20250627-88291')">Save
+                        Assessment</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Renew TCC -->
+    <div class="modal fade R" id="renewTCCModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Renew Tax Compliance Certificate
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Business</label><select class="FC">
+                            <option>Greenfield Logistics Limited</option>
+                            <option>Shalom SACCO</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Current TCC Expiry</label><input class="FC" value="30 Jun 2025"
+                            disabled></div>
+                    <div class="mb-3"><label class="FL">Upload New TCC</label><input type="file" class="FC"></div>
+                    <div class="mb-3"><label class="FL">New Expiry Date</label><input type="date" class="FC"
+                            value="2026-06-30"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('renewTCCModal','TCC renewed successfully. Compliance score updated.','TCC-20250627-88291')">Renew
+                        TCC</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Bulk Renewal -->
+    <div class="modal fade R" id="bulkRenewalModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-lightning me-2"></i>Bulk TCC Auto-Renewal</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+                        <div style="font-size:11px;color:#047857;font-weight:700">AUTO-RENEWAL ELIGIBLE</div>
+                        <div style="font-size:22px;font-weight:700;color:var(--pm-accent)">4 businesses</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Business</th>
+                                    <th>Current Expiry</th>
+                                    <th>New Expiry</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Greenfield Logistics</td>
+                                    <td>30 Jun 2025</td>
+                                    <td>30 Jun 2026</td>
+                                    <td><span class="B B-s">Ready</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Shalom SACCO</td>
+                                    <td>15 Jul 2025</td>
+                                    <td>15 Jul 2026</td>
+                                    <td><span class="B B-s">Ready</span></td>
+                                </tr>
+                                <tr>
+                                    <td>TechNova Solutions</td>
+                                    <td>22 Jul 2025</td>
+                                    <td>22 Jul 2026</td>
+                                    <td><span class="B B-s">Ready</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Hope Children NGO</td>
+                                    <td>05 Aug 2025</td>
+                                    <td>05 Aug 2026</td>
+                                    <td><span class="B B-s">Ready</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bulkRenewalModal','4 TCCs renewed automatically via KRA portal integration.','BULK-TCC-20250627')">Execute
+                        Bulk Renewal</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: View Business -->
+    <div class="modal fade R" id="viewBusinessModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building me-2"></i>Business Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Business
+                                        Name</span><strong>Hope Children NGO</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Type</span><strong>NGO</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">CR12</span><strong>CR12-44821</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Status</span><span
+                                        class="B B-s">Active</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Compliance
+                                        Score</span><strong>96/100</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">TCC
+                                        Expiry</span><strong>05 Aug 2026</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">UBO
+                                        Declared</span><strong>1/1</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Directors
+                                        Verified</span><strong>7/7</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('editBusinessModal')">Edit</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Edit Business -->
+    <div class="modal fade R" id="editBusinessModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Business Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Legal Name</label><input class="FC"
+                                value="Hope Children NGO"></div>
+                        <div class="col-md-6"><label class="FL">Trading Name</label><input class="FC"
+                                value="Hope Children"></div>
+                        <div class="col-md-6"><label class="FL">Email</label><input class="FC"
+                                value="info@hopechildren.or.ke"></div>
+                        <div class="col-md-6"><label class="FL">Phone</label><input class="FC" value="0700 123 456">
+                        </div>
+                        <div class="col-12"><label class="FL">Address</label><input class="FC"
+                                value="P.O. Box 5678-00100, Nairobi"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editBusinessModal','Business profile updated successfully.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Audit Trail -->
+    <div class="modal fade R" id="auditTrailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Audit Trail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3"><input class="FC" style="width:220px"
+                            placeholder="Search audit log"><select class="FC" style="width:auto">
+                            <option>All Actions</option>
+                            <option>Upload</option>
+                            <option>Verify</option>
+                            <option>Approve</option>
+                            <option>Edit</option>
+                        </select></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Business</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>IP</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:32</td>
+                                    <td>Greenfield Logistics</td>
+                                    <td>TCC Upload</td>
+                                    <td>Compliance Analyst</td>
+                                    <td>102.134.45.12</td>
+                                    <td>Document DOC-88291 uploaded</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:45</td>
+                                    <td>Shalom SACCO</td>
+                                    <td>Director KYC Verified</td>
+                                    <td>James M.</td>
+                                    <td>102.134.45.12</td>
+                                    <td>Peter Ochieng verified</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 16:20</td>
+                                    <td>TechNova Solutions</td>
+                                    <td>UBO Added</td>
+                                    <td>Compliance Analyst</td>
+                                    <td>102.134.45.12</td>
+                                    <td>Grace Wanjiku added (30%)</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 09:15</td>
+                                    <td>Hope Children NGO</td>
+                                    <td>Approved</td>
+                                    <td>Head of Compliance</td>
+                                    <td>102.134.45.12</td>
+                                    <td>Full access granted</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('auditTrailModal','Audit trail exported successfully.','')">Export
+                        CSV</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Pre-fill -->
+    <div class="modal fade R" id="preFillModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-check me-2"></i>Pre-fill from BRS Data</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">CR12 Number</label><input class="FC" value="PVT-99128"></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+                        <div style="font-size:11px;color:#047857;font-weight:700">DATA RETRIEVED FROM BRS</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--pm-accent)">TechNova Solutions Limited
+                        </div>
+                        <div style="font-size:12px;color:#065F46">CR12: PVT-99128 · KRA PIN: P051234567A · 3 Directors
+                        </div>
+                    </div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Legal name, registration number,
+                            directors</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Shareholding structure</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label" style="font-size:13px">Registered address</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('preFillModal','Application pre-filled with BRS data. 3 directors imported.','BRS-20250627-99128')">Pre-fill
+                        Application</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Bulk Document Upload -->
+    <div class="modal fade R" id="bulkDocumentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-files me-2"></i>Bulk Document Upload</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Business</label><select class="FC">
+                            <option>Greenfield Logistics Limited</option>
+                            <option>TechNova Solutions</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Upload Multiple Files</label><input type="file" class="FC"
+                            multiple></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Supported: PDF, JPG, PNG. Max 10MB per file. You can
+                        upload multiple documents at once.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bulkDocumentModal','5 documents uploaded and queued for verification.','BULK-DOC-20250627')">Upload
+                        All</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Attention Full -->
+    <div class="modal fade R" id="attentionFullModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Nairobi SACCO — TCC expires in 4 days</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('renewTCCModal')">Renew</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Peter Ochieng — Director KYC pending 7 days</strong></div><button
+                            class="btn-pm btn-sm" onclick="openM('directorKYCModal')">Verify</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Greenfield Logistics — Beneficial ownership overdue</strong></div><button
+                            class="btn-pm btn-sm" onclick="openM('beneficialOwnerModal')">Complete</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>TechNova Solutions — Director ID expires in 12 days</strong></div><button
+                            class="btn-pm btn-sm" onclick="openM('directorKYCModal')">Update</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Shalom SACCO — PEP flag requires review</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('riskAssessmentModal')">Review</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Security Check -->
+    <div class="modal fade R" id="securityCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>KYB/KYC Security Posture
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    87</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">COMPLIANCE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">94%</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">UBO COVERAGE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">11</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">EXPIRING</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">2</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">PEP FLAGS</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Director Verification Rate</td>
+                                    <td>94%</td>
+                                    <td><span class="B B-s">Good</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Document Authenticity</td>
+                                    <td>100%</td>
+                                    <td><span class="B B-s">Excellent</span></td>
+                                </tr>
+                                <tr>
+                                    <td>PEP Screening Coverage</td>
+                                    <td>100%</td>
+                                    <td><span class="B B-s">Excellent</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Adverse Media Checks</td>
+                                    <td>100%</td>
+                                    <td><span class="B B-s">Excellent</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JM</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James M.</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.m@paymo.co.ke · +254 700 123 456</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Head of Compliance</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Businesses Managed</span><br><strong>84</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Member Since</span><br><strong>Mar 2022</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Cases Resolved</span><br><strong>1,248</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Onboard Notifications -->
+    <div class="modal fade R" id="onboardNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>KYB/KYC Notifications (12)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>TCC
+                            expiring in 4 days</strong>
+                        <div style="font-size:11px;color:#7F1D1D">Nairobi SACCO — KRA-TCC-88291</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Director KYC pending 7 days</strong>
+                        <div style="font-size:11px;color:#92400E">Peter Ochieng — Greenfield Logistics</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px">
+                        <strong>Beneficial ownership declaration overdue</strong>
+                        <div style="font-size:11px;color:#1E40AF">Greenfield Logistics — 5 shareholders</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px">
+                        <strong>Application approved</strong>
+                        <div style="font-size:11px;color:#065F46">Hope Children NGO — Full access granted</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>New application
+                            received</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">Mama Mboga Traders — 45% complete</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('notifSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M24: Notif Settings -->
+    <div class="modal fade R" id="notifSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Notification Preferences</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Alert Type</th>
+                                    <th>Push</th>
+                                    <th>SMS</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TCC Expiry (30/14/7/1 days)</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Director KYC Pending (7/3/1 days)</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Beneficial Ownership Overdue</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>New Application Received</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Application Approved / Rejected</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('notifSettingsModal','Notification preferences saved.','')">Save
+                        Preferences</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { onboard: { current: 1, total: 5, labels: ['Identity', 'Ownership', 'Documents', 'UBO', 'Done'] }, kyc: { current: 1, total: 4, labels: ['Details', 'Documents', 'Screening', 'Done'] }, bulk: { current: 1, total: 3, labels: ['Upload', 'Validate', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { onboard: 'onboardNewModal', kyc: 'directorKYCModal', bulk: 'bulkOnboardModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'onboard') btn.innerHTML = 'Submit Application <i class="bi bi-send"></i>'; else if (key === 'kyc') btn.innerHTML = 'Complete Verification <i class="bi bi-check-lg"></i>'; else btn.innerHTML = 'Import Now <i class="bi bi-upload"></i>'; } }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

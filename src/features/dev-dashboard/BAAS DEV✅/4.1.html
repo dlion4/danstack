@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Developer Portal — Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif;--pm-font-mono:'Fira Code',monospace}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;font-family:var(--pm-font-mono);transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}
+.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}
+.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}
+.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}
+.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-dark{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-card-accent{background:linear-gradient(135deg,#1e1b4b 0%,#4338ca 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-mono);font-size:26px;font-weight:700;letter-spacing:-0.02em}
+.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600;font-family:var(--pm-font-mono)}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}
+.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}
+.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}
+.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}
+.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}
+.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}
+.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}
+.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}
+.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}
+.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}
+.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}
+.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}
+.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}
+.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle;font-family:var(--pm-font-mono);font-size:12px}
+.pm-table tr:last-child td{border-bottom:none}
+.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}
+.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;font-family:var(--pm-font-sans)}
+.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}
+.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}
+.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff;font-family:var(--pm-font-mono)}
+.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}
+.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}
+.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s;font-family:var(--pm-font-sans)}
+.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}
+.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}
+.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted);font-family:var(--pm-font-sans)}
+.pm-step.active .pm-step-label{color:var(--pm-primary)}
+.pm-step.completed .pm-step-label{color:var(--pm-accent)}
+.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}
+.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft);font-family:var(--pm-font-sans)}
+.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}
+.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}
+.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:110px;padding:12px 0 18px}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;position:relative;min-width:18px;cursor:pointer;transition:all .2s}
+.chart-bar:hover{opacity:.88}
+.chart-bar .bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted);font-family:var(--pm-font-sans)}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.code-block{background:#1E293B;color:#e2e8f0;padding:16px;border-radius:var(--pm-r-md);font-family:var(--pm-font-mono);font-size:12px;overflow-x:auto;position:relative}
+.code-block .copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer}
+.code-block .copy-btn:hover{background:rgba(255,255,255,.2)}
+.env-toggle{display:inline-flex;align-items:center;background:var(--pm-surface-2);border-radius:var(--pm-r-pill);padding:4px;border:1px solid var(--pm-border)}
+.env-btn{padding:4px 12px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--pm-muted);transition:all .2s;font-family:var(--pm-font-sans)}
+.env-btn.active.live{background:var(--pm-primary);color:#fff}
+.env-btn.active.test{background:var(--pm-warning);color:#fff}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Home"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item active" title="Developer"><i class="bi bi-code-slash"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="API Keys"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-broadcast"></i></button>
+<button class="pm-nav-item" title="Logs"><i class="bi bi-terminal"></i></button>
+<button class="pm-nav-item" title="Docs"><i class="bi bi-book"></i></button>
+<button class="pm-nav-item" title="Settings"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Help"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<!-- MAIN -->
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-slate)"><i class="bi bi-braces"></i></div>
+<div>
+<h1>Developer Portal</h1>
+<p style="font-family:var(--pm-font-sans)">APIs, Integration & Technical Operations</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search API docs, logs, errors, endpoint patterns...">
+</div>
+<div class="pm-header-actions">
+<div class="env-toggle me-2">
+<button class="env-btn test active" onclick="toggleEnv('test', this)">TEST</button>
+<button class="env-btn live" onclick="toggleEnv('live', this)">LIVE</button>
+</div>
+<button class="pm-header-btn" onclick="openModal('healthStatusModal')" title="API Health"><i class="bi bi-activity text-success"></i></button>
+<button class="pm-header-btn" onclick="openModal('apiAlertsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">3</span></button>
+<div class="pm-profile-btn" onclick="openModal('devProfileModal')">
+<div class="pm-avatar">DK</div>
+<div>
+<div class="pm-name" style="font-family:var(--pm-font-sans)">David K.</div>
+<div class="pm-role" style="font-family:var(--pm-font-sans)">Lead Engineer</div>
+</div>
+</div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Developer Portal</a> / <strong>Dashboard & Project Management</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.1 — Developer Dashboard</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0;font-family:var(--pm-font-sans)">Manage your PayMo integration, track API requests, handle webhook events, and manage project access.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('createProjectModal')"><i class="bi bi-folder-plus"></i> New Project</button>
+<button class="pm-btn" onclick="openModal('generateKeyModal')"><i class="bi bi-key"></i> New API Key</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('docsModal')"><i class="bi bi-book"></i> Read Docs</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78);font-family:var(--pm-font-sans)">Project: <strong style="color:#fff">JengaPay Core Backend</strong> <span class="ms-2" style="color:#fcd34d">● Test Mode</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">24,892 <span style="font-size:14px;font-weight:400;opacity:.8">requests / 24h</span></div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78);font-family:var(--pm-font-sans)">API Version: v2025-01-01 · Region: af-east-1</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('apiLogsModal')">View Logs</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('goLiveChecklistModal')">Go Live Checklist</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">API LATENCY (P95)</p>
+<div class="pm-stat-value" style="margin:6px 0">124 <span style="font-size:14px;color:var(--pm-muted)">ms</span></div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-graph-down"></i> 12ms improvement</span>
+<div class="pm-mini-bars mt-3"><div class="pm-mini-bar" style="height:65%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:70%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:55%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:80%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:60%;background:var(--pm-info)"></div><div class="pm-mini-bar" style="height:45%;background:var(--pm-info)"></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-danger)">ERROR RATE</p>
+<div class="pm-stat-value" style="margin:6px 0">0.42 <span style="font-size:14px;color:var(--pm-muted)">%</span></div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-exclamation-triangle"></i> 104 failed reqs</span>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-sans)"><span>Error Budget</span><span>42% used</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:42%;background:var(--pm-danger)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-purple)">
+<p class="pm-stat-label" style="color:var(--pm-purple)">WEBHOOK DELIVERY</p>
+<div class="pm-stat-value" style="margin:6px 0">99.8 <span style="font-size:14px;color:var(--pm-muted)">%</span></div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-check-all"></i> Healthy</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft);font-family:var(--pm-font-sans)">
+<div>Active Endpoints: <strong>3</strong></div>
+<div>Pending Retries: <strong>14</strong> <button class="pm-btn pm-btn-sm ms-1" style="padding:2px 6px;font-size:10px" onclick="openModal('webhookLogsModal')">View</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Requires Attention</h3><button class="pm-btn pm-btn-sm" onclick="openModal('apiAlertsModal')">View all</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px"><i class="bi bi-key"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px;font-family:var(--pm-font-sans)">Test Secret Key expires in 14 days</div><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-sans)">Key prefix: sk_test_8f92...</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('rollKeyModal')">Roll Key</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px"><i class="bi bi-broadcast"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px;font-family:var(--pm-font-sans)">Webhook endpoint failing</div><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-sans)">https://api.jenga.com/hooks returning 503</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('webhookLogsModal')">Inspect</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px"><i class="bi bi-box-arrow-up-right"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px;font-family:var(--pm-font-sans)">New API Version Available</div><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-sans)">Upgrade to v2025-06-01 for new features</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('apiVersionModal')">Upgrade</button></div>
+</div>
+</div>
+
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Integration Quickstart</h3><span class="pm-badge pm-badge-purple"><i class="bi bi-code"></i></span></div>
+<p style="font-size:12px;color:var(--pm-ink-soft);font-family:var(--pm-font-sans);margin-top:-8px;margin-bottom:12px">Get started quickly with PayMo SDKs.</p>
+<div class="pm-tab-pills mb-2">
+<button class="pm-tab-pill active" onclick="switchTab('snippet','curl',this)">cURL</button>
+<button class="pm-tab-pill" onclick="switchTab('snippet','node',this)">Node.js</button>
+<button class="pm-tab-pill" onclick="switchTab('snippet','python',this)">Python</button>
+<button class="pm-tab-pill" onclick="switchTab('snippet','php',this)">PHP</button>
+</div>
+<div id="snippet-curl" class="tab-panel active code-block">
+curl https://api.paymo.com/v1/charges \
+  -H "Authorization: Bearer sk_test_8f92..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 5000,
+    "currency": "KES",
+    "source": "mpesa_stk",
+    "phone": "0712345678"
+  }'
+<button class="copy-btn" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i> Copy</button>
+</div>
+<div id="snippet-node" class="tab-panel code-block">
+const paymo = require('paymo')('sk_test_8f92...');
+const charge = await paymo.charges.create({
+  amount: 5000,
+  currency: 'KES',
+  source: 'mpesa_stk',
+  phone: '0712345678'
+});
+<button class="copy-btn" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i> Copy</button>
+</div>
+<div id="snippet-python" class="tab-panel code-block">
+import paymo
+paymo.api_key = "sk_test_8f92..."
+charge = paymo.Charge.create(
+    amount=5000,
+    currency="KES",
+    source="mpesa_stk",
+    phone="0712345678"
+)
+<button class="copy-btn" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i> Copy</button>
+</div>
+<div id="snippet-php" class="tab-panel code-block">
+$paymo = new \PayMo\PayMo('sk_test_8f92...');
+$charge = $paymo->charges->create([
+  'amount' => 5000,
+  'currency' => 'KES',
+  'source' => 'mpesa_stk',
+  'phone' => '0712345678'
+]);
+<button class="copy-btn" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i> Copy</button>
+</div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('sdkDownloadModal')"><i class="bi bi-download"></i> Download Full SDKs</button>
+</div>
+</div>
+
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Quick Actions</h3><p class="pm-section-sub">Developer tools & settings</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('generateKeyModal')"><i class="bi bi-key text-warning me-1"></i> API Keys</button>
+<button class="quick-action-btn" onclick="openModal('addWebhookModal')"><i class="bi bi-broadcast text-info me-1"></i> Webhooks</button>
+<button class="quick-action-btn" onclick="openModal('apiLogsModal')"><i class="bi bi-terminal text-purple me-1" style="color:var(--pm-purple)"></i> API Logs</button>
+<button class="quick-action-btn" onclick="openModal('whitelistIpModal')"><i class="bi bi-shield-lock text-success me-1"></i> IP Whitelist</button>
+<button class="quick-action-btn" onclick="openModal('projectTeamModal')"><i class="bi bi-people text-primary me-1"></i> Team Access</button>
+<button class="quick-action-btn" onclick="openModal('rateLimitModal')"><i class="bi bi-speedometer2 text-danger me-1"></i> Rate Limits</button>
+<button class="quick-action-btn" onclick="openModal('quotaBillingModal')"><i class="bi bi-wallet2 text-secondary me-1"></i> API Quota</button>
+<button class="quick-action-btn" onclick="openModal('goLiveChecklistModal')"><i class="bi bi-rocket me-1" style="color:var(--pm-accent)"></i> Go Live</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Section 4.1.1 — App & API Key Manager -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-key-fill" style="color:var(--pm-warning)"></i> 4.1.1 — API Keys & Authentication</h3>
+<p class="pm-section-sub">Manage your secret and publishable keys for environments. Never share your secret keys.</p>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('generateKeyModal')"><i class="bi bi-plus-lg"></i> Create Key</button>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Key Name / Environment</th><th>Key Token</th><th>Created</th><th>Last Used</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody>
+<tr><td><strong>Test Secret Key</strong><br><span class="pm-badge" style="background:var(--pm-warning-soft);color:#B45309;font-size:9px">TEST</span></td><td><code>sk_test_8f92****************4a1b</code></td><td>12 Jan 2025</td><td>2 mins ago</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('rollKeyModal')">Roll Key</button></td></tr>
+<tr><td><strong>Test Publishable Key</strong><br><span class="pm-badge" style="background:var(--pm-warning-soft);color:#B45309;font-size:9px">TEST</span></td><td><code>pk_test_e3b1****************9c0d</code></td><td>12 Jan 2025</td><td>1 hour ago</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('copySnippetModal')">Copy</button></td></tr>
+<tr><td><strong>Live Secret Key</strong><br><span class="pm-badge" style="background:var(--pm-primary-light);color:#fff;font-size:9px">LIVE</span></td><td><code>sk_live_************************</code></td><td>—</td><td>—</td><td><span class="pm-badge" style="background:#f3f4f6;color:var(--pm-muted)">Locked</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('goLiveChecklistModal')">Unlock</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Section 4.1.2 — Project Team & Access -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-people-fill" style="color:var(--pm-info)"></i> 4.1.2 — Project Team & Access Control</h3>
+<p class="pm-section-sub">Manage developers, admins, and support staff access to this project.</p>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('projectTeamModal')"><i class="bi bi-person-plus"></i> Invite Member</button>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>User</th><th>Email</th><th>Role</th><th>MFA Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+<tbody>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="width:24px;height:24px;font-size:10px">DK</div><strong>David K.</strong></div></td><td>david@jenga.com</td><td><span class="pm-badge pm-badge-purple">Owner</span></td><td><span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Enabled</span></td><td>Today</td><td>—</td></tr>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="width:24px;height:24px;font-size:10px;background:var(--pm-gradient-blue)">SO</div><strong>Sarah O.</strong></div></td><td>sarah@jenga.com</td><td><span class="pm-badge pm-badge-info">Developer</span></td><td><span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Enabled</span></td><td>Yesterday</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('memberAccessModal')">Edit</button></td></tr>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="width:24px;height:24px;font-size:10px;background:var(--pm-gradient-rose)">MW</div><strong>Mike W.</strong></div></td><td>mike@jenga.com</td><td><span class="pm-badge" style="background:#f3f4f6;color:var(--pm-muted)">Support</span></td><td><span class="pm-badge pm-badge-warning">Disabled</span></td><td>5 days ago</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('memberAccessModal')">Edit</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Section 4.1.3 — API Health & Recent Logs -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-terminal-fill" style="color:var(--pm-accent)"></i> 4.1.3 — Integration Status & Recent Logs</h3>
+<p class="pm-section-sub">Real-time view of API requests, responses, and webhook deliveries.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('webhookLogsModal')"><i class="bi bi-broadcast"></i> Webhooks</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('apiLogsModal')"><i class="bi bi-list"></i> Full Logs</button>
+</div>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Method / Endpoint</th><th>Status</th><th>Time</th><th>IP Address</th><th>Latency</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><span class="pm-badge pm-badge-success">POST</span> <code>/v1/charges/mpesa</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>10:42:15 AM</td><td>192.168.1.45</td><td>112ms</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-info">GET</span> <code>/v1/customers/cus_9912</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>10:41:03 AM</td><td>192.168.1.45</td><td>85ms</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-success">POST</span> <code>/v1/disbursements</code></td><td><span class="pm-badge pm-badge-danger">400 ERR</span></td><td>10:38:22 AM</td><td>192.168.1.102</td><td>145ms</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-warning">HOOK</span> <code>charge.success</code></td><td><span class="pm-badge pm-badge-danger">503 ERR</span></td><td>10:35:10 AM</td><td>PayMo Event Bus</td><td>—</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('webhookLogsModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-info">GET</span> <code>/v1/balance</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>10:30:00 AM</td><td>192.168.1.45</td><td>60ms</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div><!-- end pm-content -->
+</div><!-- end pm-main -->
+</div><!-- end pm-app -->
+
+<!-- ============================================================ -->
+<!-- OVER 20 MODALS FOR DEVELOPER DASHBOARD -->
+<!-- ============================================================ -->
+
+<!-- 1. Generate New API Key -->
+<div class="modal fade resettable" id="generateKeyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-key text-primary me-2"></i>Generate API Key</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label" style="font-family:var(--pm-font-sans)">Key Name / Description</label><input class="pm-form-control" style="font-family:var(--pm-font-sans)" placeholder="e.g. Mobile App Prod Key"></div>
+<div class="mb-3"><label class="pm-form-label" style="font-family:var(--pm-font-sans)">Environment</label><select class="pm-form-control" style="font-family:var(--pm-font-sans)"><option>Test</option><option disabled>Live (Requires Go-Live approval)</option></select></div>
+<div class="mb-3"><label class="pm-form-label" style="font-family:var(--pm-font-sans)">Expiration (Optional)</label><select class="pm-form-control" style="font-family:var(--pm-font-sans)"><option>Never</option><option>30 Days</option><option>90 Days</option><option>1 Year</option></select></div>
+<div class="p-3 rounded" style="background:var(--pm-warning-soft);font-family:var(--pm-font-sans);font-size:12px"><i class="bi bi-shield-lock me-1"></i> Once generated, the secret key will only be shown once. Be prepared to copy it to a secure vault.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('generateKeyModal','API Key Generated. Secret: sk_test_new_a1b2c3... (Store this safely!)','')">Generate Key</button></div>
+</div></div></div>
+
+<!-- 2. Roll API Key -->
+<div class="modal fade resettable" id="rollKeyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-warning me-2"></i>Roll API Key</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Rolling an API key generates a new secret key and schedules the old one for deletion. This is useful if a key is compromised.</p>
+<div class="mb-3"><label class="pm-form-label">Key to Roll</label><input class="pm-form-control" value="Test Secret Key (sk_test_8f92...)" disabled></div>
+<div class="mb-3"><label class="pm-form-label">Old Key Expiration</label><select class="pm-form-control"><option>Immediately (Dangerous)</option><option selected>In 12 hours</option><option>In 24 hours</option><option>In 7 days</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I understand that API requests using the old key will fail after expiration.</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-warning" style="color:#fff" onclick="processDevAction('rollKeyModal','Key rolled successfully. Old key expires in 12 hours.','')">Roll Key Now</button></div>
+</div></div></div>
+
+<!-- 3. Create New Project -->
+<div class="modal fade resettable" id="createProjectModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-folder-plus text-primary me-2"></i>Create New Project</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="mb-3"><label class="pm-form-label">Project Name</label><input class="pm-form-control" placeholder="e.g. E-Commerce Website"></div>
+<div class="mb-3"><label class="pm-form-label">Primary Currency</label><select class="pm-form-control"><option>KES - Kenyan Shilling</option><option>USD - US Dollar</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Associated Business Entity</label><select class="pm-form-control"><option>JengaPay Limited</option><option>Create new business profile...</option></select></div>
+<p style="font-size:12px;color:var(--pm-muted)">Projects allow you to isolate API keys, webhooks, and analytics for different applications within the same business.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('createProjectModal','Project created successfully. Switch to new project?','')">Create Project</button></div>
+</div></div></div>
+
+<!-- 4. Project Team (Invite Member) -->
+<div class="modal fade resettable" id="projectTeamModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-plus text-info me-2"></i>Invite Team Member</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="mb-3"><label class="pm-form-label">Email Address</label><input class="pm-form-control" placeholder="developer@example.com"></div>
+<div class="mb-3"><label class="pm-form-label">Project Role</label>
+<div class="p-2 border rounded mb-2" style="cursor:pointer" onclick="this.style.borderColor='var(--pm-primary)'"><strong>Developer</strong><div style="font-size:11px;color:var(--pm-muted)">Can view test data, manage test API keys, and view logs.</div></div>
+<div class="p-2 border rounded mb-2" style="cursor:pointer" onclick="this.style.borderColor='var(--pm-primary)'"><strong>Admin</strong><div style="font-size:11px;color:var(--pm-muted)">Can manage live keys, team members, and settings.</div></div>
+<div class="p-2 border rounded" style="cursor:pointer" onclick="this.style.borderColor='var(--pm-primary)'"><strong>Support</strong><div style="font-size:11px;color:var(--pm-muted)">Can view logs and transaction data only.</div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('projectTeamModal','Invitation sent to developer@example.com','')">Send Invite</button></div>
+</div></div></div>
+
+<!-- 5. Member Access Controls -->
+<div class="modal fade resettable" id="memberAccessModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-purple me-2" style="color:var(--pm-purple)"></i>Edit Member Access</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="d-flex align-items-center gap-3 mb-4"><div class="pm-avatar" style="width:40px;height:40px;background:var(--pm-gradient-blue)">SO</div><div><strong>Sarah O.</strong><div style="font-size:12px;color:var(--pm-muted)">sarah@jenga.com</div></div></div>
+<div class="mb-3"><label class="pm-form-label">Change Role</label><select class="pm-form-control"><option>Developer</option><option>Admin</option><option>Support</option></select></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Require Multi-Factor Authentication (MFA)</label></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Account Active</label></div>
+<button class="pm-btn pm-btn-sm pm-btn-danger w-100 mt-2">Remove Member from Project</button>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('memberAccessModal','Member access updated successfully','')">Save Changes</button></div>
+</div></div></div>
+
+<!-- 6. Webhook Logs Modal -->
+<div class="modal fade resettable" id="webhookLogsModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-broadcast text-info me-2"></i>Webhook Delivery Logs</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3 flex-wrap" style="gap:8px">
+<select class="pm-form-control" style="width:auto;font-family:var(--pm-font-sans)"><option>All Endpoints</option><option>https://api.jenga.com/hooks</option></select>
+<select class="pm-form-control" style="width:auto;font-family:var(--pm-font-sans)"><option>All Statuses</option><option>Success (2xx)</option><option>Failed (4xx/5xx)</option></select>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('addWebhookModal')">Add Endpoint</button>
+</div>
+<div class="table-responsive" style="max-height:400px;overflow-y:auto">
+<table class="pm-table">
+<thead><tr><th>Event ID</th><th>Event Type</th><th>Endpoint</th><th>Status</th><th>Timestamp</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>evt_88319a...</code></td><td><code>charge.success</code></td><td><code>.../hooks</code></td><td><span class="pm-badge pm-badge-danger">503 ERR</span></td><td>10:35:10 AM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('testWebhookModal')">Retry</button></td></tr>
+<tr><td><code>evt_88318b...</code></td><td><code>customer.created</code></td><td><code>.../hooks</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>10:30:05 AM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">View</button></td></tr>
+<tr><td><code>evt_88317c...</code></td><td><code>charge.failed</code></td><td><code>.../hooks</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>10:22:14 AM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">View</button></td></tr>
+<tr><td><code>evt_88316d...</code></td><td><code>transfer.success</code></td><td><code>.../hooks</code></td><td><span class="pm-badge pm-badge-success">200 OK</span></td><td>09:15:00 AM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">View</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 7. Add Webhook Endpoint -->
+<div class="modal fade resettable" id="addWebhookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Add Webhook Endpoint</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="mb-3"><label class="pm-form-label">Endpoint URL</label><input class="pm-form-control" placeholder="https://your-domain.com/paymo/webhook"></div>
+<div class="mb-3"><label class="pm-form-label">API Version</label><select class="pm-form-control"><option>v2025-01-01 (Latest)</option></select></div>
+<label class="pm-form-label">Events to send</label>
+<div class="p-2 border rounded mb-3" style="max-height:150px;overflow-y:auto">
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px;font-family:var(--pm-font-mono)">charge.success</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px;font-family:var(--pm-font-mono)">charge.failed</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px;font-family:var(--pm-font-mono)">transfer.success</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px;font-family:var(--pm-font-mono)">customer.created</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px;font-family:var(--pm-font-mono)">invoice.paid</label></div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">PayMo requires HTTPS endpoints. A webhook signing secret will be generated upon creation to verify event payloads.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('addWebhookModal','Webhook endpoint created. Secret: whsec_test_a1b2...','')">Add Endpoint</button></div>
+</div></div></div>
+
+<!-- 8. Test Webhook Delivery -->
+<div class="modal fade resettable" id="testWebhookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightning-charge text-accent me-2" style="color:var(--pm-accent)"></i>Test Webhook Delivery</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="mb-3"><label class="pm-form-label">Endpoint</label><select class="pm-form-control"><option>https://api.jenga.com/hooks</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Event Type to Simulate</label><select class="pm-form-control"><option>charge.success</option><option>charge.failed</option><option>transfer.success</option></select></div>
+<div class="code-block mt-3 mb-3">
+{
+  "id": "evt_test_123",
+  "type": "charge.success",
+  "data": {
+    "object": {
+      "id": "ch_test_abc",
+      "amount": 5000,
+      "currency": "KES",
+      "status": "successful"
+    }
+  }
+}
+</div>
+<button class="pm-btn pm-btn-sm w-100 pm-btn-accent" onclick="processDevAction('testWebhookModal','Test event sent. Received 200 OK response.','')">Send Test Event</button>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 9. API Logs Modal -->
+<div class="modal fade resettable" id="apiLogsModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-terminal text-purple me-2" style="color:var(--pm-purple)"></i>API Request Logs</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3 flex-wrap" style="gap:8px">
+<div class="d-flex gap-2">
+<select class="pm-form-control" style="width:auto;font-family:var(--pm-font-sans)"><option>All Requests</option><option>POST /charges</option><option>GET /balance</option></select>
+<select class="pm-form-control" style="width:auto;font-family:var(--pm-font-sans)"><option>All Statuses</option><option>200 OK</option><option>400 Bad Request</option><option>401 Unauthorized</option></select>
+</div>
+<input class="pm-form-control" style="width:250px" placeholder="Search Request ID (req_...)">
+</div>
+<div class="table-responsive" style="max-height:400px;overflow-y:auto">
+<table class="pm-table">
+<thead><tr><th>Method</th><th>Endpoint</th><th>Status</th><th>Timestamp</th><th>IP Address</th><th>Source</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><span class="pm-badge pm-badge-success">POST</span></td><td><code>/v1/charges/mpesa</code></td><td><span class="pm-badge pm-badge-success">200</span></td><td>10:42:15 AM</td><td>192.168.1.45</td><td>Node.js SDK</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-info">GET</span></td><td><code>/v1/customers/cus_9912</code></td><td><span class="pm-badge pm-badge-success">200</span></td><td>10:41:03 AM</td><td>192.168.1.45</td><td>cURL</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-success">POST</span></td><td><code>/v1/disbursements</code></td><td><span class="pm-badge pm-badge-danger">400</span></td><td>10:38:22 AM</td><td>192.168.1.102</td><td>Python SDK</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-info">GET</span></td><td><code>/v1/balance</code></td><td><span class="pm-badge pm-badge-success">200</span></td><td>10:30:00 AM</td><td>192.168.1.45</td><td>Node.js SDK</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+<tr><td><span class="pm-badge pm-badge-success">POST</span></td><td><code>/v1/charges/card</code></td><td><span class="pm-badge pm-badge-warning">402</span></td><td>10:15:22 AM</td><td>10.0.0.5</td><td>PHP SDK</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('requestDetailModal')">Inspect</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('apiLogsModal','Logs exported to CSV.','')"><i class="bi bi-download"></i> Export Logs</button></div>
+</div></div></div>
+
+<!-- 10. API Request Detail Modal -->
+<div class="modal fade resettable" id="requestDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-search me-2"></i>Request Details: req_8f7b...</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row mb-3" style="font-family:var(--pm-font-sans);font-size:13px">
+<div class="col-6 mb-2"><span class="text-muted">Status:</span> <span class="pm-badge pm-badge-danger">400 Bad Request</span></div>
+<div class="col-6 mb-2"><span class="text-muted">Time:</span> 10:38:22 AM EAT</div>
+<div class="col-6 mb-2"><span class="text-muted">Method:</span> POST /v1/disbursements</div>
+<div class="col-6 mb-2"><span class="text-muted">IP:</span> 192.168.1.102</div>
+<div class="col-6"><span class="text-muted">API Version:</span> v2025-01-01</div>
+<div class="col-6"><span class="text-muted">Source:</span> paymo-python/2.1.0</div>
+</div>
+<div class="pm-tab-pills mb-2">
+<button class="pm-tab-pill active" onclick="switchTab('reqDetail','payload',this)">Request Payload</button>
+<button class="pm-tab-pill" onclick="switchTab('reqDetail','response',this)">Response Body</button>
+</div>
+<div id="reqDetail-payload" class="tab-panel active code-block" style="height:250px">
+{
+  "amount": 50000,
+  "currency": "KES",
+  "destination": {
+    "type": "bank_account",
+    "account_number": "12345678"
+    // Missing required field: bank_code
+  },
+  "description": "Supplier Payment"
+}
+</div>
+<div id="reqDetail-response" class="tab-panel code-block" style="height:250px;color:#fca5a5">
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "parameter_missing",
+    "message": "The parameter 'destination.bank_code' is required for bank_account transfers.",
+    "param": "destination.bank_code"
+  }
+}
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 11. Rate Limit Alerts -->
+<div class="modal fade resettable" id="rateLimitModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 text-danger me-2"></i>Rate Limits & Throttling</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-1"><span>Current Tier</span><strong>Standard API</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Read Limit</span><strong>100 req / sec</strong></div>
+<div class="d-flex justify-content-between"><span>Write Limit</span><strong>50 req / sec</strong></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Alert me when requests reach:</label><select class="pm-form-control"><option>75% of limit</option><option>90% of limit</option><option>100% (Throttled)</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Automatically retry requests handling HTTP 429 using exponential backoff in SDKs</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('rateLimitModal','Rate limit alert settings saved.','')">Save Settings</button></div>
+</div></div></div>
+
+<!-- 12. IP Whitelisting -->
+<div class="modal fade resettable" id="whitelistIpModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-success me-2"></i>IP Whitelisting</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<p style="font-size:13px;color:var(--pm-ink-soft)">For enhanced security, restrict API requests using your Live Secret Key to specific IP addresses or CIDR blocks.</p>
+<div class="mb-3"><label class="pm-form-label">Add IP or CIDR</label>
+<div class="d-flex gap-2"><input class="pm-form-control" placeholder="e.g. 192.168.1.1/24"><button class="pm-btn pm-btn-sm">Add</button></div>
+</div>
+<label class="pm-form-label">Whitelisted IPs</label>
+<div class="p-2 border rounded mb-1 d-flex justify-content-between align-items-center"><code>102.215.33.45</code> <button class="pm-btn pm-btn-sm text-danger" style="padding:2px 6px"><i class="bi bi-x"></i></button></div>
+<div class="p-2 border rounded mb-1 d-flex justify-content-between align-items-center"><code>45.33.22.0/24</code> <button class="pm-btn pm-btn-sm text-danger" style="padding:2px 6px"><i class="bi bi-x"></i></button></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('whitelistIpModal','IP Whitelist updated. Allow up to 5 mins for propagation.','')">Save Restrictions</button></div>
+</div></div></div>
+
+<!-- 13. API Version Upgrade -->
+<div class="modal fade resettable" id="apiVersionModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-arrow-up-right text-info me-2"></i>API Version Upgrade</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-1"><span>Current Version</span><strong>v2024-08-15</strong></div>
+<div class="d-flex justify-content-between"><span>Latest Version</span><strong style="color:var(--pm-primary)">v2025-06-01</strong></div>
+</div>
+<h6 style="font-weight:700">What's new in v2025-06-01:</h6>
+<ul style="font-size:12px;color:var(--pm-ink-soft);padding-left:16px">
+<li>Added <code>bank_code</code> validation to Disbursement API</li>
+<li>New Pagination cursor format for List Endpoints</li>
+<li>Deprecated <code>receipt_number</code> in favor of <code>transaction_ref</code> in Webhooks</li>
+</ul>
+<div class="form-check mt-3"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px;color:var(--pm-danger)">I have updated my code to handle breaking changes.</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('apiVersionModal','API Version upgraded to v2025-06-01!','')">Upgrade Version</button></div>
+</div></div></div>
+
+<!-- 14. API Alerts Modal -->
+<div class="modal fade resettable" id="apiAlertsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Developer Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:450px;overflow-y:auto;font-family:var(--pm-font-sans)">
+<div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><i class="bi bi-key text-warning me-1"></i> <strong>Key Expiration</strong> — Test Secret Key expires in 14 days. <a href="#" onclick="openModal('rollKeyModal');closeModal('apiAlertsModal')">Roll Key</a><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 hours ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><i class="bi bi-broadcast text-danger me-1"></i> <strong>Webhook Failures</strong> — Endpoint <code>.../hooks</code> has failed 14 consecutive times. <a href="#" onclick="openModal('webhookLogsModal');closeModal('apiAlertsModal')">Inspect</a><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">5 hours ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><i class="bi bi-box-arrow-up-right text-info me-1"></i> <strong>Version Deprecation</strong> — API v2024-08-15 will be deprecated on Dec 31, 2025. <a href="#" onclick="openModal('apiVersionModal');closeModal('apiAlertsModal')">Upgrade</a><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">1 day ago</div></div>
+<div class="p-3 rounded mb-2" style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><i class="bi bi-speedometer2 text-muted me-1"></i> <strong>Rate Limit</strong> — Hit 85% of read rate limit during peak hour.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 days ago</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 15. SDK Download -->
+<div class="modal fade resettable" id="sdkDownloadModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-download text-primary me-2"></i>Download SDKs & Plugins</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('sdkTab','backend',this)">Backend</button><button class="pm-tab-pill" onclick="switchTab('sdkTab','mobile',this)">Mobile</button><button class="pm-tab-pill" onclick="switchTab('sdkTab','plugins',this)">Plugins</button></div>
+<div id="sdkTab-backend" class="tab-panel active">
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>Node.js</strong><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-mono)">npm install paymo-node</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i></button></div>
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>Python</strong><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-mono)">pip install paymo-python</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i></button></div>
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>PHP / Composer</strong><div style="font-size:11px;color:var(--pm-muted);font-family:var(--pm-font-mono)">composer require paymo/paymo-php</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('copySnippetModal')"><i class="bi bi-clipboard"></i></button></div>
+</div>
+<div id="sdkTab-mobile" class="tab-panel">
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>React Native</strong><div style="font-size:11px;color:var(--pm-muted)">Official React Native wrapper</div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-github"></i> View</button></div>
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>Flutter</strong><div style="font-size:11px;color:var(--pm-muted)">paymo_flutter pub.dev</div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-github"></i> View</button></div>
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>Android (Kotlin)</strong><div style="font-size:11px;color:var(--pm-muted)">Maven Central</div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-github"></i> View</button></div>
+</div>
+<div id="sdkTab-plugins" class="tab-panel">
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>WooCommerce</strong><div style="font-size:11px;color:var(--pm-muted)">WordPress Plugin</div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-download"></i></button></div>
+<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><div><strong>Shopify</strong><div style="font-size:11px;color:var(--pm-muted)">Install via Shopify App Store</div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-box-arrow-up-right"></i></button></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 16. API Quota & Billing -->
+<div class="modal fade resettable" id="quotaBillingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-wallet2 text-secondary me-2"></i>API Quota & Billing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<h6 style="font-weight:700">Current Plan: Standard Tier</h6>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:12px;color:var(--pm-muted)"><span>Free API Calls Used</span><span>45,210 / 100,000</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:45%;background:var(--pm-primary)"></div></div></div>
+</div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Service</th><th>Usage</th><th>Cost</th></tr></thead><tbody>
+<tr><td>M-Pesa Collections</td><td>1,240 txns</td><td>Standard MDR</td></tr><tr><td>Identity Verifications</td><td>42 checks</td><td>KES 1,260</td></tr><tr><td>SMS Notifications</td><td>840 msg</td><td>KES 840</td></tr><tr><td colspan="2" class="text-end" style="font-weight:700">Est. Total</td><td><strong style="color:var(--pm-primary)">KES 2,100</strong></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('quotaBillingModal','Upgrade request sent. Sales will contact you.','')">Upgrade Tier</button></div>
+</div></div></div>
+
+<!-- 17. Go Live Checklist -->
+<div class="modal fade resettable" id="goLiveChecklistModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-rocket text-accent me-2" style="color:var(--pm-accent)"></i>Go Live & Production Readiness</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Complete the following checklist to unlock Live API Keys and process real transactions.</p>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3">
+<i class="bi bi-check-circle-fill text-success" style="font-size:20px"></i><div style="flex:1"><strong>Business Verification (KYB)</strong><div style="font-size:11px;color:var(--pm-muted)">Documents approved by compliance team.</div></div>
+</div>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3">
+<i class="bi bi-check-circle-fill text-success" style="font-size:20px"></i><div style="flex:1"><strong>Test Transactions</strong><div style="font-size:11px;color:var(--pm-muted)">At least 5 successful API calls in Test mode.</div></div>
+</div>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3">
+<i class="bi bi-circle text-muted" style="font-size:20px"></i><div style="flex:1"><strong>Webhook Setup</strong><div style="font-size:11px;color:var(--pm-muted)">Configure and verify at least one Live webhook endpoint.</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('addWebhookModal')">Setup</button>
+</div>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3">
+<i class="bi bi-circle text-muted" style="font-size:20px"></i><div style="flex:1"><strong>IP Whitelisting (Optional but Recommended)</strong><div style="font-size:11px;color:var(--pm-muted)">Restrict API key access to your server IPs.</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('whitelistIpModal')">Add IPs</button>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processDevAction('goLiveChecklistModal','Submitted for Production Approval. Please wait 24h.','')">Request Production Access</button></div>
+</div></div></div>
+
+<!-- 18. API Health Status -->
+<div class="modal fade resettable" id="healthStatusModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>PayMo API Systems Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="p-3 rounded mb-3 text-center" style="background:var(--pm-accent-soft);color:#047857"><i class="bi bi-check-circle-fill me-1"></i> All Systems Operational</div>
+<div class="status-row"><div><strong>Core API Gateway</strong><div style="font-size:11px;color:var(--pm-muted)">Uptime 99.99%</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><div><strong>M-Pesa STK Push</strong><div style="font-size:11px;color:var(--pm-muted)">Uptime 99.95%</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><div><strong>PesaLink Transfers</strong><div style="font-size:11px;color:var(--pm-muted)">Uptime 99.80%</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><div><strong>Webhooks Delivery</strong><div style="font-size:11px;color:var(--pm-muted)">Latency < 2s</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<p style="font-size:11px;color:var(--pm-muted);margin-top:12px;text-align:center">Visit <a href="#">status.paymo.com</a> for historical uptime.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 19. Copy Snippet Modal (Global utility) -->
+<div class="modal fade resettable" id="copySnippetModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+<div class="modal-body text-center p-4">
+<div class="pm-icon-circle mx-auto mb-3" style="width:56px;height:56px;font-size:24px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-clipboard-check"></i></div>
+<h5 style="font-weight:700">Copied to Clipboard!</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin-bottom:0">The code snippet or key is now in your clipboard.</p>
+</div>
+<div class="modal-footer justify-content-center border-0 pt-0"><button class="pm-btn" data-bs-dismiss="modal">Dismiss</button></div>
+</div></div></div>
+
+<!-- 20. Developer Profile Modal -->
+<div class="modal fade resettable" id="devProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Developer Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center" style="font-family:var(--pm-font-sans)">
+<div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)">DK</div>
+<h5 style="font-weight:700;margin-bottom:2px">David K.</h5>
+<p style="font-size:13px;color:var(--pm-muted)">david.k@jenga.com · Lead Engineer</p>
+<div class="row g-2 text-start mt-3" style="font-size:13px">
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Projects</span><br><strong>3 Active</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Security</span><br><strong>MFA Enabled</strong></div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-danger" onclick="location.reload()">Sign Out</button></div>
+</div></div></div>
+
+<!-- 21. Documentation Modal -->
+<div class="modal fade resettable" id="docsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-book text-primary me-2"></i>API Documentation Explorer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="font-family:var(--pm-font-sans)">
+<div class="row g-3">
+<div class="col-md-4">
+<div class="list-group" style="font-size:13px">
+<button class="list-group-item list-group-item-action active border-0" style="background:var(--pm-primary-light);color:#fff">Authentication</button>
+<button class="list-group-item list-group-item-action border-0">Charges API</button>
+<button class="list-group-item list-group-item-action border-0">Transfers API</button>
+<button class="list-group-item list-group-item-action border-0">Webhooks Events</button>
+<button class="list-group-item list-group-item-action border-0">Error Codes</button>
+</div>
+</div>
+<div class="col-md-8 border-start px-4">
+<h6 style="font-weight:700">Authentication</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft)">PayMo uses API keys to authenticate requests. You can view and manage your API keys in the Dashboard.</p>
+<div class="code-block mt-2 mb-3">Authorization: Bearer sk_test_...</div>
+<p style="font-size:12px;color:var(--pm-ink-soft)">Test mode secret keys have the prefix <code>sk_test_</code> and Live mode secret keys have the prefix <code>sk_live_</code>. Your API requests must be made over HTTPS.</p>
+<button class="pm-btn pm-btn-sm" onclick="window.open('https://docs.paymo.com', '_blank')">Open Full Docs <i class="bi bi-box-arrow-up-right"></i></button>
+</div>
+</div>
+</div>
+</div></div></div>
+
+<!-- Script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function toggleEnv(env,btn){document.querySelectorAll('.env-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(env==='live'){setTimeout(()=>openModal('goLiveChecklistModal'),200);btn.classList.remove('active');document.querySelector('.env-btn.test').classList.add('active');}}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+function processDevAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref?`<p style="font-size:12px;font-family:monospace;color:var(--pm-muted)">Ref: ${ref}</p>`:''}</div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;});});}
+document.addEventListener('DOMContentLoaded',()=>{cacheResettable();});
+</script>
+</body>
+</html>

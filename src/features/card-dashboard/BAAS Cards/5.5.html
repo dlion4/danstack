@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Prepaid Card Management</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1E293B 0%,#334155 50%,#4F46E5 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-pin-input{display:flex;gap:8px;justify-content:center}.pm-pin-input input{width:48px;height:56px;text-align:center;font-size:24px;font-weight:700;border:2px solid var(--pm-border);border-radius:var(--pm-r-sm);font-family:var(--pm-font-display)}.pm-pin-input input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.pm-amount-chips{display:flex;flex-wrap:wrap;gap:8px}.pm-amount-chip{padding:8px 16px;border:1px solid var(--pm-border);border-radius:var(--pm-r-pill);cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;background:#fff}.pm-amount-chip:hover,.pm-amount-chip.active{border-color:var(--pm-primary);background:rgba(79,70,229,.06);color:var(--pm-primary)}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.credit-card-ui{width:100%;height:180px;border-radius:16px;padding:20px;position:relative;overflow:hidden;box-shadow:var(--pm-shadow-md);color:#fff;display:flex;flex-direction:column;justify-content:space-between;transition:transform .3s;cursor:pointer}
+.credit-card-ui:hover{transform:translateY(-4px)}
+.credit-card-ui::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,0.1);border-radius:50%}
+.credit-card-ui .cc-logo{font-family:var(--pm-font-display);font-weight:800;font-size:18px;letter-spacing:1px}
+.credit-card-ui .cc-chip{width:36px;height:28px;background:linear-gradient(135deg,#eab308,#fcd34d);border-radius:4px;position:relative}
+.credit-card-ui .cc-chip::after{content:'';position:absolute;inset:2px;border:1px solid rgba(0,0,0,0.2);border-radius:2px}
+.credit-card-ui .cc-number{font-family:monospace;font-size:18px;letter-spacing:3px;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+.credit-card-ui .cc-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.credit-card-ui .cc-name{font-size:13px;text-transform:uppercase;letter-spacing:1px}
+.credit-card-ui .cc-expiry{font-size:12px;font-family:monospace}
+.credit-card-ui .cc-brand{font-size:24px;font-style:italic;font-weight:700}
+.bg-gradient-blue{background:linear-gradient(135deg,#1E3A8A,#3B82F6)}
+.bg-gradient-purple{background:linear-gradient(135deg,#4C1D95,#8B5CF6)}
+.bg-gradient-dark{background:linear-gradient(135deg,#111827,#374151)}
+.bg-gradient-emerald{background:linear-gradient(135deg,#064E3B,#10B981)}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-credit-card"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-arrow-left-right"></i></button>
+<button class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button>
+<button class="pm-nav-item"><i class="bi bi-shield-check"></i></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<!-- MAIN -->
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">AK</div>
+<div>
+<h1>Card Center</h1>
+<p>Issue, fund, control, and monitor your prepaid card portfolio</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search cards by last 4 digits, cardholder, or status...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-shield-check"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationModal')"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')">
+<div class="pm-avatar" style="background:var(--pm-gradient-blue)">AK</div>
+<div>
+<div class="pm-name">Alex K.</div>
+<div class="pm-role">Fleet Manager</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Prepaid Management</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 5.5 — Prepaid Card Management</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Issue physical/virtual prepaid cards for family, staff, or fleet. Manage balances, limits, and restrictions in real-time.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('bulkIssueModal')"><i class="bi bi-layers"></i> Bulk Issue</button>
+<button class="pm-btn" onclick="openModal('bulkTopupModal')"><i class="bi bi-cash-stack"></i> Bulk Top-up</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('issueCardModal')"><i class="bi bi-plus-lg"></i> Issue New Card</button>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="pm-content">
+
+<!-- HERO STATS -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Prepaid Card Program is Active <span style="color:#86efac">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">12 Active Cards</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">4 Physical, 8 Virtual. Used for fleet fuel, online software, and staff expenses.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('bulkTopupModal')">Fund Cards</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('issueCardModal')">New Virtual</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">TOTAL PREPAID BALANCE</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 142.5K</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-wallet2"></i> Available</span>
+<div class="pm-mini-bars mt-3">
+<div class="pm-mini-bar" style="height:40%;background:var(--pm-primary)"></div>
+<div class="pm-mini-bar" style="height:60%;background:var(--pm-info)"></div>
+<div class="pm-mini-bar" style="height:30%;background:var(--pm-primary)"></div>
+<div class="pm-mini-bar" style="height:80%;background:var(--pm-info)"></div>
+<div class="pm-mini-bar" style="height:50%;background:var(--pm-primary)"></div>
+<div class="pm-mini-bar" style="height:90%;background:var(--pm-info)"></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">SPEND THIS MONTH</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 88.2K</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-graph-up-arrow"></i> +12% vs last month</span>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted)"><span>Budget Limit</span><span>44% Used</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:44%;background:var(--pm-warning)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">LOW BALANCE CARDS</p>
+<div class="pm-stat-value" style="margin:6px 0">3 Cards</div>
+<span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-circle"></i> Needs top-up</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+<div class="d-flex justify-content-between"><span>Fleet Card #4</span><strong>KES 150</strong></div>
+<div class="d-flex justify-content-between"><span>Marketing Ads</span><strong>KES 450</strong></div>
+<button class="pm-btn pm-btn-sm mt-1 pm-btn-outline w-100" onclick="openModal('bulkTopupModal')">Top-up Now</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ATTENTION / SUGGESTIONS / ACTIONS -->
+<div class="row g-3">
+<!-- Attention -->
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Attention Required</h3><button class="pm-btn pm-btn-sm" onclick="openModal('attentionModal')">View all</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px"><i class="bi bi-x-octagon"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Transaction Declined</div><div style="font-size:11px;color:var(--pm-muted)">Fleet Card #2 · Insufficient Funds</div></div><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('topupCardModal')">Fund</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px"><i class="bi bi-hourglass-split"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Card Expiring Soon</div><div style="font-size:11px;color:var(--pm-muted)">Virtual Ads Card · Exp: 07/25</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('replaceCardModal')">Renew</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px"><i class="bi bi-shield-lock"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Unusual Online Spend</div><div style="font-size:11px;color:var(--pm-muted)">Staff Card · KES 15,000 at Amazon</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('disputeTxModal')">Review</button></div>
+</div>
+</div>
+<!-- Suggestions -->
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Smart Suggestions</h3><span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px"><i class="bi bi-arrow-repeat"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Set Auto-Reload</div><div style="font-size:11px;color:var(--pm-muted)">Avoid declines on Marketing Ads Card</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('autoReloadModal')">Setup</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px"><i class="bi bi-geo-alt"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Enable Geo-Blocking</div><div style="font-size:11px;color:var(--pm-muted)">Lock Fleet cards to Kenya only</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('geoBlockModal')">Apply</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px"><i class="bi bi-archive"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Freeze Unused Card</div><div style="font-size:11px;color:var(--pm-muted)">Travel Card inactive for 90 days</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('freezeCardModal')">Freeze</button></div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Quick Actions</h3><p class="pm-section-sub">Frequent card operations</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('topupCardModal')"><i class="bi bi-cash text-success me-1"></i> Top-up Card</button>
+<button class="quick-action-btn" onclick="openModal('transferModal')"><i class="bi bi-arrow-left-right text-info me-1"></i> Transfer</button>
+<button class="quick-action-btn" onclick="openModal('cardLimitsModal')"><i class="bi bi-sliders text-primary me-1"></i> Set Limits</button>
+<button class="quick-action-btn" onclick="openModal('viewPinModal')"><i class="bi bi-asterisk text-warning me-1"></i> View PIN</button>
+<button class="quick-action-btn" onclick="openModal('freezeCardModal')"><i class="bi bi-snow text-danger me-1"></i> Freeze</button>
+<button class="quick-action-btn" onclick="openModal('unloadCardModal')"><i class="bi bi-box-arrow-right text-secondary me-1"></i> Unload Funds</button>
+<button class="quick-action-btn" onclick="openModal('mccBlockModal')"><i class="bi bi-shop text-purple me-1" style="color:var(--pm-purple)"></i> MCC Blocks</button>
+<button class="quick-action-btn" onclick="openModal('exportReportModal')"><i class="bi bi-download text-dark me-1"></i> Reports</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.5.1: Card Portfolio -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-credit-card-2-front-fill" style="color:var(--pm-primary)"></i> 5.5.1 — Prepaid Card Directory & Portfolio</h3><p class="pm-section-sub">View and manage all issued physical and virtual prepaid cards.</p></div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('bulkIssueModal')"><i class="bi bi-layers"></i> Bulk Issue</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('issueCardModal')"><i class="bi bi-plus-lg"></i> Issue Card</button>
+</div>
+</div>
+
+<div class="pm-tab-pills mb-3">
+<button class="pm-tab-pill active" onclick="filterCards('all',this)">All Cards (12)</button>
+<button class="pm-tab-pill" onclick="filterCards('virtual',this)">Virtual (8)</button>
+<button class="pm-tab-pill" onclick="filterCards('physical',this)">Physical (4)</button>
+<button class="pm-tab-pill" onclick="filterCards('frozen',this)">Frozen (1)</button>
+</div>
+
+<div class="row g-3" id="cardGrid">
+<!-- Virtual Card 1 -->
+<div class="col-lg-3 col-md-4 col-sm-6 card-item" data-type="virtual">
+<div class="credit-card-ui bg-gradient-blue" onclick="openModal('cardDetailModal')">
+<div class="d-flex justify-content-between align-items-start">
+<div class="cc-logo">PAYMO</div>
+<div><i class="bi bi-wifi text-white opacity-75 fs-5"></i></div>
+</div>
+<div>
+<div class="d-flex justify-content-between align-items-center mb-1">
+<span class="badge bg-light text-primary" style="font-size:10px">VIRTUAL</span>
+<span class="fs-6 fw-bold">KES 14,500</span>
+</div>
+<div class="cc-number">**** **** **** 4812</div>
+</div>
+<div class="cc-bottom">
+<div>
+<div class="cc-name">Marketing Ads</div>
+<div class="cc-expiry">08/26</div>
+</div>
+<div class="cc-brand">VISA</div>
+</div>
+</div>
+<div class="d-flex justify-content-between mt-2 px-1">
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 me-1" onclick="openModal('topupCardModal')">Fund</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 ms-1" onclick="openModal('cardControlsModal')">Controls</button>
+</div>
+</div>
+
+<!-- Physical Card 1 -->
+<div class="col-lg-3 col-md-4 col-sm-6 card-item" data-type="physical">
+<div class="credit-card-ui bg-gradient-emerald" onclick="openModal('cardDetailModal')">
+<div class="d-flex justify-content-between align-items-start">
+<div class="cc-logo">PAYMO</div>
+<div><i class="bi bi-contactless text-white opacity-75 fs-5"></i></div>
+</div>
+<div>
+<div class="cc-chip mb-2"></div>
+<div class="d-flex justify-content-between align-items-center mb-1">
+<span class="badge bg-light text-success" style="font-size:10px">PHYSICAL</span>
+<span class="fs-6 fw-bold">KES 22,100</span>
+</div>
+<div class="cc-number">**** **** **** 9091</div>
+</div>
+<div class="cc-bottom">
+<div>
+<div class="cc-name">Fleet #1 - John</div>
+<div class="cc-expiry">12/27</div>
+</div>
+<div class="cc-brand">VISA</div>
+</div>
+</div>
+<div class="d-flex justify-content-between mt-2 px-1">
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 me-1" onclick="openModal('topupCardModal')">Fund</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 ms-1" onclick="openModal('cardControlsModal')">Controls</button>
+</div>
+</div>
+
+<!-- Virtual Card 2 (Low Balance) -->
+<div class="col-lg-3 col-md-4 col-sm-6 card-item" data-type="virtual">
+<div class="credit-card-ui bg-gradient-purple" onclick="openModal('cardDetailModal')" style="border:2px solid var(--pm-danger)">
+<div class="d-flex justify-content-between align-items-start">
+<div class="cc-logo">PAYMO</div>
+<div><i class="bi bi-wifi text-white opacity-75 fs-5"></i></div>
+</div>
+<div>
+<div class="d-flex justify-content-between align-items-center mb-1">
+<span class="badge bg-danger text-white" style="font-size:10px">LOW BAL</span>
+<span class="fs-6 fw-bold text-warning">KES 150</span>
+</div>
+<div class="cc-number">**** **** **** 3321</div>
+</div>
+<div class="cc-bottom">
+<div>
+<div class="cc-name">Software Subs</div>
+<div class="cc-expiry">05/25</div>
+</div>
+<div class="cc-brand">Mastercard</div>
+</div>
+</div>
+<div class="d-flex justify-content-between mt-2 px-1">
+<button class="pm-btn pm-btn-sm pm-btn-danger w-100 me-1" onclick="openModal('topupCardModal')">Fund Now</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 ms-1" onclick="openModal('autoReloadModal')">Auto-load</button>
+</div>
+</div>
+
+<!-- Frozen Card -->
+<div class="col-lg-3 col-md-4 col-sm-6 card-item" data-type="frozen">
+<div class="credit-card-ui bg-gradient-dark opacity-75" onclick="openModal('cardDetailModal')">
+<div class="d-flex justify-content-between align-items-start">
+<div class="cc-logo">PAYMO</div>
+<div><i class="bi bi-snow text-info fs-5"></i></div>
+</div>
+<div>
+<div class="d-flex justify-content-between align-items-center mb-1">
+<span class="badge bg-secondary text-white" style="font-size:10px">FROZEN</span>
+<span class="fs-6 fw-bold text-muted">KES 4,500</span>
+</div>
+<div class="cc-number">**** **** **** 7762</div>
+</div>
+<div class="cc-bottom">
+<div>
+<div class="cc-name">Travel Expo</div>
+<div class="cc-expiry">09/25</div>
+</div>
+<div class="cc-brand text-muted">VISA</div>
+</div>
+</div>
+<div class="d-flex justify-content-between mt-2 px-1">
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 me-1" onclick="openModal('freezeCardModal')">Unfreeze</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 ms-1" onclick="openModal('unloadCardModal')">Unload</button>
+</div>
+</div>
+</div>
+<div class="text-center mt-3"><button class="pm-btn pm-btn-sm" onclick="openModal('cardListModal')">View All Cards</button></div>
+</div>
+
+<!-- SECTION 5.5.2 & 5.5.3: Funding & Controls -->
+<div class="row g-3 mb-4">
+<!-- Funding -->
+<div class="col-lg-6">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-cash-stack text-success"></i> 5.5.2 — Funding & Top-ups</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('bulkTopupModal')">Bulk Fund</button>
+</div>
+<div class="utility-block mb-3">
+<h4 style="font-size:13px;font-weight:700">Active Auto-Reload Rules</h4>
+<div class="status-row"><div><strong>Marketing Ads</strong><div style="font-size:11px;color:var(--pm-muted)">Load KES 10K when balance < KES 1K</div></div><span class="pm-badge pm-badge-success">Active</span></div>
+<div class="status-row"><div><strong>Software Subs</strong><div style="font-size:11px;color:var(--pm-muted)">Load KES 5K on 1st of month</div></div><span class="pm-badge pm-badge-success">Active</span></div>
+<button class="pm-btn pm-btn-sm mt-2 w-100" onclick="openModal('autoReloadModal')"><i class="bi bi-plus"></i> New Rule</button>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('topupCardModal')">Top-up Card</button>
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('transferModal')">Transfer Balance</button>
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('unloadCardModal')">Unload to Wallet</button>
+</div>
+</div>
+</div>
+<!-- Controls -->
+<div class="col-lg-6">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-shield-lock text-purple" style="color:var(--pm-purple)"></i> 5.5.3 — Controls & Limits</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('cardLimitsModal')">Edit Limits</button>
+</div>
+<div class="utility-block mb-3">
+<h4 style="font-size:13px;font-weight:700">Global Restrictions Applied</h4>
+<div class="status-row"><div><strong>Geo-Blocking</strong><div style="font-size:11px;color:var(--pm-muted)">Physical cards locked to Kenya & EA</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('geoBlockModal')">Edit</button></div>
+<div class="status-row"><div><strong>MCC Blocks</strong><div style="font-size:11px;color:var(--pm-muted)">Gambling, Crypto, Adult blocked on all</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('mccBlockModal')">Edit</button></div>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('cardControlsModal')">Per-Card Settings</button>
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('viewPinModal')">PIN Mgmt</button>
+<button class="pm-btn flex-fill justify-content-center" onclick="openModal('freezeCardModal')">Freeze/Block</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.5.4: Analytics & Ledger -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-bar-chart-line text-info"></i> 5.5.4 — Spending Analytics & Ledger</h3><p class="pm-section-sub">Track real-time spend across your card program, analyze merchants, and export reconciliations.</p></div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('spendAnalyticsModal')"><i class="bi bi-pie-chart"></i> Analytics</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('exportReportModal')"><i class="bi bi-download"></i> Export</button>
+</div>
+</div>
+
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Date</th><th>Card</th><th>Merchant</th><th>Category</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
+<tbody>
+<tr><td>Today, 14:32</td><td>Fleet #1 (...9091)</td><td>Shell Petrol Station</td><td>Fuel</td><td><strong>KES 6,500</strong></td><td><span class="pm-badge pm-badge-success">Approved</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('txReceiptModal')"><i class="bi bi-receipt"></i></button></td></tr>
+<tr><td>Today, 10:15</td><td>Marketing (...4812)</td><td>Facebook Ads</td><td>Advertising</td><td><strong>KES 12,000</strong></td><td><span class="pm-badge pm-badge-success">Approved</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('txReceiptModal')"><i class="bi bi-receipt"></i></button></td></tr>
+<tr><td>Yesterday</td><td>Software (...3321)</td><td>AWS Cloud</td><td>Cloud Svcs</td><td><strong>KES 8,400</strong></td><td><span class="pm-badge pm-badge-danger">Declined (NSF)</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('disputeTxModal')"><i class="bi bi-info-circle"></i></button></td></tr>
+<tr><td>Yesterday</td><td>Fleet #2 (...1124)</td><td>Carrefour</td><td>Groceries</td><td><strong>KES 1,200</strong></td><td><span class="pm-badge pm-badge-success">Approved</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('txReceiptModal')"><i class="bi bi-receipt"></i></button></td></tr>
+<tr><td>25 Jun</td><td>Travel (...7762)</td><td>Uber</td><td>Transport</td><td><strong>KES 850</strong></td><td><span class="pm-badge pm-badge-success">Approved</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('txReceiptModal')"><i class="bi bi-receipt"></i></button></td></tr>
+</tbody>
+</table>
+</div>
+<div class="text-center mt-3"><button class="pm-btn pm-btn-sm" onclick="openModal('txLedgerModal')">View Full Ledger</button></div>
+</div>
+
+</div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end app -->
+
+
+<!-- ========================================== -->
+<!-- 25+ MODALS FOR COMPREHENSIVENESS -->
+<!-- ========================================== -->
+
+<!-- 1. Issue New Card (Multi-step) -->
+<div class="modal fade resettable" id="issueCardModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-lg text-primary me-2"></i>Issue New Prepaid Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="pm-stepper" id="issueStepper"></div>
+<div id="issueStep1" class="fade-step active"><h6 class="fw-bold mb-3">Step 1: Card Type</h6>
+<div class="row g-3"><div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)" onclick="selectBox(this)"><i class="bi bi-wifi fs-3 text-primary d-block mb-2"></i><strong>Virtual Card</strong><br><small class="text-muted">Instant activation</small></div></div><div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><i class="bi bi-credit-card fs-3 text-success d-block mb-2"></i><strong>Physical Card</strong><br><small class="text-muted">Delivery in 3-5 days</small></div></div></div>
+<div class="mt-3"><label class="pm-form-label">Card Purpose / Nickname</label><input class="pm-form-control" placeholder="e.g. Employee Travel, Facebook Ads"></div>
+<div class="mt-3"><label class="pm-form-label">Cardholder Name (Appears on card)</label><input class="pm-form-control" placeholder="e.g. John Doe or Marketing Dept"></div>
+</div>
+<div id="issueStep2" class="fade-step"><h6 class="fw-bold mb-3">Step 2: Initial Funding & Limits</h6>
+<div class="mb-3"><label class="pm-form-label">Initial Top-up Amount (KES)</label><input type="number" class="pm-form-control" value="5000"></div>
+<div class="mb-3"><label class="pm-form-label">Funding Source</label><select class="pm-form-control"><option>PayMo Main Wallet (KES 240,000)</option><option>M-Pesa (0712***890)</option><option>Equity Bank</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Monthly Spending Limit (Optional)</label><input type="number" class="pm-form-control" placeholder="Leave blank for no limit"></div>
+<div class="p-3 bg-light rounded"><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label text-sm">Lock card to specific Merchant Category (MCC)</label></div></div>
+</div>
+<div id="issueStep3" class="fade-step"><h6 class="fw-bold mb-3">Step 3: Review & Confirm</h6>
+<div class="p-3 bg-light rounded mb-3"><div class="d-flex justify-content-between mb-2"><span>Type</span><strong>Virtual Prepaid VISA</strong></div><div class="d-flex justify-content-between mb-2"><span>Name</span><strong>Marketing Dept</strong></div><div class="d-flex justify-content-between mb-2"><span>Initial Load</span><strong>KES 5,000</strong></div><div class="d-flex justify-content-between mb-2"><span>Issuance Fee</span><strong>KES 150</strong></div><hr><div class="d-flex justify-content-between fw-bold text-primary"><span>Total Deduction</span><span>KES 5,150</span></div></div>
+<label class="pm-form-label">Enter PIN to authorize issuance</label>
+<div class="pm-pin-input"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+</div>
+<div id="issueStep4" class="fade-step">
+<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 class="fw-bold text-success">Virtual Card Issued!</h5><p class="text-muted">Card is active and ready for immediate use.</p>
+<div class="credit-card-ui bg-gradient-blue mx-auto mt-3" style="max-width:320px;text-align:left"><div class="d-flex justify-content-between"><div>PAYMO</div><i class="bi bi-wifi text-white"></i></div><div class="mt-4"><div class="cc-number mb-2">4123 5567 8901 2345</div><div class="d-flex justify-content-between"><div class="cc-name">Marketing Dept</div><div class="cc-expiry">07/28</div></div></div></div>
+<div class="d-flex justify-content-center gap-2 mt-4"><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-eye"></i> Show CVV</button><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-clipboard"></i> Copy PAN</button></div>
+</div>
+</div>
+</div><div class="modal-footer" id="issueFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="issueNextBtn" onclick="nextIssueStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 2. Top-up Card Modal (Multi-step) -->
+<div class="modal fade resettable" id="topupCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack text-success me-2"></i>Fund Prepaid Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="pm-stepper" id="topupStepper"></div>
+<div id="topupStep1" class="fade-step active"><h6 class="fw-bold mb-3">Top-up Details</h6>
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Software Subs (Bal: KES 150)</option><option>Marketing Ads (Bal: KES 14,500)</option><option>Fleet #1 (Bal: KES 22,100)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Amount to Load (KES)</label><div class="pm-amount-chips mb-2"><span class="pm-amount-chip" onclick="pickChip(this,'topupAmt','1000')">1,000</span><span class="pm-amount-chip active" onclick="pickChip(this,'topupAmt','5000')">5,000</span><span class="pm-amount-chip" onclick="pickChip(this,'topupAmt','10000')">10,000</span></div><input type="number" id="topupAmt" class="pm-form-control" value="5000"></div>
+<div class="mb-3"><label class="pm-form-label">Source of Funds</label><select class="pm-form-control"><option>PayMo Wallet</option><option>M-Pesa Express</option><option>Linked Bank</option></select></div>
+</div>
+<div id="topupStep2" class="fade-step"><h6 class="fw-bold mb-3">Confirm Funding</h6>
+<div class="p-3 bg-light rounded text-center mb-3"><div class="text-muted small">Loading Card</div><div class="fw-bold fs-5 text-primary">Software Subs (...3321)</div><div class="text-muted small mt-2">Amount</div><div class="fw-bold fs-3 text-success">+ KES 5,000</div></div>
+<p class="text-center text-muted small">Funds will be instantly available on the card. Zero fee applies from PayMo Wallet.</p>
+</div>
+<div id="topupStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 class="fw-bold text-success">Top-up Successful</h5><p class="text-muted">KES 5,000 added to Software Subs.</p><div class="p-3 bg-light rounded text-start"><div class="d-flex justify-content-between"><span>New Balance</span><strong>KES 5,150</strong></div><div class="d-flex justify-content-between mt-2"><span>Ref</span><strong>TOP-88214</strong></div></div></div></div>
+</div><div class="modal-footer" id="topupFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="topupNextBtn" onclick="nextTopupStep()">Review <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 3. Unload Card Modal -->
+<div class="modal fade resettable" id="unloadCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-arrow-right text-secondary me-2"></i>Unload Funds from Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<p class="text-muted small mb-3">Withdraw funds from a prepaid card back to your main PayMo Wallet instantly.</p>
+<div class="mb-3"><label class="pm-form-label">Select Card to Unload</label><select class="pm-form-control"><option>Marketing Ads (Bal: KES 14,500)</option><option>Fleet #1 (Bal: KES 22,100)</option><option>Travel Expo (Bal: KES 4,500) - FROZEN</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Amount to Unload</label><input type="number" class="pm-form-control" value="14500"><div class="text-end mt-1"><button class="btn btn-link p-0 text-decoration-none" style="font-size:11px">Unload Max (KES 14,500)</button></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('unloadCardModal','Funds unloaded to Wallet successfully.','UNL-99211')">Unload Funds</button></div></div></div></div>
+
+<!-- 4. Transfer Between Cards -->
+<div class="modal fade resettable" id="transferModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-left-right text-info me-2"></i>Transfer Card to Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">From Card</label><select class="pm-form-control"><option>Fleet #1 (Bal: KES 22,100)</option><option>Marketing Ads (Bal: KES 14,500)</option></select></div>
+<div class="text-center mb-2"><i class="bi bi-arrow-down fs-4 text-muted"></i></div>
+<div class="mb-3"><label class="pm-form-label">To Card</label><select class="pm-form-control"><option>Software Subs (Bal: KES 150)</option><option>Fleet #2 (Bal: KES 3,400)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Amount</label><input type="number" class="pm-form-control" placeholder="Enter amount"></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('transferModal','Transfer completed successfully.','TRF-11029')">Transfer Now</button></div></div></div></div>
+
+<!-- 5. Card Controls (Per Card) -->
+<div class="modal fade resettable" id="cardControlsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Card Controls & Toggles</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Marketing Ads (...4812)</option><option>Fleet #1 (...9091)</option></select></div>
+<div class="p-3 bg-light rounded">
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">Online Transactions</label><div class="text-muted" style="font-size:11px">Allow card-not-present internet purchases</div></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label fw-bold">International Spend</label><div class="text-muted" style="font-size:11px">Allow non-KES cross-border transactions</div></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">Contactless (Tap-to-Pay)</label><div class="text-muted" style="font-size:11px">Allow physical tap limits without PIN</div></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label fw-bold">ATM Withdrawals</label><div class="text-muted" style="font-size:11px">Allow cash out at ATMs</div></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">Subscriptions / Recurring</label><div class="text-muted" style="font-size:11px">Allow automated monthly billing charges</div></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('cardControlsModal','Card controls updated successfully.','')">Save Settings</button></div></div></div></div>
+
+<!-- 6. Card Detail & Reveal -->
+<div class="modal fade resettable" id="cardDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card-front me-2"></i>Card Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+<div class="credit-card-ui bg-gradient-blue mx-auto mb-4" style="max-width:340px;text-align:left">
+<div class="d-flex justify-content-between align-items-start"><div class="cc-logo">PAYMO</div><i class="bi bi-wifi text-white opacity-75 fs-5"></i></div>
+<div class="mt-3"><div class="cc-number mb-2" id="sensNum">**** **** **** 4812</div><div class="d-flex justify-content-between"><div class="cc-name">Marketing Dept</div><div><span class="cc-expiry">07/28</span> <span class="ms-2" id="sensCvv" style="font-family:monospace">***</span></div></div></div>
+</div>
+<div class="d-flex justify-content-center gap-2 mb-4">
+<button class="pm-btn pm-btn-outline" onclick="revealCardDetails()"><i class="bi bi-eye text-primary"></i> Reveal Info</button>
+<button class="pm-btn pm-btn-outline"><i class="bi bi-clipboard text-secondary"></i> Copy PAN</button>
+<button class="pm-btn pm-btn-outline" onclick="openModal('freezeCardModal');closeModal('cardDetailModal')"><i class="bi bi-snow text-info"></i> Freeze</button>
+</div>
+<div class="text-start">
+<h6 class="fw-bold fs-6">Recent Activity</h6>
+<div class="status-row"><div><strong>Facebook Ads</strong><div style="font-size:11px" class="text-muted">Today</div></div><strong>KES 12,000</strong></div>
+<div class="status-row"><div><strong>Google Workspace</strong><div style="font-size:11px" class="text-muted">Yesterday</div></div><strong>KES 1,450</strong></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn w-100 pm-btn-primary" data-bs-dismiss="modal">Done</button></div></div></div></div>
+
+<!-- 7. View / Change PIN -->
+<div class="modal fade resettable" id="viewPinModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-asterisk text-warning me-2"></i>Manage PIN</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Physical Card</label><select class="pm-form-control"><option>Fleet #1 (...9091)</option></select></div>
+<div class="d-grid gap-2"><button class="pm-btn pm-btn-outline justify-content-center" onclick="processAction('viewPinModal','Check your SMS for the secure PIN link.','')"><i class="bi bi-eye"></i> Send PIN via secure SMS</button><button class="pm-btn pm-btn-outline justify-content-center" onclick="processAction('viewPinModal','PIN reset initiated. Follow instructions on email.','')"><i class="bi bi-arrow-clockwise"></i> Reset Forgotten PIN</button></div>
+</div></div></div></div>
+
+<!-- 8. Freeze / Block Card -->
+<div class="modal fade resettable" id="freezeCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-snow text-info me-2"></i>Freeze or Block Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Marketing Ads (...4812)</option><option>Travel Expo (...7762) - FROZEN</option></select></div>
+<div class="p-3 bg-light rounded mb-3">
+<div class="form-check mb-2"><input class="form-check-input" type="radio" name="blk" checked><label class="form-check-label fw-bold text-info">Temporary Freeze</label><div class="text-muted" style="font-size:11px">Card is disabled but can be unfrozen instantly anytime.</div></div>
+<hr>
+<div class="form-check mb-2"><input class="form-check-input" type="radio" name="blk"><label class="form-check-label fw-bold text-danger">Permanent Block (Lost/Stolen)</label><div class="text-muted" style="font-size:11px">Card is cancelled forever. A replacement must be ordered.</div></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('freezeCardModal','Card status updated successfully.','')">Apply Status</button></div></div></div></div>
+
+<!-- 9. Replace Card -->
+<div class="modal fade resettable" id="replaceCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-primary me-2"></i>Replace Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Virtual Ads Card (...3321) - Expiring Soon</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control"><option>Expiring</option><option>Damaged</option><option>Name Change</option><option>Compromised</option></select></div>
+<div class="p-3 bg-light rounded" style="font-size:12px"><i class="bi bi-info-circle text-primary"></i> For virtual cards, a new PAN will be generated instantly and the balance transferred automatically. Active subscriptions will need to be updated with the new number.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('replaceCardModal','Card replaced. New virtual card is active.','')">Confirm Replacement</button></div></div></div></div>
+
+<!-- 10. Auto-Reload Rules -->
+<div class="modal fade resettable" id="autoReloadModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-success me-2"></i>Set Auto-Reload Rule</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Card</label><select class="pm-form-control"><option>Software Subs (...3321)</option><option>Marketing Ads (...4812)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Trigger Event</label><select class="pm-form-control"><option>When balance falls below amount</option><option>On specific day of month</option><option>Weekly on Monday</option></select></div>
+<div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Threshold (KES)</label><input type="number" class="pm-form-control" value="1000"></div><div class="col-6"><label class="pm-form-label">Load Amount (KES)</label><input type="number" class="pm-form-control" value="5000"></div></div>
+<div class="mb-3"><label class="pm-form-label">Source Account</label><select class="pm-form-control"><option>PayMo Main Wallet</option><option>Equity Bank Auto-Debit</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label text-sm">Notify me each time rule executes</label></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('autoReloadModal','Auto-reload rule saved and activated.','')">Save Rule</button></div></div></div></div>
+
+<!-- 11. Geo-Blocking -->
+<div class="modal fade resettable" id="geoBlockModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-geo-alt text-purple me-2"></i>Geographic Blocking</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<p class="text-muted small">Restrict physical card usage by region to prevent skimming fraud.</p>
+<div class="mb-3"><label class="pm-form-label">Apply to</label><select class="pm-form-control"><option>All Physical Fleet Cards (4)</option><option>Fleet #1 only</option></select></div>
+<div class="p-3 bg-light rounded">
+<div class="form-check mb-2"><input class="form-check-input" type="radio" name="geo" checked><label class="form-check-label fw-bold">Kenya Only</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="radio" name="geo"><label class="form-check-label fw-bold">East Africa Region</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="radio" name="geo"><label class="form-check-label fw-bold">Global (No restrictions)</label></div>
+<div class="form-check"><input class="form-check-input" type="radio" name="geo"><label class="form-check-label fw-bold">Custom Allowlist</label></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('geoBlockModal','Geographic restrictions applied to selected cards.','')">Apply Security</button></div></div></div></div>
+
+<!-- 12. MCC Blocking -->
+<div class="modal fade resettable" id="mccBlockModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop text-danger me-2"></i>Merchant Category Blocks</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<p class="text-muted small">Prevent card usage at specific merchant types.</p>
+<div class="mb-3"><label class="pm-form-label">Apply to</label><select class="pm-form-control"><option>Entire Card Program (All Cards)</option><option>Fleet Cards Only</option></select></div>
+<div class="p-3 bg-light rounded">
+<div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block Gambling & Casinos</label></div>
+<div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block Adult Content</label></div>
+<div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block Cryptocurrency</label></div>
+<div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label">Block Alcohol & Liquor Stores</label></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label class="form-check-label">Block Airlines & Travel</label></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('mccBlockModal','MCC blocks updated program-wide.','')">Save Blocks</button></div></div></div></div>
+
+<!-- 13. Set Limits -->
+<div class="modal fade resettable" id="cardLimitsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders text-info me-2"></i>Set Spending Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Fleet #1 (...9091)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Daily Spend Limit (KES)</label><input type="number" class="pm-form-control" value="10000"></div>
+<div class="mb-3"><label class="pm-form-label">Monthly Spend Limit (KES)</label><input type="number" class="pm-form-control" value="150000"></div>
+<div class="mb-3"><label class="pm-form-label">Per-Transaction Limit (KES)</label><input type="number" class="pm-form-control" value="5000"></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label text-sm">Decline and alert me if limit is exceeded</label></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('cardLimitsModal','Card limits updated and enforced.','')">Save Limits</button></div></div></div></div>
+
+<!-- 14. Bulk Issue Modal -->
+<div class="modal fade resettable" id="bulkIssueModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-layers text-primary me-2"></i>Bulk Issue Cards (Corporate)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="pm-stepper" id="bulkIssStepper"></div>
+<div id="bulkIssStep1" class="fade-step active"><h6 class="fw-bold mb-3">Upload Employee Data</h6>
+<div class="p-4 border border-dashed rounded text-center mb-3 bg-light"><i class="bi bi-cloud-upload fs-1 text-muted mb-2 d-block"></i><strong>Upload CSV or Excel</strong><p class="text-muted small mt-1">Columns: Name, Email, Phone, Department, Limit</p><button class="pm-btn pm-btn-sm pm-btn-outline mt-2">Select File</button></div>
+<div class="text-center"><a href="#" class="text-decoration-none small text-primary"><i class="bi bi-download"></i> Download CSV Template</a></div>
+</div>
+<div id="bulkIssStep2" class="fade-step"><h6 class="fw-bold mb-3">Review Batch Data</h6>
+<div class="alert alert-success py-2"><i class="bi bi-check-circle me-1"></i> 45 records validated successfully.</div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Name</th><th>Dept</th><th>Card Type</th><th>Limit</th></tr></thead><tbody><tr><td>Peter Kariuki</td><td>Sales</td><td>Virtual</td><td>KES 10K</td></tr><tr><td>Jane Mwangi</td><td>Ops</td><td>Physical</td><td>KES 5K</td></tr><tr><td>...</td><td>...</td><td>...</td><td>...</td></tr></tbody></table></div>
+</div>
+<div id="bulkIssStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-all"></i></div><h5 class="fw-bold text-success">Batch Issuance Started</h5><p class="text-muted">45 cards are being generated.</p><div class="p-3 bg-light rounded text-start"><div class="d-flex justify-content-between mb-1"><span>Virtual Cards (30)</span><span class="text-success">Ready in 2 mins</span></div><div class="d-flex justify-content-between"><span>Physical Cards (15)</span><span class="text-info">Dispatched in 48hrs</span></div></div></div></div>
+</div><div class="modal-footer" id="bulkIssFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="bulkIssNextBtn" onclick="nextBulkIssStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 15. Bulk Top-up Modal -->
+<div class="modal fade resettable" id="bulkTopupModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack text-success me-2"></i>Bulk Fund Cards</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="pm-stepper" id="bulkTopStepper"></div>
+<div id="bulkTopStep1" class="fade-step active"><h6 class="fw-bold mb-3">Select Cards & Amounts</h6>
+<div class="mb-3"><label class="pm-form-label">Funding Strategy</label><select class="pm-form-control"><option>Top-up all low balance cards to KES 5,000</option><option>Top-up specific departments</option><option>Upload custom amount CSV</option></select></div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th><input type="checkbox" checked></th><th>Card</th><th>Current Bal</th><th>Load Amt</th></tr></thead><tbody>
+<tr><td><input type="checkbox" checked></td><td>Software Subs</td><td class="text-danger">KES 150</td><td><input type="number" class="form-control form-control-sm w-75" value="4850"></td></tr>
+<tr><td><input type="checkbox" checked></td><td>Fleet #4</td><td class="text-danger">KES 200</td><td><input type="number" class="form-control form-control-sm w-75" value="4800"></td></tr>
+</tbody></table></div>
+<div class="text-end fw-bold">Total Batch Load: KES 9,650</div>
+</div>
+<div id="bulkTopStep2" class="fade-step"><h6 class="fw-bold mb-3">Confirm Bulk Funding</h6>
+<div class="p-3 bg-light rounded mb-3"><div class="d-flex justify-content-between mb-2"><span>Total Cards</span><strong>2 Cards</strong></div><div class="d-flex justify-content-between mb-2"><span>Source</span><strong>PayMo Wallet</strong></div><hr><div class="d-flex justify-content-between fw-bold text-primary fs-5"><span>Total Deducted</span><span>KES 9,650</span></div></div>
+</div>
+<div id="bulkTopStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 class="fw-bold text-success">Bulk Top-up Complete</h5><p class="text-muted">Funds instantly available on all selected cards.</p></div></div>
+</div><div class="modal-footer" id="bulkTopFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="bulkTopNextBtn" onclick="nextBulkTopStep()">Review <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 16. Dispute Transaction -->
+<div class="modal fade resettable" id="disputeTxModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Dispute Transaction</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="p-3 bg-light rounded mb-3"><div class="fw-bold">Amazon AWS Cloud</div><div class="text-muted small">Software Subs Card · Yesterday</div><div class="fw-bold text-danger mt-1">KES 8,400 (Declined)</div></div>
+<div class="mb-3"><label class="pm-form-label">Reason for Dispute / Review</label><select class="pm-form-control"><option>I do not recognize this merchant</option><option>Amount charged is incorrect</option><option>Subscription was cancelled</option><option>Card was lost/stolen</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Details</label><textarea class="pm-form-control" rows="3">We cancelled our AWS trial account 3 days ago but they still attempted to charge the card.</textarea></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label text-sm fw-bold text-danger">Freeze card temporarily while investigating</label></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('disputeTxModal','Dispute ticket #DSP-9192 created and card frozen.','')">Submit Dispute</button></div></div></div></div>
+
+<!-- 17. Spend Analytics -->
+<div class="modal fade resettable" id="spendAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pie-chart text-info me-2"></i>Spend Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active">By Category</button><button class="pm-tab-pill">By Merchant</button><button class="pm-tab-pill">By Card</button></div>
+<div class="row g-3">
+<div class="col-md-5"><div class="p-3 bg-light rounded h-100 text-center d-flex flex-column justify-content-center"><div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--pm-primary) 0 45%, var(--pm-warning) 45% 70%, var(--pm-info) 70% 90%, var(--pm-accent) 90% 100%);margin:0 auto"></div><div class="fw-bold mt-3">KES 88.2K Total Spend</div></div></div>
+<div class="col-md-7"><table class="pm-table"><tbody>
+<tr><td><span class="d-inline-block rounded-circle me-2" style="width:10px;height:10px;background:var(--pm-primary)"></span> <strong>Software & Ads</strong></td><td class="text-end">45%</td></tr>
+<tr><td><span class="d-inline-block rounded-circle me-2" style="width:10px;height:10px;background:var(--pm-warning)"></span> <strong>Fuel & Transport</strong></td><td class="text-end">25%</td></tr>
+<tr><td><span class="d-inline-block rounded-circle me-2" style="width:10px;height:10px;background:var(--pm-info)"></span> <strong>Travel & Hotels</strong></td><td class="text-end">20%</td></tr>
+<tr><td><span class="d-inline-block rounded-circle me-2" style="width:10px;height:10px;background:var(--pm-accent)"></span> <strong>Other Expenses</strong></td><td class="text-end">10%</td></tr>
+</tbody></table></div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 18. Export Reports -->
+<div class="modal fade resettable" id="exportReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Card Reports</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control"><option>Full Transaction Ledger (All Cards)</option><option>Card Balances & Status</option><option>Declined Transactions Analysis</option></select></div>
+<div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Start Date</label><input type="date" class="pm-form-control" value="2025-06-01"></div><div class="col-6"><label class="pm-form-label">End Date</label><input type="date" class="pm-form-control" value="2025-06-28"></div></div>
+<div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>CSV (For Accounting/ERP)</option><option>Excel (.xlsx)</option><option>PDF Summary</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportReportModal','Report compiled and downloaded!','')"><i class="bi bi-download"></i> Generate</button></div></div></div></div>
+
+<!-- 19. Full Ledger Modal -->
+<div class="modal fade resettable" id="txLedgerModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-card-list me-2"></i>Full Transaction Ledger</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="d-flex gap-2 mb-3"><select class="pm-form-control w-auto"><option>All Cards</option><option>Virtual Only</option></select><select class="pm-form-control w-auto"><option>Last 30 Days</option></select><input type="text" class="pm-form-control" placeholder="Search merchant..."></div>
+<div class="table-responsive" style="max-height:400px;overflow-y:auto">
+<table class="pm-table"><thead><tr><th>Date</th><th>Card</th><th>Merchant</th><th>Amount</th><th>Status</th><th>Auth Code</th></tr></thead><tbody>
+<tr><td>28 Jun 14:32</td><td>Fleet #1</td><td>Shell</td><td>KES 6,500</td><td><span class="pm-badge pm-badge-success">Approved</span></td><td>AUTH-911</td></tr>
+<tr><td>28 Jun 10:15</td><td>Marketing</td><td>Facebook</td><td>KES 12,000</td><td><span class="pm-badge pm-badge-success">Approved</span></td><td>AUTH-842</td></tr>
+<tr><td>27 Jun 16:20</td><td>Software</td><td>AWS</td><td>KES 8,400</td><td><span class="pm-badge pm-badge-danger">Declined NSF</span></td><td>-</td></tr>
+<tr><td>27 Jun 09:10</td><td>Travel</td><td>Kenya Airways</td><td>KES 14,200</td><td><span class="pm-badge pm-badge-success">Approved</span></td><td>AUTH-311</td></tr>
+<tr><td>26 Jun 18:45</td><td>Fleet #2</td><td>Carrefour</td><td>KES 1,200</td><td><span class="pm-badge pm-badge-success">Approved</span></td><td>AUTH-102</td></tr>
+</tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportReportModal')">Export Data</button></div></div></div></div>
+
+<!-- 20. Card List Modal -->
+<div class="modal fade resettable" id="cardListModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-list me-2"></i>All Issued Cards</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:500px;overflow-y:auto">
+<table class="pm-table"><thead><tr><th>Name</th><th>Type</th><th>Last 4</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead><tbody>
+<tr><td>Marketing Ads</td><td>Virtual</td><td>4812</td><td>KES 14,500</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cardControlsModal')">Manage</button></td></tr>
+<tr><td>Fleet #1 - John</td><td>Physical</td><td>9091</td><td>KES 22,100</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cardControlsModal')">Manage</button></td></tr>
+<tr><td>Software Subs</td><td>Virtual</td><td>3321</td><td><span class="text-danger fw-bold">KES 150</span></td><td><span class="pm-badge pm-badge-warning">Low Bal</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('topupCardModal')">Fund</button></td></tr>
+<tr><td>Travel Expo</td><td>Physical</td><td>7762</td><td>KES 4,500</td><td><span class="pm-badge pm-badge-info">Frozen</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('freezeCardModal')">Unfreeze</button></td></tr>
+<tr><td>Fleet #2 - Mary</td><td>Physical</td><td>1124</td><td>KES 3,400</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cardControlsModal')">Manage</button></td></tr>
+</tbody></table>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 21. Tx Receipt -->
+<div class="modal fade" id="txReceiptModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction Receipt</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+<div class="receipt-icon mx-auto mb-3" style="width:56px;height:56px;background:var(--pm-success-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px"><i class="bi bi-check-circle-fill"></i></div>
+<h3 class="fw-bold">KES 6,500</h3><p class="text-muted">Shell Petrol Station</p>
+<div class="p-3 bg-light rounded text-start mt-4" style="font-size:13px">
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Card Used</span><strong>Fleet #1 (...9091)</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Date & Time</span><strong>28 Jun 2025, 14:32</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Auth Code</span><strong>AUTH-911244</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Category</span><strong>Fuel & Auto</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 22. Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>User Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+<div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-blue)">AK</div>
+<h5 class="fw-bold">Alex K.</h5><p class="text-muted small">Fleet & Ops Manager · Corporate Acct</p>
+<div class="row g-2 text-start mt-3"><div class="col-6"><div class="p-2 bg-light rounded"><span class="text-muted small">Role Permissions</span><br><strong>Card Issuance (Max 50K)</strong></div></div><div class="col-6"><div class="p-2 bg-light rounded"><span class="text-muted small">Managed Cards</span><br><strong>12 Active</strong></div></div></div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Notification Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (4)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="p-2 border-bottom"><div class="fw-bold text-danger"><i class="bi bi-x-circle me-1"></i> Card Declined</div><div class="small text-muted">Software Subs card declined for KES 8,400 (NSF).</div></div>
+<div class="p-2 border-bottom"><div class="fw-bold text-success"><i class="bi bi-check-circle me-1"></i> Top-up Complete</div><div class="small text-muted">Marketing Ads card funded with KES 10,000.</div></div>
+<div class="p-2 border-bottom"><div class="fw-bold text-info"><i class="bi bi-info-circle me-1"></i> Travel Notice</div><div class="small text-muted">Travel Expo card used outside Kenya (Dubai).</div></div>
+<div class="p-2"><div class="fw-bold text-warning"><i class="bi bi-exclamation-triangle me-1"></i> Balance Alert</div><div class="small text-muted">Fleet #4 balance is below KES 500 threshold.</div></div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 24. Health Check Modal -->
+<div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Card Program Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+<div class="mb-4"><div style="font-size:48px;font-weight:800;color:var(--pm-accent)">96/100</div><div class="fw-bold text-success">Excellent Security Posture</div></div>
+<div class="text-start p-3 bg-light rounded small">
+<div class="mb-2"><i class="bi bi-check-circle text-success me-1"></i> All physical cards require PIN</div>
+<div class="mb-2"><i class="bi bi-check-circle text-success me-1"></i> Geo-blocking active on 4 cards</div>
+<div class="mb-2"><i class="bi bi-check-circle text-success me-1"></i> No compromised PANs detected</div>
+<div><i class="bi bi-exclamation-circle text-warning me-1"></i> 1 card expiring within 30 days</div>
+</div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 25. Attention Items Modal -->
+<div class="modal fade" id="attentionModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>Attention Required</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="p-3 border-start border-4 border-danger bg-light mb-2"><div class="fw-bold">Declined Transaction</div><div class="small text-muted">Software Subs card lacked KES 8,400. <a href="#" onclick="openModal('topupCardModal');closeModal('attentionModal')">Top-up now</a></div></div>
+<div class="p-3 border-start border-4 border-warning bg-light mb-2"><div class="fw-bold">Expiring Card</div><div class="small text-muted">Virtual Ads Card expires 07/25. <a href="#" onclick="openModal('replaceCardModal');closeModal('attentionModal')">Renew</a></div></div>
+<div class="p-3 border-start border-4 border-info bg-light"><div class="fw-bold">Unusual Online Spend</div><div class="small text-muted">Review KES 15,000 charge. <a href="#" onclick="openModal('disputeTxModal');closeModal('attentionModal')">Review</a></div></div>
+</div><div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// UI & Modal handling logic
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(el){const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}}
+function selectBox(el){el.closest('.row').querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background=''});el.style.borderColor='var(--pm-primary)';el.style.background='rgba(79,70,229,.04)';}
+function pickChip(el,target,val){el.parentElement.querySelectorAll('.pm-amount-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');document.getElementById(target).value=val;}
+function moveFocus(el){if(el.value.length===1&&el.nextElementSibling)el.nextElementSibling.focus();}
+
+// Simulation and process
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p class="mt-3 fw-bold text-primary small">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1500);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 class="fw-bold text-success">${msg}</h5>${ref?`<p class="text-muted small">Ref: ${ref}</p>`:''}<div class="mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Done</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';});}
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body'),f=m.querySelector('.modal-footer');if(b)m.dataset.b=b.innerHTML;if(f)m.dataset.f=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.b)m.querySelector('.modal-body').innerHTML=m.dataset.b;if(m.dataset.f)m.querySelector('.modal-footer').innerHTML=m.dataset.f;resetFlows();});});}
+
+// Multi-step logic
+function renderStepper(elId,labels,cur){const w=document.getElementById(elId);if(!w)return;w.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<cur?'completed':(i+1)===cur?'active':''}"><div class="pm-step-num">${(i+1)<cur?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(px,cur,tot){for(let i=1;i<=tot;i++){const el=document.getElementById(px+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(px+cur);if(a){a.classList.add('active');a.style.display='block';}}
+
+// Issue Card
+let issStep=1;
+function nextIssueStep(){
+  if(issStep===3){showLoading('#issueStep3',()=>{issStep=4;renderStepper('issueStepper',['Type','Limits','Review','Done'],issStep);showFlow('issueStep',issStep,4);document.getElementById('issueNextBtn').textContent='Finish';});return;}
+  if(issStep>=4){closeModal('issueCardModal');return;}
+  issStep++;renderStepper('issueStepper',['Type','Limits','Review','Done'],issStep);showFlow('issueStep',issStep,4);
+  if(issStep===3)document.getElementById('issueNextBtn').innerHTML='Authorize <i class="bi bi-lock"></i>';
+}
+
+// Topup Card
+let topStep=1;
+function nextTopupStep(){
+  if(topStep===2){showLoading('#topupStep2',()=>{topStep=3;renderStepper('topupStepper',['Details','Confirm','Done'],topStep);showFlow('topupStep',topStep,3);document.getElementById('topupNextBtn').textContent='Done';});return;}
+  if(topStep>=3){closeModal('topupCardModal');return;}
+  topStep++;renderStepper('topupStepper',['Details','Confirm','Done'],topStep);showFlow('topupStep',topStep,3);
+  if(topStep===2)document.getElementById('topupNextBtn').innerHTML='Confirm Top-up <i class="bi bi-check"></i>';
+}
+
+// Bulk Issue
+let bissStep=1;
+function nextBulkIssStep(){
+  if(bissStep===2){showLoading('#bulkIssStep2',()=>{bissStep=3;renderStepper('bulkIssStepper',['Upload','Review','Done'],bissStep);showFlow('bulkIssStep',bissStep,3);document.getElementById('bulkIssNextBtn').textContent='Done';});return;}
+  if(bissStep>=3){closeModal('bulkIssueModal');return;}
+  bissStep++;renderStepper('bulkIssStepper',['Upload','Review','Done'],bissStep);showFlow('bulkIssStep',bissStep,3);
+  if(bissStep===2)document.getElementById('bulkIssNextBtn').innerHTML='Issue 45 Cards <i class="bi bi-check"></i>';
+}
+
+// Bulk Topup
+let btopStep=1;
+function nextBulkTopStep(){
+  if(btopStep===2){showLoading('#bulkTopStep2',()=>{btopStep=3;renderStepper('bulkTopStepper',['Select','Confirm','Done'],btopStep);showFlow('bulkTopStep',btopStep,3);document.getElementById('bulkTopNextBtn').textContent='Done';});return;}
+  if(btopStep>=3){closeModal('bulkTopupModal');return;}
+  btopStep++;renderStepper('bulkTopStepper',['Select','Confirm','Done'],btopStep);showFlow('bulkTopStep',btopStep,3);
+  if(btopStep===2)document.getElementById('bulkTopNextBtn').innerHTML='Fund Cards <i class="bi bi-check"></i>';
+}
+
+function resetFlows(){
+  issStep=1;topStep=1;bissStep=1;btopStep=1;
+  renderStepper('issueStepper',['Type','Limits','Review','Done'],1);showFlow('issueStep',1,4);
+  renderStepper('topupStepper',['Details','Confirm','Done'],1);showFlow('topupStep',1,3);
+  renderStepper('bulkIssStepper',['Upload','Review','Done'],1);showFlow('bulkIssStep',1,3);
+  renderStepper('bulkTopStepper',['Select','Confirm','Done'],1);showFlow('bulkTopStep',1,3);
+}
+
+// Filter cards in grid
+function filterCards(type,btn){
+  btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.card-item').forEach(el=>{
+    if(type==='all') el.style.display='block';
+    else if(el.dataset.type===type) el.style.display='block';
+    else el.style.display='none';
+  });
+}
+
+// Reveal logic
+let revealed = false;
+function revealCardDetails(){
+  showLoading('#cardDetailModal .modal-body', ()=>{
+    document.getElementById('sensNum').innerText = revealed ? "**** **** **** 4812" : "4123 5567 8901 4812";
+    document.getElementById('sensCvv').innerText = revealed ? "***" : "892";
+    revealed = !revealed;
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  resetFlows();
+});
+</script>
+</body>
+</html>

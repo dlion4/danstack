@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Utility Settings & Automation</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#d946ef 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-pin-input{display:flex;gap:8px;justify-content:center}.pm-pin-input input{width:48px;height:56px;text-align:center;font-size:24px;font-weight:700;border:2px solid var(--pm-border);border-radius:var(--pm-r-sm);font-family:var(--pm-font-display)}.pm-pin-input input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.member-card{background:#fff;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;margin-bottom:12px}
+.source-drag-item{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);margin-bottom:8px;cursor:grab}
+.switch-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.switch-item:last-child{border-bottom:none}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-gear-wide-connected"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-lightning-charge"></i></button>
+<button class="pm-nav-item"><i class="bi bi-droplet"></i></button>
+<button class="pm-nav-item"><i class="bi bi-people"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+<div>
+<h1>Settings & Automation</h1>
+<p>Budgets, Auto-Pay Rules, Alerts & Household Access Control</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search settings, rules, members, alerts...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-shield-check"></i></button>
+<button class="pm-header-btn" onclick="openModal('activityHistoryModal')"><i class="bi bi-clock-history"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationsModal')"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar">JK</div><div><div class="pm-name">James K.</div><div class="pm-role">Primary Admin</div></div></div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Utilities Hub</a> / <strong>Settings & Automation</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 2.10 — Utility Settings & Automation</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Configure robust auto-pay frameworks, optimize monthly utility budgets, tune alert preferences, and manage multi-user household access.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('budgetWizardModal')"><i class="bi bi-magic"></i> Budget Wizard</button>
+<button class="pm-btn" onclick="openModal('addMemberModal')"><i class="bi bi-person-plus"></i> Add Member</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('autoPaySetupModal')"><i class="bi bi-plus-lg"></i> New Auto-Pay Rule</button>
+</div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-6">
+<div class="pm-card pm-card-accent" style="min-height:160px">
+<p class="pm-stat-label" style="color:rgba(255,255,255,.7)">ACTIVE AUTOMATIONS</p>
+<div class="pm-stat-value" style="margin:6px 0;color:#fff">8 Rules</div>
+<span class="pm-badge" style="background:rgba(255,255,255,.15);color:#fff"><i class="bi bi-arrow-repeat"></i> Running smoothly</span>
+<div class="mt-3"><button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.15);border-color:transparent;color:#fff" onclick="openModal('autoPaySetupModal')">Add rule</button></div>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:160px">
+<p class="pm-stat-label" style="color:var(--pm-info)">TOTAL UTILITY BUDGET</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 48k</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-piggy-bank"></i> KES 4,500 under limit</span>
+<div class="pm-progress mt-3"><div class="pm-progress-bar" style="width:78%;background:var(--pm-info)"></div></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">78% utilized this month</div>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:160px">
+<p class="pm-stat-label" style="color:var(--pm-purple)">HOUSEHOLD MEMBERS</p>
+<div class="pm-stat-value" style="margin:6px 0">4 Users</div>
+<div class="d-flex align-items-center mt-2 mb-2" style="margin-left:8px">
+<div class="pm-avatar" style="width:24px;height:24px;margin-left:-8px;border:2px solid #fff;background:var(--pm-gradient-hero)">JK</div>
+<div class="pm-avatar" style="width:24px;height:24px;margin-left:-8px;border:2px solid #fff;background:var(--pm-gradient-rose)">GK</div>
+<div class="pm-avatar" style="width:24px;height:24px;margin-left:-8px;border:2px solid #fff;background:var(--pm-gradient-blue)">BK</div>
+<div class="pm-avatar" style="width:24px;height:24px;margin-left:-8px;border:2px solid #fff;background:var(--pm-gradient-slate)">+1</div>
+</div>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('addMemberModal')"><i class="bi bi-person-plus"></i> Manage</button>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-warning)">
+<p class="pm-stat-label" style="color:var(--pm-warning)">ALERTS TRIGGERED</p>
+<div class="pm-stat-value" style="margin:6px 0">12</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-bell"></i> Last 7 days</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+<div><i class="bi bi-envelope text-muted"></i> 5 Due Reminders</div>
+<div><i class="bi bi-exclamation-triangle text-muted"></i> 2 Low Balances</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ACTIONS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Attention Needed</h3></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">AP</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Pending payment approval</div><div style="font-size:11px;color:var(--pm-muted)">Brian (Child) requested KES 500</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approvalRequestModal')">Review</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">FA</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Auto-pay failed (Card expired)</div><div style="font-size:11px;color:var(--pm-muted)">Zuku Internet · KES 5,500</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('failureHandlingModal')">Fix</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">SM</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Unused budget detected</div><div style="font-size:11px;color:var(--pm-muted)">Rollover KES 4,500 to savings?</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('rolloverSettingsModal')">Setup</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Smart Config Suggestions</h3><span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">SW</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Run Budget Wizard</div><div style="font-size:11px;color:var(--pm-muted)">Align limits to 3-month avg spend</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('budgetWizardModal')">Run</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">SP</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Enable Smart Auto-Pay</div><div style="font-size:11px;color:var(--pm-muted)">Prevent bill shock on variable utilities</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('smartAutoPayModal')">Enable</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">OS</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Block overspend payments</div><div style="font-size:11px;color:var(--pm-muted)">Enforce strict household budget caps</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('overspendPreventionModal')">Apply</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Settings Quick Links</h3><p class="pm-section-sub">Jump straight to configuration modes</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('autoPaySetupModal')"><i class="bi bi-arrow-repeat text-primary me-1"></i> New Rule</button>
+<button class="quick-action-btn" onclick="openModal('addMemberModal')"><i class="bi bi-person-plus text-success me-1"></i> Add Member</button>
+<button class="quick-action-btn" onclick="openModal('paymentSourcePriorityModal')"><i class="bi bi-sort-numeric-down text-info me-1"></i> Priorities</button>
+<button class="quick-action-btn" onclick="openModal('alertSettingsModal')"><i class="bi bi-bell text-warning me-1"></i> Alert Prefs</button>
+<button class="quick-action-btn" onclick="openModal('splitBillModal')"><i class="bi bi-pie-chart text-purple me-1" style="color:var(--pm-purple)"></i> Split Bills</button>
+<button class="quick-action-btn" onclick="openModal('childAccountModal')"><i class="bi bi-person-badge text-danger me-1"></i> Child Acct</button>
+<button class="quick-action-btn" onclick="openModal('elderlyParentModal')"><i class="bi bi-person-heart text-accent me-1" style="color:var(--pm-accent)"></i> Elder Acct</button>
+<button class="quick-action-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-shield-check text-secondary me-1"></i> System Check</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SEC 2.10.1: AUTO-PAY CONFIGURATION -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-arrow-repeat" style="color:var(--pm-primary)"></i> 2.10.1 — Auto-Pay Configuration Engine</h3><p class="pm-section-sub">Service-level automation, execution timing, amount rules, priority routing, and smart deviation bounds.</p></div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('smartAutoPayModal')"><i class="bi bi-cpu"></i> Smart Settings</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('paymentSourcePriorityModal')"><i class="bi bi-wallet2"></i> Funding Priority</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('autoPaySetupModal')"><i class="bi bi-plus"></i> Add Rule</button>
+</div>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Utility Service</th><th>Amount Rule</th><th>Timing Strategy</th><th>Funding Source</th><th>Smart Logic</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody>
+<tr>
+<td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;font-size:14px;background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-lightning-charge"></i></div>KPLC Prepaid</div></td>
+<td>KES 2,000 top-up</td>
+<td>When balance &lt; 20 units</td>
+<td><span class="pm-badge pm-badge-info">M-Pesa (Primary)</span></td>
+<td>None</td>
+<td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td>
+<td><div class="d-flex" style="gap:4px"><button class="pm-btn pm-btn-sm" onclick="openModal('editAutoPayModal')"><i class="bi bi-pencil"></i></button><button class="pm-btn pm-btn-sm" onclick="openModal('deleteRuleModal')" style="color:var(--pm-danger)"><i class="bi bi-trash"></i></button></div></td>
+</tr>
+<tr>
+<td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;font-size:14px;background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-tv"></i></div>DSTV Compact+</div></td>
+<td>Full exact bill (KES 11,500)</td>
+<td>2 days before due date</td>
+<td><span class="pm-badge pm-badge-info">Wallet (Primary)</span></td>
+<td>Block if > KES 12K</td>
+<td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td>
+<td><div class="d-flex" style="gap:4px"><button class="pm-btn pm-btn-sm" onclick="openModal('editAutoPayModal')"><i class="bi bi-pencil"></i></button><button class="pm-btn pm-btn-sm" onclick="openModal('deleteRuleModal')" style="color:var(--pm-danger)"><i class="bi bi-trash"></i></button></div></td>
+</tr>
+<tr>
+<td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;font-size:14px;background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-droplet"></i></div>NCWSC Water</div></td>
+<td>Fetch dynamic bill</td>
+<td>On due date</td>
+<td><span class="pm-badge pm-badge-info">Bank (Primary)</span></td>
+<td>Requires approval if > 15% avg</td>
+<td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td>
+<td><div class="d-flex" style="gap:4px"><button class="pm-btn pm-btn-sm" onclick="openModal('editAutoPayModal')"><i class="bi bi-pencil"></i></button><button class="pm-btn pm-btn-sm" onclick="openModal('deleteRuleModal')" style="color:var(--pm-danger)"><i class="bi bi-trash"></i></button></div></td>
+</tr>
+<tr>
+<td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;font-size:14px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-phone"></i></div>Safaricom Data</div></td>
+<td>KES 1,000 fixed</td>
+<td>1st of every month</td>
+<td><span class="pm-badge pm-badge-info">M-Pesa (Primary)</span></td>
+<td>None</td>
+<td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td>
+<td><div class="d-flex" style="gap:4px"><button class="pm-btn pm-btn-sm" onclick="openModal('editAutoPayModal')"><i class="bi bi-pencil"></i></button><button class="pm-btn pm-btn-sm" onclick="openModal('deleteRuleModal')" style="color:var(--pm-danger)"><i class="bi bi-trash"></i></button></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- SEC 2.10.2: BUDGET & ALERT SETTINGS -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-piggy-bank" style="color:var(--pm-accent)"></i> 2.10.2 — Budget Logic & Alert System</h3><p class="pm-section-sub">Category budget tracking, rollover tools, overspend protection, and comprehensive notification tuning.</p></div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('alertSettingsModal')"><i class="bi bi-bell"></i> Global Alerts</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('editBudgetModal')"><i class="bi bi-sliders"></i> Edit Limits</button>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Category Budgets</h4>
+<div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Electricity</span><span>KES 18,400 / 20,000 (92%)</span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:92%;background:var(--pm-warning)"></div></div></div>
+<div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Water</span><span>KES 6,800 / 8,000 (85%)</span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:85%;background:var(--pm-info)"></div></div></div>
+<div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>TV & Streaming</span><span>KES 14,500 / 15,000 (97%)</span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:97%;background:var(--pm-purple)"></div></div></div>
+<div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Internet</span><span>KES 8,500 / 12,000 (71%)</span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:71%;background:var(--pm-primary)"></div></div></div>
+<div class="mt-3 p-3 rounded d-flex justify-content-between align-items-center" style="background:var(--pm-surface);border:1px solid var(--pm-border)">
+<div><strong style="font-size:13px">Rollover Enabled</strong><div style="font-size:11px;color:var(--pm-muted)">Unused budget flows to Savings</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('rolloverSettingsModal')">Configure</button>
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Event Alert Toggles</h4>
+<div class="switch-item"><div><strong>Due Date Reminders</strong><div style="font-size:11px;color:var(--pm-muted)">7 days, 3 days, and 1 day before due</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
+<div class="switch-item"><div><strong>Low Balance Warnings</strong><div style="font-size:11px;color:var(--pm-muted)">When prepaid units drop below safety threshold</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
+<div class="switch-item"><div><strong>Unusual Usage Detection</strong><div style="font-size:11px;color:var(--pm-muted)">Spikes greater than 20% vs average</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
+<div class="switch-item"><div><strong>Provider Price/Tariff Changes</strong><div style="font-size:11px;color:var(--pm-muted)">Get notified when providers adjust rates</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="openModal('priceChangeNotifModal')"></div></div>
+<div class="switch-item"><div><strong>Service Outages & Maintenance</strong><div style="font-size:11px;color:var(--pm-muted)">KPLC / NCWSC local outage bulletins</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked onchange="openModal('serviceOutageNotifModal')"></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SEC 2.10.3: HOUSEHOLD MEMBER MANAGEMENT -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-people" style="color:var(--pm-purple)"></i> 2.10.3 — Household & Family Account Management</h3><p class="pm-section-sub">Add dependents, spouses, or caretakers. Assign granular permission levels, budget limits, and split responsibilities.</p></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('addMemberModal')"><i class="bi bi-person-plus"></i> Add Member</button>
+</div>
+<div class="row g-3">
+<div class="col-md-4">
+<div class="member-card position-relative">
+<span class="pm-badge pm-badge-success position-absolute" style="top:16px;right:16px">Primary Admin</span>
+<div class="d-flex align-items-center gap-3 mb-3">
+<div class="pm-avatar" style="width:48px;height:48px;font-size:16px;background:var(--pm-gradient-hero)">JK</div>
+<div><h5 style="margin:0;font-size:15px;font-weight:700">James Kamau</h5><div style="font-size:12px;color:var(--pm-muted)">Full Ownership</div></div>
+</div>
+<div class="p-2 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">
+<div class="d-flex justify-content-between mb-1"><span>Spend Limit</span><strong>Unlimited</strong></div>
+<div class="d-flex justify-content-between"><span>Access</span><strong>All 14 Utilities</strong></div>
+</div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm flex-1 w-100" onclick="openModal('memberActivityLogModal')">Activity</button></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="member-card position-relative">
+<div class="d-flex align-items-center gap-3 mb-3">
+<div class="pm-avatar" style="width:48px;height:48px;font-size:16px;background:var(--pm-gradient-rose)">GK</div>
+<div><h5 style="margin:0;font-size:15px;font-weight:700">Grace Kamau</h5><div style="font-size:12px;color:var(--pm-muted)">Spouse (Co-Payer)</div></div>
+</div>
+<div class="p-2 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">
+<div class="d-flex justify-content-between mb-1"><span>Spend Limit</span><strong>KES 30,000 / mo</strong></div>
+<div class="d-flex justify-content-between"><span>Access</span><strong>12 Utilities</strong></div>
+</div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('editMemberModal')">Manage</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('splitBillModal')">Split Bill</button></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="member-card position-relative">
+<div class="d-flex align-items-center gap-3 mb-3">
+<div class="pm-avatar" style="width:48px;height:48px;font-size:16px;background:var(--pm-gradient-blue)">BK</div>
+<div><h5 style="margin:0;font-size:15px;font-weight:700">Brian Kamau</h5><div style="font-size:12px;color:var(--pm-muted)">Child Account</div></div>
+</div>
+<div class="p-2 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">
+<div class="d-flex justify-content-between mb-1"><span>Spend Limit</span><strong>KES 2,000 / mo</strong></div>
+<div class="d-flex justify-content-between text-warning"><span>Approvals</span><strong>Req. > KES 500</strong></div>
+</div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('childAccountModal')">Controls</button><button class="pm-btn pm-btn-sm w-100 pm-btn-outline" onclick="openModal('suspendMemberModal')">Suspend</button></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="member-card position-relative">
+<div class="d-flex align-items-center gap-3 mb-3">
+<div class="pm-avatar" style="width:48px;height:48px;font-size:16px;background:var(--pm-gradient-violet)">MN</div>
+<div><h5 style="margin:0;font-size:15px;font-weight:700">Mama Nyokabi</h5><div style="font-size:12px;color:var(--pm-muted)">Elderly Parent</div></div>
+</div>
+<div class="p-2 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">
+<div class="d-flex justify-content-between mb-1"><span>Spend Limit</span><strong>None (View Only)</strong></div>
+<div class="d-flex justify-content-between text-success"><span>Auto-Pay Link</span><strong>Active (Home Meter)</strong></div>
+</div>
+<div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('elderlyParentModal')">Remote Config</button></div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- End pm-content -->
+</div><!-- End pm-main -->
+</div><!-- End pm-app -->
+
+
+<!-- ============================================================ -->
+<!-- OVER 20 EXTENSIVE MODALS -->
+<!-- ============================================================ -->
+
+<!-- 1. Auto-Pay Setup Modal (Multistep) -->
+<div class="modal fade resettable" id="autoPaySetupModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-primary me-2"></i>Create Auto-Pay Rule</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="apStepper"></div><div id="apStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: Select Utility & Type</h6><div class="mb-3"><label class="pm-form-label">Utility Account</label><select class="pm-form-control"><option>KPLC Prepaid (14825739)</option><option>NCWSC Water (290081)</option><option>DSTV (20491867421)</option><option>Safaricom Fibre (SF-40812)</option></select></div><div class="row g-3"><div class="col-md-6"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)"><i class="bi bi-calendar-check d-block mb-1" style="font-size:24px;color:var(--pm-primary)"></i><strong>Schedule Based</strong><div style="font-size:11px;color:var(--pm-muted)">Pay on fixed dates or due dates</div></div></div><div class="col-md-6"><div class="p-3 border rounded text-center" style="cursor:pointer"><i class="bi bi-thermometer-half d-block mb-1" style="font-size:24px;color:var(--pm-warning)"></i><strong>Threshold Based</strong><div style="font-size:11px;color:var(--pm-muted)">Top-up when balance drops</div></div></div></div></div><div id="apStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Define Amount & Timing</h6><div class="mb-3"><label class="pm-form-label">Amount Rule</label><select class="pm-form-control"><option>Fetch exactly full billed amount</option><option>Fixed amount (custom)</option><option>Variable, up to a monthly cap</option></select></div><div class="mb-3"><label class="pm-form-label">Set Cap / Fixed Amount (KES)</label><input type="number" class="pm-form-control" value="10000"></div><div class="mb-3"><label class="pm-form-label">Execution Timing</label><select class="pm-form-control"><option>2 days before due date</option><option>Exactly on due date</option><option>5 days before due date</option><option>1st of every month</option></select></div></div><div id="apStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 3: Guardrails & Funding</h6><div class="mb-3"><label class="pm-form-label">Primary Funding Source</label><select class="pm-form-control"><option>PayMo Wallet</option><option>M-Pesa 0712***890</option><option>Equity Bank ***4521</option></select></div><div class="mb-3"><label class="pm-form-label">Fallback Funding Source</label><select class="pm-form-control"><option>M-Pesa 0712***890</option><option>PayMo Wallet</option><option>None (Fail if primary fails)</option></select></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Require manual approval if bill is 20% higher than average</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Notify me instantly upon execution</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="apNextBtn" onclick="nextApStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 2. Edit Auto-Pay Modal -->
+<div class="modal fade resettable" id="editAutoPayModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Auto-Pay Rule</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Utility</label><input class="pm-form-control" value="KPLC Prepaid (14825739)" disabled style="background:var(--pm-surface-2)"></div><div class="mb-3"><label class="pm-form-label">Top-up Amount</label><input type="number" class="pm-form-control" value="2000"></div><div class="mb-3"><label class="pm-form-label">Trigger Condition</label><select class="pm-form-control"><option>When balance drops below 20 units</option><option>When balance drops below 50 units</option><option>Weekly on Monday</option></select></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Rule Active</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('editAutoPayModal','Rule updated successfully.','')">Save Changes</button></div></div></div></div>
+
+<!-- 3. Smart Auto-Pay Modal -->
+<div class="modal fade resettable" id="smartAutoPayModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cpu text-purple me-2" style="color:var(--pm-purple)"></i>Smart Auto-Pay Logic</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft);font-size:13px"><i class="bi bi-stars me-1 text-purple" style="color:var(--pm-purple)"></i> Let AI manage your variable utility bills to prevent bill shock and optimize liquidity.</div><div class="switch-item"><div><strong>Deviation Guard</strong><div style="font-size:11px;color:var(--pm-muted)">Only auto-pay if bill is within X% of your 6-month average</div></div><div class="d-flex align-items-center gap-2"><input class="pm-form-control pm-form-control-sm" style="width:70px" value="15"><span style="font-size:12px">%</span><div class="form-check form-switch ms-2"><input class="form-check-input" type="checkbox" checked></div></div></div><div class="switch-item"><div><strong>Hard Cap Alert</strong><div style="font-size:11px;color:var(--pm-muted)">Pause auto-pay and alert me if single bill exceeds KES limit</div></div><div class="d-flex align-items-center gap-2"><input class="pm-form-control pm-form-control-sm" style="width:100px" value="12000"><div class="form-check form-switch ms-2"><input class="form-check-input" type="checkbox" checked></div></div></div><div class="switch-item"><div><strong>Seasonal Adjustments</strong><div style="font-size:11px;color:var(--pm-muted)">Automatically allow higher electricity thresholds in cold months (Jun-Aug)</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="switch-item"><div><strong>Liquidity Check</strong><div style="font-size:11px;color:var(--pm-muted)">Delay non-critical payments by 2 days if main bank account balance is low</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('smartAutoPayModal','Smart logic applied to all eligible auto-pay rules.','')">Activate Smart Logic</button></div></div></div></div>
+
+<!-- 4. Budget Wizard Modal -->
+<div class="modal fade resettable" id="budgetWizardModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-magic text-accent me-2" style="color:var(--pm-accent)"></i>Budget Allocation Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="bwStepper"></div><div id="bwStep1" class="fade-step active"><h6 style="font-weight:700">Analyze & Forecast</h6><p style="font-size:13px;color:var(--pm-ink-soft)">PayMo has analyzed your last 6 months of utility transactions.</p><div class="row g-3"><div class="col-6"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">AVERAGE MONTHLY SPEND</div><div style="font-size:22px;font-weight:700">KES 46,200</div></div></div><div class="col-6"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)"><div style="font-size:11px;color:#047857;font-weight:700">RECOMMENDED BUDGET</div><div style="font-size:22px;font-weight:700;color:var(--pm-accent)">KES 50,000</div></div></div></div><div class="mt-3 text-center"><button class="pm-btn pm-btn-primary" onclick="nextBwStep()">Generate Plan <i class="bi bi-arrow-right"></i></button></div></div><div id="bwStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Proposed Allocation</h6><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Electricity</span><span><input class="pm-form-control p-1 text-end" style="width:100px;height:24px" value="20000"></span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:40%;background:var(--pm-warning)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Water</span><span><input class="pm-form-control p-1 text-end" style="width:100px;height:24px" value="8000"></span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:16%;background:var(--pm-info)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>TV/Internet</span><span><input class="pm-form-control p-1 text-end" style="width:100px;height:24px" value="15000"></span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:30%;background:var(--pm-purple)"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Airtime/Gas</span><span><input class="pm-form-control p-1 text-end" style="width:100px;height:24px" value="7000"></span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:14%;background:var(--pm-accent)"></div></div></div><div class="d-flex justify-content-between align-items-center p-3 rounded" style="background:var(--pm-surface-2)"><span style="font-weight:700">Total Validated</span><strong style="font-size:18px;color:var(--pm-primary)">KES 50,000</strong></div></div></div><div class="modal-footer" id="bwFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="bwNextBtn" style="display:none" onclick="processAction('budgetWizardModal','Budget perfectly aligned and applied!','')">Save Budget</button></div></div></div></div>
+
+<!-- 5. Edit Budget Modal -->
+<div class="modal fade resettable" id="editBudgetModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Edit Budget Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Electricity Limit</label><input type="number" class="pm-form-control" value="20000"></div><div class="mb-3"><label class="pm-form-label">Water Limit</label><input type="number" class="pm-form-control" value="8000"></div><div class="mb-3"><label class="pm-form-label">TV & Internet</label><input type="number" class="pm-form-control" value="15000"></div><div class="mb-3"><label class="pm-form-label">Airtime & Gas</label><input type="number" class="pm-form-control" value="5000"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('editBudgetModal','Limits updated!','')">Update Limits</button></div></div></div></div>
+
+<!-- 6. Alert Settings Modal -->
+<div class="modal fade resettable" id="alertSettingsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Global Alert Preferences</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Notification Category</th><th>Push</th><th>SMS</th><th>Email</th><th>WhatsApp</th></tr></thead><tbody><tr><td>Payment Due Reminders</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr><tr><td>Auto-Pay Executions & Receipts</td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox" checked></td><td><input type="checkbox"></td></tr><tr><td>Auto-Pay Failures & Issues</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr><tr><td>Budget Exceeded Warning</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr><tr><td>Household Member Activity</td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('alertSettingsModal','Alert preferences saved globally.','')">Save Preferences</button></div></div></div></div>
+
+<!-- 7. Add Member Modal (Multistep) -->
+<div class="modal fade resettable" id="addMemberModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-plus text-success me-2"></i>Onboard Household Member</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="memStepper"></div><div id="memStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: Invite Details</h6><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Full Name</label><input class="pm-form-control" placeholder="E.g., Jane Doe"></div><div class="col-md-6"><label class="pm-form-label">Phone Number (Invite Link)</label><input class="pm-form-control" placeholder="07XX XXX XXX"></div><div class="col-12"><label class="pm-form-label">Household Role</label><select class="pm-form-control"><option>Spouse / Partner</option><option>Child / Dependent</option><option>Elderly Parent</option><option>Tenant / Roommate</option><option>Caretaker</option></select></div></div></div><div id="memStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Permissions & Budget</h6><div class="mb-3"><label class="pm-form-label">Action Access</label><select class="pm-form-control"><option>Can view & pay (Requires approval for large sums)</option><option>Full Admin (Equal rights)</option><option>View only (Cannot trigger payments)</option></select></div><div class="mb-3"><label class="pm-form-label">Monthly Spending Limit</label><input type="number" class="pm-form-control" placeholder="Amount in KES"></div><div class="mb-3"><label class="pm-form-label">Approval Threshold</label><div class="p-2 border rounded d-flex align-items-center"><input class="form-check-input me-2" type="checkbox" checked><span style="font-size:13px">Require my approval for any payment above KES</span><input type="number" class="pm-form-control pm-form-control-sm ms-2" style="width:100px" value="2000"></div></div></div><div id="memStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 3: Assign Utilities</h6><p style="font-size:13px;color:var(--pm-ink-soft)">Select which utilities this member can view/manage.</p><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Home Electricity (Prepaid)</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">NCWSC Water (Home)</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label">Office Westlands (Postpaid)</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Zuku Internet</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label">Parent Home Electricity</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="memNextBtn" onclick="nextMemStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 8. Edit Member Modal -->
+<div class="modal fade resettable" id="editMemberModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>Manage Grace Kamau</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Change Role</label><select class="pm-form-control"><option selected>Spouse (Co-Payer)</option><option>Full Admin</option><option>View Only</option></select></div><div class="mb-3"><label class="pm-form-label">Adjust Spending Limit</label><input type="number" class="pm-form-control" value="30000"></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Receive their activity notifications</label></div><button class="pm-btn pm-btn-outline w-100 text-danger" onclick="openModal('suspendMemberModal');closeModal('editMemberModal')">Suspend Member Access</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('editMemberModal','Member profile updated!','')">Save</button></div></div></div></div>
+
+<!-- 9. Split Bill Modal -->
+<div class="modal fade resettable" id="splitBillModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pie-chart me-2" style="color:var(--pm-purple)"></i>Automated Bill Split</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select Utility</label><select class="pm-form-control"><option>Safaricom Fibre (Internet)</option><option>NCWSC Water</option><option>DSTV Compact+</option></select></div><div class="mb-3"><label class="pm-form-label">Split With</label><select class="pm-form-control"><option>Grace Kamau</option><option>Brian Kamau</option><option>External Number...</option></select></div><div class="mb-3"><label class="pm-form-label">Split Ratio</label><div class="d-flex gap-2"><div class="flex-1"><label style="font-size:11px;color:var(--pm-muted)">You</label><select class="pm-form-control"><option>50%</option><option>60%</option><option>100%</option></select></div><div class="flex-1"><label style="font-size:11px;color:var(--pm-muted)">Them</label><select class="pm-form-control"><option>50%</option><option>40%</option><option>0%</option></select></div></div></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Auto-send payment request via PayMo/WhatsApp 3 days before due date</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('splitBillModal','Split logic applied. Requests will be routed automatically.','')">Set Split Rule</button></div></div></div></div>
+
+<!-- 10. Child Account Modal -->
+<div class="modal fade resettable" id="childAccountModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge text-danger me-2"></i>Child Account Controls (Brian)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:12px"><i class="bi bi-shield-lock me-1"></i> Strict guardrails are active for this account. They cannot add new utilities or view global budgets.</div><div class="mb-3"><label class="pm-form-label">Monthly Pocket Allowance (Utilities/Airtime)</label><input type="number" class="pm-form-control" value="2000"></div><div class="mb-3"><label class="pm-form-label">Max single transaction</label><input type="number" class="pm-form-control" value="500"></div><div class="switch-item"><div><strong>Block Airtime Resale</strong><div style="font-size:11px;color:var(--pm-muted)">Prevent purchasing airtime for non-linked numbers</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="switch-item border-0"><div><strong>Require Approval</strong><div style="font-size:11px;color:var(--pm-muted)">Forward all payment requests to my app</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('childAccountModal','Child account controls strictly enforced.','')">Update Controls</button></div></div></div></div>
+
+<!-- 11. Elderly Parent Modal -->
+<div class="modal fade resettable" id="elderlyParentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-heart me-2" style="color:var(--pm-accent)"></i>Elderly Parent Link (Mama Nyokabi)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft);font-size:12px">This connection allows you to remotely monitor and fund utilities for your parent without requiring them to use the app.</div><div class="switch-item"><div><strong>Auto-fund Electricity</strong><div style="font-size:11px;color:var(--pm-muted)">If token < 15, auto-buy KES 1,000 using my Wallet</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="switch-item"><div><strong>Pay Monthly Water</strong><div style="font-size:11px;color:var(--pm-muted)">Auto-settle Nyeri Water bill from my M-Pesa</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="switch-item border-0"><div><strong>Send SMS Updates</strong><div style="font-size:11px;color:var(--pm-muted)">Send "Token loaded" SMS directly to her phone</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('elderlyParentModal','Elderly care automation synced!','')">Save Routines</button></div></div></div></div>
+
+<!-- 12. Payment Source Priority Modal -->
+<div class="modal fade resettable" id="paymentSourcePriorityModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sort-numeric-down text-info me-2"></i>Global Funding Priority</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Drag and drop to set the default order PayMo will attempt to charge for auto-payments.</p><div class="source-drag-item"><i class="bi bi-grip-vertical text-muted"></i><span class="pm-badge pm-badge-info">1</span><i class="bi bi-wallet2 text-primary mx-2"></i><strong>PayMo Wallet</strong> (KES 24,500)</div><div class="source-drag-item"><i class="bi bi-grip-vertical text-muted"></i><span class="pm-badge pm-badge-info">2</span><i class="bi bi-phone text-accent mx-2"></i><strong>M-Pesa</strong> (0712***890)</div><div class="source-drag-item"><i class="bi bi-grip-vertical text-muted"></i><span class="pm-badge pm-badge-info">3</span><i class="bi bi-bank text-info mx-2"></i><strong>Equity Bank</strong> (***4521)</div><div class="source-drag-item"><i class="bi bi-grip-vertical text-muted"></i><span class="pm-badge pm-badge-info">4</span><i class="bi bi-credit-card text-muted mx-2"></i><strong>Visa Card</strong> (***9981)</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('paymentSourcePriorityModal','Funding cascade order updated globally.','')">Save Order</button></div></div></div></div>
+
+<!-- 13. Failure Handling Modal -->
+<div class="modal fade resettable" id="failureHandlingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Auto-Pay Failure Resolution</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="border:1px solid var(--pm-danger);background:var(--pm-surface)"><div class="d-flex justify-content-between mb-1"><strong>Zuku Internet</strong><span class="pm-badge pm-badge-danger">Failed</span></div><div style="font-size:12px;color:var(--pm-muted)">Reason: Visa Card expired. Primary & Fallback failed.</div><div style="font-size:12px;font-weight:600;margin-top:4px">Amount: KES 5,500</div></div><div class="mb-3"><label class="pm-form-label">Select new source to retry immediately</label><select class="pm-form-control"><option>PayMo Wallet (KES 24,500)</option><option>M-Pesa 0712***890</option><option>Equity Bank ***4521</option></select></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Update the auto-pay rule with this new source</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('failureHandlingModal','Payment retried successfully using PayMo Wallet. Rule updated.','TXN-RETRY-881')">Retry Payment</button></div></div></div></div>
+
+<!-- 14. Rollover Settings Modal -->
+<div class="modal fade resettable" id="rolloverSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-piggy-bank text-info me-2"></i>Budget Rollover & Savings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);font-size:13px">You are currently <strong>KES 4,500</strong> under budget for this month across all utilities.</div><div class="switch-item"><div><strong>Enable Auto-Rollover</strong><div style="font-size:11px;color:var(--pm-muted)">Sweep unspent utility budget at month-end</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="mb-3 mt-3"><label class="pm-form-label">Sweep Destination</label><select class="pm-form-control"><option>PayMo Savings (Mali) - 8% p.a</option><option>PayMo Main Wallet</option><option>M-Shwari Lock Savings</option></select></div><button class="pm-btn w-100 pm-btn-outline" onclick="processAction('rolloverSettingsModal','Manual sweep completed! KES 4,500 moved to Savings.','')">Sweep KES 4,500 Now</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('rolloverSettingsModal','Auto-rollover settings saved.','')">Save Settings</button></div></div></div></div>
+
+<!-- 15. Overspend Prevention Modal -->
+<div class="modal fade resettable" id="overspendPreventionModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-warning me-2"></i>Overspend Prevention</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">If a payment exceeds the category budget:</label><select class="pm-form-control"><option>Block the payment entirely</option><option>Require explicit admin PIN to proceed</option><option>Send warning alert but allow payment</option><option>Do nothing</option></select></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Apply this strictly to Household Members (Child/Spouse accounts)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('overspendPreventionModal','Overspend guards enforced.','')">Enforce Policy</button></div></div></div></div>
+
+<!-- 16. Price Change Notif Modal -->
+<div class="modal fade resettable" id="priceChangeNotifModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Tariff / Price Change Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">PayMo monitors EPRA and utility providers for gazetted rate changes.</p><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Alert me if KPLC cost per kWh increases</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Alert me if Water tariff bands shift</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Alert me if TV/Internet subscription prices rise</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Alert me on Gas/LPG market price swings</label></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Confirm</button></div></div></div></div>
+
+<!-- 17. Service Outage Notif Modal -->
+<div class="modal fade resettable" id="serviceOutageNotifModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cone-striped text-danger me-2"></i>Outage & Maintenance Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">We map your linked meter locations to utility provider maintenance schedules.</p><div class="mb-3"><label class="pm-form-label">Alert me before planned outages via:</label><div class="d-flex gap-3 mt-1"><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Push</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">SMS</label></div></div></div><div class="mb-3"><label class="pm-form-label">Lead Time</label><select class="pm-form-control"><option>24 Hours before</option><option>48 Hours before</option><option>On the morning of outage</option></select></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Confirm</button></div></div></div></div>
+
+<!-- 18. Member Activity Log Modal -->
+<div class="modal fade resettable" id="memberActivityLogModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-card-text me-2"></i>Activity Log: James Kamau</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date & Time</th><th>Action</th><th>Target</th><th>Value</th></tr></thead><tbody><tr><td>27 Jun, 14:32</td><td>Created Auto-Pay Rule</td><td>Safaricom Fibre</td><td>KES 5,999</td></tr><tr><td>25 Jun, 09:15</td><td>Added Household Member</td><td>Grace Kamau</td><td>—</td></tr><tr><td>24 Jun, 18:00</td><td>Paid Bill</td><td>Office Westlands</td><td>KES 8,400</td></tr><tr><td>22 Jun, 11:45</td><td>Updated Budget Limit</td><td>TV & Streaming</td><td>KES 15,000</td></tr><tr><td>18 Jun, 08:30</td><td>Bought Airtime</td><td>0712***890</td><td>KES 1,000</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 19. Approval Request Modal -->
+<div class="modal fade resettable" id="approvalRequestModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Review Payment Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-4"><div class="pm-avatar mx-auto mb-2" style="width:56px;height:56px;font-size:20px;background:var(--pm-gradient-blue)">BK</div><h6 style="font-weight:700;margin:0">Brian Kamau</h6><p style="font-size:12px;color:var(--pm-muted)">Child Account</p></div><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Requested for</span><strong>Safaricom Data Bundle</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES 500</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Limit check</span><strong class="text-warning">Requires approval (> 0 KES)</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Funding source</span><strong>M-Pesa (Primary Admin)</strong></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-danger" onclick="processAction('approvalRequestModal','Request declined. Brian notified.','')">Reject</button><button class="pm-btn pm-btn-primary" onclick="processAction('approvalRequestModal','Request approved and payment executing.','')">Approve & Pay KES 500</button></div></div></div></div>
+
+<!-- 20. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-primary me-2"></i>Settings & Security Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Auto-Pay Redundancy</strong><div style="font-size:11px;color:var(--pm-muted);margin-left:24px">Fallback payment sources are configured for all 8 active rules.</div></div></div><div class="status-row"><div><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Budget Alignment</strong><div style="font-size:11px;color:var(--pm-muted);margin-left:24px">Allocated budget perfectly matches expected forecast.</div></div></div><div class="status-row"><div><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i><strong>Stale Permission</strong><div style="font-size:11px;color:var(--pm-muted);margin-left:24px">Caretaker Joe account inactive for 45 days. Consider revoking.</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('suspendMemberModal')">Revoke</button></div><div class="status-row border-0"><div><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Overspend Protection</strong><div style="font-size:11px;color:var(--pm-muted);margin-left:24px">Active and bound to household members.</div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 21. Notifications Modal -->
+<div class="modal fade resettable" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>System Notifications</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:400px;overflow-y:auto"><div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Action Required</strong><div style="font-size:11px;color:var(--pm-muted)">Payment request from Brian Kamau for KES 500 pending.</div><button class="pm-btn pm-btn-sm mt-2" onclick="openModal('approvalRequestModal');closeModal('notificationsModal')">Review</button></div><div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Auto-Pay Failure</strong><div style="font-size:11px;color:var(--pm-muted)">Zuku Internet payment failed due to expired card.</div><button class="pm-btn pm-btn-sm mt-2" onclick="openModal('failureHandlingModal');closeModal('notificationsModal')">Fix</button></div><div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>Automation Success</strong><div style="font-size:11px;color:var(--pm-muted)">Parent Home KPLC token auto-topped up with KES 1,500.</div></div><div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);font-size:13px"><strong>Budget Alert</strong><div style="font-size:11px;color:var(--pm-muted)">Electricity category has reached 92% of KES 20,000 limit.</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 22. Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div><h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5><p style="font-size:13px;color:var(--pm-muted)">Primary Administrator · Joined 2023</p><div class="text-start mt-4"><div class="switch-item"><div><strong>Two-Factor Authentication</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="switch-item"><div><strong>Biometric Login</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Suspend Member Modal -->
+<div class="modal fade resettable" id="suspendMemberModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-x text-danger me-2"></i>Suspend Member Access</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Are you sure you want to suspend this household member's access to utility payments?</p><div class="p-3 rounded mb-3 text-center" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-weight:600">They will no longer be able to initiate payments, but past history will be retained.</div><div class="mb-3"><label class="pm-form-label">Duration</label><select class="pm-form-control"><option>Indefinitely</option><option>7 Days</option><option>30 Days</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('suspendMemberModal','Member suspended successfully.','')">Confirm Suspend</button></div></div></div></div>
+
+<!-- 24. Delete Rule Modal -->
+<div class="modal fade resettable" id="deleteRuleModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-trash text-danger me-2"></i>Delete Auto-Pay Rule</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Are you sure you want to permanently delete this automation rule?</p><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-1"><span class="text-muted">Utility</span><strong>Selected Service</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Impact</span><strong>Manual payments required</strong></div></div><p style="font-size:12px;color:var(--pm-danger)">This action cannot be undone.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('deleteRuleModal','Auto-pay rule deleted forever.','')">Delete Permanently</button></div></div></div></div>
+
+<!-- 25. Activity History Modal -->
+<div class="modal fade resettable" id="activityHistoryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>System Automation Audit Log</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive" style="max-height:400px;overflow-y:auto"><table class="pm-table"><thead><tr><th>Timestamp</th><th>Action</th><th>Component</th><th>Initiator</th></tr></thead><tbody><tr><td>27 Jun, 16:00</td><td>Rule Triggered</td><td>KPLC Prepaid Top-up</td><td>System (Auto)</td></tr><tr><td>26 Jun, 09:14</td><td>Budget Sweep</td><td>KES 4,500 to Savings</td><td>System (Auto)</td></tr><tr><td>25 Jun, 11:22</td><td>Permissions Edited</td><td>Brian (Child) Limits</td><td>James Kamau</td></tr><tr><td>24 Jun, 10:05</td><td>Rule Created</td><td>DSTV Compact+ Auto-pay</td><td>James Kamau</td></tr><tr><td>22 Jun, 14:30</td><td>Priority Reordered</td><td>Global Funding Srcs</td><td>James Kamau</td></tr><tr><td>20 Jun, 08:00</td><td>Alert Sent</td><td>Water Due Reminder</td><td>System (Auto)</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('activityHistoryModal','Audit log exported as CSV.','')"><i class="bi bi-download"></i> Export Log</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Saving configuration...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+
+let apStep=1;
+function nextApStep(){if(apStep===3){showLoading('#autoPaySetupModal .modal-body',()=>{apStep=4;renderStepper('apStepper',['Utility','Rule','Funding'],3);document.getElementById('apNextBtn').textContent='Done';processAction('autoPaySetupModal','Auto-Pay Rule created successfully!','');});return;}if(apStep>=4){closeModal('autoPaySetupModal');return;}apStep++;renderStepper('apStepper',['Utility','Rule','Funding'],apStep);showFlow('apStep',apStep,3);if(apStep===3)document.getElementById('apNextBtn').innerHTML='Save Rule <i class="bi bi-check"></i>';}
+
+let bwStep=1;
+function nextBwStep(){showLoading('#budgetWizardModal .modal-body',()=>{bwStep=2;renderStepper('bwStepper',['Analyze','Adjust','Confirm'],bwStep);showFlow('bwStep',bwStep,2);document.getElementById('bwNextBtn').style.display='inline-flex';});}
+
+let memStep=1;
+function nextMemStep(){if(memStep===3){showLoading('#addMemberModal .modal-body',()=>{memStep=4;processAction('addMemberModal','Household member invited. They will receive an SMS with setup instructions.','');});return;}if(memStep>=4){closeModal('addMemberModal');return;}memStep++;renderStepper('memStepper',['Invite','Limits','Assign'],memStep);showFlow('memStep',memStep,3);if(memStep===3)document.getElementById('memNextBtn').innerHTML='Send Invite <i class="bi bi-send"></i>';}
+
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;apStep=1;bwStep=1;memStep=1;renderStepper('apStepper',['Utility','Rule','Funding'],1);renderStepper('bwStepper',['Analyze','Adjust','Confirm'],1);renderStepper('memStepper',['Invite','Limits','Assign'],1);showFlow('apStep',1,3);showFlow('bwStep',1,2);showFlow('memStep',1,3);});});}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  renderStepper('apStepper',['Utility','Rule','Funding'],1);
+  renderStepper('bwStepper',['Analyze','Adjust','Confirm'],1);
+  renderStepper('memStepper',['Invite','Limits','Assign'],1);
+});
+</script>
+</body>
+</html>

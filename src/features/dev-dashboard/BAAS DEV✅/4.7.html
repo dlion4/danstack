@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Dev Portal — Integration Architecture & Patterns</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#0F172A;--pm-bg-2:#1E293B;--pm-surface:#1E293B;--pm-surface-2:#334155;--pm-ink:#F8FAFC;--pm-ink-soft:#94A3B8;--pm-muted:#64748B;--pm-border:#334155;--pm-border-2:#475569;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);--pm-shadow-sm:0 1px 2px rgba(0,0,0,0.2);--pm-shadow-md:0 4px 12px rgba(0,0,0,0.3);--pm-shadow-lg:0 10px 30px rgba(0,0,0,0.4);--pm-shadow-xl:0 20px 50px rgba(0,0,0,0.5);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.3);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif;--pm-font-mono:'Fira Code',monospace;}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.1),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(16,185,129,0.08),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-bg-2);border-right:1px solid var(--pm-border);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:8px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:var(--pm-ink-soft);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:var(--pm-surface-2)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid var(--pm-primary);animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(30,41,59,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em;color:#fff}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:var(--pm-bg);color:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:var(--pm-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary-light);border-color:var(--pm-primary)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:var(--pm-surface);border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600;color:#fff}
+.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-accent)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary-light);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}
+.pm-card:hover{box-shadow:var(--pm-shadow-md);border-color:var(--pm-border-2)}
+.pm-card-accent{background:var(--pm-gradient-slate);border:1px solid var(--pm-primary);position:relative;overflow:hidden}
+.pm-card-accent::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--pm-gradient-hero)}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#fff}
+.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:rgba(16,185,129,0.15);color:#34D399;border:1px solid rgba(16,185,129,0.3)}
+.pm-badge-warning{background:rgba(245,158,11,0.15);color:#FBBF24;border:1px solid rgba(245,158,11,0.3)}
+.pm-badge-danger{background:rgba(239,68,68,0.15);color:#F87171;border:1px solid rgba(239,68,68,0.3)}
+.pm-badge-info{background:rgba(59,130,246,0.15);color:#60A5FA;border:1px solid rgba(59,130,246,0.3)}
+.pm-badge-purple{background:rgba(139,92,246,0.15);color:#A78BFA;border:1px solid rgba(139,92,246,0.3)}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:var(--pm-surface);cursor:pointer;transition:all .2s;color:#fff;text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);border-color:var(--pm-border-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}
+.pm-btn-primary{background:var(--pm-primary);border-color:var(--pm-primary);color:#fff}
+.pm-btn-primary:hover{background:var(--pm-primary-light);border-color:var(--pm-primary-light);color:#fff;box-shadow:var(--pm-shadow-glow)}
+.pm-btn-accent{background:var(--pm-accent);border-color:var(--pm-accent);color:#fff}
+.pm-btn-accent:hover{background:#34D399;border-color:#34D399;color:#fff}
+.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px;color:#fff}
+.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px;color:var(--pm-ink)}
+.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}
+.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}
+.pm-table tr:hover td{background:rgba(255,255,255,0.02)}
+.modal-content{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl);color:var(--pm-ink)}
+.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}
+.btn-close{filter:invert(1) grayscale(100%) brightness(200%)}
+.modal-title{font-family:var(--pm-font-display);font-weight:700;color:#fff}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;background:var(--pm-bg);color:#fff;transition:all .2s}
+.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}
+.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}
+.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}
+.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff;box-shadow:var(--pm-shadow-glow)}
+.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}
+.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}
+.pm-step.active .pm-step-label{color:var(--pm-primary-light)}
+.pm-step.completed .pm-step-label{color:var(--pm-accent)}
+.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-step.completed + .pm-step-line, .pm-step.completed .pm-step-line{background:var(--pm-accent)}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-bg);border-radius:var(--pm-r-sm);overflow-x:auto;border:1px solid var(--pm-border)}
+.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}
+.pm-tab-pill.active{background:var(--pm-surface);color:var(--pm-primary-light);box-shadow:var(--pm-shadow-sm);border:1px solid var(--pm-border)}
+.code-block{background:#000;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);padding:16px;font-family:var(--pm-font-mono);font-size:13px;color:#A78BFA;overflow-x:auto;position:relative}
+.code-copy{position:absolute;top:8px;right:8px;background:var(--pm-surface);border:1px solid var(--pm-border);color:var(--pm-ink-soft);border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer}
+.code-copy:hover{color:#fff;background:var(--pm-surface-2)}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(30,41,59,0.85);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}
+.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary-light);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.arch-diagram{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;background:var(--pm-bg);border:1px solid var(--pm-border);border-radius:var(--pm-r-md)}
+.arch-node{background:var(--pm-surface-2);border:1px solid var(--pm-border-2);padding:12px;border-radius:var(--pm-r-sm);text-align:center;min-width:100px;font-size:12px;font-weight:600}
+.arch-link{flex:1;height:2px;background:var(--pm-primary);position:relative}
+.arch-link::after{content:'▶';position:absolute;top:-10px;right:-5px;color:var(--pm-primary);font-size:14px}
+.integration-card{border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;height:100%;transition:all .2s;background:var(--pm-surface)}
+.integration-card:hover{border-color:var(--pm-primary);transform:translateY(-2px);box-shadow:var(--pm-shadow-md)}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dev Dashboard"><i class="bi bi-terminal"></i></button>
+<button class="pm-nav-item" title="API Reference"><i class="bi bi-braces"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-broadcast"></i></button>
+<button class="pm-nav-item active" title="Architecture"><i class="bi bi-diagram-3"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Sandbox"><i class="bi bi-box"></i></button>
+<button class="pm-nav-item" title="Security"><i class="bi bi-shield-check"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Support"><i class="bi bi-life-preserver"></i></button>
+</aside>
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title">
+<div class="d-flex align-items-center gap-3">
+<div class="pm-avatar" style="width:40px;height:40px;font-size:18px"><i class="bi bi-diagram-3"></i></div>
+<div>
+<h1>Integration Architecture & Patterns</h1>
+<p>System topologies, integration methods, and scalability frameworks for PayMo BaaS</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search architecture patterns, caching, mesh...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-heart-pulse"></i></button>
+<button class="pm-header-btn" onclick="openModal('drMonitorModal')"><i class="bi bi-shield-exclamation"></i></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-info)">DL</div><div><div class="pm-name">Dev Lead</div><div class="pm-role">System Architect</div></div></div>
+</div>
+</header>
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Developer Portal</a> / <a href="#">Guides</a> / <strong>Architecture</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px;color:#fff">PAGE 4.7 — INTEGRATION ARCHITECTURE & PATTERNS</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Define how your systems connect to PayMo via direct APIs, embedded checkouts, microservices, or legacy translators.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('archGuideModal')"><i class="bi bi-download text-primary"></i> Arch Guide</button>
+<button class="pm-btn" onclick="openModal('testIntegrationModal')"><i class="bi bi-bug text-warning"></i> Test Simulator</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('boilerplateModal')"><i class="bi bi-code-slash"></i> Gen Boilerplate</button>
+</div>
+</div>
+<div class="pm-content">
+
+<!-- Top Stats -->
+<div class="row g-3">
+<div class="col-lg-3 col-6">
+<div class="pm-card pm-card-accent" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-primary-light)">ACTIVE PATTERN</p>
+<div class="pm-stat-value" style="margin:6px 0;font-size:22px">Hybrid Sync</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Online</span>
+<div style="font-size:11px;color:var(--pm-ink-soft);margin-top:8px">API + Webhooks + Offline Queue</div>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-accent)">API SLA HEALTH</p>
+<div class="pm-stat-value" style="margin:6px 0">99.99%</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-activity"></i> p95 < 200ms</span>
+<div class="progress mt-2" style="height:4px;background:var(--pm-bg)"><div class="progress-bar bg-success" style="width:99.99%"></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">CACHE HIT RATE</p>
+<div class="pm-stat-value" style="margin:6px 0">84.2%</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-lightning"></i> Redis Edge</span>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">Saved ~1.2M backend queries today</div>
+</div>
+</div>
+<div class="col-lg-3 col-6">
+<div class="pm-card" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-purple)">MESH NODES</p>
+<div class="pm-stat-value" style="margin:6px 0">12 Active</div>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-diagram-2"></i> gRPC Connected</span>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">Cross-region availability group</div>
+</div>
+</div>
+</div>
+
+<!-- Section 4.7.1 -->
+<div class="pm-card mt-2">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-puzzle text-primary"></i> 4.7.1 — Integration Patterns</h3>
+<p class="pm-section-sub">Select and configure how your application frontend and backend interface with PayMo.</p>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-md-3">
+<div class="integration-card d-flex flex-column">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-primary);color:#fff"><i class="bi bi-hdd-network"></i></div>
+<h6 style="font-weight:700">Direct API</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);flex:1">RESTful server-to-server calls. Includes webhook listeners, idempotency, and fallback polling.</p>
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm flex-1 w-100" onclick="openModal('directApiModal')">Configure</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('webhookConfigModal')">Webhooks</button></div>
+</div>
+</div>
+<div class="col-md-3">
+<div class="integration-card d-flex flex-column">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-info);color:#fff"><i class="bi bi-window-sidebar"></i></div>
+<h6 style="font-weight:700">Embedded Checkout</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);flex:1">iFrame, Popups, or Redirects. Reduces PCI scope while maintaining UX.</p>
+<button class="pm-btn pm-btn-sm mt-auto" onclick="openModal('embeddedCheckoutModal')">Customize Checkout</button>
+</div>
+</div>
+<div class="col-md-3">
+<div class="integration-card d-flex flex-column">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-purple);color:#fff"><i class="bi bi-palette"></i></div>
+<h6 style="font-weight:700">White-Label</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);flex:1">Fully branded payment pages, emails, SMS, and custom domains mapping.</p>
+<button class="pm-btn pm-btn-sm mt-auto" onclick="openModal('whiteLabelModal')">Theme & Domain</button>
+</div>
+</div>
+<div class="col-md-3">
+<div class="integration-card d-flex flex-column">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-accent);color:#fff"><i class="bi bi-shuffle"></i></div>
+<h6 style="font-weight:700">Hybrid Setup</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);flex:1">Mix API + SDK. Offline queueing, bulk background processing.</p>
+<button class="pm-btn pm-btn-sm mt-auto" onclick="openModal('hybridSyncModal')">Sync Settings</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Section 4.7.2 -->
+<div class="pm-card mt-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-building text-warning"></i> 4.7.2 — Enterprise Architecture</h3>
+<p class="pm-section-sub">Topology mapping for complex infrastructures including legacy cores and multi-tenant SaaS.</p>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('idempotencyModal')"><i class="bi bi-key text-warning"></i> Idempotency Keys</button>
+</div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div style="background:var(--pm-bg);border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;height:100%">
+<h6 style="font-weight:700;color:var(--pm-purple-light)"><i class="bi bi-boxes"></i> Microservices Mesh</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:12px">Integrate PayMo via sidecar proxies. gRPC support enabled.</p>
+<div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
+<span style="font-size:12px">Istio/Envoy Proxy</span><span class="pm-badge pm-badge-success">Active</span>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+<span style="font-size:12px">Event-driven triggers</span><span class="pm-badge pm-badge-info">Kafka</span>
+</div>
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('meshConfigModal')">Mesh Config</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('grpcSetupModal')">gRPC Specs</button></div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('circuitBreakerModal')">Circuit Breakers</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div style="background:var(--pm-bg);border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;height:100%">
+<h6 style="font-weight:700;color:var(--pm-danger-light)"><i class="bi bi-device-hdd"></i> Legacy Integrations</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:12px">Bridges for older systems (SOAP, File-drop, AS400).</p>
+<div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
+<span style="font-size:12px">SOAP to REST Bridge</span><span class="pm-badge pm-badge-warning">Configured</span>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+<span style="font-size:12px">SFTP Batch Drops</span><span class="pm-badge pm-badge-purple">CSV/XML</span>
+</div>
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('soapTranslatorModal')">SOAP Translator</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('fileIntegrationModal')">SFTP Config</button></div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('legacyDbSyncModal')">Database Sync Rules</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div style="background:var(--pm-bg);border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;height:100%">
+<h6 style="font-weight:700;color:var(--pm-accent)"><i class="bi bi-diagram-3-fill"></i> Multi-Tenant SaaS</h6>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:12px">Manage multiple distinct businesses under a single master API token.</p>
+<div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
+<span style="font-size:12px">Tenant Isolation</span><span class="pm-badge pm-badge-success">Strict</span>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+<span style="font-size:12px">Active Tenants</span><strong style="font-size:14px">142</strong>
+</div>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('tenantIsolationModal')">Tenant Data Policies</button>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('certPinningModal')">Cert Pinning Security</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Section 4.7.3 -->
+<div class="pm-card mt-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-speedometer text-accent" style="color:var(--pm-accent)"></i> 4.7.3 — Performance & Scalability</h3>
+<p class="pm-section-sub">Manage rate limits, setup edge caching, and configure failovers for high-traffic environments.</p>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('haFailoverModal')"><i class="bi bi-activity"></i> HA Tester</button>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Component</th><th>Strategy / Tool</th><th>Status</th><th>Throughput / Rule</th><th>Action</th></tr></thead>
+<tbody>
+<tr>
+<td><i class="bi bi-memory me-2 text-info"></i> Caching</td>
+<td>Edge response caching (Redis)</td>
+<td><span class="pm-badge pm-badge-success">Active</span></td>
+<td>TTL 300s · Assets 24h</td>
+<td><div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('cacheStrategyModal')">Rules</button><button class="pm-btn pm-btn-sm" onclick="openModal('cdnSetupModal')">CDN</button></div></td>
+</tr>
+<tr>
+<td><i class="bi bi-sign-stop me-2 text-warning"></i> Throttling</td>
+<td>Token-bucket client rate limit</td>
+<td><span class="pm-badge pm-badge-warning">Monitoring</span></td>
+<td>1000 req/sec per token</td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('rateLimitModal')">Limit Params</button></td>
+</tr>
+<tr>
+<td><i class="bi bi-router me-2 text-purple" style="color:var(--pm-purple)"></i> Load Balancing</td>
+<td>Geo-routed active-active</td>
+<td><span class="pm-badge pm-badge-success">Healthy</span></td>
+<td>3 Availability Zones</td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('lbIntegrationModal')">Routes</button></td>
+</tr>
+<tr>
+<td><i class="bi bi-life-preserver me-2 text-danger"></i> Disaster Recovery</td>
+<td>Cross-region failover</td>
+<td><span class="pm-badge pm-badge-info">Ready</span></td>
+<td>RTO < 5m · RPO < 1s</td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('drMonitorModal')">Test DR</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODALS (20+ Functional Modals)             -->
+<!-- ========================================== -->
+
+<!-- 1. Architecture Guide Modal -->
+<div class="modal fade resettable" id="archGuideModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download text-primary me-2"></i>Download Architecture Guide</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Select the architecture topology document tailored for your enterprise.</p><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>PDF Document</option><option>Draw.io Diagram</option><option>Lucidchart XML</option><option>AWS/Azure Architecture Maps</option></select></div><div class="mb-3"><label class="pm-form-label">Include Sections</label><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">API Data Flow</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Security & Authentication</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Failover Strategies</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('archGuideModal','Guide generated successfully! Downloading...','')">Download Package</button></div></div></div></div>
+
+<!-- 2. Generate Boilerplate (Multi-step) -->
+<div class="modal fade resettable" id="boilerplateModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-code-slash text-info me-2"></i>Generate Boilerplate Code</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="boilerStepper"></div><div id="boilerStep1" class="fade-step active"><h6 style="font-weight:700">Step 1: Core Stack</h6><div class="row g-2 mt-2"><div class="col-4"><div class="p-3 border rounded text-center border-secondary" style="cursor:pointer" onclick="selectCardOption(this)"><i class="bi bi-filetype-node d-block mb-1 fs-3 text-success"></i><strong>Node.js</strong></div></div><div class="col-4"><div class="p-3 border rounded text-center border-secondary" style="cursor:pointer;border-color:var(--pm-primary)!important" onclick="selectCardOption(this)"><i class="bi bi-filetype-py d-block mb-1 fs-3 text-warning"></i><strong>Python</strong></div></div><div class="col-4"><div class="p-3 border rounded text-center border-secondary" style="cursor:pointer" onclick="selectCardOption(this)"><i class="bi bi-filetype-java d-block mb-1 fs-3 text-danger"></i><strong>Java/Spring</strong></div></div></div></div><div id="boilerStep2" class="fade-step"><h6 style="font-weight:700">Step 2: Architecture Type</h6><div class="mb-3"><label class="pm-form-label">Deployment Style</label><select class="pm-form-control"><option>Serverless (AWS Lambda / Cloud Functions)</option><option>Microservices (Docker / K8s ready)</option><option>Monolithic Backend</option></select></div><div class="mb-3"><label class="pm-form-label">Database Connector</label><select class="pm-form-control"><option>PostgreSQL</option><option>MongoDB</option><option>None (Stateless proxy)</option></select></div></div><div id="boilerStep3" class="fade-step"><h6 style="font-weight:700">Step 3: Features & Auth</h6><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Include Direct API Auth (HMAC)</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Include Webhook Listener with signature validation</label></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input"><label class="form-check-label">Include Embedded Checkout HTML snippet</label></div><div class="form-check"><input type="checkbox" class="form-check-input"><label class="form-check-label">Include Idempotency caching middleware (Redis)</label></div></div><div id="boilerStep4" class="fade-step"><div class="text-center py-4"><i class="bi bi-box-seam text-primary" style="font-size:48px"></i><h5 class="mt-3 font-weight-bold">Ready to Generate!</h5><p class="text-muted">Your Python Microservice boilerplate with Webhooks and HMAC auth is ready.</p></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="boilerNextBtn" onclick="nextBoilerStep()">Next Step <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 3. Test Simulator -->
+<div class="modal fade resettable" id="testIntegrationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bug text-warning me-2"></i>Integration Simulator</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('simTab','rest',this)">REST API</button><button class="pm-tab-pill" onclick="switchTab('simTab','hook',this)">Webhooks</button><button class="pm-tab-pill" onclick="switchTab('simTab','sdk',this)">SDK Event</button></div><div id="simTab-rest" class="tab-panel active"><div class="mb-3"><label class="pm-form-label">Endpoint</label><div class="d-flex"><select class="pm-form-control" style="width:100px;border-radius:8px 0 0 8px;border-right:0"><option>POST</option><option>GET</option></select><input type="text" class="pm-form-control" style="border-radius:0 8px 8px 0" value="https://sandbox.paymo.com/v1/payments"></div></div><div class="mb-3"><label class="pm-form-label">Payload</label><textarea class="pm-form-control font-monospace" rows="4">{"amount": 500, "currency": "KES", "msisdn": "254712345678"}</textarea></div><button class="pm-btn pm-btn-primary pm-btn-sm" onclick="document.getElementById('simResp').style.display='block'">Send Request</button><div class="code-block mt-3" id="simResp" style="display:none">{
+  "status": "success",
+  "transaction_id": "TXN_SIM_001",
+  "message": "Payment initiated"
+}</div></div><div id="simTab-hook" class="tab-panel"><p class="text-muted text-sm">Trigger a test webhook payload to your registered endpoint.</p><div class="mb-3"><label class="pm-form-label">Event Type</label><select class="pm-form-control"><option>payment.success</option><option>payment.failed</option><option>disbursement.completed</option></select></div><button class="pm-btn pm-btn-primary" onclick="processAction('testIntegrationModal','Webhook fired. Check your server logs.','')">Fire Webhook</button></div><div id="simTab-sdk" class="tab-panel"><p class="text-muted text-sm">Simulate frontend SDK callbacks (e.g. onCheckoutClose).</p><button class="pm-btn border-secondary">Simulate Checkout Success</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 4. Direct API Modal -->
+<div class="modal fade resettable" id="directApiModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-hdd-network text-primary me-2"></i>Direct API Configuration</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">API Version</label><select class="pm-form-control"><option>v2 (Recommended)</option><option>v1 (Legacy)</option></select></div><div class="mb-3"><label class="pm-form-label">Authentication Method</label><select class="pm-form-control"><option>OAuth 2.0 Client Credentials</option><option>HMAC-SHA256 Signatures</option><option>Static API Key (Sandbox only)</option></select></div><div class="form-check mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Enforce IP Whitelisting</label></div><div class="code-block"><div class="code-copy">Copy</div>Authorization: Bearer pm_live_xxxxxx...<br>X-PayMo-Signature: a3f8...</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('directApiModal','API configurations updated','CONFIG_881')">Save Settings</button></div></div></div></div>
+
+<!-- 5. Webhook Config Modal -->
+<div class="modal fade resettable" id="webhookConfigModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-broadcast text-info me-2"></i>Webhook Listener Settings</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-12"><label class="pm-form-label">Endpoint URL</label><input type="url" class="pm-form-control" value="https://api.yourdomain.com/paymo/webhooks"></div><div class="col-md-6"><label class="pm-form-label">Retry Strategy</label><select class="pm-form-control"><option>Exponential Backoff (Recommended)</option><option>Linear (Every 5 mins)</option><option>No Retries</option></select></div><div class="col-md-6"><label class="pm-form-label">Max Retries</label><input type="number" class="pm-form-control" value="5"></div><div class="col-12"><label class="pm-form-label">Subscribed Events</label><div class="d-flex flex-wrap gap-2"><span class="pm-badge pm-badge-success">payment.success</span><span class="pm-badge pm-badge-danger">payment.failed</span><span class="pm-badge pm-badge-info">payout.completed</span></div></div><div class="col-12"><label class="pm-form-label">Webhook Secret (for HMAC)</label><div class="d-flex gap-2"><input type="password" class="pm-form-control" value="whsec_8849201283894" readonly><button class="pm-btn border-secondary"><i class="bi bi-eye"></i></button></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('webhookConfigModal','Webhook endpoint activated!','')">Update Endpoint</button></div></div></div></div>
+
+<!-- 6. Embedded Checkout Modal -->
+<div class="modal fade resettable" id="embeddedCheckoutModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-window-sidebar text-accent me-2"></i>Embedded Checkout Setup</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('checkTab','style',this)">UI Theme</button><button class="pm-tab-pill" onclick="switchTab('checkTab','behavior',this)">Behavior</button><button class="pm-tab-pill" onclick="switchTab('checkTab','code',this)">Embed Code</button></div><div id="checkTab-style" class="tab-panel active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Primary Color</label><input type="color" class="pm-form-control p-1" value="#4F46E5" style="height:40px"></div><div class="col-md-6"><label class="pm-form-label">Border Radius</label><select class="pm-form-control"><option>Sharp (0px)</option><option>Rounded (8px)</option><option selected>Pill (20px)</option></select></div><div class="col-12"><label class="pm-form-label">Logo URL</label><input type="url" class="pm-form-control" placeholder="https://yourdomain.com/logo.png"></div></div></div><div id="checkTab-behavior" class="tab-panel"><div class="mb-3"><label class="pm-form-label">Display Mode</label><select class="pm-form-control"><option>Overlay Popup Modal</option><option>Inline iFrame</option><option>Full Page Redirect</option></select></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Enable Guest Checkout</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Save card for future payments</label></div></div><div id="checkTab-code" class="tab-panel"><p class="text-muted text-sm">Place this snippet before the closing <code>&lt;/body&gt;</code> tag.</p><div class="code-block"><div class="code-copy">Copy</div>&lt;script src="https://js.paymo.com/v2/checkout.js"&gt;&lt;/script&gt;<br>&lt;script&gt;<br>  const paymo = new PayMo('pk_live_xxxx');<br>  paymo.mount('#payment-element');<br>&lt;/script&gt;</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('embeddedCheckoutModal','Checkout settings saved globally.','')">Save Checkout</button></div></div></div></div>
+
+<!-- 7. White Label Modal -->
+<div class="modal fade resettable" id="whiteLabelModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-palette text-purple me-2"></i>White-Label Configuration</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Custom Payment Domain</label><div class="input-group"><span class="input-group-text bg-secondary text-white border-secondary">https://</span><input type="text" class="pm-form-control rounded-0" placeholder="pay.yourbrand.com"></div></div><div class="p-3 border border-secondary rounded mb-3"><h6 class="font-weight-bold mb-2 text-white">DNS Instructions</h6><p class="text-muted mb-0" style="font-size:12px">Create a CNAME record pointing <code>pay.yourbrand.com</code> to <code>wl.paymo.com</code>. We automatically provision SSL.</p></div><div class="mb-3"><label class="pm-form-label">Email Sender Name</label><input type="text" class="pm-form-control" value="YourBrand Payments"></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Remove 'Powered by PayMo' badge (Enterprise only)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('whiteLabelModal','Domain verification initiated. Please check DNS.','')">Verify Domain</button></div></div></div></div>
+
+<!-- 8. Hybrid Sync Modal -->
+<div class="modal fade resettable" id="hybridSyncModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shuffle text-success me-2"></i>Hybrid Sync & Offline Queues</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Enable Background Sync API</label></div><div class="mb-3"><label class="pm-form-label">Offline Queue Behavior</label><select class="pm-form-control"><option>Store locally and sync on network connect</option><option>Reject transactions when offline</option></select></div><div class="mb-3"><label class="pm-form-label">Bulk Operation Chunk Size</label><input type="number" class="pm-form-control" value="500"></div><p class="text-muted" style="font-size:12px">Ideal for POS devices in low-connectivity areas. SDK handles indexing and state reconciliation automatically.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('hybridSyncModal','Hybrid sync parameters deployed to SDK clients.','')">Deploy Strategy</button></div></div></div></div>
+
+<!-- 9. Mesh Config Modal -->
+<div class="modal fade resettable" id="meshConfigModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-boxes text-purple me-2"></i>Service Mesh Proxy</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Proxy Environment</label><select class="pm-form-control"><option>Istio</option><option>Envoy Native</option><option>Linkerd</option></select></div><div class="mb-3"><label class="pm-form-label">mTLS Mode</label><select class="pm-form-control"><option>Strict (Require client certs)</option><option>Permissive</option></select></div><p class="text-muted" style="font-size:12px">Download the sidecar injection templates for your Kubernetes cluster to map PayMo endpoints internally.</p><div class="code-block"><div class="code-copy">Copy</div>apiVersion: networking.istio.io/v1alpha3<br>kind: ServiceEntry<br>metadata:<br>  name: paymo-external...</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('meshConfigModal','Service mesh manifest downloaded.','')">Download Manifest</button></div></div></div></div>
+
+<!-- 10. gRPC Setup Modal -->
+<div class="modal fade resettable" id="grpcSetupModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cpu text-info me-2"></i>gRPC Protocols</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted mb-3">For ultra-low latency internal microservice communication, use our Protobuf specs instead of JSON REST.</p><div class="mb-3"><label class="pm-form-label">Service Spec</label><select class="pm-form-control"><option>PaymentInitiationService.proto</option><option>DisbursementStream.proto</option><option>LedgerSync.proto</option></select></div><div class="code-block" style="height:150px"><div class="code-copy">Copy</div>syntax = "proto3";<br>package paymo.v1;<br><br>service PaymentInitiation {<br>  rpc CreateCharge (ChargeReq) returns (ChargeRes);<br>}</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary">Download .proto Files</button></div></div></div></div>
+
+<!-- 11. Circuit Breaker Modal -->
+<div class="modal fade resettable" id="circuitBreakerModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sign-stop-lights text-danger me-2"></i>Circuit Breaker Rules</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Error Threshold (%)</label><input type="number" class="pm-form-control" value="50"></div><div class="mb-3"><label class="pm-form-label">Timeout (ms)</label><input type="number" class="pm-form-control" value="3000"></div><div class="mb-3"><label class="pm-form-label">Reset Timeout (seconds)</label><input type="number" class="pm-form-control" value="60"></div><p class="text-muted" style="font-size:12px">If failures to downstream banks exceed threshold, requests will fail fast for the reset timeout to prevent cascading failures.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('circuitBreakerModal','Circuit breaker thresholds updated.','')">Save Thresholds</button></div></div></div></div>
+
+<!-- 12. SOAP Translator Modal (Multi-step) -->
+<div class="modal fade resettable" id="soapTranslatorModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-code text-warning me-2"></i>SOAP to REST Bridge</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="soapStepper"></div><div id="soapStep1" class="fade-step active"><h6 style="font-weight:700">Step 1: Upload WSDL</h6><div class="mb-3 mt-3"><label class="pm-form-label">Target Core Banking WSDL URL</label><input type="url" class="pm-form-control" placeholder="http://legacy.bank.internal/Service?wsdl"></div><p class="text-center my-3 text-muted">OR</p><div class="border border-secondary border-dashed p-4 text-center rounded"><i class="bi bi-upload fs-3 text-muted"></i><p class="mb-0 mt-2">Drag and drop .wsdl file here</p></div></div><div id="soapStep2" class="fade-step"><h6 style="font-weight:700">Step 2: Method Mapping</h6><div class="table-responsive mt-3"><table class="pm-table"><thead><tr><th>SOAP Operation</th><th>REST Endpoint (PayMo)</th></tr></thead><tbody><tr><td><code>doFundTransfer</code></td><td><select class="pm-form-control p-1"><option>POST /v1/disbursements</option></select></td></tr><tr><td><code>checkAccountBal</code></td><td><select class="pm-form-control p-1"><option>GET /v1/wallet/balance</option></select></td></tr></tbody></table></div></div><div id="soapStep3" class="fade-step"><h6 style="font-weight:700">Step 3: Deploy Middleware</h6><div class="form-check mb-3 mt-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Wrap with basic XML Security signatures</label></div><div class="form-check mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Translate ISO-8601 to legacy YYYYMMDD</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="soapNextBtn" onclick="nextSoapStep()">Next Step <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 13. SFTP File Integration Modal -->
+<div class="modal fade resettable" id="fileIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-folder-symlink text-primary me-2"></i>SFTP Batch Drops</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Drop Zone Host</label><input type="text" class="pm-form-control" value="sftp.paymo.com" readonly></div><div class="mb-3"><label class="pm-form-label">Authentication</label><select class="pm-form-control"><option>SSH Key Pair</option><option>Password (Not recommended)</option></select></div><div class="mb-3"><label class="pm-form-label">Upload Public Key</label><input type="file" class="pm-form-control"></div><div class="mb-3"><label class="pm-form-label">File Format Expected</label><select class="pm-form-control"><option>CSV (Comma Separated)</option><option>XML (ISO 20022 camt.053)</option><option>Fixed-width TXT</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('fileIntegrationModal','SFTP credentials established and ready for drops.','')">Provision Drop Zone</button></div></div></div></div>
+
+<!-- 14. Legacy DB Sync Modal -->
+<div class="modal fade resettable" id="legacyDbSyncModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-database-down text-info me-2"></i>Database Replication Rules</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted text-sm">Configure CDC (Change Data Capture) or batch sync into your on-premise relational database.</p><div class="mb-3"><label class="pm-form-label">Sync Mechanism</label><select class="pm-form-control"><option>Debezium CDC Stream</option><option>Nightly SQL Dump</option></select></div><div class="mb-3"><label class="pm-form-label">Target Engine</label><select class="pm-form-control"><option>Oracle DB</option><option>Microsoft SQL Server</option><option>MySQL</option></select></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Anonymize PII Data (Mask Names/Phones)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('legacyDbSyncModal','CDC stream initialized.','')">Save Replication Config</button></div></div></div></div>
+
+<!-- 15. Tenant Isolation Modal -->
+<div class="modal fade resettable" id="tenantIsolationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-layout-wtf text-accent me-2"></i>Tenant Data Policies</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Data Segregation Strategy</label><select class="pm-form-control"><option>Logical (Row-level security)</option><option>Physical (Separate schema per tenant)</option><option>Dedicated DB per tenant (Enterprise)</option></select></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Enforce tenant_id header strictly</label></div><div class="p-3 border border-secondary rounded"><div class="d-flex justify-content-between align-items-center mb-2"><strong class="text-white">Cross-Tenant Analytics</strong><span class="pm-badge pm-badge-warning">Restricted</span></div><p class="text-muted mb-0" style="font-size:12px">Aggregated reporting across tenants requires specific Master Admin IAM roles.</p></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('tenantIsolationModal','Isolation strictness enforced at database level.','')">Update Policies</button></div></div></div></div>
+
+<!-- 16. Caching Strategy Modal -->
+<div class="modal fade resettable" id="cacheStrategyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-memory text-info me-2"></i>Edge Caching Rules</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Static Data TTL (seconds)</label><input type="number" class="pm-form-control" value="300"></div><div class="mb-3"><label class="pm-form-label">Invalidation Strategy</label><select class="pm-form-control"><option>Time-based (TTL only)</option><option>Event-driven (Purge on write)</option></select></div><div class="form-check mb-2"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Cache GET /v1/exchange-rates</label></div><div class="form-check"><input type="checkbox" class="form-check-input"><label class="form-check-label">Cache GET /v1/wallet/balance (Not recommended)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('cacheStrategyModal','Redis cache rules pushed to edge.','')">Update Caching</button></div></div></div></div>
+
+<!-- 17. CDN Setup Modal -->
+<div class="modal fade resettable" id="cdnSetupModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe text-primary me-2"></i>CDN Asset Distribution</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Frontend Assets Source</label><input type="url" class="pm-form-control" value="https://assets.yourdomain.com"></div><p class="text-muted" style="font-size:12px">Route your checkout iFrame scripts and CSS through PayMo's globally distributed CDN for sub-50ms latency across Africa.</p><div class="form-check form-switch"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Auto-minify JavaScript/CSS at edge</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('cdnSetupModal','CDN purge and remap initiated.','')">Purge & Map CDN</button></div></div></div></div>
+
+<!-- 18. Rate Limit Modal -->
+<div class="modal fade resettable" id="rateLimitModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sign-stop text-warning me-2"></i>Rate Limiting Parameters</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Max Requests per Second</label><input type="number" class="pm-form-control" value="1000"></div><div class="col-md-6"><label class="pm-form-label">Burst Capacity (Tokens)</label><input type="number" class="pm-form-control" value="1500"></div><div class="col-12"><label class="pm-form-label">Backoff Header Injection</label><select class="pm-form-control"><option>Include Retry-After header</option><option>Standard 429 Too Many Requests</option></select></div><div class="col-12"><p class="text-muted mb-0" style="font-size:12px">Current utilization is at 12% of threshold. No throttling events logged in last 24h.</p></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('rateLimitModal','Rate limits adjusted.','')">Save Limits</button></div></div></div></div>
+
+<!-- 19. HA Failover Modal -->
+<div class="modal fade resettable" id="haFailoverModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-accent me-2"></i>High Availability Tester</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="arch-diagram mb-3"><div class="arch-node border-primary text-primary">Nairobi (Active)</div><div class="arch-link"></div><div class="arch-node border-info text-info">Mombasa (Active)</div><div class="arch-link" style="background:var(--pm-border)"></div><div class="arch-node border-secondary text-muted">Cape Town (Passive)</div></div><div class="mb-3"><label class="pm-form-label">Failover Simulation</label><select class="pm-form-control"><option>Simulate Nairobi Zone Failure</option><option>Simulate Mombasa Zone Failure</option></select></div><p class="text-muted" style="font-size:12px">This will redirect sandbox traffic entirely to the surviving nodes to test your application's connection retry logic and latency tolerance.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('haFailoverModal','Failover drill initiated on sandbox environment. Check metrics.','')">Initiate Chaos Drill</button></div></div></div></div>
+
+<!-- 20. Load Balancer Integration Modal -->
+<div class="modal fade resettable" id="lbIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-router text-purple me-2"></i>Load Balancer Routes</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Algorithm</label><select class="pm-form-control"><option>Round Robin</option><option>Least Connections</option><option>IP Hash (Sticky Sessions)</option></select></div><div class="form-check form-switch mb-3"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Cross-Zone Load Balancing</label></div><div class="mb-3"><label class="pm-form-label">Health Check Path</label><input type="text" class="pm-form-control" value="/api/health"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('lbIntegrationModal','LB rules updated across target groups.','')">Apply Routing</button></div></div></div></div>
+
+<!-- 21. DR Monitor Modal -->
+<div class="modal fade resettable" id="drMonitorModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-2"></i>Disaster Recovery Targets</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="p-3 border border-secondary rounded text-center"><h3 class="text-white mb-1">1s</h3><div style="font-size:11px;color:var(--pm-muted)">RPO (Recovery Point)</div></div></div><div class="col-6"><div class="p-3 border border-secondary rounded text-center"><h3 class="text-white mb-1">5m</h3><div style="font-size:11px;color:var(--pm-muted)">RTO (Recovery Time)</div></div></div><div class="col-12 mt-4"><h6 class="text-white">Latest DR Drill</h6><p class="text-muted text-sm mb-0">Passed on 12 Jun 2025. Data loss zero. Fallback switch completed in 3m 42s.</p></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary">Schedule Drill</button></div></div></div></div>
+
+<!-- 22. Idempotency Key Simulator -->
+<div class="modal fade resettable" id="idempotencyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-key text-warning me-2"></i>Idempotency Tester</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted text-sm">Send a duplicate request with the same Idempotency-Key header to test exact caching.</p><div class="mb-3"><label class="pm-form-label">Idempotency Key</label><input type="text" class="pm-form-control" value="req_998xzy281"></div><div class="code-block" style="height:100px"><div class="code-copy">Copy</div>POST /v1/disbursements<br>Idempotency-Key: req_998xzy281<br>...</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('idempotencyModal','Test returned HTTP 409 Conflict. Original response replayed.','')">Send Test Request</button></div></div></div></div>
+
+<!-- 23. Cert Pinning Modal -->
+<div class="modal fade resettable" id="certPinningModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-lock text-success me-2"></i>Certificate Pinning</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted text-sm">Secure your mobile SDKs against MITM attacks by pinning our leaf and intermediate certificates.</p><div class="mb-3"><label class="pm-form-label">Primary Hash (SHA-256)</label><input type="text" class="pm-form-control font-monospace" value="sha256/WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18=" readonly></div><div class="mb-3"><label class="pm-form-label">Backup Hash</label><input type="text" class="pm-form-control font-monospace" value="sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=" readonly></div><div class="p-3 border border-secondary rounded"><p class="mb-0 text-white" style="font-size:12px">Certs rotate every 90 days. Ensure you use the backup hash to prevent app lockouts.</p></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 24. Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Developer Profile</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-info)">DL</div><h5 style="font-weight:700;margin-bottom:2px;color:#fff">Dev Lead</h5><p style="font-size:13px;color:var(--pm-muted)">dev@enterprise.co.ke</p><div class="row g-2 text-start mt-3"><div class="col-6"><div class="p-2 border border-secondary rounded"><span class="text-muted">Keys Managed</span><br><strong class="text-white">12 Active</strong></div></div><div class="col-6"><div class="p-2 border border-secondary rounded"><span class="text-muted">Webhooks</span><br><strong class="text-white">4 Endpoints</strong></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 25. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>API Status</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-2"><span class="text-white">Core Payments API</span><span class="pm-badge pm-badge-success">Operational</span></div><div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-2"><span class="text-white">Disbursements API</span><span class="pm-badge pm-badge-success">Operational</span></div><div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-2"><span class="text-white">Webhook Delivery</span><span class="pm-badge pm-badge-success">Operational</span></div><div class="d-flex justify-content-between mb-2"><span class="text-white">Sandbox Env</span><span class="pm-badge pm-badge-warning">Degraded</span></div><p class="text-muted text-sm mt-3 mb-0">Sandbox environment undergoing scheduled M-Pesa simulator maintenance.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function selectCardOption(el){el.closest('.row').querySelectorAll('.border').forEach(b=>{b.style.borderColor='var(--pm-border-2)';b.style.borderWidth='1px'});el.style.borderColor='var(--pm-primary)';el.style.borderWidth='2px'}
+
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary-light)">Executing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1500);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="text-center py-4"><i class="bi bi-check-circle text-accent" style="font-size:48px"></i><h5 class="mt-3 font-weight-bold text-white">${msg}</h5>${ref?`<p class="text-muted">Ref: ${ref}</p>`:''}</div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+
+let boilerStep=1;
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+function nextBoilerStep(){if(boilerStep===3){showLoading('#boilerplateModal .modal-body',()=>{boilerStep=4;renderStepper('boilerStepper',['Stack','Arch','Features','Ready'],boilerStep);showFlow('boilerStep',boilerStep,4);document.getElementById('boilerNextBtn').innerHTML='<i class="bi bi-download"></i> Download Zip';});return;}if(boilerStep>=4){closeModal('boilerplateModal');return;}boilerStep++;renderStepper('boilerStepper',['Stack','Arch','Features','Ready'],boilerStep);showFlow('boilerStep',boilerStep,4);if(boilerStep===3)document.getElementById('boilerNextBtn').innerHTML='Generate <i class="bi bi-gear"></i>';}
+
+let soapStep=1;
+function nextSoapStep(){if(soapStep===2){showLoading('#soapTranslatorModal .modal-body',()=>{soapStep=3;renderStepper('soapStepper',['Upload','Mapping','Deploy'],soapStep);showFlow('soapStep',soapStep,3);document.getElementById('soapNextBtn').innerHTML='Deploy Bridge <i class="bi bi-rocket"></i>';});return;}if(soapStep>=3){closeModal('soapTranslatorModal');return;}soapStep++;renderStepper('soapStepper',['Upload','Mapping','Deploy'],soapStep);showFlow('soapStep',soapStep,3);if(soapStep===2)document.getElementById('soapNextBtn').innerHTML='Next Step <i class="bi bi-arrow-right"></i>';}
+
+function resetFlows(){
+  boilerStep=1; soapStep=1;
+  renderStepper('boilerStepper',['Stack','Arch','Features','Ready'],1);
+  renderStepper('soapStepper',['Upload','Mapping','Deploy'],1);
+  showFlow('boilerStep',1,4); showFlow('soapStep',1,3);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.resettable').forEach(m=>{
+    const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');
+    if(b)m.dataset.originalBody=b.innerHTML;
+    if(f)m.dataset.originalFooter=f.innerHTML;
+    m.addEventListener('hidden.bs.modal',()=>{
+      if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;
+      if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;
+      resetFlows();
+    });
+  });
+  resetFlows();
+});
+</script>
+</body>
+</html>

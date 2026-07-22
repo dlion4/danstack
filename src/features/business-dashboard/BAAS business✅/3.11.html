@@ -1,0 +1,2827 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo Business — Multi-Currency Treasury & Forex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #0f766e);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .fx-rate {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff
+        }
+
+        .fx-rate:hover {
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .fx-rate {
+                flex-wrap: wrap
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-cash-stack"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-currency-exchange"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-gear"></i></button></nav><button class="pm-nav-item" style="margin-top:auto"><i
+                    class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Multi-Currency Treasury & Forex</h1>
+                            <p>FX accounts, live rates, transfers, hedging, compliance, reconciliation and reporting</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search currencies, rates, transfers, FX contracts..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('fxHealthModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('fxNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">7</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Treasury Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Business Portal</a> /
+                        <strong>Multi-Currency Treasury</strong>
+                    </div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        3.11 — Multi-Currency Treasury & Forex Operations</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage multi-currency accounts, execute
+                        live FX trades, set hedging contracts, monitor exposure, ensure regulatory compliance and
+                        reconcile treasury positions.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm" onclick="openM('fxHealthModal')"><i
+                            class="bi bi-heart-pulse"></i> Health Check</button><button class="btn-pm"
+                        onclick="openM('fxNotifModal')"><i class="bi bi-bell"></i> Alerts</button><button class="btn-pm"
+                        onclick="openM('transferModal')"><i class="bi bi-arrow-left-right"></i> Transfer</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('tradeModal')"><i class="bi bi-currency-exchange"></i>
+                        Trade FX</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Treasury platform live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">KES 124.8M equivalent</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Across 7 currencies (KES,
+                                USD, EUR, GBP, UGX, TZS, AED). Hedged exposure: 68%. Pending trades: 4.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('tradeModal')">Trade</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('hedgeModal')">Hedge</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('transferModal')">Transfer</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">NET FX EXPOSURE</p>
+                            <div class="SV" style="margin:6px 0">USD 318K</div><span class="B B-s"><i
+                                    class="bi bi-shield-check"></i> 68% hedged</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Unhedged: USD 102K<br>Next
+                                hedge expiry: 14 Jul</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">TODAY'S FX P&L</p>
+                            <div class="SV" style="margin:6px 0">+KES 184,200</div><span class="B B-s"><i
+                                    class="bi bi-graph-up-arrow"></i> +1.8% vs yesterday</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Spot gain: KES
+                                142K<br>Forward gain: KES 42K</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">COMPLIANCE STATUS</p>
+                            <div class="SV" style="margin:6px 0">99.4%</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> 1 STR pending</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">CBK filing:
+                                Complete<br>Next report: 30 Jun</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">USD 45K forward expires today</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Contract FX-8821 · action
+                                            required</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('fxContractModal')">Roll</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">STR report due for large USD inflow
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 12.4M from US client</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('complianceModal')">File</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-arrow-left-right"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">EUR 28K settlement mismatch</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Bank vs internal ledger</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('reconcileModal')">Reconcile</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up-arrow"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Lock GBP rate now (1.32 vs forecast
+                                            1.29)</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Save ~KES 380K on July payroll
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('tradeModal')">Trade</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Increase hedge ratio on USD exposure
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Current 68% → recommended 85%
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('hedgeModal')">Hedge</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-currency-exchange"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Convert TZS 18M to USD before 2%
+                                            devaluation</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">CBK policy meeting scheduled
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('tradeModal')">Convert</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent treasury workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('tradeModal')"><i
+                                        class="bi bi-currency-exchange text-primary me-1"></i> Spot
+                                    Trade</button><button class="quick-btn" onclick="openM('hedgeModal')"><i
+                                        class="bi bi-shield-check text-success me-1"></i> Forward Hedge</button><button
+                                    class="quick-btn" onclick="openM('transferModal')"><i
+                                        class="bi bi-arrow-left-right text-info me-1"></i>
+                                    Cross-Currency</button><button class="quick-btn"
+                                    onclick="openM('fxContractModal')"><i class="bi bi-file-earmark-text me-1"
+                                        style="color:var(--pm-purple)"></i> Manage Contracts</button><button
+                                    class="quick-btn" onclick="openM('reconcileModal')"><i
+                                        class="bi bi-list-check text-warning me-1"></i> Reconcile</button><button
+                                    class="quick-btn" onclick="openM('complianceModal')"><i
+                                        class="bi bi-file-earmark-check text-danger me-1"></i>
+                                    Compliance</button><button class="quick-btn" onclick="openM('rateAlertModal')"><i
+                                        class="bi bi-bell me-1" style="color:var(--pm-accent)"></i> Rate
+                                    Alerts</button><button class="quick-btn" onclick="openM('reportExportModal')"><i
+                                        class="bi bi-download me-1" style="color:var(--pm-primary)"></i>
+                                    Reports</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-wallet2" style="color:var(--pm-primary)"></i> 3.11.1 —
+                                Multi-Currency Account Overview & Balances</h3>
+                            <p class="ss">Real-time balances across all currencies, conversion values, account limits,
+                                and pending settlements.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('accountModal')"><i class="bi bi-gear"></i> Manage</button><button
+                                class="btn-pm btn-sm btn-pm-p" onclick="openM('transferModal')"><i
+                                    class="bi bi-plus-lg"></i> Fund</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Currency Balances</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Currency</th>
+                                                <th>Balance</th>
+                                                <th>KES Equivalent</th>
+                                                <th>24h Change</th>
+                                                <th>Limit</th>
+                                                <th>Utilization</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>KES</strong></td>
+                                                <td><strong>48,240,000</strong></td>
+                                                <td>48.24M</td>
+                                                <td><span class="B B-s">+2.1%</span></td>
+                                                <td>100M</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:48%;background:var(--pm-primary)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferModal')">Transfer</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>USD</strong></td>
+                                                <td><strong>318,450</strong></td>
+                                                <td>41.2M</td>
+                                                <td><span class="B B-d">-0.8%</span></td>
+                                                <td>500K</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:64%;background:var(--pm-info)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('tradeModal')">Trade</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>EUR</strong></td>
+                                                <td><strong>142,800</strong></td>
+                                                <td>19.9M</td>
+                                                <td><span class="B B-s">+1.4%</span></td>
+                                                <td>300K</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:48%;background:var(--pm-accent)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('tradeModal')">Trade</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>GBP</strong></td>
+                                                <td><strong>67,200</strong></td>
+                                                <td>11.3M</td>
+                                                <td><span class="B B-w">-2.3%</span></td>
+                                                <td>150K</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:45%;background:var(--pm-warning)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('tradeModal')">Trade</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>UGX</strong></td>
+                                                <td><strong>124,800,000</strong></td>
+                                                <td>3.4M</td>
+                                                <td><span class="B B-s">+0.9%</span></td>
+                                                <td>300M</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:42%;background:var(--pm-purple)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferModal')">Transfer</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>TZS</strong></td>
+                                                <td><strong>186,400,000</strong></td>
+                                                <td>9.4M</td>
+                                                <td><span class="B B-d">-1.2%</span></td>
+                                                <td>500M</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:37%;background:var(--pm-danger)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('tradeModal')">Trade</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>AED</strong></td>
+                                                <td><strong>84,200</strong></td>
+                                                <td>3.0M</td>
+                                                <td><span class="B B-s">+0.4%</span></td>
+                                                <td>200K</td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:42%;background:var(--pm-info)"></div>
+                                                    </div>
+                                                </td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferModal')">Transfer</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Pending Settlements</h4>
+                                <div class="sr">
+                                    <div><strong>USD 85,000 incoming</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">From US client • Value date 28
+                                            Jun</div>
+                                    </div><span class="B B-i">T+2</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR 42,000 outgoing</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Supplier payment • Value date
+                                            27 Jun</div>
+                                    </div><span class="B B-w">Pending</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>GBP 18,500 incoming</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">UK subsidiary • Value date 29
+                                            Jun</div>
+                                    </div><span class="B B-s">Confirmed</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>UGX 45M outgoing</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Uganda branch payroll • Value
+                                            date 30 Jun</div>
+                                    </div><span class="B B-w">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-graph-up-arrow" style="color:var(--pm-accent)"></i> 3.11.2 —
+                                Live FX Rates & Market Intelligence</h3>
+                            <p class="ss">Real-time interbank rates, spreads, historical trends, volatility alerts and
+                                market commentary.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('rateAlertModal')"><i class="bi bi-bell"></i> Alerts</button><button
+                                class="btn-pm btn-sm" onclick="openM('marketModal')"><i class="bi bi-newspaper"></i>
+                                Market</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Live Interbank Rates
+                                    (Mid-market)</h4>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">USD/KES</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">129.42 • -0.08</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">129.35 - 129.50</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 0.15</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">EUR/KES</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">139.80 • +0.22</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">139.65 - 139.95</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 0.30</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">GBP/KES</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">167.90 • -0.45</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">167.70 - 168.10</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 0.40</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">USD/EUR</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">0.926 • -0.001</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">0.925 - 0.927</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 0.002</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">USD/UGX</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">3,712 • +8</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">3,705 - 3,719</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 14</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fx-rate">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700">USD/TZS</div>
+                                                <div style="font-size:11px;color:var(--pm-muted)">2,705 • -3</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                <div style="font-weight:700">2,698 - 2,712</div>
+                                                <div style="font-size:10px;color:var(--pm-muted)">Spread 14</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Volatility & Alerts</h4>
+                                <div class="sr">
+                                    <div><strong>GBP/KES</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Volatility 1.8% (high)</div>
+                                    </div><span class="B B-d">Alert</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>USD/KES</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Volatility 0.4% (normal)</div>
+                                    </div><span class="B B-s">Normal</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR/KES</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Volatility 0.9% (elevated)
+                                        </div>
+                                    </div><span class="B B-w">Watch</span>
+                                </div>
+                                <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                                        class="bi bi-lightbulb me-1"></i> CBK policy meeting tomorrow — expect USD/KES
+                                    volatility.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-arrow-left-right" style="color:var(--pm-info)"></i> 3.11.3 —
+                                Cross-Currency Transfers & Settlements</h3>
+                            <p class="ss">Instant and scheduled transfers between currencies, internal accounts,
+                                external banks and mobile money.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('transferModal')"><i class="bi bi-plus-lg"></i> New Transfer</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent Transfers</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>From → To</th>
+                                                <th>Amount</th>
+                                                <th>Rate</th>
+                                                <th>Fee</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>27 Jun</td>
+                                                <td>USD → KES</td>
+                                                <td><strong>USD 50,000</strong><br><span
+                                                        style="font-size:11px;color:var(--pm-muted)">KES
+                                                        6,471,000</span></td>
+                                                <td>129.42</td>
+                                                <td>KES 12,942</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Receipt</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>26 Jun</td>
+                                                <td>EUR → USD</td>
+                                                <td><strong>EUR 28,000</strong><br><span
+                                                        style="font-size:11px;color:var(--pm-muted)">USD 25,928</span>
+                                                </td>
+                                                <td>1.08</td>
+                                                <td>USD 51.86</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Receipt</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>26 Jun</td>
+                                                <td>KES → GBP</td>
+                                                <td><strong>KES 4,200,000</strong><br><span
+                                                        style="font-size:11px;color:var(--pm-muted)">GBP 25,015</span>
+                                                </td>
+                                                <td>167.90</td>
+                                                <td>KES 8,400</td>
+                                                <td><span class="B B-w">Pending</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Track</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>25 Jun</td>
+                                                <td>USD → TZS</td>
+                                                <td><strong>USD 12,000</strong><br><span
+                                                        style="font-size:11px;color:var(--pm-muted)">TZS
+                                                        32,460,000</span></td>
+                                                <td>2,705</td>
+                                                <td>USD 24</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Receipt</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Transfer Limits & Fees</h4>
+                                <div class="sr">
+                                    <div><strong>Instant (same currency)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 0 fee • 24/7</div>
+                                    </div><span class="B B-s">Free</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Cross-currency (spot)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">0.2% • min KES 500</div>
+                                    </div><span class="B B-i">0.2%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Forward contract settlement</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">0.1% • min KES 1,000</div>
+                                    </div><span class="B B-w">0.1%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>SWIFT international</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">USD 25 + correspondent fees
+                                        </div>
+                                    </div><span class="B B-p">Flat</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-shield-check" style="color:var(--pm-purple)"></i> 3.11.4 — FX
+                                Contracts, Hedging & Risk Management</h3>
+                            <p class="ss">Forward contracts, options, exposure monitoring, risk policies and automated
+                                hedging rules.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('hedgeModal')"><i class="bi bi-plus-lg"></i> New Hedge</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active FX Contracts</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Contract</th>
+                                                <th>Type</th>
+                                                <th>Pair</th>
+                                                <th>Amount</th>
+                                                <th>Rate</th>
+                                                <th>Expiry</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>FX-8821</td>
+                                                <td>Forward</td>
+                                                <td>USD/KES</td>
+                                                <td>USD 120,000</td>
+                                                <td>130.50</td>
+                                                <td>27 Jun 2025</td>
+                                                <td><span class="B B-d">Expires today</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fxContractModal')">Roll</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>FX-8794</td>
+                                                <td>Forward</td>
+                                                <td>EUR/KES</td>
+                                                <td>EUR 85,000</td>
+                                                <td>141.20</td>
+                                                <td>14 Jul 2025</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fxContractModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>FX-8755</td>
+                                                <td>Option (Call)</td>
+                                                <td>GBP/KES</td>
+                                                <td>GBP 40,000</td>
+                                                <td>Strike 168.00</td>
+                                                <td>30 Jul 2025</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fxContractModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>FX-8701</td>
+                                                <td>Forward</td>
+                                                <td>USD/EUR</td>
+                                                <td>USD 65,000</td>
+                                                <td>0.925</td>
+                                                <td>10 Aug 2025</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fxContractModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Exposure & Hedging</h4>
+                                <div class="sr">
+                                    <div><strong>USD Net Exposure</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Receivables: 420K • Payables:
+                                            102K</div>
+                                    </div><strong>USD 318K</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Hedged Amount</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">216K (68%)</div>
+                                    </div><strong style="color:var(--pm-accent)">USD 216K</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Unhedged Risk</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">102K at current rate</div>
+                                    </div><strong style="color:var(--pm-warning)">USD 102K</strong>
+                                </div>
+                                <div class="p-3 rounded mt-3" style="background:var(--pm-accent-soft);font-size:12px"><i
+                                        class="bi bi-lightbulb me-1"></i> AI recommends additional USD 65K hedge to
+                                    reach 85% coverage.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.5 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-check" style="color:var(--pm-warning)"></i>
+                                3.11.5 — Regulatory Compliance & Reporting</h3>
+                            <p class="ss">CBK forex reporting, KRA requirements, suspicious transaction monitoring,
+                                audit trails and filing calendar.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('complianceModal')"><i class="bi bi-file-earmark-text"></i> File
+                                Report</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Compliance Status</h4>
+                                <div class="sr">
+                                    <div><strong>CBK Forex Returns</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Monthly Form FX-1</div>
+                                    </div><span class="B B-s">Submitted</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>CBK Large FX Transactions</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Form FX-2 • 3 reports this
+                                            month</div>
+                                    </div><span class="B B-s">Complete</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KRA Withholding Tax</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">FX gains • KES 184K</div>
+                                    </div><span class="B B-s">Filed</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>STR Filing</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">1 pending review</div>
+                                    </div><span class="B B-w">Action</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Upcoming Deadlines</h4>
+                                <div class="sr">
+                                    <div><strong>CBK Monthly Return</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Due 30 Jun 2025</div>
+                                    </div><span class="B B-i">3 days</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KRA Quarterly FX Gains</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Due 15 Jul 2025</div>
+                                    </div><span class="B B-w">18 days</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Internal Audit</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Q2 Treasury audit</div>
+                                    </div><span class="B B-p">45 days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.11.6 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clipboard-data" style="color:var(--pm-danger)"></i> 3.11.6 —
+                                Treasury Analytics, Reconciliation & Reporting</h3>
+                            <p class="ss">P&L by currency, exposure reports, reconciliation status, audit logs and
+                                scheduled exports.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('reconcileModal')"><i class="bi bi-list-check"></i>
+                                Reconcile</button><button class="btn-pm btn-sm" onclick="openM('reportExportModal')"><i
+                                    class="bi bi-download"></i> Export</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">P&L by Currency (MTD)</h4>
+                                <div class="sr">
+                                    <div><strong>USD</strong></div><strong style="color:var(--pm-accent)">+KES
+                                        142,800</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR</strong></div><strong style="color:var(--pm-accent)">+KES
+                                        38,400</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>GBP</strong></div><strong style="color:var(--pm-danger)">-KES
+                                        12,600</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>UGX/TZS</strong></div><strong style="color:var(--pm-accent)">+KES
+                                        15,600</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Overall</strong></div><strong
+                                        style="color:var(--pm-accent);font-size:16px">+KES 184,200</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Reconciliation Status</h4>
+                                <div class="sr">
+                                    <div><strong>USD Nostro Account</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Bank vs Internal</div>
+                                    </div><span class="B B-s">Matched</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR Nostro Account</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Bank vs Internal</div>
+                                    </div><span class="B B-s">Matched</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>GBP Nostro Account</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Bank vs Internal</div>
+                                    </div><span class="B B-w">1 exception</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Forward Contracts</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Mark-to-market vs ledger</div>
+                                    </div><span class="B B-s">Matched</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- MODALS (23+) -->
+
+    <!-- M1: Trade FX (multi-step) -->
+    <div class="modal fade R" id="tradeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange text-primary me-2"></i>Execute FX Trade
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="tradeStepper"></div>
+                    <div id="tradeS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Pair & Direction</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Base Currency</label><select class="FC"
+                                    id="baseCur">
+                                    <option>USD</option>
+                                    <option>EUR</option>
+                                    <option>GBP</option>
+                                    <option>KES</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Quote Currency</label><select class="FC"
+                                    id="quoteCur">
+                                    <option>KES</option>
+                                    <option>USD</option>
+                                    <option>EUR</option>
+                                    <option>GBP</option>
+                                </select></div>
+                            <div class="col-12"><label class="FL">Action</label>
+                                <div class="pills"><button class="pill active"
+                                        onclick="this.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Buy</button><button
+                                        class="pill"
+                                        onclick="this.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Sell</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tradeS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Rate</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Amount (Base)</label><input class="FC" id="tradeAmt"
+                                    value="50000"></div>
+                            <div class="col-md-6"><label class="FL">Rate</label><input class="FC" id="tradeRate"
+                                    value="129.42" disabled></div>
+                        </div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:13px">
+                            <div class="d-flex justify-content-between mb-1"><span>Estimated Quote Amount</span><strong
+                                    id="quoteEst">KES 6,471,000</strong></div>
+                            <div class="d-flex justify-content-between"><span>Spread</span><strong>KES 7,500</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tradeS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Settlement & Confirmation</h6>
+                        <div class="mb-3"><label class="FL">Settlement Date</label><select class="FC">
+                                <option>Spot (T+2) — 29 Jun 2025</option>
+                                <option>Forward — 14 Jul 2025</option>
+                                <option>Forward — 31 Jul 2025</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Debit Account</label><select class="FC">
+                                <option>USD Account • 318,450</option>
+                                <option>KES Account • 48,240,000</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Credit Account</label><select class="FC">
+                                <option>KES Account • 48,240,000</option>
+                                <option>USD Account • 318,450</option>
+                            </select></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Trade will be executed at live rate. Funds will be
+                            available after settlement.</div>
+                    </div>
+                    <div id="tradeS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Trade Executed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your FX trade has been completed.
+                                Settlement instructions issued.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Trade
+                                        ID</span><strong>FXT-20250627-9918</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Pair</span><strong>USD/KES</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Rate</span><strong>129.42</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Settlement</span><strong>29 Jun 2025</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="tradeFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="tradeNext"
+                        onclick="nextFlow('trade',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Hedge / Forward Contract -->
+    <div class="modal fade R" id="hedgeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Create Forward Hedge
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Currency Pair</label><select class="FC">
+                                <option>USD/KES</option>
+                                <option>EUR/KES</option>
+                                <option>GBP/KES</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Direction</label><select class="FC">
+                                <option>Buy Forward (protect payable)</option>
+                                <option>Sell Forward (protect receivable)</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Amount</label><input class="FC" value="100000"></div>
+                        <div class="col-md-6"><label class="FL">Tenor</label><select class="FC">
+                                <option>30 days</option>
+                                <option>60 days</option>
+                                <option>90 days</option>
+                                <option>180 days</option>
+                            </select></div>
+                        <div class="col-12"><label class="FL">Forward Rate (indicative)</label>
+                            <div class="fx-rate">
+                                <div style="flex:1"><strong>130.85</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">+1.43 vs spot</div>
+                                </div>
+                                <div style="text-align:right">
+                                    <div style="font-size:12px;color:var(--pm-muted)">Premium: KES 143,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-accent-soft);font-size:12px"><i
+                            class="bi bi-lightbulb me-1"></i> Hedge locks your rate for 90 days. No margin call. Full
+                        amount settled on maturity.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('hedgeModal','Forward hedge contract created. Contract ID: FXH-20250627-4421','FXH-20250627-4421')">Create
+                        Hedge</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Cross-Currency Transfer -->
+    <div class="modal fade R" id="transferModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-info me-2"></i>Cross-Currency Transfer
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="xferStepper"></div>
+                    <div id="xferS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: From / To</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Debit Account</label><select class="FC">
+                                    <option>USD Account • 318,450</option>
+                                    <option>KES Account • 48,240,000</option>
+                                    <option>EUR Account • 142,800</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Credit Account</label><select class="FC">
+                                    <option>KES Account • 48,240,000</option>
+                                    <option>USD Account • 318,450</option>
+                                    <option>GBP Account • 67,200</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="xferS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Rate</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Amount</label><input class="FC" value="25000"></div>
+                            <div class="col-md-6"><label class="FL">Rate (live)</label><input class="FC" value="129.42"
+                                    disabled></div>
+                        </div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:13px">
+                            <div class="d-flex justify-content-between"><span>Estimated Credit</span><strong>KES
+                                    3,235,500</strong></div>
+                        </div>
+                    </div>
+                    <div id="xferS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Purpose & Compliance</h6>
+                        <div class="mb-3"><label class="FL">Purpose</label><select class="FC">
+                                <option>Operating expenses</option>
+                                <option>Payroll funding</option>
+                                <option>Supplier payment</option>
+                                <option>Investment / Treasury</option>
+                                <option>Loan repayment</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Reference / Invoice</label><input class="FC"
+                                value="INV-2025-88421"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Transfers above USD 10,000 require CBK Form FX-2
+                            filing.</div>
+                    </div>
+                    <div id="xferS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Transfer Initiated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your cross-currency transfer has been
+                                submitted for processing.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Transfer
+                                        ID</span><strong>XFR-20250627-7712</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Value
+                                        Date</span><strong>29 Jun 2025</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Fee</span><strong>KES 7,500</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="xferFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="xferNext"
+                        onclick="nextFlow('xfer',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: FX Contract Management -->
+    <div class="modal fade R" id="fxContractModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"
+                            style="color:var(--pm-purple)"></i>Manage FX Contracts</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('fxc','active',this)">Active</button><button class="pill"
+                            onclick="sw('fxc','expired',this)">Expired</button><button class="pill"
+                            onclick="sw('fxc','roll',this)">Roll / Close</button></div>
+                    <div id="fxc-active" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Contract</th>
+                                        <th>Pair</th>
+                                        <th>Amount</th>
+                                        <th>Rate</th>
+                                        <th>Expiry</th>
+                                        <th>MTM</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>FX-8821</td>
+                                        <td>USD/KES</td>
+                                        <td>USD 120,000</td>
+                                        <td>130.50</td>
+                                        <td>27 Jun</td>
+                                        <td><span class="B B-d">+KES 84K</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('rollContractModal')">Roll</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FX-8794</td>
+                                        <td>EUR/KES</td>
+                                        <td>EUR 85,000</td>
+                                        <td>141.20</td>
+                                        <td>14 Jul</td>
+                                        <td><span class="B B-s">+KES 42K</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('rollContractModal')">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FX-8755</td>
+                                        <td>GBP/KES</td>
+                                        <td>GBP 40,000</td>
+                                        <td>168.00</td>
+                                        <td>30 Jul</td>
+                                        <td><span class="B B-w">-KES 18K</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('rollContractModal')">Close</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="fxc-expired" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">No expired
+                            contracts in last 90 days.</div>
+                    </div>
+                    <div id="fxc-roll" class="tpanel">
+                        <div class="mb-3"><label class="FL">Select Contract</label><select class="FC">
+                                <option>FX-8821 • USD 120K • 27 Jun</option>
+                                <option>FX-8794 • EUR 85K • 14 Jul</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Action</label><select class="FC">
+                                <option>Roll forward 30 days</option>
+                                <option>Roll forward 90 days</option>
+                                <option>Close and settle</option>
+                                <option>Close and convert to spot</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Reconciliation -->
+    <div class="modal fade R" id="reconcileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check me-2"></i>Reconciliation Center</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('rec','nostro',this)">Nostro</button><button class="pill"
+                            onclick="sw('rec','forward',this)">Forward</button><button class="pill"
+                            onclick="sw('rec','exception',this)">Exceptions</button></div>
+                    <div id="rec-nostro" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Bank Balance</th>
+                                        <th>Internal Ledger</th>
+                                        <th>Difference</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>USD Nostro</td>
+                                        <td>318,450</td>
+                                        <td>318,450</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Matched</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>EUR Nostro</td>
+                                        <td>142,800</td>
+                                        <td>142,800</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Matched</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>GBP Nostro</td>
+                                        <td>67,200</td>
+                                        <td>66,850</td>
+                                        <td>350</td>
+                                        <td><span class="B B-w">Exception</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="rec-forward" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Contract</th>
+                                        <th>MTM (Bank)</th>
+                                        <th>MTM (Ledger)</th>
+                                        <th>Difference</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>FX-8821</td>
+                                        <td>+KES 84K</td>
+                                        <td>+KES 84K</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Matched</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FX-8794</td>
+                                        <td>+KES 42K</td>
+                                        <td>+KES 42K</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Matched</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="rec-exception" class="tpanel">
+                        <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft)">
+                            <div class="d-flex justify-content-between">
+                                <div><strong>GBP Nostro mismatch</strong>
+                                    <div style="font-size:11px;color:#92400E">KES 350 difference — SWIFT fee not booked
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="doAction('reconcileModal','Exception resolved. Journal entry created.','REC-20250627-1128')">Resolve</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Compliance / STR -->
+    <div class="modal fade R" id="complianceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-check me-2"></i>Regulatory Compliance Filing
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('cmp','cbk',this)">CBK</button><button class="pill"
+                            onclick="sw('cmp','kra',this)">KRA</button><button class="pill"
+                            onclick="sw('cmp','str',this)">STR</button></div>
+                    <div id="cmp-cbk" class="tpanel active">
+                        <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                                <option>Monthly Forex Return (FX-1)</option>
+                                <option>Large FX Transaction (FX-2)</option>
+                                <option>Quarterly FX Position</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Period</label><input type="month" class="FC"
+                                value="2025-05"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Report will be auto-generated from treasury system
+                            and submitted via CBK portal.</div>
+                    </div>
+                    <div id="cmp-kra" class="tpanel">
+                        <div class="mb-3"><label class="FL">Tax Type</label><select class="FC">
+                                <option>Withholding Tax on FX Gains</option>
+                                <option>VAT on FX Fees</option>
+                                <option>Digital Services Tax</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="184200"></div>
+                    </div>
+                    <div id="cmp-str" class="tpanel">
+                        <div class="mb-3"><label class="FL">Transaction Reference</label><input class="FC"
+                                value="XFR-20250620-4492"></div>
+                        <div class="mb-3"><label class="FL">Reason for Suspicion</label><textarea class="FC"
+                                rows="3">Large inbound USD 85K from new US client with no prior trading history. Amount significantly exceeds typical transaction size.</textarea>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Flag for manual review by compliance
+                                officer</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('complianceModal','Compliance report filed successfully. Reference: CBK-FX1-202506-9914','CBK-FX1-202506-9914')">Submit
+                        Filing</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Rate Alert -->
+    <div class="modal fade R" id="rateAlertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>FX Rate Alert Setup</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Currency Pair</label><select class="FC">
+                            <option>USD/KES</option>
+                            <option>EUR/KES</option>
+                            <option>GBP/KES</option>
+                        </select></div>
+                    <div class="row g-3">
+                        <div class="col-6"><label class="FL">Alert Type</label><select class="FC">
+                                <option>Rate above</option>
+                                <option>Rate below</option>
+                                <option>Volatility above</option>
+                            </select></div>
+                        <div class="col-6"><label class="FL">Threshold</label><input class="FC" value="130.00"></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Delivery</label>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label" style="font-size:13px">Push</label></div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label" style="font-size:13px">Email</label></div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label" style="font-size:13px">SMS</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('rateAlertModal','Rate alert created. You will be notified when USD/KES crosses 130.00.','')">Create
+                        Alert</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Transfer Detail -->
+    <div class="modal fade R" id="transferDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Transfer Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Transfer
+                                ID</span><strong>XFR-20250627-7712</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Completed</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">From</span><strong>USD
+                                Account</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">To</span><strong>KES
+                                Account</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>USD 50,000 → KES 6,471,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Rate</span><strong>129.42</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Fee</span><strong>KES
+                                12,942</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Value Date</span><strong>27
+                                Jun 2025, 14:32 EAT</strong></div>
+                    </div>
+                    <div class="d-flex gap-2"><button class="btn-pm btn-sm"><i class="bi bi-download"></i> Receipt
+                            PDF</button><button class="btn-pm btn-sm"><i class="bi bi-share"></i> Share</button></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: FX Health -->
+    <div class="modal fade R" id="fxHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Treasury Health Check</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    87</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">TREASURY SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">68%</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">HEDGED</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">4</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">OPEN TRADES</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">1</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">STR PENDING</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Area</th>
+                                    <th>Status</th>
+                                    <th>Issue</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>USD Exposure</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>68% hedged</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>GBP Volatility</td>
+                                    <td><span class="B B-w">Watch</span></td>
+                                    <td>1.8% volatility</td>
+                                    <td>Increase hedge</td>
+                                </tr>
+                                <tr>
+                                    <td>Compliance</td>
+                                    <td><span class="B B-w">Action</span></td>
+                                    <td>STR pending</td>
+                                    <td>File today</td>
+                                </tr>
+                                <tr>
+                                    <td>Reconciliation</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>1 exception resolved</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('complianceModal')">File Pending STR</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Market Intelligence -->
+    <div class="modal fade R" id="marketModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-newspaper me-2"></i>FX Market Intelligence</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                        <h6 style="font-weight:700;color:#1D4ED8">CBK Policy Meeting — Tomorrow</h6>
+                        <p style="font-size:13px;color:#1E40AF;margin:4px 0 0">Consensus: 25bps rate cut expected.
+                            USD/KES likely to weaken to 130.50–131.00 range.</p>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                        <h6 style="font-weight:700;color:#B45309">GBP Alert</h6>
+                        <p style="font-size:13px;color:#92400E;margin:4px 0 0">UK inflation data tomorrow — potential
+                            1.5% volatility. Consider hedging before event.</p>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                        <h6 style="font-weight:700;color:#047857">TZS Devaluation Risk</h6>
+                        <p style="font-size:13px;color:#065F46;margin:4px 0 0">Tanzania central bank under pressure.
+                            2–3% devaluation possible in next 30 days.</p>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: FX Notifications -->
+    <div class="modal fade R" id="fxNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>FX Notifications (7)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Forward FX-8821 expires today</strong>
+                        <div style="font-size:11px;color:#7F1D1D">USD 120K • Action required before 5 PM</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>GBP
+                            volatility alert triggered</strong>
+                        <div style="font-size:11px;color:#92400E">1.8% move in last 4 hours</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>USD 85K
+                            settlement confirmed</strong>
+                        <div style="font-size:11px;color:#1E40AF">Value date 28 Jun</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>STR
+                            filed successfully</strong>
+                        <div style="font-size:11px;color:#065F46">Reference CBK-STR-20250627-9914</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Rate alert:
+                            USD/KES crossed 129.50</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">Current: 129.42</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" onclick="openM('rateAlertModal')">Manage
+                        Alerts</button><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@company.co.ke · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Treasury Score</span><br><strong
+                                    style="color:var(--pm-accent)">87/100</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Open Contracts</span><br><strong>4</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Member Since</span><br><strong>Mar 2022</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">STRs Filed</span><br><strong>12 YTD</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Attention Full -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Treasury Items
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>USD 45K forward expires today</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Contract FX-8821</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('fxContractModal')">Roll</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>STR pending for large USD inflow</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 12.4M from US client</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('complianceModal')">File</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>EUR 28K settlement mismatch</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Bank vs internal ledger</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('reconcileModal')">Reconcile</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>GBP volatility alert</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">1.8% move in 4 hours</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('rateAlertModal')">Adjust</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Forward FX-8794 MTM positive</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">+KES 42K unrealized gain</div>
+                        </div><span class="B B-s">Monitor</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Report Export -->
+    <div class="modal fade R" id="reportExportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Treasury Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Daily Treasury Position</option>
+                            <option>FX P&L Statement</option>
+                            <option>Exposure & Hedging Report</option>
+                            <option>Compliance Filing Summary</option>
+                            <option>Full Audit Trail</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-06-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reportExportModal','Report generated and downloading...','')">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Roll Contract -->
+    <div class="modal fade R" id="rollContractModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Roll / Close Contract</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Contract</label><select class="FC">
+                            <option>FX-8821 • USD 120K • 27 Jun</option>
+                            <option>FX-8794 • EUR 85K • 14 Jul</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Action</label><select class="FC">
+                            <option>Roll forward 30 days at market</option>
+                            <option>Roll forward 90 days at market</option>
+                            <option>Close and settle P&L</option>
+                            <option>Close and convert to spot</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Rolling will create a new forward contract. P&L will be
+                        realized on the original contract.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('rollContractModal','Contract rolled successfully. New contract FX-8922 created.','FX-8922')">Execute</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Account Management -->
+    <div class="modal fade R" id="accountModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Manage Multi-Currency Accounts</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Currency</th>
+                                    <th>Account Number</th>
+                                    <th>Bank</th>
+                                    <th>Balance</th>
+                                    <th>Limit</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>USD</td>
+                                    <td>ACCT-USD-8821</td>
+                                    <td>Standard Chartered</td>
+                                    <td>318,450</td>
+                                    <td>500,000</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('accountModal','Account settings updated.','')">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EUR</td>
+                                    <td>ACCT-EUR-8822</td>
+                                    <td>Standard Chartered</td>
+                                    <td>142,800</td>
+                                    <td>300,000</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('accountModal','Account settings updated.','')">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>GBP</td>
+                                    <td>ACCT-GBP-8823</td>
+                                    <td>Standard Chartered</td>
+                                    <td>67,200</td>
+                                    <td>150,000</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('accountModal','Account settings updated.','')">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>KES</td>
+                                    <td>ACCT-KES-001</td>
+                                    <td>Equity Bank</td>
+                                    <td>48,240,000</td>
+                                    <td>100,000,000</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('accountModal','Account settings updated.','')">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Market Comment -->
+    <div class="modal fade R" id="marketCommentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-chat-text me-2"></i>Market Commentary</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <h6 style="font-weight:700">USD/KES Outlook — Next 7 Days</h6>
+                        <p style="font-size:13px;color:var(--pm-ink-soft);margin-top:8px">CBK expected to cut policy
+                            rate by 25bps tomorrow. This should put downward pressure on KES, pushing USD/KES toward
+                            130.00–130.80 range. Recommend locking in any USD receivables above 130.00.</p>
+                    </div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                        <h6 style="font-weight:700">GBP Risk Event</h6>
+                        <p style="font-size:13px;color:var(--pm-ink-soft);margin-top:8px">UK CPI data tomorrow could
+                            trigger 1.5% volatility. Consider hedging 50% of July GBP exposure before the event.</p>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Security / PIN -->
+    <div class="modal fade R" id="securityModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Treasury Security</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Action</label><select class="FC">
+                            <option>Change Treasury PIN</option>
+                            <option>Enable 2FA for FX trades</option>
+                            <option>Review authorized signatories</option>
+                            <option>Download audit log</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> All FX trades above USD 50K require dual authorization.
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('securityModal','Security settings updated.','')">Apply</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19-23: Additional helper modals for completeness -->
+    <div class="modal fade R" id="rollContractModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Roll Contract</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Contract</label><select class="FC">
+                            <option>FX-8821 • USD 120K • 27 Jun</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">New Expiry</label><select class="FC">
+                            <option>30 days</option>
+                            <option>60 days</option>
+                            <option>90 days</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('rollContractModal','Contract rolled. New ID: FX-8922','FX-8922')">Roll</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="fxHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse me-2"></i>FX Health</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                        <div style="font-size:28px;font-weight:800;color:var(--pm-accent)">87</div>
+                        <div style="font-size:12px;color:#047857">TREASURY HEALTH SCORE</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@company.co.ke</p>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="faqModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-question-circle me-2"></i>FX FAQ</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>How do I roll a forward contract?</strong>
+                            <div style="font-size:12px;color:var(--pm-ink-soft)">Go to FX Contracts → select contract →
+                                Roll. New rate based on current forward points.</div>
+                        </div>
+                    </div>
+                    <div class="sr">
+                        <div><strong>What is the cut-off time for same-day FX?</strong>
+                            <div style="font-size:12px;color:var(--pm-ink-soft)">Spot trades before 2 PM EAT settle T+2.
+                                After 2 PM → T+3.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="reportExportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report</label><select class="FC">
+                            <option>Daily Treasury Position</option>
+                            <option>FX P&L</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reportExportModal','Report downloaded.','')">Export</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { trade: { current: 1, total: 4, labels: ['Pair', 'Amount', 'Settle', 'Done'] }, xfer: { current: 1, total: 4, labels: ['From/To', 'Amount', 'Purpose', 'Done'] } };
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { const modalBody = document.querySelector('#' + (key === 'trade' ? 'tradeModal' : 'transferModal') + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(key === 'trade' ? 'tradeModal' : 'transferModal'); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) document.getElementById(key + 'Next').innerHTML = 'Confirm <i class="bi bi-check-lg"></i>'; }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

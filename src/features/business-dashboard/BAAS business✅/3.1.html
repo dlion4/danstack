@@ -1,0 +1,2613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo Business — Command Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* PayMo Master CSS */
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-biz: linear-gradient(135deg, #1E293B 0%, #334155 50%, #475569 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-xl: 28px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.05), transparent 60%), var(--pm-bg);
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: #0F172A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+            border-right: 1px solid #1E293B;
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px;
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            padding: 0 12px;
+            flex: 1;
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all .2s;
+            position: relative;
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #0F172A;
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pm-header {
+            background: rgba(255, 255, 255, .8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative;
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: var(--pm-surface-2);
+            font-size: 13px;
+            transition: all .2s;
+        }
+
+        .pm-header-search input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow);
+            background: #fff;
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted);
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative;
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px);
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid #fff;
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2);
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display);
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted);
+            line-height: 1.2;
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted);
+            margin-bottom: 8px;
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none;
+        }
+
+        .pm-content {
+            padding: 20px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pm-card {
+            background: #fff;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s;
+        }
+
+        .pm-card:hover {
+            box-shadow: var(--pm-shadow-md);
+        }
+
+        .pm-card-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none;
+        }
+
+        .pm-card-biz {
+            background: var(--pm-gradient-biz);
+            color: #fff;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pm-card-biz::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .pm-stat-value {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .pm-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .pm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pm-badge-success {
+            background: var(--pm-accent-soft);
+            color: #047857;
+        }
+
+        .pm-badge-warning {
+            background: var(--pm-warning-soft);
+            color: #B45309;
+        }
+
+        .pm-badge-danger {
+            background: var(--pm-danger-soft);
+            color: #DC2626;
+        }
+
+        .pm-badge-info {
+            background: var(--pm-info-soft);
+            color: #1D4ED8;
+        }
+
+        .pm-badge-purple {
+            background: var(--pm-purple-soft);
+            color: #6D28D9;
+        }
+
+        .pm-badge-dark {
+            background: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pm-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink);
+            font-family: var(--pm-font-sans);
+        }
+
+        .pm-btn:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm);
+        }
+
+        .pm-btn-primary {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary);
+        }
+
+        .pm-btn-primary:hover {
+            background: var(--pm-primary-dark);
+            color: #fff;
+        }
+
+        .pm-btn-danger {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger);
+        }
+
+        .pm-btn-dark {
+            background: var(--pm-ink);
+            color: #fff;
+            border-color: var(--pm-ink);
+        }
+
+        .pm-btn-dark:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .pm-btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .pm-progress {
+            height: 6px;
+            background: var(--pm-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .pm-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s ease;
+        }
+
+        .pm-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pm-divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0;
+        }
+
+        .pm-section-title {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pm-section-sub {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 4px 0 0;
+        }
+
+        .pm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .pm-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2);
+            white-space: nowrap;
+        }
+
+        .pm-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle;
+        }
+
+        .pm-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pm-table tr:hover td {
+            background: var(--pm-surface-2);
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .quick-action-btn {
+            padding: 12px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-2px);
+            box-shadow: var(--pm-shadow-sm);
+        }
+
+        .quick-action-btn i {
+            font-size: 20px;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border);
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-xl);
+            box-shadow: var(--pm-shadow-xl);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px;
+            background: #fff;
+        }
+
+        .modal-body {
+            padding: 24px;
+            background: var(--pm-bg);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px;
+            background: #fff;
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .pm-form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .pm-form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff;
+        }
+
+        .pm-form-control:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow);
+        }
+
+        .pm-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .pm-stepper::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--pm-border);
+            z-index: 1;
+        }
+
+        .pm-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pm-step-num {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: #fff;
+            border: 2px solid var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s;
+        }
+
+        .pm-step.active .pm-step-num {
+            background: #fff;
+            border-color: var(--pm-primary);
+            color: var(--pm-primary);
+        }
+
+        .pm-step.completed .pm-step-num {
+            background: var(--pm-primary);
+            border-color: var(--pm-primary);
+            color: #fff;
+        }
+
+        .pm-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted);
+        }
+
+        .pm-step.active .pm-step-label {
+            color: var(--pm-primary);
+        }
+
+        .pm-tab-pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .pm-tab-pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+        }
+
+        .pm-tab-pill.active {
+            background: #fff;
+            color: var(--pm-ink);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600;
+        }
+
+        .pm-pin-input {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .pm-pin-input input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display);
+        }
+
+        .pm-pin-input input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow);
+        }
+
+        .fade-step {
+            display: none;
+        }
+
+        .fade-step.active {
+            display: block;
+            animation: fadeIn .3s ease-out;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn .3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pm-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: inherit;
+        }
+
+        .pm-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-block {
+            background: #fff;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .box-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .chart-container {
+            height: 160px;
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-top: 20px;
+            border-bottom: 1px solid var(--pm-border);
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+
+        .chart-bar-wrapper:hover {
+            opacity: .8;
+        }
+
+        .chart-bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+
+        .chart-bar.target {
+            background: var(--pm-border-2);
+            width: 60%;
+            margin: 0 auto;
+            position: absolute;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .chart-bar.actual {
+            background: var(--pm-primary);
+            z-index: 2;
+        }
+
+        .chart-label {
+            font-size: 10px;
+            color: var(--pm-muted);
+            text-align: center;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            background: #fff;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .02);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="pm-app">
+        <!-- SIDEBAR -->
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo" style="background:var(--pm-gradient-biz)">B</div>
+            <nav class="pm-sidebar-nav">
+                <button class="pm-nav-item active" title="Command Center"><i class="bi bi-grid-1x2"></i><span
+                        class="badge-dot"></span></button>
+                <button class="pm-nav-item" title="Collections & Merchants"><i class="bi bi-shop"></i></button>
+                <button class="pm-nav-item" title="Invoicing"><i class="bi bi-receipt"></i></button>
+                <button class="pm-nav-item" title="Payroll"><i class="bi bi-people"></i></button>
+                <button class="pm-nav-item" title="Disbursements"><i class="bi bi-send"></i></button>
+                <button class="pm-nav-item" title="Payables"><i class="bi bi-box-arrow-right"></i></button>
+                <button class="pm-nav-item" title="Business Settings"><i class="bi bi-gear"></i></button>
+            </nav>
+        </aside>
+
+        <div class="pm-main">
+            <!-- HEADER -->
+            <header class="pm-header">
+                <div class="pm-header-title">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-ink)">TS
+                        </div>
+                        <div>
+                            <h1 style="display:flex;align-items:center;gap:8px">TechSolutions Ltd <button
+                                    class="pm-btn pm-btn-sm"
+                                    style="padding:2px 6px;border:none;background:transparent;color:var(--pm-primary)"
+                                    onclick="openModal('switchBusinessModal')"><i
+                                        class="bi bi-chevron-down"></i></button></h1>
+                            <p>KRA PIN: P051234567M · Reg: PVT-2022/10492</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search invoices, employees, payments, customers...">
+                </div>
+                <div class="pm-header-actions">
+                    <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Business Health"><i
+                            class="bi bi-activity text-success"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i
+                            class="bi bi-bell"></i><span class="counter">7</span></button>
+                    <div class="pm-profile-btn" onclick="openModal('businessProfileModal')">
+                        <div class="pm-avatar" style="background:var(--pm-primary)">AD</div>
+                        <div>
+                            <div class="pm-name">Amina D.</div>
+                            <div class="pm-role">Director (Admin)</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Business Portal</a> / <strong>Command Center</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">PAGE 3.1 —
+                        Business Command Center</h2>
+                    <p class="pm-section-sub">Consolidated overview of collections, payroll, invoices, and business
+                        health.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="pm-btn" onclick="openModal('consolidatedReportModal')"><i
+                            class="bi bi-file-earmark-bar-graph"></i> Reports</button>
+                    <button class="pm-btn" onclick="openModal('inviteUserModal')"><i class="bi bi-person-plus"></i> Add
+                        User</button>
+                    <button class="pm-btn pm-btn-dark" onclick="openModal('newInvoiceModal')"><i
+                            class="bi bi-plus-lg"></i> New Invoice</button>
+                </div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO ROW: 3.1.1 Key Metrics -->
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card pm-card-biz" onclick="openModal('cashFlowDetailsModal')"
+                            style="cursor:pointer">
+                            <div class="pm-stat-label" style="color:var(--pm-muted)">AVAILABLE CASH POSITION</div>
+                            <div class="pm-stat-value">KES 2.45M</div>
+                            <div class="d-flex align-items-center gap-2 mt-2"
+                                style="font-size:12px;color:rgba(255,255,255,0.7)">
+                                <span class="pm-badge pm-badge-dark"><i class="bi bi-bank"></i> + KES 850K in
+                                    transit</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" onclick="openModal('revenueDetailsModal')" style="cursor:pointer">
+                            <div class="pm-stat-label">MONTHLY REVENUE</div>
+                            <div class="pm-stat-value" style="color:var(--pm-ink)">KES 1.82M</div>
+                            <div class="d-flex align-items-center justify-content-between mt-2">
+                                <span class="pm-badge pm-badge-success"><i class="bi bi-graph-up-arrow"></i> +12% vs
+                                    last month</span>
+                                <span style="font-size:11px;color:var(--pm-muted)">Target: 2.0M</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" onclick="openModal('expenseDetailsModal')" style="cursor:pointer">
+                            <div class="pm-stat-label">MONTHLY EXPENSES</div>
+                            <div class="pm-stat-value" style="color:var(--pm-danger)">KES 940K</div>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between mb-1"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Payroll:
+                                        450K</span><span>Supplier: 320K</span></div>
+                                <div class="pm-progress">
+                                    <div class="pm-progress-bar" style="width:65%;background:var(--pm-danger)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="border-left:3px solid var(--pm-warning)">
+                            <div class="pm-stat-label" style="color:var(--pm-warning)">PENDING APPROVALS</div>
+                            <div class="pm-stat-value">5 Actionable</div>
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="pm-btn pm-btn-sm" style="flex:1"
+                                    onclick="openModal('pendingApprovalsModal')">Review Queue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION & QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-8">
+                        <div class="pm-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Attention & Operations</h3>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('notificationsModal')">View
+                                    all</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i
+                                        class="bi bi-people"></i></div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:14px">Payroll Run: October 2025 Requires
+                                        Approval</div>
+                                    <div style="font-size:12px;color:var(--pm-muted)">24 Employees · Total KES 450,500 ·
+                                        Maker: HR Dept</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm pm-btn-primary"
+                                    onclick="openModal('runPayrollModal')">Review & Approve</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i
+                                        class="bi bi-shield-exclamation"></i></div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:14px">KYB Update Required: Annual Returns
+                                    </div>
+                                    <div style="font-size:12px;color:var(--pm-muted)">Upload 2024 CR12 to maintain Tier
+                                        3 limit (Overdue in 5 days)</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm pm-btn-danger"
+                                    onclick="openModal('kybUploadModal')">Upload Doc</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info)">
+                                    <i class="bi bi-receipt"></i></div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:14px">3 Invoices Aging > 60 Days</div>
+                                    <div style="font-size:12px;color:var(--pm-muted)">Total outstanding: KES 145,000 ·
+                                        Action recommended</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('agingInvoicesModal')">Send
+                                    Reminders</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card h-100">
+                            <h3 class="pm-section-title mb-3">Quick Actions</h3>
+                            <div class="quick-action-grid">
+                                <div class="quick-action-btn" onclick="openModal('newInvoiceModal')"><i
+                                        class="bi bi-receipt text-primary"></i> Invoice</div>
+                                <div class="quick-action-btn" onclick="openModal('runPayrollModal')"><i
+                                        class="bi bi-people text-success"></i> Payroll</div>
+                                <div class="quick-action-btn" onclick="openModal('disburseFundsModal')"><i
+                                        class="bi bi-send text-info"></i> Disburse</div>
+                                <div class="quick-action-btn" onclick="openModal('interCompanyTransferModal')"><i
+                                        class="bi bi-arrow-left-right text-purple" style="color:var(--pm-purple)"></i>
+                                    Transfer</div>
+                                <div class="quick-action-btn" onclick="openModal('inviteUserModal')"><i
+                                        class="bi bi-person-plus text-warning"></i> Add Team</div>
+                                <div class="quick-action-btn" onclick="openModal('kybUploadModal')"><i
+                                        class="bi bi-shield-check text-secondary"></i> KYB</div>
+                            </div>
+                            <div class="p-3 mt-3 rounded"
+                                style="background:var(--pm-accent-soft);border:1px solid rgba(16,185,129,0.2)">
+                                <div style="font-size:12px;font-weight:700;color:#047857;margin-bottom:4px"><i
+                                        class="bi bi-stars"></i> Smart Suggestion</div>
+                                <div style="font-size:12px;color:#065F46">You have KES 1.2M idle cash. Consider moving
+                                    500K to the Money Market Fund to earn ~11% p.a.</div>
+                                <button class="pm-btn pm-btn-sm mt-2 w-100"
+                                    style="background:#fff;color:#047857;border-color:rgba(16,185,129,0.3)"
+                                    onclick="openModal('interCompanyTransferModal')">View Investment Options</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.1.1: OVERVIEW DASHBOARD -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="pm-section-title text-primary"><i class="bi bi-graph-up"></i> 3.1.1 — Business
+                                Overview Dashboard</h3>
+                            <p class="pm-section-sub">Collections vs Targets, Aging Invoices, and Disbursement Rates.
+                            </p>
+                        </div>
+                        <button class="pm-btn pm-btn-sm" onclick="openModal('collectionTargetModal')"><i
+                                class="bi bi-sliders"></i> Edit Targets</button>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="status-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 8px">Collections vs Target (Last 6
+                                    Months)</h4>
+                                <div class="chart-container">
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:60%"></div>
+                                            <div class="chart-bar actual" style="height:55%;background:var(--pm-muted)">
+                                            </div>
+                                        </div>
+                                        <div class="chart-label">May</div>
+                                    </div>
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:65%"></div>
+                                            <div class="chart-bar actual" style="height:60%;background:var(--pm-muted)">
+                                            </div>
+                                        </div>
+                                        <div class="chart-label">Jun</div>
+                                    </div>
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:70%"></div>
+                                            <div class="chart-bar actual"
+                                                style="height:75%;background:var(--pm-accent)"></div>
+                                        </div>
+                                        <div class="chart-label">Jul</div>
+                                    </div>
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:75%"></div>
+                                            <div class="chart-bar actual"
+                                                style="height:68%;background:var(--pm-warning)"></div>
+                                        </div>
+                                        <div class="chart-label">Aug</div>
+                                    </div>
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:80%"></div>
+                                            <div class="chart-bar actual"
+                                                style="height:85%;background:var(--pm-accent)"></div>
+                                        </div>
+                                        <div class="chart-label">Sep</div>
+                                    </div>
+                                    <div class="chart-bar-wrapper" onclick="openModal('revenueDetailsModal')">
+                                        <div style="position:relative;width:40px;height:100%;margin:0 auto">
+                                            <div class="chart-bar target" style="height:85%"></div>
+                                            <div class="chart-bar actual"
+                                                style="height:95%;background:var(--pm-primary)"></div>
+                                        </div>
+                                        <div class="chart-label">Oct</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:11px">
+                                    <span class="d-flex align-items-center gap-1">
+                                        <div
+                                            style="width:10px;height:10px;background:var(--pm-border-2);border-radius:2px">
+                                        </div> Target
+                                    </span>
+                                    <span class="d-flex align-items-center gap-1">
+                                        <div
+                                            style="width:10px;height:10px;background:var(--pm-primary);border-radius:2px">
+                                        </div> Actual
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="status-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Outstanding Invoices Aging
+                                </h4>
+                                <div class="d-flex gap-2 h-100">
+                                    <div class="p-3 rounded flex-1 text-center d-flex flex-column justify-content-center"
+                                        style="background:var(--pm-success-soft, #D1FAE5);cursor:pointer"
+                                        onclick="openModal('agingInvoicesModal')">
+                                        <div style="font-size:12px;color:#047857;font-weight:600">0-30 Days</div>
+                                        <div style="font-size:18px;font-weight:700;color:#065F46">KES 420K</div>
+                                    </div>
+                                    <div class="p-3 rounded flex-1 text-center d-flex flex-column justify-content-center"
+                                        style="background:var(--pm-warning-soft);cursor:pointer"
+                                        onclick="openModal('agingInvoicesModal')">
+                                        <div style="font-size:12px;color:#B45309;font-weight:600">31-60 Days</div>
+                                        <div style="font-size:18px;font-weight:700;color:#92400E">KES 185K</div>
+                                    </div>
+                                    <div class="p-3 rounded flex-1 text-center d-flex flex-column justify-content-center"
+                                        style="background:var(--pm-danger-soft);cursor:pointer"
+                                        onclick="openModal('agingInvoicesModal')">
+                                        <div style="font-size:12px;color:#DC2626;font-weight:600">61-90+ Days</div>
+                                        <div style="font-size:18px;font-weight:700;color:#991B1B">KES 145K</div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="pm-btn pm-btn-sm w-100" onclick="openModal('agingInvoicesModal')"><i
+                                            class="bi bi-envelope"></i> Send Auto-Reminders to All Overdue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW: PROFILE & MULTI-BIZ -->
+                <div class="row g-3">
+                    <!-- SECTION 3.1.2: BUSINESS PROFILE -->
+                    <div class="col-lg-6">
+                        <div class="pm-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="pm-section-title text-info"><i class="bi bi-building-check"></i> 3.1.2 —
+                                        Business Profile & Settings</h3>
+                                    <p class="pm-section-sub">KYC/KYB status and corporate details.</p>
+                                </div>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('businessSettingsModal')"><i
+                                        class="bi bi-pencil"></i></button>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6">
+                                    <div class="p-2 border rounded">
+                                        <div style="font-size:11px;color:var(--pm-muted)">Company Name</div>
+                                        <div style="font-size:13px;font-weight:600">TechSolutions Ltd</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-2 border rounded">
+                                        <div style="font-size:11px;color:var(--pm-muted)">KRA PIN</div>
+                                        <div style="font-size:13px;font-weight:600;font-family:monospace">P051234567M
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-2 border rounded">
+                                        <div style="font-size:11px;color:var(--pm-muted)">Registration Number</div>
+                                        <div style="font-size:13px;font-weight:600">PVT-2022/10492</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-2 border rounded">
+                                        <div style="font-size:11px;color:var(--pm-muted)">Business Type / Sector</div>
+                                        <div style="font-size:13px;font-weight:600">LLC · IT Services</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 style="font-size:13px;font-weight:700;margin:0 0 8px">Verification & KYB Status</h4>
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom"
+                                style="font-size:13px">
+                                <span>Certificate of Incorporation</span>
+                                <span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i>
+                                    Verified</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom"
+                                style="font-size:13px">
+                                <span>KRA PIN Certificate</span>
+                                <span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i>
+                                    Verified</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2 border-bottom"
+                                style="font-size:13px">
+                                <span>Tax Compliance Certificate</span>
+                                <span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Valid till
+                                    Dec 2025</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2" style="font-size:13px">
+                                <span>Annual Returns (CR12)</span>
+                                <span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-circle"></i> Missing
+                                    2024</span>
+                            </div>
+                            <button class="pm-btn pm-btn-sm mt-2" onclick="openModal('kybUploadModal')">Manage
+                                Documents</button>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3.1.3: MULTI-BIZ -->
+                    <div class="col-lg-6">
+                        <div class="pm-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="pm-section-title" style="color:var(--pm-purple)"><i
+                                            class="bi bi-diagram-3"></i> 3.1.3 — Multi-Business Management</h3>
+                                    <p class="pm-section-sub">Switch accounts, view consolidated data, inter-company
+                                        transfers.</p>
+                                </div>
+                                <button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('switchBusinessModal')">Switch</button>
+                            </div>
+
+                            <div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:11px;color:#6D28D9;font-weight:700">CONSOLIDATED GROUP CASH (3
+                                    ENTITIES)</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">KES 12.8M</div>
+                                <div class="mt-2 d-flex gap-2">
+                                    <button class="pm-btn pm-btn-sm"
+                                        style="border-color:var(--pm-purple);color:var(--pm-purple)"
+                                        onclick="openModal('consolidatedReportModal')">View Group Report</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="pm-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Entity Name</th>
+                                            <th>Role</th>
+                                            <th>Cash Bal</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="background:var(--pm-surface-2)">
+                                            <td><strong>TechSolutions Ltd</strong> (Current)</td>
+                                            <td>Owner</td>
+                                            <td>2.45M</td>
+                                            <td><button class="pm-btn pm-btn-sm" disabled>Active</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>TS Logistics & Delivery</td>
+                                            <td>Owner</td>
+                                            <td>8.10M</td>
+                                            <td><button class="pm-btn pm-btn-sm"
+                                                    onclick="openModal('interCompanyTransferModal')">Transfer</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>TechSolutions Foundation</td>
+                                            <td>Admin</td>
+                                            <td>2.25M</td>
+                                            <td><button class="pm-btn pm-btn-sm"
+                                                    onclick="openModal('switchBusinessModal')">Switch</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.1.4: TEAM & USER MANAGEMENT -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 class="pm-section-title text-success"><i class="bi bi-people"></i> 3.1.4 — Team & User
+                                Management</h3>
+                            <p class="pm-section-sub">Manage roles, permissions, approval limits, and MFA requirements.
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="pm-btn pm-btn-sm" onclick="openModal('rolePermissionsModal')"><i
+                                    class="bi bi-shield-lock"></i> View Roles Matrix</button>
+                            <button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('inviteUserModal')"><i
+                                    class="bi bi-person-plus"></i> Invite User</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role / Dept</th>
+                                    <th>Approval Limit</th>
+                                    <th>MFA Status</th>
+                                    <th>Last Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pm-avatar"
+                                                style="width:28px;height:28px;font-size:10px;background:var(--pm-primary)">
+                                                AD</div>
+                                            <div><strong>Amina D.</strong>
+                                                <div style="font-size:11px;color:var(--pm-muted)">amina@techsol.co.ke
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="pm-badge" style="background:#1E293B;color:#fff">Owner</span></td>
+                                    <td>Unlimited</td>
+                                    <td><span class="pm-badge pm-badge-success"><i class="bi bi-phone"></i>
+                                            Enforced</span></td>
+                                    <td>Today, 09:41 AM</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('viewUserModal')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pm-avatar"
+                                                style="width:28px;height:28px;font-size:10px;background:var(--pm-info)">
+                                                PK</div>
+                                            <div><strong>Peter K.</strong>
+                                                <div style="font-size:11px;color:var(--pm-muted)">peter.k@techsol.co.ke
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="pm-badge pm-badge-info">Finance Admin</span></td>
+                                    <td>KES 1,000,000</td>
+                                    <td><span class="pm-badge pm-badge-success"><i class="bi bi-phone"></i>
+                                            Enforced</span></td>
+                                    <td>Today, 08:15 AM</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('viewUserModal')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pm-avatar"
+                                                style="width:28px;height:28px;font-size:10px;background:var(--pm-warning)">
+                                                SW</div>
+                                            <div><strong>Sarah W.</strong>
+                                                <div style="font-size:11px;color:var(--pm-muted)">sarah.hr@techsol.co.ke
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="pm-badge pm-badge-warning">HR Manager</span></td>
+                                    <td>KES 5,000,000 (Payroll)</td>
+                                    <td><span class="pm-badge pm-badge-success"><i class="bi bi-phone"></i>
+                                            Enforced</span></td>
+                                    <td>Yesterday</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('viewUserModal')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pm-avatar"
+                                                style="width:28px;height:28px;font-size:10px;background:var(--pm-muted)">
+                                                JM</div>
+                                            <div><strong>John M.</strong>
+                                                <div style="font-size:11px;color:var(--pm-muted)">john@techsol.co.ke
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="pm-badge" style="background:#f1f5f9;color:var(--pm-ink-soft)">Sales
+                                            (Invoicing)</span></td>
+                                    <td>None (Maker only)</td>
+                                    <td><span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-circle"></i>
+                                            Pending Setup</span></td>
+                                    <td>Never (Invited)</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('viewUserModal')">Manage</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- end content -->
+        </div><!-- end main -->
+    </div><!-- end app -->
+
+
+    <!-- ========================================================= -->
+    <!-- MODALS (20+ Modals) -->
+    <!-- ========================================================= -->
+
+    <!-- 1. Quick Action: New Invoice -->
+    <div class="modal fade" id="newInvoiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt text-primary me-2"></i>Create Quick Invoice</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Customer</label><select class="pm-form-control">
+                            <option>Acme Corp</option>
+                            <option>Global Industries</option>
+                            <option>+ Add New Customer</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                            class="pm-form-control" value="150000"></div>
+                    <div class="mb-3"><label class="pm-form-label">Description</label><textarea class="pm-form-control"
+                            rows="2">IT Consulting Services - October 2025</textarea></div>
+                    <div class="mb-3"><label class="pm-form-label">Due Date</label><input type="date"
+                            class="pm-form-control" value="2025-11-15"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Send payment link via Email/SMS</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('newInvoiceModal','Invoice #INV-2025-142 created & sent successfully!','INV-2025-142')">Create
+                        Invoice</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Multistep: Run Payroll -->
+    <div class="modal fade" id="runPayrollModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-success me-2"></i>Run & Approve Payroll</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="payrollBody">
+                    <div class="pm-stepper" id="payrollStepper">
+                        <div class="pm-step active">
+                            <div class="pm-step-num">1</div>
+                            <div class="pm-step-label">Select</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">2</div>
+                            <div class="pm-step-label">Review</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">3</div>
+                            <div class="pm-step-label">Approve</div>
+                        </div>
+                    </div>
+                    <div id="payStep1" class="fade-step active">
+                        <h6 style="font-weight:700">Select Payroll Period</h6>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6"><label class="pm-form-label">Month</label><select
+                                    class="pm-form-control">
+                                    <option>October 2025</option>
+                                    <option>September 2025</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="pm-form-label">Department / Group</label><select
+                                    class="pm-form-control">
+                                    <option>All Employees (24)</option>
+                                    <option>Management (4)</option>
+                                    <option>Engineering (12)</option>
+                                </select></div>
+                            <div class="col-12">
+                                <div class="p-3 border rounded" style="background:var(--pm-surface-2)">
+                                    <div class="d-flex justify-content-between mb-2"><span>Gross Pay</span><strong>KES
+                                            620,000</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-danger">PAYE &
+                                            Statutory</span><strong class="text-danger">- KES 169,500</strong></div>
+                                    <hr class="pm-divider">
+                                    <div class="d-flex justify-content-between"><span style="font-weight:700">Net
+                                            Disbursement</span><strong style="color:var(--pm-success)">KES
+                                            450,500</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="payStep2" class="fade-step">
+                        <h6 style="font-weight:700">Review Discrepancies</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:13px"><i
+                                class="bi bi-exclamation-triangle"></i> 1 employee banking detail missing. They will be
+                            paid via M-Pesa.</div>
+                        <div class="table-responsive">
+                            <table class="pm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Gross</th>
+                                        <th>Net</th>
+                                        <th>Method</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>James K.</td>
+                                        <td>120,000</td>
+                                        <td>86,400</td>
+                                        <td>Bank Transfer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Grace M.</td>
+                                        <td>95,000</td>
+                                        <td>71,200</td>
+                                        <td>Bank Transfer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>David O.</td>
+                                        <td>60,000</td>
+                                        <td>48,500</td>
+                                        <td>M-Pesa B2C</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">... 21 more rows</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="payStep3" class="fade-step">
+                        <h6 style="font-weight:700">Authorize Execution</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                            Authorization required for <strong>KES 450,500</strong> disbursement to 24 employees. Funds
+                            will be deducted from TechSolutions Ltd main wallet.
+                        </div>
+                        <label class="pm-form-label text-center">Enter your Director PIN</label>
+                        <div class="pm-pin-input">
+                            <input type="password" maxlength="1"><input type="password" maxlength="1"><input
+                                type="password" maxlength="1"><input type="password" maxlength="1">
+                        </div>
+                        <div class="form-check mt-4 text-center d-flex justify-content-center">
+                            <input class="form-check-input me-2" type="checkbox" checked><label class="form-check-label"
+                                style="font-size:12px">Auto-file KRA P10, NSSF, and SHIF returns</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="pm-btn" data-bs-dismiss="modal">Cancel</button>
+                    <button class="pm-btn pm-btn-primary" id="payNextBtn" onclick="nextPayrollStep()">Continue <i
+                            class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Multistep: Inter-Company Transfer -->
+    <div class="modal fade" id="interCompanyTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-purple me-2"></i>Inter-Company
+                        Transfer</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="transferBody">
+                    <div class="pm-stepper" id="transStepper">
+                        <div class="pm-step active">
+                            <div class="pm-step-num">1</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">2</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">3</div>
+                        </div>
+                    </div>
+                    <div id="transStep1" class="fade-step active">
+                        <div class="mb-3"><label class="pm-form-label">Transfer From</label><select
+                                class="pm-form-control">
+                                <option>TechSolutions Ltd (Bal: 2.45M)</option>
+                            </select></div>
+                        <div class="mb-3 text-center"><i class="bi bi-arrow-down"
+                                style="font-size:20px;color:var(--pm-muted)"></i></div>
+                        <div class="mb-3"><label class="pm-form-label">Transfer To</label><select
+                                class="pm-form-control">
+                                <option>TS Logistics & Delivery (Bal: 8.10M)</option>
+                                <option>TechSolutions Foundation (Bal: 2.25M)</option>
+                                <option>PayMo Money Market Fund (Yield: 11%)</option>
+                            </select></div>
+                    </div>
+                    <div id="transStep2" class="fade-step">
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                                class="pm-form-control" value="500000"></div>
+                        <div class="mb-3"><label class="pm-form-label">Reference / Reason</label><input type="text"
+                                class="pm-form-control" value="Fleet expansion capital"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Inter-company
+                            transfers settle instantly. Zero fees applied.</div>
+                    </div>
+                    <div id="transStep3" class="fade-step">
+                        <div class="text-center">
+                            <h4 style="font-weight:700">Confirm Transfer</h4>
+                            <p style="font-size:24px;color:var(--pm-purple);font-weight:700;margin:10px 0">KES 500,000
+                            </p>
+                            <p style="font-size:13px;color:var(--pm-muted)">To TS Logistics & Delivery</p>
+                            <div class="pm-pin-input mt-4"><input type="password" maxlength="1"><input type="password"
+                                    maxlength="1"><input type="password" maxlength="1"><input type="password"
+                                    maxlength="1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary" id="transNextBtn" onclick="nextTransStep()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Multistep: Add/Invite User -->
+    <div class="modal fade" id="inviteUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus text-warning me-2"></i>Invite Team Member</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="inviteBody">
+                    <div class="pm-stepper" id="inviteStepper">
+                        <div class="pm-step active">
+                            <div class="pm-step-num">1</div>
+                            <div class="pm-step-label">Details</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">2</div>
+                            <div class="pm-step-label">Role</div>
+                        </div>
+                        <div class="pm-step">
+                            <div class="pm-step-num">3</div>
+                            <div class="pm-step-label">Limits</div>
+                        </div>
+                    </div>
+                    <div id="invStep1" class="fade-step active">
+                        <div class="mb-3"><label class="pm-form-label">Full Name</label><input type="text"
+                                class="pm-form-control" placeholder="e.g. Jane Doe"></div>
+                        <div class="mb-3"><label class="pm-form-label">Work Email</label><input type="email"
+                                class="pm-form-control" placeholder="jane@techsol.co.ke"></div>
+                        <div class="mb-3"><label class="pm-form-label">Department</label><select
+                                class="pm-form-control">
+                                <option>Finance</option>
+                                <option>HR</option>
+                                <option>Sales</option>
+                                <option>Operations</option>
+                            </select></div>
+                    </div>
+                    <div id="invStep2" class="fade-step">
+                        <label class="pm-form-label">Assign Role</label>
+                        <div class="p-3 border rounded mb-2"
+                            style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="role"
+                                    checked><label class="form-check-label"><strong>Admin</strong> - Manage settings,
+                                    approve payments</label></div>
+                        </div>
+                        <div class="p-3 border rounded mb-2">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="role"><label
+                                    class="form-check-label"><strong>Finance / Maker</strong> - Create invoices,
+                                    initiate payments</label></div>
+                        </div>
+                        <div class="p-3 border rounded">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="role"><label
+                                    class="form-check-label"><strong>Viewer</strong> - Read-only access to
+                                    reports</label></div>
+                        </div>
+                    </div>
+                    <div id="invStep3" class="fade-step">
+                        <div class="mb-3"><label class="pm-form-label">Approval Limit (KES)</label><input type="number"
+                                class="pm-form-control" value="1000000"></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked
+                                disabled><label class="form-check-label">Require 2FA/MFA (Enforced for Admin)</label>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Allow access to multi-business switcher</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary" id="invNextBtn" onclick="nextInviteStep()">Continue</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. KYB Upload Modal -->
+    <div class="modal fade" id="kybUploadModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-secondary me-2"></i>KYB Document Upload
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:13px"><i
+                            class="bi bi-exclamation-triangle text-danger"></i> Missing Annual Returns (CR12). Limit
+                        restrictions will apply in 5 days.</div>
+                    <div class="mb-3"><label class="pm-form-label">Document Type</label><select class="pm-form-control"
+                            disabled>
+                            <option>CR12 / Annual Returns</option>
+                        </select></div>
+                    <div class="upload-zone mb-3" onclick="alert('File selector opened')">
+                        <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:var(--pm-primary)"></i>
+                        <div style="font-weight:600;margin-top:8px">Click to browse or drag file here</div>
+                        <div style="font-size:11px;color:var(--pm-muted)">PDF, JPG, PNG (Max 5MB)</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('kybUploadModal','Document uploaded and sent for verification.','KYB-99120')">Submit
+                        for Verification</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Business Settings Modal -->
+    <div class="modal fade" id="businessSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Business Settings</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills"><button class="pm-tab-pill active">General</button><button
+                            class="pm-tab-pill">Address & Contacts</button><button
+                            class="pm-tab-pill">Signatories</button></div>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6"><label class="pm-form-label">Trading Name</label><input type="text"
+                                class="pm-form-control" value="TechSolutions Ltd"></div>
+                        <div class="col-md-6"><label class="pm-form-label">Industry Sector</label><select
+                                class="pm-form-control">
+                                <option>Information Technology</option>
+                                <option>Retail</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="pm-form-label">Support Email</label><input type="email"
+                                class="pm-form-control" value="support@techsol.co.ke"></div>
+                        <div class="col-md-6"><label class="pm-form-label">Support Phone</label><input type="text"
+                                class="pm-form-control" value="+254 700 000 000"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('businessSettingsModal','Settings updated successfully!','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Switch Business Modal -->
+    <div class="modal fade" id="switchBusinessModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-diagram-3 me-2"></i>Switch Business Account</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-header-search mb-3" style="max-width:100%"><i class="bi bi-search"></i><input
+                            type="text" placeholder="Search businesses..."></div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"
+                        style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="pm-avatar">TS</div>
+                            <div>
+                                <div style="font-weight:600;font-size:14px">TechSolutions Ltd</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Owner · Current</div>
+                            </div>
+                        </div>
+                        <i class="bi bi-check-circle-fill text-primary"></i>
+                    </div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"
+                        style="cursor:pointer"
+                        onclick="simulateProcess('switchBusinessModal','Switched to TS Logistics!','')">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="pm-avatar" style="background:var(--pm-danger)">TL</div>
+                            <div>
+                                <div style="font-weight:600;font-size:14px">TS Logistics & Delivery</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Owner</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded d-flex justify-content-between align-items-center"
+                        style="cursor:pointer"
+                        onclick="simulateProcess('switchBusinessModal','Switched to Foundation!','')">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="pm-avatar" style="background:var(--pm-info)">TF</div>
+                            <div>
+                                <div style="font-weight:600;font-size:14px">TechSolutions Foundation</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Admin</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Cash Flow Details Modal -->
+    <div class="modal fade" id="cashFlowDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank me-2"></i>Cash Position & Liquidity</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded h-100">
+                                <div style="font-size:11px;color:var(--pm-muted)">PAYMO BUSINESS WALLET</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-primary)">KES 2,450,000</div>
+                                <button class="pm-btn pm-btn-sm mt-2 w-100"
+                                    onclick="openModal('interCompanyTransferModal')">Transfer Funds</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded h-100">
+                                <div style="font-size:11px;color:var(--pm-muted)">LINKED ACCOUNTS (EQUITY BANK)</div>
+                                <div style="font-size:24px;font-weight:700">KES 8,120,500</div><button
+                                    class="pm-btn pm-btn-sm mt-2 w-100" onclick="openModal('connectBankModal')">Manage
+                                    Connections</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 style="font-weight:700;margin-top:20px">Pending Settlements (T+1)</h6>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Amount</th>
+                                    <th>Expected Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>M-Pesa Till (Buy Goods)</td>
+                                    <td>KES 450,000</td>
+                                    <td>Tomorrow, 8:00 AM</td>
+                                </tr>
+                                <tr>
+                                    <td>Visa/Mastercard Gateway</td>
+                                    <td>KES 400,000</td>
+                                    <td>Tomorrow, 2:00 PM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Aging Invoices Modal -->
+    <div class="modal fade" id="agingInvoicesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Outstanding Invoices (Aging Report)</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills"><button class="pm-tab-pill active">All (750K)</button><button
+                            class="pm-tab-pill">0-30 Days (420K)</button><button class="pm-tab-pill">31-60 Days
+                            (185K)</button><button class="pm-tab-pill" style="color:var(--pm-danger)">61-90+ Days
+                            (145K)</button></div>
+                    <div class="table-responsive mt-3">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Days Overdue</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INV-2025-081</td>
+                                    <td>Acme Corp</td>
+                                    <td>KES 85,000</td>
+                                    <td><span class="pm-badge pm-badge-danger">72 days</span></td>
+                                    <td><button class="pm-btn pm-btn-sm">Remind</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-2025-084</td>
+                                    <td>Global Industries</td>
+                                    <td>KES 60,000</td>
+                                    <td><span class="pm-badge pm-badge-danger">65 days</span></td>
+                                    <td><button class="pm-btn pm-btn-sm">Remind</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-2025-092</td>
+                                    <td>StartUp Inc</td>
+                                    <td>KES 185,000</td>
+                                    <td><span class="pm-badge pm-badge-warning">45 days</span></td>
+                                    <td><button class="pm-btn pm-btn-sm">Remind</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-2025-104</td>
+                                    <td>Retail Chain A</td>
+                                    <td>KES 420,000</td>
+                                    <td><span class="pm-badge pm-badge-info">15 days</span></td>
+                                    <td><button class="pm-btn pm-btn-sm">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('agingInvoicesModal','Reminders sent to all overdue customers via Email & SMS.','')"><i
+                            class="bi bi-envelope-check"></i> Send Batch Reminders</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person me-2"></i>Edit User: Peter K.</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Role</label><select class="pm-form-control">
+                            <option>Admin</option>
+                            <option selected>Finance Admin</option>
+                            <option>HR Manager</option>
+                            <option>Viewer</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Approval Limit (KES)</label><input type="number"
+                            class="pm-form-control" value="1000000"></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">MFA Enforced</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label text-danger">Suspend Account</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('viewUserModal','User settings updated!','')">Save</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Disburse Funds Modal (Quick Action) -->
+    <div class="modal fade" id="disburseFundsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-send text-info me-2"></i>Disburse Funds</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Disbursement Type</label><select
+                            class="pm-form-control">
+                            <option>Single Vendor Payment</option>
+                            <option>Bulk CSV Upload (M-Pesa B2C)</option>
+                            <option>Expense Reimbursement</option>
+                        </select></div>
+                    <div class="p-3 border rounded text-center mb-3">
+                        <i class="bi bi-file-earmark-excel mb-2" style="font-size:24px;color:var(--pm-accent)"></i><br>
+                        <strong>Upload Beneficiary CSV</strong><br>
+                        <span style="font-size:11px;color:var(--pm-muted)">Format: Name, Phone, Account,
+                            Amount</span><br>
+                        <button class="pm-btn pm-btn-sm mt-2">Browse File</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('disburseFundsModal','CSV Uploaded. Sent to Maker/Checker queue.','')">Upload
+                        & Validate</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Pending Approvals Modal -->
+    <div class="modal fade" id="pendingApprovalsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock text-warning me-2"></i>Approval Queue</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Request</th>
+                                    <th>Maker</th>
+                                    <th>Amount</th>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Payroll Run Oct</td>
+                                    <td>Sarah W. (HR)</td>
+                                    <td>KES 450,500</td>
+                                    <td>Today, 08:00 AM</td>
+                                    <td><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                            onclick="openModal('runPayrollModal');closeModal('pendingApprovalsModal')">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Supplier: OfficeMart</td>
+                                    <td>Peter K. (Fin)</td>
+                                    <td>KES 120,000</td>
+                                    <td>Yesterday</td>
+                                    <td><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                            onclick="simulateProcess('pendingApprovalsModal','Payment approved!','')">Approve</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Vendor: AWS Hosting</td>
+                                    <td>Peter K. (Fin)</td>
+                                    <td>KES 85,000</td>
+                                    <td>Yesterday</td>
+                                    <td><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                            onclick="simulateProcess('pendingApprovalsModal','Payment approved!','')">Approve</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Consolidated Report Modal -->
+    <div class="modal fade" id="consolidatedReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-bar-graph me-2"></i>Export Business Reports
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control">
+                            <option>Consolidated Cash Flow</option>
+                            <option>Group Revenue Summary</option>
+                            <option>Payroll Audit Trail</option>
+                            <option>Tax / Statutory Deductions</option>
+                        </select></div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label class="pm-form-label">From</label><input type="date"
+                                class="pm-form-control"></div>
+                        <div class="col-6"><label class="pm-form-label">To</label><input type="date"
+                                class="pm-form-control"></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('consolidatedReportModal','Report generated and downloaded.','')">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Notifications Modal -->
+    <div class="modal fade" id="notificationsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Business Alerts</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:400px; overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Payroll Approval Required</strong><br>Sarah W. initiated Oct Payroll. <a href="#"
+                            onclick="openModal('runPayrollModal');closeModal('notificationsModal')">Review</a></div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>KYB
+                            Expiring</strong><br>Annual returns due in 5 days. <a href="#"
+                            onclick="openModal('kybUploadModal');closeModal('notificationsModal')">Upload</a></div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px">
+                        <strong>Settlement Completed</strong><br>KES 850K settled to Equity Bank.</div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:var(--pm-surface-2);border:1px solid var(--pm-border);font-size:13px">
+                        <strong>New User Invite Accepted</strong><br>John M. joined as Sales.</div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Role Permissions Matrix Modal -->
+    <div class="modal fade" id="rolePermissionsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Role Permissions Matrix</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="pm-table text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Feature</th>
+                                    <th>Owner</th>
+                                    <th>Admin</th>
+                                    <th>Fin/HR</th>
+                                    <th>Sales</th>
+                                    <th>Viewer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-start">Multi-Business Toggle</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start">Manage Team</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start">Approve Payroll</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start">Initiate Payments</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start">Create Invoices</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start">View Reports</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16. Connect Bank Modal -->
+    <div class="modal fade" id="connectBankModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank text-info me-2"></i>Manage Linked Banks</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 border rounded mb-3 d-flex justify-content-between align-items-center">
+                        <div><strong>Equity Bank Ltd</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">***4521 · Open Banking Sync Active</div>
+                        </div>
+                        <button class="pm-btn pm-btn-sm pm-btn-danger">Unlink</button>
+                    </div>
+                    <div class="p-3 border rounded text-center" style="cursor:pointer"
+                        onclick="simulateProcess('connectBankModal','Redirecting to secure bank portal...','')">
+                        <i class="bi bi-plus-circle mb-2" style="font-size:24px;color:var(--pm-primary)"></i><br>
+                        <strong>Connect New Bank Account</strong><br>
+                        <span style="font-size:11px;color:var(--pm-muted)">via PesaLink Open API</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Health Check Modal -->
+    <div class="modal fade" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Business Health Snapshot
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center mb-4">
+                        <div
+                            style="width:120px;height:120px;border-radius:50%;border:8px solid var(--pm-accent);display:flex;align-items:center;justify-content:center;flex-direction:column">
+                            <span style="font-size:32px;font-weight:700;font-family:var(--pm-font-display)">92</span>
+                            <span style="font-size:11px;color:var(--pm-muted)">SCORE</span>
+                        </div>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Liquidity Ratio</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Cash available to cover payroll</div>
+                        </div><span class="pm-badge pm-badge-success">Excellent</span>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Collections Rate</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Invoices paid within 30 days</div>
+                        </div><span class="pm-badge pm-badge-warning">Needs Focus</span>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Compliance</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KYB and KRA Returns</div>
+                        </div><span class="pm-badge pm-badge-danger">Action Reqd</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 18. Revenue Details Modal -->
+    <div class="modal fade" id="revenueDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up text-primary me-2"></i>Revenue Breakdown</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stat-value text-center mb-4">KES 1.82M</div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Amount</th>
+                                    <th>% of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Invoices Paid</td>
+                                    <td>KES 1.20M</td>
+                                    <td>66%</td>
+                                </tr>
+                                <tr>
+                                    <td>M-Pesa Till (Walk-in)</td>
+                                    <td>KES 420K</td>
+                                    <td>23%</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Links</td>
+                                    <td>KES 200K</td>
+                                    <td>11%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. Expense Details Modal -->
+    <div class="modal fade" id="expenseDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-down text-danger me-2"></i>Expense Breakdown</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stat-value text-center mb-4 text-danger">KES 940K</div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>% of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Payroll & Salaries</td>
+                                    <td>KES 450K</td>
+                                    <td>48%</td>
+                                </tr>
+                                <tr>
+                                    <td>Supplier Payments</td>
+                                    <td>KES 320K</td>
+                                    <td>34%</td>
+                                </tr>
+                                <tr>
+                                    <td>KRA Taxes & Levies</td>
+                                    <td>KES 120K</td>
+                                    <td>13%</td>
+                                </tr>
+                                <tr>
+                                    <td>Utilities & Internet</td>
+                                    <td>KES 50K</td>
+                                    <td>5%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Collection Target Modal -->
+    <div class="modal fade" id="collectionTargetModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bullseye text-primary me-2"></i>Set Collection Targets</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Target Month</label><select class="pm-form-control">
+                            <option>November 2025</option>
+                            <option>December 2025</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Gross Revenue Target (KES)</label><input
+                            type="number" class="pm-form-control" value="2500000"></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);font-size:12px">Setting targets
+                        updates the dashboard charts for the entire team to track progress.</div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="simulateProcess('collectionTargetModal','Targets updated for November!','')">Save
+                        Targets</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Business Profile View Modal -->
+    <div class="modal fade" id="businessProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge text-primary me-2"></i>My Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3"
+                        style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div>
+                    <h4 style="font-weight:700;margin-bottom:4px">Amina D.</h4>
+                    <p style="font-size:13px;color:var(--pm-muted)">Director (Admin) · TechSolutions Ltd</p>
+                    <div class="p-3 border rounded text-start mt-3">
+                        <div class="d-flex justify-content-between mb-2" style="font-size:13px"><span
+                                class="text-muted">Approval Limit</span><strong>Unlimited</strong></div>
+                        <div class="d-flex justify-content-between mb-2" style="font-size:13px"><span
+                                class="text-muted">Security</span><span class="pm-badge pm-badge-success">MFA
+                                Active</span></div>
+                        <div class="d-flex justify-content-between" style="font-size:13px"><span
+                                class="text-muted">Connected Entities</span><strong>3 Businesses</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn pm-btn-danger w-100" data-bs-dismiss="modal">Log
+                        Out</button></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Multistep Logics
+        let payStep = 1, transStep = 1, invStep = 1;
+
+        function showStep(prefix, current, total) {
+            for (let i = 1; i <= total; i++) {
+                let el = document.getElementById(prefix + 'Step' + i);
+                if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+            }
+            let active = document.getElementById(prefix + 'Step' + current);
+            if (active) { active.classList.add('active'); active.style.display = 'block'; }
+        }
+
+        function updateStepper(id, current, total) {
+            let html = '';
+            for (let i = 1; i <= total; i++) {
+                let cls = i < current ? 'completed' : i === current ? 'active' : '';
+                let num = i < current ? '<i class="bi bi-check"></i>' : i;
+                html += `<div class="pm-step ${cls}"><div class="pm-step-num">${num}</div></div>`;
+                if (i < total) html += `<div class="pm-step-line" style="flex:1;height:2px;background:var(--pm-border);margin:0 8px;${i < current ? 'background:var(--pm-accent)' : ''}"></div>`;
+            }
+            document.getElementById(id).innerHTML = html;
+        }
+
+        // Payroll flow
+        function nextPayrollStep() {
+            if (payStep === 2) {
+                showLoading('payrollBody', () => {
+                    payStep = 3; showStep('pay', payStep, 3); updateStepper('payrollStepper', payStep, 3);
+                    document.getElementById('payNextBtn').innerHTML = 'Approve & Execute <i class="bi bi-lock"></i>';
+                });
+                return;
+            }
+            if (payStep === 3) {
+                simulateProcess('runPayrollModal', 'Payroll executed successfully! KES 450,500 disbursed.', 'PAY-10029');
+                payStep = 1; return;
+            }
+            payStep++; showStep('pay', payStep, 3); updateStepper('payrollStepper', payStep, 3);
+        }
+
+        // Transfer Flow
+        function nextTransStep() {
+            if (transStep === 2) {
+                showLoading('transferBody', () => {
+                    transStep = 3; showStep('trans', transStep, 3); updateStepper('transStepper', transStep, 3);
+                    document.getElementById('transNextBtn').innerHTML = 'Authorize <i class="bi bi-lock"></i>';
+                });
+                return;
+            }
+            if (transStep === 3) {
+                simulateProcess('interCompanyTransferModal', 'Transfer of KES 500,000 completed instantly.', 'TRF-59001');
+                transStep = 1; return;
+            }
+            transStep++; showStep('trans', transStep, 3); updateStepper('transStepper', transStep, 3);
+        }
+
+        // Invite Flow
+        function nextInviteStep() {
+            if (invStep === 2) {
+                showLoading('inviteBody', () => {
+                    invStep = 3; showStep('inv', invStep, 3); updateStepper('inviteStepper', invStep, 3);
+                    document.getElementById('invNextBtn').innerHTML = 'Send Invite <i class="bi bi-envelope"></i>';
+                });
+                return;
+            }
+            if (invStep === 3) {
+                simulateProcess('inviteUserModal', 'Invitation sent! They will receive an email to set up MFA.');
+                invStep = 1; return;
+            }
+            invStep++; showStep('inv', invStep, 3); updateStepper('inviteStepper', invStep, 3);
+        }
+
+        // Reset Modals on close
+        document.addEventListener('DOMContentLoaded', () => {
+            ['runPayrollModal', 'interCompanyTransferModal', 'inviteUserModal'].forEach(id => {
+                let m = document.getElementById(id);
+                if (m) {
+                    m.addEventListener('hidden.bs.modal', () => {
+                        payStep = 1; transStep = 1; invStep = 1;
+                        showStep('pay', 1, 3); updateStepper('payrollStepper', 1, 3); document.getElementById('payNextBtn').innerHTML = 'Continue <i class="bi bi-arrow-right"></i>';
+                        showStep('trans', 1, 3); updateStepper('transStepper', 1, 3); document.getElementById('transNextBtn').innerHTML = 'Continue';
+                        showStep('inv', 1, 3); updateStepper('inviteStepper', 1, 3); document.getElementById('invNextBtn').innerHTML = 'Continue';
+                    });
+                }
+            });
+        });
+
+        // Utilities
+        function openModal(id) {
+            let el = document.getElementById(id);
+            if (el) new bootstrap.Modal(el).show();
+        }
+        function closeModal(id) {
+            let el = document.getElementById(id);
+            if (el) { let m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        }
+        function showLoading(containerId, cb) {
+            let el = document.getElementById(containerId);
+            let ov = document.createElement('div');
+            ov.className = 'pm-loading-overlay';
+            ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-weight:600">Processing...</p>';
+            el.style.position = 'relative'; el.appendChild(ov);
+            setTimeout(() => { ov.remove(); cb(); }, 1200);
+        }
+        function simulateProcess(modalId, msg, ref = '') {
+            let modal = document.getElementById(modalId);
+            let body = modal.querySelector('.modal-body');
+            let foot = modal.querySelector('.modal-footer');
+            showLoading(body.id || body.parentElement.id || body.tagName, () => {
+                body.innerHTML = `<div class="text-center p-4">
+            <div class="pm-icon-circle mx-auto mb-3" style="width:64px;height:64px;font-size:28px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-check-lg"></i></div>
+            <h5 style="font-weight:700">${msg}</h5>
+            ${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}
+        </div>`;
+                foot.innerHTML = `<button class="pm-btn pm-btn-primary" onclick="location.reload()">Done</button>`;
+            });
+        }
+    </script>
+</body>
+
+</html>

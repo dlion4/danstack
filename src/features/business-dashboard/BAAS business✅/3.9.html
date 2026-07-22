@@ -1,0 +1,2709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Virtual Accounts & Sub-Accounts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #1e3a8a, #312e81, #4F46E5);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .va-card {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1.8;
+            border-radius: 16px;
+            padding: 20px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--pm-font-display);
+            margin-bottom: 12px
+        }
+
+        .va-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .1) 0%, transparent 60%)
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .va-card {
+                max-width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-briefcase"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-diagram-3"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-gear"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">BK</div>
+                        <div>
+                            <h1>Virtual Accounts & Sub-Accounts</h1>
+                            <p>Business virtual accounts, sub-account hierarchy, funding, reconciliation & automation
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search virtual accounts, sub-accounts, transactions, rules..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('reconModal')"><i class="bi bi-list-check"></i><span
+                            class="counter">4</span></button><button class="pm-header-btn"
+                        onclick="openM('notifModal')"><i class="bi bi-bell"></i><span class="counter">9</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">BK</div>
+                        <div>
+                            <div class="pm-name">Business Owner</div>
+                            <div class="pm-role">Finance Director</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Business Portal</a> / <strong>Virtual
+                            Accounts</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        3.9 — Virtual Accounts & Sub-Accounts</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Create, manage and reconcile business
+                        virtual accounts and sub-accounts with full funding controls, hierarchy, automation rules and
+                        audit trails.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('healthCheckModal')"><i class="bi bi-heart-pulse"></i> Health</button><button
+                        class="btn-pm" onclick="openM('reconModal')"><i class="bi bi-list-check"></i>
+                        Reconcile</button><button class="btn-pm" onclick="openM('createVA')"><i
+                            class="bi bi-plus-lg"></i> New VA</button><button class="btn-pm btn-pm-p"
+                        onclick="openM('createSub')"><i class="bi bi-diagram-3"></i> New Sub-Account</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Virtual accounts live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">18 virtual accounts</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">12 main VAs + 47 sub-accounts
+                                • KES 124.8M total balance • 6 automated rules active</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('createVA')">New VA</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('createSub')">New Sub</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('bulkFundModal')">Bulk Fund</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">TOTAL BALANCE</p>
+                            <div class="SV" style="margin:6px 0">KES 124.8M</div><span class="B B-s"><i
+                                    class="bi bi-graph-up"></i> +12.4% MoM</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Main VAs: KES
+                                89.4M<br>Sub-accounts: KES 35.4M</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">THIS MONTH ACTIVITY</p>
+                            <div class="SV" style="margin:6px 0">KES 312.6M</div><span class="B B-i"><i
+                                    class="bi bi-arrow-left-right"></i> 4,812 txns</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Collections: KES
+                                198.2M<br>Disbursements: KES 114.4M</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">RECONCILIATION STATUS</p>
+                            <div class="SV" style="margin:6px 0">4 issues</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> Review needed</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">2 unmatched credits<br>1
+                                timing difference<br>1 bank error</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Unmatched credit KES 1.2M</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">VA-003 • 26 Jun</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('reconModal')">Resolve</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Sub-account limit breach</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Payroll Sub • KES 450K over
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('subLimitModal')">Adjust</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-arrow-left-right"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Auto-sweep rule paused</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Collections VA • 3 days</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('autoSweepModal')">Resume</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-diagram-3"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Create 4 new project sub-accounts
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Based on upcoming contracts
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('createSub')">Create</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-shield-check"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable dual approval on large subs
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce fraud risk on 3
+                                            accounts</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('approvalRulesModal')">Enable</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Consolidate 5 low-activity VAs</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Save KES 12,500/month in fees
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('consolidateModal')">Review</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent virtual account workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('createVA')"><i
+                                        class="bi bi-plus-circle text-primary me-1"></i> New VA</button><button
+                                    class="quick-btn" onclick="openM('createSub')"><i
+                                        class="bi bi-diagram-3 text-success me-1"></i> New Sub</button><button
+                                    class="quick-btn" onclick="openM('fundVA')"><i
+                                        class="bi bi-cash-stack text-accent me-1"></i> Fund Account</button><button
+                                    class="quick-btn" onclick="openM('transferModal')"><i
+                                        class="bi bi-arrow-left-right text-info me-1"></i> Internal
+                                    Transfer</button><button class="quick-btn" onclick="openM('bulkFundModal')"><i
+                                        class="bi bi-collection me-1" style="color:var(--pm-purple)"></i> Bulk
+                                    Fund</button><button class="quick-btn" onclick="openM('reconModal')"><i
+                                        class="bi bi-list-check me-1" style="color:var(--pm-warning)"></i>
+                                    Reconcile</button><button class="quick-btn" onclick="openM('autoSweepModal')"><i
+                                        class="bi bi-arrow-repeat me-1" style="color:var(--pm-primary)"></i> Auto
+                                    Rules</button><button class="quick-btn" onclick="openM('exportReportModal')"><i
+                                        class="bi bi-download me-1" style="color:var(--pm-muted)"></i> Export</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-wallet2" style="color:var(--pm-primary)"></i> 3.9.1 — Virtual
+                                Account Creation & Management</h3>
+                            <p class="ss">Create, view, edit and manage all virtual accounts with full details,
+                                balances, rules and status.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('createVA')"><i
+                                    class="bi bi-plus-lg"></i> New VA</button><button class="btn-pm btn-sm"
+                                onclick="openM('vaHealthModal')">Health Check</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="T">
+                                    <thead>
+                                        <tr>
+                                            <th>VA Number</th>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Balance</th>
+                                            <th>Sub-Accounts</th>
+                                            <th>Status</th>
+                                            <th>Rules</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vaTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-diagram-3" style="color:var(--pm-purple)"></i> 3.9.2 —
+                                Sub-Account Hierarchy & Structure</h3>
+                            <p class="ss">Manage hierarchical sub-accounts under each virtual account with limits,
+                                approvals and visibility controls.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('createSub')"><i class="bi bi-plus-lg"></i> New Sub</button><button
+                                class="btn-pm btn-sm" onclick="openM('hierarchyModal')">View Hierarchy</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Sub-Account Directory</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Sub-Account</th>
+                                                <th>Parent VA</th>
+                                                <th>Balance</th>
+                                                <th>Limit</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="subTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Hierarchy Tree</h4>
+                                <div id="hierarchyTree"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-cash-stack" style="color:var(--pm-accent)"></i> 3.9.3 —
+                                Virtual Account Funding & Transfers</h3>
+                            <p class="ss">Fund accounts, perform internal transfers, set up bulk funding and manage
+                                liquidity across the portfolio.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('fundVA')">Fund
+                                VA</button><button class="btn-pm btn-sm"
+                                onclick="openM('transferModal')">Transfer</button><button class="btn-pm btn-sm"
+                                onclick="openM('bulkFundModal')">Bulk Fund</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Funding Activity</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>VA / Sub</th>
+                                                <th>Amount</th>
+                                                <th>Source</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="fundingTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Quick Funding Options</h4>
+                                <div class="quick-grid"><button class="quick-btn"
+                                        onclick="openM('fundVA')">M-Pesa</button><button class="quick-btn"
+                                        onclick="openM('fundVA')">Bank Transfer</button><button class="quick-btn"
+                                        onclick="openM('fundVA')">PayMo Wallet</button><button class="quick-btn"
+                                        onclick="openM('bulkFundModal')">Bulk Upload</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-sliders" style="color:var(--pm-info)"></i> 3.9.4 — Virtual
+                                Account Controls & Limits</h3>
+                            <p class="ss">Set spending limits, approval workflows, transaction rules and velocity
+                                controls per account and sub-account.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('approvalRulesModal')">Approval Rules</button><button
+                                class="btn-pm btn-sm" onclick="openM('velocityModal')">Velocity Controls</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Daily Limits</h4>
+                                <div id="limitsList"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Approval Matrix</h4>
+                                <div class="sr">
+                                    <div><strong>Up to KES 100K</strong></div><span class="B B-s">Auto</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KES 100K – 500K</strong></div><span class="B B-i">Manager</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KES 500K – 2M</strong></div><span class="B B-w">Director</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Above KES 2M</strong></div><span class="B B-d">CFO + Board</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Rules</h4>
+                                <div id="rulesList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.5 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-list-check" style="color:var(--pm-warning)"></i> 3.9.5 —
+                                Reconciliation & Reporting</h3>
+                            <p class="ss">Reconcile bank statements, match transactions, resolve discrepancies and
+                                generate comprehensive reports.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('reconModal')">Reconcile Now</button><button class="btn-pm btn-sm"
+                                onclick="openM('exportReportModal')">Export Reports</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Reconciliation Dashboard</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>VA / Sub</th>
+                                                <th>Book Balance</th>
+                                                <th>Bank Balance</th>
+                                                <th>Difference</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reconTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Quick Reports</h4>
+                                <div class="quick-grid"><button class="quick-btn"
+                                        onclick="openM('exportReportModal')">Daily Summary</button><button
+                                        class="quick-btn" onclick="openM('exportReportModal')">Monthly
+                                        Statement</button><button class="quick-btn"
+                                        onclick="openM('exportReportModal')">Sub-Account Report</button><button
+                                        class="quick-btn" onclick="openM('exportReportModal')">Audit Trail</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.9.6 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-cpu" style="color:var(--pm-purple)"></i> 3.9.6 — Virtual
+                                Account Settings & Automation</h3>
+                            <p class="ss">Configure auto-sweep rules, notification preferences, access controls and
+                                integration settings.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('autoSweepModal')">Auto-Sweep</button><button class="btn-pm btn-sm"
+                                onclick="openM('integrationModal')">Integrations</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Auto-Sweep Rules</h4>
+                                <div id="sweepList"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Notifications</h4>
+                                <div class="sr">
+                                    <div><strong>Low balance alerts</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Transaction notifications</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Limit breach alerts</strong></div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Access & Security</h4>
+                                <div class="sr">
+                                    <div><strong>Multi-user access</strong></div><span class="B B-s">Enabled</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>API access</strong></div><span class="B B-s">Enabled</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Webhook notifications</strong></div><span class="B B-w">Paused</span>
+                                </div><button class="btn-pm btn-sm mt-2 w-100"
+                                    onclick="openM('integrationModal')">Manage Integrations</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent Virtual
+                            Account Activity</h3><button class="btn-pm btn-sm" onclick="openM('activityModal')">View
+                            All</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>VA / Sub</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Ref</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>Collections VA</td>
+                                    <td>Client payment received</td>
+                                    <td><strong>KES 2,450,000</strong></td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>VA-003-4421</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('txnDetailModal')">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>Payroll Sub</td>
+                                    <td>Salary disbursement batch</td>
+                                    <td><strong>KES 8,920,000</strong></td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>SUB-007-8812</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('txnDetailModal')">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun</td>
+                                    <td>Operations VA</td>
+                                    <td>Supplier payment</td>
+                                    <td><strong>KES 1,875,500</strong></td>
+                                    <td><span class="B B-i">Pending</span></td>
+                                    <td>VA-001-3390</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('txnDetailModal')">Track</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun</td>
+                                    <td>Collections VA</td>
+                                    <td>Auto-sweep to Treasury</td>
+                                    <td><strong>KES 5,200,000</strong></td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>VA-003-3389</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('txnDetailModal')">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun</td>
+                                    <td>Marketing Sub</td>
+                                    <td>Campaign budget top-up</td>
+                                    <td><strong>KES 450,000</strong></td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>SUB-012-2291</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('txnDetailModal')">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ==================== MODALS (23 total) ==================== -->
+
+    <!-- M1: Create Virtual Account (multi-step) -->
+    <div class="modal fade R" id="createVA" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Create Virtual Account
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="vaStepper"></div>
+                    <div id="vaS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Account Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Account Name</label><input class="FC"
+                                    value="Client Collections - Q3"></div>
+                            <div class="col-md-6"><label class="FL">Account Type</label><select class="FC">
+                                    <option>Collections</option>
+                                    <option>Disbursements</option>
+                                    <option>Operations</option>
+                                    <option>Payroll</option>
+                                    <option>Project / Campaign</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Currency</label><select class="FC">
+                                    <option>KES - Kenyan Shilling</option>
+                                    <option>USD - US Dollar</option>
+                                    <option>EUR - Euro</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Initial Balance</label><input class="FC" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="vaS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Controls & Rules</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Daily Limit</label><input class="FC"
+                                    value="5000000"></div>
+                            <div class="col-md-6"><label class="FL">Monthly Limit</label><input class="FC"
+                                    value="50000000"></div>
+                            <div class="col-md-6"><label class="FL">Approval Required Above</label><input class="FC"
+                                    value="1000000"></div>
+                            <div class="col-md-6"><label class="FL">Auto-Sweep Threshold</label><input class="FC"
+                                    value="2000000"></div>
+                        </div>
+                        <div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Enable transaction notifications</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Enable auto-sweep to Treasury</label></div>
+                    </div>
+                    <div id="vaS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Virtual Account Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your new virtual account is ready.
+                                Account number has been generated.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Account
+                                        Number</span><strong>VA-2025-0038</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Name</span><strong>Client Collections - Q3</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Status</span><span
+                                        class="B B-s">Active</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="vaFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="vaNext"
+                        onclick="nextFlow('va',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Create Sub-Account (multi-step) -->
+    <div class="modal fade R" id="createSub" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-diagram-3 text-purple me-2"></i>Create Sub-Account</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="subStepper"></div>
+                    <div id="subS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Sub-Account Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Parent Virtual Account</label><select class="FC">
+                                    <option>VA-003 — Client Collections</option>
+                                    <option>VA-001 — Operations</option>
+                                    <option>VA-007 — Payroll</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Sub-Account Name</label><input class="FC"
+                                    value="Project Alpha - Marketing"></div>
+                            <div class="col-md-6"><label class="FL">Purpose</label><select class="FC">
+                                    <option>Project / Campaign</option>
+                                    <option>Department</option>
+                                    <option>Employee Wallet</option>
+                                    <option>Reserve / Savings</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Initial Allocation</label><input class="FC"
+                                    value="2500000"></div>
+                        </div>
+                    </div>
+                    <div id="subS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Limits & Approvals</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Daily Spend Limit</label><input class="FC"
+                                    value="500000"></div>
+                            <div class="col-md-6"><label class="FL">Monthly Budget</label><input class="FC"
+                                    value="5000000"></div>
+                            <div class="col-md-6"><label class="FL">Approval Required Above</label><input class="FC"
+                                    value="100000"></div>
+                            <div class="col-md-6"><label class="FL">Visibility</label><select class="FC">
+                                    <option>Private (owner only)</option>
+                                    <option>Team visible</option>
+                                    <option>Company visible</option>
+                                </select></div>
+                        </div>
+                        <div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Require dual approval for payments</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Allow external transfers</label></div>
+                    </div>
+                    <div id="subS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Sub-Account Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Sub-account is now active under the
+                                selected parent virtual account.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Sub-Account
+                                        ID</span><strong>SUB-2025-0142</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Parent</span><strong>VA-003</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Balance</span><strong>KES 2,500,000</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="subFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="subNext"
+                        onclick="nextFlow('sub',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Fund VA -->
+    <div class="modal fade R" id="fundVA" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cash-stack text-accent me-2"></i>Fund Virtual Account</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select Account</label><select class="FC">
+                            <option>VA-003 — Client Collections (KES 12.4M)</option>
+                            <option>VA-001 — Operations (KES 8.9M)</option>
+                            <option>VA-007 — Payroll (KES 22.1M)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Funding Source</label><select class="FC">
+                            <option>PayMo Business Wallet (KES 45.2M)</option>
+                            <option>M-Pesa Till 123456</option>
+                            <option>Bank Transfer (Equity ***4521)</option>
+                            <option>Another Virtual Account</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="2500000"></div>
+                    <div class="mb-3"><label class="FL">Reference / Narration</label><input class="FC"
+                            value="Client payment batch - June 2025"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Funds will be available instantly. A confirmation
+                        receipt will be generated.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-a"
+                        onclick="doAction('fundVA','Account funded successfully! KES 2,500,000 credited to VA-003.','FND-20250627-8812')">Fund
+                        Account</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Internal Transfer -->
+    <div class="modal fade R" id="transferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-info me-2"></i>Internal Transfer</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">From Account</label><select class="FC">
+                                <option>VA-003 — Client Collections</option>
+                                <option>VA-001 — Operations</option>
+                                <option>VA-007 — Payroll</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">To Account</label><select class="FC">
+                                <option>VA-007 — Payroll</option>
+                                <option>VA-001 — Operations</option>
+                                <option>SUB-0142 — Project Alpha</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Amount (KES)</label><input class="FC" value="1500000">
+                        </div>
+                        <div class="col-md-6"><label class="FL">Purpose</label><select class="FC">
+                                <option>Operational top-up</option>
+                                <option>Project allocation</option>
+                                <option>Payroll funding</option>
+                                <option>Reserve movement</option>
+                            </select></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="2">Monthly payroll funding allocation - June 2025</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('transferModal','Internal transfer of KES 1,500,000 completed successfully.','TRF-20250627-4491')">Execute
+                        Transfer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Bulk Fund -->
+    <div class="modal fade R" id="bulkFundModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-collection text-purple me-2"></i>Bulk Fund Virtual Accounts
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="bulkStepper"></div>
+                    <div id="bulkS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Upload Funding List</h6>
+                        <div class="mb-3"><label class="FL">Funding Source</label><select class="FC">
+                                <option>PayMo Business Wallet</option>
+                                <option>Bank Transfer</option>
+                                <option>M-Pesa Corporate</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Upload CSV File</label><input type="file" class="FC">
+                            <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Format: AccountID, Amount,
+                                Reference</div>
+                        </div>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><strong>Preview
+                                (first 3 rows):</strong><br>VA-003,2500000,Client batch June<br>VA-007,8500000,Payroll
+                            June<br>SUB-0142,450000,Marketing campaign</div>
+                    </div>
+                    <div id="bulkS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Review & Confirm</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Amount</th>
+                                        <th>Reference</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>VA-003</td>
+                                        <td>KES 2,500,000</td>
+                                        <td>Client batch June</td>
+                                        <td><span class="B B-s">Ready</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>VA-007</td>
+                                        <td>KES 8,500,000</td>
+                                        <td>Payroll June</td>
+                                        <td><span class="B B-s">Ready</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SUB-0142</td>
+                                        <td>KES 450,000</td>
+                                        <td>Marketing campaign</td>
+                                        <td><span class="B B-s">Ready</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-accent-soft);font-size:13px">
+                            <strong>Total to fund: KES 11,450,000</strong> from PayMo Business Wallet</div>
+                    </div>
+                    <div id="bulkS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-all"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Funding Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">3 accounts funded successfully. All
+                                transactions have been recorded.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="bulkFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="bulkNext"
+                        onclick="nextFlow('bulk',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Reconciliation -->
+    <div class="modal fade R" id="reconModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check text-warning me-2"></i>Reconciliation Center</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('recon','unmatched',this)">Unmatched</button><button class="pill"
+                            onclick="sw('recon','timing',this)">Timing Diff</button><button class="pill"
+                            onclick="sw('recon','bankerr',this)">Bank Errors</button></div>
+                    <div id="recon-unmatched" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Reference</th>
+                                        <th>Amount</th>
+                                        <th>VA / Sub</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>26 Jun</td>
+                                        <td>MPESA-882910</td>
+                                        <td>KES 1,200,000</td>
+                                        <td>VA-003</td>
+                                        <td><span class="B B-w">Unmatched</span></td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('matchModal')">Match</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>25 Jun</td>
+                                        <td>BANK-441902</td>
+                                        <td>KES 875,000</td>
+                                        <td>VA-001</td>
+                                        <td><span class="B B-w">Unmatched</span></td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('matchModal')">Match</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="recon-timing" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Book</th>
+                                        <th>Bank</th>
+                                        <th>Diff</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>24 Jun</td>
+                                        <td>Salary batch</td>
+                                        <td>KES 8,920,000</td>
+                                        <td>KES 8,920,000</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Cleared</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>23 Jun</td>
+                                        <td>Client payment</td>
+                                        <td>KES 2,450,000</td>
+                                        <td>KES 2,450,000</td>
+                                        <td>0</td>
+                                        <td><span class="B B-s">Cleared</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="recon-bankerr" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                            <div style="font-size:13px;font-weight:700;color:#991B1B">Bank Error Detected</div>
+                            <div style="font-size:12px;color:#7F1D1D">Duplicate debit of KES 125,000 on 22 Jun — ticket
+                                raised with bank.</div><button class="btn-pm btn-sm mt-2"
+                                onclick="openM('bankErrorModal')">View Ticket</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reconModal','Reconciliation completed. 2 items matched successfully.','REC-20250627-9912')">Complete
+                        Reconciliation</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Match Transaction -->
+    <div class="modal fade R" id="matchModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-link-45deg me-2"></i>Match Transaction</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Bank
+                                Reference</span><strong>MPESA-882910</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>KES 1,200,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>26 Jun
+                                2025</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Match to Virtual Account Transaction</label><select class="FC">
+                            <option>Client payment - Invoice INV-4421 (KES 1,200,000)</option>
+                            <option>Client payment - Invoice INV-4420 (KES 1,150,000)</option>
+                            <option>Other (manual match)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="2">Matched via M-Pesa reference. Client confirmed payment.</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('matchModal','Transaction matched successfully. Reconciliation updated.','MAT-20250627-1129')">Match
+                        Transaction</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Approval Rules -->
+    <div class="modal fade R" id="approvalRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-square text-primary me-2"></i>Approval Rules &
+                        Workflows</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('apr','matrix',this)">Matrix</button><button class="pill"
+                            onclick="sw('apr','workflow',this)">Workflow</button><button class="pill"
+                            onclick="sw('apr','delegation',this)">Delegation</button></div>
+                    <div id="apr-matrix" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Amount Range</th>
+                                        <th>Approver 1</th>
+                                        <th>Approver 2</th>
+                                        <th>Approver 3</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Up to KES 100K</td>
+                                        <td>Auto-approve</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr>
+                                        <td>KES 100K – 500K</td>
+                                        <td>Department Head</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr>
+                                        <td>KES 500K – 2M</td>
+                                        <td>Finance Manager</td>
+                                        <td>Director</td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Above KES 2M</td>
+                                        <td>CFO</td>
+                                        <td>CEO</td>
+                                        <td>Board</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="apr-workflow" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Standard payment workflow</strong></div><span class="B B-s">3 levels</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Emergency payment workflow</strong></div><span class="B B-w">2 levels (CFO
+                                override)</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Recurring payment workflow</strong></div><span class="B B-s">Auto
+                                (pre-approved)</span>
+                        </div>
+                    </div>
+                    <div id="apr-delegation" class="tpanel">
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Allow delegation during approver absence</label></div>
+                        <div class="mb-3"><label class="FL">Delegation expiry</label><select class="FC">
+                                <option>7 days</option>
+                                <option>14 days</option>
+                                <option>30 days</option>
+                            </select></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Require notification on delegation</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('approvalRulesModal','Approval rules updated successfully.','APR-20250627-8821')">Save
+                        Rules</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Auto-Sweep Rules -->
+    <div class="modal fade R" id="autoSweepModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-purple me-2"></i>Auto-Sweep Configuration
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('swp','rules',this)">Rules</button><button class="pill"
+                            onclick="sw('swp','schedule',this)">Schedule</button><button class="pill"
+                            onclick="sw('swp','exceptions',this)">Exceptions</button></div>
+                    <div id="swp-rules" class="tpanel active">
+                        <div class="sr">
+                            <div><strong>Collections VA → Treasury</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Sweep when balance > KES 2M</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Operations VA → Reserve</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Daily at 6 PM if > KES 1M</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Project Subs → Main</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">End of project or monthly</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                        </div>
+                    </div>
+                    <div id="swp-schedule" class="tpanel">
+                        <div class="mb-3"><label class="FL">Sweep Frequency</label><select class="FC">
+                                <option>Real-time (when threshold met)</option>
+                                <option>Hourly</option>
+                                <option>Daily at 6 PM</option>
+                                <option>Weekly (Friday 6 PM)</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Destination Account</label><select class="FC">
+                                <option>Treasury VA-999</option>
+                                <option>Reserve VA-998</option>
+                                <option>Operations VA-001</option>
+                            </select></div>
+                    </div>
+                    <div id="swp-exceptions" class="tpanel">
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Pause sweep during month-end close</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Exclude weekends</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Notify on every sweep</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('autoSweepModal','Auto-sweep rules updated. Changes effective immediately.','SWP-20250627-4492')">Save
+                        Configuration</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Hierarchy Modal -->
+    <div class="modal fade R" id="hierarchyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-diagram-3 me-2"></i>Virtual Account Hierarchy</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div style="font-weight:700">VA-003 — Client Collections</div>
+                        <div style="font-size:12px;color:var(--pm-muted)">Balance: KES 12.4M | 8 sub-accounts</div>
+                    </div>
+                    <div class="ps-4">
+                        <div class="p-2 border-start border-2 mb-2"><strong>SUB-0142 — Project Alpha</strong> <span
+                                class="B B-s">KES 2.1M</span></div>
+                        <div class="p-2 border-start border-2 mb-2"><strong>SUB-0143 — Project Beta</strong> <span
+                                class="B B-s">KES 1.8M</span></div>
+                        <div class="p-2 border-start border-2 mb-2"><strong>SUB-0144 — Project Gamma</strong> <span
+                                class="B B-w">KES 450K (over limit)</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('createSub')">Add Sub-Account</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Transaction Detail -->
+    <div class="modal fade R" id="txnDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Reference</span><strong>VA-003-4421</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Date &
+                                Time</span><strong>27 Jun 2025, 09:14</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">From</span><strong>MPESA Till 882910</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">To</span><strong>VA-003 — Client Collections</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Amount</span><strong>KES
+                                2,450,000</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Status</label>
+                        <div><span class="B B-s">Completed • Bank confirmed</span></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Notes</label>
+                        <div style="font-size:13px">Client payment for Invoice INV-4421. Matched automatically via
+                            reference.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('matchModal')">Match / Unmatch</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Export Report -->
+    <div class="modal fade R" id="exportReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Virtual Account Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Full VA portfolio statement</option>
+                            <option>Sub-account activity</option>
+                            <option>Reconciliation report</option>
+                            <option>Funding & transfer log</option>
+                            <option>Audit trail</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-06-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('exportReportModal','Report generated and downloading...','RPT-20250627-9918')">Generate
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: VA Health Check -->
+    <div class="modal fade R" id="vaHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Virtual Account Health
+                        Check</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    94</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">HEALTH SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">18/18</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">ACTIVE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">4</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">ISSUES</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">6</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">RULES</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Score</th>
+                                    <th>Issues</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>VA-003</td>
+                                    <td><strong>98</strong></td>
+                                    <td>None</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                </tr>
+                                <tr>
+                                    <td>VA-007</td>
+                                    <td><strong>91</strong></td>
+                                    <td>1 limit breach</td>
+                                    <td><span class="B B-w">Warning</span></td>
+                                </tr>
+                                <tr>
+                                    <td>SUB-0144</td>
+                                    <td><strong>72</strong></td>
+                                    <td>Over limit, no rule</td>
+                                    <td><span class="B B-d">Critical</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('attentionModal')">Fix Issues</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Match / Bank Error -->
+    <div class="modal fade R" id="bankErrorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Bank Error Ticket
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#991B1B">Duplicate Debit Detected</div>
+                        <div style="font-size:12px;color:#7F1D1D">KES 125,000 debited twice on 22 Jun from VA-001.
+                            Ticket #BNK-88291 raised with Equity Bank.</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Ticket Status</label>
+                        <div><span class="B B-i">Under investigation • Expected resolution: 3 business days</span></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="2">Bank confirmed error. Reversal expected by 30 Jun. Temporary credit of KES 125,000 applied to VA-001.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bankErrorModal','Follow-up note added to ticket BNK-88291.','')">Add
+                        Note</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Attention Modal -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Unmatched credit KES 1.2M</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">VA-003 • 26 Jun</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('matchModal')">Match</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Sub-account SUB-0144 over limit</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 450K over monthly budget</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('subLimitModal')">Adjust</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Auto-sweep rule paused</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Collections VA • 3 days</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('autoSweepModal')">Resume</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Bank error ticket open</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Duplicate debit KES 125K</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('bankErrorModal')">Track</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Sub Limit Modal -->
+    <div class="modal fade R" id="subLimitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Adjust Sub-Account Limit</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Sub-Account</label><select class="FC">
+                            <option>SUB-0144 — Project Gamma</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Current Monthly Limit</label><input class="FC" value="2000000">
+                    </div>
+                    <div class="mb-3"><label class="FL">New Monthly Limit</label><input class="FC" value="2500000">
+                    </div>
+                    <div class="mb-3"><label class="FL">Reason</label><textarea class="FC"
+                            rows="2">Increased project scope approved by client. Additional budget allocated.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('subLimitModal','Limit updated successfully. New limit: KES 2,500,000.','LIM-20250627-4493')">Update
+                        Limit</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Velocity Controls -->
+    <div class="modal fade R" id="velocityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-speedometer2 me-2"></i>Velocity & Transaction Controls</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Max Transactions per Hour</label><input class="FC"
+                                value="50"></div>
+                        <div class="col-md-6"><label class="FL">Max Transactions per Day</label><input class="FC"
+                                value="300"></div>
+                        <div class="col-md-6"><label class="FL">Max Single Transaction</label><input class="FC"
+                                value="5000000"></div>
+                        <div class="col-md-6"><label class="FL">Cool-down Period (minutes)</label><input class="FC"
+                                value="5"></div>
+                    </div>
+                    <div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Block after velocity breach</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Alert on velocity breach</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('velocityModal','Velocity controls updated successfully.','VEL-20250627-8822')">Save
+                        Controls</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Integration Modal -->
+    <div class="modal fade R" id="integrationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plug me-2"></i>Integrations & Webhooks</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('int','api',this)">API</button><button class="pill"
+                            onclick="sw('int','webhook',this)">Webhooks</button><button class="pill"
+                            onclick="sw('int','erp',this)">ERP</button></div>
+                    <div id="int-api" class="tpanel active">
+                        <div class="sr">
+                            <div><strong>API Access</strong></div><span class="B B-s">Enabled</span>
+                        </div>
+                        <div class="mb-3"><label class="FL">API Key</label>
+                            <div class="input-group"><input class="FC" value="pk_live_4f8a9b2c1d3e4f5a6b7c8d9e"
+                                    readonly><button class="btn-pm btn-sm">Regenerate</button></div>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">IP whitelist enabled</label></div>
+                    </div>
+                    <div id="int-webhook" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Transaction webhook</strong></div><span class="B B-s">Active</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Reconciliation webhook</strong></div><span class="B B-w">Paused</span>
+                        </div>
+                        <div class="mb-3"><label class="FL">Webhook URL</label><input class="FC"
+                                value="https://api.company.com/webhooks/paymo"></div>
+                    </div>
+                    <div id="int-erp" class="tpanel">
+                        <div class="sr">
+                            <div><strong>QuickBooks Online</strong></div><span class="B B-s">Connected</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Sage 300</strong></div><span class="B B-w">Disconnected</span>
+                        </div><button class="btn-pm btn-sm mt-2"
+                            onclick="doAction('integrationModal','ERP sync reconnected successfully.','ERP-20250627-1128')">Reconnect
+                            Sage</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('integrationModal','Integration settings saved.','INT-20250627-4494')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Activity Modal -->
+    <div class="modal fade R" id="activityModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Activity Log</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3 flex-wrap"><select class="FC" style="width:auto">
+                            <option>All Accounts</option>
+                            <option>VA-003</option>
+                            <option>VA-007</option>
+                        </select><select class="FC" style="width:auto">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                        </select><input class="FC" style="width:200px" placeholder="Search reference..."></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Account</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Ref</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 09:14</td>
+                                    <td>VA-003</td>
+                                    <td>Credit</td>
+                                    <td>Client payment INV-4421</td>
+                                    <td>KES 2,450,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>VA-003-4421</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 08:45</td>
+                                    <td>VA-007</td>
+                                    <td>Debit</td>
+                                    <td>Salary batch June</td>
+                                    <td>KES 8,920,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>SUB-007-8812</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 16:22</td>
+                                    <td>VA-001</td>
+                                    <td>Debit</td>
+                                    <td>Supplier payment</td>
+                                    <td>KES 1,875,500</td>
+                                    <td><span class="B B-i">Pending</span></td>
+                                    <td>VA-001-3390</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 14:10</td>
+                                    <td>VA-003</td>
+                                    <td>Debit</td>
+                                    <td>Auto-sweep to Treasury</td>
+                                    <td>KES 5,200,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>VA-003-3389</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 11:05</td>
+                                    <td>SUB-012</td>
+                                    <td>Credit</td>
+                                    <td>Campaign budget top-up</td>
+                                    <td>KES 450,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>SUB-012-2291</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('exportReportModal')">Export Log</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">BK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Business Owner</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">finance@company.co.ke · +254 700 123 456</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Virtual Accounts</span><br><strong>18 active</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Sub-Accounts</span><br><strong>47 active</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Total Balance</span><br><strong>KES 124.8M</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Health Score</span><br><strong
+                                    style="color:var(--pm-accent)">94/100</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Notif Modal -->
+    <div class="modal fade R" id="notifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (9)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Unmatched credit KES 1.2M</strong>
+                        <div style="font-size:11px;color:#7F1D1D">VA-003 • Requires manual match</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Sub-account over limit</strong>
+                        <div style="font-size:11px;color:#92400E">SUB-0144 • KES 450K over budget</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px">
+                        <strong>Auto-sweep rule paused</strong>
+                        <div style="font-size:11px;color:#1E40AF">Collections VA • 3 days inactive</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>Bank
+                            error resolved</strong>
+                        <div style="font-size:11px;color:#065F46">Duplicate debit KES 125K reversed</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Monthly
+                            statement ready</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">VA-003 • June 2025 statement</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('notifSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Health Check -->
+    <div class="modal fade R" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Virtual Account Portfolio
+                        Health</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    94</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">HEALTH SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">18/18</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">ACTIVE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">4</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">ISSUES</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">6</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">RULES</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Score</th>
+                                    <th>Issues</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>VA-003</td>
+                                    <td><strong>98</strong></td>
+                                    <td>None</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                </tr>
+                                <tr>
+                                    <td>VA-007</td>
+                                    <td><strong>91</strong></td>
+                                    <td>1 limit breach</td>
+                                    <td><span class="B B-w">Warning</span></td>
+                                </tr>
+                                <tr>
+                                    <td>SUB-0144</td>
+                                    <td><strong>72</strong></td>
+                                    <td>Over limit, no rule</td>
+                                    <td><span class="B B-d">Critical</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('attentionModal')">Fix Issues</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Consolidate Modal -->
+    <div class="modal fade R" id="consolidateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-compress-arrows me-2"></i>Consolidate Virtual Accounts</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select accounts to consolidate</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">VA-012 — Old Project Reserve (KES 1.2M)</label></div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">VA-015 — Legacy Marketing (KES 890K)</label></div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">VA-018 — Inactive Campaign (KES 450K)</label></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Destination Account</label><select class="FC">
+                            <option>VA-001 — Operations</option>
+                            <option>VA-003 — Client Collections</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Estimated annual fee savings: <strong>KES
+                            12,500</strong></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('consolidateModal','3 accounts consolidated successfully. KES 2.54M moved to Operations VA.','CON-20250627-9912')">Consolidate
+                        Accounts</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const vaData = [
+            { id: 'VA-003', name: 'Client Collections', type: 'Collections', balance: '12.4M', subs: 8, status: 'active', rules: 2 },
+            { id: 'VA-001', name: 'Operations', type: 'Operations', balance: '8.9M', subs: 12, status: 'active', rules: 3 },
+            { id: 'VA-007', name: 'Payroll', type: 'Payroll', balance: '22.1M', subs: 5, status: 'active', rules: 1 },
+            { id: 'VA-009', name: 'Marketing', type: 'Project', balance: '3.2M', subs: 4, status: 'active', rules: 2 },
+            { id: 'VA-012', name: 'Old Project Reserve', type: 'Reserve', balance: '1.2M', subs: 0, status: 'active', rules: 0 }
+        ];
+        const subData = [
+            { id: 'SUB-0142', name: 'Project Alpha', parent: 'VA-003', balance: '2.1M', limit: '2.5M', status: 'active' },
+            { id: 'SUB-0143', name: 'Project Beta', parent: 'VA-003', balance: '1.8M', limit: '2.0M', status: 'active' },
+            { id: 'SUB-0144', name: 'Project Gamma', parent: 'VA-003', balance: '2.45M', limit: '2.0M', status: 'warning' },
+            { id: 'SUB-0071', name: 'June Salaries', parent: 'VA-007', balance: '8.9M', limit: '10M', status: 'active' },
+            { id: 'SUB-0121', name: 'Campaign Q2', parent: 'VA-009', balance: '450K', limit: '500K', status: 'active' }
+        ];
+        function renderVATable() { const tbody = document.getElementById('vaTableBody'); tbody.innerHTML = vaData.map(v => `<tr><td><code>${v.id}</code></td><td>${v.name}</td><td>${v.type}</td><td><strong>KES ${v.balance}</strong></td><td>${v.subs}</td><td><span class="B B-s">Active</span></td><td>${v.rules}</td><td><div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm" onclick="openM('fundVA')"><i class="bi bi-cash-stack"></i></button><button class="btn-pm btn-sm" onclick="openM('createSub')"><i class="bi bi-diagram-3"></i></button><button class="btn-pm btn-sm" onclick="openM('vaHealthModal')"><i class="bi bi-heart-pulse"></i></button></div></td></tr>`).join(''); }
+        function renderSubTable() { const tbody = document.getElementById('subTableBody'); tbody.innerHTML = subData.map(s => `<tr><td><code>${s.id}</code></td><td>${s.parent}</td><td><strong>KES ${s.balance}</strong></td><td>KES ${s.limit}</td><td>${s.status === 'active' ? '<span class="B B-s">Active</span>' : '<span class="B B-w">Warning</span>'}</td><td><div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm" onclick="openM('subLimitModal')"><i class="bi bi-sliders"></i></button><button class="btn-pm btn-sm" onclick="openM('transferModal')"><i class="bi bi-arrow-left-right"></i></button></div></td></tr>`).join(''); }
+        function renderHierarchy() { const el = document.getElementById('hierarchyTree'); el.innerHTML = `<div class="p-3 rounded mb-2" style="background:var(--pm-surface-2)"><div style="font-weight:700">VA-003 — Client Collections</div><div style="font-size:12px;color:var(--pm-muted)">Balance: KES 12.4M | 8 sub-accounts</div></div><div class="ps-4"><div class="p-2 border-start border-2 mb-2"><strong>SUB-0142 — Project Alpha</strong> <span class="B B-s">KES 2.1M</span></div><div class="p-2 border-start border-2 mb-2"><strong>SUB-0143 — Project Beta</strong> <span class="B B-s">KES 1.8M</span></div><div class="p-2 border-start border-2 mb-2"><strong>SUB-0144 — Project Gamma</strong> <span class="B B-w">KES 2.45M (over)</span></div></div>`; }
+        function renderFundingTable() { const tbody = document.getElementById('fundingTableBody'); tbody.innerHTML = `<tr><td>27 Jun</td><td>VA-003</td><td>Client payment</td><td><strong>KES 2.45M</strong></td><td><span class="B B-s">Success</span></td></tr><tr><td>26 Jun</td><td>VA-007</td><td>Payroll funding</td><td><strong>KES 8.5M</strong></td><td><span class="B B-s">Success</span></td></tr><tr><td>25 Jun</td><td>SUB-012</td><td>Campaign top-up</td><td><strong>KES 450K</strong></td><td><span class="B B-s">Success</span></td></tr>`; }
+        function renderReconTable() { const tbody = document.getElementById('reconTableBody'); tbody.innerHTML = `<tr><td>VA-003</td><td>KES 12.4M</td><td>KES 12.4M</td><td>0</td><td><span class="B B-s">Cleared</span></td><td>—</td></tr><tr><td>VA-001</td><td>KES 8.9M</td><td>KES 8.775M</td><td>KES 125K</td><td><span class="B B-d">Bank error</span></td><td><button class="btn-pm btn-sm" onclick="openM('bankErrorModal')">Track</button></td></tr><tr><td>VA-007</td><td>KES 22.1M</td><td>KES 22.1M</td><td>0</td><td><span class="B B-s">Cleared</span></td><td>—</td></tr>`; }
+        function renderLimits() { const el = document.getElementById('limitsList'); el.innerHTML = `<div class="sr"><div><strong>VA-003 Daily</strong></div><span class="B B-s">KES 5M</span></div><div class="sr"><div><strong>VA-007 Daily</strong></div><span class="B B-s">KES 10M</span></div><div class="sr"><div><strong>SUB-0142 Daily</strong></div><span class="B B-w">KES 500K</span></div>`; }
+        function renderRules() { const el = document.getElementById('rulesList'); el.innerHTML = `<div class="sr"><div><strong>Auto-sweep</strong></div><span class="B B-s">Active</span></div><div class="sr"><div><strong>Low balance alert</strong></div><span class="B B-s">Active</span></div><div class="sr"><div><strong>Dual approval</strong></div><span class="B B-w">Paused</span></div>`; }
+        function renderSweep() { const el = document.getElementById('sweepList'); el.innerHTML = `<div class="sr"><div><strong>Collections → Treasury</strong></div><span class="B B-s">Active</span></div><div class="sr"><div><strong>Operations → Reserve</strong></div><span class="B B-s">Active</span></div>`; }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        const flows = { va: { current: 1, total: 3, labels: ['Details', 'Controls', 'Done'] }, sub: { current: 1, total: 3, labels: ['Details', 'Limits', 'Done'] }, bulk: { current: 1, total: 3, labels: ['Upload', 'Review', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { va: 'createVA', sub: 'createSub', bulk: 'bulkFundModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'bulk') btn.innerHTML = 'Execute Batch <i class="bi bi-check-all"></i>'; else btn.innerHTML = 'Create <i class="bi bi-check-lg"></i>'; } }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { renderVATable(); renderSubTable(); renderHierarchy(); renderFundingTable(); renderReconTable(); renderLimits(); renderRules(); renderSweep(); Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

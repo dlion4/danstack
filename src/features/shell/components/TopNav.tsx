@@ -197,7 +197,7 @@ export default function TopNav({
                 ))}
               </div>
               <div className={cx(s.panelFooter, 'text-center')}>
-                <Link to="/app/$section" params={{ section: 'support' }} className={cx(s.btnLink, s.btnLinkPrimary)}>
+                <Link to="/transaction_dashboard/app/$section" params={{ section: 'support' }} className={cx(s.btnLink, s.btnLinkPrimary)}>
                   View all notifications
                 </Link>
               </div>
@@ -235,13 +235,13 @@ export default function TopNav({
               </div>
               <div className={s.panelBody}>
                 <div className="d-flex flex-column">
-                  <Link to="/app/$section" params={{ section: 'settings' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
+                  <Link to="/transaction_dashboard/app/$section" params={{ section: 'settings' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
                     <i className="bi bi-person" /> Profile
                   </Link>
-                  <Link to="/app/$section" params={{ section: 'settings' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
+                  <Link to="/transaction_dashboard/app/$section" params={{ section: 'settings' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
                     <i className="bi bi-gear" /> Settings
                   </Link>
-                  <Link to="/app/$section" params={{ section: 'support' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
+                  <Link to="/transaction_dashboard/app/$section" params={{ section: 'support' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
                     <i className="bi bi-envelope" /> Inbox
                     <span className={cx(s.badgeMini, s.badgeOk, 'ms-auto')}>3</span>
                   </Link>
@@ -251,7 +251,7 @@ export default function TopNav({
                   <button type="button" className={s.menuItem} onClick={() => onOpenAside('developers')}>
                     <i className="bi bi-code-slash" /> Developers
                   </button>
-                  <Link to="/app/$section" params={{ section: 'support' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
+                  <Link to="/transaction_dashboard/app/$section" params={{ section: 'support' }} className={s.menuItem} onClick={() => onToggleDropdown('user')}>
                     <i className="bi bi-question-circle" /> Help Center
                   </Link>
                 </div>

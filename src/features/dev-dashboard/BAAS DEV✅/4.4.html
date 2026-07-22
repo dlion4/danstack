@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — SDKs, Plugins & Code Resources</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif;--pm-font-mono:'JetBrains Mono',monospace;}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1E293B 0%,#334155 50%,#4F46E5 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto;margin-bottom:16px}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.pm-code-block{background:var(--pm-gradient-slate);color:#f8f8f2;font-family:var(--pm-font-mono);font-size:13px;padding:16px;border-radius:var(--pm-r-md);overflow-x:auto;position:relative;line-height:1.5}
+.pm-code-block .copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all .2s;font-family:var(--pm-font-sans)}.pm-code-block .copy-btn:hover{background:rgba(255,255,255,.2)}
+.plugin-card{padding:16px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;height:100%}.plugin-card:hover{border-color:var(--pm-primary);box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.plugin-card .logo{height:48px;width:auto;margin:0 auto 12px;object-fit:contain}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-terminal"></i></button>
+<button class="pm-nav-item"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-box-seam"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-bug"></i></button>
+<button class="pm-nav-item"><i class="bi bi-book"></i></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">DT</div>
+<div>
+<h1>Developer Portal</h1>
+<p>APIs, SDKs, Webhooks, Sandbox & Integration Tools</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search SDKs, APIs, plugins, or docs...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('apiPlaygroundModal')"><i class="bi bi-terminal-plus"></i></button>
+<button class="pm-header-btn" onclick="openModal('sdkReleaseNotesModal')"><i class="bi bi-bell"></i><span class="counter">2</span></button>
+<div class="pm-profile-btn" onclick="openModal('githubAccessModal')"><div class="pm-avatar" style="background:var(--pm-ink)">GH</div><div><div class="pm-name">TechCorp</div><div class="pm-role">Prod Environment</div></div></div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Developer Portal</a> / <a href="#">Integration</a> / <strong>SDKs & Plugins</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.4 — SDKs, Plugins & Code Resources</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Official libraries, e-commerce extensions, sample applications, and interactive tools for integrating PayMo into your stack.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('apiPlaygroundModal')"><i class="bi bi-code-slash"></i> API Sandbox</button>
+<button class="pm-btn" onclick="openModal('githubAccessModal')"><i class="bi bi-github"></i> GitHub Repos</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('installJsSdkModal')"><i class="bi bi-download"></i> Get Node SDK</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">SDK distribution is live <span style="color:#86efac">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">2.4M+ Downloads</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Join thousands of developers building fast, compliant African payments with our official SDKs.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('installJsSdkModal')"><i class="bi bi-filetype-js"></i> Node.js</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('installPythonSdkModal')"><i class="bi bi-filetype-py"></i> Python</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('installPhpSdkModal')"><i class="bi bi-filetype-php"></i> PHP</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-primary)">ACTIVE PLUGINS</p>
+<div class="pm-stat-value" style="margin:6px 0">12</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-plugin"></i> CMS & E-comm</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-muted)">Supported: WooCommerce, Shopify, Magento, OpenCart, and more.</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-accent)">COMMUNITY RATING</p>
+<div class="pm-stat-value" style="margin:6px 0">4.9/5</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-github"></i> 18k Stars</span>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted)"><span>Uptime SLA</span><span>99.99%</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:99.9%;background:var(--pm-accent)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+<p class="pm-stat-label" style="color:var(--pm-warning)">STARTER TEMPLATES</p>
+<div class="pm-stat-value" style="margin:6px 0">25+</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-code"></i> Ready-to-deploy</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)"><div>Full-stack repos for <strong>Payroll</strong>, <strong>SaaS</strong>, <strong>E-Comm</strong>, and <strong>M-Pesa Collections</strong>.</div></div>
+</div>
+</div>
+</div>
+
+<!-- ATTENTION & QUICK ACTIONS ROW -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Developer Updates</h3><button class="pm-btn pm-btn-sm" onclick="openModal('sdkReleaseNotesModal')">View all</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-primary-soft);color:var(--pm-primary);font-size:12px">V3</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Node.js SDK v3.2.0 released</div><div style="font-size:11px;color:var(--pm-muted)">Added enhanced error handling & retries</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('npmChangelogModal')">Notes</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">FL</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Flutter Plugin Beta 2</div><div style="font-size:11px;color:var(--pm-muted)">Now supports seamless STK Push overlays</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('installFlutterSdkModal')">Get SDK</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">WH</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Webhook Signature Update</div><div style="font-size:11px;color:var(--pm-muted)">Action required before August 1st</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('webhookSnippetModal')">Guide</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Community & Support</h3><span class="pm-badge pm-badge-purple"><i class="bi bi-people"></i> Live</span></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">BG</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Found an issue in an SDK?</div><div style="font-size:11px;color:var(--pm-muted)">Report bugs directly to our engineering team</div></div><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('reportBugModal')">Report</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">FR</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Need a specific feature?</div><div style="font-size:11px;color:var(--pm-muted)">Vote on roadmap or request a new endpoint</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('requestSdkFeatureModal')">Request</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);border:1px solid var(--pm-border);font-size:12px"><i class="bi bi-github"></i></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Contribute to PayMo Open Source</div><div style="font-size:11px;color:var(--pm-muted)">Read our PR guidelines and earn bounties</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('githubAccessModal')">View</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Quick Toolkit</h3><p class="pm-section-sub">Direct access to tools and libraries</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('installJsSdkModal')"><i class="bi bi-filetype-js text-warning me-1"></i> Node SDK</button>
+<button class="quick-action-btn" onclick="openModal('installPythonSdkModal')"><i class="bi bi-filetype-py text-info me-1"></i> Python SDK</button>
+<button class="quick-action-btn" onclick="openModal('installPhpSdkModal')"><i class="bi bi-filetype-php text-primary me-1"></i> PHP SDK</button>
+<button class="quick-action-btn" onclick="openModal('installJavaSdkModal')"><i class="bi bi-filetype-java text-danger me-1"></i> Java SDK</button>
+<button class="quick-action-btn" onclick="openModal('installAndroidSdkModal')"><i class="bi bi-android2 text-success me-1"></i> Android SDK</button>
+<button class="quick-action-btn" onclick="openModal('installIosSdkModal')"><i class="bi bi-apple me-1"></i> iOS SDK</button>
+<button class="quick-action-btn" onclick="openModal('checkoutWidgetModal')"><i class="bi bi-window-sidebar text-purple me-1" style="color:var(--pm-purple)"></i> Drop-in Widget</button>
+<button class="quick-action-btn" onclick="openModal('apiPlaygroundModal')"><i class="bi bi-braces text-accent me-1" style="color:var(--pm-accent)"></i> Interactive API</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4.4.1 OFFICIAL SDKs -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-box" style="color:var(--pm-primary)"></i> 4.4.1 — Official SDKs</h3>
+<p class="pm-section-sub">Language-specific libraries for fast, type-safe API integration.</p>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('checkoutWidgetModal')"><i class="bi bi-code-square"></i> CDN Links</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('githubAccessModal')"><i class="bi bi-github"></i> Browse GitHub</button>
+</div>
+</div>
+
+<div class="row g-4">
+<div class="col-lg-3 col-md-4">
+<div class="pm-tab-pills" style="flex-direction:column;margin-bottom:0">
+<button class="pm-tab-pill active text-start" onclick="switchTab('sdkType','node',this)"><i class="bi bi-filetype-js me-2 text-warning"></i> Node.js / TypeScript</button>
+<button class="pm-tab-pill text-start" onclick="switchTab('sdkType','python',this)"><i class="bi bi-filetype-py me-2 text-info"></i> Python</button>
+<button class="pm-tab-pill text-start" onclick="switchTab('sdkType','php',this)"><i class="bi bi-filetype-php me-2 text-primary"></i> PHP</button>
+<button class="pm-tab-pill text-start" onclick="switchTab('sdkType','flutter',this)"><i class="bi bi-phone me-2 text-info"></i> Flutter / Dart</button>
+<button class="pm-tab-pill text-start" onclick="switchTab('sdkType','java',this)"><i class="bi bi-filetype-java me-2 text-danger"></i> Java / Spring</button>
+</div>
+</div>
+<div class="col-lg-9 col-md-8">
+<!-- Node.js -->
+<div id="sdkType-node" class="tab-panel active">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div>
+<h5 style="font-weight:700;margin:0">PayMo Node.js SDK</h5>
+<p style="font-size:12px;color:var(--pm-muted);margin:4px 0 0">Fully typed with TypeScript, Promise-based, Browser & Node environments supported.</p>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('installJsSdkModal')">Install Guide</button>
+</div>
+<div class="pm-code-block mb-3">
+<button class="copy-btn" onclick="this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000)">Copy</button>
+npm install @paymo/paymo-node
+</div>
+<div class="pm-code-block">
+<button class="copy-btn" onclick="this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000)">Copy</button>
+import { PayMoClient } from '@paymo/paymo-node';
+
+const paymo = new PayMoClient({
+  apiKey: process.env.PAYMO_SECRET_KEY,
+  environment: 'sandbox' // or 'production'
+});
+
+// Initiate an M-Pesa STK Push
+const response = await paymo.collections.requestMpesaPayment({
+  amount: 1500,
+  phoneNumber: '254712345678',
+  reference: 'INV-2025-001',
+  description: 'Payment for web services'
+});
+
+console.log(response.transactionId);
+</div>
+</div>
+<!-- Python -->
+<div id="sdkType-python" class="tab-panel">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div>
+<h5 style="font-weight:700;margin:0">PayMo Python SDK</h5>
+<p style="font-size:12px;color:var(--pm-muted);margin:4px 0 0">Python 3.7+ support, synchronous and async variations included.</p>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('installPythonSdkModal')">Install Guide</button>
+</div>
+<div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>pip install paymo-python</div>
+<div class="pm-code-block"><button class="copy-btn">Copy</button>from paymo import PayMoClient
+
+paymo = PayMoClient(api_key="sk_test_12345")
+
+# Initiate PesaLink disbursement
+transfer = paymo.disbursements.create(
+    amount=50000,
+    currency="KES",
+    destination=paymo.Destination.bank_account(
+        bank_code="068", # Equity Bank
+        account_number="0123456789"
+    ),
+    purpose="Salary payment"
+)
+print(transfer.status)
+</div>
+</div>
+<!-- PHP -->
+<div id="sdkType-php" class="tab-panel">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div><h5 style="font-weight:700;margin:0">PayMo PHP SDK</h5><p style="font-size:12px;color:var(--pm-muted);margin:4px 0 0">PHP 7.4+ and 8.x compatible. Laravel package also available.</p></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('installPhpSdkModal')">Install Guide</button></div>
+<div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>composer require paymo/paymo-php</div>
+<div class="pm-code-block"><button class="copy-btn">Copy</button>$paymo = new \PayMo\PayMoClient('sk_test_12345');
+$invoice = $paymo->invoices->create([
+    'customer' => ['name' => 'John Doe', 'email' => 'john@example.com'],
+    'items' => [['name' => 'Consulting', 'amount' => 10000]],
+    'due_date' => '2025-07-01'
+]);
+echo $invoice->payment_url;
+</div></div>
+<!-- Flutter -->
+<div id="sdkType-flutter" class="tab-panel">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div><h5 style="font-weight:700;margin:0">PayMo Flutter Plugin</h5><p style="font-size:12px;color:var(--pm-muted);margin:4px 0 0">Drop-in payment UI for iOS and Android apps.</p></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('installFlutterSdkModal')">Install Guide</button></div>
+<div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>flutter pub add paymo_flutter</div>
+<div class="pm-code-block"><button class="copy-btn">Copy</button>import 'package:paymo_flutter/paymo_flutter.dart';
+
+await PayMoCheckout.start(
+  context,
+  config: PayMoConfig(
+    publicKey: 'pk_test_12345',
+    amount: 1500,
+    currency: 'KES',
+    customerEmail: 'user@app.com',
+  ),
+  onSuccess: (result) => print('Success: ${result.reference}'),
+  onError: (error) => print('Error: ${error.message}'),
+);
+</div></div>
+<!-- Java -->
+<div id="sdkType-java" class="tab-panel">
+<div class="d-flex justify-content-between align-items-start mb-3">
+<div><h5 style="font-weight:700;margin:0">PayMo Java SDK</h5><p style="font-size:12px;color:var(--pm-muted);margin:4px 0 0">Java 11+ compatible, Maven/Gradle support.</p></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('installJavaSdkModal')">Install Guide</button></div>
+<div class="pm-code-block mb-3"><button class="copy-btn">Copy</button><dependency>
+  <groupId>com.paymo</groupId>
+  <artifactId>paymo-java</artifactId>
+  <version>2.1.0</version>
+</dependency></div></div>
+
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4.4.2 E-COMMERCE PLUGINS -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-shop" style="color:var(--pm-accent)"></i> 4.4.2 — E-Commerce & CMS Plugins</h3>
+<p class="pm-section-sub">No-code integrations for popular platforms to accept M-Pesa, Cards, and PesaLink.</p>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('posIntegrationModal')"><i class="bi bi-printer"></i> POS Integrations</button>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('woocommercePluginModal')">
+<div style="font-size:36px;color:#7F54B3;margin-bottom:8px"><i class="bi bi-wordpress"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">WooCommerce</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">v4.1.2 · 50k+ installs</div>
+<button class="pm-btn pm-btn-sm w-100 mt-auto">Configure</button>
+</div></div>
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('shopifyPluginModal')">
+<div style="font-size:36px;color:#95BF47;margin-bottom:8px"><i class="bi bi-bag-fill"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">Shopify</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">Official App Store</div>
+<button class="pm-btn pm-btn-sm w-100 mt-auto">Install App</button>
+</div></div>
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('magentoPluginModal')">
+<div style="font-size:36px;color:#F26322;margin-bottom:8px"><i class="bi bi-box-fill"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">Magento 2</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">v2.3 & v2.4 support</div>
+<button class="pm-btn pm-btn-sm w-100 mt-auto">Download</button>
+</div></div>
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('posIntegrationModal')">
+<div style="font-size:36px;color:#3B82F6;margin-bottom:8px"><i class="bi bi-cart"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">PrestaShop</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">v1.7 module</div>
+<button class="pm-btn pm-btn-sm w-100 mt-auto">Download</button>
+</div></div>
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('posIntegrationModal')">
+<div style="font-size:36px;color:#000;margin-bottom:8px"><i class="bi bi-browser-edge"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">Wix App</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">Marketplace install</div>
+<button class="pm-btn pm-btn-sm w-100 mt-auto">Install App</button>
+</div></div>
+<div class="col-lg-2 col-md-3 col-6">
+<div class="plugin-card" onclick="openModal('checkoutWidgetModal')">
+<div style="font-size:36px;color:var(--pm-primary);margin-bottom:8px"><i class="bi bi-code-slash"></i></div>
+<h6 style="font-weight:700;font-size:13px;margin:0 0 4px">Custom Widget</h6>
+<div style="font-size:11px;color:var(--pm-muted);margin-bottom:12px">Drop-in HTML/JS UI</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline w-100 mt-auto">Get Code</button>
+</div></div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4.4.3 CODE SAMPLES & STARTER PROJECTS -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-folder-symlink" style="color:var(--pm-info)"></i> 4.4.3 — Code Samples & Starter Projects</h3>
+<p class="pm-section-sub">Clone production-ready repositories to jumpstart your integration.</p>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('githubAccessModal')"><i class="bi bi-github"></i> Visit PayMo GitHub</button>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block" style="border:1px solid var(--pm-border);background:#fff">
+<div class="d-flex align-items-start justify-content-between mb-2">
+<div class="pm-icon-circle" style="background:var(--pm-primary-soft);color:var(--pm-primary)"><i class="bi bi-shop-window"></i></div>
+<span class="pm-badge pm-badge-success">Next.js + Tailwind</span>
+</div>
+<h5 style="font-size:15px;font-weight:700;margin:0 0 6px">Full-Stack E-Commerce</h5>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:16px">Complete storefront with cart, checkout, M-Pesa STK push handling, and webhook reconciliation.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('ecommerceStarterModal')">Clone Repo</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block" style="border:1px solid var(--pm-border);background:#fff">
+<div class="d-flex align-items-start justify-content-between mb-2">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-arrow-repeat"></i></div>
+<span class="pm-badge pm-badge-info">Python + Django</span>
+</div>
+<h5 style="font-size:15px;font-weight:700;margin:0 0 6px">SaaS Subscription Billing</h5>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:16px">Tiered subscription plans, automated retry dunning logic, and card tokenization examples.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('saasBillingStarterModal')">Clone Repo</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block" style="border:1px solid var(--pm-border);background:#fff">
+<div class="d-flex align-items-start justify-content-between mb-2">
+<div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-people"></i></div>
+<span class="pm-badge pm-badge-purple">PHP + Laravel</span>
+</div>
+<h5 style="font-size:15px;font-weight:700;margin:0 0 6px">Payroll & Bulk Disbursement</h5>
+<p style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:16px">Handle Excel parsing, B2C bulk payments to mobile numbers, and comprehensive tracking.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('payrollStarterModal')">Clone Repo</button>
+</div>
+</div>
+</div>
+
+<div class="p-4 border rounded mt-4" style="background:var(--pm-gradient-slate);color:#fff;text-align:center">
+<h4 style="font-family:var(--pm-font-display);font-weight:700;margin-bottom:8px">Test APIs in the Browser</h4>
+<p style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:20px">Use our interactive API playground to build payloads, inject test keys, and view live JSON responses without writing any code.</p>
+<button class="pm-btn pm-btn-lg pm-btn-primary border-0" onclick="openModal('apiPlaygroundModal')"><i class="bi bi-braces"></i> Launch Interactive Sandbox</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODALS (20+) -->
+<!-- ============================================================ -->
+
+<!-- 1. Install JS SDK -->
+<div class="modal fade resettable" id="installJsSdkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-filetype-js text-warning me-2"></i>Install Node.js / Browser SDK</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('jsIns','npm',this)">NPM / Yarn</button><button class="pm-tab-pill" onclick="switchTab('jsIns','cdn',this)">CDN (Browser)</button><button class="pm-tab-pill" onclick="switchTab('jsIns','react',this)">React/Vue wrapper</button></div>
+<div id="jsIns-npm" class="tab-panel active"><p style="font-size:13px">Install via package manager:</p><div class="pm-code-block mb-3">npm install @paymo/paymo-node<br># or<br>yarn add @paymo/paymo-node</div><p style="font-size:13px">Initialize client:</p><div class="pm-code-block">import { PayMoClient } from '@paymo/paymo-node';<br>const paymo = new PayMoClient({ apiKey: 'your_secret_key' });</div></div>
+<div id="jsIns-cdn" class="tab-panel"><p style="font-size:13px">Include via unpkg CDN in your HTML:</p><div class="pm-code-block mb-3">&lt;script src="https://unpkg.com/@paymo/paymo-js@3.2.0/dist/paymo.min.js"&gt;&lt;/script&gt;</div><p style="font-size:13px">Initialize global object:</p><div class="pm-code-block">const paymo = PayMo('your_public_key');<br>paymo.elements.create('checkout').mount('#payment-form');</div></div>
+<div id="jsIns-react" class="tab-panel"><p style="font-size:13px">Install the React library:</p><div class="pm-code-block mb-3">npm install @paymo/paymo-react</div><div class="pm-code-block">import { PayMoProvider, CheckoutElement } from '@paymo/paymo-react';<br><br>function App() {<br>  return (<br>    &lt;PayMoProvider publicKey="pk_test_123"&gt;<br>      &lt;CheckoutElement amount={1500} onSuccess={handleSuccess} /&gt;<br>    &lt;/PayMoProvider&gt;<br>  );<br>}</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><a href="#" class="pm-btn pm-btn-primary">View Full Docs <i class="bi bi-arrow-right"></i></a></div>
+</div></div></div>
+
+<!-- 2. Install Python SDK -->
+<div class="modal fade resettable" id="installPythonSdkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-filetype-py text-info me-2"></i>Install Python SDK</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px">Install via pip:</p><div class="pm-code-block mb-3">pip install paymo-python</div><p style="font-size:13px">Async support via <code>paymo.async_client</code> (requires aiohttp):</p><div class="pm-code-block">import asyncio<br>from paymo.async_client import AsyncPayMo<br><br>async def make_payment():<br>    client = AsyncPayMo(api_key="sk_test_123")<br>    res = await client.collections.mpesa_push(phone="254712345678", amount=500)<br>    print(res.status)</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 3. Install PHP SDK -->
+<div class="modal fade resettable" id="installPhpSdkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-filetype-php text-primary me-2"></i>Install PHP SDK</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px">Install via Composer:</p><div class="pm-code-block mb-3">composer require paymo/paymo-php</div><div class="pm-code-block">&lt;?php<br>require 'vendor/autoload.php';<br><br>$paymo = new \PayMo\Client('sk_test_123');<br>$balance = $paymo->wallet->getBalance();<br>echo $balance->available_kes;</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 4. Install Java SDK -->
+<div class="modal fade resettable" id="installJavaSdkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-filetype-java text-danger me-2"></i>Install Java SDK</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('javains','maven',this)">Maven</button><button class="pm-tab-pill" onclick="switchTab('javains','gradle',this)">Gradle</button></div>
+<div id="javains-maven" class="tab-panel active"><div class="pm-code-block">&lt;dependency&gt;<br>  &lt;groupId&gt;com.paymo&lt;/groupId&gt;<br>  &lt;artifactId&gt;paymo-java&lt;/artifactId&gt;<br>  &lt;version&gt;2.1.0&lt;/version&gt;<br>&lt;/dependency&gt;</div></div>
+<div id="javains-gradle" class="tab-panel"><div class="pm-code-block">implementation 'com.paymo:paymo-java:2.1.0'</div></div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 5. Install Flutter SDK -->
+<div class="modal fade resettable" id="installFlutterSdkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-phone text-info me-2"></i>Install Flutter Plugin</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><div class="pm-code-block mb-3">flutter pub add paymo_flutter</div><p style="font-size:13px">Note: Ensure your <code>minSdkVersion</code> is 21 or higher in <code>android/app/build.gradle</code>.</p></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 6. Android SDK -->
+<div class="modal fade resettable" id="installAndroidSdkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-android2 text-success me-2"></i>Android SDK (Kotlin/Java)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px">Add to your app-level <code>build.gradle</code>:</p><div class="pm-code-block">dependencies {<br>    implementation 'com.paymo.android:core:3.0.1'<br>    implementation 'com.paymo.android:ui:3.0.1' // Optional UI components<br>}</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 7. iOS SDK -->
+<div class="modal fade resettable" id="installIosSdkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-apple me-2"></i>iOS SDK (Swift)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px">Via CocoaPods (<code>Podfile</code>):</p><div class="pm-code-block mb-3">pod 'PayMoSDK', '~> 2.0'</div><p style="font-size:13px">Via Swift Package Manager:</p><div class="pm-code-block">https://github.com/paymo/paymo-ios.git</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 8. WooCommerce Plugin -->
+<div class="modal fade resettable" id="woocommercePluginModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-wordpress me-2" style="color:#7F54B3"></i>WooCommerce Integration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="wooStepper"><div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Download</div></div><div class="pm-step-line"></div><div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Upload</div></div><div class="pm-step-line"></div><div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Keys</div></div></div>
+<div id="wooStep1" class="fade-step active"><div class="text-center p-4 border rounded"><i class="bi bi-file-zip mb-2 d-block" style="font-size:32px;color:var(--pm-primary)"></i><h6 style="font-weight:700">paymo-woocommerce-v4.1.2.zip</h6><button class="pm-btn pm-btn-sm mt-2" onclick="nextWooStep()">Download Plugin</button></div></div>
+<div id="wooStep2" class="fade-step"><ol style="font-size:13px;color:var(--pm-ink-soft);line-height:1.8"><li>Log into your WordPress Admin Dashboard.</li><li>Go to <strong>Plugins > Add New</strong>.</li><li>Click <strong>Upload Plugin</strong> and select the downloaded ZIP.</li><li>Click <strong>Install Now</strong>, then <strong>Activate</strong>.</li></ol><button class="pm-btn pm-btn-sm" onclick="nextWooStep()">Next Step</button></div>
+<div id="wooStep3" class="fade-step"><p style="font-size:13px;color:var(--pm-ink-soft)">Go to <strong>WooCommerce > Settings > Payments > PayMo</strong> and enter your API keys from the portal.</p><div class="mb-3"><label class="pm-form-label">Public Key</label><input class="pm-form-control" value="pk_test_a8b9c0..." readonly></div><div class="mb-3"><label class="pm-form-label">Secret Key</label><input class="pm-form-control" type="password" value="sk_test_12345" readonly></div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 9. Shopify Plugin -->
+<div class="modal fade resettable" id="shopifyPluginModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bag-fill me-2" style="color:#95BF47"></i>Shopify App</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center"><i class="bi bi-shop d-block mb-3" style="font-size:48px;color:#95BF47"></i><p style="font-size:13px;color:var(--pm-ink-soft)">The PayMo Shopify app is officially listed in the Shopify App Store. Clicking below will redirect you to Shopify to authorize and install the payment gateway.</p></div>
+<div class="modal-footer justify-content-center"><button class="pm-btn pm-btn-primary" onclick="simulateAction('shopifyPluginModal','Redirecting to Shopify App Store...')">Go to Shopify App Store <i class="bi bi-box-arrow-up-right"></i></button></div>
+</div></div></div>
+
+<!-- 10. Magento Plugin -->
+<div class="modal fade resettable" id="magentoPluginModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-fill me-2" style="color:#F26322"></i>Magento 2 Extension</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px">Install via Composer in your Magento root directory:</p><div class="pm-code-block mb-3">composer require paymo/module-magento2<br>php bin/magento setup:upgrade<br>php bin/magento setup:di:compile<br>php bin/magento cache:clean</div><p style="font-size:13px;color:var(--pm-muted)">Configure keys under Stores > Configuration > Sales > Payment Methods > PayMo.</p></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 11. API Playground -->
+<div class="modal fade resettable" id="apiPlaygroundModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-braces text-accent me-2"></i>Interactive API Playground</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="background:#1e1e1e;color:#fff;border-radius:var(--pm-r-md)">
+<div class="row g-0">
+<div class="col-md-4 p-3 border-end" style="border-color:#333!important">
+<div class="mb-3"><label style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Environment</label><select class="form-select form-select-sm bg-dark text-white border-secondary"><option>Sandbox (sk_test_...)</option><option disabled>Production (Requires MFA)</option></select></div>
+<div class="mb-3"><label style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Endpoints</label>
+<div class="list-group list-group-flush" style="font-size:13px">
+<button class="list-group-item list-group-item-action bg-dark text-white border-0 active" style="background:var(--pm-primary)!important">POST /v1/mpesa/stkpush</button>
+<button class="list-group-item list-group-item-action bg-dark text-white border-0">GET /v1/transactions/{id}</button>
+<button class="list-group-item list-group-item-action bg-dark text-white border-0">POST /v1/disbursements</button>
+</div></div>
+</div>
+<div class="col-md-8 p-3">
+<div class="mb-3 d-flex justify-content-between align-items-center"><span class="badge bg-success">POST</span><span style="font-family:monospace;font-size:13px;color:#4ade80">https://api.paymo.com/v1/mpesa/stkpush</span><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="simulatePlaygroundResponse()">Send Request</button></div>
+<div class="row g-3">
+<div class="col-6"><label style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Request Body (JSON)</label><textarea class="form-control bg-dark text-white border-secondary font-monospace" rows="8" style="font-size:12px">{
+  "amount": 100,
+  "phone": "254712345678",
+  "reference": "TEST-100",
+  "callback_url": "https://hook.site/abc"
+}</textarea></div>
+<div class="col-6"><label style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Response</label><textarea id="playgroundResponse" class="form-control bg-dark border-secondary font-monospace" rows="8" style="font-size:12px;color:#a3e635" readonly>// Click 'Send Request'</textarea></div>
+</div>
+</div>
+</div>
+</div>
+</div></div></div>
+
+<!-- 12. GitHub Access -->
+<div class="modal fade resettable" id="githubAccessModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-github me-2"></i>PayMo Open Source Repositories</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="list-group">
+<a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"><div class="pm-icon-circle" style="background:#f3f4f6"><i class="bi bi-filetype-js"></i></div><div><strong>paymo-node</strong><br><small class="text-muted">Official Node.js SDK</small></div><i class="bi bi-box-arrow-up-right ms-auto"></i></a>
+<a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"><div class="pm-icon-circle" style="background:#f3f4f6"><i class="bi bi-filetype-py"></i></div><div><strong>paymo-python</strong><br><small class="text-muted">Official Python SDK</small></div><i class="bi bi-box-arrow-up-right ms-auto"></i></a>
+<a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"><div class="pm-icon-circle" style="background:#f3f4f6"><i class="bi bi-wordpress"></i></div><div><strong>woocommerce-paymo</strong><br><small class="text-muted">WooCommerce payment gateway plugin</small></div><i class="bi bi-box-arrow-up-right ms-auto"></i></a>
+<a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"><div class="pm-icon-circle" style="background:#f3f4f6"><i class="bi bi-shop"></i></div><div><strong>nextjs-ecommerce-template</strong><br><small class="text-muted">Starter project for full-stack storefronts</small></div><i class="bi bi-box-arrow-up-right ms-auto"></i></a>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 13. E-commerce Starter -->
+<div class="modal fade resettable" id="ecommerceStarterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop-window text-primary me-2"></i>Full-Stack E-Commerce Template</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">A complete Next.js 14 template using App Router, Tailwind CSS, Prisma, and PayMo Node SDK for M-Pesa STK Push and Card checkouts.</p><div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>npx create-next-app -e https://github.com/paymo/nextjs-ecommerce-template</div><p style="font-size:13px">Features included: Cart state, webhook listeners for async M-Pesa callbacks, dynamic receipt generation.</p></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="simulateAction('ecommerceStarterModal','Opening repo in new tab...')">View on GitHub</button></div>
+</div></div></div>
+
+<!-- 14. SaaS Billing Starter -->
+<div class="modal fade resettable" id="saasBillingStarterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-warning me-2"></i>SaaS Subscription Billing Template</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">A Django (Python 3.10) application demonstrating subscription plan tiers, card tokenization for recurring billing, and dunning retry logic.</p><div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>git clone https://github.com/paymo/django-saas-billing.git<br>cd django-saas-billing<br>pip install -r requirements.txt</div><p style="font-size:13px">Includes background Celery tasks for handling daily subscription renewals.</p></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="simulateAction('saasBillingStarterModal','Opening repo in new tab...')">View on GitHub</button></div>
+</div></div></div>
+
+<!-- 15. Payroll Starter -->
+<div class="modal fade resettable" id="payrollStarterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-people text-purple me-2"></i>Payroll & Bulk Disbursement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">A Laravel 10 application showing how to parse Excel/CSV employee rosters and trigger PayMo B2C bulk disbursement APIs efficiently.</p><div class="pm-code-block mb-3"><button class="copy-btn">Copy</button>composer create-project paymo/laravel-payroll-starter my-app</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="simulateAction('payrollStarterModal','Opening repo in new tab...')">View on GitHub</button></div>
+</div></div></div>
+
+<!-- 16. POS Integration -->
+<div class="modal fade resettable" id="posIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-printer me-2"></i>POS & CMS Integrations</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center"><i class="bi bi-tools d-block mb-3" style="font-size:48px;color:var(--pm-muted)"></i><p style="font-size:13px;color:var(--pm-ink-soft)">This specific integration is distributed via partner portals or requires direct developer setup. Please refer to our documentation portal for step-by-step guides on configuring PrestaShop, OpenCart, or Custom Android POS terminals.</p></div>
+<div class="modal-footer justify-content-center"><button class="pm-btn pm-btn-primary" onclick="simulateAction('posIntegrationModal','Redirecting to docs...')">Go to Documentation</button></div>
+</div></div></div>
+
+<!-- 17. Release Notes -->
+<div class="modal fade resettable" id="sdkReleaseNotesModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>SDK & Developer Updates</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:400px;overflow-y:auto">
+<div class="mb-3 border-bottom pb-3"><strong class="d-block">Node.js SDK v3.2.0</strong><small class="text-muted">June 20, 2025</small><p style="font-size:13px;margin-top:4px;margin-bottom:0">Added built-in exponential backoff for rate-limited endpoints. Fixed type definitions for Disbursement payload.</p></div>
+<div class="mb-3 border-bottom pb-3"><strong class="d-block">Flutter SDK Beta 2</strong><small class="text-muted">June 15, 2025</small><p style="font-size:13px;margin-top:4px;margin-bottom:0">Overlaid checkout UI now properly handles keyboard avoidance on iOS. Added support for Dark Mode.</p></div>
+<div class="mb-3 border-bottom pb-3"><strong class="d-block">Webhook Signature Requirement</strong><small class="text-muted">June 10, 2025</small><p style="font-size:13px;margin-top:4px;margin-bottom:0">All webhooks will require HMAC-SHA256 signature verification starting August 1st. See migration guide.</p></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 18. Report Bug -->
+<div class="modal fade resettable" id="reportBugModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bug text-danger me-2"></i>Report an SDK/API Bug</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Component</label><select class="pm-form-control"><option>Node.js SDK</option><option>Python SDK</option><option>REST API</option><option>WooCommerce Plugin</option><option>Other</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Title</label><input class="pm-form-control" placeholder="e.g. STK Push returns 500 error randomly"></div>
+<div class="mb-3"><label class="pm-form-label">Steps to reproduce</label><textarea class="pm-form-control" rows="4"></textarea></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="simulateAction('reportBugModal','Bug report submitted to Engineering.')">Submit Bug</button></div>
+</div></div></div>
+
+<!-- 19. Request Feature -->
+<div class="modal fade resettable" id="requestSdkFeatureModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightbulb text-accent me-2"></i>Request a Feature</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>New SDK Language</option><option>New CMS Plugin</option><option>API Endpoint Enhancement</option><option>Webhook Event Type</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="4" placeholder="Describe the use case and why you need it..."></textarea></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-accent" onclick="simulateAction('requestSdkFeatureModal','Feature request added to roadmap voting list.')">Submit Request</button></div>
+</div></div></div>
+
+<!-- 20. Webhook Snippet -->
+<div class="modal fade resettable" id="webhookSnippetModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-warning me-2"></i>Webhook Signature Migration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Verify incoming PayMo webhooks using the <code>x-paymo-signature</code> header to ensure payloads originate from us and haven't been tampered with.</p>
+<div class="pm-tab-pills mb-2"><button class="pm-tab-pill active" onclick="switchTab('whs','node',this)">Node.js Express</button><button class="pm-tab-pill" onclick="switchTab('whs','php',this)">PHP</button></div>
+<div id="whs-node" class="tab-panel active"><div class="pm-code-block">const crypto = require('crypto');<br><br>app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {<br>  const signature = req.headers['x-paymo-signature'];<br>  const hash = crypto.createHmac('sha256', process.env.PAYMO_WH_SECRET)<br>                     .update(req.body)<br>                     .digest('hex');<br>  if (hash !== signature) return res.status(401).send('Invalid signature');<br>  <br>  const event = JSON.parse(req.body);<br>  // Handle event...<br>});</div></div>
+<div id="whs-php" class="tab-panel"><div class="pm-code-block">$payload = file_get_contents('php://input');<br>$signature = $_SERVER['HTTP_X_PAYMO_SIGNATURE'] ?? '';<br>$hash = hash_hmac('sha256', $payload, getenv('PAYMO_WH_SECRET'));<br><br>if (!hash_equals($hash, $signature)) {<br>    http_response_code(401);<br>    exit('Invalid signature');<br>}</div></div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 21. Checkout Widget -->
+<div class="modal fade resettable" id="checkoutWidgetModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-window-sidebar text-purple me-2"></i>Drop-in Checkout Widget</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Embed a secure payment form directly on your site without handling sensitive routing.</p><div class="pm-code-block">&lt;script src="https://js.paymo.com/v1/widget.js"&gt;&lt;/script&gt;<br>&lt;button id="pay-btn"&gt;Pay KES 1500&lt;/button&gt;<br><br>&lt;script&gt;<br>  const widget = PayMoWidget({<br>    publicKey: 'pk_test_12345',<br>    amount: 1500,<br>    currency: 'KES',<br>    onSuccess: function(ref) { alert('Paid: ' + ref); }<br>  });<br>  document.getElementById('pay-btn').onclick = () => widget.open();<br>&lt;/script&gt;</div></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 22. NPM Changelog -->
+<div class="modal fade resettable" id="npmChangelogModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-filetype-js me-2"></i>Node SDK Changelog</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body"><ul style="font-size:13px;line-height:1.6;color:var(--pm-ink-soft)"><li><strong>v3.2.0</strong> - Added `maxRetries` option in Client config. Added `Disbursement` types.</li><li><strong>v3.1.5</strong> - Fixed Axios timeout bug on slow networks.</li><li><strong>v3.1.0</strong> - Added support for PesaLink bank transfers.</li><li><strong>v3.0.0</strong> - Major rewrite to TypeScript. Breaking changes on Initialization.</li></ul></div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(el){const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Loading...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},800);}
+function simulateAction(modalId,msg){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+
+let wooStep=1;
+function nextWooStep(){if(wooStep===3){closeModal('woocommercePluginModal');return;}wooStep++;document.getElementById('wooStepper').innerHTML=[1,2,3].map(i=>`<div class="pm-step ${i<wooStep?'completed':i===wooStep?'active':''}"><div class="pm-step-num">${i<wooStep?'<i class="bi bi-check"></i>':i}</div><div class="pm-step-label">Step ${i}</div></div>${i<3?'<div class="pm-step-line"></div>':''}`).join('');for(let i=1;i<=3;i++){document.getElementById('wooStep'+i).style.display=i===wooStep?'block':'none';}}
+
+function simulatePlaygroundResponse(){
+  const btn=document.querySelector('#apiPlaygroundModal .pm-btn-primary');
+  btn.innerHTML='<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+  setTimeout(()=>{
+    btn.innerHTML='Send Request';
+    document.getElementById('playgroundResponse').value=JSON.stringify({
+      "status": "success",
+      "message": "STK Push initiated successfully",
+      "data": {
+        "transaction_id": "WS_1029384756",
+        "merchant_request_id": "12345-67890-1",
+        "checkout_request_id": "ws_CO_27062025143200",
+        "customer_message": "Success. Request accepted for processing."
+      }
+    },null,2);
+  },600);
+}
+
+document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;if(m.id==='woocommercePluginModal')wooStep=1;});});
+</script>
+</body>
+</html>

@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Dispute & Chargeback Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-exclamation-triangle"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Dispute & Chargeback Management</h1>
+                            <p>End-to-end dispute lifecycle, evidence management, chargeback tracking and resolution
+                                analytics</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search disputes, chargebacks, cases, merchants..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('caseNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">14</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Dispute Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">BaaS Transactions</a> /
+                        <strong>Dispute & Chargeback</strong>
+                    </div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.16 — Dispute & Chargeback Management</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Initiate disputes, manage evidence,
+                        track chargeback workflows, resolve cases and analyse resolution performance across all payment
+                        rails.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('healthCheckModal')"><i class="bi bi-heart-pulse"></i> Health
+                        Check</button><button class="btn-pm" onclick="openM('disputeModal')"><i
+                            class="bi bi-plus-lg"></i> New Dispute</button><button class="btn-pm"
+                        onclick="openM('bulkDisputeModal')"><i class="bi bi-collection"></i> Bulk</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('evidenceUploadModal')"><i class="bi bi-upload"></i>
+                        Upload Evidence</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Dispute command center live
+                                <span style="color:#86efac">●</span>
+                            </p>
+                            <div class="SV" style="margin:8px 0;color:#fff">142 open cases</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">38 disputes filed this month,
+                                67 chargebacks in progress, 37 resolved in last 7 days across Visa, Mastercard,
+                                PesaLink, SWIFT and local rails.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('disputeModal')">File dispute</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('evidenceUploadModal')">Upload evidence</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('bulkDisputeModal')">Bulk action</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-danger)">WIN RATE</p>
+                            <div class="SV" style="margin:6px 0">68%<span
+                                    style="font-size:14px;color:var(--pm-muted)">/90d</span></div><span class="B B-s"><i
+                                    class="bi bi-trophy"></i> +4% vs last quarter</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Avg resolution: 41
+                                days<br>Recovery: KES 18.4M</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-warning)">AT RISK / PENDING</p>
+                            <div class="SV" style="margin:6px 0">29</div><span class="B B-w"><i class="bi bi-clock"></i>
+                                11 expiring in 7 days</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">High-value: 8
+                                cases<br>Merchant repeat: 4 merchants</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+                            <p class="SL" style="color:var(--pm-accent)">MONTHLY SAVINGS</p>
+                            <div class="SV" style="margin:6px 0">KES 4.2M</div><span class="B B-s"><i
+                                    class="bi bi-piggy-bank"></i> Chargeback recovery</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Fraud prevention: KES
+                                2.1M<br>Merchant clawbacks: KES 2.1M</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">High-value dispute expiring</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">CDP-44892 · KES 1.85M · 4 days
+                                            left</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm btn-pm-d"
+                                    onclick="openM('evidenceUploadModal')">Upload</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Merchant repeat offender</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">4 cases this month · Blacklist
+                                            review</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('merchantRiskModal')">Review</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Chargeback response due today</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">CB-99102 · Visa · KES 87,400
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('chargebackResponseModal')">Respond</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Increase evidence bundle for online
+                                            disputes</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">+18% win rate improvement
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('evidenceUploadModal')">Apply</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Blacklist 3 high-risk merchants
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Prevent 12 future disputes
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('merchantRiskModal')">Blacklist</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable auto-escalation for >KES 500k
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce SLA breach risk</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('disputeRulesModal')">Enable</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent dispute workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('disputeModal')"><i
+                                        class="bi bi-plus-circle text-primary me-1"></i> File Dispute</button><button
+                                    class="quick-btn" onclick="openM('evidenceUploadModal')"><i
+                                        class="bi bi-upload text-success me-1"></i> Upload Evidence</button><button
+                                    class="quick-btn" onclick="openM('chargebackResponseModal')"><i
+                                        class="bi bi-reply text-info me-1"></i> Respond to CB</button><button
+                                    class="quick-btn" onclick="openM('bulkDisputeModal')"><i
+                                        class="bi bi-collection me-1" style="color:var(--pm-purple)"></i> Bulk
+                                    Action</button><button class="quick-btn" onclick="openM('merchantRiskModal')"><i
+                                        class="bi bi-building text-warning me-1"></i> Merchant Risk</button><button
+                                    class="quick-btn" onclick="openM('resolutionAnalyticsModal')"><i
+                                        class="bi bi-bar-chart-line me-1" style="color:var(--pm-accent)"></i>
+                                    Analytics</button><button class="quick-btn" onclick="openM('disputeRulesModal')"><i
+                                        class="bi bi-sliders me-1" style="color:var(--pm-primary)"></i>
+                                    Rules</button><button class="quick-btn" onclick="openM('exportReportModal')"><i
+                                        class="bi bi-download text-muted me-1"></i> Export Report</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.16.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-plus" style="color:var(--pm-primary)"></i>
+                                1.16.1 — Dispute Initiation & Filing</h3>
+                            <p class="ss">Create new disputes, select transactions, choose reason codes, attach initial
+                                evidence and route to the correct workflow.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('disputeModal')"><i class="bi bi-plus-lg"></i> New
+                                Dispute</button><button class="btn-pm btn-sm" onclick="openM('bulkDisputeModal')"><i
+                                    class="bi bi-collection"></i> Bulk</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent Transactions Eligible
+                                    for Dispute</h4>
+                                <div class="sr">
+                                    <div><strong>Amazon Kenya</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Visa ****4521 · KES 87,400 ·
+                                            12 Jun</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Dispute</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Jumia Pay</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">MC ****3392 · KES 23,150 · 10
+                                            Jun</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Dispute</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Booking.com</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Visa ****4521 · KES 124,800 ·
+                                            08 Jun</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Dispute</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Uber Eats</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Prepaid ****8890 · KES 4,200 ·
+                                            05 Jun</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Dispute</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Dispute Reason Quick Select
+                                </h4>
+                                <div class="quick-grid"><button class="quick-btn"
+                                        onclick="quickDispute('unauthorised')"><i
+                                            class="bi bi-person-x text-danger me-1"></i> Unauthorised</button><button
+                                        class="quick-btn" onclick="quickDispute('not_received')"><i
+                                            class="bi bi-box-arrow-left text-warning me-1"></i> Not
+                                        Received</button><button class="quick-btn"
+                                        onclick="quickDispute('not_described')"><i
+                                            class="bi bi-exclamation-octagon text-info me-1"></i> Not
+                                        Described</button><button class="quick-btn"
+                                        onclick="quickDispute('duplicate')"><i class="bi bi-copy text-purple me-1"></i>
+                                        Duplicate</button><button class="quick-btn"
+                                        onclick="quickDispute('cancelled')"><i
+                                            class="bi bi-x-circle text-danger me-1"></i> Cancelled</button><button
+                                        class="quick-btn" onclick="quickDispute('refund')"><i
+                                            class="bi bi-arrow-counterclockwise text-accent me-1"></i> Refund
+                                        Issue</button></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Filing Stats (30d)</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#991B1B">FILED</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">38</div>
+                                </div>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#B45309">AVG VALUE</div>
+                                    <div style="font-size:20px;font-weight:700;color:var(--pm-warning)">KES 124,800
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#047857">TOP REASON</div>
+                                    <div style="font-size:18px;font-weight:700;color:var(--pm-accent)">Unauthorised
+                                        (42%)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.16.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-folder-fill" style="color:var(--pm-info)"></i> 1.16.2 —
+                                Evidence Management & Submission</h3>
+                            <p class="ss">Upload, organise and submit evidence packages to networks with deadline
+                                tracking and compliance checks.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('evidenceUploadModal')"><i class="bi bi-upload"></i>
+                                Upload</button><button class="btn-pm btn-sm" onclick="openM('evidencePackageModal')"><i
+                                    class="bi bi-archive"></i> Packages</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Evidence Requirements
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Case</th>
+                                                <th>Network</th>
+                                                <th>Deadline</th>
+                                                <th>Evidence Needed</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>CDP-44892</code></td>
+                                                <td>Visa</td>
+                                                <td><span class="text-danger">29 Jun</span></td>
+                                                <td>Receipt, Police report, ID</td>
+                                                <td><span class="B B-w">4/6 uploaded</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('evidenceUploadModal')">Upload</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>CB-99102</code></td>
+                                                <td>Mastercard</td>
+                                                <td><span class="text-danger">27 Jun</span></td>
+                                                <td>Invoice, Delivery proof</td>
+                                                <td><span class="B B-d">2/5 uploaded</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('evidenceUploadModal')">Upload</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>CDP-44915</code></td>
+                                                <td>PesaLink</td>
+                                                <td>02 Jul</td>
+                                                <td>Contract, Bank statement</td>
+                                                <td><span class="B B-s">Complete</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('evidencePackageModal')">Review</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Evidence Library</h4>
+                                <div class="sr">
+                                    <div><strong>Receipts</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">124 files</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('evidencePackageModal')">Browse</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Police Reports</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">38 files</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('evidencePackageModal')">Browse</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Delivery Proof</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">67 files</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('evidencePackageModal')">Browse</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Contracts</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">19 files</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('evidencePackageModal')">Browse</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.16.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-arrow-repeat" style="color:var(--pm-purple)"></i> 1.16.3 —
+                                Chargeback Workflow & Tracking</h3>
+                            <p class="ss">Track chargeback lifecycle, respond to representments, manage pre-arbitration
+                                and arbitration stages.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('chargebackResponseModal')"><i class="bi bi-reply"></i>
+                                Respond</button><button class="btn-pm btn-sm"
+                                onclick="openM('chargebackTrackerModal')"><i class="bi bi-graph-up"></i>
+                                Tracker</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Chargebacks</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>CB ID</th>
+                                                <th>Case</th>
+                                                <th>Network</th>
+                                                <th>Stage</th>
+                                                <th>Amount</th>
+                                                <th>Due</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>CB-99102</code></td>
+                                                <td>CDP-44892</td>
+                                                <td>Visa</td>
+                                                <td><span class="B B-w">Representment</span></td>
+                                                <td>KES 87,400</td>
+                                                <td>27 Jun</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('chargebackResponseModal')">Respond</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>CB-99087</code></td>
+                                                <td>CDP-44710</td>
+                                                <td>MC</td>
+                                                <td><span class="B B-i">Pre-Arbitration</span></td>
+                                                <td>KES 312,000</td>
+                                                <td>02 Jul</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('chargebackTrackerModal')">Track</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>CB-99065</code></td>
+                                                <td>CDP-44655</td>
+                                                <td>Visa</td>
+                                                <td><span class="B B-p">Arbitration</span></td>
+                                                <td>KES 1,240,000</td>
+                                                <td>15 Jul</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('arbitrationModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Stage Summary</h4>
+                                <div class="sr">
+                                    <div><strong>First Chargeback</strong></div><span class="B B-s">48 cases</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Representment</strong></div><span class="B B-w">29 cases</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Pre-Arbitration</strong></div><span class="B B-i">12 cases</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Arbitration</strong></div><span class="B B-d">7 cases</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Resolved (30d)</strong></div><span class="B B-s">67 cases</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.16.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bar-chart-line" style="color:var(--pm-accent)"></i> 1.16.4 —
+                                Resolution Analytics & Insights</h3>
+                            <p class="ss">Analyse win/loss rates, merchant performance, reason code effectiveness and
+                                financial recovery metrics.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('resolutionAnalyticsModal')"><i class="bi bi-graph-up-arrow"></i> Deep
+                                Analytics</button><button class="btn-pm btn-sm" onclick="openM('exportReportModal')"><i
+                                    class="bi bi-download"></i> Export</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Win Rate by Reason Code</h4>
+                                <div class="sr">
+                                    <div><strong>Unauthorised</strong></div>
+                                    <div><span class="B B-s">82%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Not Received</strong></div>
+                                    <div><span class="B B-s">71%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Not Described</strong></div>
+                                    <div><span class="B B-w">54%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Duplicate</strong></div>
+                                    <div><span class="B B-s">89%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Cancelled</strong></div>
+                                    <div><span class="B B-i">63%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Top 5 Merchants by Disputes
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Amazon Kenya</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">18 cases · 61% win</div>
+                                    </div><span class="B B-w">Review</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Jumia Pay</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">12 cases · 75% win</div>
+                                    </div><span class="B B-s">OK</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Booking.com</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">9 cases · 44% win</div>
+                                    </div><span class="B B-d">High Risk</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Uber Eats</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">7 cases · 86% win</div>
+                                    </div><span class="B B-s">OK</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Local Vendor X</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">6 cases · 17% win</div>
+                                    </div><span class="B B-d">Blacklist</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recovery Summary (30d)</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;color:#047857;font-weight:700">TOTAL RECOVERED</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-accent)">KES 18.4M</div>
+                                </div>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:11px;color:#1D4ED8;font-weight:700">AVG PER CASE</div>
+                                    <div style="font-size:18px;font-weight:700;color:var(--pm-info)">KES 129,600</div>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-purple-soft)">
+                                    <div style="font-size:11px;color:#6D28D9;font-weight:700">MERCHANT CLAWBACKS</div>
+                                    <div style="font-size:18px;font-weight:700;color:var(--pm-purple)">KES 4.7M</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT ACTIVITY -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent Dispute
+                            Activity</h3><button class="btn-pm btn-sm" onclick="openM('activityLogModal')">View Full
+                            Log</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Case</th>
+                                    <th>Type</th>
+                                    <th>Merchant</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>CDP-44923</td>
+                                    <td>Dispute</td>
+                                    <td>Amazon Kenya</td>
+                                    <td>KES 87,400</td>
+                                    <td><span class="B B-i">Under Review</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('disputeDetailModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun</td>
+                                    <td>CB-99102</td>
+                                    <td>Chargeback</td>
+                                    <td>Jumia Pay</td>
+                                    <td>KES 23,150</td>
+                                    <td><span class="B B-w">Representment</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('chargebackResponseModal')">Respond</button></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun</td>
+                                    <td>CDP-44915</td>
+                                    <td>Dispute</td>
+                                    <td>Booking.com</td>
+                                    <td>KES 124,800</td>
+                                    <td><span class="B B-s">Resolved - Won</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('disputeDetailModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>24 Jun</td>
+                                    <td>CDP-44892</td>
+                                    <td>Dispute</td>
+                                    <td>Local Vendor X</td>
+                                    <td>KES 1,850,000</td>
+                                    <td><span class="B B-w">Evidence Pending</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('evidenceUploadModal')">Upload</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ==================== 23+ MODALS ==================== -->
+
+    <!-- M1: New Dispute (multi-step) -->
+    <div class="modal fade R" id="disputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-plus text-primary me-2"></i>File New Dispute
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="dispStepper"></div>
+                    <div id="dispS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Transaction</h6>
+                        <div class="mb-3"><label class="FL">Card / Account</label><select class="FC">
+                                <option>Visa ****4521</option>
+                                <option>MC ****3392</option>
+                                <option>Prepaid ****8890</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Transaction</label><select class="FC">
+                                <option>12 Jun 2025 — Amazon Kenya — KES 87,400 — Ref: AMZ-882910</option>
+                                <option>10 Jun 2025 — Jumia Pay — KES 23,150 — Ref: JM-441029</option>
+                                <option>08 Jun 2025 — Booking.com — KES 124,800 — Ref: BK-991022</option>
+                            </select></div>
+                    </div>
+                    <div id="dispS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Reason & Details</h6>
+                        <div class="mb-3"><label class="FL">Reason Code</label><select class="FC">
+                                <option>01 — Unauthorised Transaction</option>
+                                <option>02 — Goods Not Received</option>
+                                <option>03 — Goods Not as Described</option>
+                                <option>04 — Duplicate Charge</option>
+                                <option>05 — Cancelled Recurring</option>
+                                <option>06 — Refund Not Processed</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Description</label><textarea class="FC"
+                                rows="3">I did not authorise this transaction. Card was in my possession at all times.</textarea>
+                        </div>
+                        <div class="mb-3"><label class="FL">Requested Amount</label><input class="FC" value="87400">
+                        </div>
+                    </div>
+                    <div id="dispS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Initial Evidence</h6>
+                        <div class="mb-3"><label class="FL">Upload Supporting Documents</label><input type="file"
+                                class="FC" multiple></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Police report will be uploaded within 48
+                                hours</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">ID verification attached</label></div>
+                    </div>
+                    <div id="dispS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Dispute Filed Successfully</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Case CDP-44923 created. Network deadline:
+                                11 Jul 2025.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Case
+                                        ID</span><strong>CDP-44923</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Amount</span><strong>KES 87,400</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Status</span><span
+                                        class="B B-i">Under Review</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="dispFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="dispNext"
+                        onclick="nextFlow('disp',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Evidence Upload (multi-step) -->
+    <div class="modal fade R" id="evidenceUploadModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload text-success me-2"></i>Upload Evidence Package</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="evStepper"></div>
+                    <div id="evS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Case</h6>
+                        <div class="mb-3"><label class="FL">Case</label><select class="FC">
+                                <option>CDP-44892 — Visa — KES 1,850,000</option>
+                                <option>CB-99102 — MC — KES 87,400</option>
+                                <option>CDP-44915 — PesaLink — KES 124,800</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Evidence Type</label><select class="FC">
+                                <option>Receipt / Invoice</option>
+                                <option>Police Report</option>
+                                <option>Delivery Proof</option>
+                                <option>Contract / Agreement</option>
+                                <option>Bank Statement</option>
+                                <option>Other</option>
+                            </select></div>
+                    </div>
+                    <div id="evS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Upload Files</h6>
+                        <div class="mb-3"><label class="FL">Files</label><input type="file" class="FC" multiple></div>
+                        <div class="mb-3"><label class="FL">Description / Notes</label><textarea class="FC"
+                                rows="2">Receipt from merchant dated 12 Jun 2025 showing full payment.</textarea></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Accepted formats: PDF, JPG, PNG, DOCX. Max 10MB per
+                            file.</div>
+                    </div>
+                    <div id="evS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Evidence Uploaded</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">3 files attached to CDP-44892. Package
+                                completeness: 6/6.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Files</span><strong>receipt.pdf, police.pdf, id.jpg</strong>
+                                </div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Deadline</span><strong>29 Jun 2025</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="evFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="evNext"
+                        onclick="nextFlow('ev',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Chargeback Response -->
+    <div class="modal fade R" id="chargebackResponseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-reply text-info me-2"></i>Respond to Chargeback</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Chargeback</label><select class="FC">
+                            <option>CB-99102 — Visa — KES 87,400 — Representment due 27 Jun</option>
+                            <option>CB-99087 — MC — KES 312,000 — Pre-Arbitration</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Response Type</label><select class="FC">
+                            <option>Representment (provide evidence)</option>
+                            <option>Accept chargeback</option>
+                            <option>Pre-arbitration response</option>
+                            <option>Arbitration filing</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Evidence / Notes</label><textarea class="FC"
+                            rows="4">Merchant provided signed delivery confirmation and CCTV footage showing cardholder at pickup location.</textarea>
+                    </div>
+                    <div class="mb-3"><label class="FL">Additional Files</label><input type="file" class="FC" multiple>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('chargebackResponseModal','Chargeback response submitted successfully. Case updated to Pre-Arbitration stage.','CB-99102-R1')">Submit
+                        Response</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Bulk Dispute -->
+    <div class="modal fade R" id="bulkDisputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-collection text-purple me-2"></i>Bulk Dispute Actions</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="bulkStepper"></div>
+                    <div id="bulkS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Cases</h6>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span><strong>CDP-44892</strong>
+                                    — Visa — KES 1.85M</span><span class="B B-w">Evidence due</span></label></div>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input" type="checkbox"
+                                checked><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span><strong>CDP-44915</strong>
+                                    — PesaLink — KES 124.8k</span><span class="B B-s">Complete</span></label></div>
+                        <div class="form-check p-3 border rounded mb-2"><input class="form-check-input"
+                                type="checkbox"><label
+                                class="form-check-label ms-2 d-flex justify-content-between w-100"><span><strong>CB-99087</strong>
+                                    — MC — KES 312k</span><span class="B B-i">Pre-Arbitration</span></label></div>
+                        <hr class="divider">
+                        <div class="d-flex justify-content-between"><span
+                                style="font-weight:700">Selected</span><strong>2 cases</strong></div>
+                    </div>
+                    <div id="bulkS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Action</h6>
+                        <div class="mb-3"><label class="FL">Bulk Action</label><select class="FC">
+                                <option>Upload evidence to all</option>
+                                <option>Request extension</option>
+                                <option>Accept chargebacks</option>
+                                <option>Escalate to arbitration</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Notes (applies to all)</label><textarea class="FC"
+                                rows="3">Bulk evidence package attached for all selected cases.</textarea></div>
+                    </div>
+                    <div id="bulkS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-all"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Action Completed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Evidence uploaded to 2 cases. Deadlines
+                                extended where applicable.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="bulkFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="bulkNext"
+                        onclick="nextFlow('bulk',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Evidence Package -->
+    <div class="modal fade R" id="evidencePackageModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-archive me-2"></i>Evidence Package Manager</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('evpkg','all',this)">All
+                            Files</button><button class="pill"
+                            onclick="sw('evpkg','receipt',this)">Receipts</button><button class="pill"
+                            onclick="sw('evpkg','police',this)">Police</button><button class="pill"
+                            onclick="sw('evpkg','delivery',this)">Delivery</button></div>
+                    <div id="evpkg-all" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Case</th>
+                                        <th>Type</th>
+                                        <th>Uploaded</th>
+                                        <th>Size</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>receipt_amz.pdf</td>
+                                        <td>CDP-44892</td>
+                                        <td>Receipt</td>
+                                        <td>27 Jun</td>
+                                        <td>1.2 MB</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>police_88291.pdf</td>
+                                        <td>CDP-44892</td>
+                                        <td>Police</td>
+                                        <td>26 Jun</td>
+                                        <td>3.4 MB</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>id_jk.jpg</td>
+                                        <td>CDP-44915</td>
+                                        <td>ID</td>
+                                        <td>25 Jun</td>
+                                        <td>0.8 MB</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="evpkg-receipt" class="tpanel">
+                        <div class="sr">
+                            <div><strong>receipt_amz.pdf</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">CDP-44892 · 1.2 MB</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>receipt_jumia.pdf</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">CB-99102 · 0.9 MB</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                        </div>
+                    </div>
+                    <div id="evpkg-police" class="tpanel">
+                        <div class="sr">
+                            <div><strong>police_88291.pdf</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">CDP-44892 · 3.4 MB</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                        </div>
+                    </div>
+                    <div id="evpkg-delivery" class="tpanel">
+                        <div class="sr">
+                            <div><strong>delivery_booking.jpg</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">CDP-44915 · 2.1 MB</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('evidencePackageModal','File downloaded.','')">Download</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('evidenceUploadModal')">Upload More</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Merchant Risk -->
+    <div class="modal fade R" id="merchantRiskModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building text-warning me-2"></i>Merchant Risk Management
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('mrisk','high',this)">High
+                            Risk</button><button class="pill" onclick="sw('mrisk','repeat',this)">Repeat
+                            Offenders</button><button class="pill"
+                            onclick="sw('mrisk','blacklist',this)">Blacklist</button></div>
+                    <div id="mrisk-high" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Merchant</th>
+                                        <th>Cases (30d)</th>
+                                        <th>Win Rate</th>
+                                        <th>Risk Score</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Local Vendor X</td>
+                                        <td>6</td>
+                                        <td>17%</td>
+                                        <td><span class="B B-d">94</span></td>
+                                        <td><button class="btn-pm btn-sm btn-pm-d"
+                                                onclick="doAction('merchantRiskModal','Merchant blacklisted. All future transactions will be blocked.','')">Blacklist</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Booking.com</td>
+                                        <td>9</td>
+                                        <td>44%</td>
+                                        <td><span class="B B-w">72</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="doAction('merchantRiskModal','Merchant flagged for review. Monitoring enabled.','')">Monitor</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="mrisk-repeat" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Amazon Kenya</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">18 cases · 61% win rate</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('merchantRiskModal','Merchant flagged for review. Monitoring enabled.','')">Monitor</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Jumia Pay</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">12 cases · 75% win rate</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('merchantRiskModal','Merchant flagged for review. Monitoring enabled.','')">Monitor</button>
+                        </div>
+                    </div>
+                    <div id="mrisk-blacklist" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Local Vendor X</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Blacklisted 24 Jun 2025</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('merchantRiskModal','Merchant removed from blacklist. Transactions will be allowed.','')">Remove</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Scam Merchant Y</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Blacklisted 12 May 2025</div>
+                            </div><button class="btn-pm btn-sm"
+                                onclick="doAction('merchantRiskModal','Merchant removed from blacklist. Transactions will be allowed.','')">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Resolution Analytics -->
+    <div class="modal fade R" id="resolutionAnalyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up-arrow text-accent me-2"></i>Resolution Analytics
+                        Dashboard</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('ran','win',this)">Win
+                            Rate</button><button class="pill"
+                            onclick="sw('ran','merchant',this)">Merchant</button><button class="pill"
+                            onclick="sw('ran','reason',this)">Reason Code</button><button class="pill"
+                            onclick="sw('ran','time',this)">Time to Resolve</button></div>
+                    <div id="ran-win" class="tpanel active">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:28px;font-weight:800;color:var(--pm-accent)">68%</div>
+                                    <div style="font-size:11px;font-weight:700;color:#047857">OVERALL WIN RATE</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-info)">41 days</div>
+                                    <div style="font-size:11px;font-weight:700;color:#1D4ED8">AVG RESOLUTION</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">KES 129k</div>
+                                    <div style="font-size:11px;font-weight:700;color:#6D28D9">AVG RECOVERED</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ran-merchant" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Merchant</th>
+                                        <th>Cases</th>
+                                        <th>Win Rate</th>
+                                        <th>Avg Amount</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Amazon Kenya</td>
+                                        <td>18</td>
+                                        <td>61%</td>
+                                        <td>KES 87k</td>
+                                        <td><span class="B B-s">↑</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jumia Pay</td>
+                                        <td>12</td>
+                                        <td>75%</td>
+                                        <td>KES 23k</td>
+                                        <td><span class="B B-s">↑</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Booking.com</td>
+                                        <td>9</td>
+                                        <td>44%</td>
+                                        <td>KES 125k</td>
+                                        <td><span class="B B-w">↓</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="ran-reason" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Reason Code</th>
+                                        <th>Cases</th>
+                                        <th>Win Rate</th>
+                                        <th>Avg Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Unauthorised</td>
+                                        <td>16</td>
+                                        <td>82%</td>
+                                        <td>32</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Not Received</td>
+                                        <td>9</td>
+                                        <td>71%</td>
+                                        <td>48</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Duplicate</td>
+                                        <td>7</td>
+                                        <td>89%</td>
+                                        <td>21</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="ran-time" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div style="font-size:13px;font-weight:700">Resolution Time Distribution</div>
+                            <div class="sr mt-2">
+                                <div>0-30 days</div>
+                                <div><span class="B B-s">42%</span></div>
+                            </div>
+                            <div class="sr">
+                                <div>31-60 days</div>
+                                <div><span class="B B-w">38%</span></div>
+                            </div>
+                            <div class="sr">
+                                <div>61-90 days</div>
+                                <div><span class="B B-i">15%</span></div>
+                            </div>
+                            <div class="sr">
+                                <div>90+ days</div>
+                                <div><span class="B B-d">5%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('exportReportModal')">Export Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Dispute Rules -->
+    <div class="modal fade R" id="disputeRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders text-primary me-2"></i>Dispute Automation Rules</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('drule','auto',this)">Auto-Escalation</button><button class="pill"
+                            onclick="sw('drule','evidence',this)">Evidence Rules</button><button class="pill"
+                            onclick="sw('drule','merchant',this)">Merchant Rules</button></div>
+                    <div id="drule-auto" class="tpanel active">
+                        <div class="sr">
+                            <div><strong>Auto-escalate disputes > KES 500,000</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Current: Disabled</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Auto-file chargeback if no response in 10 days</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Auto-blacklist merchant after 5 lost cases</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                        </div>
+                    </div>
+                    <div id="drule-evidence" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Require police report for unauthorised > KES 100k</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Require delivery proof for "not received"</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="drule-merchant" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Auto-flag merchants with win rate < 40%</strong>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Auto-block transactions from blacklisted merchants</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('disputeRulesModal','Automation rules updated. Changes take effect immediately.','')">Save
+                        Rules</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Arbitration -->
+    <div class="modal fade R" id="arbitrationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gavel text-purple me-2"></i>Arbitration Management</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Case</label><select class="FC">
+                            <option>CB-99065 — Visa — KES 1,240,000 — Arbitration</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Arbitration Status</label>
+                        <div class="p-3 rounded" style="background:var(--pm-purple-soft)">
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Stage</span><strong>Arbitration Filed</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Network</span><strong>Visa</strong></div>
+                            <div class="d-flex justify-content-between"><span class="text-muted">Decision
+                                    Due</span><strong>15 Aug 2025</strong></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="3">Strong evidence package submitted. Merchant has poor compliance history.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('arbitrationModal','Arbitration notes saved. Case updated.','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Export Report -->
+    <div class="modal fade R" id="exportReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Dispute Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Full dispute & chargeback report</option>
+                            <option>Win/loss analysis</option>
+                            <option>Merchant performance</option>
+                            <option>Reason code effectiveness</option>
+                            <option>Monthly resolution summary</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-01-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('exportReportModal','Report generated and downloading...','')">Generate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Health Check -->
+    <div class="modal fade R" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Dispute Health Check</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:28px;font-weight:800;color:var(--pm-accent)">84</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">HEALTH SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">11</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">EXPIRING</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">41d</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">AVG TIME</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">68%</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">WIN RATE</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Current</th>
+                                    <th>Target</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Evidence completeness</td>
+                                    <td>78%</td>
+                                    <td>95%</td>
+                                    <td><span class="B B-w">Below</span></td>
+                                </tr>
+                                <tr>
+                                    <td>On-time filing</td>
+                                    <td>94%</td>
+                                    <td>100%</td>
+                                    <td><span class="B B-s">Good</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Merchant blacklisting</td>
+                                    <td>3</td>
+                                    <td>5</td>
+                                    <td><span class="B B-w">Below</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Arbitration win rate</td>
+                                    <td>52%</td>
+                                    <td>65%</td>
+                                    <td><span class="B B-w">Below</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('disputeRulesModal')">Improve Score</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Case Notifications -->
+    <div class="modal fade R" id="caseNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Dispute Notifications (14)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>CDP-44892 evidence deadline in 2 days</strong>
+                        <div style="font-size:11px;color:#7F1D1D">Upload remaining documents before 29 Jun.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>CB-99102 representment response due today</strong>
+                        <div style="font-size:11px;color:#92400E">Visa deadline: 27 Jun 2025.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px">
+                        <strong>CDP-44923 evidence package complete</strong>
+                        <div style="font-size:11px;color:#1E40AF">Submitted to Visa successfully.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px">
+                        <strong>CDP-44915 resolved — won</strong>
+                        <div style="font-size:11px;color:#065F46">KES 124,800 recovered.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Merchant
+                            blacklisting applied</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">Local Vendor X — 3 new disputes prevented.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('disputeRulesModal')">Automation</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Disputes Managed</span><br><strong>142 this month</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Win
+                                    Rate</span><br><strong style="color:var(--pm-accent)">68%</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Recovery</span><br><strong>KES 18.4M</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Health Score</span><br><strong
+                                    style="color:var(--pm-accent)">84/100</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Activity Log -->
+    <div class="modal fade R" id="activityLogModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Activity Log</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3"><select class="FC" style="width:auto">
+                            <option>All Cases</option>
+                            <option>CDP-44892</option>
+                            <option>CB-99102</option>
+                        </select><input class="FC" style="width:200px" placeholder="Search activity..."></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Case</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:32</td>
+                                    <td>CDP-44923</td>
+                                    <td>Evidence uploaded</td>
+                                    <td>James K.</td>
+                                    <td>receipt_amz.pdf, police_88291.pdf</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:15</td>
+                                    <td>CB-99102</td>
+                                    <td>Representment filed</td>
+                                    <td>Grace M.</td>
+                                    <td>Response submitted to Visa</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 09:40</td>
+                                    <td>CDP-44892</td>
+                                    <td>Merchant flagged</td>
+                                    <td>System</td>
+                                    <td>Local Vendor X — risk score 94</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 16:20</td>
+                                    <td>CDP-44915</td>
+                                    <td>Case resolved — won</td>
+                                    <td>James K.</td>
+                                    <td>KES 124,800 recovered</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('exportReportModal')">Export Log</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Attention Full -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>CDP-44892 evidence due in 2 days</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 1.85M — 4 files remaining</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('evidenceUploadModal')">Upload</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>CB-99102 representment due today</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Visa — KES 87,400</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('chargebackResponseModal')">Respond</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Local Vendor X blacklisting review</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">6 cases — 17% win rate</div>
+                        </div><button class="btn-pm btn-sm btn-pm-d"
+                            onclick="openM('merchantRiskModal')">Blacklist</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>CDP-44923 evidence package complete</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Ready for submission</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('disputeDetailModal')">Submit</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Quick Dispute Helper -->
+    <div class="modal fade R" id="quickDisputeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i>Quick Dispute</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Transaction</label><select class="FC">
+                            <option>Amazon Kenya — KES 87,400 — 12 Jun</option>
+                            <option>Jumia Pay — KES 23,150 — 10 Jun</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Unauthorised</option>
+                            <option>Not Received</option>
+                            <option>Duplicate</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="87400"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('quickDisputeModal','Quick dispute filed successfully. Case CDP-44924 created.','CDP-44924')">File
+                        Dispute</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17-23: Additional supporting modals (detail, rules, export, etc.) -->
+    <div class="modal fade R" id="disputeDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Dispute Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Case
+                                ID</span><strong>CDP-44923</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-i">Under Review</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>KES 87,400</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Network
+                                Deadline</span><strong>11 Jul 2025</strong></div>
+                    </div>
+                    <div class="mb-3">
+                        <h6 style="font-weight:700">Timeline</h6>
+                        <div class="sr">
+                            <div>27 Jun 14:32</div>
+                            <div>Evidence uploaded</div>
+                        </div>
+                        <div class="sr">
+                            <div>27 Jun 09:15</div>
+                            <div>Dispute filed</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('evidenceUploadModal')">Upload Evidence</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="chargebackTrackerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up me-2"></i>Chargeback Tracker</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">CB-99102</span><span
+                                class="B B-w">Representment</span></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Progress</span><strong>Visa
+                                → Pre-Arbitration</strong></div>
+                    </div>
+                    <div class="mb-3">
+                        <h6 style="font-weight:700">Stage Timeline</h6>
+                        <div class="sr">
+                            <div>20 Jun</div>
+                            <div>First chargeback filed</div>
+                        </div>
+                        <div class="sr">
+                            <div>25 Jun</div>
+                            <div>Representment submitted</div>
+                        </div>
+                        <div class="sr">
+                            <div>27 Jun</div>
+                            <div>Response due</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="disputeRulesModal2" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Dispute Rules</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Auto-escalate > KES 500k</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Auto-file chargeback after 10 days</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Auto-blacklist after 5 lost cases</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p" onclick="doAction('disputeRulesModal2','Rules saved.','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- M18: Quick Dispute Helper -->
+<div class="modal fade R" id="quickDisputeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i>Quick Dispute</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="FL">Transaction</label><select class="FC"><option>Amazon Kenya — KES 87,400 — 12 Jun</option><option>Jumia Pay — KES 23,150 — 10 Jun</option></select></div><div class="mb-3"><label class="FL">Reason</label><select class="FC"><option>Unauthorised</option><option>Not Received</option><option>Duplicate</option></select></div><div class="mb-3"><label class="FL">Amount</label><input class="FC" value="87400"></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" onclick="doAction('quickDisputeModal','Quick dispute filed successfully. Case CDP-44924 created.','CDP-44924')">File Dispute</button></div></div></div></div>
+
+<!--M19: Dispute Detail View-->
+<div class="modal fade R" id="disputeDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Dispute Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Case ID</span><strong>CDP-44923</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span class="B B-i">Under Review</span></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES 87,400</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Network Deadline</span><strong>11 Jul 2025</strong></div></div><div class="mb-3"><h6 style="font-weight:700">Timeline</h6><div class="sr"><div>27 Jun 14:32</div><div>Evidence uploaded</div></div><div class="sr"><div>27 Jun 09:15</div><div>Dispute filed</div></div></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button class="btn-pm btn-pm-p" onclick="openM('evidenceUploadModal')">Upload Evidence</button></div></div></div></div>
+
+<!--M20: Chargeback Tracker-->
+<div class="modal fade R" id="chargebackTrackerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up me-2"></i>Chargeback Tracker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft)"><div class="d-flex justify-content-between mb-2"><span class="text-muted">CB-99102</span><span class="B B-w">Representment</span></div><div class="d-flex justify-content-between"><span class="text-muted">Progress</span><strong>Visa → Pre-Arbitration</strong></div></div><div class="mb-3"><h6 style="font-weight:700">Stage Timeline</h6><div class="sr"><div>20 Jun</div><div>First chargeback filed</div></div><div class="sr"><div>25 Jun</div><div>Representment submitted</div></div><div class="sr"><div>27 Jun</div><div>Response due</div></div></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!--M21: Fee Calculator-->
+<div class="modal fade R" id="feeCalcModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Dispute Fee Calculator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="FL">Action</label><select class="FC"><option>Arbitration filing fee</option><option>Pre-arbitration response</option><option>Evidence retrieval</option></select></div><div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="500000"></div><div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Network Fee</span><strong>KES 2,500</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Legal Review</span><strong>KES 15,000</strong></div><hr class="divider"><div class="d-flex justify-content-between"><span style="font-weight:700">Total Cost</span><strong style="color:var(--pm-primary)">KES 17,500</strong></div></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!--M22: Branch Support-->
+<div class="modal fade R" id="branchSupportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-geo-alt me-2"></i>Branch Support Locator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="FL">Search Location</label><input class="FC" placeholder="Enter area" value="Nairobi"></div><div class="table-responsive"><table class="T"><thead><tr><th>Branch</th><th>Address</th><th>Services</th><th>Distance</th></tr></thead><tbody><tr><td><strong>PayMo Westlands</strong></td><td>Sarit Centre, Level 2</td><td>Dispute filing, Evidence upload</td><td>1.2 km</td></tr><tr><td><strong>PayMo CBD</strong></td><td>Koinange / Kenyatta</td><td>Full dispute support</td><td>3.4 km</td></tr></tbody></table></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!--M23: Security Check-->
+            <div class="modal fade R" id="securityCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Dispute Security Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)"><div style="font-size:28px;font-weight:800;color:var(--pm-accent)">92</div><div style="font-size:10px;font-weight:700;color:#047857">SECURITY SCORE</div></div></div><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-info-soft)"><div style="font-size:24px;font-weight:700;color:var(--pm-info)">100%</div><div style="font-size:10px;font-weight:700;color:#1D4ED8">2FA ENABLED</div></div></div><div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)"><div style="font-size:24px;font-weight:700;color:var(--pm-purple)">0</div><div style="font-size:10px;font-weight:700;color:#6D28D9">BREACHES</div></div></div></div></div><div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { disp: { current: 1, total: 4 }, ev: { current: 1, total: 3 }, bulk: { current: 1, total: 3 } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = Array.from({ length: f.total }, (_, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">Step ${i + 1}</div></div>${i < f.total - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { const body = document.querySelector('#' + key + 'Modal .modal-body'); showLoading(body, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(key + 'Modal'); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1400); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function quickDispute(type) { closeM('disputeModal'); openM('quickDisputeModal'); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+
+    </script>
+</body>
+
+</html>

@@ -9,15 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettlementRouteImport } from './routes/settlement'
-import { Route as MobileMoneyRouteImport } from './routes/mobile-money'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ComplianceRouteImport } from './routes/compliance'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as HomeRouteImport } from './routes/_home'
-import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
+import { Route as Transaction_dashboardAppRouteImport } from './routes/transaction_dashboard/app'
+import { Route as CardsAppRouteImport } from './routes/cards/app'
 import { Route as AuthSecurityRouteImport } from './routes/auth/security'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
@@ -27,58 +23,63 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
 import { Route as AuthHubRouteImport } from './routes/auth/hub'
 import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
-import { Route as AppTransfersRouteImport } from './routes/app.transfers'
-import { Route as AppTransferManagementRouteImport } from './routes/app.transfer-management'
-import { Route as AppReconciliationRouteImport } from './routes/app.reconciliation'
-import { Route as AppPaymentRailsRouteImport } from './routes/app.payment-rails'
-import { Route as AppLiquidityRouteImport } from './routes/app.liquidity'
-import { Route as AppInitiateTransferRouteImport } from './routes/app.initiate-transfer'
-import { Route as AppSectionRouteImport } from './routes/app.$section'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
+import { Route as Transaction_dashboardAppIndexRouteImport } from './routes/transaction_dashboard/app.index'
+import { Route as Transaction_dashboardAppTransfersRouteImport } from './routes/transaction_dashboard/app.transfers'
+import { Route as Transaction_dashboardAppTransferOverviewRouteImport } from './routes/transaction_dashboard/app.transfer-overview'
+import { Route as Transaction_dashboardAppTransferManagementRouteImport } from './routes/transaction_dashboard/app.transfer-management'
+import { Route as Transaction_dashboardAppSettlementRouteImport } from './routes/transaction_dashboard/app.settlement'
+import { Route as Transaction_dashboardAppReconciliationRouteImport } from './routes/transaction_dashboard/app.reconciliation'
+import { Route as Transaction_dashboardAppPaymentRailsRouteImport } from './routes/transaction_dashboard/app.payment-rails'
+import { Route as Transaction_dashboardAppOpsHealthRouteImport } from './routes/transaction_dashboard/app.ops-health'
+import { Route as Transaction_dashboardAppMobileMoneyRouteImport } from './routes/transaction_dashboard/app.mobile-money'
+import { Route as Transaction_dashboardAppLiquidityRouteImport } from './routes/transaction_dashboard/app.liquidity'
+import { Route as Transaction_dashboardAppKraGovernmentRouteImport } from './routes/transaction_dashboard/app.kra-government'
+import { Route as Transaction_dashboardAppInitiateTransferRouteImport } from './routes/transaction_dashboard/app.initiate-transfer'
+import { Route as Transaction_dashboardAppFxRouteImport } from './routes/transaction_dashboard/app.fx'
+import { Route as Transaction_dashboardAppFeesRouteImport } from './routes/transaction_dashboard/app.fees'
+import { Route as Transaction_dashboardAppDisputesRouteImport } from './routes/transaction_dashboard/app.disputes'
+import { Route as Transaction_dashboardAppCustomersRouteImport } from './routes/transaction_dashboard/app.customers'
+import { Route as Transaction_dashboardAppComplianceRouteImport } from './routes/transaction_dashboard/app.compliance'
+import { Route as Transaction_dashboardAppAnalyticsRouteImport } from './routes/transaction_dashboard/app.analytics'
+import { Route as Transaction_dashboardAppSectionRouteImport } from './routes/transaction_dashboard/app.$section'
+import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
+import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
+import { Route as CardsAppSupportRouteImport } from './routes/cards/app/support'
+import { Route as CardsAppPrepaidCardManagementRouteImport } from './routes/cards/app/prepaid-card-management'
+import { Route as CardsAppPhysicalDebitCardsRouteImport } from './routes/cards/app/physical-debit-cards'
+import { Route as CardsAppCorporateBusinessCardsRouteImport } from './routes/cards/app/corporate-business-cards'
+import { Route as CardsAppCardSettingsSupportRouteImport } from './routes/cards/app/card-settings-support'
+import { Route as CardsAppCardSecurityFraudPreventionRouteImport } from './routes/cards/app/card-security-fraud-prevention'
+import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/cards/app/card-program-administration'
+import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
+import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
+import { Route as CardsAppAccountSettingsRouteImport } from './routes/cards/app/account-settings'
 
-const SettlementRoute = SettlementRouteImport.update({
-  id: '/settlement',
-  path: '/settlement',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MobileMoneyRoute = MobileMoneyRouteImport.update({
-  id: '/mobile-money',
-  path: '/mobile-money',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComplianceRoute = ComplianceRouteImport.update({
-  id: '/compliance',
-  path: '/compliance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/_home',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => HomeRoute,
+} as any)
+const Transaction_dashboardAppRoute =
+  Transaction_dashboardAppRouteImport.update({
+    id: '/transaction_dashboard/app',
+    path: '/transaction_dashboard/app',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CardsAppRoute = CardsAppRouteImport.update({
+  id: '/cards/app',
+  path: '/cards/app',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSecurityRoute = AuthSecurityRouteImport.update({
   id: '/auth/security',
@@ -125,63 +126,200 @@ const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
   path: '/auth/account-status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppTransfersRoute = AppTransfersRouteImport.update({
-  id: '/transfers',
-  path: '/transfers',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTransferManagementRoute = AppTransferManagementRouteImport.update({
-  id: '/transfer-management',
-  path: '/transfer-management',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppReconciliationRoute = AppReconciliationRouteImport.update({
-  id: '/reconciliation',
-  path: '/reconciliation',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPaymentRailsRoute = AppPaymentRailsRouteImport.update({
-  id: '/payment-rails',
-  path: '/payment-rails',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLiquidityRoute = AppLiquidityRouteImport.update({
-  id: '/liquidity',
-  path: '/liquidity',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInitiateTransferRoute = AppInitiateTransferRouteImport.update({
-  id: '/initiate-transfer',
-  path: '/initiate-transfer',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSectionRoute = AppSectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
-  getParentRoute: () => AppRoute,
-} as any)
 const HomeBusinessRoute = HomeBusinessRouteImport.update({
   id: '/business',
   path: '/business',
   getParentRoute: () => HomeRoute,
 } as any)
+const Transaction_dashboardAppIndexRoute =
+  Transaction_dashboardAppIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppTransfersRoute =
+  Transaction_dashboardAppTransfersRouteImport.update({
+    id: '/transfers',
+    path: '/transfers',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppTransferOverviewRoute =
+  Transaction_dashboardAppTransferOverviewRouteImport.update({
+    id: '/transfer-overview',
+    path: '/transfer-overview',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppTransferManagementRoute =
+  Transaction_dashboardAppTransferManagementRouteImport.update({
+    id: '/transfer-management',
+    path: '/transfer-management',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppSettlementRoute =
+  Transaction_dashboardAppSettlementRouteImport.update({
+    id: '/settlement',
+    path: '/settlement',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppReconciliationRoute =
+  Transaction_dashboardAppReconciliationRouteImport.update({
+    id: '/reconciliation',
+    path: '/reconciliation',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppPaymentRailsRoute =
+  Transaction_dashboardAppPaymentRailsRouteImport.update({
+    id: '/payment-rails',
+    path: '/payment-rails',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppOpsHealthRoute =
+  Transaction_dashboardAppOpsHealthRouteImport.update({
+    id: '/ops-health',
+    path: '/ops-health',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppMobileMoneyRoute =
+  Transaction_dashboardAppMobileMoneyRouteImport.update({
+    id: '/mobile-money',
+    path: '/mobile-money',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppLiquidityRoute =
+  Transaction_dashboardAppLiquidityRouteImport.update({
+    id: '/liquidity',
+    path: '/liquidity',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppKraGovernmentRoute =
+  Transaction_dashboardAppKraGovernmentRouteImport.update({
+    id: '/kra-government',
+    path: '/kra-government',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppInitiateTransferRoute =
+  Transaction_dashboardAppInitiateTransferRouteImport.update({
+    id: '/initiate-transfer',
+    path: '/initiate-transfer',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppFxRoute =
+  Transaction_dashboardAppFxRouteImport.update({
+    id: '/fx',
+    path: '/fx',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppFeesRoute =
+  Transaction_dashboardAppFeesRouteImport.update({
+    id: '/fees',
+    path: '/fees',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppDisputesRoute =
+  Transaction_dashboardAppDisputesRouteImport.update({
+    id: '/disputes',
+    path: '/disputes',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppCustomersRoute =
+  Transaction_dashboardAppCustomersRouteImport.update({
+    id: '/customers',
+    path: '/customers',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppComplianceRoute =
+  Transaction_dashboardAppComplianceRouteImport.update({
+    id: '/compliance',
+    path: '/compliance',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppAnalyticsRoute =
+  Transaction_dashboardAppAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppSectionRoute =
+  Transaction_dashboardAppSectionRouteImport.update({
+    id: '/$section',
+    path: '/$section',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const CardsAppVirtualDebitCardsRoute =
+  CardsAppVirtualDebitCardsRouteImport.update({
+    id: '/virtual-debit-cards',
+    path: '/virtual-debit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppVirtualCreditCardsRoute =
+  CardsAppVirtualCreditCardsRouteImport.update({
+    id: '/virtual-credit-cards',
+    path: '/virtual-credit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppSupportRoute = CardsAppSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => CardsAppRoute,
+} as any)
+const CardsAppPrepaidCardManagementRoute =
+  CardsAppPrepaidCardManagementRouteImport.update({
+    id: '/prepaid-card-management',
+    path: '/prepaid-card-management',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppPhysicalDebitCardsRoute =
+  CardsAppPhysicalDebitCardsRouteImport.update({
+    id: '/physical-debit-cards',
+    path: '/physical-debit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCorporateBusinessCardsRoute =
+  CardsAppCorporateBusinessCardsRouteImport.update({
+    id: '/corporate-business-cards',
+    path: '/corporate-business-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardSettingsSupportRoute =
+  CardsAppCardSettingsSupportRouteImport.update({
+    id: '/card-settings-support',
+    path: '/card-settings-support',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardSecurityFraudPreventionRoute =
+  CardsAppCardSecurityFraudPreventionRouteImport.update({
+    id: '/card-security-fraud-prevention',
+    path: '/card-security-fraud-prevention',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardProgramAdministrationRoute =
+  CardsAppCardProgramAdministrationRouteImport.update({
+    id: '/card-program-administration',
+    path: '/card-program-administration',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardCommandCenterRoute =
+  CardsAppCardCommandCenterRouteImport.update({
+    id: '/card-command-center',
+    path: '/card-command-center',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardAnalyticsReportingRoute =
+  CardsAppCardAnalyticsReportingRouteImport.update({
+    id: '/card-analytics-reporting',
+    path: '/card-analytics-reporting',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
+  id: '/account-settings',
+  path: '/account-settings',
+  getParentRoute: () => CardsAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/app': typeof AppRouteWithChildren
-  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
-  '/mobile-money': typeof MobileMoneyRoute
-  '/settlement': typeof SettlementRoute
   '/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
-  '/app/initiate-transfer': typeof AppInitiateTransferRoute
-  '/app/liquidity': typeof AppLiquidityRoute
-  '/app/payment-rails': typeof AppPaymentRailsRoute
-  '/app/reconciliation': typeof AppReconciliationRoute
-  '/app/transfer-management': typeof AppTransferManagementRoute
-  '/app/transfers': typeof AppTransfersRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -191,22 +329,43 @@ export interface FileRoutesByFullPath {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
-  '/app/': typeof AppIndexRoute
+  '/cards/app': typeof CardsAppRouteWithChildren
+  '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
+  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
+  '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
+  '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
+  '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
+  '/cards/app/card-security-fraud-prevention': typeof CardsAppCardSecurityFraudPreventionRoute
+  '/cards/app/card-settings-support': typeof CardsAppCardSettingsSupportRoute
+  '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
+  '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
+  '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
+  '/cards/app/support': typeof CardsAppSupportRoute
+  '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
+  '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
+  '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
+  '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
+  '/transaction_dashboard/app/disputes': typeof Transaction_dashboardAppDisputesRoute
+  '/transaction_dashboard/app/fees': typeof Transaction_dashboardAppFeesRoute
+  '/transaction_dashboard/app/fx': typeof Transaction_dashboardAppFxRoute
+  '/transaction_dashboard/app/initiate-transfer': typeof Transaction_dashboardAppInitiateTransferRoute
+  '/transaction_dashboard/app/kra-government': typeof Transaction_dashboardAppKraGovernmentRoute
+  '/transaction_dashboard/app/liquidity': typeof Transaction_dashboardAppLiquidityRoute
+  '/transaction_dashboard/app/mobile-money': typeof Transaction_dashboardAppMobileMoneyRoute
+  '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
+  '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
+  '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
+  '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
+  '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
+  '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app/': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRoutesByTo {
-  '/analytics': typeof AnalyticsRoute
-  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
-  '/mobile-money': typeof MobileMoneyRoute
-  '/settlement': typeof SettlementRoute
   '/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
-  '/app/initiate-transfer': typeof AppInitiateTransferRoute
-  '/app/liquidity': typeof AppLiquidityRoute
-  '/app/payment-rails': typeof AppPaymentRailsRoute
-  '/app/reconciliation': typeof AppReconciliationRoute
-  '/app/transfer-management': typeof AppTransferManagementRoute
-  '/app/transfers': typeof AppTransfersRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -216,26 +375,45 @@ export interface FileRoutesByTo {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/cards/app': typeof CardsAppRouteWithChildren
   '/': typeof HomeIndexRoute
-  '/app': typeof AppIndexRoute
+  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
+  '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
+  '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
+  '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
+  '/cards/app/card-security-fraud-prevention': typeof CardsAppCardSecurityFraudPreventionRoute
+  '/cards/app/card-settings-support': typeof CardsAppCardSettingsSupportRoute
+  '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
+  '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
+  '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
+  '/cards/app/support': typeof CardsAppSupportRoute
+  '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
+  '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
+  '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
+  '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
+  '/transaction_dashboard/app/disputes': typeof Transaction_dashboardAppDisputesRoute
+  '/transaction_dashboard/app/fees': typeof Transaction_dashboardAppFeesRoute
+  '/transaction_dashboard/app/fx': typeof Transaction_dashboardAppFxRoute
+  '/transaction_dashboard/app/initiate-transfer': typeof Transaction_dashboardAppInitiateTransferRoute
+  '/transaction_dashboard/app/kra-government': typeof Transaction_dashboardAppKraGovernmentRoute
+  '/transaction_dashboard/app/liquidity': typeof Transaction_dashboardAppLiquidityRoute
+  '/transaction_dashboard/app/mobile-money': typeof Transaction_dashboardAppMobileMoneyRoute
+  '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
+  '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
+  '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
+  '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
+  '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
+  '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
-  '/analytics': typeof AnalyticsRoute
-  '/app': typeof AppRouteWithChildren
-  '/compliance': typeof ComplianceRoute
   '/login': typeof LoginRoute
-  '/mobile-money': typeof MobileMoneyRoute
-  '/settlement': typeof SettlementRoute
   '/_home/business': typeof HomeBusinessRoute
-  '/app/$section': typeof AppSectionRoute
-  '/app/initiate-transfer': typeof AppInitiateTransferRoute
-  '/app/liquidity': typeof AppLiquidityRoute
-  '/app/payment-rails': typeof AppPaymentRailsRoute
-  '/app/reconciliation': typeof AppReconciliationRoute
-  '/app/transfer-management': typeof AppTransferManagementRoute
-  '/app/transfers': typeof AppTransfersRoute
   '/auth/account-status': typeof AuthAccountStatusRoute
   '/auth/hub': typeof AuthHubRoute
   '/auth/identity': typeof AuthIdentityRoute
@@ -245,27 +423,47 @@ export interface FileRoutesById {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/cards/app': typeof CardsAppRouteWithChildren
+  '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
   '/_home/': typeof HomeIndexRoute
-  '/app/': typeof AppIndexRoute
+  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
+  '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
+  '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
+  '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
+  '/cards/app/card-security-fraud-prevention': typeof CardsAppCardSecurityFraudPreventionRoute
+  '/cards/app/card-settings-support': typeof CardsAppCardSettingsSupportRoute
+  '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
+  '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
+  '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
+  '/cards/app/support': typeof CardsAppSupportRoute
+  '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
+  '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
+  '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
+  '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
+  '/transaction_dashboard/app/disputes': typeof Transaction_dashboardAppDisputesRoute
+  '/transaction_dashboard/app/fees': typeof Transaction_dashboardAppFeesRoute
+  '/transaction_dashboard/app/fx': typeof Transaction_dashboardAppFxRoute
+  '/transaction_dashboard/app/initiate-transfer': typeof Transaction_dashboardAppInitiateTransferRoute
+  '/transaction_dashboard/app/kra-government': typeof Transaction_dashboardAppKraGovernmentRoute
+  '/transaction_dashboard/app/liquidity': typeof Transaction_dashboardAppLiquidityRoute
+  '/transaction_dashboard/app/mobile-money': typeof Transaction_dashboardAppMobileMoneyRoute
+  '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
+  '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
+  '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
+  '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
+  '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
+  '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app/': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/analytics'
-    | '/app'
-    | '/compliance'
     | '/login'
-    | '/mobile-money'
-    | '/settlement'
     | '/business'
-    | '/app/$section'
-    | '/app/initiate-transfer'
-    | '/app/liquidity'
-    | '/app/payment-rails'
-    | '/app/reconciliation'
-    | '/app/transfer-management'
-    | '/app/transfers'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -275,22 +473,43 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
-    | '/app/'
+    | '/cards/app'
+    | '/transaction_dashboard/app'
+    | '/cards/app/account-settings'
+    | '/cards/app/card-analytics-reporting'
+    | '/cards/app/card-command-center'
+    | '/cards/app/card-program-administration'
+    | '/cards/app/card-security-fraud-prevention'
+    | '/cards/app/card-settings-support'
+    | '/cards/app/corporate-business-cards'
+    | '/cards/app/physical-debit-cards'
+    | '/cards/app/prepaid-card-management'
+    | '/cards/app/support'
+    | '/cards/app/virtual-credit-cards'
+    | '/cards/app/virtual-debit-cards'
+    | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/analytics'
+    | '/transaction_dashboard/app/compliance'
+    | '/transaction_dashboard/app/customers'
+    | '/transaction_dashboard/app/disputes'
+    | '/transaction_dashboard/app/fees'
+    | '/transaction_dashboard/app/fx'
+    | '/transaction_dashboard/app/initiate-transfer'
+    | '/transaction_dashboard/app/kra-government'
+    | '/transaction_dashboard/app/liquidity'
+    | '/transaction_dashboard/app/mobile-money'
+    | '/transaction_dashboard/app/ops-health'
+    | '/transaction_dashboard/app/payment-rails'
+    | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settlement'
+    | '/transaction_dashboard/app/transfer-management'
+    | '/transaction_dashboard/app/transfer-overview'
+    | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/analytics'
-    | '/compliance'
     | '/login'
-    | '/mobile-money'
-    | '/settlement'
     | '/business'
-    | '/app/$section'
-    | '/app/initiate-transfer'
-    | '/app/liquidity'
-    | '/app/payment-rails'
-    | '/app/reconciliation'
-    | '/app/transfer-management'
-    | '/app/transfers'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -300,25 +519,44 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/cards/app'
     | '/'
-    | '/app'
+    | '/cards/app/account-settings'
+    | '/cards/app/card-analytics-reporting'
+    | '/cards/app/card-command-center'
+    | '/cards/app/card-program-administration'
+    | '/cards/app/card-security-fraud-prevention'
+    | '/cards/app/card-settings-support'
+    | '/cards/app/corporate-business-cards'
+    | '/cards/app/physical-debit-cards'
+    | '/cards/app/prepaid-card-management'
+    | '/cards/app/support'
+    | '/cards/app/virtual-credit-cards'
+    | '/cards/app/virtual-debit-cards'
+    | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/analytics'
+    | '/transaction_dashboard/app/compliance'
+    | '/transaction_dashboard/app/customers'
+    | '/transaction_dashboard/app/disputes'
+    | '/transaction_dashboard/app/fees'
+    | '/transaction_dashboard/app/fx'
+    | '/transaction_dashboard/app/initiate-transfer'
+    | '/transaction_dashboard/app/kra-government'
+    | '/transaction_dashboard/app/liquidity'
+    | '/transaction_dashboard/app/mobile-money'
+    | '/transaction_dashboard/app/ops-health'
+    | '/transaction_dashboard/app/payment-rails'
+    | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settlement'
+    | '/transaction_dashboard/app/transfer-management'
+    | '/transaction_dashboard/app/transfer-overview'
+    | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app'
   id:
     | '__root__'
     | '/_home'
-    | '/analytics'
-    | '/app'
-    | '/compliance'
     | '/login'
-    | '/mobile-money'
-    | '/settlement'
     | '/_home/business'
-    | '/app/$section'
-    | '/app/initiate-transfer'
-    | '/app/liquidity'
-    | '/app/payment-rails'
-    | '/app/reconciliation'
-    | '/app/transfer-management'
-    | '/app/transfers'
     | '/auth/account-status'
     | '/auth/hub'
     | '/auth/identity'
@@ -328,18 +566,45 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/cards/app'
+    | '/transaction_dashboard/app'
     | '/_home/'
-    | '/app/'
+    | '/cards/app/account-settings'
+    | '/cards/app/card-analytics-reporting'
+    | '/cards/app/card-command-center'
+    | '/cards/app/card-program-administration'
+    | '/cards/app/card-security-fraud-prevention'
+    | '/cards/app/card-settings-support'
+    | '/cards/app/corporate-business-cards'
+    | '/cards/app/physical-debit-cards'
+    | '/cards/app/prepaid-card-management'
+    | '/cards/app/support'
+    | '/cards/app/virtual-credit-cards'
+    | '/cards/app/virtual-debit-cards'
+    | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/analytics'
+    | '/transaction_dashboard/app/compliance'
+    | '/transaction_dashboard/app/customers'
+    | '/transaction_dashboard/app/disputes'
+    | '/transaction_dashboard/app/fees'
+    | '/transaction_dashboard/app/fx'
+    | '/transaction_dashboard/app/initiate-transfer'
+    | '/transaction_dashboard/app/kra-government'
+    | '/transaction_dashboard/app/liquidity'
+    | '/transaction_dashboard/app/mobile-money'
+    | '/transaction_dashboard/app/ops-health'
+    | '/transaction_dashboard/app/payment-rails'
+    | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settlement'
+    | '/transaction_dashboard/app/transfer-management'
+    | '/transaction_dashboard/app/transfer-overview'
+    | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
-  AnalyticsRoute: typeof AnalyticsRoute
-  AppRoute: typeof AppRouteWithChildren
-  ComplianceRoute: typeof ComplianceRoute
   LoginRoute: typeof LoginRoute
-  MobileMoneyRoute: typeof MobileMoneyRoute
-  SettlementRoute: typeof SettlementRoute
   AuthAccountStatusRoute: typeof AuthAccountStatusRoute
   AuthHubRoute: typeof AuthHubRoute
   AuthIdentityRoute: typeof AuthIdentityRoute
@@ -349,50 +614,17 @@ export interface RootRouteChildren {
   AuthRecoveryRoute: typeof AuthRecoveryRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSecurityRoute: typeof AuthSecurityRoute
+  CardsAppRoute: typeof CardsAppRouteWithChildren
+  Transaction_dashboardAppRoute: typeof Transaction_dashboardAppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settlement': {
-      id: '/settlement'
-      path: '/settlement'
-      fullPath: '/settlement'
-      preLoaderRoute: typeof SettlementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mobile-money': {
-      id: '/mobile-money'
-      path: '/mobile-money'
-      fullPath: '/mobile-money'
-      preLoaderRoute: typeof MobileMoneyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compliance': {
-      id: '/compliance'
-      path: '/compliance'
-      fullPath: '/compliance'
-      preLoaderRoute: typeof ComplianceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analytics': {
-      id: '/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_home': {
@@ -402,19 +634,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_home/': {
       id: '/_home/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRoute
+    }
+    '/transaction_dashboard/app': {
+      id: '/transaction_dashboard/app'
+      path: '/transaction_dashboard/app'
+      fullPath: '/transaction_dashboard/app'
+      preLoaderRoute: typeof Transaction_dashboardAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cards/app': {
+      id: '/cards/app'
+      path: '/cards/app'
+      fullPath: '/cards/app'
+      preLoaderRoute: typeof CardsAppRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/security': {
       id: '/auth/security'
@@ -479,61 +718,229 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/transfers': {
-      id: '/app/transfers'
-      path: '/transfers'
-      fullPath: '/app/transfers'
-      preLoaderRoute: typeof AppTransfersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/transfer-management': {
-      id: '/app/transfer-management'
-      path: '/transfer-management'
-      fullPath: '/app/transfer-management'
-      preLoaderRoute: typeof AppTransferManagementRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/reconciliation': {
-      id: '/app/reconciliation'
-      path: '/reconciliation'
-      fullPath: '/app/reconciliation'
-      preLoaderRoute: typeof AppReconciliationRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/payment-rails': {
-      id: '/app/payment-rails'
-      path: '/payment-rails'
-      fullPath: '/app/payment-rails'
-      preLoaderRoute: typeof AppPaymentRailsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/liquidity': {
-      id: '/app/liquidity'
-      path: '/liquidity'
-      fullPath: '/app/liquidity'
-      preLoaderRoute: typeof AppLiquidityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/initiate-transfer': {
-      id: '/app/initiate-transfer'
-      path: '/initiate-transfer'
-      fullPath: '/app/initiate-transfer'
-      preLoaderRoute: typeof AppInitiateTransferRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/$section': {
-      id: '/app/$section'
-      path: '/$section'
-      fullPath: '/app/$section'
-      preLoaderRoute: typeof AppSectionRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_home/business': {
       id: '/_home/business'
       path: '/business'
       fullPath: '/business'
       preLoaderRoute: typeof HomeBusinessRouteImport
       parentRoute: typeof HomeRoute
+    }
+    '/transaction_dashboard/app/': {
+      id: '/transaction_dashboard/app/'
+      path: '/'
+      fullPath: '/transaction_dashboard/app/'
+      preLoaderRoute: typeof Transaction_dashboardAppIndexRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/transfers': {
+      id: '/transaction_dashboard/app/transfers'
+      path: '/transfers'
+      fullPath: '/transaction_dashboard/app/transfers'
+      preLoaderRoute: typeof Transaction_dashboardAppTransfersRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/transfer-overview': {
+      id: '/transaction_dashboard/app/transfer-overview'
+      path: '/transfer-overview'
+      fullPath: '/transaction_dashboard/app/transfer-overview'
+      preLoaderRoute: typeof Transaction_dashboardAppTransferOverviewRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/transfer-management': {
+      id: '/transaction_dashboard/app/transfer-management'
+      path: '/transfer-management'
+      fullPath: '/transaction_dashboard/app/transfer-management'
+      preLoaderRoute: typeof Transaction_dashboardAppTransferManagementRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/settlement': {
+      id: '/transaction_dashboard/app/settlement'
+      path: '/settlement'
+      fullPath: '/transaction_dashboard/app/settlement'
+      preLoaderRoute: typeof Transaction_dashboardAppSettlementRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/reconciliation': {
+      id: '/transaction_dashboard/app/reconciliation'
+      path: '/reconciliation'
+      fullPath: '/transaction_dashboard/app/reconciliation'
+      preLoaderRoute: typeof Transaction_dashboardAppReconciliationRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/payment-rails': {
+      id: '/transaction_dashboard/app/payment-rails'
+      path: '/payment-rails'
+      fullPath: '/transaction_dashboard/app/payment-rails'
+      preLoaderRoute: typeof Transaction_dashboardAppPaymentRailsRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/ops-health': {
+      id: '/transaction_dashboard/app/ops-health'
+      path: '/ops-health'
+      fullPath: '/transaction_dashboard/app/ops-health'
+      preLoaderRoute: typeof Transaction_dashboardAppOpsHealthRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/mobile-money': {
+      id: '/transaction_dashboard/app/mobile-money'
+      path: '/mobile-money'
+      fullPath: '/transaction_dashboard/app/mobile-money'
+      preLoaderRoute: typeof Transaction_dashboardAppMobileMoneyRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/liquidity': {
+      id: '/transaction_dashboard/app/liquidity'
+      path: '/liquidity'
+      fullPath: '/transaction_dashboard/app/liquidity'
+      preLoaderRoute: typeof Transaction_dashboardAppLiquidityRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/kra-government': {
+      id: '/transaction_dashboard/app/kra-government'
+      path: '/kra-government'
+      fullPath: '/transaction_dashboard/app/kra-government'
+      preLoaderRoute: typeof Transaction_dashboardAppKraGovernmentRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/initiate-transfer': {
+      id: '/transaction_dashboard/app/initiate-transfer'
+      path: '/initiate-transfer'
+      fullPath: '/transaction_dashboard/app/initiate-transfer'
+      preLoaderRoute: typeof Transaction_dashboardAppInitiateTransferRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/fx': {
+      id: '/transaction_dashboard/app/fx'
+      path: '/fx'
+      fullPath: '/transaction_dashboard/app/fx'
+      preLoaderRoute: typeof Transaction_dashboardAppFxRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/fees': {
+      id: '/transaction_dashboard/app/fees'
+      path: '/fees'
+      fullPath: '/transaction_dashboard/app/fees'
+      preLoaderRoute: typeof Transaction_dashboardAppFeesRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/disputes': {
+      id: '/transaction_dashboard/app/disputes'
+      path: '/disputes'
+      fullPath: '/transaction_dashboard/app/disputes'
+      preLoaderRoute: typeof Transaction_dashboardAppDisputesRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/customers': {
+      id: '/transaction_dashboard/app/customers'
+      path: '/customers'
+      fullPath: '/transaction_dashboard/app/customers'
+      preLoaderRoute: typeof Transaction_dashboardAppCustomersRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/compliance': {
+      id: '/transaction_dashboard/app/compliance'
+      path: '/compliance'
+      fullPath: '/transaction_dashboard/app/compliance'
+      preLoaderRoute: typeof Transaction_dashboardAppComplianceRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/analytics': {
+      id: '/transaction_dashboard/app/analytics'
+      path: '/analytics'
+      fullPath: '/transaction_dashboard/app/analytics'
+      preLoaderRoute: typeof Transaction_dashboardAppAnalyticsRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/$section': {
+      id: '/transaction_dashboard/app/$section'
+      path: '/$section'
+      fullPath: '/transaction_dashboard/app/$section'
+      preLoaderRoute: typeof Transaction_dashboardAppSectionRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/cards/app/virtual-debit-cards': {
+      id: '/cards/app/virtual-debit-cards'
+      path: '/virtual-debit-cards'
+      fullPath: '/cards/app/virtual-debit-cards'
+      preLoaderRoute: typeof CardsAppVirtualDebitCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/virtual-credit-cards': {
+      id: '/cards/app/virtual-credit-cards'
+      path: '/virtual-credit-cards'
+      fullPath: '/cards/app/virtual-credit-cards'
+      preLoaderRoute: typeof CardsAppVirtualCreditCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/support': {
+      id: '/cards/app/support'
+      path: '/support'
+      fullPath: '/cards/app/support'
+      preLoaderRoute: typeof CardsAppSupportRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/prepaid-card-management': {
+      id: '/cards/app/prepaid-card-management'
+      path: '/prepaid-card-management'
+      fullPath: '/cards/app/prepaid-card-management'
+      preLoaderRoute: typeof CardsAppPrepaidCardManagementRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/physical-debit-cards': {
+      id: '/cards/app/physical-debit-cards'
+      path: '/physical-debit-cards'
+      fullPath: '/cards/app/physical-debit-cards'
+      preLoaderRoute: typeof CardsAppPhysicalDebitCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/corporate-business-cards': {
+      id: '/cards/app/corporate-business-cards'
+      path: '/corporate-business-cards'
+      fullPath: '/cards/app/corporate-business-cards'
+      preLoaderRoute: typeof CardsAppCorporateBusinessCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-settings-support': {
+      id: '/cards/app/card-settings-support'
+      path: '/card-settings-support'
+      fullPath: '/cards/app/card-settings-support'
+      preLoaderRoute: typeof CardsAppCardSettingsSupportRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-security-fraud-prevention': {
+      id: '/cards/app/card-security-fraud-prevention'
+      path: '/card-security-fraud-prevention'
+      fullPath: '/cards/app/card-security-fraud-prevention'
+      preLoaderRoute: typeof CardsAppCardSecurityFraudPreventionRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-program-administration': {
+      id: '/cards/app/card-program-administration'
+      path: '/card-program-administration'
+      fullPath: '/cards/app/card-program-administration'
+      preLoaderRoute: typeof CardsAppCardProgramAdministrationRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-command-center': {
+      id: '/cards/app/card-command-center'
+      path: '/card-command-center'
+      fullPath: '/cards/app/card-command-center'
+      preLoaderRoute: typeof CardsAppCardCommandCenterRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-analytics-reporting': {
+      id: '/cards/app/card-analytics-reporting'
+      path: '/card-analytics-reporting'
+      fullPath: '/cards/app/card-analytics-reporting'
+      preLoaderRoute: typeof CardsAppCardAnalyticsReportingRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/account-settings': {
+      id: '/cards/app/account-settings'
+      path: '/account-settings'
+      fullPath: '/cards/app/account-settings'
+      preLoaderRoute: typeof CardsAppAccountSettingsRouteImport
+      parentRoute: typeof CardsAppRoute
     }
   }
 }
@@ -550,38 +957,110 @@ const HomeRouteChildren: HomeRouteChildren = {
 
 const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
-interface AppRouteChildren {
-  AppSectionRoute: typeof AppSectionRoute
-  AppInitiateTransferRoute: typeof AppInitiateTransferRoute
-  AppLiquidityRoute: typeof AppLiquidityRoute
-  AppPaymentRailsRoute: typeof AppPaymentRailsRoute
-  AppReconciliationRoute: typeof AppReconciliationRoute
-  AppTransferManagementRoute: typeof AppTransferManagementRoute
-  AppTransfersRoute: typeof AppTransfersRoute
-  AppIndexRoute: typeof AppIndexRoute
+interface CardsAppRouteChildren {
+  CardsAppAccountSettingsRoute: typeof CardsAppAccountSettingsRoute
+  CardsAppCardAnalyticsReportingRoute: typeof CardsAppCardAnalyticsReportingRoute
+  CardsAppCardCommandCenterRoute: typeof CardsAppCardCommandCenterRoute
+  CardsAppCardProgramAdministrationRoute: typeof CardsAppCardProgramAdministrationRoute
+  CardsAppCardSecurityFraudPreventionRoute: typeof CardsAppCardSecurityFraudPreventionRoute
+  CardsAppCardSettingsSupportRoute: typeof CardsAppCardSettingsSupportRoute
+  CardsAppCorporateBusinessCardsRoute: typeof CardsAppCorporateBusinessCardsRoute
+  CardsAppPhysicalDebitCardsRoute: typeof CardsAppPhysicalDebitCardsRoute
+  CardsAppPrepaidCardManagementRoute: typeof CardsAppPrepaidCardManagementRoute
+  CardsAppSupportRoute: typeof CardsAppSupportRoute
+  CardsAppVirtualCreditCardsRoute: typeof CardsAppVirtualCreditCardsRoute
+  CardsAppVirtualDebitCardsRoute: typeof CardsAppVirtualDebitCardsRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppSectionRoute: AppSectionRoute,
-  AppInitiateTransferRoute: AppInitiateTransferRoute,
-  AppLiquidityRoute: AppLiquidityRoute,
-  AppPaymentRailsRoute: AppPaymentRailsRoute,
-  AppReconciliationRoute: AppReconciliationRoute,
-  AppTransferManagementRoute: AppTransferManagementRoute,
-  AppTransfersRoute: AppTransfersRoute,
-  AppIndexRoute: AppIndexRoute,
+const CardsAppRouteChildren: CardsAppRouteChildren = {
+  CardsAppAccountSettingsRoute: CardsAppAccountSettingsRoute,
+  CardsAppCardAnalyticsReportingRoute: CardsAppCardAnalyticsReportingRoute,
+  CardsAppCardCommandCenterRoute: CardsAppCardCommandCenterRoute,
+  CardsAppCardProgramAdministrationRoute:
+    CardsAppCardProgramAdministrationRoute,
+  CardsAppCardSecurityFraudPreventionRoute:
+    CardsAppCardSecurityFraudPreventionRoute,
+  CardsAppCardSettingsSupportRoute: CardsAppCardSettingsSupportRoute,
+  CardsAppCorporateBusinessCardsRoute: CardsAppCorporateBusinessCardsRoute,
+  CardsAppPhysicalDebitCardsRoute: CardsAppPhysicalDebitCardsRoute,
+  CardsAppPrepaidCardManagementRoute: CardsAppPrepaidCardManagementRoute,
+  CardsAppSupportRoute: CardsAppSupportRoute,
+  CardsAppVirtualCreditCardsRoute: CardsAppVirtualCreditCardsRoute,
+  CardsAppVirtualDebitCardsRoute: CardsAppVirtualDebitCardsRoute,
 }
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const CardsAppRouteWithChildren = CardsAppRoute._addFileChildren(
+  CardsAppRouteChildren,
+)
+
+interface Transaction_dashboardAppRouteChildren {
+  Transaction_dashboardAppSectionRoute: typeof Transaction_dashboardAppSectionRoute
+  Transaction_dashboardAppAnalyticsRoute: typeof Transaction_dashboardAppAnalyticsRoute
+  Transaction_dashboardAppComplianceRoute: typeof Transaction_dashboardAppComplianceRoute
+  Transaction_dashboardAppCustomersRoute: typeof Transaction_dashboardAppCustomersRoute
+  Transaction_dashboardAppDisputesRoute: typeof Transaction_dashboardAppDisputesRoute
+  Transaction_dashboardAppFeesRoute: typeof Transaction_dashboardAppFeesRoute
+  Transaction_dashboardAppFxRoute: typeof Transaction_dashboardAppFxRoute
+  Transaction_dashboardAppInitiateTransferRoute: typeof Transaction_dashboardAppInitiateTransferRoute
+  Transaction_dashboardAppKraGovernmentRoute: typeof Transaction_dashboardAppKraGovernmentRoute
+  Transaction_dashboardAppLiquidityRoute: typeof Transaction_dashboardAppLiquidityRoute
+  Transaction_dashboardAppMobileMoneyRoute: typeof Transaction_dashboardAppMobileMoneyRoute
+  Transaction_dashboardAppOpsHealthRoute: typeof Transaction_dashboardAppOpsHealthRoute
+  Transaction_dashboardAppPaymentRailsRoute: typeof Transaction_dashboardAppPaymentRailsRoute
+  Transaction_dashboardAppReconciliationRoute: typeof Transaction_dashboardAppReconciliationRoute
+  Transaction_dashboardAppSettlementRoute: typeof Transaction_dashboardAppSettlementRoute
+  Transaction_dashboardAppTransferManagementRoute: typeof Transaction_dashboardAppTransferManagementRoute
+  Transaction_dashboardAppTransferOverviewRoute: typeof Transaction_dashboardAppTransferOverviewRoute
+  Transaction_dashboardAppTransfersRoute: typeof Transaction_dashboardAppTransfersRoute
+  Transaction_dashboardAppIndexRoute: typeof Transaction_dashboardAppIndexRoute
+}
+
+const Transaction_dashboardAppRouteChildren: Transaction_dashboardAppRouteChildren =
+  {
+    Transaction_dashboardAppSectionRoute: Transaction_dashboardAppSectionRoute,
+    Transaction_dashboardAppAnalyticsRoute:
+      Transaction_dashboardAppAnalyticsRoute,
+    Transaction_dashboardAppComplianceRoute:
+      Transaction_dashboardAppComplianceRoute,
+    Transaction_dashboardAppCustomersRoute:
+      Transaction_dashboardAppCustomersRoute,
+    Transaction_dashboardAppDisputesRoute:
+      Transaction_dashboardAppDisputesRoute,
+    Transaction_dashboardAppFeesRoute: Transaction_dashboardAppFeesRoute,
+    Transaction_dashboardAppFxRoute: Transaction_dashboardAppFxRoute,
+    Transaction_dashboardAppInitiateTransferRoute:
+      Transaction_dashboardAppInitiateTransferRoute,
+    Transaction_dashboardAppKraGovernmentRoute:
+      Transaction_dashboardAppKraGovernmentRoute,
+    Transaction_dashboardAppLiquidityRoute:
+      Transaction_dashboardAppLiquidityRoute,
+    Transaction_dashboardAppMobileMoneyRoute:
+      Transaction_dashboardAppMobileMoneyRoute,
+    Transaction_dashboardAppOpsHealthRoute:
+      Transaction_dashboardAppOpsHealthRoute,
+    Transaction_dashboardAppPaymentRailsRoute:
+      Transaction_dashboardAppPaymentRailsRoute,
+    Transaction_dashboardAppReconciliationRoute:
+      Transaction_dashboardAppReconciliationRoute,
+    Transaction_dashboardAppSettlementRoute:
+      Transaction_dashboardAppSettlementRoute,
+    Transaction_dashboardAppTransferManagementRoute:
+      Transaction_dashboardAppTransferManagementRoute,
+    Transaction_dashboardAppTransferOverviewRoute:
+      Transaction_dashboardAppTransferOverviewRoute,
+    Transaction_dashboardAppTransfersRoute:
+      Transaction_dashboardAppTransfersRoute,
+    Transaction_dashboardAppIndexRoute: Transaction_dashboardAppIndexRoute,
+  }
+
+const Transaction_dashboardAppRouteWithChildren =
+  Transaction_dashboardAppRoute._addFileChildren(
+    Transaction_dashboardAppRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
-  AnalyticsRoute: AnalyticsRoute,
-  AppRoute: AppRouteWithChildren,
-  ComplianceRoute: ComplianceRoute,
   LoginRoute: LoginRoute,
-  MobileMoneyRoute: MobileMoneyRoute,
-  SettlementRoute: SettlementRoute,
   AuthAccountStatusRoute: AuthAccountStatusRoute,
   AuthHubRoute: AuthHubRoute,
   AuthIdentityRoute: AuthIdentityRoute,
@@ -591,6 +1070,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRecoveryRoute: AuthRecoveryRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSecurityRoute: AuthSecurityRoute,
+  CardsAppRoute: CardsAppRouteWithChildren,
+  Transaction_dashboardAppRoute: Transaction_dashboardAppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

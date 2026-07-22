@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Sandbox, Testing & Simulation</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif;--pm-font-mono:'Fira Code',monospace}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:var(--pm-gradient-slate);color:#fff;border:none;position:relative;overflow:hidden}
+.pm-card-accent::before{content:"";position:absolute;top:0;right:0;width:300px;height:100%;background:radial-gradient(circle at 100% 50%,rgba(79,70,229,.3),transparent 70%);pointer-events:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-badge-dark{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-btn-dark{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)}.pm-btn-dark:hover{background:rgba(255,255,255,.2);color:#fff}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-table-mono td{font-family:var(--pm-font-mono);font-size:12px}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px;display:flex;justify-content:flex-end;gap:8px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-form-control.mono{font-family:var(--pm-font-mono);font-size:12px}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);margin-bottom:8px;background:#fff;transition:all .2s}.feed-item:hover{border-color:var(--pm-primary-light);box-shadow:var(--pm-shadow-sm)}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.code-block{background:#1E293B;color:#E2E8F0;font-family:var(--pm-font-mono);font-size:12px;padding:16px;border-radius:var(--pm-r-md);overflow-x:auto;line-height:1.6}
+.code-block .key{color:#93C5FD}.code-block .str{color:#A7F3D0}.code-block .num{color:#FDBA74}.code-block .bool{color:#F9A8D4}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.env-switch{display:flex;align-items:center;background:var(--pm-surface-2);padding:4px;border-radius:var(--pm-r-pill);border:1px solid var(--pm-border)}.env-option{padding:6px 16px;border-radius:var(--pm-r-pill);font-size:12px;font-weight:600;cursor:pointer;color:var(--pm-muted);transition:all .2s}.env-option.active.sandbox{background:var(--pm-warning-soft);color:var(--pm-warning);box-shadow:var(--pm-shadow-sm)}.env-option.active.prod{background:var(--pm-accent-soft);color:var(--pm-accent);box-shadow:var(--pm-shadow-sm)}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dashboard"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item" title="API Keys"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-diagram-3"></i></button>
+<button class="pm-nav-item" title="Docs"><i class="bi bi-book"></i></button>
+<button class="pm-nav-item active" title="Sandbox"><i class="bi bi-box"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Security"><i class="bi bi- shield-lock"></i></button>
+<button class="pm-nav-item" title="Logs"><i class="bi bi-terminal"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Support"><i class="bi bi-headset"></i></button>
+</aside>
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">DP</div>
+<div>
+<h1>Sandbox & Testing</h1>
+<p>Simulation tools, test data generation, and diagnostics</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search API docs, error codes, logs...">
+</div>
+<div class="pm-header-actions">
+<div class="env-switch d-none d-md-flex me-2">
+<div class="env-option active sandbox"><i class="bi bi-cone-striped me-1"></i> Sandbox</div>
+<div class="env-option prod" onclick="alert('Switching to production requires 2FA')"><i class="bi bi-lightning-charge me-1"></i> Live</div>
+</div>
+<button class="pm-header-btn" onclick="openModal('emergencyHotlineModal')"><i class="bi bi-telephone text-danger"></i></button>
+<button class="pm-header-btn" onclick="openModal('supportTicketModal')"><i class="bi bi-life-preserver"></i><span class="counter" style="background:var(--pm-info)">2</span></button>
+<div class="pm-profile-btn" onclick="openModal('devProfileModal')"><div class="pm-avatar">AD</div><div><div class="pm-name">Alex Dev</div><div class="pm-role">Lead Engineer</div></div></div>
+</div>
+</header>
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Developer Portal</a> / <a href="#">Integration</a> / <strong>Sandbox & Simulation</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.5 — Sandbox, Testing & Simulation</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Safely test integrations without moving real money. Generate dummy data, simulate PSP responses, run automated scenarios, and debug payloads.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('resetSandboxModal')"><i class="bi bi-arrow-counterclockwise text-danger"></i> Reset Env</button>
+<button class="pm-btn" onclick="openModal('certificationModal')"><i class="bi bi-patch-check text-success"></i> Go-Live Checklist</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('generateTestDataModal')"><i class="bi bi-magic"></i> Generate Data</button>
+</div>
+</div>
+<div class="pm-content">
+
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Sandbox environment is active <span style="color:#FCD34D">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">24,592</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Test API requests processed this month. Rate limit: 500 req/sec.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('sandboxCredsModal')"><i class="bi bi-key"></i> Credentials</button>
+<button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('liveLogsModal')"><i class="bi bi-terminal"></i> Live Logs</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">API SUCCESS RATE</p>
+<div class="pm-stat-value" style="margin:6px 0">94.2%</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-check-circle"></i> 1,420 success</span>
+<div class="mt-3" style="font-size:11px;color:var(--pm-muted)">
+<div class="d-flex justify-content-between mb-1"><span>4xx Errors</span><span class="text-warning">4.8%</span></div>
+<div class="d-flex justify-content-between"><span>5xx Errors</span><span class="text-danger">1.0%</span></div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-purple)">ACTIVE WEBHOOKS</p>
+<div class="pm-stat-value" style="margin:6px 0">8 / 12</div>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-diagram-3"></i> Events subscribed</span>
+<div class="mt-2"><div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted)"><span>Delivery latency</span><span>~140ms</span></div><div class="pm-progress mt-1"><div class="pm-progress-bar" style="width:85%;background:var(--pm-purple)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">GO-LIVE READINESS</p>
+<div class="pm-stat-value" style="margin:6px 0">85%</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Scenarios passing</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)"><div>Contract tests: <strong class="text-success">Passed</strong></div><div>Security scan: <strong class="text-warning">Pending</strong></div></div>
+</div>
+</div>
+</div>
+
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px"><div><h3 class="pm-section-title"><i class="bi bi-box-seam" style="color:var(--pm-warning)"></i> 4.5.1 — Sandbox Environment & Simulators</h3><p class="pm-section-sub">Generate mock data and simulate responses from external systems (M-Pesa, Banks, Cards) to test edge cases.</p></div><div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('sandboxCredsModal')"><i class="bi bi-key"></i> Keys</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('generateTestDataModal')"><i class="bi bi-magic"></i> Generate Data</button></div></div>
+<div class="row g-3">
+<div class="col-lg-3 col-sm-6">
+<div class="feed-item" style="cursor:pointer" onclick="openModal('simMpesaModal')"><div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-phone"></i></div><div style="flex:1"><strong style="font-size:13px">M-Pesa STK Simulator</strong><div style="font-size:11px;color:var(--pm-muted)">Trigger push & callbacks</div></div></div>
+</div>
+<div class="col-lg-3 col-sm-6">
+<div class="feed-item" style="cursor:pointer" onclick="openModal('simBankModal')"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-bank"></i></div><div style="flex:1"><strong style="font-size:13px">Bank Transfer (PesaLink)</strong><div style="font-size:11px;color:var(--pm-muted)">Simulate EFT/RTGS flows</div></div></div>
+</div>
+<div class="col-lg-3 col-sm-6">
+<div class="feed-item" style="cursor:pointer" onclick="openModal('simCardModal')"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-credit-card"></i></div><div style="flex:1"><strong style="font-size:13px">Card Payment Simulator</strong><div style="font-size:11px;color:var(--pm-muted)">Test 3DS & chargebacks</div></div></div>
+</div>
+<div class="col-lg-3 col-sm-6">
+<div class="feed-item" style="cursor:pointer" onclick="openModal('simFxModal')"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-currency-exchange"></i></div><div style="flex:1"><strong style="font-size:13px">FX Rate Simulator</strong><div style="font-size:11px;color:var(--pm-muted)">Mock multi-currency spreads</div></div></div>
+</div>
+</div>
+<div class="utility-block mt-3">
+<h4 style="font-size:13px;font-weight:700;margin:0 0 12px">Test Data Generation Sets</h4>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Data Type</th><th>Description</th><th>Last Generated</th><th>Action</th></tr></thead><tbody>
+<tr><td><i class="bi bi-people me-2"></i>Customers</td><td>100 users with valid KE phone numbers (07XX)</td><td>Today, 10:45 AM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('genCustomersModal')">Generate New</button></td></tr>
+<tr><td><i class="bi bi-receipt me-2"></i>Invoices</td><td>50 active invoices with mixed aging states</td><td>Yesterday, 2:10 PM</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('genInvoicesModal')">Generate New</button></td></tr>
+<tr><td><i class="bi bi-cash-stack me-2"></i>Payroll</td><td>Dummy payroll run with 200 employees + KRA logic</td><td>24 Jun 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('runPayrollTestModal')">Simulate Run</button></td></tr>
+</tbody></table></div>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title"><i class="bi bi-check2-all" style="color:var(--pm-accent)"></i> 4.5.2 — Test Scenarios</h3><button class="pm-btn pm-btn-sm" onclick="openModal('certificationModal')">Checklist</button></div>
+<p style="font-size:12px;color:var(--pm-ink-soft)">Execute pre-built integration scenarios to validate your system's handling of asynchronous events.</p>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);font-size:14px">1</div><div style="flex:1"><strong style="font-size:13px">Successful End-to-End Payment</strong><div style="font-size:11px;color:var(--pm-muted)">Initiation → Auth → Capture → Webhook</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('scenarioE2eModal')">Run</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);font-size:14px">2</div><div style="flex:1"><strong style="font-size:13px">Failed Payment w/ Retry</strong><div style="font-size:11px;color:var(--pm-muted)">Simulates insufficient funds, then success</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('scenarioFailedModal')">Run</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);font-size:14px">3</div><div style="flex:1"><strong style="font-size:13px">Partial Refund Processing</strong><div style="font-size:11px;color:var(--pm-muted)">Refunds 50% of captured transaction</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('scenarioRefundModal')">Run</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);font-size:14px">4</div><div style="flex:1"><strong style="font-size:13px">Subscription Upgrade & Proration</strong><div style="font-size:11px;color:var(--pm-muted)">Mid-cycle tier change validation</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('scenarioSubModal')">Run</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-surface-2);color:var(--pm-ink);font-size:14px">5</div><div style="flex:1"><strong style="font-size:13px">Bulk Disbursement w/ Mixed Results</strong><div style="font-size:11px;color:var(--pm-muted)">10 txns: 8 success, 2 failed callbacks</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('scenarioBulkModal')">Run</button></div>
+<div class="mt-3 pt-3 border-top">
+<div class="d-flex justify-content-between align-items-center mb-2"><h4 style="font-size:13px;font-weight:700;margin:0">Automated Testing</h4><span class="pm-badge pm-badge-success">Passing</span></div>
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('apiContractModal')">API Contracts</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('testSuiteModal')">Integration Suite</button><button class="pm-btn pm-btn-sm w-100" onclick="openModal('owaspReportModal')">OWASP Scan</button></div>
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title"><i class="bi bi-bug" style="color:var(--pm-danger)"></i> 4.5.3 — Debugging & Diagnostics</h3><button class="pm-btn pm-btn-sm" onclick="openModal('liveLogsModal')"><i class="bi bi-arrows-fullscreen"></i> Full View</button></div>
+<p style="font-size:12px;color:var(--pm-ink-soft)">Live HTTP request/response logs from your sandbox environment.</p>
+<div class="code-block mb-3" style="height:250px;overflow-y:auto;position:relative">
+<div style="display:flex;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid #334155;padding-bottom:4px">
+<span class="text-success fw-bold">POST 200 OK</span><span class="text-muted">/v1/payments/stk-push</span><span>142ms</span>
+</div>
+<pre style="margin:0;white-space:pre-wrap">
+<span class="text-muted">// Request Payload</span>
+{
+  <span class="key">"amount"</span>: <span class="num">1500</span>,
+  <span class="key">"phone_number"</span>: <span class="str">"254712345678"</span>,
+  <span class="key">"reference"</span>: <span class="str">"INV-2025-001"</span>,
+  <span class="key">"description"</span>: <span class="str">"Payment for services"</span>,
+  <span class="key">"callback_url"</span>: <span class="str">"https://api.merchant.com/webhook"</span>
+}
+
+<span class="text-muted">// Response Payload</span>
+{
+  <span class="key">"status"</span>: <span class="str">"success"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"transaction_id"</span>: <span class="str">"txn_98f2a1b"</span>,
+    <span class="key">"merchant_request_id"</span>: <span class="str">"req_4412"</span>,
+    <span class="key">"checkout_request_id"</span>: <span class="str">"chk_8821"</span>,
+    <span class="key">"customer_message"</span>: <span class="str">"Success. Request accepted for processing"</span>
+  }
+}
+</pre>
+</div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('curlExportModal')"><i class="bi bi-terminal me-1"></i> Copy cURL</button>
+<button class="quick-action-btn" onclick="openModal('payloadDiffModal')"><i class="bi bi-file-diff me-1"></i> Payload Diff</button>
+<button class="quick-action-btn" onclick="openModal('errorCodeModal')"><i class="bi bi-journal-code me-1"></i> Error Codes</button>
+<button class="quick-action-btn" onclick="openModal('supportTicketModal')"><i class="bi bi-headset me-1"></i> Support Ticket</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODALS (25+) -->
+<!-- ============================================================ -->
+
+<!-- 1. Sandbox Credentials -->
+<div class="modal fade" id="sandboxCredsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-key me-2 text-warning"></i>Sandbox Credentials</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Use these keys to authenticate requests in the sandbox environment. Do not use in production.</p>
+<div class="mb-3"><label class="pm-form-label">Client ID (Public Key)</label><div class="input-group"><input class="form-control pm-form-control mono" value="sbx_pk_9a8b7c6d5e4f3g2h1i0j" readonly><button class="btn btn-outline-secondary"><i class="bi bi-clipboard"></i></button></div></div>
+<div class="mb-3"><label class="pm-form-label">Client Secret (Private Key)</label><div class="input-group"><input type="password" class="form-control pm-form-control mono" value="sbx_sk_z9y8x7w6v5u4t3s2r1q0" readonly><button class="btn btn-outline-secondary" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password'"><i class="bi bi-eye"></i></button><button class="btn btn-outline-secondary"><i class="bi bi-clipboard"></i></button></div></div>
+<div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-exclamation-triangle me-1"></i> Keys were last rotated 45 days ago. Recommended rotation is 90 days.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-danger" onclick="processAction('sandboxCredsModal','Keys rotated successfully! Update your environment variables.','')"><i class="bi bi-arrow-repeat"></i> Rotate Keys</button></div>
+</div></div></div>
+
+<!-- 2. Reset Sandbox -->
+<div class="modal fade" id="resetSandboxModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title text-danger"><i class="bi bi-exclamation-octagon me-2"></i>Reset Sandbox Environment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<i class="bi bi-trash text-danger" style="font-size:48px"></i>
+<h5 class="mt-3 fw-bold">Are you sure?</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft)">This will permanently delete all test customers, mock transactions, invoices, and webhooks history in your sandbox. This action cannot be undone.</p>
+<div class="text-start mt-3">
+<label class="pm-form-label">Type 'RESET' to confirm</label>
+<input class="pm-form-control border-danger" placeholder="RESET">
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('resetSandboxModal','Sandbox environment wiped clean.','')">Wipe Data</button></div>
+</div></div></div>
+
+<!-- 3. Generate Test Data Hub -->
+<div class="modal fade" id="generateTestDataModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-magic text-primary me-2"></i>Generate Mock Data</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><div class="utility-block text-center" style="cursor:pointer" onclick="closeModal('generateTestDataModal');openModal('genCustomersModal')"><i class="bi bi-people text-info mb-2" style="font-size:32px"></i><h6 class="fw-bold">Customers</h6><p class="text-muted" style="font-size:11px">Phones, names, addresses</p></div></div>
+<div class="col-md-6"><div class="utility-block text-center" style="cursor:pointer" onclick="closeModal('generateTestDataModal');openModal('genInvoicesModal')"><i class="bi bi-receipt text-warning mb-2" style="font-size:32px"></i><h6 class="fw-bold">Invoices</h6><p class="text-muted" style="font-size:11px">Overdue, paid, partial states</p></div></div>
+<div class="col-md-6"><div class="utility-block text-center" style="cursor:pointer" onclick="processAction('generateTestDataModal','100 mock transactions injected.','')"><i class="bi bi-arrow-left-right text-success mb-2" style="font-size:32px"></i><h6 class="fw-bold">Transactions</h6><p class="text-muted" style="font-size:11px">Mixed history (card/m-pesa)</p></div></div>
+<div class="col-md-6"><div class="utility-block text-center" style="cursor:pointer" onclick="processAction('generateTestDataModal','Mock subscriptions created.','')"><i class="bi bi-calendar-check text-purple mb-2" style="font-size:32px;color:var(--pm-purple)"></i><h6 class="fw-bold">Subscriptions</h6><p class="text-muted" style="font-size:11px">Recurring billing lifecycles</p></div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 4. Generate Customers -->
+<div class="modal fade" id="genCustomersModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-people me-2"></i>Generate Mock Customers</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Number of Records</label><input type="number" class="pm-form-control" value="50" max="500"></div>
+<div class="mb-3"><label class="pm-form-label">Phone Prefix Format</label><select class="pm-form-control"><option>Random (Safaricom/Airtel/Telkom)</option><option>Safaricom Only (071X, 072X)</option><option>Airtel Only (073X)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Include Metadata</label>
+<div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">KYC Documents (Dummy IDs)</label></div>
+<div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Physical Addresses (Nairobi regions)</label></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('genCustomersModal','50 test customers generated and added to sandbox.','')">Generate</button></div>
+</div></div></div>
+
+<!-- 5. Generate Invoices -->
+<div class="modal fade" id="genInvoicesModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Generate Mock Invoices</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Volume</label><input type="number" class="pm-form-control" value="20"></div>
+<div class="mb-3"><label class="pm-form-label">State Distribution</label><select class="pm-form-control"><option>Mixed (Paid, Unpaid, Overdue)</option><option>All Overdue</option><option>All Draft</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Amount Range (KES)</label>
+<div class="d-flex gap-2"><input class="pm-form-control" placeholder="Min" value="500"><input class="pm-form-control" placeholder="Max" value="50000"></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('genInvoicesModal','20 mixed state invoices generated.','')">Generate</button></div>
+</div></div></div>
+
+<!-- 6. Simulate M-Pesa -->
+<div class="modal fade" id="simMpesaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-phone text-accent me-2"></i>M-Pesa STK Simulator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Simulate Condition</label><select class="pm-form-control"><option>0 - Success (Completed)</option><option>1 - Insufficient Funds</option><option>1032 - Request Cancelled by User</option><option>1037 - PIN timeout</option><option>2001 - Invalid PIN</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Target Phone Number</label><input class="pm-form-control" value="254712345678"></div>
+<div class="mb-3"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="1000"></div>
+<div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Fire webhook callback automatically</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-accent" onclick="processAction('simMpesaModal','M-Pesa callback fired. Check your webhook receiver.','')">Trigger Simulator</button></div>
+</div></div></div>
+
+<!-- 7. Simulate Bank -->
+<div class="modal fade" id="simBankModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank text-info me-2"></i>Bank Transfer Simulator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Transaction Type</label><select class="pm-form-control"><option>Inbound EFT Collection</option><option>Outbound RTGS Disbursement</option><option>PesaLink Real-time</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Bank Code</label><select class="pm-form-control"><option>068 - Equity Bank</option><option>001 - KCB</option><option>011 - Co-op Bank</option><option>003 - Barclays/Absa</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Account & Amount</label>
+<div class="d-flex gap-2"><input class="pm-form-control" placeholder="Acct Number" value="0681234567"><input class="pm-form-control" placeholder="Amount" value="50000"></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Result Payload</label><select class="pm-form-control"><option>Success - Settled</option><option>Failed - Invalid Account</option><option>Failed - KYC Block</option><option>Pending - Manual Review</option></select></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-info text-white" style="background:var(--pm-info)" onclick="processAction('simBankModal','Bank transfer mock event injected.','')">Simulate</button></div>
+</div></div></div>
+
+<!-- 8. Simulate Card -->
+<div class="modal fade" id="simCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card text-purple me-2" style="color:var(--pm-purple)"></i>Card Payment Simulator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">Use magic card numbers to trigger specific responses. (e.g. 4242... for success, 4000...0005 for decline).</div>
+<div class="mb-3"><label class="pm-form-label">Magic Card Number</label><select class="pm-form-control mono"><option>4242 4242 4242 4242 (Success)</option><option>4000 0000 0000 0005 (Decline - Insufficient)</option><option>4000 0000 0000 0012 (Decline - Fraud)</option><option>4000 0000 0000 3D00 (Trigger 3DS Challenge)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Currency & Amount</label>
+<div class="d-flex gap-2"><select class="pm-form-control" style="width:100px"><option>KES</option><option>USD</option></select><input class="pm-form-control" value="2500"></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn text-white" style="background:var(--pm-purple)" onclick="processAction('simCardModal','Card gateway payload simulated.','')">Process Test Card</button></div>
+</div></div></div>
+
+<!-- 9. Simulate FX -->
+<div class="modal fade" id="simFxModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-currency-exchange text-warning me-2"></i>FX Rate Simulator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Mock exchange rate behaviors to test your pricing logic.</p>
+<div class="row g-3"><div class="col-6"><label class="pm-form-label">Pair</label><select class="pm-form-control"><option>USD/KES</option><option>EUR/KES</option><option>GBP/KES</option></select></div><div class="col-6"><label class="pm-form-label">Behavior</label><select class="pm-form-control"><option>Static (130.50)</option><option>Volatile (+/- 5%)</option><option>Depreciating KES</option></select></div><div class="col-12"><label class="pm-form-label">Apply Spread Margin (%)</label><input type="number" class="pm-form-control" value="1.5"></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-warning text-white" onclick="processAction('simFxModal','FX simulation updated.','')">Apply Mock Rates</button></div></div></div></div>
+
+<!-- 10. Scenario E2E -->
+<div class="modal fade" id="scenarioE2eModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run: End-to-End Payment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<p style="font-size:13px">This scenario will automatically trigger an API request for a KES 500 payment, simulate the customer entering their PIN, and fire the webhook back to your system.</p>
+<div class="code-block text-start mb-3">Target Webhook: https://api.yourdomain.com/v1/webhooks/paymo</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scenarioE2eModal','Scenario executed. 3 webhooks fired.','')"><i class="bi bi-play-fill"></i> Execute Scenario</button></div>
+</div></div></div>
+
+<!-- 11. Scenario Failed -->
+<div class="modal fade" id="scenarioFailedModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run: Failed Payment + Retry</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px">Tests your systems retry logic. Emits a <code>payment.failed</code> (Insufficient Funds) event, waits 5s, then emits a successful capture.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scenarioFailedModal','Scenario completed. Check logs for sequence.','')">Execute</button></div></div></div></div>
+
+<!-- 12. Scenario Refund -->
+<div class="modal fade" id="scenarioRefundModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run: Partial Refund</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px">Creates a successful KES 2,000 charge, then issues a KES 500 partial refund via the API, emitting <code>refund.processed</code>.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scenarioRefundModal','Partial refund sequence executed.','')">Execute</button></div></div></div></div>
+
+<!-- 13. Scenario Subscription -->
+<div class="modal fade" id="scenarioSubModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run: Subscription Upgrade</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px">Creates a Basic Plan subscription, advances time by 15 days, upgrades to Premium Plan, and calculates/bills the prorated difference.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scenarioSubModal','Time-travel upgrade scenario completed.','')">Execute</button></div></div></div></div>
+
+<!-- 14. Scenario Bulk -->
+<div class="modal fade" id="scenarioBulkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run: Bulk Disbursement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px">Injects a batch payout of 10 items. Simulates 8 successful M-Pesa B2C transfers, 1 invalid phone failure, and 1 MNO timeout failure.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scenarioBulkModal','Batch payout simulated with mixed results.','')">Execute</button></div></div></div></div>
+
+<!-- 15. Payroll Test -->
+<div class="modal fade" id="runPayrollTestModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack me-2"></i>Simulate Payroll Run</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">Triggers the payroll calculation engine using dummy employee data to validate PAYE, NSSF, SHIF, and Housing Levy logic.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('runPayrollTestModal','Payroll calc engine tested. Reports generated.','')">Run Engine</button></div></div></div></div>
+
+<!-- 16. API Contract Test -->
+<div class="modal fade" id="apiContractModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check me-2 text-success"></i>API Contract Validation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-between mb-3"><span class="fw-bold">OpenAPI v3.1 Spec Coverage</span><span class="text-success">100% Passed</span></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Endpoint</th><th>Method</th><th>Schema Valid</th><th>Status</th></tr></thead><tbody><tr><td>/v1/payments</td><td>POST</td><td>Yes</td><td><span class="text-success"><i class="bi bi-check"></i></span></td></tr><tr><td>/v1/disbursements</td><td>POST</td><td>Yes</td><td><span class="text-success"><i class="bi bi-check"></i></span></td></tr><tr><td>/v1/customers/{id}</td><td>GET</td><td>Yes</td><td><span class="text-success"><i class="bi bi-check"></i></span></td></tr><tr><td>/v1/webhooks</td><td>POST</td><td>Yes</td><td><span class="text-success"><i class="bi bi-check"></i></span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary"><i class="bi bi-download"></i> JSON Report</button></div></div></div></div>
+
+<!-- 17. Integration Test Suite -->
+<div class="modal fade" id="testSuiteModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-code-slash me-2"></i>Download CI/CD Integration Suite</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">Download pre-configured Postman/Newman collections or Jest scripts to drop into your GitHub Actions / GitLab CI pipelines.</p><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>Postman Collection v2.1</option><option>Jest / TypeScript</option><option>Python PyTest</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('testSuiteModal','Test suite zip downloading...','')">Download ZIP</button></div></div></div></div>
+
+<!-- 18. OWASP Scan -->
+<div class="modal fade" id="owaspReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2 text-warning"></i>Security Validation (OWASP)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-3"><div class="pm-icon-circle mx-auto mb-2" style="width:64px;height:64px;background:var(--pm-warning-soft);color:var(--pm-warning);font-size:24px"><i class="bi bi-hourglass-split"></i></div><h5 class="fw-bold">Scan Pending</h5><p style="font-size:13px;color:var(--pm-muted)">You need to initiate a security scan against your webhook endpoints before go-live certification.</p></div><div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">The scanner will test your webhook receivers for:<br>- Signature validation (HMAC-SHA256)<br>- Replay attacks (Idempotency)<br>- TLS 1.2+ compliance</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('owaspReportModal','Security scan initiated. Results will be emailed in 5 minutes.','')">Start Scan</button></div></div></div></div>
+
+<!-- 19. Certification Checklist -->
+<div class="modal fade" id="certificationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-patch-check text-success me-2"></i>Go-Live Certification Checklist</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-progress mb-3"><div class="pm-progress-bar" style="width:85%;background:var(--pm-success)"></div></div><div class="form-check mb-2 p-2 border-bottom"><input type="checkbox" class="form-check-input" checked disabled> <label class="form-check-label fw-bold">API Authentication Verified</label><div class="text-muted" style="font-size:11px">Successfully authenticated using OAuth 2.0 / API Keys</div></div><div class="form-check mb-2 p-2 border-bottom"><input type="checkbox" class="form-check-input" checked disabled> <label class="form-check-label fw-bold">Idempotency Implemented</label><div class="text-muted" style="font-size:11px">Duplicate keys correctly rejected with 409 Conflict</div></div><div class="form-check mb-2 p-2 border-bottom"><input type="checkbox" class="form-check-input" checked disabled> <label class="form-check-label fw-bold">Webhook Signatures Validated</label><div class="text-muted" style="font-size:11px">HMAC-SHA256 headers parsed and verified</div></div><div class="form-check mb-2 p-2 border-bottom"><input type="checkbox" class="form-check-input"> <label class="form-check-label fw-bold">Security Scan Passed</label><div class="text-muted" style="font-size:11px">Requires 0 critical/high vulnerabilities on public endpoints</div></div><div class="form-check p-2"><input type="checkbox" class="form-check-input"> <label class="form-check-label fw-bold">Business KYC Approved</label><div class="text-muted" style="font-size:11px">CR12 and Directors IDs verified by compliance team</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success text-white disabled" style="background:var(--pm-accent)">Request Production Keys</button></div></div></div></div>
+
+<!-- 20. Live Logs -->
+<div class="modal fade" id="liveLogsModal" tabindex="-1"><div class="modal-dialog modal-fullscreen"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-terminal me-2"></i>Live HTTP Logs (Sandbox)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0 d-flex flex-column" style="background:#0F172A;color:#fff"><div class="p-3 border-bottom border-secondary d-flex gap-2"><input class="form-control bg-dark text-white border-secondary" placeholder="Filter by endpoint, status, or ref..." style="max-width:300px"><button class="pm-btn pm-btn-sm pm-btn-dark">Filter</button><button class="pm-btn pm-btn-sm pm-btn-dark ms-auto" onclick="openModal('curlExportModal')">Export HAR</button></div><div class="flex-1 p-3 code-block" style="border-radius:0;background:transparent;flex:1"><div class="mb-2"><span class="text-success fw-bold">POST 200</span> <span class="text-muted">10:45:01</span> /v1/payments - 145ms</div><div class="mb-2"><span class="text-info fw-bold">WEBHOOK 200</span> <span class="text-muted">10:45:06</span> payment.success -> api.merchant.com/hook - 42ms</div><div class="mb-2"><span class="text-danger fw-bold">POST 400</span> <span class="text-muted">10:48:12</span> /v1/disbursements - 89ms (Validation Error)</div><div class="mb-2"><span class="text-warning fw-bold">POST 409</span> <span class="text-muted">10:48:13</span> /v1/disbursements - 30ms (Duplicate Idempotency Key)</div><div class="mb-2"><span class="text-success fw-bold">GET 200</span> <span class="text-muted">10:50:00</span> /v1/customers/cu_9182 - 60ms</div></div></div></div></div></div>
+
+<!-- 21. cURL / HAR Export -->
+<div class="modal fade" id="curlExportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-code me-2"></i>Export Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">Copy the exact cURL command to reproduce this request locally.</p><div class="code-block mb-3">curl -X POST "https://sandbox.paymo.com/v1/payments" \
+-H "Authorization: Bearer sbx_sk_..." \
+-H "Content-Type: application/json" \
+-H "Idempotency-Key: idemp_8812" \
+-d '{"amount":1500,"phone":"254712345678"}'</div><div class="d-flex justify-content-between align-items-center mt-3"><span class="text-muted" style="font-size:12px">Need full context?</span><button class="pm-btn pm-btn-sm" onclick="processAction('curlExportModal','HAR file generated. Downloading...','')">Download .HAR</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('curlExportModal','Copied to clipboard','')"><i class="bi bi-clipboard"></i> Copy cURL</button></div></div></div></div>
+
+<!-- 22. Payload Diff -->
+<div class="modal fade" id="payloadDiffModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-diff me-2"></i>Payload Comparator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">Compare failed request payload against a successful one or against the JSON schema.</p><div class="row g-0 border rounded"><div class="col-6 p-3 border-end"><h6 class="fw-bold text-danger">Failed Request (400)</h6><pre class="code-block" style="background:#fff;color:var(--pm-ink);border:1px solid var(--pm-border)">{
+  "amount": 1500,
+  <span style="background:var(--pm-danger-soft)">"phoneNumber": "0712345678",</span> // Expected format 254...
+  "currency": "KES"
+}</pre></div><div class="col-6 p-3"><h6 class="fw-bold text-success">Schema Expectation</h6><pre class="code-block" style="background:#fff;color:var(--pm-ink);border:1px solid var(--pm-border)">{
+  "amount": 1500,
+  <span style="background:var(--pm-accent-soft)">"phone_number": "254712345678",</span>
+  "currency": "KES"
+}</pre></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Error Codes Dictionary -->
+<div class="modal fade" id="errorCodeModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-code me-2"></i>Error Code Reference</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><input class="pm-form-control" placeholder="Search error code (e.g. err_insufficient_funds)"></div><div class="table-responsive" style="max-height:300px;overflow-y:auto"><table class="pm-table"><thead><tr><th>Code</th><th>HTTP</th><th>Description</th><th>Resolution</th></tr></thead><tbody><tr><td><code>err_validation</code></td><td>400</td><td>Payload schema violation</td><td>Check 'details' array for exact field format required.</td></tr><tr><td><code>err_unauthorized</code></td><td>401</td><td>Invalid or expired API Key</td><td>Ensure Bearer token is present and valid for the environment.</td></tr><tr><td><code>err_idempotency_conflict</code></td><td>409</td><td>Duplicate idempotency key with different payload</td><td>Use a new UUID for distinct requests.</td></tr><tr><td><code>err_insufficient_funds</code></td><td>422</td><td>Customer M-Pesa balance too low</td><td>Prompt customer to top up or use a different method.</td></tr><tr><td><code>err_timeout</code></td><td>504</td><td>Downstream PSP timeout</td><td>Query transaction status endpoint after 60s.</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 24. Support Ticket -->
+<div class="modal fade" id="supportTicketModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2"></i>Technical Support Escalation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Issue Category</label><select class="pm-form-control"><option>API Error / Bug</option><option>Webhook Delivery</option><option>Go-Live Certification</option><option>Account Limits</option></select></div><div class="col-md-6"><label class="pm-form-label">Environment</label><select class="pm-form-control"><option>Sandbox</option><option>Production</option></select></div><div class="col-12"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="4">Webhooks to our staging domain are occasionally timing out from PayMo's side. See attached logs.</textarea></div><div class="col-12"><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Auto-attach recent failed request logs (last 1 hour)</label></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('supportTicketModal','Ticket #TK-9921 created. A technical account manager will reply within 4 hours.','')">Submit Ticket</button></div></div></div></div>
+
+<!-- 25. Slack/Teams Config -->
+<div class="modal fade" id="slackIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-slack me-2"></i>Configure Alerts Integration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">Receive real-time developer alerts directly in your team's workspace.</p><div class="mb-3"><label class="pm-form-label">Platform</label><select class="pm-form-control"><option>Slack</option><option>Microsoft Teams</option><option>Discord</option><option>Generic Webhook</option></select></div><div class="mb-3"><label class="pm-form-label">Incoming Webhook URL</label><input type="password" class="pm-form-control" placeholder="https://hooks.slack.com/services/T000.../..."></div><div class="mb-3"><label class="pm-form-label">Alert Events</label><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">API Error Rate > 1%</label></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">Webhook Delivery Failures</label></div><div class="form-check"><input type="checkbox" class="form-check-input"><label class="form-check-label">Sandbox Reset</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('slackIntegrationModal','Integration saved. A test message has been sent.','')">Connect Workspace</button></div></div></div></div>
+
+<!-- 26. Emergency Hotline -->
+<div class="modal fade" id="emergencyHotlineModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-danger"><i class="bi bi-telephone-fill me-2"></i>Emergency Hotline (SEV1)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px;color:var(--pm-ink-soft)">Only use this for critical production outages (SEV1/SEV2) where payment processing is completely halted.</p><div class="p-4 rounded my-3" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><h2 class="fw-bold mb-0">+254 800 720 000</h2><div style="font-size:12px;font-weight:600">PIN: 4892 (Enterprise Support)</div></div><p style="font-size:12px;color:var(--pm-muted)">For non-critical issues, please open a <a href="#" onclick="closeModal('emergencyHotlineModal');openModal('supportTicketModal')">standard support ticket</a>.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 27. Dev Profile -->
+<div class="modal fade" id="devProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Developer Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-blue)">AD</div><h5 style="font-weight:700;margin-bottom:2px">Alex Dev</h5><p style="font-size:13px;color:var(--pm-muted)">alex.dev@merchant.com · API Admin</p><div class="row g-2 text-start mt-3" style="font-size:13px"><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Account Tier</span><br><strong class="text-primary">Enterprise Partner</strong></div></div><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">API Rate Limit</span><br><strong>500 req / sec</strong></div></div><div class="col-12"><button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('slackIntegrationModal')"><i class="bi bi-slack"></i> Manage Alert Integrations</button></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1500);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Refresh Env</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+// Handle environment toggle UI
+document.querySelectorAll('.env-option').forEach(el=>{
+  el.addEventListener('click', function(){
+    if(this.classList.contains('prod')){
+      alert('Switching to production environment requires 2FA authentication and live keys. Stay in Sandbox for now.');
+    }
+  });
+});
+</script>
+</body>
+</html>

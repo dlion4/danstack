@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayMo — KRA & Government Integration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --pm-primary: #4F46E5;
+      --pm-primary-dark: #3730A3;
+      --pm-primary-light: #818CF8;
+      --pm-accent: #10B981;
+      --pm-accent-soft: #D1FAE5;
+      --pm-warning: #F59E0B;
+      --pm-warning-soft: #FEF3C7;
+      --pm-danger: #EF4444;
+      --pm-danger-soft: #FEE2E2;
+      --pm-info: #3B82F6;
+      --pm-info-soft: #DBEAFE;
+      --pm-purple: #8B5CF6;
+      --pm-purple-soft: #EDE9FE;
+      --pm-bg: #F5F1EC;
+      --pm-bg-2: #EEE8DF;
+      --pm-surface: #FFFFFF;
+      --pm-surface-2: #FAF7F3;
+      --pm-ink: #1A1F2E;
+      --pm-ink-soft: #4B5563;
+      --pm-muted: #9CA3AF;
+      --pm-border: #E5E2DC;
+      --pm-border-2: #D4D0C8;
+      --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+      --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+      --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+      --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+      --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+      --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+      --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+      --pm-r-sm: 8px;
+      --pm-r-md: 14px;
+      --pm-r-lg: 20px;
+      --pm-r-pill: 999px;
+      --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: var(--pm-font-sans);
+      background: var(--pm-bg);
+      color: var(--pm-ink);
+      overflow-x: hidden;
+      font-size: 14px;
+      line-height: 1.5
+    }
+
+    .pm-app {
+      display: flex;
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+    }
+
+    .pm-sidebar {
+      width: 88px;
+      flex-shrink: 0;
+      background: var(--pm-gradient-slate);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 100
+    }
+
+    .pm-sidebar-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--pm-gradient-hero);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 22px;
+      font-family: var(--pm-font-display);
+      box-shadow: var(--pm-shadow-lg);
+      margin-bottom: 24px
+    }
+
+    .pm-sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      width: 100%;
+      padding: 0 12px
+    }
+
+    .pm-nav-item {
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: rgba(255, 255, 255, .6);
+      cursor: pointer;
+      background: 0 0;
+      border: none;
+      transition: all .2s;
+      position: relative
+    }
+
+    .pm-nav-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, .08)
+    }
+
+    .pm-nav-item.active {
+      color: #fff;
+      background: var(--pm-primary);
+      box-shadow: var(--pm-shadow-md)
+    }
+
+    .pm-nav-item .badge-dot {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 8px;
+      height: 8px;
+      background: var(--pm-danger);
+      border-radius: 50%;
+      border: 2px solid #334155;
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(1.2)
+      }
+    }
+
+    .pm-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden
+    }
+
+    .pm-header {
+      background: rgba(245, 241, 236, .7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--pm-border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50
+    }
+
+    .pm-header-title h1 {
+      font-family: var(--pm-font-display);
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -.02em
+    }
+
+    .pm-header-title p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--pm-ink-soft)
+    }
+
+    .pm-header-search {
+      flex: 1;
+      max-width: 440px;
+      position: relative
+    }
+
+    .pm-header-search input {
+      width: 100%;
+      height: 40px;
+      padding: 0 16px 0 40px;
+      border: 1px solid var(--pm-border);
+      border-radius: var(--pm-r-md);
+      background: #fff;
+      font-size: 13px;
+      transition: all .2s
+    }
+
+    .pm-header-search input:focus {
+      outline: 0;
+      border-color: var(--pm-primary);
+      box-shadow: var(--pm-shadow-glow)
+    }
+
+    .pm-header-search .bi {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--pm-muted)
+    }
+
+    .pm-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .pm-header-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--pm-border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--pm-ink-soft);
+      position: relative
+    }
+
+    .pm-header-btn:hover {
+      background: var(--pm-surface-2);
+      color: var(--pm-primary);
+      transform: translateY(-1px)
+    }
+
+    .pm-header-btn .counter {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 18px;
+      height: 18px;
+      background: var(--pm-danger);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      border: 2px solid var(--pm-bg)
+    }
+
+    .pm-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 12px 5px 5px;
+      border: 1px solid var(--pm-border);
+      background: #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .pm-profile-btn:hover {
+      background: var(--pm-surface-2)
+    }
+
+    .pm-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--pm-gradient-hero);
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--pm-font-display)
+    }
+
+    .pm-profile-btn .pm-name {
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .pm-profile-btn .pm-role {
+      font-size: 11px;
+      color: var(--pm-muted)
+    }
+
+    .pm-page-bar {
+      padding: 20px 32px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap
+    }
+
+    .pm-breadcrumb {
+      font-size: 12px;
+      color: var(--pm-muted)
+    }
+
+    .pm-breadcrumb a {
+      color: var(--pm-primary);
+      text-decoration: none
+    }
+
+    .pm-breadcrumb a:hover {
+      text-decoration: underline
+    }
+
+    .pm-content {
+      padding: 16px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px
+    }
+
+    .C {
+      background: var(--pm-surface);
+      border: 1px solid var(--pm-border);
+      border-radius: var(--pm-r-lg);
+      padding: 20px;
+      box-shadow: var(--pm-shadow-sm);
+      transition: all .2s
+    }
+
+    .C:hover {
+      box-shadow: var(--pm-shadow-md)
+    }
+
+    .C-dark {
+      background: var(--pm-gradient-slate);
+      color: #fff;
+      border: none
+    }
+
+    .C-accent {
+      background: linear-gradient(135deg, #1E293B, #4F46E5, #7C3AED);
+      color: #fff;
+      border: none
+    }
+
+    .SV {
+      font-family: var(--pm-font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.02em
+    }
+
+    .SL {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--pm-muted);
+      font-weight: 600
+    }
+
+    .B {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: var(--pm-r-pill);
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .B-s {
+      background: var(--pm-accent-soft);
+      color: #047857
+    }
+
+    .B-w {
+      background: var(--pm-warning-soft);
+      color: #B45309
+    }
+
+    .B-d {
+      background: var(--pm-danger-soft);
+      color: #DC2626
+    }
+
+    .B-i {
+      background: var(--pm-info-soft);
+      color: #1D4ED8
+    }
+
+    .B-p {
+      background: var(--pm-purple-soft);
+      color: #6D28D9
+    }
+
+    .btn-pm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--pm-r-sm);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--pm-border);
+      background: #fff;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--pm-ink)
+    }
+
+    .btn-pm:hover {
+      background: var(--pm-surface-2);
+      transform: translateY(-1px);
+      box-shadow: var(--pm-shadow-sm)
+    }
+
+    .btn-pm-p {
+      background: var(--pm-primary);
+      color: #fff;
+      border-color: var(--pm-primary)
+    }
+
+    .btn-pm-p:hover {
+      background: var(--pm-primary-dark);
+      color: #fff
+    }
+
+    .btn-pm-a {
+      background: var(--pm-accent);
+      color: #fff;
+      border-color: var(--pm-accent)
+    }
+
+    .btn-pm-d {
+      background: var(--pm-danger);
+      color: #fff;
+      border-color: var(--pm-danger)
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px
+    }
+
+    .T {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    .T th {
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--pm-muted);
+      border-bottom: 1px solid var(--pm-border);
+      background: var(--pm-surface-2)
+    }
+
+    .T td {
+      padding: 12px;
+      border-bottom: 1px solid var(--pm-border);
+      vertical-align: middle
+    }
+
+    .T tr:last-child td {
+      border-bottom: none
+    }
+
+    .T tr:hover td {
+      background: var(--pm-surface-2)
+    }
+
+    .pills {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--pm-surface-2);
+      border-radius: var(--pm-r-sm);
+      overflow-x: auto
+    }
+
+    .pill {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background: 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .2s;
+      color: var(--pm-ink-soft)
+    }
+
+    .pill.active {
+      background: #fff;
+      color: var(--pm-primary);
+      box-shadow: var(--pm-shadow-sm);
+      font-weight: 600
+    }
+
+    .FL {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pm-ink-soft);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .03em
+    }
+
+    .FC {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--pm-border);
+      border-radius: var(--pm-r-sm);
+      font-size: 14px;
+      transition: all .2s;
+      background: #fff
+    }
+
+    .FC:focus {
+      outline: 0;
+      border-color: var(--pm-primary);
+      box-shadow: var(--pm-shadow-glow)
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+      flex-wrap: wrap
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 80px
+    }
+
+    .step-n {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--pm-border);
+      color: var(--pm-muted);
+      transition: all .3s
+    }
+
+    .step.active .step-n {
+      background: var(--pm-primary);
+      color: #fff
+    }
+
+    .step.done .step-n {
+      background: var(--pm-accent);
+      color: #fff
+    }
+
+    .step-l {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--pm-muted)
+    }
+
+    .step.active .step-l {
+      color: var(--pm-primary)
+    }
+
+    .step.done .step-l {
+      color: var(--pm-accent)
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--pm-border);
+      margin: 0 8px
+    }
+
+    .pin-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center
+    }
+
+    .pin-row input {
+      width: 48px;
+      height: 56px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      border: 2px solid var(--pm-border);
+      border-radius: var(--pm-r-sm);
+      font-family: var(--pm-font-display)
+    }
+
+    .pin-row input:focus {
+      outline: 0;
+      border-color: var(--pm-primary);
+      box-shadow: var(--pm-shadow-glow)
+    }
+
+    .receipt {
+      background: var(--pm-surface-2);
+      border: 1px dashed var(--pm-border-2);
+      border-radius: var(--pm-r-md);
+      padding: 20px;
+      text-align: center
+    }
+
+    .receipt .ri {
+      width: 56px;
+      height: 56px;
+      background: var(--pm-accent-soft);
+      color: var(--pm-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 12px
+    }
+
+    .fstep {
+      display: none
+    }
+
+    .fstep.active {
+      display: block;
+      animation: fi .3s
+    }
+
+    .tpanel {
+      display: none
+    }
+
+    .tpanel.active {
+      display: block;
+      animation: fi .3s
+    }
+
+    @keyframes fi {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .loading-ov {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, .85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      border-radius: var(--pm-r-lg)
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--pm-border);
+      border-top-color: var(--pm-primary);
+      border-radius: 50%;
+      animation: sp .8s linear infinite
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .sr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--pm-border)
+    }
+
+    .sr:last-child {
+      border-bottom: none
+    }
+
+    .UB {
+      background: var(--pm-surface-2);
+      border-radius: var(--pm-r-md);
+      padding: 16px;
+      height: 100%
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px
+    }
+
+    .quick-btn {
+      padding: 10px;
+      border: 1px solid var(--pm-border);
+      border-radius: var(--pm-r-sm);
+      background: #fff;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .2s
+    }
+
+    .quick-btn:hover {
+      border-color: var(--pm-primary);
+      background: rgba(79, 70, 229, .04);
+      transform: translateY(-1px)
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: var(--pm-r-lg);
+      box-shadow: var(--pm-shadow-xl)
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--pm-border);
+      padding: 20px 24px
+    }
+
+    .modal-body {
+      padding: 24px
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--pm-border);
+      padding: 16px 24px
+    }
+
+    .modal-title {
+      font-family: var(--pm-font-display);
+      font-weight: 700
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--pm-border);
+      margin: 16px 0
+    }
+
+    .st {
+      font-family: var(--pm-font-display);
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .ss {
+      font-size: 12px;
+      color: var(--pm-ink-soft);
+      margin: 2px 0 0
+    }
+
+    @media(max-width:768px) {
+      .pm-sidebar {
+        display: none
+      }
+
+      .pm-header {
+        padding: 12px 16px;
+        flex-wrap: wrap
+      }
+
+      .pm-header-search {
+        max-width: 100%;
+        order: 3;
+        flex-basis: 100%
+      }
+
+      .pm-content {
+        padding: 12px 16px 24px
+      }
+
+      .pm-page-bar {
+        padding: 12px 16px 0
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .SV {
+        font-size: 22px
+      }
+
+      .modal-body {
+        padding: 18px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pm-app">
+    <aside class="pm-sidebar">
+      <div class="pm-sidebar-logo">P</div>
+      <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+          class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+            class="bi bi-lightning-charge"></i></button><button class="pm-nav-item active"><i
+            class="bi bi-bank2"></i><span class="badge-dot"></span></button><button class="pm-nav-item"><i
+            class="bi bi-receipt-cutoff"></i></button><button class="pm-nav-item"><i
+            class="bi bi-geo-alt"></i></button><button class="pm-nav-item"><i class="bi bi-gear"></i></button></nav>
+      <button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+    </aside>
+    <div class="pm-main">
+      <header class="pm-header">
+        <div class="pm-header-title" style="flex-shrink:0">
+          <div class="d-flex align-items-center gap-2">
+            <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+            <div>
+              <h1>KRA & Government Integration</h1>
+              <p>iTax, eCitizen, County Revenue, Land & Public Service Payments</p>
+            </div>
+          </div>
+        </div>
+        <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+            placeholder="Search tax types, KRA PIN, eCitizen services, county permits..."></div>
+        <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('complianceHealthModal')"><i
+              class="bi bi-shield-check"></i></button><button class="pm-header-btn" onclick="openM('govNotifModal')"><i
+              class="bi bi-bell"></i><span class="counter">9</span></button>
+          <div class="pm-profile-btn" onclick="openM('profileModal')">
+            <div class="pm-avatar">JK</div>
+            <div>
+              <div class="pm-name">James K.</div>
+              <div class="pm-role">Tax & Compliance Manager</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="pm-page-bar">
+        <div>
+          <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Services Hub</a> / <strong>KRA &
+              Government</strong></div>
+          <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 1.12 — KRA
+            & Government Integration</h2>
+          <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage iTax obligations, file returns, pay
+            national & county government fees, handle land services via Ardhisasa, and maintain full compliance from a
+            single hub.</p>
+        </div>
+        <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm" onclick="openM('complianceHealthModal')"><i
+              class="bi bi-heart-pulse"></i> Compliance Health</button><button class="btn-pm"
+            onclick="openM('bulkTaxModal')"><i class="bi bi-collection"></i> Bulk File</button><button class="btn-pm"
+            onclick="openM('payKRAModal')"><i class="bi bi-credit-card"></i> Pay Tax</button><button
+            class="btn-pm btn-pm-p" onclick="openM('addKRAModal')"><i class="bi bi-plus-lg"></i> Link KRA PIN</button>
+        </div>
+      </div>
+
+      <div class="pm-content">
+
+        <!-- HERO STATS -->
+        <div class="row g-3">
+          <div class="col-lg-4">
+            <div class="C C-accent" style="min-height:170px">
+              <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">KRA integration live <span
+                  style="color:#86efac">●</span></p>
+              <div class="SV" style="margin:8px 0;color:#fff">4 KRA PINs linked</div>
+              <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Personal, business, rental portfolio and
+                investment company obligations managed with real-time iTax sync.</p>
+              <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                  style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                  onclick="openM('payKRAModal')">Pay Tax</button><button class="btn-pm btn-sm"
+                  style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                  onclick="openM('fileReturnModal')">File Return</button><button class="btn-pm btn-sm"
+                  style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                  onclick="openM('complianceHealthModal')">Health Check</button></div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-6">
+            <div class="C" style="min-height:170px">
+              <p class="SL" style="color:var(--pm-danger)">DUE IN 7 DAYS</p>
+              <div class="SV" style="margin:6px 0">KES 184,200</div><span class="B B-d"><i class="bi bi-clock"></i> 5
+                obligations</span>
+              <div class="mt-2">
+                <div class="pm-progress">
+                  <div class="pm-progress-bar" style="width:65%;background:var(--pm-danger)"></div>
+                </div>
+                <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">PAYE, VAT, TOT, CGT, SHIF</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-4 col-6">
+            <div class="C" style="min-height:170px">
+              <p class="SL" style="color:var(--pm-info)">COMPLIANCE SCORE</p>
+              <div class="SV" style="margin:6px 0">94<span style="font-size:14px;color:var(--pm-muted)">/100</span>
+              </div><span class="B B-s"><i class="bi bi-shield-check"></i> Excellent</span>
+              <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">All returns filed on time<br>Zero
+                penalties in 18 months</div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <div class="C" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+              <p class="SL" style="color:var(--pm-accent)">SAVINGS THIS YEAR</p>
+              <div class="SV" style="margin:6px 0">KES 47,800</div><span class="B B-s"><i class="bi bi-piggy-bank"></i>
+                Via early filing + reliefs</span>
+              <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">PAYE relief: KES 31,200<br>Investment
+                deductions: KES 16,600</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+        <div class="row g-3">
+          <div class="col-lg-4">
+            <div class="C">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                  onclick="openM('attentionModal')">View all</button>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-receipt-cutoff"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">VAT return due in 2 days</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">KRA PIN A012345678Y · KES 84,200</div>
+                  </div>
+                </div><button class="btn-pm btn-sm btn-pm-d" onclick="openM('fileReturnModal')">File</button>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-bank"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">CGT on property sale pending</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">KES 62,000 due 15 Jul</div>
+                  </div>
+                </div><button class="btn-pm btn-sm" onclick="openM('payKRAModal')">Pay</button>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-file-earmark-text"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">eCitizen passport renewal ready</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">Application #P-449281 · Pay KES 4,500</div>
+                  </div>
+                </div><button class="btn-pm btn-sm" onclick="openM('payECitizenModal')">Pay</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="C">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i> AI</span>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-calendar-check"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">File PAYE early for 5-day relief</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">Save KES 8,400 in penalties</div>
+                  </div>
+                </div><button class="btn-pm btn-sm" onclick="openM('fileReturnModal')">File Early</button>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-graph-up"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">Claim additional rental income relief</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">KES 124,000 unclaimed</div>
+                  </div>
+                </div><button class="btn-pm btn-sm" onclick="openM('taxOptimizerModal')">Claim</button>
+              </div>
+              <div class="sr">
+                <div class="d-flex align-items-center gap-3">
+                  <div
+                    style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                    <i class="bi bi-building"></i></div>
+                  <div>
+                    <div style="font-weight:600;font-size:13px">Renew 3 county business permits</div>
+                    <div style="font-size:11px;color:var(--pm-muted)">Nairobi, Kiambu, Nakuru</div>
+                  </div>
+                </div><button class="btn-pm btn-sm" onclick="openM('payCountyModal')">Renew</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="C">
+              <div class="mb-3">
+                <h3 class="st">Quick Actions</h3>
+                <p class="ss">Frequent government payment workflows</p>
+              </div>
+              <div class="quick-grid"><button class="quick-btn" onclick="openM('payKRAModal')"><i
+                    class="bi bi-receipt-cutoff text-danger me-1"></i> Pay Tax</button><button class="quick-btn"
+                  onclick="openM('fileReturnModal')"><i class="bi bi-file-earmark-text text-primary me-1"></i> File
+                  Return</button><button class="quick-btn" onclick="openM('payECitizenModal')"><i
+                    class="bi bi-globe text-info me-1"></i> eCitizen</button><button class="quick-btn"
+                  onclick="openM('payCountyModal')"><i class="bi bi-building text-warning me-1"></i> County
+                  Permit</button><button class="quick-btn" onclick="openM('payArdhisasaModal')"><i
+                    class="bi bi-map text-success me-1"></i> Ardhisasa</button><button class="quick-btn"
+                  onclick="openM('bulkTaxModal')"><i class="bi bi-collection me-1" style="color:var(--pm-purple)"></i>
+                  Bulk File</button><button class="quick-btn" onclick="openM('taxOptimizerModal')"><i
+                    class="bi bi-lightbulb me-1" style="color:var(--pm-accent)"></i> Optimizer</button><button
+                  class="quick-btn" onclick="openM('complianceHealthModal')"><i class="bi bi-heart-pulse me-1"
+                    style="color:var(--pm-primary)"></i> Health Check</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1.12.1 -->
+        <div class="C">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+            <div>
+              <h3 class="st"><i class="bi bi-bank2" style="color:var(--pm-primary)"></i> 1.12.1 — KRA iTax Integration
+                Hub</h3>
+              <p class="ss">Link multiple KRA PINs, sync obligations, view real-time tax position, and manage filings
+                across personal and business entities.</p>
+            </div>
+            <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('addKRAModal')"><i
+                  class="bi bi-plus-lg"></i> Link PIN</button><button class="btn-pm btn-sm btn-pm-p"
+                onclick="openM('syncItaxModal')"><i class="bi bi-arrow-repeat"></i> Sync iTax</button></div>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-7">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Linked KRA PINs & Obligations</h4>
+                <div class="table-responsive">
+                  <table class="T">
+                    <thead>
+                      <tr>
+                        <th>PIN</th>
+                        <th>Entity</th>
+                        <th>Status</th>
+                        <th>Next Due</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>A012345678Y</code></td>
+                        <td>James Kamau (Personal)</td>
+                        <td><span class="B B-s">Compliant</span></td>
+                        <td>15 Jul — PAYE</td>
+                        <td>KES 42,800</td>
+                        <td>
+                          <div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm"
+                              onclick="openM('payKRAModal')">Pay</button><button class="btn-pm btn-sm"
+                              onclick="openM('fileReturnModal')">File</button></div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>P987654321Z</code></td>
+                        <td>JK Holdings Ltd</td>
+                        <td><span class="B B-w">Due Soon</span></td>
+                        <td>05 Jul — VAT</td>
+                        <td>KES 84,200</td>
+                        <td>
+                          <div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm btn-pm-d"
+                              onclick="openM('fileReturnModal')">File</button><button class="btn-pm btn-sm"
+                              onclick="openM('payKRAModal')">Pay</button></div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>R445566778X</code></td>
+                        <td>Rental Portfolio</td>
+                        <td><span class="B B-s">Compliant</span></td>
+                        <td>20 Jul — TOT</td>
+                        <td>KES 18,600</td>
+                        <td>
+                          <div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm"
+                              onclick="openM('payKRAModal')">Pay</button><button class="btn-pm btn-sm"
+                              onclick="openM('fileReturnModal')">File</button></div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>C112233445W</code></td>
+                        <td>JK Investments</td>
+                        <td><span class="B B-d">Overdue</span></td>
+                        <td>25 Jun — CGT</td>
+                        <td>KES 62,000</td>
+                        <td>
+                          <div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm btn-pm-d"
+                              onclick="openM('payKRAModal')">Pay</button><button class="btn-pm btn-sm"
+                              onclick="openM('disputeKRAModal')">Dispute</button></div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Tax Position Snapshot</h4>
+                <div class="sr">
+                  <div><strong>Total Outstanding</strong></div><strong style="color:var(--pm-danger)">KES
+                    184,200</strong>
+                </div>
+                <div class="sr">
+                  <div><strong>Refunds Due</strong></div><strong style="color:var(--pm-accent)">KES 31,450</strong>
+                </div>
+                <div class="sr">
+                  <div><strong>Compliance Score</strong></div><span class="B B-s">94/100</span>
+                </div>
+                <div class="sr">
+                  <div><strong>Last iTax Sync</strong></div><span style="font-size:12px">27 Jun 2025, 09:14</span>
+                </div>
+                <div class="mt-3"><button class="btn-pm btn-sm w-100" onclick="openM('syncItaxModal')"><i
+                      class="bi bi-arrow-repeat"></i> Force Full Sync</button></div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="UB">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                  <h4 style="font-size:14px;font-weight:700;margin:0">Recent iTax Activity</h4><button
+                    class="btn-pm btn-sm" onclick="openM('taxHistoryModal')">Full History</button>
+                </div>
+                <div class="table-responsive">
+                  <table class="T">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>PIN</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Ref</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>25 Jun</td>
+                        <td>A012345678Y</td>
+                        <td>PAYE</td>
+                        <td>KES 42,800</td>
+                        <td><span class="B B-s">Paid</span></td>
+                        <td>ITX-882341</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('taxReceiptModal')">Receipt</button></td>
+                      </tr>
+                      <tr>
+                        <td>22 Jun</td>
+                        <td>P987654321Z</td>
+                        <td>VAT</td>
+                        <td>KES 84,200</td>
+                        <td><span class="B B-w">Filed</span></td>
+                        <td>ITX-881902</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('fileReturnModal')">View</button></td>
+                      </tr>
+                      <tr>
+                        <td>18 Jun</td>
+                        <td>C112233445W</td>
+                        <td>CGT</td>
+                        <td>KES 62,000</td>
+                        <td><span class="B B-d">Overdue</span></td>
+                        <td>ITX-880117</td>
+                        <td><button class="btn-pm btn-sm btn-pm-d" onclick="openM('payKRAModal')">Pay</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1.12.2 -->
+        <div class="C">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+            <div>
+              <h3 class="st"><i class="bi bi-credit-card" style="color:var(--pm-info)"></i> 1.12.2 — Tax Payment
+                Execution & Scheduling</h3>
+              <p class="ss">Execute single or bulk tax payments, set recurring schedules, and manage payment plans with
+                full audit trails.</p>
+            </div>
+            <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('bulkTaxModal')"><i
+                  class="bi bi-collection"></i> Bulk Pay</button><button class="btn-pm btn-sm btn-pm-p"
+                onclick="openM('payKRAModal')">Pay Now</button></div>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Payment Methods & Sources</h4>
+                <div class="sr">
+                  <div><strong>PayMo Wallet</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Balance: KES 124,500</div>
+                  </div><span class="B B-s">Default</span>
+                </div>
+                <div class="sr">
+                  <div><strong>M-Pesa</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">0712***890</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payKRAModal')">Use</button>
+                </div>
+                <div class="sr">
+                  <div><strong>Equity Bank</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Acc ***4521</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payKRAModal')">Use</button>
+                </div>
+                <div class="sr">
+                  <div><strong>KCB Bank</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Acc ***7782</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payKRAModal')">Use</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Scheduled & Recurring Payments</h4>
+                <div class="sr">
+                  <div><strong>PAYE — Personal</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Monthly • 15th • Auto from Wallet</div>
+                  </div><span class="B B-s">Active</span>
+                </div>
+                <div class="sr">
+                  <div><strong>VAT — JK Holdings</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Monthly • 5th • M-Pesa</div>
+                  </div><span class="B B-s">Active</span>
+                </div>
+                <div class="sr">
+                  <div><strong>TOT — Rental Portfolio</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Quarterly • Next: 20 Jul</div>
+                  </div><span class="B B-w">Paused</span>
+                </div>
+                <div class="mt-3"><button class="btn-pm btn-sm w-100" onclick="openM('scheduleTaxModal')"><i
+                      class="bi bi-plus-lg"></i> Schedule New Payment</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1.12.3 -->
+        <div class="C">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+            <div>
+              <h3 class="st"><i class="bi bi-globe" style="color:var(--pm-purple)"></i> 1.12.3 — eCitizen & Government
+                Services Portal</h3>
+              <p class="ss">Pay for passports, driving licences, police clearance, business registration, and other
+                eCitizen services in one place.</p>
+            </div>
+            <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('payECitizenModal')">Pay
+                Service</button></div>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-8">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent & Upcoming Government Services</h4>
+                <div class="table-responsive">
+                  <table class="T">
+                    <thead>
+                      <tr>
+                        <th>Service</th>
+                        <th>Ref / Application</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Due / Expiry</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Passport Renewal</td>
+                        <td>P-449281</td>
+                        <td>KES 4,500</td>
+                        <td><span class="B B-w">Ready to Pay</span></td>
+                        <td>30 Jun 2025</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('payECitizenModal')">Pay</button></td>
+                      </tr>
+                      <tr>
+                        <td>Driving Licence Renewal</td>
+                        <td>DL-882910</td>
+                        <td>KES 3,200</td>
+                        <td><span class="B B-s">Paid</span></td>
+                        <td>15 Aug 2025</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('govReceiptModal')">Receipt</button></td>
+                      </tr>
+                      <tr>
+                        <td>Police Clearance</td>
+                        <td>PC-334102</td>
+                        <td>KES 1,000</td>
+                        <td><span class="B B-i">Processing</span></td>
+                        <td>28 Jun 2025</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('trackGovModal')">Track</button></td>
+                      </tr>
+                      <tr>
+                        <td>Business Registration (LLC)</td>
+                        <td>BN-991827</td>
+                        <td>KES 12,500</td>
+                        <td><span class="B B-s">Paid</span></td>
+                        <td>—</td>
+                        <td><button class="btn-pm btn-sm" onclick="openM('govReceiptModal')">Download</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Quick Government Services</h4>
+                <div class="quick-grid"><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">Passport</button><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">Driving Licence</button><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">Police Clearance</button><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">Good Conduct</button><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">Business Reg</button><button class="quick-btn"
+                    onclick="openM('payECitizenModal')">CRB Report</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1.12.4 -->
+        <div class="C">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+            <div>
+              <h3 class="st"><i class="bi bi-map" style="color:var(--pm-accent)"></i> 1.12.4 — County & Ardhisasa Land
+                Services</h3>
+              <p class="ss">Pay land rates, single business permits, building approvals, and manage property
+                transactions via Ardhisasa.</p>
+            </div>
+            <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm" onclick="openM('payCountyModal')">County
+                Permit</button><button class="btn-pm btn-sm btn-pm-p"
+                onclick="openM('payArdhisasaModal')">Ardhisasa</button></div>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">County Revenue Payments</h4>
+                <div class="sr">
+                  <div><strong>Nairobi City County</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Single Business Permit • KES 18,500</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payCountyModal')">Pay</button>
+                </div>
+                <div class="sr">
+                  <div><strong>Kiambu County</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Land Rates • KES 42,300</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payCountyModal')">Pay</button>
+                </div>
+                <div class="sr">
+                  <div><strong>Nakuru County</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Health Permit • KES 7,800</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payCountyModal')">Pay</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="UB">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Ardhisasa Land Services</h4>
+                <div class="sr">
+                  <div><strong>Title Deed Processing</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">LR No. 209/881 • KES 28,500</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payArdhisasaModal')">Pay</button>
+                </div>
+                <div class="sr">
+                  <div><strong>Stamp Duty — Property Transfer</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">KES 124,000</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payArdhisasaModal')">Pay</button>
+                </div>
+                <div class="sr">
+                  <div><strong>Lease Renewal</strong>
+                    <div style="font-size:11px;color:var(--pm-muted)">Plot LR-334102 • KES 15,200</div>
+                  </div><button class="btn-pm btn-sm" onclick="openM('payArdhisasaModal')">Pay</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="C">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent Government
+              Transactions</h3><button class="btn-pm btn-sm" onclick="openM('govHistoryModal')">View All</button>
+          </div>
+          <div class="table-responsive">
+            <table class="T">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Service</th>
+                  <th>Provider</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                  <th>Ref</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>25 Jun</td>
+                  <td>PAYE</td>
+                  <td>KRA</td>
+                  <td>KES 42,800</td>
+                  <td>M-Pesa</td>
+                  <td><span class="B B-s">Success</span></td>
+                  <td>ITX-882341</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('taxReceiptModal')">Receipt</button></td>
+                </tr>
+                <tr>
+                  <td>22 Jun</td>
+                  <td>VAT Return</td>
+                  <td>KRA</td>
+                  <td>KES 84,200</td>
+                  <td>Wallet</td>
+                  <td><span class="B B-s">Filed</span></td>
+                  <td>ITX-881902</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('fileReturnModal')">View</button></td>
+                </tr>
+                <tr>
+                  <td>18 Jun</td>
+                  <td>Passport Renewal</td>
+                  <td>eCitizen</td>
+                  <td>KES 4,500</td>
+                  <td>Bank</td>
+                  <td><span class="B B-i">Processing</span></td>
+                  <td>EC-449281</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('trackGovModal')">Track</button></td>
+                </tr>
+                <tr>
+                  <td>15 Jun</td>
+                  <td>Land Rates</td>
+                  <td>Nairobi County</td>
+                  <td>KES 42,300</td>
+                  <td>M-Pesa</td>
+                  <td><span class="B B-s">Success</span></td>
+                  <td>CCN-772910</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('govReceiptModal')">Receipt</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- pm-content -->
+    </div><!-- pm-main -->
+  </div><!-- pm-app -->
+
+  <!-- ==================== 25+ MODALS ==================== -->
+
+  <!-- M1: Pay KRA Tax (multi-step) -->
+  <div class="modal fade R" id="payKRAModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-receipt-cutoff text-danger me-2"></i>Pay KRA Tax</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper" id="kraStepper"></div>
+          <div id="kraS1" class="fstep active">
+            <h6 style="font-weight:700">Step 1: Select Obligation</h6>
+            <div class="mb-3"><label class="FL">KRA PIN / Entity</label><select class="FC">
+                <option>A012345678Y — James Kamau (PAYE)</option>
+                <option>P987654321Z — JK Holdings (VAT)</option>
+                <option>R445566778X — Rental Portfolio (TOT)</option>
+                <option>C112233445W — JK Investments (CGT)</option>
+              </select></div>
+            <div class="mb-3"><label class="FL">Tax Type</label><select class="FC">
+                <option>PAYE</option>
+                <option>VAT</option>
+                <option>TOT</option>
+                <option>CGT</option>
+                <option>Withholding Tax</option>
+              </select></div>
+            <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                class="bi bi-info-circle me-1"></i> Current due: <strong>KES 42,800</strong> • Due date: 15 Jul 2025
+            </div>
+          </div>
+          <div id="kraS2" class="fstep">
+            <h6 style="font-weight:700">Step 2: Payment Details</h6>
+            <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="42800"></div>
+            <div class="mb-3"><label class="FL">Payment Method</label><select class="FC">
+                <option>PayMo Wallet (KES 124,500)</option>
+                <option>M-Pesa (0712***890)</option>
+                <option>Equity Bank ***4521</option>
+              </select></div>
+            <div class="mb-3"><label class="FL">Schedule</label><select class="FC">
+                <option>Pay immediately</option>
+                <option>Schedule for 10 Jul</option>
+                <option>Recurring monthly</option>
+              </select></div>
+          </div>
+          <div id="kraS3" class="fstep">
+            <h6 style="font-weight:700">Step 3: Confirm & Pay</h6>
+            <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Tax
+                  Type</span><strong>PAYE</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES
+                  42,800</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span
+                  class="text-muted">Method</span><strong>Wallet</strong></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Fee</span><strong>KES 0</strong>
+              </div>
+            </div><label class="FL">Enter Wallet PIN</label>
+            <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input type="password"
+                maxlength="1" oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"><input
+                type="password" maxlength="1" oninput="nf(this)"></div>
+          </div>
+          <div id="kraS4" class="fstep">
+            <div class="receipt">
+              <div class="ri"><i class="bi bi-check-lg"></i></div>
+              <h5 style="font-weight:700;color:var(--pm-accent)">Tax Payment Successful</h5>
+              <p style="font-size:13px;color:var(--pm-ink-soft)">Your KRA payment has been processed. Receipt and iTax
+                confirmation have been sent.</p>
+              <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted">KRA
+                    PIN</span><strong>A012345678Y</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES
+                    42,800</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted">iTax
+                    Ref</span><strong>ITX-883421</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun 2025,
+                    14:32</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="kraFoot"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p" id="kraNext" onclick="nextFlow('kra',4)">Continue <i
+              class="bi bi-arrow-right"></i></button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M2: File Return -->
+  <div class="modal fade R" id="fileReturnModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-file-earmark-text text-primary me-2"></i>File Tax Return</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper" id="fileStepper"></div>
+          <div id="fileS1" class="fstep active">
+            <h6 style="font-weight:700">Step 1: Select Return</h6>
+            <div class="mb-3"><label class="FL">KRA PIN</label><select class="FC">
+                <option>P987654321Z — JK Holdings Ltd (VAT)</option>
+                <option>A012345678Y — James Kamau (PAYE)</option>
+              </select></div>
+            <div class="mb-3"><label class="FL">Return Period</label><select class="FC">
+                <option>June 2025</option>
+                <option>May 2025</option>
+                <option>April 2025</option>
+              </select></div>
+            <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i
+                class="bi bi-clock me-1"></i> Due in <strong>2 days</strong>. File early to avoid late penalties.</div>
+          </div>
+          <div id="fileS2" class="fstep">
+            <h6 style="font-weight:700">Step 2: Upload & Review</h6>
+            <div class="mb-3"><label class="FL">Upload Supporting Documents</label><input type="file" class="FC"></div>
+            <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Gross Sales</span><strong>KES
+                  4,200,000</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Input VAT</span><strong>KES
+                  672,000</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Output VAT</span><strong>KES
+                  756,200</strong></div>
+              <hr class="divider">
+              <div class="d-flex justify-content-between"><span style="font-weight:700">Net VAT Payable</span><strong
+                  style="color:var(--pm-danger)">KES 84,200</strong></div>
+            </div>
+          </div>
+          <div id="fileS3" class="fstep">
+            <h6 style="font-weight:700">Step 3: Submit & Pay</h6>
+            <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Return Type</span><strong>VAT —
+                  June 2025</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount Due</span><strong>KES
+                  84,200</strong></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">iTax Confirmation</span><strong>Will
+                  be emailed</strong></div>
+            </div>
+            <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                class="form-check-label" style="font-size:13px">Pay immediately after filing</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                class="form-check-label" style="font-size:13px">Auto-file next month</label></div>
+          </div>
+          <div id="fileS4" class="fstep">
+            <div class="receipt">
+              <div class="ri"><i class="bi bi-check-lg"></i></div>
+              <h5 style="font-weight:700;color:var(--pm-accent)">Return Filed Successfully</h5>
+              <p style="font-size:13px;color:var(--pm-ink-soft)">VAT return for June 2025 has been submitted to iTax.
+                Payment of KES 84,200 processed.</p>
+              <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted">iTax
+                    Ref</span><strong>VAT-202506-99182</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Filed By</span><strong>James
+                    Kamau</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun 2025,
+                    14:45</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="fileFoot"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p" id="fileNext" onclick="nextFlow('file',4)">Continue <i
+              class="bi bi-arrow-right"></i></button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M3: Pay eCitizen -->
+  <div class="modal fade R" id="payECitizenModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-globe text-info me-2"></i>Pay eCitizen Service</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">Service</label><select class="FC">
+              <option>Passport Renewal — KES 4,500</option>
+              <option>Driving Licence Renewal — KES 3,200</option>
+              <option>Police Clearance — KES 1,000</option>
+              <option>Good Conduct Certificate — KES 1,000</option>
+              <option>Business Registration — KES 12,500</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Application / Ref Number</label><input class="FC" value="P-449281"></div>
+          <div class="mb-3"><label class="FL">Payment Method</label><select class="FC">
+              <option>M-Pesa</option>
+              <option>PayMo Wallet</option>
+              <option>Bank Transfer</option>
+            </select></div>
+          <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+              class="bi bi-info-circle me-1"></i> Payment will be processed instantly. You will receive a confirmation
+            SMS and email with the receipt.</div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('payECitizenModal','eCitizen payment successful! Receipt sent to your email.','EC-449281')">Pay
+            KES 4,500</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M4: Pay County -->
+  <div class="modal fade R" id="payCountyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-building text-warning me-2"></i>Pay County Revenue</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">County</label><select class="FC">
+              <option>Nairobi City County</option>
+              <option>Kiambu County</option>
+              <option>Nakuru County</option>
+              <option>Mombasa County</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Service / Permit</label><select class="FC">
+              <option>Single Business Permit — KES 18,500</option>
+              <option>Land Rates — KES 42,300</option>
+              <option>Health Permit — KES 7,800</option>
+              <option>Fire Safety Certificate — KES 4,200</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Account / Plot Number</label><input class="FC" value="NCC-882910"></div>
+          <div class="mb-3"><label class="FL">Payment Method</label><select class="FC">
+              <option>M-Pesa</option>
+              <option>PayMo Wallet</option>
+            </select></div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('payCountyModal','County payment successful! Permit updated in your records.','CCN-772910')">Pay
+            Now</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M5: Pay Ardhisasa -->
+  <div class="modal fade R" id="payArdhisasaModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-map text-success me-2"></i>Pay Ardhisasa Land Services</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">Service</label><select class="FC">
+              <option>Title Deed Processing — KES 28,500</option>
+              <option>Stamp Duty — KES 124,000</option>
+              <option>Lease Renewal — KES 15,200</option>
+              <option>Change of User — KES 45,000</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">LR / Plot Number</label><input class="FC" value="LR-209/881"></div>
+          <div class="mb-3"><label class="FL">Payment Method</label><select class="FC">
+              <option>PayMo Wallet</option>
+              <option>Bank Transfer</option>
+            </select></div>
+          <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+              class="bi bi-info-circle me-1"></i> Payments are processed through the Ministry of Lands portal. You will
+            receive an official receipt.</div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('payArdhisasaModal','Ardhisasa payment successful! Receipt and confirmation sent.','ARD-20250627-1192')">Pay
+            Now</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M6: Bulk Tax -->
+  <div class="modal fade R" id="bulkTaxModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-collection me-2"></i>Bulk Tax Filing & Payment</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper" id="bulkStepper"></div>
+          <div id="bulkS1" class="fstep active">
+            <h6 style="font-weight:700">Step 1: Upload File</h6>
+            <div class="mb-3"><label class="FL">Upload CSV/Excel</label><input type="file" class="FC"></div>
+            <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                class="bi bi-info-circle me-1"></i> Download template: <a href="#"
+                onclick="alert('Template downloaded')">KRA_Bulk_Template.csv</a></div>
+          </div>
+          <div id="bulkS2" class="fstep">
+            <h6 style="font-weight:700">Step 2: Preview & Validate</h6>
+            <div class="table-responsive">
+              <table class="T">
+                <thead>
+                  <tr>
+                    <th>PIN</th>
+                    <th>Tax Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>A012345678Y</td>
+                    <td>PAYE</td>
+                    <td>KES 42,800</td>
+                    <td><span class="B B-s">Valid</span></td>
+                  </tr>
+                  <tr>
+                    <td>P987654321Z</td>
+                    <td>VAT</td>
+                    <td>KES 84,200</td>
+                    <td><span class="B B-s">Valid</span></td>
+                  </tr>
+                  <tr>
+                    <td>R445566778X</td>
+                    <td>TOT</td>
+                    <td>KES 18,600</td>
+                    <td><span class="B B-w">Warning</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="bulkS3" class="fstep">
+            <div class="receipt">
+              <div class="ri"><i class="bi bi-check-all"></i></div>
+              <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Filing Complete</h5>
+              <p style="font-size:13px;color:var(--pm-ink-soft)">3 returns filed and 2 payments processed successfully.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="bulkFoot"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p" id="bulkNext" onclick="nextFlow('bulk',3)">Continue <i
+              class="bi bi-arrow-right"></i></button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M7: Schedule Tax -->
+  <div class="modal fade R" id="scheduleTaxModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-calendar-event me-2"></i>Schedule Tax Payment</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">KRA PIN / Tax Type</label><select class="FC">
+              <option>P987654321Z — VAT</option>
+              <option>A012345678Y — PAYE</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="84200"></div>
+          <div class="mb-3"><label class="FL">Frequency</label><select class="FC">
+              <option>Monthly</option>
+              <option>Quarterly</option>
+              <option>Annual</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Start Date</label><input type="date" class="FC" value="2025-07-05"></div>
+          <div class="mb-3"><label class="FL">Payment Method</label><select class="FC">
+              <option>PayMo Wallet</option>
+              <option>M-Pesa</option>
+            </select></div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('scheduleTaxModal','Tax payment scheduled successfully!','SCH-20250627-4421')">Schedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M8: Tax Optimizer -->
+  <div class="modal fade R" id="taxOptimizerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-lightbulb text-warning me-2"></i>Tax Optimizer</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)">
+            <div style="font-size:11px;font-weight:700;color:#047857">POTENTIAL SAVINGS IDENTIFIED</div>
+            <div style="font-size:28px;font-weight:700;color:var(--pm-accent)">KES 47,800</div>
+          </div>
+          <div class="table-responsive">
+            <table class="T">
+              <thead>
+                <tr>
+                  <th>Opportunity</th>
+                  <th>Estimated Saving</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Claim additional rental income relief</td>
+                  <td>KES 31,200</td>
+                  <td><button class="btn-pm btn-sm"
+                      onclick="doAction('taxOptimizerModal','Relief claim submitted to KRA.','')">Claim</button></td>
+                </tr>
+                <tr>
+                  <td>Investment deduction (solar)</td>
+                  <td>KES 12,400</td>
+                  <td><button class="btn-pm btn-sm"
+                      onclick="doAction('taxOptimizerModal','Deduction added to next return.','')">Add</button></td>
+                </tr>
+                <tr>
+                  <td>Early filing penalty avoidance</td>
+                  <td>KES 4,200</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('fileReturnModal')">File Early</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M9: Add KRA PIN -->
+  <div class="modal fade R" id="addKRAModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Link New KRA PIN</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">KRA PIN</label><input class="FC" placeholder="A012345678Y"></div>
+          <div class="mb-3"><label class="FL">Entity Type</label><select class="FC">
+              <option>Individual</option>
+              <option>Company</option>
+              <option>Partnership</option>
+              <option>Trust</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Entity Name</label><input class="FC"
+              placeholder="Company or Individual Name"></div>
+          <div class="mb-3"><label class="FL">Default Payment Source</label><select class="FC">
+              <option>PayMo Wallet</option>
+              <option>M-Pesa</option>
+              <option>Bank</option>
+            </select></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+              class="form-check-label" style="font-size:13px">Enable auto-sync with iTax</label></div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('addKRAModal','KRA PIN linked successfully! Syncing obligations...','KRA-20250627-1192')">Link
+            PIN</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M10: Sync iTax -->
+  <div class="modal fade R" id="syncItaxModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Sync with iTax</h5><button class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+            <div style="font-size:13px">Last sync: 27 Jun 2025, 09:14</div>
+            <div style="font-size:13px">Obligations synced: 12</div>
+          </div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+              class="form-check-label" style="font-size:13px">Full obligation sync</label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+              class="form-check-label" style="font-size:13px">Payment history</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label"
+              style="font-size:13px">Refund status</label></div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('syncItaxModal','iTax sync completed successfully! 3 new obligations found.','')">Sync
+            Now</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M11: Tax Receipt -->
+  <div class="modal fade R" id="taxReceiptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Tax Payment Receipt</h5><button class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="receipt">
+            <div class="ri"><i class="bi bi-check-lg"></i></div>
+            <h5 style="font-weight:700;color:var(--pm-accent)">Official Receipt</h5>
+            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">KRA
+                  PIN</span><strong>A012345678Y</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Tax
+                  Type</span><strong>PAYE</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES
+                  42,800</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">iTax
+                  Ref</span><strong>ITX-882341</strong></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun
+                  2025</strong></div>
+            </div>
+            <div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm"><i
+                  class="bi bi-download"></i> PDF</button><button class="btn-pm btn-sm"><i class="bi bi-whatsapp"></i>
+                Share</button></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M12: Gov Receipt -->
+  <div class="modal fade R" id="govReceiptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Government Service Receipt</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="receipt">
+            <div class="ri"><i class="bi bi-check-lg"></i></div>
+            <h5 style="font-weight:700;color:var(--pm-accent)">Payment Confirmed</h5>
+            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Service</span><strong>Passport
+                  Renewal</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span
+                  class="text-muted">Ref</span><strong>P-449281</strong></div>
+              <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES
+                  4,500</strong></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun
+                  2025</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M13: Track Gov -->
+  <div class="modal fade R" id="trackGovModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-truck me-2"></i>Track Government Service</h5><button class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">Application Ref</label><input class="FC" value="P-449281"></div>
+          <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+            <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                class="B B-i">Under Processing</span></div>
+            <div class="d-flex justify-content-between mb-2"><span class="text-muted">Stage</span><strong>Biometric
+                Verification</strong></div>
+            <div class="d-flex justify-content-between"><span class="text-muted">Est. Completion</span><strong>02 Jul
+                2025</strong></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M14: Compliance Health -->
+  <div class="modal fade R" id="complianceHealthModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-heart-pulse text-success me-2"></i>Compliance Health Dashboard</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-6">
+              <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                <div style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">94
+                </div>
+                <div style="font-size:10px;font-weight:700;color:#047857">COMPLIANCE</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">0</div>
+                <div style="font-size:10px;font-weight:700;color:#1D4ED8">PENALTIES</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">2</div>
+                <div style="font-size:10px;font-weight:700;color:#B45309">RETURNS DUE</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">18</div>
+                <div style="font-size:10px;font-weight:700;color:#6D28D9">MONTHS CLEAN</div>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="T">
+              <thead>
+                <tr>
+                  <th>Entity</th>
+                  <th>Score</th>
+                  <th>Issues</th>
+                  <th>Next Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>James Kamau</td>
+                  <td><span class="B B-s">98</span></td>
+                  <td>None</td>
+                  <td>PAYE 15 Jul</td>
+                </tr>
+                <tr>
+                  <td>JK Holdings</td>
+                  <td><span class="B B-s">92</span></td>
+                  <td>VAT due soon</td>
+                  <td>File 05 Jul</td>
+                </tr>
+                <tr>
+                  <td>JK Investments</td>
+                  <td><span class="B B-w">78</span></td>
+                  <td>CGT overdue</td>
+                  <td>Pay immediately</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+            class="btn-pm btn-pm-p" onclick="openM('payKRAModal')">Resolve Issues</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M15: Attention Modal -->
+  <div class="modal fade R" id="attentionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items Requiring
+            Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="sr">
+            <div><strong>VAT return due in 2 days</strong>
+              <div style="font-size:11px;color:var(--pm-muted)">P987654321Z · KES 84,200</div>
+            </div><button class="btn-pm btn-sm btn-pm-d" onclick="openM('fileReturnModal')">File</button>
+          </div>
+          <div class="sr">
+            <div><strong>CGT overdue</strong>
+              <div style="font-size:11px;color:var(--pm-muted)">C112233445W · KES 62,000</div>
+            </div><button class="btn-pm btn-sm btn-pm-d" onclick="openM('payKRAModal')">Pay</button>
+          </div>
+          <div class="sr">
+            <div><strong>Passport renewal ready</strong>
+              <div style="font-size:11px;color:var(--pm-muted)">P-449281 · KES 4,500</div>
+            </div><button class="btn-pm btn-sm" onclick="openM('payECitizenModal')">Pay</button>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M16: Tax History -->
+  <div class="modal fade R" id="taxHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Tax Payment History</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="T">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>PIN</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                  <th>Ref</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>25 Jun</td>
+                  <td>A012345678Y</td>
+                  <td>PAYE</td>
+                  <td>KES 42,800</td>
+                  <td>M-Pesa</td>
+                  <td><span class="B B-s">Paid</span></td>
+                  <td>ITX-882341</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('taxReceiptModal')">Receipt</button></td>
+                </tr>
+                <tr>
+                  <td>22 Jun</td>
+                  <td>P987654321Z</td>
+                  <td>VAT</td>
+                  <td>KES 84,200</td>
+                  <td>Wallet</td>
+                  <td><span class="B B-s">Filed</span></td>
+                  <td>ITX-881902</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('fileReturnModal')">View</button></td>
+                </tr>
+                <tr>
+                  <td>15 Jun</td>
+                  <td>R445566778X</td>
+                  <td>TOT</td>
+                  <td>KES 18,600</td>
+                  <td>Bank</td>
+                  <td><span class="B B-s">Paid</span></td>
+                  <td>ITX-880991</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('taxReceiptModal')">Receipt</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M17: Gov History -->
+  <div class="modal fade R" id="govHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Government Services History</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="T">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Service</th>
+                  <th>Provider</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Ref</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>18 Jun</td>
+                  <td>Passport Renewal</td>
+                  <td>eCitizen</td>
+                  <td>KES 4,500</td>
+                  <td><span class="B B-i">Processing</span></td>
+                  <td>P-449281</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('trackGovModal')">Track</button></td>
+                </tr>
+                <tr>
+                  <td>15 Jun</td>
+                  <td>Land Rates</td>
+                  <td>Nairobi County</td>
+                  <td>KES 42,300</td>
+                  <td><span class="B B-s">Paid</span></td>
+                  <td>CCN-772910</td>
+                  <td><button class="btn-pm btn-sm" onclick="openM('govReceiptModal')">Receipt</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M18: Dispute KRA -->
+  <div class="modal fade R" id="disputeKRAModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Dispute KRA Assessment
+          </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="FL">KRA PIN</label><select class="FC">
+              <option>C112233445W — JK Investments</option>
+            </select></div>
+          <div class="mb-3"><label class="FL">Assessment Ref</label><input class="FC" value="CGT-2025-6621"></div>
+          <div class="mb-3"><label class="FL">Dispute Reason</label><textarea class="FC"
+              rows="3">The capital gains calculation does not account for improvement costs of KES 1.2M incurred in 2023.</textarea>
+          </div>
+          <div class="mb-3"><label class="FL">Upload Supporting Documents</label><input type="file" class="FC"></div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+            class="btn-pm btn-pm-p"
+            onclick="doAction('disputeKRAModal','Dispute filed successfully. Case #KRA-DSP-99182 created.','KRA-DSP-99182')">Submit
+            Dispute</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M19: Profile -->
+  <div class="modal fade R" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+          <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+          <p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com · +254 712 345 890</p>
+          <div class="row g-2 text-start mt-3" style="font-size:13px">
+            <div class="col-6">
+              <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">KRA
+                  PINs</span><br><strong>4 linked</strong></div>
+            </div>
+            <div class="col-6">
+              <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                  class="text-muted">Compliance</span><br><strong style="color:var(--pm-accent)">94/100</strong></div>
+            </div>
+            <div class="col-6">
+              <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Member
+                  Since</span><br><strong>Mar 2022</strong></div>
+            </div>
+            <div class="col-6">
+              <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Open
+                  Cases</span><br><strong>2</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M20: Notif Modal -->
+  <div class="modal fade R" id="govNotifModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Government Notifications (9)</h5><button
+            class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="max-height:500px;overflow-y:auto">
+          <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>VAT return due
+              in 2 days</strong>
+            <div style="font-size:11px;color:#7F1D1D">P987654321Z · File before 05 Jul</div>
+          </div>
+          <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>CGT
+              overdue</strong>
+            <div style="font-size:11px;color:#92400E">C112233445W · Pay immediately</div>
+          </div>
+          <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Passport
+              application update</strong>
+            <div style="font-size:11px;color:#1E40AF">P-449281 · Biometric stage</div>
+          </div>
+          <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>Land rates
+              payment confirmed</strong>
+            <div style="font-size:11px;color:#065F46">Nairobi County · Receipt available</div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M21-M25: Additional supporting modals -->
+  <div class="modal fade R" id="taxOptimizerModal2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Tax Optimizer</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Additional optimization opportunities available.</p>
+        </div>
+        <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const flows = { kra: { current: 1, total: 4, labels: ['Obligation', 'Details', 'Confirm', 'Done'] }, file: { current: 1, total: 4, labels: ['Select', 'Upload', 'Submit', 'Done'] }, bulk: { current: 1, total: 3, labels: ['Upload', 'Validate', 'Done'] } };
+    function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+    function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+    function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+    function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+    function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+    function nextFlow(key, total) { const f = flows[key]; const modalMap = { kra: 'payKRAModal', file: 'fileReturnModal', bulk: 'bulkTaxModal' }; if (f.current === total - 1) { const body = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(body, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'kra') btn.innerHTML = 'Pay Now <i class="bi bi-lock"></i>'; else if (key === 'file') btn.innerHTML = 'Submit & Pay <i class="bi bi-send"></i>'; else btn.innerHTML = 'Execute <i class="bi bi-check-lg"></i>'; } }
+    function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+    function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+    function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+    document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+  </script>
+</body>
+
+</html>

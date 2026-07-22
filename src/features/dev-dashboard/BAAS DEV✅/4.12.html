@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Compliance, Audit & Regulatory Integration</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.5);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:rgba(79,70,229,0.2);box-shadow:var(--pm-shadow-md);border-left:3px solid var(--pm-primary)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #0F172A;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em;display:flex;align-items:center;gap:8px}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s;font-family:var(--pm-font-sans)}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-slate);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}
+.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}
+.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}
+.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}
+.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-dark{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}
+.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}
+.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}
+.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}
+.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}
+.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-badge-slate{background:#E2E8F0;color:#334155}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none;font-family:var(--pm-font-sans)}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}
+.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}
+.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}
+.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}
+.pm-btn-dark{background:#1E293B;color:#fff;border-color:#1E293B}
+.pm-btn-dark:hover{background:#0F172A;color:#fff}
+.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}
+.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}
+.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}
+.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}
+.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle;color:var(--pm-ink)}
+.pm-table tr:last-child td{border-bottom:none}
+.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}
+.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;font-family:var(--pm-font-sans)}
+.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px);color:var(--pm-primary)}
+.endpoint-card{padding:14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;cursor:pointer;transition:all .2s;position:relative}
+.endpoint-card:hover{border-color:var(--pm-primary);box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.endpoint-card .status-dot{position:absolute;top:14px;right:14px;width:8px;height:8px;border-radius:50%}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}
+.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px;background:var(--pm-surface-2);border-radius:0 0 var(--pm-r-lg) var(--pm-r-lg)}
+.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff;font-family:var(--pm-font-sans)}
+.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}
+.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}
+.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}
+.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}
+.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}
+.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}
+.pm-step.active .pm-step-label{color:var(--pm-primary)}
+.pm-step.completed .pm-step-label{color:var(--pm-accent)}
+.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}
+.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}
+.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-tab-pill:hover:not(.active){background:rgba(255,255,255,0.5)}
+.code-block{background:#0F172A;color:#E2E8F0;padding:16px;border-radius:var(--pm-r-md);font-family:monospace;font-size:12px;overflow-x:auto;position:relative}
+.code-block pre{margin:0}
+.code-copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.code-copy:hover{background:rgba(255,255,255,0.2)}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}
+.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--pm-border)}
+.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}
+.fade-step.active{display:block;animation:fadeIn .3s}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:inherit}
+.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}
+.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.api-method{font-family:monospace;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-right:8px}
+.api-get{background:#DBEAFE;color:#1D4ED8}
+.api-post{background:#D1FAE5;color:#047857}
+.api-put{background:#FEF3C7;color:#B45309}
+.api-del{background:#FEE2E2;color:#DC2626}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo" style="background:#1E293B;box-shadow:none;border:1px solid rgba(255,255,255,0.1)">
+  <i class="bi bi-code-slash text-white" style="font-size:20px"></i>
+</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dev Dashboard"><i class="bi bi-terminal"></i></button>
+<button class="pm-nav-item" title="API Reference"><i class="bi bi-journal-code"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-arrow-repeat"></i></button>
+<button class="pm-nav-item" title="Sandbox & Testing"><i class="bi bi-box"></i></button>
+<button class="pm-nav-item" title="Security & Auth"><i class="bi bi-shield-lock"></i></button>
+<button class="pm-nav-item active" title="Compliance & Audit"><i class="bi bi-file-earmark-check"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Monitoring"><i class="bi bi-activity"></i></button>
+</nav>
+<button class="pm-nav-item" title="Developer Support" style="margin-top:auto"><i class="bi bi-life-preserver"></i></button>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="background:var(--pm-primary);width:36px;height:36px;font-size:16px"><i class="bi bi-shield-check"></i></div>
+<div>
+<h1>Compliance & Regulatory APIs</h1>
+<p>Audit logging, CBK/KRA reporting, data privacy & ISO 20022/SWIFT standards</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search compliance tools, audit endpoints, logs, ISO docs...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('envSwitcherModal')" title="Environment"><i class="bi bi-hdd-network"></i></button>
+<button class="pm-header-btn" onclick="openModal('auditAlertsModal')" title="Compliance Alerts"><i class="bi bi-bell"></i><span class="counter">3</span></button>
+<button class="pm-header-btn" onclick="openModal('auditReportModal')" title="Generate Audit Report"><i class="bi bi-file-pdf"></i></button>
+<div class="pm-profile-btn" onclick="openModal('devProfileModal')">
+<div class="pm-avatar" style="background:#1E293B">DV</div>
+<div>
+<div class="pm-name">Dev Admin</div>
+<div class="pm-role">Prod Environment</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Developer Portal</a> / <a href="#">APIs</a> / <strong>Compliance & Audit</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.12 — Compliance, Audit & Regulatory Integration</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Integrate real-time regulatory reporting, manage immutable audit trails, and ensure strict compliance with KRA, CBK, and global standards (ISO 20022/SWIFT).</p>
+</div>
+<div class="d-flex flex-wrap gap-2">
+<button class="pm-btn" onclick="openModal('isoMessageModal')"><i class="bi bi-globe"></i> ISO 20022 Tester</button>
+<button class="pm-btn" onclick="openModal('dsarRequestModal')"><i class="bi bi-person-bounding-box"></i> DSAR API</button>
+<button class="pm-btn" onclick="openModal('kraEtimModal')"><i class="bi bi-receipt-cutoff"></i> KRA e-TIMS Check</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('genAuditTokenModal')"><i class="bi bi-key"></i> Audit Access Token</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:140px;border-left:4px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">COMPLIANCE HEALTH</p>
+<div class="pm-stat-value" style="margin:6px 0;color:var(--pm-ink)">100%</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Fully Compliant</span>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">CBK, KRA, ODPC checks passed</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-info)">AUDIT LOG ENTRIES (30D)</p>
+<div class="pm-stat-value" style="margin:6px 0">2.4M</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-shield-lock"></i> WORM Encrypted</span>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">Last synced: 2 mins ago</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:140px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">PENDING REG. FILINGS</p>
+<div class="pm-stat-value" style="margin:6px 0">2</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-clock"></i> Next due in 4 days</span>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">KRA DST, NSSF Tier II</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card pm-card-dark" style="min-height:140px">
+<p class="pm-stat-label" style="color:rgba(255,255,255,0.7)">API RATE LIMIT STATUS</p>
+<div class="pm-stat-value" style="margin:6px 0;color:#fff">Healthy</div>
+<span class="pm-badge pm-badge-slate"><i class="bi bi-activity"></i> 450 req/sec</span>
+<div class="pm-progress mt-2"><div class="pm-progress-bar" style="width:15%;background:var(--pm-accent)"></div></div>
+</div>
+</div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="row g-3">
+<!-- 4.12.1 Regulatory Reporting APIs -->
+<div class="col-lg-8">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-bank" style="color:var(--pm-primary)"></i> 4.12.1 — Regulatory Reporting APIs</h3>
+<div class="pm-tab-pills">
+<button class="pm-tab-pill active" onclick="switchMainTab('reg','cbk',this)">CBK & AML</button>
+<button class="pm-tab-pill" onclick="switchMainTab('reg','kra',this)">KRA & Taxes</button>
+<button class="pm-tab-pill" onclick="switchMainTab('reg','odpc',this)">Data Privacy (ODPC)</button>
+</div>
+</div>
+
+<div id="reg-cbk" class="tab-panel active">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Endpoints for Central Bank of Kenya reporting, Anti-Money Laundering (AML), and large transaction flagging.</p>
+<div class="endpoint-card mb-2" onclick="openModal('apiEndpointModal', 'cbkLarge')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/compliance/cbk/large-transaction</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Report transactions exceeding KES 1M equivalent to the Financial Reporting Centre (FRC).</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="endpoint-card mb-2" onclick="openModal('apiEndpointModal', 'cbkStr')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/compliance/cbk/str</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Submit Suspicious Transaction Reports (STR) algorithmically based on ML risk scoring.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="endpoint-card" onclick="openModal('apiEndpointModal', 'cbkKyc')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-get">GET</span> <strong style="font-family:monospace">/v1/compliance/kyc/pep-screening</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Screen entities against Politically Exposed Persons (PEP) and global sanction lists.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="mt-3 text-end"><button class="pm-btn pm-btn-sm" onclick="openModal('simulateCbkModal')">Simulate AML Trigger</button></div>
+</div>
+
+<div id="reg-kra" class="tab-panel">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Tax compliance integrations for e-TIMS, PAYE, and automated VAT reporting.</p>
+<div class="endpoint-card mb-2" onclick="openModal('kraEtimModal')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/tax/kra/e-tims/invoice</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Push B2B/B2C invoice data directly to KRA e-TIMS and return certified QR/receipt numbers.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="endpoint-card mb-2" onclick="openModal('apiEndpointModal', 'kraPaye')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/tax/kra/paye/submit</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Submit automated monthly PAYE returns from payroll module to iTax.</div>
+</div>
+<span class="pm-badge pm-badge-warning">Maintenance at 10 PM</span>
+</div>
+</div>
+<div class="endpoint-card" onclick="openModal('apiEndpointModal', 'kraWht')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/tax/kra/wht/certificate</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Generate and remit Withholding Tax certificates for supplier payments.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+</div>
+
+<div id="reg-odpc" class="tab-panel">
+<p style="font-size:13px;color:var(--pm-ink-soft)">APIs mapped to Data Protection Act 2019 (Kenya) requirements.</p>
+<div class="endpoint-card mb-2" onclick="openModal('dsarRequestModal')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-post">POST</span> <strong style="font-family:monospace">/v1/privacy/dsar/request</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Initiate Data Subject Access Request (DSAR). Compiles complete JSON of user data footprint.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="endpoint-card mb-2" onclick="openModal('apiEndpointModal', 'odpcErase')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-del">DEL</span> <strong style="font-family:monospace">/v1/privacy/data/erase</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Execute right to erasure (Right to be Forgotten) across non-immutable financial stores.</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+<div class="endpoint-card" onclick="openModal('apiEndpointModal', 'odpcConsent')">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<div class="d-flex align-items-center mb-1"><span class="api-method api-put">PUT</span> <strong style="font-family:monospace">/v1/privacy/consent/update</strong></div>
+<div style="font-size:12px;color:var(--pm-muted)">Manage granular user consent flags (marketing, profiling, third-party sharing).</div>
+</div>
+<span class="pm-badge pm-badge-success">Operational</span>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Quick Actions & Links -->
+<div class="col-lg-4">
+<div class="pm-card h-100">
+<h3 class="pm-section-title mb-3">Quick Tools</h3>
+<div class="quick-action-grid mb-4">
+<button class="quick-action-btn" onclick="openModal('genAuditTokenModal')"><i class="bi bi-key text-warning me-1"></i> Audit Token</button>
+<button class="quick-action-btn" onclick="openModal('isoMessageModal')"><i class="bi bi-file-code text-info me-1"></i> MX Validator</button>
+<button class="quick-action-btn" onclick="openModal('swiftRouteModal')"><i class="bi bi-send text-primary me-1"></i> SWIFT Route</button>
+<button class="quick-action-btn" onclick="openModal('openBankingModal')"><i class="bi bi-unlock text-success me-1"></i> OB Consent</button>
+<button class="quick-action-btn" onclick="openModal('auditReportModal')"><i class="bi bi-cloud-download text-danger me-1"></i> Export Logs</button>
+<button class="quick-action-btn" onclick="openModal('complianceDashModal')"><i class="bi bi-speedometer text-purple me-1" style="color:var(--pm-purple)"></i> Dashboard</button>
+</div>
+
+<div class="utility-block">
+<h4 style="font-size:13px;font-weight:700;margin:0 0 10px">Documentation Hub</h4>
+<div class="feed-item py-2"><i class="bi bi-journal-text text-muted"></i> <a href="#" onclick="openModal('docViewerModal')" style="font-size:13px;font-weight:500;color:var(--pm-primary);text-decoration:none">KYC/AML Implementation Guide</a></div>
+<div class="feed-item py-2"><i class="bi bi-journal-text text-muted"></i> <a href="#" onclick="openModal('docViewerModal')" style="font-size:13px;font-weight:500;color:var(--pm-primary);text-decoration:none">Data Privacy Compliance Checklist</a></div>
+<div class="feed-item py-2"><i class="bi bi-journal-text text-muted"></i> <a href="#" onclick="openModal('docViewerModal')" style="font-size:13px;font-weight:500;color:var(--pm-primary);text-decoration:none">KRA e-TIMS API Spec v2.1</a></div>
+</div>
+
+</div>
+</div>
+</div> <!-- end row -->
+
+<div class="row g-3">
+<!-- 4.12.2 Audit & Compliance Tools -->
+<div class="col-lg-6">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-shield-check" style="color:var(--pm-accent)"></i> 4.12.2 — Audit & Compliance Tools</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('auditLogsModal')">View Logs</button>
+</div>
+<div class="p-3 border rounded mb-3" style="background:var(--pm-surface-2)">
+<div class="d-flex align-items-center justify-content-between mb-2">
+<div style="font-weight:600;font-size:14px">Immutable Audit Trail (WORM)</div>
+<span class="pm-badge pm-badge-success">Active</span>
+</div>
+<p style="font-size:12px;color:var(--pm-muted);margin-bottom:12px">All transaction states, configuration changes, and access logs are written to a Write-Once-Read-Many datastore. Tamper-evident verification is available via API.</p>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm" onclick="openModal('verifyLogModal')"><i class="bi bi-check-circle"></i> Verify Hash</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('thirdPartyAuditModal')"><i class="bi bi-people"></i> Auditor Portal</button>
+</div>
+</div>
+<h4 style="font-size:13px;font-weight:700;margin:0 0 10px">Recent System Audit Events</h4>
+<div class="feed-item py-2">
+<div class="pm-icon-circle" style="width:32px;height:32px;background:var(--pm-primary-soft);color:var(--pm-primary)"><i class="bi bi-key" style="font-size:14px"></i></div>
+<div style="flex:1"><div style="font-weight:600;font-size:12px">API Key Rotated</div><div style="font-size:11px;color:var(--pm-muted)">User: dev.admin@paymo.co.ke · IP: 197.232.x.x</div></div>
+<div style="font-size:11px;color:var(--pm-muted)">10 mins ago</div>
+</div>
+<div class="feed-item py-2">
+<div class="pm-icon-circle" style="width:32px;height:32px;background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-person-x" style="font-size:14px"></i></div>
+<div style="flex:1"><div style="font-weight:600;font-size:12px">Failed Login Attempt (x5)</div><div style="font-size:11px;color:var(--pm-muted)">Account: system.hook@paymo.co.ke · IP: 41.220.x.x</div></div>
+<div style="font-size:11px;color:var(--pm-muted)">1 hr ago</div>
+</div>
+<div class="feed-item py-2">
+<div class="pm-icon-circle" style="width:32px;height:32px;background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-gear" style="font-size:14px"></i></div>
+<div style="flex:1"><div style="font-weight:600;font-size:12px">Webhook URL Changed</div><div style="font-size:11px;color:var(--pm-muted)">Event: payout.completed · User: j.doe@company.com</div></div>
+<div style="font-size:11px;color:var(--pm-muted)">4 hrs ago</div>
+</div>
+</div>
+</div>
+
+<!-- 4.12.3 International Standards -->
+<div class="col-lg-6">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-globe" style="color:var(--pm-purple)"></i> 4.12.3 — International Standards</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('isoDocsModal')">Standards Docs</button>
+</div>
+
+<div class="row g-3">
+<div class="col-12">
+<div class="utility-block" style="border-left:3px solid var(--pm-primary)">
+<div class="d-flex justify-content-between">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 4px">ISO 20022 Messaging</h4>
+<span class="pm-badge pm-badge-success">Enabled</span>
+</div>
+<p style="font-size:12px;color:var(--pm-muted);margin-bottom:8px">API support for standardized financial messaging formats.</p>
+<div class="d-flex gap-2 flex-wrap">
+<span class="pm-badge pm-badge-slate">pain.001 (Init)</span>
+<span class="pm-badge pm-badge-slate">pain.002 (Status)</span>
+<span class="pm-badge pm-badge-slate">camt.052/053 (Reports)</span>
+</div>
+<div class="mt-2"><button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('isoMessageModal')">Validate Payload</button></div>
+</div>
+</div>
+
+<div class="col-12">
+<div class="utility-block" style="border-left:3px solid var(--pm-warning)">
+<div class="d-flex justify-content-between">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 4px">SWIFT & Cross-Border</h4>
+<span class="pm-badge pm-badge-success">Enabled</span>
+</div>
+<p style="font-size:12px;color:var(--pm-muted);margin-bottom:8px">Integration for SWIFT gpi tracking, MT103 generation, and correspondent routing.</p>
+<div class="d-flex gap-2 mt-2">
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('swiftRouteModal')">Route Check</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('gpiTrackerModal')">gpi Tracker</button>
+</div>
+</div>
+</div>
+
+<div class="col-12">
+<div class="utility-block" style="border-left:3px solid var(--pm-accent)">
+<div class="d-flex justify-content-between">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 4px">Open Banking (PSD2/Kenya)</h4>
+<span class="pm-badge pm-badge-success">Compliant</span>
+</div>
+<p style="font-size:12px;color:var(--pm-muted);margin-bottom:8px">AIS (Account Info), PIS (Payment Initiation), and strict SCA implementation.</p>
+<div class="d-flex gap-2 mt-2">
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('openBankingModal')">Consent Mgmt API</button>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('scaSettingsModal')">SCA Rules</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div> <!-- end row -->
+
+</div> <!-- end pm-content -->
+</div> <!-- end pm-main -->
+</div> <!-- end pm-app -->
+
+
+<!-- ============================================================ -->
+<!-- MODALS (20+ unique comprehensive modals) -->
+<!-- ============================================================ -->
+
+<!-- 1. API Endpoint Inspector Modal -->
+<div class="modal fade resettable" id="apiEndpointModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title" id="apiModalTitle"><i class="bi bi-terminal me-2"></i>API Endpoint Explorer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-tab-pills mb-3">
+<button class="pm-tab-pill active" onclick="switchTab('epTab','req',this)">Request</button>
+<button class="pm-tab-pill" onclick="switchTab('epTab','res',this)">Response</button>
+<button class="pm-tab-pill" onclick="switchTab('epTab','auth',this)">Auth & Scopes</button>
+</div>
+<div id="epTab-req" class="tab-panel active">
+<div class="d-flex align-items-center mb-3"><span class="api-method api-post" id="apiModalMethod">POST</span><input type="text" class="pm-form-control" id="apiModalUrl" value="https://api.paymo.co.ke/v1/compliance/cbk/large-transaction" readonly style="font-family:monospace;background:var(--pm-surface-2)"></div>
+<label class="pm-form-label">Payload Schema (JSON)</label>
+<div class="code-block">
+<button class="code-copy"><i class="bi bi-clipboard"></i></button>
+<pre><code>{
+  "transaction_id": "string",
+  "amount_kes": "decimal",
+  "sender_details": {
+    "name": "string",
+    "id_number": "string",
+    "kyc_tier": "integer"
+  },
+  "recipient_details": {
+    "name": "string",
+    "account_number": "string",
+    "bank_code": "string"
+  },
+  "purpose_code": "string"
+}</code></pre></div>
+</div>
+<div id="epTab-res" class="tab-panel">
+<label class="pm-form-label">Success Response (201 Created)</label>
+<div class="code-block">
+<pre><code>{
+  "status": "success",
+  "data": {
+    "frc_reference": "FRC-2025-88491A",
+    "submitted_at": "2025-06-27T10:45:00Z",
+    "risk_score": 12
+  }
+}</code></pre></div>
+<label class="pm-form-label mt-3">Error Responses</label>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Code</th><th>Reason</th></tr></thead><tbody><tr><td>400</td><td>Validation Error (e.g. missing ID number)</td></tr><tr><td>401</td><td>Unauthorized / Invalid Signature</td></tr><tr><td>403</td><td>Forbidden / Missing Scope</td></tr></tbody></table></div>
+</div>
+<div id="epTab-auth" class="tab-panel">
+<div class="p-3 border rounded mb-3">
+<h6 style="font-size:13px;font-weight:700">Authentication Required</h6>
+<p style="font-size:12px;color:var(--pm-muted)">This endpoint requires OAuth 2.0 Client Credentials flow with a signed JWT or HMAC-SHA256 payload signature.</p>
+<div class="d-flex gap-2"><span class="pm-badge pm-badge-purple">Bearer Token</span><span class="pm-badge pm-badge-info">HMAC Signature</span></div>
+</div>
+<div class="p-3 border rounded">
+<h6 style="font-size:13px;font-weight:700">Required OAuth Scopes</h6>
+<ul style="font-size:12px;color:var(--pm-muted);margin:0;padding-left:16px">
+<li><code>compliance:write</code></li>
+<li><code>transactions:read</code></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('simulateCbkModal')">Test in Sandbox</button></div>
+</div></div></div>
+
+<!-- 2. Simulate CBK / AML Trigger Modal (Multistep) -->
+<div class="modal fade resettable" id="simulateCbkModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-exclamation text-warning me-2"></i>Simulate CBK / AML Trigger</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="cbkStepper"></div>
+<div id="cbkStep1" class="fade-step active">
+<h6 style="font-weight:700;margin-bottom:16px">Step 1: Configure Transaction Params</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Transaction Amount (KES)</label><input class="pm-form-control" value="1500000"></div>
+<div class="col-md-6"><label class="pm-form-label">Scenario Type</label><select class="pm-form-control"><option>Large Transaction (>1M)</option><option>Structuring / Smurfing</option><option>High-Risk Jurisdiction</option><option>PEP Match</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Sender Name</label><input class="pm-form-control" value="John Doe Test"></div>
+<div class="col-md-6"><label class="pm-form-label">Destination Country</label><select class="pm-form-control"><option>Kenya (Local)</option><option>Uganda</option><option>UAE</option><option>Cayman Islands</option></select></div>
+</div>
+</div>
+<div id="cbkStep2" class="fade-step">
+<h6 style="font-weight:700;margin-bottom:16px">Step 2: Generate Payload & Hash</h6>
+<div class="code-block mb-3" style="max-height:200px"><pre><code>{
+  "tx_ref": "SIM-8849-221A",
+  "amount": 1500000.00,
+  "currency": "KES",
+  "sender": "John Doe Test",
+  "destination": "KE",
+  "type": "B2B_TRANSFER"
+}</code></pre></div>
+<div class="mb-3"><label class="pm-form-label">HMAC-SHA256 Signature (Auto-generated)</label><input class="pm-form-control" value="a8b9c7d6e5f4g3h2i1j0k9l8m7n6o5p4q3r2s1t0" readonly style="font-family:monospace;background:var(--pm-surface-2)"></div>
+</div>
+<div id="cbkStep3" class="fade-step">
+<div class="pm-receipt">
+<div class="receipt-icon" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-shield-exclamation"></i></div>
+<h5 style="font-weight:700;color:var(--pm-warning)">AML Alert Triggered Successfully (Sandbox)</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft)">The simulation successfully hit the rule engine. A mock STR report has been generated.</p>
+<div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Rule Triggered</span><strong>Rule 14A (Large Txn)</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Risk Score</span><strong>85 / 100</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Action Taken</span><strong style="color:var(--pm-danger)">Transaction Frozen</strong></div>
+<div class="d-flex justify-content-between"><span class="text-muted">FRC Mock Ref</span><strong style="font-family:monospace">FRC-MOCK-9912</strong></div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-footer" id="cbkFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="cbkNextBtn" onclick="nextCbkStep()">Next Step <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- 3. KRA e-TIMS Check Modal -->
+<div class="modal fade resettable" id="kraEtimModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt-cutoff text-success me-2"></i>KRA e-TIMS Validator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Invoice Number</label><input class="pm-form-control" value="INV-2025-0899"></div>
+<div class="mb-3"><label class="pm-form-label">Gross Amount (KES)</label><input class="pm-form-control" value="45000"></div>
+<div class="mb-3"><label class="pm-form-label">Tax Category</label><select class="pm-form-control"><option>16% VAT</option><option>8% VAT</option><option>Zero Rated</option><option>Exempt</option></select></div>
+<div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px">
+This tool simulates posting an invoice payload to the KRA e-TIMS middleware and generates a mock CU (Control Unit) invoice number and QR string.
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success" style="background:#047857;color:#fff" onclick="processAction('kraEtimModal','e-TIMS Mock Generation Successful!','CU Num: 0011223344/20250627/0001')">Simulate e-TIMS Post</button></div>
+</div></div></div>
+
+<!-- 4. DSAR Request Modal -->
+<div class="modal fade resettable" id="dsarRequestModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-bounding-box text-purple me-2" style="color:var(--pm-purple)"></i>Initiate DSAR (ODPC)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Simulate a Data Subject Access Request as per the Kenya Data Protection Act 2019.</p>
+<div class="mb-3"><label class="pm-form-label">Customer ID or Phone</label><input class="pm-form-control" placeholder="e.g. 254712345678 or UUID"></div>
+<div class="mb-3"><label class="pm-form-label">Request Type</label><select class="pm-form-control"><option>Full Data Export (JSON)</option><option>Right to Erasure (Delete)</option><option>Consent Review</option></select></div>
+<div class="form-check mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Trigger asynchronous compilation (Callback Webhook)</label></div>
+<div class="mb-3"><label class="pm-form-label">Webhook URL for delivery</label><input class="pm-form-control" value="https://api.yourdomain.com/webhooks/dsar"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('dsarRequestModal','DSAR compilation job started. Webhook will fire upon completion.','Job ID: DSAR-8812-X')">Initiate Request</button></div>
+</div></div></div>
+
+<!-- 5. Generate Audit Token Modal -->
+<div class="modal fade resettable" id="genAuditTokenModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-key text-warning me-2"></i>Generate Auditor Token</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Create a time-bound, read-only JWT token for external auditors to access the immutable log API.</p>
+<div class="mb-3"><label class="pm-form-label">Auditor Name / Firm</label><input class="pm-form-control" placeholder="e.g. KPMG, PwC, Internal Audit"></div>
+<div class="mb-3"><label class="pm-form-label">Expiration Date</label><input type="datetime-local" class="pm-form-control" value="2025-07-04T17:00"></div>
+<div class="mb-3"><label class="pm-form-label">Allowed Scopes</label>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label" style="font-size:13px"><code>audit:read</code></label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px"><code>transactions:read</code></label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px"><code>kyc:read</code></label></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">IP Whitelist (Optional)</label><input class="pm-form-control" placeholder="e.g. 192.168.1.1/32"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('genAuditTokenModal','Token Generated! Provide this securely to the auditor.','Token begins: eyJhbGciOiJIUzI1...')">Generate JWT</button></div>
+</div></div></div>
+
+<!-- 6. View Audit Logs Modal -->
+<div class="modal fade resettable" id="auditLogsModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-list-columns me-2"></i>Immutable Audit Logs Explorer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex gap-2 mb-3 flex-wrap">
+<input type="text" class="pm-form-control" style="width:200px" placeholder="Search event, user, IP...">
+<select class="pm-form-control" style="width:auto"><option>All Event Types</option><option>Auth & Access</option><option>API Configuration</option><option>Transactions</option><option>Data Deletion</option></select>
+<select class="pm-form-control" style="width:auto"><option>Last 24 Hours</option><option>Last 7 Days</option><option>Last 30 Days</option></select>
+<button class="pm-btn"><i class="bi bi-funnel"></i> Filter</button>
+</div>
+<div class="table-responsive" style="max-height:400px;overflow-y:auto">
+<table class="pm-table">
+<thead><tr><th>Timestamp (UTC)</th><th>Event ID</th><th>Event Type</th><th>Actor / Service</th><th>IP Address</th><th>Hash Valid</th></tr></thead>
+<tbody>
+<tr><td>2025-06-27 10:45:12</td><td><code>evt_889a</code></td><td>Webhook Updated</td><td>j.doe@company.com</td><td>41.220.x.x</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2025-06-27 09:12:05</td><td><code>evt_889b</code></td><td>API Key Rotated</td><td>dev.admin@paymo</td><td>197.232.x.x</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2025-06-27 08:30:00</td><td><code>evt_889c</code></td><td>DSAR Requested</td><td>system.compliance</td><td>10.0.1.45</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2025-06-26 23:59:59</td><td><code>evt_889d</code></td><td>Daily Settlement Exec</td><td>worker.settlement</td><td>10.0.1.22</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2025-06-26 15:20:11</td><td><code>evt_889e</code></td><td>Failed Login (x5)</td><td>unknown</td><td>8.8.8.8</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2025-06-26 11:10:00</td><td><code>evt_889f</code></td><td>CBK Large Txn Report</td><td>system.aml</td><td>10.0.1.50</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:11px;color:var(--pm-muted);margin-top:10px"><i class="bi bi-shield-lock me-1"></i> Logs are stored in an append-only AWS QLDB ledger. Tampering is mathematically impossible without breaking the hash chain.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('auditReportModal')">Export Log Batch</button></div>
+</div></div></div>
+
+<!-- 7. Verify Log Hash Modal -->
+<div class="modal fade resettable" id="verifyLogModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Verify Tamper-Evident Hash</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Event ID or Block Hash</label><input class="pm-form-control" value="evt_889a"></div>
+<div class="code-block mb-3"><pre><code>{
+  "event_id": "evt_889a",
+  "previous_hash": "e3b0c44298fc1c14...",
+  "payload_hash": "8d969eef6ecad3c2...",
+  "signature": "3045022100a1b2..."
+}</code></pre></div>
+<button class="pm-btn pm-btn-dark w-100 mb-3" onclick="this.innerHTML='<i class=\'bi bi-check-circle\'></i> Hash Chain Verified! The block is cryptographically sound.'; this.classList.replace('pm-btn-dark','pm-btn-success'); this.style.background='#047857'">Run Verification Algorithm</button>
+<p style="font-size:12px;color:var(--pm-muted);text-align:center">This tool pulls the Merkle proof for the specified event from the ledger and recalculates the hash chain locally.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 8. Auditor Portal / Third Party Audit Modal -->
+<div class="modal fade resettable" id="thirdPartyAuditModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-people text-info me-2"></i>Third-Party Auditor Management</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h6 style="font-weight:700;margin:0">Active Auditor Sessions</h6>
+<button class="pm-btn pm-btn-sm" onclick="openModal('genAuditTokenModal')"><i class="bi bi-plus"></i> New Auditor</button>
+</div>
+<div class="status-row"><div><strong>KPMG System Audit 2025</strong><div style="font-size:11px;color:var(--pm-muted)">Token ending in ...A9F2 · Expires 04 Jul</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Revoke</button></div>
+<div class="status-row"><div><strong>CBK Inspection Team</strong><div style="font-size:11px;color:var(--pm-muted)">Token ending in ...B4E1 · Expires 30 Jun</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Revoke</button></div>
+<hr class="pm-divider">
+<h6 style="font-weight:700;margin-bottom:12px">Pre-built Query Templates</h6>
+<div class="d-flex flex-wrap gap-2">
+<span class="pm-badge pm-badge-slate" style="cursor:pointer">Q2 AML Reports</span>
+<span class="pm-badge pm-badge-slate" style="cursor:pointer">Failed Logins > 5</span>
+<span class="pm-badge pm-badge-slate" style="cursor:pointer">Admin Role Changes</span>
+<span class="pm-badge pm-badge-slate" style="cursor:pointer">Data Deletions</span>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 9. ISO 20022 Tester Modal (Multistep) -->
+<div class="modal fade resettable" id="isoMessageModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe me-2"></i>ISO 20022 Message Validator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="isoStepper"></div>
+<div id="isoStep1" class="fade-step active">
+<h6 style="font-weight:700;margin-bottom:16px">Step 1: Select Message Type</h6>
+<div class="row g-3">
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)" onclick="selectBox(this)"><strong style="font-size:14px">pain.001</strong><div style="font-size:11px;color:var(--pm-muted)">Customer Credit Transfer Initiation</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><strong style="font-size:14px">pain.002</strong><div style="font-size:11px;color:var(--pm-muted)">Payment Status Report</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><strong style="font-size:14px">camt.053</strong><div style="font-size:11px;color:var(--pm-muted)">Bank to Customer Statement</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectBox(this)"><strong style="font-size:14px">pacs.008</strong><div style="font-size:11px;color:var(--pm-muted)">FIToFI Customer Credit Transfer</div></div></div>
+</div>
+</div>
+<div id="isoStep2" class="fade-step">
+<h6 style="font-weight:700;margin-bottom:16px">Step 2: Input XML Payload</h6>
+<textarea class="pm-form-control" style="font-family:monospace;font-size:11px" rows="10">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03"&gt;
+  &lt;CstmrCdtTrfInitn&gt;
+    &lt;GrpHdr&gt;
+      &lt;MsgId&gt;MSG-20250627-001&lt;/MsgId&gt;
+      &lt;CreDtTm&gt;2025-06-27T10:00:00Z&lt;/CreDtTm&gt;
+      &lt;NbOfTxs&gt;1&lt;/NbOfTxs&gt;
+      &lt;InitgPty&gt;&lt;Nm&gt;PayMo Ltd&lt;/Nm&gt;&lt;/InitgPty&gt;
+    &lt;/GrpHdr&gt;
+    &lt;!-- Simplified payload for demo --&gt;
+  &lt;/CstmrCdtTrfInitn&gt;
+&lt;/Document&gt;</textarea>
+</div>
+<div id="isoStep3" class="fade-step">
+<div class="pm-receipt">
+<div class="receipt-icon"><i class="bi bi-check-all"></i></div>
+<h5 style="font-weight:700;color:var(--pm-accent)">XSD Schema Validation Passed</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft)">The submitted XML complies perfectly with the urn:iso:std:iso:20022:tech:xsd:pain.001.001.03 specification.</p>
+<div class="table-responsive mt-3"><table class="pm-table"><thead><tr><th>Rule Checked</th><th>Status</th></tr></thead><tbody><tr><td>Well-formed XML</td><td><i class="bi bi-check-circle text-success"></i> Passed</td></tr><tr><td>Root Namespace</td><td><i class="bi bi-check-circle text-success"></i> Passed</td></tr><tr><td>Mandatory Elements</td><td><i class="bi bi-check-circle text-success"></i> Passed</td></tr><tr><td>Data Types</td><td><i class="bi bi-check-circle text-success"></i> Passed</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+<div class="modal-footer" id="isoFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="isoNextBtn" onclick="nextIsoStep()">Next Step <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- 10. SWIFT Route Check Modal -->
+<div class="modal fade resettable" id="swiftRouteModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-send text-primary me-2"></i>SWIFT Routing & BIC Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Destination BIC/SWIFT Code</label><input class="pm-form-control" value="CHASKE2X" style="text-transform:uppercase"></div>
+<div class="mb-3"><label class="pm-form-label">Currency</label><select class="pm-form-control"><option>USD</option><option>EUR</option><option>GBP</option><option>KES</option></select></div>
+<button class="pm-btn pm-btn-dark w-100 mb-3" onclick="document.getElementById('swiftResult').style.display='block'">Check Route via API</button>
+<div id="swiftResult" style="display:none">
+<div class="p-3 rounded" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-2"><span>Institution</span><strong>JPMorgan Chase Bank, NA (Kenya)</strong></div>
+<div class="d-flex justify-content-between mb-2"><span>Branch</span><strong>Nairobi Branch</strong></div>
+<div class="d-flex justify-content-between mb-2"><span>Status</span><span class="pm-badge pm-badge-success">Active Participant</span></div>
+<div class="d-flex justify-content-between"><span>gpi Support</span><span class="pm-badge pm-badge-success">Enabled</span></div>
+<hr class="pm-divider">
+<div style="font-size:11px;color:var(--pm-muted)"><i class="bi bi-info-circle"></i> Direct correspondent route available for USD. Expected settlement time: T+0.</div>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 11. SWIFT gpi Tracker Modal -->
+<div class="modal fade resettable" id="gpiTrackerModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-search me-2"></i>SWIFT gpi UETR Tracker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Unique End-to-end Transaction Ref (UETR)</label><input class="pm-form-control" value="123e4567-e89b-12d3-a456-426614174000"></div>
+<button class="pm-btn pm-btn-dark w-100 mb-3" onclick="document.getElementById('gpiResult').style.display='block'">Query Network</button>
+<div id="gpiResult" style="display:none">
+<div class="pm-stepper flex-column align-items-start mt-3" style="gap:16px">
+<div class="pm-step completed w-100"><div class="pm-step-num"><i class="bi bi-check"></i></div><div><div class="pm-step-label" style="font-size:13px;color:var(--pm-ink)">Initiated by PayMo</div><div style="font-size:11px;color:var(--pm-muted)">27 Jun, 09:00 UTC</div></div></div>
+<div class="pm-step completed w-100"><div class="pm-step-num"><i class="bi bi-check"></i></div><div><div class="pm-step-label" style="font-size:13px;color:var(--pm-ink)">Processed by Intermediary (CITI)</div><div style="font-size:11px;color:var(--pm-muted)">27 Jun, 09:12 UTC · Fees deducted: $15</div></div></div>
+<div class="pm-step active w-100"><div class="pm-step-num"><div class="spinner-border spinner-border-sm" style="width:12px;height:12px"></div></div><div><div class="pm-step-label" style="font-size:13px;color:var(--pm-ink)">At Beneficiary Bank (Barclays UK)</div><div style="font-size:11px;color:var(--pm-muted)">Pending credit to account</div></div></div>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 12. Open Banking Consent Mgmt Modal -->
+<div class="modal fade resettable" id="openBankingModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-unlock text-success me-2"></i>Open Banking Consent API</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Manage Third-Party Provider (TPP) consents under PSD2 / Kenya Open Banking standards.</p>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>TPP Name</th><th>Consent Type</th><th>Status</th><th>Expires</th><th>Action</th></tr></thead><tbody>
+<tr><td>Mint PFM App</td><td>Account Info (AIS)</td><td><span class="pm-badge pm-badge-success">Active</span></td><td>25 Sep 2025</td><td><button class="pm-btn pm-btn-sm pm-btn-danger">Revoke</button></td></tr>
+<tr><td>Xero Accounting</td><td>Account Info (AIS)</td><td><span class="pm-badge pm-badge-success">Active</span></td><td>10 Aug 2025</td><td><button class="pm-btn pm-btn-sm pm-btn-danger">Revoke</button></td></tr>
+<tr><td>Stripe Payments</td><td>Payment Init (PIS)</td><td><span class="pm-badge pm-badge-warning">Expired</span></td><td>01 Jun 2025</td><td><button class="pm-btn pm-btn-sm">Renew</button></td></tr>
+</tbody></table></div>
+<hr class="pm-divider">
+<h6 style="font-weight:700">Simulate Consent Flow URL generation</h6>
+<div class="code-block mt-2"><pre><code>POST /v1/open-banking/consent/request
+{
+  "tpp_id": "TPP-49112",
+  "scope": ["accounts.read", "balances.read"],
+  "redirect_uri": "https://tpp.app/callback"
+}</code></pre></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 13. SCA Settings Modal -->
+<div class="modal fade resettable" id="scaSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Strong Customer Auth (SCA) Rules</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Configure API-level exemptions and triggers for Multi-Factor Authentication.</p>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Require SCA for all Payment Initiations (PIS)</label></div>
+<div class="mb-3"><label class="pm-form-label">Low Value Exemption Threshold (KES)</label><input class="pm-form-control" value="3000"><div style="font-size:11px;color:var(--pm-muted)">Transactions below this bypass SCA if combined sum < 15,000 KES.</div></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Trusted Beneficiary Exemption</label></div>
+<div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Corporate Payment Exemption (Secure Corp Protocol)</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scaSettingsModal','SCA Exemption rules updated!','')">Save Configuration</button></div>
+</div></div></div>
+
+<!-- 14. Audit Report Export Modal -->
+<div class="modal fade resettable" id="auditReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-pdf text-danger me-2"></i>Export Compliance & Audit Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Report Category</label><select class="pm-form-control"><option>System Access & Auth Logs</option><option>Transaction Audit Trail</option><option>CBK / AML Exception Report</option><option>Data Deletion / DSAR Log</option></select></div>
+<div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">Date From</label><input type="date" class="pm-form-control" value="2025-06-01"></div><div class="col-6"><label class="pm-form-label">Date To</label><input type="date" class="pm-form-control" value="2025-06-27"></div></div>
+<div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>PDF (Signed)</option><option>CSV</option><option>JSON (Machine readable)</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Include cryptographic Merkle proofs in export</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('auditReportModal','Report compiled and downloading securely...','')"><i class="bi bi-download"></i> Generate Export</button></div>
+</div></div></div>
+
+<!-- 15. Compliance Dashboard Modal -->
+<div class="modal fade resettable" id="complianceDashModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer text-purple me-2" style="color:var(--pm-purple)"></i>Compliance Command Center Overview</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-4"><div class="p-3 border rounded h-100"><h6 style="font-size:12px;font-weight:700;color:var(--pm-muted)">CBK AML STATUS</h6><div style="font-size:24px;font-weight:700;color:var(--pm-accent)">100% OK</div><div style="font-size:12px;margin-top:4px">No unreviewed STRs</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded h-100"><h6 style="font-size:12px;font-weight:700;color:var(--pm-muted)">KRA FILINGS</h6><div style="font-size:24px;font-weight:700;color:var(--pm-warning)">1 PENDING</div><div style="font-size:12px;margin-top:4px">Digital Services Tax due 20th</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded h-100"><h6 style="font-size:12px;font-weight:700;color:var(--pm-muted)">ODPC DSAR Queue</h6><div style="font-size:24px;font-weight:700;color:var(--pm-primary)">0 OPEN</div><div style="font-size:12px;margin-top:4px">All data requests fulfilled within SLA</div></div></div>
+</div>
+<h6 style="font-weight:700;margin-top:20px;margin-bottom:12px">Filing Calendar</h6>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Regulation / Authority</th><th>Filing Type</th><th>Deadline</th><th>Status</th></tr></thead><tbody>
+<tr><td>KRA</td><td>PAYE (P10)</td><td>09 Jul 2025</td><td><span class="pm-badge pm-badge-success">Automated</span></td></tr>
+<tr><td>KRA</td><td>Digital Services Tax</td><td>20 Jul 2025</td><td><span class="pm-badge pm-badge-warning">Pending Review</span></td></tr>
+<tr><td>NSSF</td><td>Tier I & II</td><td>09 Jul 2025</td><td><span class="pm-badge pm-badge-success">Automated</span></td></tr>
+<tr><td>CBK</td><td>Monthly CBK-PR Report</td><td>15 Jul 2025</td><td><span class="pm-badge pm-badge-info">Generating</span></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 16. Environment Switcher Modal -->
+<div class="modal fade resettable" id="envSwitcherModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-hdd-network me-2"></i>Switch Environment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 border rounded mb-2" style="cursor:pointer" onclick="selectBox(this)">
+<div class="d-flex justify-content-between align-items-center">
+<div><strong style="font-size:14px"><i class="bi bi-box me-1 text-muted"></i> Sandbox Environment</strong><div style="font-size:11px;color:var(--pm-muted)">Test mode with simulated API responses</div></div>
+</div>
+</div>
+<div class="p-3 border rounded mb-2" style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)" onclick="selectBox(this)">
+<div class="d-flex justify-content-between align-items-center">
+<div><strong style="font-size:14px"><i class="bi bi-server me-1 text-primary"></i> Production Environment</strong><div style="font-size:11px;color:var(--pm-muted)">Live data, real money movement, real reports</div></div>
+<span class="pm-badge pm-badge-success">Active</span>
+</div>
+</div>
+<div class="p-3 border rounded" style="cursor:pointer" onclick="selectBox(this)">
+<div class="d-flex justify-content-between align-items-center">
+<div><strong style="font-size:14px"><i class="bi bi-shield-check me-1 text-purple" style="color:var(--pm-purple)"></i> Dedicated Audit Environment</strong><div style="font-size:11px;color:var(--pm-muted)">Read-only mirror for third-party auditors</div></div>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('envSwitcherModal','Environment context switched successfully.','')">Switch Context</button></div>
+</div></div></div>
+
+<!-- 17. Audit Alerts Modal -->
+<div class="modal fade resettable" id="auditAlertsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Compliance & Audit Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:400px;overflow-y:auto">
+<div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><i class="bi bi-exclamation-triangle text-warning me-1"></i> <strong>Missing KYC document detected</strong> — User ID usr_8819 requires updated KRA PIN.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 hours ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><i class="bi bi-shield-x text-danger me-1"></i> <strong>Multiple failed authentication attempts</strong> — Admin user locked out temporarily.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">5 hours ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><i class="bi bi-info-circle text-info me-1"></i> <strong>Audit Token Expiry</strong> — KPMG Audit token expires in 3 days.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">1 day ago</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 18. Doc Viewer Modal -->
+<div class="modal fade resettable" id="docViewerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text me-2"></i>Documentation Viewer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-4 border rounded" style="background:var(--pm-surface);max-height:500px;overflow-y:auto">
+<h4 style="font-weight:700">Data Privacy Compliance Checklist</h4>
+<p style="font-size:13px;color:var(--pm-muted)">Last updated: Jan 2025</p>
+<hr>
+<p style="font-size:14px">As per the Data Protection Act (2019), integrations utilizing PayMo APIs must ensure:</p>
+<ul style="font-size:13px;line-height:1.6">
+<li><strong>Explicit Consent:</strong> Utilize the <code>/v1/privacy/consent/update</code> endpoint before capturing marketing parameters.</li>
+<li><strong>Right to Erasure:</strong> Call the <code>/v1/privacy/data/erase</code> endpoint when a user closes their account. Note: Financial records are exempt for 7 years (AML laws).</li>
+<li><strong>Data Minimization:</strong> Only query required scopes. PayMo OAuth tokens will reject out-of-scope requests automatically.</li>
+</ul>
+<div class="p-3 mt-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+<strong>Did you know?</strong> Integrating the DSAR API automates user data requests, saving your support team hours of manual compilation.
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 19. Dev Profile Modal -->
+<div class="modal fade resettable" id="devProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Developer Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:#1E293B">DV</div>
+<h5 style="font-weight:700;margin-bottom:2px">Dev Admin</h5>
+<p style="font-size:13px;color:var(--pm-muted)">dev.admin@paymo.co.ke · Admin Access</p>
+<div class="row g-2 text-start mt-3" style="font-size:13px">
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">API Keys Active</span><br><strong>4 keys</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Registered Webhooks</span><br><strong>12 URLs</strong></div></div>
+<div class="col-12"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Security Policy</span><br><strong style="color:var(--pm-accent)"><i class="bi bi-shield-check"></i> MFA Enforced · IP Whitelist ON</strong></div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-sm" style="color:var(--pm-danger)">Sign Out</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 20. ISO Message Result Details Modal -->
+<!-- Shown after ISO validation -->
+<div class="modal fade resettable" id="isoDetailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-info-circle me-2"></i>Detailed ISO 20022 Schema Output</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px">The provided XML payload was parsed and evaluated against <strong>pain.001.001.03</strong>.</p>
+<div class="code-block mt-2"><pre><code>Line 5: &lt;MsgId&gt; valid
+Line 6: &lt;CreDtTm&gt; matched ISO 8601
+Line 7: &lt;NbOfTxs&gt; validated (integer)
+Line 8: &lt;Nm&gt; character set checked (Latin)
+
+Result: 0 Errors, 0 Warnings.</code></pre></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- Javascript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id, extraArg){
+  const el = document.getElementById(id);
+  if(el){
+    // specific logic for generic endpoint modal mapping
+    if(id === 'apiEndpointModal' && extraArg){
+      mapEndpointContent(extraArg);
+    }
+    new bootstrap.Modal(el).show();
+  }
+}
+function closeModal(id){const el=document.getElementById(id);if(el){const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}}
+function selectBox(el){el.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background=''});el.style.borderColor='var(--pm-primary)';el.style.background='rgba(79,70,229,.04)';}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function switchMainTab(prefix,key,btn){switchTab(prefix,key,btn);}
+function moveFocus(el){if(el.value.length===1&&el.nextElementSibling)el.nextElementSibling.focus();}
+
+// Multistep ISO
+let isoStep = 1;
+function renderIsoStepper(){
+  const labels=['Type','Payload','Validate'];
+  const wrap = document.getElementById('isoStepper');
+  if(!wrap) return;
+  wrap.innerHTML = labels.map((l,i)=>`<div class="pm-step ${(i+1)<isoStep?'completed':(i+1)===isoStep?'active':''}"><div class="pm-step-num">${(i+1)<isoStep?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');
+}
+function nextIsoStep(){
+  if(isoStep===2){
+    showLoading('#isoMessageModal .modal-body', ()=>{
+      isoStep=3; renderIsoStepper();
+      ['isoStep1','isoStep2','isoStep3'].forEach(id=>{document.getElementById(id).classList.remove('active')});
+      document.getElementById('isoStep3').classList.add('active');
+      document.getElementById('isoNextBtn').innerHTML='View Output Detail';
+    });
+    return;
+  }
+  if(isoStep===3){
+    closeModal('isoMessageModal');
+    setTimeout(()=>openModal('isoDetailsModal'),400);
+    return;
+  }
+  isoStep++;
+  renderIsoStepper();
+  ['isoStep1','isoStep2','isoStep3'].forEach(id=>{document.getElementById(id).classList.remove('active')});
+  document.getElementById('isoStep'+isoStep).classList.add('active');
+  if(isoStep===2) document.getElementById('isoNextBtn').innerHTML='Validate <i class="bi bi-check2-circle"></i>';
+}
+
+// Multistep CBK Simulate
+let cbkStep = 1;
+function renderCbkStepper(){
+  const labels=['Params','Payload','Trigger'];
+  const wrap = document.getElementById('cbkStepper');
+  if(!wrap) return;
+  wrap.innerHTML = labels.map((l,i)=>`<div class="pm-step ${(i+1)<cbkStep?'completed':(i+1)===cbkStep?'active':''}"><div class="pm-step-num">${(i+1)<cbkStep?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');
+}
+function nextCbkStep(){
+  if(cbkStep===2){
+    showLoading('#simulateCbkModal .modal-body', ()=>{
+      cbkStep=3; renderCbkStepper();
+      ['cbkStep1','cbkStep2','cbkStep3'].forEach(id=>{document.getElementById(id).classList.remove('active')});
+      document.getElementById('cbkStep3').classList.add('active');
+      document.getElementById('cbkNextBtn').innerHTML='Done';
+    });
+    return;
+  }
+  if(cbkStep===3){
+    closeModal('simulateCbkModal');
+    return;
+  }
+  cbkStep++;
+  renderCbkStepper();
+  ['cbkStep1','cbkStep2','cbkStep3'].forEach(id=>{document.getElementById(id).classList.remove('active')});
+  document.getElementById('cbkStep'+cbkStep).classList.add('active');
+  if(cbkStep===2) document.getElementById('cbkNextBtn').innerHTML='Trigger Alert <i class="bi bi-shield-exclamation"></i>';
+}
+
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+
+function processAction(modalId,msg,ref){
+  const modal=document.getElementById(modalId);
+  const body=modal.querySelector('.modal-body');
+  const footer=modal.querySelector('.modal-footer');
+  showLoading(body,()=>{
+    body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">${ref}</p>`:''}</div>`;
+    footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';
+  });
+}
+
+function mapEndpointContent(key){
+  const db = {
+    cbkLarge: { method: 'POST', cls: 'api-post', url: 'https://api.paymo.co.ke/v1/compliance/cbk/large-transaction' },
+    cbkStr: { method: 'POST', cls: 'api-post', url: 'https://api.paymo.co.ke/v1/compliance/cbk/str' },
+    cbkKyc: { method: 'GET', cls: 'api-get', url: 'https://api.paymo.co.ke/v1/compliance/kyc/pep-screening?id_num=123' },
+    kraPaye: { method: 'POST', cls: 'api-post', url: 'https://api.paymo.co.ke/v1/tax/kra/paye/submit' },
+    kraWht: { method: 'POST', cls: 'api-post', url: 'https://api.paymo.co.ke/v1/tax/kra/wht/certificate' },
+    odpcErase: { method: 'DEL', cls: 'api-del', url: 'https://api.paymo.co.ke/v1/privacy/data/erase' },
+    odpcConsent: { method: 'PUT', cls: 'api-put', url: 'https://api.paymo.co.ke/v1/privacy/consent/update' }
+  };
+  const e = db[key] || db['cbkLarge'];
+  document.getElementById('apiModalMethod').className = 'api-method ' + e.cls;
+  document.getElementById('apiModalMethod').innerText = e.method;
+  document.getElementById('apiModalUrl').value = e.url;
+}
+
+function cacheResettable(){
+  document.querySelectorAll('.resettable').forEach(m=>{
+    const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');
+    if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;
+    m.addEventListener('hidden.bs.modal',()=>{
+      if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;
+      if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;
+      resetFlows();
+    });
+  });
+}
+function resetFlows(){
+  isoStep=1; cbkStep=1;
+  renderIsoStepper(); renderCbkStepper();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  resetFlows();
+  
+  // Basic copy snippet logic for buttons
+  document.querySelectorAll('.code-copy').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const orig = this.innerHTML;
+      this.innerHTML = '<i class="bi bi-check text-success"></i>';
+      setTimeout(()=>this.innerHTML=orig, 2000);
+    });
+  });
+});
+</script>
+</body>
+</html>

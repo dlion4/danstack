@@ -1,0 +1,628 @@
+/* ============================================================================
+ * virtual-debit-cards.module.css — Virtual Debit Cards page (Page 5.3)
+ * ----------------------------------------------------------------------------
+ * Comprehensive responsive styles for virtual debit cards layout,
+ * designed to fix horizontal overflow and layout break issues.
+ * Follows cream + indigo/emerald dark-glass theme with responsive design.
+ * ========================================================================== */
+
+.virtualDebitCardsPage {
+  --pm-primary: #4F46E5;
+  --pm-primary-dark: #3730A3;
+  --pm-primary-light: #818CF8;
+  --pm-accent: #10B981;
+  --pm-accent-soft: #D1FAE5;
+  --pm-warning: #F59E0B;
+  --pm-warning-soft: #FEF3C7;
+  --pm-danger: #EF4444;
+  --pm-danger-soft: #FEE2E2;
+  --pm-info: #3B82F6;
+  --pm-info-soft: #DBEAFE;
+  --pm-purple: #8B5CF6;
+  --pm-purple-soft: #EDE9FE;
+  --pm-bg: #F5F1EC;
+  --pm-bg-2: #EEE8DF;
+  --pm-surface: #FFFFFF;
+  --pm-surface-2: #FAF7F3;
+  --pm-ink: #1A1F2E;
+  --pm-ink-soft: #4B5563;
+  --pm-muted: #9CA3AF;
+  --pm-border: #E5E2DC;
+  --pm-border-2: #D4D0C8;
+  --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+  --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+  --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+  --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+  --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+  --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+  --pm-r-sm: 8px;
+  --pm-r-md: 14px;
+  --pm-r-lg: 20px;
+  --pm-r-xl: 28px;
+  --pm-r-pill: 999px;
+  --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+
+  display: flex;
+  min-height: 100vh;
+  font-family: var(--pm-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--pm-ink);
+  background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%),
+              radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%),
+              radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%),
+              var(--pm-bg);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* FIX: Page bar layout issues */
+.pageBar {
+  padding: 20px 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* FIX: Full width for breadcrumb section */
+.pageBar > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+/* FIX: Header actions responsive layout */
+.pageBar > div:last-child {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.pageBar > div:last-child > div {
+  width: auto;
+}
+
+.pageBar > div:last-child > div > button {
+  white-space: nowrap;
+}
+
+.breadcrumb { font-size: 12px; color: var(--pm-muted); }
+.breadcrumb a { color: var(--pm-primary); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+.pageH2 {
+  font-family: var(--pm-font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 8px 0 2px;
+  color: var(--pm-ink);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.pageSub {
+  font-size: 13px;
+  color: var(--pm-ink-soft);
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.content {
+  padding: 16px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FIX: Hero stat cards responsive layout */
+.content > .row.g-3 {
+  width: 100%;
+  margin: 0;
+}
+
+.content > .row.g-3 > div {
+  box-sizing: border-box;
+}
+
+/* FIX: Cards responsiveness */
+.card {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-r-lg);
+  padding: 20px;
+  box-shadow: var(--pm-shadow-sm);
+  transition: all .2s;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.card:hover { box-shadow: var(--pm-shadow-md); }
+
+.cardAccent {
+  background: var(--pm-gradient-hero);
+  color: #fff;
+  border: none;
+}
+
+/* FIX: Stat values responsiveness */
+.sv {
+  font-family: var(--pm-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  word-wrap: break-word;
+}
+
+/* FIX: Stacked layout for mobile, side-by-side for desktop */
+@media (max-width: 768px) {
+  .pageBar {
+    padding: 12px 16px 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pageBar > div:last-child {
+    width: 100%;
+    order: 2;
+    margin-top: 12px;
+  }
+
+  .pageBar > div:last-child > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pageBar > div:last-child > div > button {
+    flex: 1;
+    justify-content: center;
+    min-width: 100px;
+  }
+
+  .content { padding: 12px 16px 24px; }
+
+  .card { padding: 16px; }
+
+  .st { font-size: 15px; }
+  .sv { font-size: 22px; }
+
+  .pm-stat-value { font-size: 22px; }
+}
+
+@media (max-width: 576px) {
+  .content { padding: 10px 10px 20px; }
+  .pageBar { padding: 10px 10px 0; }
+
+  .card { padding: 14px; border-radius: 12px; }
+
+  .sv { font-size: 20px; }
+  .st { font-size: 14px; }
+  .ss { font-size: 11px; }
+
+  .pm-stat-value { font-size: 20px; }
+
+  /* FIX: Horizontal scroll prevention */
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .pm-app {
+    overflow-x: hidden;
+    width: 100%;
+  }
+}
+
+/* FIX: Virtual card grid responsive layout */
+.v-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FIX: Virtual card components */
+.v-card {
+  border-radius: 16px;
+  padding: 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--pm-shadow-md);
+  cursor: pointer;
+  transition: transform .2s;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.v-card:hover { transform: translateY(-3px); box-shadow: var(--pm-shadow-lg); }
+
+.v-card-bg-1 { background: linear-gradient(135deg,#1E293B 0%,#0F172A 100%) }
+.v-card-bg-2 { background: linear-gradient(135deg,#4F46E5 0%,#3730A3 100%) }
+.v-card-bg-3 { background: linear-gradient(135deg,#10B981 0%,#047857 100%) }
+.v-card-bg-4 { background: linear-gradient(135deg,#EC4899 0%,#BE185D 100%) }
+.v-card-bg-5 { background: linear-gradient(135deg,#F59E0B 0%,#B45309 100%) }
+.v-card-bg-frozen { background: linear-gradient(135deg,#9CA3AF 0%,#4B5563 100%); opacity: 0.85 }
+
+/* FIX: Responsive table handling */
+@media (max-width: 768px) {
+  .pm-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pm-table thead {
+    display: none;
+  }
+
+  .pm-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .pm-table tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid var(--pm-border);
+    border-radius: var(--pm-r-md);
+    padding: 12px;
+  }
+
+  .pm-table td {
+    display: block;
+    text-align: right;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--pm-border);
+    position: relative;
+  }
+
+  .pm-table td:last-child {
+    border-bottom: none;
+  }
+
+  .pm-table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+    color: var(--pm-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+
+  .pm-table td:first-child {
+    padding-top: 0;
+  }
+
+  .pm-table td:last-child {
+    padding-bottom: 0;
+  }
+}
+
+/* FIX: Modal responsive handling */
+.modal {
+  display: block;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+
+.modal.show {
+  opacity: 1;
+}
+
+.modal-dialog {
+  margin: 1.75rem auto;
+  max-width: calc(100vw - 32px);
+  width: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .modal-content {
+    border-radius: 12px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 12px;
+  }
+
+  .modal-title { font-size: 16px; }
+}
+
+/* FIX: Fix for pin input rows */
+@media (max-width: 576px) {
+  .pm-pin-input input {
+    width: 40px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .quick-action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pm-stepper {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pm-step {
+    min-width: unset;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .pm-step-line { display: none; }
+  .pm-stepper { gap: 8px; }
+}
+
+/* FIX: Ensure no horizontal overflow on body */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.pm-app {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* FIX: Responsive form controls */
+.pm-form-control, .pm-form-label {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FIX: Responsive grid system */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+  width: 100%;
+}
+
+.col-lg-4, .col-md-6, .col-6 {
+  box-sizing: border-box;
+  padding: 0 8px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 992px) {
+  .col-lg-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+}
+
+@media (max-width: 767px) {
+  .col-6 { flex: 0 0 50%; max-width: 50%; }
+}
+
+/* FIX: Counter element styling */
+.counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  background: var(--pm-danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0 5px;
+  border: 2px solid var(--pm-bg);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--pm-border);
+  background: #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.profileBtn:hover { background: var(--pm-surface-2); }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--pm-gradient-hero);
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pm-font-display);
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.role {
+  font-size: 11px;
+  color: var(--pm-muted);
+}
+
+@media (max-width: 576px) {
+  .profileBtn {
+    padding: 4px 10px 4px 4px;
+    width: auto;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .name {
+    font-size: 12px;
+  }
+}
+
+/* FIX: Utility classes for better responsiveness */
+.w-100 { width: 100% !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.justify-content-center { justify-content: center !important; }
+.align-items-center { align-items: center !important; }
+.text-center { text-align: center !important; }
+
+/* FIX: Fix for overflow in modals */
+.modal-body {
+  position: relative;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* FIX: Ensure buttons don't break layout */
+button {
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+/* FIX: Fix for issue with modal positioning on mobile */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem auto;
+    width: 100%;
+    max-height: calc(100vh - 16px);
+  }
+
+  .modal.fade .modal-dialog {
+    transition: transform .3s ease-out, opacity .3s ease-out;
+    transform: translate(0, -20px);
+  }
+
+  .modal.show .modal-dialog {
+    transform: translate(0, 0);
+  }
+}
+
+/* FIX: Fix for issue with table responsiveness */
+@media (max-width: 768px) {
+  .table-responsive {
+    border: 1px solid var(--pm-border);
+    border-radius: var(--pm-r-md);
+    background: var(--pm-surface);
+  }
+
+  .table-responsive table {
+    margin-bottom: 0;
+  }
+}
+
+/* FIX: Fix for issue with form controls */
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-r-sm);
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* FIX: Fix for issue with card widgets */
+.cardWidget {
+  border-radius: var(--pm-r-md);
+  padding: 16px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* FIX: Fix for issue with responsive grid layouts */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 576px) {
+  .quick-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* FIX: Fix for any remaining horizontal issues */
+* {
+  box-sizing: border-box;
+}
+
+/* FIX: Additional responsive fixes for mobile */
+@media (max-width: 576px) {
+  input, select, button {
+    font-size: 16px;
+    /* Prevent zoom on iOS */
+  }
+
+  .container, .content, .card {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .row > div {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

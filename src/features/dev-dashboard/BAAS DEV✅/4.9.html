@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Developer Portal — Partner Program & Marketplace</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.6);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}
+.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}
+.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}
+.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}
+.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-dark{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-card-accent{background:linear-gradient(135deg,#052E16 0%,#0F766E 50%,#0369A1 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}
+.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}
+.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}
+.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}
+.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}
+.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none;font-family:var(--pm-font-sans)}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}
+.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}
+.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}
+.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}
+.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}
+.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}
+.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}
+.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}
+.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}
+.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}
+.pm-table tr:last-child td{border-bottom:none}
+.pm-table tr:hover td{background:var(--pm-surface-2)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}
+.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}
+.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}
+.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}
+.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}
+.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}
+.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}
+.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}
+.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}
+.pm-step.active .pm-step-label{color:var(--pm-primary)}
+.pm-step.completed .pm-step-label{color:var(--pm-accent)}
+.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}
+.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}
+.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-tab-pill:hover:not(.active){background:rgba(255,255,255,.5)}
+.fade-step{display:none}
+.fade-step.active{display:block;animation:fadeIn .3s}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}
+.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}
+.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;color:var(--pm-ink)}
+.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.info-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.tier-card{padding:16px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;text-align:center;cursor:pointer;transition:all .2s}
+.tier-card:hover{border-color:var(--pm-primary);box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.tier-card.selected{border-color:var(--pm-primary);background:rgba(79,70,229,.04);box-shadow:var(--pm-shadow-glow)}
+@media(max-width:768px){
+.pm-sidebar{display:none}
+.pm-header{padding:12px 16px;flex-wrap:wrap}
+.pm-header-search{max-width:100%;order:3;flex-basis:100%}
+.pm-content{padding:12px 16px 24px}
+.pm-page-bar{padding:12px 16px 0}
+.quick-action-grid{grid-template-columns:repeat(2,1fr)}
+.pm-stat-value{font-size:22px}
+.modal-body{padding:18px}
+.modal-header,.modal-footer{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dev Dashboard"><i class="bi bi-code-slash"></i></button>
+<button class="pm-nav-item" title="API Keys"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-hdd-network"></i></button>
+<button class="pm-nav-item" title="Sandbox"><i class="bi bi-box"></i></button>
+<button class="pm-nav-item active" title="Partner Program"><i class="bi bi-briefcase"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Analytics"><i class="bi bi-graph-up"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Docs"><i class="bi bi-journal-code"></i></button>
+</aside>
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-slate)">DV</div>
+<div>
+<h1>Developer Portal</h1>
+<p>APIs, Integration & Technical Operations</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search API docs, webhooks, partner resources...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="API Status"><i class="bi bi-heart-pulse"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar">SD</div><div><div class="pm-name">TechCorp Ltd</div><div class="pm-role">Certified Partner</div></div></div>
+</div>
+</header>
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Developer Home</a> / <a href="#">Programs</a> / <strong>Partner & Marketplace</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.9 — Partner Program & Marketplace</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage partner tiers, marketplace apps, referrals, revenue share, and collaborate with the community.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('referralLinkModal')"><i class="bi bi-link-45deg"></i> Referral Link</button>
+<button class="pm-btn" onclick="openModal('submitAppModal')"><i class="bi bi-cloud-upload"></i> Publish App</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('applyPartnerModal')"><i class="bi bi-stars"></i> Upgrade Tier</button>
+</div>
+</div>
+<div class="pm-content">
+
+<!-- HERO STATS -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:170px">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Partner Status <span style="color:#86efac">● Active</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">Certified Partner</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Tier benefits active: 10% Rev Share, App Listing.</p>
+</div>
+<div class="pm-icon-circle" style="background:rgba(255,255,255,.2);color:#fff;width:48px;height:48px;font-size:20px"><i class="bi bi-award"></i></div>
+</div>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('certExamModal')">Certifications</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('revenueShareModal')">View Rev Share</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-info)">ACTIVE REFERRALS</p>
+<div class="pm-stat-value" style="margin:6px 0">42</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-arrow-up"></i> +8 this month</span>
+<div class="mt-3"><div class="d-flex justify-content-between mb-1" style="font-size:11px;color:var(--pm-muted)"><span>Target 50</span><span>84%</span></div><div class="pm-progress"><div class="pm-progress-bar" style="width:84%;background:var(--pm-info)"></div></div></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-accent)">MONTHLY COMMISSIONS</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 128,450</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Paid automatically</span>
+<div class="mt-3" style="font-size:12px"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('payoutHistoryModal')">Payout History</button></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-purple)">
+<p class="pm-stat-label" style="color:var(--pm-purple)">MARKETPLACE APPS</p>
+<div class="pm-stat-value" style="margin:6px 0">2 Live</div>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-star-fill text-warning"></i> 4.8 Avg Rating</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)"><div>Active installs: <strong>314</strong></div><div>Reviews pending reply: <strong>3</strong></div></div>
+</div>
+</div>
+</div>
+
+<div class="row g-3">
+<!-- 4.9.1 Partner Onboarding -->
+<div class="col-lg-4">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-diagram-3" style="color:var(--pm-primary)"></i> 4.9.1 Partner Onboarding</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('applyPartnerModal')">Tiers</button>
+</div>
+<p class="pm-section-sub mb-3">Manage your partner status, complete certifications, and access tier benefits.</p>
+<div class="status-row"><div><strong>Technical Certification</strong><div style="font-size:11px;color:var(--pm-muted)">Valid until Dec 2026</div></div><button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('certExamModal')">Renew</button></div>
+<div class="status-row"><div><strong>Security Assessment</strong><div style="font-size:11px;color:var(--pm-muted)">SAQ validation complete</div></div><button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('securityAssessmentModal')">Review</button></div>
+<div class="status-row"><div><strong>Performance Benchmarking</strong><div style="font-size:11px;color:var(--pm-muted)">API limits & load tests</div></div><button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('perfBenchmarkModal')">Report</button></div>
+<div class="status-row"><div><strong>Co-Marketing Hub</strong><div style="font-size:11px;color:var(--pm-muted)">Logos, brand guidelines</div></div><button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('coMarketingModal')">Assets</button></div>
+<div class="status-row"><div><strong>Lead Sharing Portal</strong><div style="font-size:11px;color:var(--pm-muted)">2 new leads from PayMo</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('leadSharingModal')">View Leads</button></div>
+</div>
+</div>
+
+<!-- 4.9.2 Marketplace Integration -->
+<div class="col-lg-4">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-shop" style="color:var(--pm-warning)"></i> 4.9.2 Marketplace Integration</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('submitAppModal')">Add App</button>
+</div>
+<p class="pm-section-sub mb-3">List your apps, track referrals, and showcase industry solutions.</p>
+<div class="info-block mb-3 p-2">
+<div class="d-flex align-items-center justify-content-between mb-2">
+<div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;background:var(--pm-primary-soft);color:var(--pm-primary);font-size:14px"><i class="bi bi-cart"></i></div><strong>WooCommerce Sync</strong></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('editAppModal')">Manage</button>
+</div>
+<div class="d-flex justify-content-between align-items-center" style="font-size:12px"><span class="pm-badge pm-badge-success">Published</span><span>210 Installs</span></div>
+</div>
+<div class="info-block mb-3 p-2">
+<div class="d-flex align-items-center justify-content-between mb-2">
+<div class="d-flex align-items-center gap-2"><div class="pm-icon-circle" style="width:32px;height:32px;background:var(--pm-accent-soft);color:var(--pm-accent);font-size:14px"><i class="bi bi-calculator"></i></div><strong>Payroll Importer</strong></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('editAppModal')">Manage</button>
+</div>
+<div class="d-flex justify-content-between align-items-center" style="font-size:12px"><span class="pm-badge pm-badge-success">Published</span><span>104 Installs</span></div>
+</div>
+<div class="d-flex gap-2 mb-2">
+<button class="pm-btn pm-btn-sm flex-fill justify-content-center" onclick="openModal('appReviewsModal')"><i class="bi bi-star"></i> App Reviews</button>
+<button class="pm-btn pm-btn-sm flex-fill justify-content-center" onclick="openModal('roiCalculatorModal')"><i class="bi bi-graph-up-arrow"></i> ROI Calc</button>
+</div>
+</div>
+</div>
+
+<!-- 4.9.3 Community & Collaboration -->
+<div class="col-lg-4">
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-people" style="color:var(--pm-accent)"></i> 4.9.3 Community & Collab</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('forumTopicModal')">Post</button>
+</div>
+<p class="pm-section-sub mb-3">Engage with engineers, vote on roadmaps, and join dev events.</p>
+<div class="quick-action-grid mb-3">
+<button class="quick-action-btn" onclick="openModal('roadmapVoteModal')"><i class="bi bi-map text-primary d-block mb-1"></i> Roadmap Votes</button>
+<button class="quick-action-btn" onclick="openModal('betaEnrollModal')"><i class="bi bi-bug text-warning d-block mb-1"></i> Beta Programs</button>
+<button class="quick-action-btn" onclick="openModal('hackathonModal')"><i class="bi bi-laptop text-success d-block mb-1"></i> Hackathons</button>
+<button class="quick-action-btn" onclick="openModal('newsletterSubscribeModal')"><i class="bi bi-envelope text-info d-block mb-1"></i> Tech Blog</button>
+</div>
+<div class="info-block p-2">
+<h4 style="font-size:13px;font-weight:700;margin:0 0 8px">Upcoming Events</h4>
+<div class="d-flex justify-content-between align-items-center mb-2" style="font-size:12px">
+<span><strong>API Office Hours</strong><br><span class="text-muted">Every Friday, 10 AM</span></span>
+<button class="pm-btn pm-btn-sm" onclick="openModal('officeHoursModal')">Book</button>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2" style="font-size:12px">
+<span><strong>Auth Workshop</strong><br><span class="text-muted">15 Nov 2026</span></span>
+<button class="pm-btn pm-btn-sm" onclick="openModal('techWorkshopModal')">Join</button>
+</div>
+<div class="d-flex justify-content-between align-items-center" style="font-size:12px">
+<span><strong>Partner Summit '26</strong><br><span class="text-muted">01 Dec 2026, Nairobi</span></span>
+<button class="pm-btn pm-btn-sm" onclick="openModal('partnerSummitModal')">RSVP</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- content -->
+</div><!-- main -->
+</div><!-- app -->
+
+<!-- ========================================== -->
+<!-- MODALS -->
+<!-- ========================================== -->
+
+<!-- 1. Apply Partner Modal (Multistep) -->
+<div class="modal fade resettable" id="applyPartnerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-stars text-primary me-2"></i>Partner Tier Upgrade</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="applyStepper"></div><div id="applyStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: Select Partner Tier</h6><div class="row g-3"><div class="col-md-6"><div class="tier-card" onclick="selectBox(this)"><h5 style="color:var(--pm-muted)">Registered Developer</h5><p style="font-size:12px;color:var(--pm-muted)">Sandbox access, forum entry.</p><strong>Free</strong></div></div><div class="col-md-6"><div class="tier-card selected" onclick="selectBox(this)"><h5 style="color:var(--pm-primary)">Certified Partner (Current)</h5><p style="font-size:12px;color:var(--pm-muted)">Production API, 10% Rev Share.</p><strong>Certified</strong></div></div><div class="col-md-6"><div class="tier-card" onclick="selectBox(this)"><h5 style="color:var(--pm-accent)">Premium Partner</h5><p style="font-size:12px;color:var(--pm-muted)">High volume limits, Dedicated tech support, 15% Rev Share.</p><strong>Min. KES 10M/mo Vol</strong></div></div><div class="col-md-6"><div class="tier-card" onclick="selectBox(this)"><h5 style="color:var(--pm-purple)">Strategic Partner</h5><p style="font-size:12px;color:var(--pm-muted)">Co-selling, white-label, enterprise SLA.</p><strong>Custom</strong></div></div></div></div><div id="applyStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Business Justification</h6><div class="mb-3"><label class="pm-form-label">Company Name</label><input class="pm-form-control" value="TechCorp Ltd" disabled></div><div class="mb-3"><label class="pm-form-label">Projected Monthly Volume (KES)</label><select class="pm-form-control"><option>10M - 50M</option><option>50M - 100M</option><option>100M+</option></select></div><div class="mb-3"><label class="pm-form-label">Integration Description</label><textarea class="pm-form-control" rows="3">Scaling our ERP integration to serve 500+ merchants.</textarea></div></div><div id="applyStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 3: Verification & Agreement</h6><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">I confirm our technical certification is valid.</label></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">I have uploaded the latest SAQ security document.</label></div><div class="form-check mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I accept the Premium Partner Terms & Conditions.</label></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="applyNextBtn" onclick="nextApplyStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 2. Certification Exam Modal -->
+<div class="modal fade resettable" id="certExamModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-award me-2"></i>Technical Certification</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-success-soft);border:1px solid var(--pm-accent)"><div class="d-flex justify-content-between align-items-center"><div><h6 style="margin:0;color:var(--pm-accent)">Current Status: Certified</h6><div style="font-size:11px;color:var(--pm-muted)">Valid until Dec 15, 2026</div></div><i class="bi bi-check-circle-fill text-success" style="font-size:24px"></i></div></div><p style="font-size:13px;color:var(--pm-ink-soft)">Annual recertification ensures your integration complies with latest OpenAPI specs and security standards.</p><div class="info-block p-3 mb-3"><h6 style="font-size:13px;font-weight:700">Exam Details</h6><ul style="font-size:12px;margin:0;padding-left:16px;color:var(--pm-muted)"><li>45 Multiple Choice Questions</li><li>Focus on OAuth2, Idempotency, Webhooks</li><li>Time limit: 60 minutes</li><li>Passing score: 80%</li></ul></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('certExamModal','Redirecting to Exam Portal...','EXM-001')">Start Recertification</button></div></div></div></div>
+
+<!-- 3. Security Assessment Modal -->
+<div class="modal fade resettable" id="securityAssessmentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Security Assessment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Integration Type</label><select class="pm-form-control"><option>Server-to-Server (API)</option><option>Mobile SDK</option><option>E-commerce Plugin</option></select></div><div class="mb-3"><label class="pm-form-label">PCI DSS SAQ Level</label><select class="pm-form-control"><option>SAQ A</option><option>SAQ A-EP</option><option>SAQ D</option></select></div><div class="mb-3"><label class="pm-form-label">Upload Latest Vulnerability Scan</label><input type="file" class="pm-form-control"></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-exclamation-triangle text-warning me-1"></i> Security assessments are manually reviewed by PayMo InfoSec team within 3-5 business days.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('securityAssessmentModal','Assessment documents submitted for review.','SEC-2026-881')">Submit Assessment</button></div></div></div></div>
+
+<!-- 4. Performance Benchmark Modal -->
+<div class="modal fade resettable" id="perfBenchmarkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 me-2"></i>Performance Benchmarking</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="info-block text-center"><div style="font-size:11px;color:var(--pm-muted)">API RATE LIMIT</div><div style="font-size:20px;font-weight:700;color:var(--pm-primary)">100 req/sec</div></div></div><div class="col-6"><div class="info-block text-center"><div style="font-size:11px;color:var(--pm-muted)">WEBHOOK LATENCY</div><div style="font-size:20px;font-weight:700;color:var(--pm-accent)">< 400ms</div></div></div></div><div class="mt-4"><label class="pm-form-label">Request Limit Increase</label><div class="input-group mb-2"><input type="number" class="pm-form-control" placeholder="Target req/sec"><button class="pm-btn pm-btn-primary">Request</button></div><p style="font-size:11px;color:var(--pm-muted)">Requires Premium Partner tier and load testing validation logs.</p></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 5. Revenue Share Modal -->
+<div class="modal fade resettable" id="revenueShareModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-coin text-success me-2"></i>Revenue Share Model</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="info-block mb-3 d-flex justify-content-between align-items-center"><div><div style="font-size:12px;color:var(--pm-muted)">Your Tier</div><div style="font-weight:700">Certified Partner</div></div><div style="font-size:24px;font-weight:700;color:var(--pm-accent)">10%</div></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Tier</th><th>Rev Share</th><th>Payout Schedule</th></tr></thead><tbody><tr><td>Registered</td><td>0%</td><td>N/A</td></tr><tr style="background:var(--pm-surface-2)"><td><strong>Certified</strong></td><td><strong>10%</strong></td><td><strong>Monthly (Net 15)</strong></td></tr><tr><td>Premium</td><td>15%</td><td>Bi-weekly</td></tr><tr><td>Strategic</td><td>Custom</td><td>Custom</td></tr></tbody></table></div><p style="font-size:11px;color:var(--pm-muted);margin-top:12px">Revenue share is calculated based on net transaction fees collected from merchants referred through your partner ID.</p></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 6. Co-Marketing Modal -->
+<div class="modal fade resettable" id="coMarketingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-megaphone me-2"></i>Co-Marketing Hub</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><div class="info-block text-center" style="cursor:pointer"><i class="bi bi-file-zip d-block mb-2" style="font-size:24px;color:var(--pm-primary)"></i><strong style="font-size:13px">Brand Kit & Logos</strong></div></div><div class="col-md-6"><div class="info-block text-center" style="cursor:pointer"><i class="bi bi-layout-text-window d-block mb-2" style="font-size:24px;color:var(--pm-info)"></i><strong style="font-size:13px">Email Templates</strong></div></div><div class="col-md-6"><div class="info-block text-center" style="cursor:pointer"><i class="bi bi-vector-pen d-block mb-2" style="font-size:24px;color:var(--pm-warning)"></i><strong style="font-size:13px">Social Banners</strong></div></div><div class="col-md-6"><div class="info-block text-center" style="cursor:pointer"><i class="bi bi-chat-quote d-block mb-2" style="font-size:24px;color:var(--pm-purple)"></i><strong style="font-size:13px">Press Release Boilerplate</strong></div></div></div><div class="mt-4"><h6 style="font-size:13px;font-weight:700">Request Custom Campaign</h6><textarea class="pm-form-control mb-2" rows="2" placeholder="Describe your joint marketing idea..."></textarea><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="processAction('coMarketingModal','Marketing request submitted to partner team.','')">Submit Request</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 7. Lead Sharing Modal -->
+<div class="modal fade resettable" id="leadSharingModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-lines-fill text-primary me-2"></i>Partner Lead Sharing Portal</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Lead Name</th><th>Industry</th><th>Interest</th><th>Date Shared</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Acme Retailers</td><td>E-commerce</td><td>WooCommerce Sync</td><td>Today</td><td><span class="pm-badge pm-badge-info">New</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary">Accept</button></td></tr><tr><td>Global Logistics</td><td>Transport</td><td>Payroll Importer</td><td>Yesterday</td><td><span class="pm-badge pm-badge-info">New</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary">Accept</button></td></tr><tr><td>Nairobi Traders</td><td>Retail</td><td>WooCommerce Sync</td><td>10 Nov</td><td><span class="pm-badge pm-badge-warning">In Progress</span></td><td><button class="pm-btn pm-btn-sm">Update</button></td></tr><tr><td>TechHub EA</td><td>Software</td><td>Custom SDK</td><td>01 Nov</td><td><span class="pm-badge pm-badge-success">Closed Won</span></td><td><button class="pm-btn pm-btn-sm" disabled>Done</button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 8. Submit App Modal (Multistep) -->
+<div class="modal fade resettable" id="submitAppModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cloud-upload text-warning me-2"></i>Submit App to Marketplace</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="appStepper"></div><div id="appStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">Step 1: App Details</h6><div class="mb-3"><label class="pm-form-label">App Name</label><input class="pm-form-control" placeholder="e.g. Magento 2 Sync"></div><div class="mb-3"><label class="pm-form-label">Short Description</label><input class="pm-form-control" placeholder="1-sentence summary"></div><div class="mb-3"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>E-commerce Plugin</option><option>Accounting Sync</option><option>POS Integration</option><option>Payroll</option></select></div></div><div id="appStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 2: Media & Support</h6><div class="mb-3"><label class="pm-form-label">App Logo (URL)</label><input class="pm-form-control" placeholder="https://..."></div><div class="mb-3"><label class="pm-form-label">Demo Video Link</label><input class="pm-form-control" placeholder="YouTube/Vimeo URL"></div><div class="mb-3"><label class="pm-form-label">Support Email</label><input class="pm-form-control" placeholder="support@yourdomain.com"></div></div><div id="appStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Step 3: Pricing & Review</h6><div class="mb-3"><label class="pm-form-label">Billing Model</label><select class="pm-form-control"><option>Free</option><option>One-time Purchase</option><option>Monthly Subscription</option></select></div><div class="mb-3"><label class="pm-form-label">Price (KES)</label><input type="number" class="pm-form-control" value="0"></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px">All marketplace apps require a security and functionality review by PayMo engineering (SLA: 5 business days).</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="appNextBtn" onclick="nextAppStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 9. Edit App Modal -->
+<div class="modal fade resettable" id="editAppModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Manage App Listing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select App</label><select class="pm-form-control"><option>WooCommerce Sync</option><option>Payroll Importer</option></select></div><div class="mb-3"><label class="pm-form-label">Status</label><select class="pm-form-control"><option>Published</option><option>Hidden</option><option>Deprecated</option></select></div><div class="mb-3"><label class="pm-form-label">Update Version Note</label><textarea class="pm-form-control" rows="2" placeholder="v2.1.0 - Added refund webhook support"></textarea></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="processAction('editAppModal','App listing updated successfully.','')">Save Changes</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 10. App Reviews Modal -->
+<div class="modal fade resettable" id="appReviewsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-star-fill text-warning me-2"></i>App Reviews & Ratings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex align-items-center gap-4 mb-4"><div class="text-center">
+<h2 style="font-family:var(--pm-font-display);font-weight:700;margin:0">4.8</h2><div style="color:var(--pm-warning)"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div><div style="font-size:11px;color:var(--pm-muted)">Based on 86 reviews</div></div>
+<div style="flex:1"><div class="d-flex align-items-center gap-2 mb-1" style="font-size:11px"><span>5</span><div class="pm-progress flex-fill"><div class="pm-progress-bar" style="width:85%;background:var(--pm-warning)"></div></div></div><div class="d-flex align-items-center gap-2 mb-1" style="font-size:11px"><span>4</span><div class="pm-progress flex-fill"><div class="pm-progress-bar" style="width:10%;background:var(--pm-warning)"></div></div></div><div class="d-flex align-items-center gap-2" style="font-size:11px"><span>3</span><div class="pm-progress flex-fill"><div class="pm-progress-bar" style="width:5%;background:var(--pm-warning)"></div></div></div></div></div>
+<div class="status-row flex-column align-items-start">
+<div class="d-flex justify-content-between w-100 mb-1"><strong>Nairobi Merchants</strong><span style="color:var(--pm-warning)"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i></span></div>
+<p style="font-size:12px;margin:0">Great integration, but the refund sync takes a few minutes.</p>
+<div class="mt-2 w-100"><textarea class="pm-form-control mb-1" rows="1" placeholder="Reply to review..."></textarea><button class="pm-btn pm-btn-sm" onclick="processAction('appReviewsModal','Reply posted.','')">Reply</button></div>
+</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 11. ROI Calculator Modal -->
+<div class="modal fade resettable" id="roiCalculatorModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up-arrow text-success me-2"></i>Partner ROI Calculator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Avg Merchant Monthly Volume (KES)</label><input class="pm-form-control" type="number" value="1000000"></div><div class="mb-3"><label class="pm-form-label">Number of Referred Merchants</label><input type="number" class="pm-form-control" value="50"></div><div class="mb-3"><label class="pm-form-label">Your Partner Tier</label><select class="pm-form-control"><option>Certified (10%)</option><option>Premium (15%)</option></select></div><hr class="pm-divider"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted);font-weight:700">ESTIMATED MONTHLY COMMISSION</div><div style="font-size:28px;font-weight:700;color:var(--pm-accent)">KES 50,000</div><div style="font-size:12px;color:var(--pm-muted)">Based on average MDR of 1%</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 12. Referral Link Modal -->
+<div class="modal fade resettable" id="referralLinkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-link-45deg me-2"></i>Partner Referral Links</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Your Default Referral Link</label><div class="input-group"><input type="text" class="pm-form-control" value="https://paymo.co.ke/join?ref=TECHCORP" readonly><button class="pm-btn pm-btn-primary" onclick="alert('Link Copied!')"><i class="bi bi-clipboard"></i></button></div></div><hr class="pm-divider"><h6 style="font-size:13px;font-weight:700">Generate Custom Campaign Link</h6><div class="mb-2"><input type="text" class="pm-form-control" placeholder="Campaign Name (e.g. black-friday-26)"></div><button class="pm-btn pm-btn-sm" onclick="processAction('referralLinkModal','Custom tracking link generated.','')">Generate</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 13. Payout History Modal -->
+<div class="modal fade resettable" id="payoutHistoryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack text-success me-2"></i>Commission Payout History</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Month</th><th>Active Merchants</th><th>Total Volume</th><th>Commission</th><th>Status</th></tr></thead><tbody><tr><td>Oct 2026</td><td>42</td><td>KES 128M</td><td><strong>KES 128,450</strong></td><td><span class="pm-badge pm-badge-info">Processing</span></td></tr><tr><td>Sep 2026</td><td>38</td><td>KES 115M</td><td><strong>KES 115,000</strong></td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr><tr><td>Aug 2026</td><td>34</td><td>KES 95M</td><td><strong>KES 95,000</strong></td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr><tr><td>Jul 2026</td><td>30</td><td>KES 80M</td><td><strong>KES 80,000</strong></td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn pm-btn-outline" onclick="openModal('exportReportModal');closeModal('payoutHistoryModal')"><i class="bi bi-download"></i> Export CSV</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 14. Forum Topic Modal -->
+<div class="modal fade resettable" id="forumTopicModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-chat-left-text me-2"></i>Create Forum Post</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Topic Category</label><select class="pm-form-control"><option>API Integration Help</option><option>SDK & Plugins</option><option>Best Practices</option><option>Feature Requests</option></select></div><div class="mb-3"><label class="pm-form-label">Title</label><input class="pm-form-control" placeholder="e.g. Handling webhook idempotency in Node.js"></div><div class="mb-3"><label class="pm-form-label">Content (Markdown supported)</label><textarea class="pm-form-control" rows="5" placeholder="Describe your question or share your snippet..."></textarea></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('forumTopicModal','Forum topic posted successfully! View it in the Community section.','')">Post Topic</button></div></div></div></div>
+
+<!-- 15. Roadmap Vote Modal -->
+<div class="modal fade resettable" id="roadmapVoteModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-map text-primary me-2"></i>Product Roadmap Voting</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Vote on upcoming API features. You have <strong>3</strong> votes remaining this quarter.</p><div class="status-row"><div><strong>GraphQL API Support</strong><div style="font-size:11px;color:var(--pm-muted)">Under Review · 142 votes</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="this.innerHTML='<i class=\'bi bi-check\'></i> Voted';this.disabled=true">Vote</button></div><div class="status-row"><div><strong>Flutter SDK Official Release</strong><div style="font-size:11px;color:var(--pm-muted)">Planned Q1 2027 · 89 votes</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="this.innerHTML='<i class=\'bi bi-check\'></i> Voted';this.disabled=true">Vote</button></div><div class="status-row"><div><strong>Idempotency Key Extension to 48hrs</strong><div style="font-size:11px;color:var(--pm-muted)">Research · 45 votes</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="this.innerHTML='<i class=\'bi bi-check\'></i> Voted';this.disabled=true">Vote</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 16. Beta Enroll Modal -->
+<div class="modal fade resettable" id="betaEnrollModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bug text-warning me-2"></i>Beta Program Enrollment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="info-block mb-3 border border-warning"><h6 style="font-weight:700">Open Banking PIS API (v2 Beta)</h6><p style="font-size:12px;color:var(--pm-muted);margin-bottom:0">Test the new Payment Initiation Service API compliant with CBK Open Banking guidelines.</p></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">I agree to test in Sandbox only</label></div><div class="form-check mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">I agree to provide feedback within 14 days</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('betaEnrollModal','Enrolled in Beta! Check your email for API keys.','')">Join Beta</button></div></div></div></div>
+
+<!-- 17. Hackathon Modal -->
+<div class="modal fade resettable" id="hackathonModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-laptop text-success me-2"></i>Hackathon Registration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-3"><h4 style="font-family:var(--pm-font-display);font-weight:800;color:var(--pm-primary)">PayMo Innovate '26</h4><p style="font-size:12px;color:var(--pm-muted)">Build the future of African Fintech. KES 1M Prize Pool.</p></div><div class="mb-3"><label class="pm-form-label">Team Name</label><input class="pm-form-control" placeholder="e.g. CodeNinjas"></div><div class="mb-3"><label class="pm-form-label">Track</label><select class="pm-form-control"><option>Financial Inclusion</option><option>B2B SaaS</option><option>E-commerce Checkout</option></select></div><div class="mb-3"><label class="pm-form-label">Team Size</label><input type="number" class="pm-form-control" value="3" max="5"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success text-white" style="background:var(--pm-accent)" onclick="processAction('hackathonModal','Team registered! Check your email for event details.','')">Register Team</button></div></div></div></div>
+
+<!-- 18. Newsletter Modal -->
+<div class="modal fade resettable" id="newsletterSubscribeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-envelope text-info me-2"></i>Developer Newsletter</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Get API updates, integration patterns, and security advisories delivered to your inbox.</p><div class="mb-3"><label class="pm-form-label">Email Address</label><input class="pm-form-control" value="dev@techcorp.co.ke"></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Weekly technical digest</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Critical security advisories (immediate)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('newsletterSubscribeModal','Preferences updated.','')">Save</button></div></div></div></div>
+
+<!-- 19. Office Hours Modal -->
+<div class="modal fade resettable" id="officeHoursModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Book API Office Hours</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Book a 30-min session with a PayMo integration engineer.</p><div class="mb-3"><label class="pm-form-label">Topic</label><select class="pm-form-control"><option>OAuth2 & Authentication</option><option>Webhook Reliability</option><option>Architecture Review</option><option>SDK Troubleshooting</option></select></div><div class="mb-3"><label class="pm-form-label">Available Slots (EAT)</label><select class="pm-form-control"><option>Friday, Nov 10 - 10:00 AM</option><option>Friday, Nov 10 - 11:30 AM</option><option>Friday, Nov 17 - 10:00 AM</option></select></div><div class="mb-3"><label class="pm-form-label">Questions/Context</label><textarea class="pm-form-control" rows="2" placeholder="Briefly describe what you need help with..."></textarea></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('officeHoursModal','Session booked! Calendar invite sent.','')">Confirm Booking</button></div></div></div></div>
+
+<!-- 20. Tech Workshop Modal -->
+<div class="modal fade resettable" id="techWorkshopModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-mortarboard me-2"></i>Technical Workshop RSVP</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)"><strong>Advanced Authentication Patterns (OAuth2 & PKCE)</strong><br><span style="font-size:12px;color:var(--pm-muted)">15 Nov 2026 · 2:00 PM EAT · Virtual (Zoom)</span></div><p style="font-size:13px;color:var(--pm-ink-soft)">Learn how to implement secure PKCE flows for your mobile and single-page apps.</p><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Send me calendar invite</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('techWorkshopModal','RSVP Confirmed. Zoom link sent.','')">RSVP Now</button></div></div></div></div>
+
+<!-- 21. Partner Summit Modal -->
+<div class="modal fade resettable" id="partnerSummitModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-geo-alt text-danger me-2"></i>PayMo Partner Summit '26</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-3"><h4 style="font-weight:800">Nairobi, Kenya</h4><p style="color:var(--pm-muted);font-size:13px">01 Dec 2026 | KICC</p></div><p style="font-size:13px;color:var(--pm-ink-soft)">Join top integrators, fintech founders, and PayMo leadership for our annual ecosystem summit.</p><div class="mb-3"><label class="pm-form-label">Ticket Type</label><select class="pm-form-control"><option>Partner Pass (Free for Certified Tiers)</option><option>VIP Pass (KES 5,000)</option></select></div><div class="mb-3"><label class="pm-form-label">Dietary Requirements</label><input class="pm-form-control" placeholder="e.g. Vegetarian"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('partnerSummitModal','Ticket confirmed! See you in Nairobi.','')">Claim Ticket</button></div></div></div></div>
+
+<!-- 22. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>API System Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><strong>Core Payment API</strong><div style="font-size:11px;color:var(--pm-muted)">Uptime 99.99%</div></div><span class="pm-badge pm-badge-success">Operational</span></div><div class="status-row"><div><strong>Disbursement API</strong><div style="font-size:11px;color:var(--pm-muted)">Uptime 99.95%</div></div><span class="pm-badge pm-badge-success">Operational</span></div><div class="status-row"><div><strong>Webhook Delivery</strong><div style="font-size:11px;color:var(--pm-muted)">Latency < 200ms</div></div><span class="pm-badge pm-badge-success">Operational</span></div><div class="status-row"><div><strong>Sandbox Environment</strong><div style="font-size:11px;color:var(--pm-muted)">Scheduled maintenance</div></div><span class="pm-badge pm-badge-warning">Degraded</span></div><div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px">All production systems are operating normally. Last incident: 14 days ago.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 23. Notification Modal -->
+<div class="modal fade resettable" id="notificationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Developer Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:400px;overflow-y:auto"><div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Sandbox Maintenance</strong><div style="font-size:11px;color:var(--pm-muted)">Sandbox APIs will be down for 2 hours on Sunday.</div></div><div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>API v1 Deprecation Notice</strong><div style="font-size:11px;color:var(--pm-muted)">Reminder: v1 endpoints sunset on Jan 1, 2027.</div></div><div class="p-3 rounded mb-2" style="background:var(--pm-success-soft);border:1px solid var(--pm-accent);font-size:13px"><strong>Payout Processed</strong><div style="font-size:11px;color:var(--pm-muted)">Commission of KES 115,000 transferred to wallet.</div></div><div class="p-3 rounded mb-2" style="border:1px solid var(--pm-border);font-size:13px"><strong>New App Review</strong><div style="font-size:11px;color:var(--pm-muted)">A user left a 4-star review on WooCommerce Sync.</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 24. Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Partner Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)">TC</div><h5 style="font-weight:700;margin-bottom:2px">TechCorp Ltd</h5><p style="font-size:13px;color:var(--pm-muted)">dev@techcorp.co.ke · Certified Partner</p><div class="row g-2 text-start mt-3" style="font-size:13px"><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Partner ID</span><br><strong style="font-family:monospace">PRT-882194</strong></div></div><div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">API Keys</span><br><strong>2 Active</strong></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 25. Export Report Modal -->
+<div class="modal fade resettable" id="exportReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Data</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Data Set</label><select class="pm-form-control"><option>Commission Payouts</option><option>Referral History</option><option>API Usage Logs</option></select></div><div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control" value="2026-01-01"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control" value="2026-10-31"></div></div><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>CSV</option><option>Excel</option><option>JSON</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportReportModal','Export generated and downloaded.','')">Download</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function selectBox(card){card.parentElement.parentElement.querySelectorAll('.tier-card').forEach(c=>c.classList.remove('selected'));card.classList.add('selected');}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Done</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';});}
+
+let applyStep=1,appStep=1;
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+
+function nextApplyStep(){
+  if(applyStep===3){showLoading('#applyPartnerModal .modal-body',()=>{applyStep=4;processAction('applyPartnerModal','Application for Premium Tier submitted. Under review.','PRT-APP-991');});return;}
+  applyStep++;renderStepper('applyStepper',['Select Tier','Justification','Verify'],applyStep);showFlow('applyStep',applyStep,3);
+  if(applyStep===3)document.getElementById('applyNextBtn').innerHTML='Submit Application <i class="bi bi-check"></i>';
+}
+function nextAppStep(){
+  if(appStep===3){showLoading('#submitAppModal .modal-body',()=>{appStep=4;processAction('submitAppModal','App submitted for Marketplace review. SLA is 5 days.','APP-SUB-221');});return;}
+  appStep++;renderStepper('appStepper',['Details','Media','Review'],appStep);showFlow('appStep',appStep,3);
+  if(appStep===3)document.getElementById('appNextBtn').innerHTML='Submit for Review <i class="bi bi-upload"></i>';
+}
+
+function resetFlows(){
+  applyStep=1;appStep=1;
+  renderStepper('applyStepper',['Select Tier','Justification','Verify'],1);
+  renderStepper('appStepper',['Details','Media','Review'],1);
+  showFlow('applyStep',1,3);
+  showFlow('appStep',1,3);
+  const btn1=document.getElementById('applyNextBtn');if(btn1)btn1.innerHTML='Continue <i class="bi bi-arrow-right"></i>';
+  const btn2=document.getElementById('appNextBtn');if(btn2)btn2.innerHTML='Continue <i class="bi bi-arrow-right"></i>';
+}
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;resetFlows();});});}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  resetFlows();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Dev — Security, Auth & Compliance</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-slate);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}
+.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}
+.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 45%,#4F46E5 100%);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}
+.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}
+.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}
+.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}
+.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}
+.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-badge-outline{background:transparent;border:1px solid var(--pm-border);color:var(--pm-ink)}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink)}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}
+.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}
+.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}
+.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}
+.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}
+.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}
+.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}
+.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}
+.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}
+.pm-table tr:last-child td{border-bottom:none}
+.pm-table tr:hover td{background:var(--pm-surface-2)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}
+.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px;background:var(--pm-surface-2);border-radius:0 0 var(--pm-r-lg) var(--pm-r-lg)}
+.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff;font-family:var(--pm-font-sans)}
+.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-form-control[disabled], .pm-form-control[readonly] {background:var(--pm-surface-2);color:var(--pm-muted)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}
+.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}
+.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}
+.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}
+.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}
+.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}
+.pm-step.active .pm-step-label{color:var(--pm-primary)}
+.pm-step.completed .pm-step-label{color:var(--pm-accent)}
+.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}
+.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}
+.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.fade-step{display:none}
+.fade-step.active{display:block;animation:fadeIn .3s}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}
+.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.code-block{background:#0F172A;color:#E2E8F0;font-family:monospace;font-size:12px;padding:16px;border-radius:var(--pm-r-md);overflow-x:auto;position:relative;line-height:1.6}
+.code-block .copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.1);border:none;color:#fff;border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all 0.2s}
+.code-block .copy-btn:hover{background:rgba(255,255,255,0.2)}
+.config-row{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--pm-border)}
+.config-row:last-child{border-bottom:none}
+.api-key-box{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);padding:12px 16px;border-radius:var(--pm-r-md);display:flex;justify-content:space-between;align-items:center;font-family:monospace;font-size:13px}
+@media(max-width:768px){
+  .pm-sidebar{display:none}
+  .pm-header{padding:12px 16px;flex-wrap:wrap}
+  .pm-header-search{max-width:100%;order:3;flex-basis:100%;margin-top:12px}
+  .pm-content{padding:12px 16px 24px}
+  .pm-page-bar{padding:12px 16px 0}
+  .pm-stat-value{font-size:22px}
+  .modal-body{padding:18px}
+  .config-row{flex-direction:column;gap:12px}
+  .config-row .text-end{text-align:left!important}
+}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dashboard"><i class="bi bi-grid-1x2"></i></button>
+<button class="pm-nav-item" title="API Keys"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item" title="Webhooks"><i class="bi bi-broadcast"></i></button>
+<button class="pm-nav-item active" title="Security & Compliance"><i class="bi bi-shield-check"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Logs & Monitors"><i class="bi bi-activity"></i></button>
+<button class="pm-nav-item" title="Docs"><i class="bi bi-file-earmark-code"></i></button>
+<button class="pm-nav-item" title="Settings"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Help"><i class="bi bi-question-circle"></i></button>
+</aside>
+
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-primary)">DV</div>
+<div>
+<h1>Developer Portal</h1>
+<p>APIs, Integration & Technical Operations</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search APIs, webhooks, error codes, logs...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="System Status"><i class="bi bi-check-circle text-success"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationSettingsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">3</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')">
+<div class="pm-avatar">AD</div>
+<div><div class="pm-name">Admin Dev</div><div class="pm-role">Prod Env</div></div>
+</div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Dev Portal</a> / <a href="#">Operations</a> / <strong>Security & Compliance</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.6 — Security, Authentication & Compliance</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage OAuth apps, API security keys, data protection compliance, and advanced fraud/risk settings.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('auditLogModal')"><i class="bi bi-journal-text"></i> Audit Logs</button>
+<button class="pm-btn" onclick="openModal('sandboxTestingModal')"><i class="bi bi-box"></i> Sandbox</button>
+<button class="pm-btn pm-btn-primary" onclick="openModal('oauthRegisterModal')"><i class="bi bi-plus-lg"></i> New OAuth App</button>
+</div>
+</div>
+
+<div class="pm-content">
+<!-- Hero Stats -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card pm-card-accent" style="min-height:160px">
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Security Posture <span style="color:#10B981">● Secure</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">92/100</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Your integration meets 11 of 12 critical security requirements for production.</p>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff" onclick="openModal('pciUploadModal')">Upload PCI Attestation</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:160px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">ACTIVE API KEYS</p>
+<div class="pm-stat-value" style="margin:6px 0">4</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-exclamation-triangle"></i> 1 expiring soon</span>
+<button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('rotateKeysModal')">Rotate Keys</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-4 col-6">
+<div class="pm-card" style="min-height:160px">
+<p class="pm-stat-label" style="color:var(--pm-info)">BLOCKED REQUESTS</p>
+<div class="pm-stat-value" style="margin:6px 0">142</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-shield-x"></i> Invalid sig / IP block</span>
+<div class="mt-2" style="font-size:11px;color:var(--pm-muted)">Last 24 hours. Rate limits enforced on 2 endpoints.</div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('rateLimitAlertModal')">Rate Limits</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-danger)">
+<p class="pm-stat-label" style="color:var(--pm-danger)">FRAUD RISK DETECTED</p>
+<div class="pm-stat-value" style="margin:6px 0">0.05%</div>
+<span class="pm-badge pm-badge-danger"><i class="bi bi-graph-up"></i> 3 flagged Tx</span>
+<div class="mt-2" style="font-size:11px;color:var(--pm-muted)">High-risk scores blocked by active rules.</div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('riskThresholdsModal')">Risk Scoring</button>
+</div>
+</div>
+</div>
+
+<!-- Main Sections -->
+<div class="row g-4">
+
+<!-- 4.6.1 Auth & Authorization -->
+<div class="col-lg-6">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-key-fill text-primary"></i> 4.6.1 Authentication & Authz</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('oauthRegisterModal')"><i class="bi bi-plus"></i> App</button>
+</div>
+<p class="pm-section-sub mb-4">Manage OAuth 2.0 flows, JWT settings, and API request security protocols.</p>
+
+<div class="config-row border-top">
+<div>
+<div style="font-weight:600;font-size:14px">OAuth 2.0 Applications</div>
+<div style="font-size:12px;color:var(--pm-muted)">Manage apps using Auth Code or PKCE flows</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('oauthManageModal')">Manage (2)</button>
+</div>
+
+<div class="config-row">
+<div>
+<div style="font-weight:600;font-size:14px">API Request Signing (HMAC-SHA256)</div>
+<div style="font-size:12px;color:var(--pm-muted)">Verify payload integrity using your secret key</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('webhookSigModal')">Configure</button>
+</div>
+
+<div class="config-row">
+<div>
+<div style="font-weight:600;font-size:14px">JWT Token Management</div>
+<div style="font-size:12px;color:var(--pm-muted)">Expiration, refresh limits, and custom claims</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('jwtConfigModal')">Settings</button>
+</div>
+
+<div class="config-row">
+<div>
+<div style="font-weight:600;font-size:14px">IP Whitelisting</div>
+<div style="font-size:12px;color:var(--pm-muted)">Restrict API access to known server IPs</div>
+<div class="mt-1"><span class="pm-badge pm-badge-success">Enabled (3 IPs)</span></div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('ipWhitelistModal')">Edit IPs</button>
+</div>
+
+<div class="config-row pb-0">
+<div>
+<div style="font-weight:600;font-size:14px">Certificate Pinning</div>
+<div style="font-size:12px;color:var(--pm-muted)">Prevent MITM attacks for Mobile SDKs</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('certPinningModal')">Get Certs</button>
+</div>
+
+</div>
+</div>
+
+<!-- 4.6.2 Data Protection & Privacy -->
+<div class="col-lg-6">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-shield-lock-fill text-success"></i> 4.6.2 Data Protection & Privacy</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('dpaModal')"><i class="bi bi-file-earmark-pdf"></i> DPA</button>
+</div>
+<p class="pm-section-sub mb-4">Compliance for PCI DSS, Data Protection Act 2019, and encryption standards.</p>
+
+<div class="config-row border-top">
+<div>
+<div style="font-weight:600;font-size:14px">PCI DSS Compliance</div>
+<div style="font-size:12px;color:var(--pm-muted)">SAQ validation and tokenization rules</div>
+<div class="mt-1"><span class="pm-badge pm-badge-warning">SAQ D Overdue</span></div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('pciUploadModal')">Upload SAQ</button>
+</div>
+
+<div class="config-row">
+<div>
+<div style="font-weight:600;font-size:14px">Consent Management API</div>
+<div style="font-size:12px;color:var(--pm-muted)">Handle user consents and DSARs programmatically</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('consentViewerModal')">View Consents</button>
+</div>
+
+<div class="config-row">
+<div>
+<div style="font-weight:600;font-size:14px">Encryption Keys (Data at Rest)</div>
+<div style="font-size:12px;color:var(--pm-muted)">AES-256 KMS integration & bring-your-own-key</div>
+<div class="mt-1"><span class="pm-badge pm-badge-success">PayMo KMS Managed</span></div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('encryptionSettingsModal')">Manage KMS</button>
+</div>
+
+<div class="config-row pb-0">
+<div>
+<div style="font-weight:600;font-size:14px">Scopes & PII Access</div>
+<div style="font-size:12px;color:var(--pm-muted)">Granular read/write permissions for integrators</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('scopeManageModal')">Manage Scopes</button>
+</div>
+
+</div>
+</div>
+
+<!-- 4.6.3 Fraud Prevention -->
+<div class="col-lg-12">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-radar text-danger"></i> 4.6.3 Fraud Prevention & Risk APIs</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('kycWebhookModal')"><i class="bi bi-plug"></i> KYC Webhooks</button>
+</div>
+<p class="pm-section-sub mb-4">Real-time risk scoring, device fingerprinting, and automated KYC/KYB validation tools.</p>
+
+<div class="row g-4">
+<div class="col-md-4">
+<div class="p-4 border rounded" style="height:100%">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-speedometer2"></i></div>
+<h5 style="font-weight:700;font-size:15px">Real-Time Risk Scoring</h5>
+<p style="font-size:12px;color:var(--pm-muted)">Tx scoring (0-100) based on velocity, location, behavior. Auto-trigger 3DS/OTP.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('riskThresholdsModal')">Configure Thresholds</button>
+</div>
+</div>
+<div class="col-md-4">
+<div class="p-4 border rounded" style="height:100%">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-phone"></i></div>
+<h5 style="font-weight:700;font-size:15px">Device Fingerprinting</h5>
+<p style="font-size:12px;color:var(--pm-muted)">Detect rooted devices, emulators, and track browser/mobile fingerprints.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('deviceFingerprintModal')">Detection Rules</button>
+</div>
+</div>
+<div class="col-md-4">
+<div class="p-4 border rounded" style="height:100%">
+<div class="pm-icon-circle mb-3" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-person-bounding-box"></i></div>
+<h5 style="font-weight:700;font-size:15px">KYC/KYB Verification API</h5>
+<p style="font-size:12px;color:var(--pm-muted)">ID OCR, liveness detection, PEP screening, and CR12 business validation.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('kycWebhookModal')">Verification Settings</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 20+ FUNCTIONAL MODALS -->
+<!-- ========================================================================= -->
+
+<!-- 1. OAuth App Registration (Multistep) -->
+<div class="modal fade resettable" id="oauthRegisterModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-lg me-2 text-primary"></i>Register OAuth Application</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="oauthStepper"></div><div id="oauthStep1" class="fade-step active"><h6 style="font-weight:700;margin-bottom:16px">App Details</h6><div class="mb-3"><label class="pm-form-label">Application Name</label><input class="pm-form-control" placeholder="e.g. My E-commerce Checkout"></div><div class="mb-3"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="2"></textarea></div><div class="mb-3"><label class="pm-form-label">App Logo (URL)</label><input class="pm-form-control" placeholder="https://..."></div></div><div id="oauthStep2" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Auth Flow & Redirects</h6><div class="mb-3"><label class="pm-form-label">Grant Types Allowed</label><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Authorization Code</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Client Credentials (M2M)</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">PKCE (Mobile/SPA)</label></div></div><div class="mb-3"><label class="pm-form-label">Allowed Redirect URIs (Comma separated)</label><textarea class="pm-form-control" rows="2" placeholder="https://app.example.com/oauth/callback"></textarea></div></div><div id="oauthStep3" class="fade-step"><h6 style="font-weight:700;margin-bottom:16px">Requested Scopes</h6><div class="p-3 border rounded mb-2"><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">payments:write</label><div style="font-size:11px;color:var(--pm-muted)">Initiate payments and disbursements</div></div></div><div class="p-3 border rounded mb-2"><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">payments:read</label><div style="font-size:11px;color:var(--pm-muted)">Read transaction history</div></div></div><div class="p-3 border rounded mb-2"><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label fw-bold">customers:read</label><div style="font-size:11px;color:var(--pm-muted)">Access customer PII data</div></div></div></div><div id="oauthStep4" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">App Registered</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Store your Client Secret securely. It will not be shown again.</p><div class="api-key-box mb-2"><span>Client ID: <span class="text-primary">app_live_8829fjak290</span></span><button class="pm-btn pm-btn-sm"><i class="bi bi-clipboard"></i></button></div><div class="api-key-box mb-3"><span>Client Secret: <span class="text-danger">sec_live_*******************</span></span><button class="pm-btn pm-btn-sm" onclick="openModal('secretRevealModal')"><i class="bi bi-eye"></i></button></div></div></div></div><div class="modal-footer" id="oauthFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="oauthNextBtn" onclick="nextOauthStep()">Next Step <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 2. OAuth Manage -->
+<div class="modal fade resettable" id="oauthManageModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-grid me-2"></i>Manage OAuth Apps</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>App Name</th><th>Client ID</th><th>Flows</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>Main Web App</td><td><code>app_lv_11a</code></td><td>Auth Code</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('oauthRegisterModal')">Edit</button> <button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('deleteAppModal')"><i class="bi bi-trash"></i></button></td></tr><tr><td>Mobile iOS App</td><td><code>app_lv_22b</code></td><td>PKCE</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('oauthRegisterModal')">Edit</button> <button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('deleteAppModal')"><i class="bi bi-trash"></i></button></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="closeModal('oauthManageModal');openModal('oauthRegisterModal')">New App</button></div></div></div></div>
+
+<!-- 3. Delete App -->
+<div class="modal fade resettable" id="deleteAppModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Revoke Application</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Are you sure you want to revoke <strong>Mobile iOS App</strong>? All active tokens will be immediately invalidated and API requests will fail.</p><label class="pm-form-label mt-3">Type "REVOKE" to confirm</label><input type="text" class="pm-form-control"></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('deleteAppModal','Application revoked. Tokens destroyed.')">Confirm Revocation</button></div></div></div></div>
+
+<!-- 4. Rotate API Keys -->
+<div class="modal fade resettable" id="rotateKeysModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Rotate API Keys</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)"><i class="bi bi-exclamation-circle text-warning me-1"></i> Production Secret Key expires in 5 days.</div><div class="mb-3"><label class="pm-form-label">Select Key to Rotate</label><select class="pm-form-control"><option>Production Secret Key (sk_live_***)</option><option>Production Public Key (pk_live_***)</option><option>Sandbox Secret Key (sk_test_***)</option></select></div><div class="mb-3"><label class="pm-form-label">Grace Period for Old Key</label><select class="pm-form-control"><option>24 Hours</option><option>48 Hours</option><option>7 Days</option><option>Revoke Immediately</option></select><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Allows zero-downtime deployment.</div></div><label class="pm-form-label">Admin MFA/OTP</label><input type="text" class="pm-form-control" placeholder="123456"></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('rotateKeysModal','Key rotated. New key generated and old key set for grace expiration.','ROT-9912')">Rotate Key</button></div></div></div></div>
+
+<!-- 5. IP Whitelist -->
+<div class="modal fade resettable" id="ipWhitelistModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-hdd-network me-2"></i>IP Whitelisting</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Restrict API calls with your Secret Key to these specific IP addresses or CIDR blocks.</p><div class="mb-3"><div class="d-flex justify-content-between align-items-center p-2 border-bottom"><code>192.168.1.50</code><button class="pm-btn pm-btn-sm text-danger"><i class="bi bi-x"></i></button></div><div class="d-flex justify-content-between align-items-center p-2 border-bottom"><code>203.0.113.0/24</code><button class="pm-btn pm-btn-sm text-danger"><i class="bi bi-x"></i></button></div><div class="d-flex justify-content-between align-items-center p-2 border-bottom"><code>198.51.100.12</code><button class="pm-btn pm-btn-sm text-danger"><i class="bi bi-x"></i></button></div></div><div class="d-flex gap-2"><input type="text" class="pm-form-control" placeholder="Add IPv4, IPv6 or CIDR"><button class="pm-btn pm-btn-primary">Add</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 6. Webhook Signatures -->
+<div class="modal fade resettable" id="webhookSigModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pen me-2"></i>Webhook Signatures (HMAC)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">PayMo signs all webhook payloads using HMAC-SHA256. Verify the <code>X-PayMo-Signature</code> header.</p><div class="mb-3"><label class="pm-form-label">Endpoint URL</label><input type="text" class="pm-form-control" value="https://api.yourdomain.com/paymo/webhooks"></div><div class="mb-3"><label class="pm-form-label">Webhook Secret</label><div class="api-key-box"><span>whsec_live_98a7sd98f7a9s8df7</span><button class="pm-btn pm-btn-sm"><i class="bi bi-arrow-repeat"></i></button></div></div><div class="code-block">const crypto = require('crypto');
+const sig = crypto.createHmac('sha256', secret)
+  .update(rawBody)
+  .digest('hex');
+if (sig === headerSig) { // Verified }</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('webhookSigModal','Webhook endpoint updated successfully.')">Save</button></div></div></div></div>
+
+<!-- 7. JWT Config -->
+<div class="modal fade resettable" id="jwtConfigModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-ticket-detailed me-2"></i>JWT Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Access Token Expiration</label><select class="pm-form-control"><option>15 Minutes</option><option selected>1 Hour</option><option>24 Hours</option></select></div><div class="mb-3"><label class="pm-form-label">Refresh Token Expiration</label><select class="pm-form-control"><option>7 Days</option><option selected>30 Days</option><option>Never (Not recommended)</option></select></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Enforce strict token revocation (Blacklist)</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Include custom claims (merchant_id, branch_id)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('jwtConfigModal','JWT settings applied across auth servers.')">Save Settings</button></div></div></div></div>
+
+<!-- 8. Cert Pinning -->
+<div class="modal fade resettable" id="certPinningModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-lock me-2"></i>Certificate Pinning (Mobile SDK)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-muted)">To prevent Man-in-the-Middle (MITM) attacks on mobile apps, pin our API SSL certificates. We rotate certificates annually.</p><div class="mb-3"><label class="pm-form-label">Current Primary Cert SHA-256 Hash</label><div class="api-key-box mb-2"><span>8A:9B:2C:4D:5E...</span><button class="pm-btn pm-btn-sm"><i class="bi bi-clipboard"></i></button></div><div style="font-size:11px;color:var(--pm-info)">Expires: Dec 31, 2026</div></div><div class="mb-3"><label class="pm-form-label">Backup Cert SHA-256 Hash</label><div class="api-key-box mb-2"><span>1F:2A:3B:4C:5D...</span><button class="pm-btn pm-btn-sm"><i class="bi bi-clipboard"></i></button></div><div style="font-size:11px;color:var(--pm-info)">Pin both to ensure zero downtime during rotation.</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 9. PCI DSS Upload -->
+<div class="modal fade resettable" id="pciUploadModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>PCI DSS Attestation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">If you use direct API card integrations rather than PayMo tokenized iframes, you must submit a valid SAQ D annually.</p><div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)"><div class="d-flex align-items-center gap-2"><i class="bi bi-exclamation-triangle text-warning"></i> <strong>Current Status: OVERDUE</strong></div><div style="font-size:12px;margin-top:4px">Your previous SAQ D expired on May 15, 2025. Direct card APIs may be restricted if not updated within 14 days.</div></div><div class="mb-3"><label class="pm-form-label">Upload SAQ D Document (PDF)</label><input type="file" class="pm-form-control"></div><div class="mb-3"><label class="pm-form-label">QSA Name / Company (if applicable)</label><input type="text" class="pm-form-control" placeholder="Leave blank if self-assessed"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('pciUploadModal','PCI Document submitted. Compliance team will review within 48 hrs.')">Upload</button></div></div></div></div>
+
+<!-- 10. Consent Viewer -->
+<div class="modal fade resettable" id="consentViewerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-check me-2"></i>Consent & DSAR Management</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('consentTab','active',this)">Active Consents</button><button class="pm-tab-pill" onclick="switchTab('consentTab','dsar',this)">Pending DSARs</button></div><div id="consentTab-active" class="tab-panel active"><div class="table-responsive"><table class="pm-table"><thead><tr><th>User ID</th><th>Data Type</th><th>Consent Date</th><th>Action</th></tr></thead><tbody><tr><td>usr_99812</td><td>Marketing SMS</td><td>12 Jun 2025</td><td><button class="pm-btn pm-btn-sm text-danger">Revoke</button></td></tr><tr><td>usr_99812</td><td>Financial Profiling</td><td>12 Jun 2025</td><td><button class="pm-btn pm-btn-sm text-danger">Revoke</button></td></tr><tr><td>usr_44122</td><td>Location Tracking</td><td>01 May 2025</td><td><button class="pm-btn pm-btn-sm text-danger">Revoke</button></td></tr></tbody></table></div></div><div id="consentTab-dsar" class="tab-panel"><div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"><div><strong>Right to Erasure Request</strong><div style="font-size:11px;color:var(--pm-muted)">usr_77182 · Due in 12 days</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('supportEscalationModal')">Execute Deletion API</button></div><div class="p-3 border rounded d-flex justify-content-between align-items-center"><div><strong>Data Portability Request</strong><div style="font-size:11px;color:var(--pm-muted)">usr_22910 · Export generated</div></div><button class="pm-btn pm-btn-sm pm-btn-outline">Download JSON</button></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 11. Encryption Settings KMS -->
+<div class="modal fade resettable" id="encryptionSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-key-fill text-success me-2"></i>KMS & Encryption at Rest</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">By default, PayMo uses AES-256 managed keys. Enterprise customers can Bring Your Own Key (BYOK) via AWS KMS or Azure KMS integration.</p><div class="mb-3"><label class="pm-form-label">Encryption Mode</label><select class="pm-form-control"><option selected>PayMo Managed Keys (Default)</option><option>AWS KMS (BYOK)</option><option>Azure Key Vault (BYOK)</option></select></div><div class="p-3 rounded" style="background:var(--pm-surface-2);opacity:0.6"><div class="mb-2"><label class="pm-form-label">KMS Key ARN (AWS only)</label><input class="pm-form-control" disabled placeholder="arn:aws:kms:eu-west-1:111122223333:key/..."></div><div><label class="pm-form-label">IAM Role Session</label><input class="pm-form-control" disabled placeholder="arn:aws:iam::..."></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('encryptionSettingsModal','Encryption settings updated.','KMS-UPDATE')">Save Config</button></div></div></div></div>
+
+<!-- 12. Scope Manage -->
+<div class="modal fade resettable" id="scopeManageModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-eye me-2"></i>Scope & PII Access Rules</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Scope Name</th><th>Description</th><th>Sensitivity</th><th>Default Status</th></tr></thead><tbody><tr><td><code>payments:write</code></td><td>Execute transfers/disbursements</td><td><span class="pm-badge pm-badge-danger">High</span></td><td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td></tr><tr><td><code>customers:pii:read</code></td><td>View full names, ID docs, phone</td><td><span class="pm-badge pm-badge-danger">High</span></td><td><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></td></tr><tr><td><code>invoices:read</code></td><td>Read invoice data</td><td><span class="pm-badge pm-badge-info">Low</span></td><td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></td></tr><tr><td><code>webhook:config</code></td><td>Change webhook URLs via API</td><td><span class="pm-badge pm-badge-warning">Med</span></td><td><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scopeManageModal','Scope defaults saved globally.')">Save Defaults</button></div></div></div></div>
+
+<!-- 13. Risk Thresholds -->
+<div class="modal fade resettable" id="riskThresholdsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 text-danger me-2"></i>Risk Scoring Thresholds</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">PayMo evaluates every API transaction in real-time (0-100 score). Set automated actions based on the score.</p><div class="mb-3"><label class="pm-form-label">Auto-Decline Threshold (Score > X)</label><input type="range" class="form-range" min="50" max="100" value="85"><div class="text-end fw-bold">85</div></div><div class="mb-3"><label class="pm-form-label">Challenge (3DS/OTP) Threshold (Score > X)</label><input type="range" class="form-range" min="30" max="85" value="60"><div class="text-end fw-bold">60</div></div><div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Flag velocity spikes (>10 tx/min per user)</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block OFAC/Sanctioned IP regions automatically</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('riskThresholdsModal','Risk thresholds updated. Applies immediately.','RSK-99')">Save Rules</button></div></div></div></div>
+
+<!-- 14. Device Fingerprint -->
+<div class="modal fade resettable" id="deviceFingerprintModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-phone me-2"></i>Device Fingerprinting Rules</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block rooted / jailbroken devices (Mobile SDK)</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Block known emulators (Bluestacks, Genymotion)</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label class="form-check-label">Enforce Behavioral Biometrics profiling (typing speed, gyro)</label></div><div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-info-circle me-1"></i> Device ID (UUID) is attached to the <code>pm-device-id</code> header. It maps to historical fraud records on our network.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('deviceFingerprintModal','Device fingerprinting constraints applied.')">Save Rules</button></div></div></div></div>
+
+<!-- 15. KYC Webhook Config -->
+<div class="modal fade resettable" id="kycWebhookModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-bounding-box me-2"></i>KYC / KYB Validation API</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">IPRS / Huduma Namba Check</label><select class="pm-form-control"><option>Strict Match (Name + DOB)</option><option>Fuzzy Match (Allows slight typos)</option></select></div><div class="mb-3"><label class="pm-form-label">Liveness Detection (Selfie)</label><select class="pm-form-control"><option>Active Liveness (Turn head, blink)</option><option>Passive Liveness (Background check only)</option></select></div><div class="mb-3"><label class="pm-form-label">KYC Result Webhook</label><input type="text" class="pm-form-control" value="https://api.yourdomain.com/kyc-callbacks"></div><div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Auto-decline PEP (Politically Exposed Persons)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('kycWebhookModal','KYC automation constraints saved.')">Save Config</button></div></div></div></div>
+
+<!-- 16. DPA Modal -->
+<div class="modal fade resettable" id="dpaModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-pdf me-2"></i>Data Processing Agreement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">As per Kenya Data Protection Act 2019 and GDPR, view or download the DPA governing PayMo's processing of your customer PII.</p><div class="p-3 border rounded mb-3 d-flex justify-content-between align-items-center"><div><i class="bi bi-file-pdf text-danger fs-4 me-2"></i> <strong>Signed DPA.pdf</strong></div><span class="pm-badge pm-badge-success">Signed: 12 Jan 2024</span></div><div class="form-check"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">I agree that PayMo acts as a Data Processor</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary"><i class="bi bi-download"></i> Download DPA</button></div></div></div></div>
+
+<!-- 17. Rate Limit Alert -->
+<div class="modal fade resettable" id="rateLimitAlertModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer text-info me-2"></i>Rate Limits & Throttling</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">Global Rate Limit</div><strong style="font-size:18px">1,000 req / sec</strong></div></div><div class="col-6"><div class="p-3 rounded" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted)">Current Usage</div><strong style="font-size:18px;color:var(--pm-info)">42 req / sec</strong></div></div></div><div class="mt-4 mb-3"><label class="pm-form-label">Alert me when usage hits X% of limit</label><input type="range" class="form-range" min="50" max="95" value="80"><div class="text-end fw-bold">80%</div></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Return 429 Retry-After headers</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('rateLimitAlertModal','Rate limit thresholds updated.')">Save Alerts</button></div></div></div></div>
+
+<!-- 18. Audit Log Modal -->
+<div class="modal fade resettable" id="auditLogModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text me-2"></i>Security Audit & Access Logs</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="text" class="pm-form-control" placeholder="Search event, user, IP..."><select class="pm-form-control" style="width:auto"><option>Last 7 Days</option><option>Last 30 Days</option></select><button class="pm-btn pm-btn-outline"><i class="bi bi-download"></i></button></div><div class="table-responsive"><table class="pm-table"><thead><tr><th>Timestamp</th><th>Event</th><th>User/System</th><th>IP Address</th><th>Status</th></tr></thead><tbody><tr><td>27 Jun 2025 14:32:11</td><td>API Key Rotated</td><td>Admin Dev (AD)</td><td>192.168.1.50</td><td><span class="pm-badge pm-badge-success">Success</span></td></tr><tr><td>27 Jun 2025 10:15:00</td><td>Webhook Sig Failed</td><td>System</td><td>203.0.113.44</td><td><span class="pm-badge pm-badge-danger">Failed</span></td></tr><tr><td>26 Jun 2025 09:00:21</td><td>OAuth App Created</td><td>Admin Dev (AD)</td><td>192.168.1.50</td><td><span class="pm-badge pm-badge-success">Success</span></td></tr><tr><td>25 Jun 2025 22:10:05</td><td>Failed Login (Bad MFA)</td><td>james@example.com</td><td>198.51.100.12</td><td><span class="pm-badge pm-badge-danger">Blocked</span></td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 19. Secret Reveal Modal -->
+<div class="modal fade resettable" id="secretRevealModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-eye me-2"></i>Reveal Client Secret</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>To reveal the secret key, verify your identity with an OTP sent to your admin email.</p><div class="mb-3"><label class="pm-form-label">6-Digit OTP</label><input type="text" class="pm-form-control" placeholder="000000"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="closeModal('secretRevealModal');alert('Secret revealed (Mock Action)');">Verify & Reveal</button></div></div></div></div>
+
+<!-- 20. Sandbox Testing -->
+<div class="modal fade resettable" id="sandboxTestingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-box me-2"></i>Sandbox Testing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px">You are currently viewing Production settings. Switch to the Sandbox environment to test integrations without real money movement.</p><div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)"><div class="d-flex justify-content-between"><span class="fw-bold">Sandbox Keys Active</span><span class="pm-badge pm-badge-info">Ready</span></div><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Test M-Pesa push responses (success, timeout, cancel) using simulated endpoints.</div></div><button class="pm-btn pm-btn-sm pm-btn-outline w-100 mb-2">View Sandbox Credentials</button><button class="pm-btn pm-btn-sm pm-btn-outline w-100">Clear Sandbox Data</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Stay in Production</button><button class="pm-btn pm-btn-primary" onclick="processAction('sandboxTestingModal','Switched to Sandbox Environment.')"><i class="bi bi-arrow-left-right"></i> Switch Context</button></div></div></div></div>
+
+<!-- 21. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>System Status</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><strong>Core APIs (REST)</strong><div style="font-size:11px;color:var(--pm-muted)">Response p95: 120ms</div></div><span class="pm-badge pm-badge-success">Operational</span></div><div class="status-row"><div><strong>Webhooks Delivery</strong><div style="font-size:11px;color:var(--pm-muted)">Avg delay: 1.2s</div></div><span class="pm-badge pm-badge-success">Operational</span></div><div class="status-row"><div><strong>M-Pesa STK Gateway</strong><div style="font-size:11px;color:var(--pm-muted)">Upstream dependency</div></div><span class="pm-badge pm-badge-warning">Degraded (Safaricom)</span></div><div class="status-row"><div><strong>KYC / OCR Engine</strong><div style="font-size:11px;color:var(--pm-muted)">ID verification services</div></div><span class="pm-badge pm-badge-success">Operational</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('supportEscalationModal');closeModal('healthCheckModal')">Report Incident</button></div></div></div></div>
+
+<!-- 22. Notification Settings -->
+<div class="modal fade resettable" id="notificationSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Developer Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">API Error Rate > 1% (Email/Slack)</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Webhook Delivery Failures (Email)</label></div><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Security Advisories & Cert Rotations</label></div><div class="mb-3"><label class="pm-form-label">Slack Webhook URL</label><input type="text" class="pm-form-control" value="https://hooks.slack.com/services/T000..."></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('notificationSettingsModal','Alert configurations updated.')">Save Alerts</button></div></div></div></div>
+
+<!-- 23. Profile Modal -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Admin Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div><h5 style="font-weight:700;margin-bottom:2px">Admin Developer</h5><p style="font-size:13px;color:var(--pm-muted)">admin.dev@company.com · Owner Role</p><button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('mfaSetupModal');closeModal('profileModal')"><i class="bi bi-shield-lock"></i> Setup MFA / 2FA</button></div><div class="modal-footer"><button class="pm-btn text-danger w-100">Logout Session</button></div></div></div></div>
+
+<!-- 24. MFA Setup -->
+<div class="modal fade resettable" id="mfaSetupModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Setup MFA</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><p style="font-size:13px">Scan this QR code with Google Authenticator, Authy, or your preferred TOTP app.</p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjI1IiB5PSI4MCIgZmlsbD0iIzk5OSI+UVIgQ09ERSBNT0NLPC90ZXh0Pjwvc3ZnPg==" class="mb-3 rounded"><div class="mb-3"><label class="pm-form-label text-start d-block">Enter 6-digit code to verify</label><input type="text" class="pm-form-control text-center fs-4" placeholder="000000" maxlength="6"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('mfaSetupModal','MFA successfully enabled for your account.')">Enable MFA</button></div></div></div></div>
+
+<!-- 25. Support Escalation -->
+<div class="modal fade resettable" id="supportEscalationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2 text-danger"></i>Escalate Incident</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Severity Level</label><select class="pm-form-control"><option>SEV1 (Complete Outage)</option><option>SEV2 (Major Degradation)</option><option>SEV3 (Minor Issue)</option></select></div><div class="mb-3"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="3">M-Pesa STK push requests are timing out after 30s. Affecting production checkout.</textarea></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> SEV1 incidents page the on-call platform engineer immediately. Misuse may result in SLA penalties.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('supportEscalationModal','Incident paged. War room activated. Ticket INC-9901','INC-9901')">Trigger PagerDuty</button></div></div></div></div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function moveFocus(el){if(el.value.length===1&&el.nextElementSibling)el.nextElementSibling.focus();}
+
+let oauthStep=1;
+function renderOauthStepper(){
+  const s=['Details','Flows','Scopes','Done'];
+  document.getElementById('oauthStepper').innerHTML=s.map((l,i)=>`<div class="pm-step ${(i+1)<oauthStep?'completed':(i+1)===oauthStep?'active':''}"><div class="pm-step-num">${(i+1)<oauthStep?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<s.length-1?'<div class="pm-step-line"></div>':''}`).join('');
+}
+function showOauthFlow(){
+  for(let i=1;i<=4;i++){const el=document.getElementById('oauthStep'+i);if(el){el.classList.remove('active');el.style.display='none';}}
+  const active=document.getElementById('oauthStep'+oauthStep);if(active){active.classList.add('active');active.style.display='block';}
+}
+function nextOauthStep(){
+  if(oauthStep===3){
+    showLoading('#oauthRegisterModal .modal-body',()=>{
+      oauthStep=4;renderOauthStepper();showOauthFlow();
+      document.getElementById('oauthNextBtn').textContent='Done';
+    });return;
+  }
+  if(oauthStep>=4){closeModal('oauthRegisterModal');return;}
+  oauthStep++;renderOauthStepper();showOauthFlow();
+  if(oauthStep===3)document.getElementById('oauthNextBtn').innerHTML='Generate Keys <i class="bi bi-key"></i>';
+}
+
+function showLoading(target,cb){
+  const el=typeof target==='string'?document.querySelector(target):target;
+  if(!el){cb();return;}
+  const ov=document.createElement('div');ov.className='pm-loading-overlay';
+  ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Applying changes...</p>';
+  el.style.position='relative';el.appendChild(ov);
+  setTimeout(()=>{ov.remove();cb();},1200);
+}
+function processAction(modalId,msg,ref){
+  const modal=document.getElementById(modalId);
+  const body=modal.querySelector('.modal-body');
+  const footer=modal.querySelector('.modal-footer');
+  showLoading(body,()=>{
+    body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px">${msg}</p>${ref?`<p style="font-size:11px;color:var(--pm-muted)">Ref: ${ref}</p>`:''}</div>`;
+    footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';
+  });
+}
+function cacheResettable(){
+  document.querySelectorAll('.resettable').forEach(m=>{
+    const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');
+    if(b)m.dataset.ob=b.innerHTML;if(f)m.dataset.of=f.innerHTML;
+    m.addEventListener('hidden.bs.modal',()=>{
+      if(m.dataset.ob)m.querySelector('.modal-body').innerHTML=m.dataset.ob;
+      if(m.dataset.of)m.querySelector('.modal-footer').innerHTML=m.dataset.of;
+      if(m.id==='oauthRegisterModal'){oauthStep=1;renderOauthStepper();showOauthFlow();}
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  renderOauthStepper();
+});
+</script>
+</body>
+</html>

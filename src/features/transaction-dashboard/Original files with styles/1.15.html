@@ -1,0 +1,2865 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Fee & Commission Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 110px;
+            padding: 12px 0 18px
+        }
+
+        .chart-bar {
+            flex: 1;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            min-width: 18px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .chart-bar:hover {
+            opacity: .88
+        }
+
+        .chart-bar .bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--pm-muted)
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bank"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-percent"></i><span class="badge-dot"></span></button><button class="pm-nav-item"><i
+                        class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-gear"></i></button></nav><button class="pm-nav-item" style="margin-top:auto"><i
+                    class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Fee & Commission Management</h1>
+                            <p>Fee structures, commission tiers, waivers, settlement reconciliation and compliance</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search fee rules, commission tiers, transactions, waivers..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('complianceCheckModal')"><i
+                            class="bi bi-shield-check"></i></button><button class="pm-header-btn"
+                        onclick="openM('feeNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">7</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Treasury Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Transactions Hub</a> / <strong>Fee &
+                            Commission Management</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.15 — Fee & Commission Management</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage all transaction fees, commission
+                        structures, tiered pricing, waivers, settlements and regulatory compliance in one centralised
+                        command center.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('complianceCheckModal')"><i class="bi bi-shield-check"></i>
+                        Compliance</button><button class="btn-pm" onclick="openM('feeCalculatorModal')"><i
+                            class="bi bi-calculator"></i> Calculator</button><button class="btn-pm"
+                        onclick="openM('waiverModal')"><i class="bi bi-gift"></i> Waivers</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('addFeeRuleModal')"><i class="bi bi-plus-lg"></i> New
+                        Rule</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Fee engine is live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">KES 18.4M collected</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">This month across 142,890
+                                transactions. 47 active fee rules, 12 commission tiers, 8 active waivers.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('feeCalculatorModal')">Calculator</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('waiverModal')">Waivers</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('settlementModal')">Settle</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">AVG FEE RATE</p>
+                            <div class="SV" style="margin:6px 0">1.42%</div><span class="B B-s"><i
+                                    class="bi bi-graph-down-arrow"></i> -0.08% MoM</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Inter-bank:
+                                0.85%<br>Wallet transfer: 1.95%</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">COMMISSION PAID OUT</p>
+                            <div class="SV" style="margin:6px 0">KES 4.82M</div><span class="B B-i"><i
+                                    class="bi bi-people"></i> 2,184 agents</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Top tier agents earned KES
+                                312K this month</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">WAIVERS ACTIVE</p>
+                            <div class="SV" style="margin:6px 0">8</div><span class="B B-w"><i class="bi bi-gift"></i>
+                                KES 1.24M waived</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">4 promotional, 3 hardship,
+                                1 regulatory</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionFullModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Tier 3 commission rule
+                                            underperforming</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Only 12% of target volume
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('editCommissionModal')">Review</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Fee rule #FR-442 expires in 5 days
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Promotional 0.5% fee for SMEs
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('editFeeRuleModal')">Extend</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-text"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Monthly settlement reconciliation
+                                            pending</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 2.1M difference flagged
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('settlementModal')">Reconcile</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Introduce volume-based tier for
+                                            agents</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Potential +KES 840K monthly
+                                            revenue</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('addCommissionTierModal')">Create
+                                    Tier</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-lightbulb"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Waive fees for first 3 inter-bank
+                                            transfers</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Increase wallet adoption by
+                                            18%</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('waiverModal')">Setup</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-file-earmark-check"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Audit fee leakage on high-value
+                                            transfers</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 312K identified in Q2
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('complianceCheckModal')">Audit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent fee & commission workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('feeCalculatorModal')"><i
+                                        class="bi bi-calculator text-primary me-1"></i> Fee Calculator</button><button
+                                    class="quick-btn" onclick="openM('addFeeRuleModal')"><i
+                                        class="bi bi-plus-circle text-success me-1"></i> New Fee Rule</button><button
+                                    class="quick-btn" onclick="openM('addCommissionTierModal')"><i
+                                        class="bi bi-layers text-purple me-1"></i> New Commission Tier</button><button
+                                    class="quick-btn" onclick="openM('waiverModal')"><i
+                                        class="bi bi-gift text-warning me-1"></i> Create Waiver</button><button
+                                    class="quick-btn" onclick="openM('settlementModal')"><i
+                                        class="bi bi-cash-stack text-info me-1"></i> Run Settlement</button><button
+                                    class="quick-btn" onclick="openM('feeReportModal')"><i
+                                        class="bi bi-file-earmark-bar-graph me-1" style="color:var(--pm-accent)"></i>
+                                    Fee Report</button><button class="quick-btn" onclick="openM('exemptionModal')"><i
+                                        class="bi bi-shield me-1" style="color:var(--pm-primary)"></i>
+                                    Exemptions</button><button class="quick-btn"
+                                    onclick="openM('complianceCheckModal')"><i class="bi bi-clipboard-check me-1"
+                                        style="color:var(--pm-danger)"></i> Compliance Check</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-percent" style="color:var(--pm-primary)"></i> 1.15.1 — Fee
+                                Structure Dashboard</h3>
+                            <p class="ss">Overview of all active fee rules, revenue collected, and performance against
+                                targets.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('feeReportModal')"><i class="bi bi-download"></i> Export</button><button
+                                class="btn-pm btn-sm btn-pm-p" onclick="openM('addFeeRuleModal')"><i
+                                    class="bi bi-plus-lg"></i> New Rule</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Fee Rules (47)</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Rule ID</th>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Rate</th>
+                                                <th>Volume</th>
+                                                <th>Revenue</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>FR-401</code></td>
+                                                <td>Inter-bank Transfer</td>
+                                                <td>Percentage</td>
+                                                <td>0.85%</td>
+                                                <td>KES 842M</td>
+                                                <td>KES 7.16M</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editFeeRuleModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>FR-402</code></td>
+                                                <td>Wallet to Bank</td>
+                                                <td>Fixed</td>
+                                                <td>KES 25</td>
+                                                <td>124,890 txns</td>
+                                                <td>KES 3.12M</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editFeeRuleModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>FR-410</code></td>
+                                                <td>High-Value Instant</td>
+                                                <td>Tiered</td>
+                                                <td>0.45–1.2%</td>
+                                                <td>KES 1.12B</td>
+                                                <td>KES 6.84M</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editFeeRuleModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>FR-415</code></td>
+                                                <td>SME Promotional</td>
+                                                <td>Percentage</td>
+                                                <td>0.50%</td>
+                                                <td>KES 189M</td>
+                                                <td>KES 945K</td>
+                                                <td><span class="B B-w">Expiring</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editFeeRuleModal')">Extend</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>FR-420</code></td>
+                                                <td>Agent Cash-in</td>
+                                                <td>Fixed</td>
+                                                <td>KES 10</td>
+                                                <td>89,420 txns</td>
+                                                <td>KES 894K</td>
+                                                <td><span class="B B-s">Active</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editFeeRuleModal')">Edit</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Revenue by Category</h4>
+                                <div class="chart-bars">
+                                    <div class="chart-bar" style="height:85%;background:var(--pm-primary)"
+                                        onclick="openM('feeReportModal')"><span class="bar-label">Inter-bank</span>
+                                    </div>
+                                    <div class="chart-bar" style="height:62%;background:var(--pm-info)"
+                                        onclick="openM('feeReportModal')"><span class="bar-label">Wallet</span></div>
+                                    <div class="chart-bar" style="height:78%;background:var(--pm-accent)"
+                                        onclick="openM('feeReportModal')"><span class="bar-label">Instant</span></div>
+                                    <div class="chart-bar" style="height:45%;background:var(--pm-warning)"
+                                        onclick="openM('feeReportModal')"><span class="bar-label">Agent</span></div>
+                                    <div class="chart-bar" style="height:35%;background:var(--pm-purple)"
+                                        onclick="openM('feeReportModal')"><span class="bar-label">Other</span></div>
+                                </div>
+                                <div class="d-flex flex-wrap mt-3" style="gap:10px;font-size:12px"><span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-primary);margin-right:5px"></span>Inter-bank
+                                        KES 7.16M</span><span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-info);margin-right:5px"></span>Wallet
+                                        KES 3.12M</span><span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-accent);margin-right:5px"></span>Instant
+                                        KES 6.84M</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-layers" style="color:var(--pm-accent)"></i> 1.15.2 —
+                                Commission Rules & Tiers</h3>
+                            <p class="ss">Tiered commission structures for agents, partners and merchants with
+                                performance tracking.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('addCommissionTierModal')"><i class="bi bi-plus-lg"></i> New
+                                Tier</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Commission Tiers (12)</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Tier</th>
+                                                <th>Name</th>
+                                                <th>Volume Threshold</th>
+                                                <th>Rate</th>
+                                                <th>Agents</th>
+                                                <th>Paid Out</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="B B-s">T1</span></td>
+                                                <td>Starter</td>
+                                                <td>KES 0 – 500K</td>
+                                                <td>0.8%</td>
+                                                <td>1,240</td>
+                                                <td>KES 1.12M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editCommissionModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="B B-i">T2</span></td>
+                                                <td>Growth</td>
+                                                <td>KES 500K – 2M</td>
+                                                <td>1.1%</td>
+                                                <td>682</td>
+                                                <td>KES 2.04M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editCommissionModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="B B-p">T3</span></td>
+                                                <td>Pro</td>
+                                                <td>KES 2M – 10M</td>
+                                                <td>1.4%</td>
+                                                <td>189</td>
+                                                <td>KES 1.48M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editCommissionModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="B B-w">T4</span></td>
+                                                <td>Elite</td>
+                                                <td>KES 10M+</td>
+                                                <td>1.8%</td>
+                                                <td>73</td>
+                                                <td>KES 218K</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editCommissionModal')">Edit</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Top Performing Agents</h4>
+                                <div class="sr">
+                                    <div><strong>Agent #AG-8821</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 48.2M volume</div>
+                                    </div><span class="B B-s">Elite</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent #AG-7744</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 39.8M volume</div>
+                                    </div><span class="B B-s">Elite</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent #AG-9910</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 31.4M volume</div>
+                                    </div><span class="B B-p">Pro</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent #AG-3342</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 27.9M volume</div>
+                                    </div><span class="B B-p">Pro</span>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-2" onclick="openM('agentLeaderboardModal')">View
+                                    Leaderboard</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-calculator" style="color:var(--pm-info)"></i> 1.15.3 — Fee
+                                Calculator & Preview</h3>
+                            <p class="ss">Interactive fee calculator with live preview for different transaction types
+                                and amounts.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('feeCalculatorModal')"><i class="bi bi-play-circle"></i> Open Full
+                                Calculator</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Quick Calculator</h4>
+                                <div class="mb-3"><label class="FL">Transaction Type</label><select class="FC"
+                                        id="calcType">
+                                        <option>Inter-bank Transfer</option>
+                                        <option>Wallet to Bank</option>
+                                        <option>Instant Payment</option>
+                                        <option>Agent Cash-in</option>
+                                    </select></div>
+                                <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC"
+                                        id="calcAmount" value="250000" oninput="calculateFee()"></div>
+                                <div class="p-3 rounded" style="background:var(--pm-surface)">
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Base
+                                            Fee</span><strong id="baseFee">KES 2,125</strong></div>
+                                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">VAT
+                                            (16%)</span><strong id="vatFee">KES 340</strong></div>
+                                    <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                            Deducted</span><strong id="totalFee"
+                                            style="color:var(--pm-primary);font-size:18px">KES 2,465</strong></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('feeCalculatorModal')">Advanced
+                                    Options</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Fee Comparison</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Provider</th>
+                                                <th>Fee</th>
+                                                <th>Time</th>
+                                                <th>Rating</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>PayMo</strong></td>
+                                                <td><strong>KES 2,465</strong></td>
+                                                <td>Instant</td>
+                                                <td><span class="B B-s">4.9/5</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Bank A</td>
+                                                <td>KES 3,200</td>
+                                                <td>30 min</td>
+                                                <td><span class="B B-i">4.2/5</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Bank B</td>
+                                                <td>KES 2,850</td>
+                                                <td>2 hours</td>
+                                                <td><span class="B B-i">3.8/5</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mobile Money</td>
+                                                <td>KES 4,100</td>
+                                                <td>Instant</td>
+                                                <td><span class="B B-w">3.5/5</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-file-earmark-bar-graph" style="color:var(--pm-accent)"></i>
+                                1.15.4 — Transaction Fee Reports & Analytics</h3>
+                            <p class="ss">Detailed fee revenue analytics, trends, and performance by channel, product
+                                and partner.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('feeReportModal')"><i class="bi bi-download"></i> Export Report</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Monthly Fee Revenue Trend
+                                </h4>
+                                <div class="chart-bars">
+                                    <div class="chart-bar" style="height:55%;background:var(--pm-primary)"><span
+                                            class="bar-label">Jan</span></div>
+                                    <div class="chart-bar" style="height:62%;background:var(--pm-primary)"><span
+                                            class="bar-label">Feb</span></div>
+                                    <div class="chart-bar" style="height:71%;background:var(--pm-primary)"><span
+                                            class="bar-label">Mar</span></div>
+                                    <div class="chart-bar" style="height:68%;background:var(--pm-primary)"><span
+                                            class="bar-label">Apr</span></div>
+                                    <div class="chart-bar" style="height:82%;background:var(--pm-primary)"><span
+                                            class="bar-label">May</span></div>
+                                    <div class="chart-bar" style="height:78%;background:var(--pm-accent)"><span
+                                            class="bar-label">Jun</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Top Fee Generating Channels
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Inter-bank (KES)</strong></div>
+                                    <div><strong>KES 7.16M</strong> <span class="B B-s">39%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Wallet Transfers</strong></div>
+                                    <div><strong>KES 3.12M</strong> <span class="B B-i">17%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Instant Payments</strong></div>
+                                    <div><strong>KES 6.84M</strong> <span class="B B-p">37%</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent Services</strong></div>
+                                    <div><strong>KES 1.28M</strong> <span class="B B-w">7%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.5 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-gift" style="color:var(--pm-warning)"></i> 1.15.5 — Fee
+                                Exemptions, Waivers & Promotions</h3>
+                            <p class="ss">Manage promotional waivers, hardship cases, regulatory exemptions and partner
+                                discounts.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('waiverModal')"><i class="bi bi-plus-lg"></i> New Waiver</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Waivers (8)</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Waiver ID</th>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Discount</th>
+                                                <th>Used</th>
+                                                <th>Budget</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>WV-101</code></td>
+                                                <td>SME First Transfer</td>
+                                                <td>Promotional</td>
+                                                <td>100%</td>
+                                                <td>18,420</td>
+                                                <td>KES 5M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editWaiverModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>WV-105</code></td>
+                                                <td>Hardship Relief</td>
+                                                <td>Hardship</td>
+                                                <td>50%</td>
+                                                <td>2,184</td>
+                                                <td>KES 2M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editWaiverModal')">Edit</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>WV-110</code></td>
+                                                <td>Regulatory (CBK)</td>
+                                                <td>Regulatory</td>
+                                                <td>100%</td>
+                                                <td>44,920</td>
+                                                <td>Unlimited</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editWaiverModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>WV-112</code></td>
+                                                <td>Partner Discount</td>
+                                                <td>Partner</td>
+                                                <td>30%</td>
+                                                <td>8,920</td>
+                                                <td>KES 3M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('editWaiverModal')">Edit</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Waiver Budget Utilization
+                                </h4>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>SME
+                                            First Transfer</span><span>78%</span></div>
+                                    <div class="pm-progress">
+                                        <div class="pm-progress-bar" style="width:78%;background:var(--pm-accent)">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                                        <span>Hardship Relief</span><span>54%</span></div>
+                                    <div class="pm-progress">
+                                        <div class="pm-progress-bar" style="width:54%;background:var(--pm-warning)">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                                        <span>Partner Discount</span><span>31%</span></div>
+                                    <div class="pm-progress">
+                                        <div class="pm-progress-bar" style="width:31%;background:var(--pm-info)"></div>
+                                    </div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-2" onclick="openM('waiverModal')">Manage All
+                                    Waivers</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.6 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-cash-stack" style="color:var(--pm-purple)"></i> 1.15.6 —
+                                Settlement, Payouts & Reconciliation</h3>
+                            <p class="ss">Run fee settlements, reconcile partner payouts and manage commission
+                                disbursements.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('settlementModal')"><i class="bi bi-play-circle"></i> Run
+                                Settlement</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Pending Settlements</h4>
+                                <div class="sr">
+                                    <div><strong>Agent Commission — June</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">2,184 agents</div>
+                                    </div>
+                                    <div><strong>KES 4.82M</strong><button class="btn-pm btn-sm ms-2"
+                                            onclick="openM('settlementModal')">Settle</button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Partner Revenue Share</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">12 partners</div>
+                                    </div>
+                                    <div><strong>KES 1.89M</strong><button class="btn-pm btn-sm ms-2"
+                                            onclick="openM('settlementModal')">Settle</button></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Merchant Cashback</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">84 merchants</div>
+                                    </div>
+                                    <div><strong>KES 312K</strong><button class="btn-pm btn-sm ms-2"
+                                            onclick="openM('settlementModal')">Settle</button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent Settlements</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Recipients</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>25 Jun 2025</td>
+                                                <td>Agent Commission</td>
+                                                <td>KES 4.12M</td>
+                                                <td>2,011</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementModal')">Receipt</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>20 Jun 2025</td>
+                                                <td>Partner Share</td>
+                                                <td>KES 1.76M</td>
+                                                <td>12</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementModal')">Receipt</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18 Jun 2025</td>
+                                                <td>Merchant Cashback</td>
+                                                <td>KES 289K</td>
+                                                <td>79</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementModal')">Receipt</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.15.7 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clipboard-check" style="color:var(--pm-danger)"></i> 1.15.7 —
+                                Compliance, Audit & Configuration</h3>
+                            <p class="ss">Regulatory compliance checks, audit trails, fee configuration and policy
+                                management.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('complianceCheckModal')"><i class="bi bi-shield-check"></i> Run
+                                Check</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Compliance Status</h4>
+                                <div class="sr">
+                                    <div><strong>CBK Fee Disclosure</strong></div><span class="B B-s">Compliant</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KRA Withholding</strong></div><span class="B B-s">Compliant</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Consumer Protection</strong></div><span class="B B-s">Compliant</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>PCI DSS Fee Storage</strong></div><span class="B B-s">Compliant</span>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('complianceCheckModal')">Full
+                                    Compliance Report</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent Audit Logs</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Action</th>
+                                                <th>User</th>
+                                                <th>Details</th>
+                                                <th>Result</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>26 Jun</td>
+                                                <td>Fee rule updated</td>
+                                                <td>James K.</td>
+                                                <td>FR-415 rate changed to 0.5%</td>
+                                                <td><span class="B B-s">Approved</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>25 Jun</td>
+                                                <td>Waiver created</td>
+                                                <td>Grace M.</td>
+                                                <td>WV-115 — Flood Relief 100%</td>
+                                                <td><span class="B B-s">Approved</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>24 Jun</td>
+                                                <td>Commission tier edited</td>
+                                                <td>James K.</td>
+                                                <td>T3 threshold updated</td>
+                                                <td><span class="B B-s">Approved</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>23 Jun</td>
+                                                <td>Settlement run</td>
+                                                <td>System</td>
+                                                <td>June agent commission</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- 23+ MODALS -->
+
+    <!-- M1: Add Fee Rule (multi-step) -->
+    <div class="modal fade R" id="addFeeRuleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Create New Fee Rule</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="feeStepper"></div>
+                    <div id="feeS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Basic Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Rule Name</label><input class="FC"
+                                    value="SME Instant Transfer"></div>
+                            <div class="col-md-6"><label class="FL">Transaction Type</label><select class="FC">
+                                    <option>Inter-bank Transfer</option>
+                                    <option>Instant Payment</option>
+                                    <option>Wallet Transfer</option>
+                                    <option>Agent Cash-in</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Fee Type</label><select class="FC">
+                                    <option>Percentage</option>
+                                    <option>Fixed Amount</option>
+                                    <option>Tiered</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Effective Date</label><input type="date" class="FC"
+                                    value="2025-07-01"></div>
+                        </div>
+                    </div>
+                    <div id="feeS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Pricing</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Rate / Amount</label><input class="FC" value="0.75">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Unit</label><select class="FC">
+                                    <option>% of transaction</option>
+                                    <option>KES fixed</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Minimum Fee</label><input class="FC" value="10">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Maximum Fee</label><input class="FC" value="5000">
+                            </div>
+                        </div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Preview: KES 100,000 transfer = KES 750 fee</div>
+                    </div>
+                    <div id="feeS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Conditions & Approval</h6>
+                        <div class="mb-3"><label class="FL">Applicable Segments</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">All customers</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">SME only</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">Agents only</label></div>
+                        </div>
+                        <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Require manual approval for changes</label>
+                        </div>
+                    </div>
+                    <div id="feeS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Fee Rule Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Rule FR-448 has been created and is
+                                pending approval.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="feeFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="feeNext"
+                        onclick="nextFlow('fee',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Edit Fee Rule -->
+    <div class="modal fade R" id="editFeeRuleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil text-primary me-2"></i>Edit Fee Rule</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Rule</label><input class="FC" value="FR-415 — SME Promotional">
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Rate</label><input class="FC" value="0.50"></div>
+                        <div class="col-md-6"><label class="FL">Max Fee</label><input class="FC" value="2500"></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Expiry Date</label><input type="date" class="FC"
+                            value="2025-07-05"></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Active</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editFeeRuleModal','Fee rule updated successfully. Changes take effect immediately.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Fee Calculator (multi-step) -->
+    <div class="modal fade R" id="feeCalculatorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calculator text-info me-2"></i>Advanced Fee Calculator</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="calcStepper"></div>
+                    <div id="calcS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Transaction Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">From Account</label><select class="FC">
+                                    <option>PayMo Wallet — KES 24,500</option>
+                                    <option>Equity Bank ****4521</option>
+                                    <option>KCB M-Pesa</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">To Account</label><select class="FC">
+                                    <option>Equity Bank ****7788</option>
+                                    <option>Co-op Bank ****9910</option>
+                                    <option>PayMo Wallet</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Amount (KES)</label><input class="FC" id="advAmount"
+                                    value="500000" oninput="advCalc()"></div>
+                            <div class="col-md-6"><label class="FL">Transaction Type</label><select class="FC"
+                                    id="advType" onchange="advCalc()">
+                                    <option>Inter-bank Transfer</option>
+                                    <option>Instant Payment</option>
+                                    <option>Wallet to Bank</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="calcS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Fee Breakdown</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-2"><span>Base Fee (0.85%)</span><strong
+                                    id="advBase">KES 4,250</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>VAT (16%)</span><strong
+                                    id="advVat">KES 680</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Network Fee</span><strong
+                                    id="advNet">KES 50</strong></div>
+                            <hr class="divider">
+                            <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                    Cost</span><strong id="advTotal" style="font-size:18px;color:var(--pm-primary)">KES
+                                    4,980</strong></div>
+                        </div>
+                        <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+                                class="bi bi-lightbulb me-1"></i> You save KES 1,200 compared to average market rate.
+                        </div>
+                    </div>
+                    <div id="calcS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Fee Calculated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Transaction cost preview complete. Ready
+                                to execute.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="calcFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button><button class="btn-pm btn-pm-p" id="calcNext"
+                        onclick="nextFlow('calc',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Add Commission Tier -->
+    <div class="modal fade R" id="addCommissionTierModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-layers text-accent me-2"></i>Create Commission Tier</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Tier Name</label><input class="FC" value="Super Agent"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Volume Threshold (KES)</label><input class="FC"
+                                value="50000000"></div>
+                        <div class="col-md-6"><label class="FL">Commission Rate</label><input class="FC" value="2.2">
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Benefits</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Priority support</label></div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Higher payout frequency</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Dedicated account manager</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('addCommissionTierModal','Commission tier created successfully!','CT-013')">Create
+                        Tier</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Edit Commission -->
+    <div class="modal fade R" id="editCommissionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil text-accent me-2"></i>Edit Commission Tier</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Tier</label><input class="FC" value="T3 — Pro"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Volume Threshold</label><input class="FC"
+                                value="2000000"></div>
+                        <div class="col-md-6"><label class="FL">Rate</label><input class="FC" value="1.4"></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Status</label><select class="FC">
+                            <option>Active</option>
+                            <option>Paused</option>
+                            <option>Archived</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editCommissionModal','Commission tier updated successfully!','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Waiver Modal (multi-step) -->
+    <div class="modal fade R" id="waiverModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gift text-warning me-2"></i>Create Fee Waiver</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="waiverStepper"></div>
+                    <div id="waiverS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Waiver Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Waiver Name</label><input class="FC"
+                                    value="Flood Relief 2025"></div>
+                            <div class="col-md-6"><label class="FL">Type</label><select class="FC">
+                                    <option>Hardship</option>
+                                    <option>Promotional</option>
+                                    <option>Regulatory</option>
+                                    <option>Partner</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Discount</label><input class="FC" value="100"></div>
+                            <div class="col-md-6"><label class="FL">Budget (KES)</label><input class="FC"
+                                    value="5000000"></div>
+                        </div>
+                    </div>
+                    <div id="waiverS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Eligibility</h6>
+                        <div class="mb-3"><label class="FL">Eligible Segments</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">All customers in affected counties</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">SME customers only</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">Agents in flood zones</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Valid Until</label><input type="date" class="FC"
+                                value="2025-09-30"></div>
+                    </div>
+                    <div id="waiverS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Waiver Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">WV-118 — Flood Relief 2025 is now active.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="waiverFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="waiverNext"
+                        onclick="nextFlow('waiver',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Edit Waiver -->
+    <div class="modal fade R" id="editWaiverModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil text-warning me-2"></i>Edit Waiver</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Waiver</label><input class="FC"
+                            value="WV-101 — SME First Transfer"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Discount %</label><input class="FC" value="100"></div>
+                        <div class="col-md-6"><label class="FL">Remaining Budget</label><input class="FC"
+                                value="1100000"></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Status</label><select class="FC">
+                            <option>Active</option>
+                            <option>Paused</option>
+                            <option>Expired</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editWaiverModal','Waiver updated successfully!','')">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Settlement Modal (multi-step) -->
+    <div class="modal fade R" id="settlementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cash-stack text-purple me-2"></i>Run Settlement</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="settleStepper"></div>
+                    <div id="settleS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Settlement</h6>
+                        <div class="mb-3"><label class="FL">Settlement Type</label><select class="FC">
+                                <option>Agent Commission — June 2025</option>
+                                <option>Partner Revenue Share</option>
+                                <option>Merchant Cashback</option>
+                            </select></div>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-2"><span>Total Amount</span><strong>KES
+                                    4,820,000</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Recipients</span><strong>2,184
+                                    agents</strong></div>
+                            <div class="d-flex justify-content-between"><span>Status</span><span class="B B-w">Ready to
+                                    settle</span></div>
+                        </div>
+                    </div>
+                    <div id="settleS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Review & Approve</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Agent</th>
+                                        <th>Volume</th>
+                                        <th>Commission</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>AG-8821</td>
+                                        <td>KES 48.2M</td>
+                                        <td>KES 866,400</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AG-7744</td>
+                                        <td>KES 39.8M</td>
+                                        <td>KES 715,200</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AG-9910</td>
+                                        <td>KES 31.4M</td>
+                                        <td>KES 564,600</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">I approve this settlement batch</label></div>
+                    </div>
+                    <div id="settleS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Settlement Executed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 4,820,000 disbursed to 2,184 agents.
+                                Reference: SET-20250627-9914</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="settleFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="settleNext"
+                        onclick="nextFlow('settle',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Compliance Check -->
+    <div class="modal fade R" id="complianceCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Compliance Health Check
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    98</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">COMPLIANCE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">0</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">OPEN ISSUES</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">3</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">RECOMMENDATIONS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">47</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">RULES AUDITED</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft);font-size:13px"><i
+                            class="bi bi-check-circle me-1"></i> All fee disclosure requirements met. No regulatory
+                        breaches detected.</div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Regulation</th>
+                                    <th>Status</th>
+                                    <th>Last Audit</th>
+                                    <th>Next Due</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CBK Fee Transparency</td>
+                                    <td><span class="B B-s">Compliant</span></td>
+                                    <td>15 Jun 2025</td>
+                                    <td>15 Sep 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>KRA Withholding Tax</td>
+                                    <td><span class="B B-s">Compliant</span></td>
+                                    <td>01 Jun 2025</td>
+                                    <td>01 Jul 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Consumer Protection Act</td>
+                                    <td><span class="B B-s">Compliant</span></td>
+                                    <td>20 Jun 2025</td>
+                                    <td>20 Sep 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('complianceCheckModal','Full compliance report downloaded.','')">Download
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Fee Report -->
+    <div class="modal fade R" id="feeReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-bar-graph me-2"></i>Fee Revenue Report</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Period</label><select class="FC">
+                            <option>June 2025</option>
+                            <option>Q2 2025</option>
+                            <option>YTD 2025</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span>Inter-bank Fees</span><strong>KES
+                                7.16M</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Wallet Fees</span><strong>KES
+                                3.12M</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Instant Fees</span><strong>KES
+                                6.84M</strong></div>
+                        <hr class="divider">
+                        <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                Revenue</span><strong style="color:var(--pm-primary)">KES 18.4M</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('feeReportModal','Fee revenue report generated and downloading...','')">Generate
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Agent Leaderboard -->
+    <div class="modal fade R" id="agentLeaderboardModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-trophy text-warning me-2"></i>Agent Leaderboard</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Agent</th>
+                                    <th>Volume</th>
+                                    <th>Commission</th>
+                                    <th>Tier</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>AG-8821 — Grace W.</td>
+                                    <td>KES 48.2M</td>
+                                    <td>KES 866K</td>
+                                    <td><span class="B B-s">Elite</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>AG-7744 — Peter M.</td>
+                                    <td>KES 39.8M</td>
+                                    <td>KES 715K</td>
+                                    <td><span class="B B-s">Elite</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>AG-9910 — Amina K.</td>
+                                    <td>KES 31.4M</td>
+                                    <td>KES 565K</td>
+                                    <td><span class="B B-p">Pro</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>AG-3342 — John O.</td>
+                                    <td>KES 27.9M</td>
+                                    <td>KES 502K</td>
+                                    <td><span class="B B-p">Pro</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>AG-5510 — Sarah N.</td>
+                                    <td>KES 24.1M</td>
+                                    <td>KES 433K</td>
+                                    <td><span class="B B-p">Pro</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Exemption Modal -->
+    <div class="modal fade R" id="exemptionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield me-2"></i>Fee Exemptions</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Exemption Type</label><select class="FC">
+                            <option>Regulatory (CBK)</option>
+                            <option>Government Disbursement</option>
+                            <option>Charity / NGO</option>
+                            <option>Staff Benefit</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Applicable Transactions</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">All government-to-citizen payments</label></div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Salary disbursements</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Charity donations</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('exemptionModal','Exemption rule created successfully!','')">Create
+                        Exemption</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Attention Full -->
+    <div class="modal fade R" id="attentionFullModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Tier 3 commission underperforming</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Only 12% of target volume</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('editCommissionModal')">Review</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Fee rule FR-415 expiring in 5 days</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Promotional 0.5% for SMEs</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('editFeeRuleModal')">Extend</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Settlement reconciliation pending</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 2.1M difference flagged</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('settlementModal')">Reconcile</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Waiver WV-101 budget 78% used</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Consider increasing budget</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('editWaiverModal')">Adjust</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Fee Notifications -->
+    <div class="modal fade R" id="feeNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Fee Notifications (7)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>FR-415 expires in 5 days</strong>
+                        <div style="font-size:11px;color:#92400E">SME promotional fee ending soon.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Settlement reconciliation difference</strong>
+                        <div style="font-size:11px;color:#7F1D1D">KES 2.1M flagged for review.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>New
+                            commission tier T4 activated</strong>
+                        <div style="font-size:11px;color:#065F46">73 agents now eligible.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Waiver WV-101
+                            budget at 78%</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">Consider top-up.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('notifSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@paymo.co.ke</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Treasury Manager</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Fee
+                                    Rules Managed</span><br><strong>47</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { fee: { current: 1, total: 4, labels: ['Details', 'Pricing', 'Conditions', 'Done'] }, calc: { current: 1, total: 3, labels: ['Details', 'Breakdown', 'Done'] }, waiver: { current: 1, total: 3, labels: ['Details', 'Eligibility', 'Done'] }, settle: { current: 1, total: 3, labels: ['Select', 'Review', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { fee: 'addFeeRuleModal', calc: 'feeCalculatorModal', waiver: 'waiverModal', settle: 'settlementModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1400); }
+        function calculateFee() { const type = document.getElementById('calcType').value; const amt = parseFloat(document.getElementById('calcAmount').value) || 0; let fee = 0; if (type.includes('Inter-bank')) fee = amt * 0.0085; else if (type.includes('Wallet')) fee = 25; else if (type.includes('Instant')) fee = amt * 0.0045; else fee = 10; const vat = fee * 0.16; document.getElementById('baseFee').innerText = 'KES ' + fee.toFixed(0); document.getElementById('vatFee').innerText = 'KES ' + vat.toFixed(0); document.getElementById('totalFee').innerText = 'KES ' + (fee + vat).toFixed(0); }
+        function advCalc() { const amt = parseFloat(document.getElementById('advAmount').value) || 0; const type = document.getElementById('advType').value; let base = amt * 0.0085; if (type.includes('Instant')) base = amt * 0.0045; if (type.includes('Wallet')) base = 25; const vat = base * 0.16; const net = 50; document.getElementById('advBase').innerText = 'KES ' + base.toFixed(0); document.getElementById('advVat').innerText = 'KES ' + vat.toFixed(0); document.getElementById('advNet').innerText = 'KES ' + net; document.getElementById('advTotal').innerText = 'KES ' + (base + vat + net).toFixed(0); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); const calcAmt = document.getElementById('calcAmount'); if (calcAmt) calcAmt.oninput = calculateFee; });
+    </script>
+    <!-- Additional Modals to reach 20+ -->
+
+    <!-- M16: Notif Settings -->
+    <div class="modal fade R" id="notifSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Notification Preferences</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Alert Type</th>
+                                    <th>Push</th>
+                                    <th>SMS</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fee rule changes</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Settlement completed</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Waiver budget alerts</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Commission payout</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('notifSettingsModal','Notification preferences saved!','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Policy Config -->
+    <div class="modal fade R" id="policyConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Fee Policy Configuration</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Policy Name</label><input class="FC"
+                            value="Standard Transaction Fee Policy 2025"></div>
+                    <div class="mb-3"><label class="FL">Effective From</label><input type="date" class="FC"
+                            value="2025-01-01"></div>
+                    <div class="mb-3"><label class="FL">Review Cycle</label><select class="FC">
+                            <option>Quarterly</option>
+                            <option>Bi-annually</option>
+                            <option>Annually</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Require board approval for changes >10%</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('policyConfigModal','Policy updated successfully!','')">Save Policy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Audit Log Detail -->
+    <div class="modal fade R" id="auditDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Audit Log Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Action
+                                ID</span><strong>AUD-20250626-8812</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">User</span><strong>James K. (Treasury)</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">IP
+                                Address</span><strong>102.68.45.112</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Timestamp</span><strong>26 Jun 2025, 14:22 EAT</strong></div>
+                        <div class="d-flex justify-content-between"><span
+                                class="text-muted">Changes</span><strong>FR-415 rate: 0.75% → 0.50%</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Bulk Upload -->
+    <div class="modal fade R" id="bulkUploadModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Bulk Fee Rule Upload</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Upload CSV</label><input type="file" class="FC"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Download template: <a href="#"
+                            onclick="alert('Template downloaded!')">fee_rules_template.csv</a></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bulkUploadModal','47 fee rules imported successfully!','BULK-20250627')">Upload
+                        & Validate</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Partner Payout -->
+    <div class="modal fade R" id="partnerPayoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building me-2"></i>Partner Payout Configuration</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Partner</label><select class="FC">
+                            <option>Safaricom M-Pesa</option>
+                            <option>Airtel Money</option>
+                            <option>Equity Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Revenue Share %</label><input class="FC" value="15"></div>
+                    <div class="mb-3"><label class="FL">Settlement Frequency</label><select class="FC">
+                            <option>Weekly</option>
+                            <option>Bi-weekly</option>
+                            <option>Monthly</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('partnerPayoutModal','Partner payout configuration saved!','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Regulatory Report -->
+    <div class="modal fade R" id="regulatoryReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-check me-2"></i>Regulatory Fee Report</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report For</label><select class="FC">
+                            <option>CBK — Central Bank of Kenya</option>
+                            <option>KRA — Kenya Revenue Authority</option>
+                            <option>CAK — Competition Authority</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Period</label><select class="FC">
+                            <option>Q2 2025</option>
+                            <option>June 2025</option>
+                            <option>YTD 2025</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">Report will include:
+                        Total fees collected, waiver utilization, commission payouts, and compliance attestations.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('regulatoryReportModal','Regulatory report generated and submitted!','REG-20250627')">Generate
+                        & Submit</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Tier Performance -->
+    <div class="modal fade R" id="tierPerformanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bar-chart-line me-2"></i>Tier Performance Analytics</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>Agents</th>
+                                    <th>Avg Volume</th>
+                                    <th>Retention</th>
+                                    <th>Growth</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>T1 — Starter</td>
+                                    <td>1,240</td>
+                                    <td>KES 312K</td>
+                                    <td>78%</td>
+                                    <td>+12%</td>
+                                </tr>
+                                <tr>
+                                    <td>T2 — Growth</td>
+                                    <td>682</td>
+                                    <td>KES 1.2M</td>
+                                    <td>89%</td>
+                                    <td>+24%</td>
+                                </tr>
+                                <tr>
+                                    <td>T3 — Pro</td>
+                                    <td>189</td>
+                                    <td>KES 4.8M</td>
+                                    <td>94%</td>
+                                    <td>+18%</td>
+                                </tr>
+                                <tr>
+                                    <td>T4 — Elite</td>
+                                    <td>73</td>
+                                    <td>KES 28.4M</td>
+                                    <td>97%</td>
+                                    <td>+31%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('addCommissionTierModal')">Add New Tier</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Hardship Waiver -->
+    <div class="modal fade R" id="hardshipWaiverModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart me-2"></i>Hardship Waiver Request</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Customer ID / Phone</label><input class="FC"
+                            value="0712 345 890"></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Medical emergency</option>
+                            <option>Job loss</option>
+                            <option>Natural disaster</option>
+                            <option>Other</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Requested Discount</label><input class="FC" value="100"></div>
+                    <div class="mb-3"><label class="FL">Supporting Document</label><input type="file" class="FC"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('hardshipWaiverModal','Hardship waiver request submitted for review!','HW-20250627')">Submit
+                        Request</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M24: Fee Comparison Tool -->
+    <div class="modal fade R" id="feeCompareModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right me-2"></i>Market Fee Comparison</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Inter-bank</th>
+                                    <th>Wallet</th>
+                                    <th>Instant</th>
+                                    <th>Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>PayMo</strong></td>
+                                    <td>0.85%</td>
+                                    <td>KES 25</td>
+                                    <td>0.45%</td>
+                                    <td><span class="B B-s">Best</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Bank A</td>
+                                    <td>1.2%</td>
+                                    <td>KES 35</td>
+                                    <td>0.8%</td>
+                                    <td><span class="B B-i">Average</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Bank B</td>
+                                    <td>1.0%</td>
+                                    <td>KES 30</td>
+                                    <td>0.6%</td>
+                                    <td><span class="B B-i">Average</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Mobile Money X</td>
+                                    <td>1.5%</td>
+                                    <td>KES 20</td>
+                                    <td>1.0%</td>
+                                    <td><span class="B B-w">Higher</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M25: Final Confirmation Modal -->
+    <div class="modal fade R" id="finalConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-circle me-2"></i>Confirm Action</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft)"><i
+                            class="bi bi-info-circle me-1"></i> This action will affect 142,890 transactions and KES
+                        18.4M in monthly revenue. Are you sure?</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('finalConfirmModal','Action confirmed and executed successfully!','CONF-20250627')">Confirm
+                        & Execute</button></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

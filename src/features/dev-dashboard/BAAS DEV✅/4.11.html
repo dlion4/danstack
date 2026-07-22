@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Dev Portal — Support, Escalation & SLAs</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* MASTER CSS */
+:root {
+    --pm-primary: #4F46E5;
+    --pm-primary-dark: #3730A3;
+    --pm-primary-light: #818CF8;
+    --pm-accent: #10B981;
+    --pm-accent-soft: #D1FAE5;
+    --pm-warning: #F59E0B;
+    --pm-warning-soft: #FEF3C7;
+    --pm-danger: #EF4444;
+    --pm-danger-soft: #FEE2E2;
+    --pm-info: #3B82F6;
+    --pm-info-soft: #DBEAFE;
+    --pm-purple: #8B5CF6;
+    --pm-purple-soft: #EDE9FE;
+
+    --pm-bg: #F5F1EC;
+    --pm-bg-2: #EEE8DF;
+    --pm-surface: #FFFFFF;
+    --pm-surface-2: #FAF7F3;
+    --pm-ink: #1A1F2E;
+    --pm-ink-soft: #4B5563;
+    --pm-muted: #9CA3AF;
+    --pm-border: #E5E2DC;
+    --pm-border-2: #D4D0C8;
+
+    --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+    --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+    --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+    --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+    --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+    --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+    --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+
+    --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+    --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+    --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+    --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+    --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+
+    --pm-r-sm: 8px;
+    --pm-r-md: 14px;
+    --pm-r-lg: 20px;
+    --pm-r-xl: 28px;
+    --pm-r-pill: 999px;
+
+    --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body { font-family: var(--pm-font-sans); background: var(--pm-bg); color: var(--pm-ink); overflow-x: hidden; font-size: 14px; line-height: 1.5; }
+
+.pm-app { display: flex; min-height: 100vh; background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, 0.06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.06), transparent 60%), var(--pm-bg); }
+
+/* SIDEBAR */
+.pm-sidebar { width: 88px; flex-shrink: 0; background: #0F172A; display: flex; flex-direction: column; align-items: center; padding: 20px 0; position: sticky; top: 0; height: 100vh; z-index: 100; border-right: 1px solid rgba(255,255,255,0.1); }
+.pm-sidebar-logo { width: 48px; height: 48px; background: var(--pm-gradient-hero); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 22px; font-family: var(--pm-font-display); box-shadow: var(--pm-shadow-lg); margin-bottom: 24px; }
+.pm-sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; width: 100%; padding: 0 12px; }
+.pm-nav-item { width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: rgba(255, 255, 255, 0.6); cursor: pointer; background: transparent; border: none; transition: all .2s; position: relative; }
+.pm-nav-item:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.pm-nav-item.active { color: #fff; background: rgba(79,70,229,0.2); border: 1px solid rgba(79,70,229,0.5); box-shadow: var(--pm-shadow-md); }
+.pm-nav-item .badge-dot { position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: var(--pm-danger); border-radius: 50%; border: 2px solid #0F172A; animation: pm-pulse 2s infinite; }
+@keyframes pm-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(1.2); } }
+
+.pm-main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-x: hidden; }
+
+/* HEADER */
+.pm-header { background: rgba(245, 241, 236, .7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--pm-border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: sticky; top: 0; z-index: 50; }
+.pm-header-title h1 { font-family: var(--pm-font-display); font-size: 22px; font-weight: 700; margin: 0; color: var(--pm-ink); letter-spacing: -0.02em; }
+.pm-header-title p { margin: 0; font-size: 12px; color: var(--pm-ink-soft); }
+.pm-header-search { flex: 1; max-width: 440px; position: relative; }
+.pm-header-search input { width: 100%; height: 40px; padding: 0 16px 0 40px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-md); background: white; font-size: 13px; transition: all .2s; }
+.pm-header-search input:focus { outline: none; border-color: var(--pm-primary); box-shadow: var(--pm-shadow-glow); }
+.pm-header-search .bi { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--pm-muted); }
+.pm-header-actions { display: flex; align-items: center; gap: 8px; }
+.pm-header-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--pm-border); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; color: var(--pm-ink-soft); position: relative; }
+.pm-header-btn:hover { background: var(--pm-surface-2); color: var(--pm-primary); transform: translateY(-1px); border-color: var(--pm-primary-light); }
+.pm-header-btn .counter { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; background: var(--pm-danger); color: white; font-size: 10px; font-weight: 600; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid var(--pm-bg); }
+.pm-profile-btn { display: flex; align-items: center; gap: 10px; padding: 5px 12px 5px 5px; border: 1px solid var(--pm-border); background: white; border-radius: 12px; cursor: pointer; transition: all .2s; }
+.pm-profile-btn:hover { background: var(--pm-surface-2); }
+.pm-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--pm-gradient-hero); color: white; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--pm-font-display); }
+
+/* BREADCRUMB & PAGE BAR */
+.pm-page-bar { padding: 20px 32px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.pm-breadcrumb { font-size: 12px; color: var(--pm-muted); }
+.pm-breadcrumb a { color: var(--pm-primary); text-decoration: none; }
+.pm-breadcrumb a:hover { text-decoration: underline; }
+
+/* CONTENT & CARDS */
+.pm-content { padding: 16px 32px 32px; display: flex; flex-direction: column; gap: 20px; }
+.pm-card { background: var(--pm-surface); border: 1px solid var(--pm-border); border-radius: var(--pm-r-lg); padding: 20px; box-shadow: var(--pm-shadow-sm); transition: all .2s; }
+.pm-card:hover { box-shadow: var(--pm-shadow-md); }
+.pm-section-title { font-family: var(--pm-font-display); font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+.pm-section-sub { font-size: 12px; color: var(--pm-ink-soft); margin: 2px 0 0; }
+.pm-stat-value { font-family: var(--pm-font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.pm-stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--pm-muted); font-weight: 600; }
+
+/* UTILITIES */
+.pm-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--pm-r-pill); font-size: 11px; font-weight: 600; }
+.pm-badge-success { background: var(--pm-accent-soft); color: #047857; }
+.pm-badge-warning { background: var(--pm-warning-soft); color: #B45309; }
+.pm-badge-danger { background: var(--pm-danger-soft); color: #DC2626; }
+.pm-badge-info { background: var(--pm-info-soft); color: #1D4ED8; }
+.pm-badge-purple { background: var(--pm-purple-soft); color: #6D28D9; }
+.pm-badge-dark { background: #E2E8F0; color: #0F172A; }
+
+.pm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: var(--pm-r-sm); font-size: 13px; font-weight: 600; border: 1px solid var(--pm-border); background: white; cursor: pointer; transition: all .2s; color: var(--pm-ink); }
+.pm-btn:hover { background: var(--pm-surface-2); transform: translateY(-1px); box-shadow: var(--pm-shadow-sm); }
+.pm-btn-primary { background: var(--pm-primary); color: white; border-color: var(--pm-primary); }
+.pm-btn-primary:hover { background: var(--pm-primary-dark); color: white; border-color: var(--pm-primary-dark); }
+.pm-btn-danger { background: var(--pm-danger); color: white; border-color: var(--pm-danger); }
+.pm-btn-sm { padding: 5px 12px; font-size: 12px; }
+
+.pm-icon-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.pm-divider { border: none; border-top: 1px solid var(--pm-border); margin: 16px 0; }
+.pm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pm-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: var(--pm-muted); border-bottom: 1px solid var(--pm-border); background: var(--pm-surface-2); }
+.pm-table td { padding: 12px; border-bottom: 1px solid var(--pm-border); vertical-align: middle; }
+
+/* MODALS */
+.modal-content { border: none; border-radius: var(--pm-r-lg); box-shadow: var(--pm-shadow-xl); }
+.modal-header { border-bottom: 1px solid var(--pm-border); padding: 20px 24px; }
+.modal-body { padding: 24px; }
+.modal-footer { border-top: 1px solid var(--pm-border); padding: 16px 24px; }
+.modal-title { font-family: var(--pm-font-display); font-weight: 700; }
+.pm-form-label { font-size: 12px; font-weight: 600; color: var(--pm-ink-soft); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+.pm-form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); font-size: 14px; background: white; transition: all .2s; }
+.pm-form-control:focus { outline: none; border-color: var(--pm-primary); box-shadow: var(--pm-shadow-glow); }
+
+.pm-stepper { display: flex; align-items: center; margin-bottom: 24px; }
+.pm-step { display: flex; align-items: center; gap: 8px; flex: 1; }
+.pm-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: var(--pm-border); color: var(--pm-muted); transition: all .3s; }
+.pm-step.active .pm-step-num { background: var(--pm-primary); color: white; }
+.pm-step.completed .pm-step-num { background: var(--pm-accent); color: white; }
+.pm-step-label { font-size: 11px; font-weight: 600; color: var(--pm-muted); }
+.pm-step.active .pm-step-label { color: var(--pm-primary); }
+.pm-step.completed .pm-step-label { color: var(--pm-accent); }
+.pm-step-line { flex: 1; height: 2px; background: var(--pm-border); margin: 0 8px; }
+.pm-step.completed + .pm-step-line { background: var(--pm-accent); }
+
+.pm-tab-pills { display: flex; gap: 4px; padding: 4px; background: var(--pm-surface-2); border-radius: var(--pm-r-sm); overflow-x: auto; }
+.pm-tab-pill { padding: 8px 16px; border-radius: 6px; border: none; background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--pm-ink-soft); white-space: nowrap; transition: all .2s; }
+.pm-tab-pill.active { background: white; color: var(--pm-primary); box-shadow: var(--pm-shadow-sm); font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn .3s; }
+.fade-step { display: none; }
+.fade-step.active { display: block; animation: fadeIn .3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.pm-loading-overlay { position: absolute; inset: 0; background: rgba(255,255,255,.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; }
+.pm-spinner { width: 40px; height: 40px; border: 3px solid var(--pm-border); border-top-color: var(--pm-primary); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.tier-card { border: 2px solid var(--pm-border); border-radius: var(--pm-r-md); padding: 16px; cursor: pointer; transition: all .2s; }
+.tier-card:hover { border-color: var(--pm-primary-light); background: rgba(79,70,229,0.02); }
+.tier-card.active { border-color: var(--pm-primary); background: rgba(79,70,229,0.05); }
+
+.sev-block { padding: 12px; border-radius: var(--pm-r-sm); margin-bottom: 8px; border-left: 4px solid; background: var(--pm-surface-2); }
+.sev-1 { border-left-color: var(--pm-danger); }
+.sev-2 { border-left-color: var(--pm-warning); }
+.sev-3 { border-left-color: var(--pm-info); }
+.sev-4 { border-left-color: var(--pm-muted); }
+
+.ticket-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); margin-bottom: 8px; transition: all .2s; cursor: pointer; }
+.ticket-item:hover { border-color: var(--pm-primary-light); background: var(--pm-surface-2); }
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo" style="background: linear-gradient(135deg, #0ea5e9 0%, #4f46e5 100%);">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dev Dashboard"><i class="bi bi-terminal"></i></button>
+<button class="pm-nav-item" title="API Keys & Auth"><i class="bi bi-key"></i></button>
+<button class="pm-nav-item" title="Webhooks & Events"><i class="bi bi-lightning-charge"></i></button>
+<button class="pm-nav-item" title="Logs & Traces"><i class="bi bi-card-list"></i></button>
+<button class="pm-nav-item" title="Sandbox"><i class="bi bi-box"></i></button>
+<button class="pm-nav-item active" title="Support & SLAs"><i class="bi bi-life-preserver"></i><span class="badge-dot"></span></button>
+</nav>
+<button class="pm-nav-item" title="Docs" style="margin-top:auto"><i class="bi bi-book"></i></button>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-icon-circle" style="background: #E0F2FE; color: #0284C7; font-size: 18px;"><i class="bi bi-code-square"></i></div>
+<div>
+<h1>Developer Portal</h1>
+<p>APIs, Integration & Technical Operations</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search documentation, error codes, tickets...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('statusPageSubscribeModal')" title="System Status"><i class="bi bi-activity text-success"></i></button>
+<button class="pm-header-btn" onclick="openModal('communityForumModal')" title="Community"><i class="bi bi-people"></i></button>
+<button class="pm-header-btn" onclick="openModal('ticketDetailModal')" title="Active Tickets"><i class="bi bi-ticket-detailed"></i><span class="counter">2</span></button>
+<div class="pm-profile-btn" onclick="openModal('manageSupportContactsModal')">
+<div class="pm-avatar" style="background: #0284C7;">JD</div>
+<div>
+<div class="pm-name">John Doe</div>
+<div class="pm-role">Tech Lead</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- PAGE BAR -->
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb">
+<a href="#">Developer Portal</a> / <strong>Support, Escalation & Service Levels</strong>
+</div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 4.11 — Support, Escalation & SLAs</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage technical support tickets, track SLA compliance, declare incidents, and access escalation matrices.</p>
+</div>
+<div class="d-flex gap-2 flex-wrap">
+<button class="pm-btn" onclick="openModal('troubleshootingWizardModal')"><i class="bi bi-magic"></i> AI Troubleshooter</button>
+<button class="pm-btn" onclick="openModal('declareIncidentModal')"><i class="bi bi-exclamation-triangle text-danger"></i> Declare Incident</button>
+<button class="pm-btn pm-btn-primary" onclick="openModal('submitTicketModal')"><i class="bi bi-plus-lg"></i> New Ticket</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="border-left: 3px solid var(--pm-primary)">
+<p class="pm-stat-label" style="color:var(--pm-primary)">CURRENT SUPPORT TIER</p>
+<div class="d-flex justify-content-between align-items-center">
+<div class="pm-stat-value" style="font-size: 24px; margin: 6px 0;">Premium Support</div>
+</div>
+<div class="d-flex align-items-center gap-2 mt-2" style="font-size: 12px; color: var(--pm-ink-soft);">
+<i class="bi bi-check-circle-fill text-success"></i> 4hr SLA for Critical Issues
+</div>
+<button class="pm-btn pm-btn-sm mt-3 w-100" onclick="openModal('upgradeTierModal')">Upgrade Tier</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card">
+<p class="pm-stat-label">OPEN TICKETS</p>
+<div class="pm-stat-value" style="margin: 6px 0;">2 Active</div>
+<div class="mt-2" style="font-size: 12px;">
+<span class="pm-badge pm-badge-warning">1 Awaiting Reply</span>
+<span class="pm-badge pm-badge-info">1 In Progress</span>
+</div>
+<button class="pm-btn pm-btn-sm mt-3 w-100" onclick="openModal('ticketDetailModal')">View Tickets</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="border-left: 3px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">MONTHLY UPTIME (API)</p>
+<div class="pm-stat-value" style="margin: 6px 0;">99.98%</div>
+<div class="mt-2" style="font-size: 12px; color: var(--pm-ink-soft);">
+<i class="bi bi-shield-check text-success"></i> Exceeds 99.9% SLA target
+</div>
+<button class="pm-btn pm-btn-sm mt-3 w-100" onclick="openModal('viewSlaReportModal')">Download SLA Report</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card">
+<p class="pm-stat-label">SYSTEM STATUS</p>
+<div class="pm-stat-value" style="margin: 6px 0; color: var(--pm-accent);">All Systems Operational</div>
+<div class="mt-2" style="font-size: 12px; color: var(--pm-muted);">
+Last incident: 14 days ago
+</div>
+<button class="pm-btn pm-btn-sm mt-3 w-100" onclick="openModal('incidentHistoryModal')">View Incident History</button>
+</div>
+</div>
+</div>
+
+<!-- MAIN SECTIONS -->
+<div class="row g-3">
+<!-- LEFT COL: Tiers & Support -->
+<div class="col-lg-6">
+<!-- 4.11.1 Support Tiers -->
+<div class="pm-card h-100">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-headset" style="color:var(--pm-primary)"></i> 4.11.1 — Technical Support</h3>
+<div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('chatSupportModal')"><i class="bi bi-chat-dots"></i> Live Chat</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('contactAmModal')"><i class="bi bi-person-badge"></i> Contact TAM</button>
+</div>
+</div>
+
+<div class="pm-tab-pills mb-3">
+<button class="pm-tab-pill active" onclick="switchTab('supportTab','overview',this)">Plan Overview</button>
+<button class="pm-tab-pill" onclick="switchTab('supportTab','premium',this)">Premium Benefits</button>
+<button class="pm-tab-pill" onclick="switchTab('supportTab','enterprise',this)">Enterprise Add-ons</button>
+</div>
+
+<div id="supportTab-overview" class="tab-panel active">
+<div class="table-responsive">
+<table class="pm-table">
+<thead>
+<tr>
+<th>Feature</th>
+<th>Standard</th>
+<th><span class="pm-badge pm-badge-purple">Premium (Current)</span></th>
+<th>Enterprise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Response SLA (Critical)</td>
+<td>24 hours</td>
+<td><strong>4 hours</strong></td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>Support Channels</td>
+<td>Email, Forum</td>
+<td><strong>Email, Phone, Chat</strong></td>
+<td>24/7 Slack, On-site</td>
+</tr>
+<tr>
+<td>Account Manager</td>
+<td>None</td>
+<td><strong>Dedicated TAM</strong></td>
+<td>TAM + Solutions Eng.</td>
+</tr>
+<tr>
+<td>Architecture Reviews</td>
+<td>Community</td>
+<td><strong>Quarterly</strong></td>
+<td>Monthly</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-3 text-center">
+<button class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('upgradeTierModal')">Compare All Plans</button>
+</div>
+</div>
+
+<div id="supportTab-premium" class="tab-panel">
+<div class="row g-2">
+<div class="col-6">
+<div class="p-3 border rounded h-100" style="background: var(--pm-surface-2);">
+<h6 style="font-size:13px; font-weight:700;"><i class="bi bi-person-workspace text-primary"></i> Tech Account Manager</h6>
+<p style="font-size:11px; color:var(--pm-muted); margin-bottom: 8px;">Your dedicated TAM is Sarah Ndungu. Available 8AM-6PM EAT.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('contactAmModal')">Message Sarah</button>
+</div>
+</div>
+<div class="col-6">
+<div class="p-3 border rounded h-100" style="background: var(--pm-surface-2);">
+<h6 style="font-size:13px; font-weight:700;"><i class="bi bi-diagram-3 text-info"></i> Architecture Review</h6>
+<p style="font-size:11px; color:var(--pm-muted); margin-bottom: 8px;">Schedule a session to review your integration patterns.</p>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('requestArchitectureReviewModal')">Schedule Review</button>
+</div>
+</div>
+<div class="col-12">
+<div class="p-3 border rounded d-flex justify-content-between align-items-center" style="background: var(--pm-surface-2);">
+<div>
+<h6 style="font-size:13px; font-weight:700; margin:0;"><i class="bi bi-calendar-check text-warning"></i> Quarterly Business Review</h6>
+<p style="font-size:11px; color:var(--pm-muted); margin:0;">Next review due: Oct 2026</p>
+</div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('quarterlyBusinessReviewModal')">Book QBR</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="supportTab-enterprise" class="tab-panel">
+<div class="p-3 border rounded mb-2 text-center" style="background: var(--pm-surface-2);">
+<i class="bi bi-rocket-takeoff text-purple" style="font-size: 24px;"></i>
+<h6 style="font-size:14px; font-weight:700; margin-top:8px;">Unlock Enterprise Features</h6>
+<p style="font-size:12px; color:var(--pm-muted);">Upgrade to Enterprise to access 24/7 dedicated support, shared Slack channels, and on-site assistance.</p>
+<div class="d-flex gap-2 justify-content-center mt-3">
+<button class="pm-btn pm-btn-sm" onclick="openModal('slackIntegrationModal')">Setup Slack (Locked)</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('onSiteSupportModal')">On-Site Support (Locked)</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('upgradeTierModal')">Upgrade Now</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- RIGHT COL: Incidents & SLAs -->
+<div class="col-lg-6">
+<!-- 4.11.2 Incident Management -->
+<div class="pm-card mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-exclamation-triangle" style="color:var(--pm-warning)"></i> 4.11.2 — Incident Management</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('escalationMatrixModal')"><i class="bi bi-ladder"></i> Escalation Matrix</button>
+</div>
+<div class="row g-2 mb-3">
+<div class="col-md-6">
+<div class="sev-block sev-1">
+<div class="d-flex justify-content-between align-items-center">
+<strong style="font-size:12px;">SEV1: Critical</strong>
+<span class="pm-badge pm-badge-danger">1hr SLA</span>
+</div>
+<p style="font-size:11px; margin:4px 0 0; color:var(--pm-muted);">Complete outage, payments down.</p>
+</div>
+</div>
+<div class="col-md-6">
+<div class="sev-block sev-2">
+<div class="d-flex justify-content-between align-items-center">
+<strong style="font-size:12px;">SEV2: Major</strong>
+<span class="pm-badge pm-badge-warning">4hr SLA</span>
+</div>
+<p style="font-size:11px; margin:4px 0 0; color:var(--pm-muted);">Major degradation, high impact.</p>
+</div>
+</div>
+</div>
+<div class="d-flex gap-2">
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('declareIncidentModal')">Declare Incident</button>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('viewRcaModal')">View Recent RCAs</button>
+</div>
+</div>
+
+<!-- 4.11.3 SLAs -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-shield-check" style="color:var(--pm-accent)"></i> 4.11.3 — Service Level Agreements</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('slaExclusionsModal')">Exclusions</button>
+</div>
+<div class="table-responsive">
+<table class="pm-table">
+<tbody>
+<tr>
+<td><strong>Core Payments API Uptime</strong></td>
+<td>99.9% Target</td>
+<td><span class="pm-badge pm-badge-success">99.98% Actual</span></td>
+</tr>
+<tr>
+<td><strong>Non-Critical Services Uptime</strong></td>
+<td>99.5% Target</td>
+<td><span class="pm-badge pm-badge-success">99.85% Actual</span></td>
+</tr>
+<tr>
+<td><strong>API Response Time (p95)</strong></td>
+<td>< 500ms</td>
+<td><span class="pm-badge pm-badge-success">210ms</span></td>
+</tr>
+<tr>
+<td><strong>Webhook Delivery Latency</strong></td>
+<td>< 2s (99%)</td>
+<td><span class="pm-badge pm-badge-warning">2.4s (98%)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="d-flex gap-2 mt-3">
+<button class="pm-btn pm-btn-sm" onclick="openModal('uptimeCalcMethodologyModal')">Uptime Methodology</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('maintenanceCalendarModal')">Maintenance Calendar</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- RECENT TICKETS ROW -->
+<div class="pm-card mt-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title"><i class="bi bi-ticket-detailed" style="color:var(--pm-muted)"></i> Recent Support Tickets</h3>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('submitTicketModal')">New Ticket</button>
+</div>
+<div class="ticket-item" onclick="openModal('ticketDetailModal')">
+<div>
+<div class="d-flex align-items-center gap-2">
+<span class="pm-badge pm-badge-warning">Awaiting Reply</span>
+<strong style="font-size:14px;">[TIC-8821] Webhook payloads dropping occasionally</strong>
+</div>
+<div style="font-size:11px; color:var(--pm-muted); margin-top:4px;">Opened: 2 days ago · Category: Webhooks · Assignee: Sarah N.</div>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+<div class="ticket-item" onclick="openModal('ticketDetailModal')">
+<div>
+<div class="d-flex align-items-center gap-2">
+<span class="pm-badge pm-badge-info">In Progress</span>
+<strong style="font-size:14px;">[TIC-8845] Request limit increase for Disbursements API</strong>
+</div>
+<div style="font-size:11px; color:var(--pm-muted); margin-top:4px;">Opened: 5 hours ago · Category: Quotas · Assignee: DevOps Team</div>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+<div class="ticket-item" style="opacity: 0.7;" onclick="openModal('ticketDetailModal')">
+<div>
+<div class="d-flex align-items-center gap-2">
+<span class="pm-badge pm-badge-dark">Resolved</span>
+<strong style="font-size:14px;">[TIC-8711] Sandbox authentication returning 401</strong>
+</div>
+<div style="font-size:11px; color:var(--pm-muted); margin-top:4px;">Opened: 12 days ago · Category: Authentication · Resolved: 11 days ago</div>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODALS (20+ Modals) -->
+<!-- ========================================================================= -->
+
+<!-- 1. submitTicketModal (Multi-step) -->
+<div class="modal fade resettable" id="submitTicketModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-lg text-primary me-2"></i>Submit Support Ticket</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="ticketStepper"></div>
+<div id="ticketStep1" class="fade-step active">
+<div class="mb-3"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>API Integration</option><option>Authentication / Auth</option><option>Webhooks</option><option>Quotas & Limits</option><option>Sandbox Environment</option><option>Other</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Severity Level</label><select class="pm-form-control"><option>SEV4 - General Inquiry / Cosmetic</option><option>SEV3 - Minor Degradation (Workaround available)</option><option class="text-warning">SEV2 - Major Degradation</option><option class="text-danger">SEV1 - Complete Outage</option></select></div>
+<div class="p-3 rounded" style="background:var(--pm-info-soft); font-size:12px;">For SEV1/SEV2 issues affecting production, please use the <a href="#" onclick="openModal('declareIncidentModal'); closeModal('submitTicketModal');">Declare Incident</a> process for immediate pager routing.</div>
+</div>
+<div id="ticketStep2" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Subject</label><input class="pm-form-control" placeholder="Brief summary of the issue"></div>
+<div class="mb-3"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="4" placeholder="Detailed description, steps to reproduce, expected vs actual behavior..."></textarea></div>
+<div class="mb-3"><label class="pm-form-label">API Endpoint / URL</label><input class="pm-form-control" placeholder="e.g. /v1/disbursements"></div>
+</div>
+<div id="ticketStep3" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Request ID / Correlation ID (if applicable)</label><input class="pm-form-control" placeholder="req_xxxxxxxxx"></div>
+<div class="mb-3"><label class="pm-form-label">Attach Logs / Screenshots</label><input type="file" class="pm-form-control" multiple></div>
+<div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Notify TAM (Sarah Ndungu)</label></div>
+</div>
+<div id="ticketStep4" class="fade-step">
+<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Ticket Submitted</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Your ticket has been routed to the API support queue.</p>
+<div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Ticket ID</span><strong>TIC-8850</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">SLA Response Time</span><strong>Within 4 hours (Premium)</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Status</span><span class="pm-badge pm-badge-warning">Open</span></div></div></div>
+</div>
+</div>
+<div class="modal-footer" id="ticketFooter">
+<button class="pm-btn" data-bs-dismiss="modal">Cancel</button>
+<button class="pm-btn pm-btn-primary" id="ticketNextBtn" onclick="nextMultiStep('ticket',4)">Continue <i class="bi bi-arrow-right"></i></button>
+</div>
+</div></div></div>
+
+<!-- 2. declareIncidentModal (Multi-step) -->
+<div class="modal fade resettable" id="declareIncidentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Declare Production Incident</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="incidentStepper"></div>
+<div id="incidentStep1" class="fade-step active">
+<div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft); font-size:12px; border:1px solid var(--pm-danger);"><i class="bi bi-shield-exclamation text-danger"></i> <strong>Warning:</strong> Declaring an incident triggers on-call pages to PayMo engineering leadership. Use only for complete production outages (SEV1) or major degradations (SEV2).</div>
+<div class="mb-3"><label class="pm-form-label">Incident Severity</label>
+<div class="p-3 border rounded mb-2 sev-1" style="cursor:pointer" onclick="selectRadioCard(this)"><input type="radio" name="sev" checked> <strong>SEV1: Complete Outage</strong><br><small class="text-muted">No transactions can be processed.</small></div>
+<div class="p-3 border rounded sev-2" style="cursor:pointer" onclick="selectRadioCard(this)"><input type="radio" name="sev"> <strong>SEV2: Major Degradation</strong><br><small class="text-muted">Significant features broken, no workaround.</small></div>
+</div>
+</div>
+<div id="incidentStep2" class="fade-step">
+<div class="mb-3"><label class="pm-form-label">Affected Service</label><select class="pm-form-control"><option>Collections API (M-Pesa)</option><option>Disbursements API</option><option>Card Processing</option><option>Webhooks</option><option>Developer Dashboard</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Estimated Impact</label><input class="pm-form-control" placeholder="e.g. 100% of checkouts failing"></div>
+<div class="mb-3"><label class="pm-form-label">Symptoms / Error Codes</label><textarea class="pm-form-control" rows="3" placeholder="e.g. Receiving 503 Gateway Timeout consistently"></textarea></div>
+</div>
+<div id="incidentStep3" class="fade-step">
+<div class="pm-receipt"><div class="receipt-icon" style="background:var(--pm-danger-soft); color:var(--pm-danger);"><i class="bi bi-broadcast"></i></div><h5 style="font-weight:700;color:var(--pm-danger)">Incident Declared</h5><p style="font-size:13px;color:var(--pm-ink-soft)">On-call engineers have been paged. War room activated.</p>
+<div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Incident ID</span><strong>INC-202608-01</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Communication Channel</span><strong>Email & TAM Contact</strong></div></div>
+<button class="pm-btn pm-btn-sm mt-3 pm-btn-danger w-100" onclick="openModal('statusPageSubscribeModal')">Check Status Page</button>
+</div>
+</div>
+</div>
+<div class="modal-footer" id="incidentFooter">
+<button class="pm-btn" data-bs-dismiss="modal">Cancel</button>
+<button class="pm-btn pm-btn-danger" id="incidentNextBtn" onclick="nextMultiStep('incident',3)">Acknowledge & Proceed</button>
+</div>
+</div></div></div>
+
+<!-- 3. upgradeTierModal -->
+<div class="modal fade resettable" id="upgradeTierModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-up-circle text-primary me-2"></i>Upgrade Support Tier</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3 mb-3">
+<div class="col-md-4">
+<div class="tier-card h-100" onclick="selectTierCard(this)">
+<input type="radio" name="tier" class="d-none">
+<h6 style="font-weight:700; color:var(--pm-muted)">Standard</h6>
+<div style="font-size:24px; font-weight:700; margin:10px 0;">Free</div>
+<ul style="font-size:11px; color:var(--pm-muted); padding-left:16px;"><li>Community Forum</li><li>Email Support (24h SLA)</li><li>Standard Documentation</li></ul>
+</div>
+</div>
+<div class="col-md-4">
+<div class="tier-card active h-100" onclick="selectTierCard(this)">
+<input type="radio" name="tier" class="d-none" checked>
+<h6 style="font-weight:700; color:var(--pm-primary)">Premium (Current)</h6>
+<div style="font-size:24px; font-weight:700; margin:10px 0;">$499<span style="font-size:12px; color:var(--pm-muted)">/mo</span></div>
+<ul style="font-size:11px; color:var(--pm-muted); padding-left:16px;"><li>Dedicated TAM</li><li>4hr SLA (Critical)</li><li>Phone & Chat Support</li><li>Quarterly Reviews</li></ul>
+</div>
+</div>
+<div class="col-md-4">
+<div class="tier-card h-100" style="border-color:var(--pm-purple)" onclick="selectTierCard(this)">
+<input type="radio" name="tier" class="d-none">
+<h6 style="font-weight:700; color:var(--pm-purple)">Enterprise</h6>
+<div style="font-size:24px; font-weight:700; margin:10px 0;">Custom</div>
+<ul style="font-size:11px; color:var(--pm-muted); padding-left:16px;"><li>1hr SLA (Critical)</li><li>24/7 Dedicated Slack</li><li>On-site support options</li><li>Custom integration help</li></ul>
+</div>
+</div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-surface-2); font-size:12px;">Upgrading to Enterprise requires a contract review. Our sales engineering team will contact you to align on SLAs and pricing.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('upgradeTierModal','Upgrade request sent. Our team will contact you shortly.','')">Request Upgrade</button></div>
+</div></div></div>
+
+<!-- 4. troubleshootingWizardModal -->
+<div class="modal fade resettable" id="troubleshootingWizardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-magic text-purple me-2"></i>AI Troubleshooting Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="height: 400px; display: flex; flex-direction: column;">
+<div style="flex:1; overflow-y:auto; background:var(--pm-surface-2); border-radius:var(--pm-r-sm); padding:16px; margin-bottom:16px; font-size:13px;">
+<div class="mb-3 d-flex gap-2">
+<div class="pm-avatar" style="width:24px; height:24px; font-size:10px; background:var(--pm-gradient-hero)">AI</div>
+<div class="p-2 rounded bg-white border" style="max-width:80%">Hi John. I'm the PayMo integration assistant. What issue are you experiencing today?</div>
+</div>
+<div class="mb-3 d-flex gap-2 justify-content-end">
+<div class="p-2 rounded border text-white" style="max-width:80%; background:var(--pm-primary)">I am getting a 401 Unauthorized error on the Sandbox Disbursements API.</div>
+<div class="pm-avatar" style="width:24px; height:24px; font-size:10px; background:#0284C7">JD</div>
+</div>
+<div class="mb-3 d-flex gap-2">
+<div class="pm-avatar" style="width:24px; height:24px; font-size:10px; background:var(--pm-gradient-hero)">AI</div>
+<div class="p-2 rounded bg-white border" style="max-width:80%">A 401 on Sandbox usually means an invalid or expired JWT token, or you are using Production keys in the Sandbox environment.<br><br>Please check:<br>1. Are your API keys prefixed with <code>sk_test_</code>?<br>2. Have you refreshed the token in the last hour?<br><br><button class="pm-btn pm-btn-sm mt-2" onclick="openModal('submitTicketModal')">Still not working? Open Ticket</button></div>
+</div>
+</div>
+<div class="d-flex gap-2">
+<input type="text" class="pm-form-control" placeholder="Describe your issue...">
+<button class="pm-btn pm-btn-primary"><i class="bi bi-send"></i></button>
+</div>
+</div>
+</div></div></div>
+
+<!-- 5. viewSlaReportModal -->
+<div class="modal fade resettable" id="viewSlaReportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-bar-graph me-2"></i>Monthly SLA Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Month</label><select class="pm-form-control"><option>August 2026</option><option>July 2026</option><option>June 2026</option></select></div>
+<div class="p-3 border rounded mb-3 text-center">
+<h3 style="margin:0; color:var(--pm-accent); font-family:var(--pm-font-display);">99.98%</h3>
+<p style="font-size:12px; color:var(--pm-muted); margin:0;">API Uptime Achieved</p>
+</div>
+<div class="table-responsive mb-3">
+<table class="pm-table">
+<tbody>
+<tr><td>Target SLA</td><td>99.90%</td></tr>
+<tr><td>Total Downtime</td><td>8m 14s</td></tr>
+<tr><td>SLA Credits Owed</td><td>$0.00</td></tr>
+</tbody>
+</table>
+</div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Include incident RCA summaries in report</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('viewSlaReportModal','Report generated and downloading...','')"><i class="bi bi-download"></i> Download PDF</button></div>
+</div></div></div>
+
+<!-- 6. viewRcaModal -->
+<div class="modal fade resettable" id="viewRcaModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Post-Incident Reviews (RCAs)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Date</th><th>Incident</th><th>Impact</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>14 Aug 2026</td><td>Webhook Delivery Latency Spike</td><td>15 min delay on 5% payloads</td><td><span class="pm-badge pm-badge-success">Published</span></td><td><button class="pm-btn pm-btn-sm">Read RCA</button></td></tr>
+<tr><td>02 Jul 2026</td><td>SEV2: PesaLink Collections Timeout</td><td>30 min API timeout (504 errors)</td><td><span class="pm-badge pm-badge-success">Published</span></td><td><button class="pm-btn pm-btn-sm">Read RCA</button></td></tr>
+<tr><td>15 Jun 2026</td><td>Sandbox Environment Down</td><td>2 hours Sandbox unavailability</td><td><span class="pm-badge pm-badge-success">Published</span></td><td><button class="pm-btn pm-btn-sm">Read RCA</button></td></tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 mt-3 rounded" style="background:var(--pm-surface-2); font-size:12px;">
+<strong>Transparency Promise:</strong> PayMo publishes full Root Cause Analyses (RCAs) for all SEV1 and SEV2 incidents within 72 hours of resolution.
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 7. contactAmModal -->
+<div class="modal fade resettable" id="contactAmModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge text-primary me-2"></i>Contact Technical Account Manager</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<div class="pm-avatar mx-auto mb-3" style="width:80px; height:80px; font-size:24px; background:var(--pm-gradient-rose);">SN</div>
+<h4 style="font-family:var(--pm-font-display); font-weight:700; margin:0;">Sarah Ndungu</h4>
+<p style="font-size:13px; color:var(--pm-muted);">Senior Technical Account Manager</p>
+<div class="d-flex justify-content-center gap-2 mt-3 mb-4">
+<span class="pm-badge pm-badge-success"><i class="bi bi-circle-fill" style="font-size:8px;"></i> Online</span>
+<span class="pm-badge pm-badge-dark">Premium Tier Support</span>
+</div>
+<div class="text-start">
+<div class="mb-3"><label class="pm-form-label">Message Subject</label><input class="pm-form-control" placeholder="e.g. Question about new API rate limits"></div>
+<div class="mb-3"><label class="pm-form-label">Message</label><textarea class="pm-form-control" rows="4"></textarea></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('contactAmModal','Message sent to Sarah. She will reply within 4 hours.','')">Send Message</button></div>
+</div></div></div>
+
+<!-- 8. escalationMatrixModal -->
+<div class="modal fade resettable" id="escalationMatrixModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-ladder me-2"></i>Escalation Matrix</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px; color:var(--pm-ink-soft);">Defined escalation paths for unresolved support tickets based on your Premium support tier.</p>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Level</th><th>Role</th><th>Time to Escalate (SEV1/SEV2)</th><th>Time to Escalate (SEV3/SEV4)</th></tr></thead>
+<tbody>
+<tr><td>L1</td><td>Technical Support Engineer</td><td>Immediate routing</td><td>Immediate routing</td></tr>
+<tr><td>L2</td><td>Technical Account Manager</td><td>+ 1 Hour</td><td>+ 24 Hours</td></tr>
+<tr><td>L3</td><td>Platform Engineering Lead</td><td>+ 2 Hours</td><td>+ 48 Hours</td></tr>
+<tr><td>L4</td><td>VP of Engineering</td><td>+ 4 Hours</td><td>N/A</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mt-3 p-3 rounded" style="background:var(--pm-warning-soft); font-size:12px;">
+<i class="bi bi-info-circle text-warning me-1"></i> If an active ticket breaches its SLA, you can manually trigger an escalation via the ticket detail page.
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 9. slaExclusionsModal -->
+<div class="modal fade resettable" id="slaExclusionsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-info-circle me-2"></i>SLA Exclusions</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;">The 99.9% Uptime SLA commitment excludes downtime resulting from the following scenarios:</p>
+<ul style="font-size:13px; color:var(--pm-ink-soft); line-height:1.6;">
+<li><strong>Scheduled Maintenance:</strong> Maintenance windows communicated at least 7 days in advance.</li>
+<li><strong>Third-Party Outages:</strong> Outages caused by underlying telecom networks (e.g. Safaricom M-Pesa core downtime) or banking partners (PesaLink switch downtime).</li>
+<li><strong>Force Majeure:</strong> Events outside our reasonable control (natural disasters, nationwide internet outages, regulatory freezes).</li>
+<li><strong>API Abuse:</strong> Downtime resulting from your breach of our rate limits or acceptable use policy (e.g., volumetric DDoS attacks originating from your credentials).</li>
+<li><strong>Sandbox Environment:</strong> The Sandbox is provided "as-is" and is excluded from production SLA guarantees.</li>
+</ul>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 10. maintenanceCalendarModal -->
+<div class="modal fade resettable" id="maintenanceCalendarModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-event text-info me-2"></i>Scheduled Maintenance Calendar</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="status-row">
+<div>
+<strong>Database Optimization (Core Services)</strong>
+<div style="font-size:11px; color:var(--pm-muted);">Impact: Minor latency spikes expected. No downtime.</div>
+</div>
+<div class="text-end">
+<div style="font-size:12px; font-weight:600;">14 Sep 2026</div>
+<div style="font-size:11px; color:var(--pm-muted);">02:00 AM - 03:00 AM EAT</div>
+</div>
+</div>
+<div class="status-row">
+<div>
+<strong>Disbursements Gateway Upgrade</strong>
+<div style="font-size:11px; color:var(--pm-muted);">Impact: B2C disbursements paused for 15 mins.</div>
+</div>
+<div class="text-end">
+<div style="font-size:12px; font-weight:600;">28 Sep 2026</div>
+<div style="font-size:11px; color:var(--pm-muted);">01:00 AM - 01:15 AM EAT</div>
+</div>
+</div>
+<div class="p-3 mt-3 rounded text-center" style="background:var(--pm-surface-2); font-size:12px;">
+Subscribe to maintenance alerts to receive calendar invites automatically.
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('maintenanceCalendarModal','Subscribed to maintenance alerts.','')">Subscribe to Alerts</button></div>
+</div></div></div>
+
+<!-- 11. ticketDetailModal -->
+<div class="modal fade resettable" id="ticketDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-ticket-detailed me-2"></i>Ticket: TIC-8821</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 style="font-weight:700; margin:0; font-size:18px;">Webhook payloads dropping occasionally</h4>
+<span class="pm-badge pm-badge-warning">Awaiting Reply</span>
+</div>
+<div class="row g-3 mb-4 text-muted" style="font-size:12px;">
+<div class="col-3"><strong>Opened:</strong> 2 days ago</div>
+<div class="col-3"><strong>Severity:</strong> SEV3</div>
+<div class="col-3"><strong>Assignee:</strong> Sarah N. (TAM)</div>
+<div class="col-3"><strong>Category:</strong> Webhooks</div>
+</div>
+
+<div class="p-3 border rounded mb-3" style="background: #fff;">
+<div class="d-flex justify-content-between mb-2"><strong style="font-size:12px;">You</strong><small class="text-muted">2 days ago</small></div>
+<p style="font-size:13px; margin:0;">We noticed that about 1% of our successful payment webhooks are not arriving at our endpoint. We checked our server logs and there are no recorded attempts from PayMo IPs for the missing transaction IDs. Correlation ID example: req_abc123.</p>
+</div>
+
+<div class="p-3 border rounded mb-3" style="background: var(--pm-info-soft); border-color:var(--pm-info)!important;">
+<div class="d-flex justify-content-between mb-2"><strong style="font-size:12px; color:var(--pm-info-dark);">Sarah N. (Support)</strong><small class="text-muted">Yesterday</small></div>
+<p style="font-size:13px; margin:0;">Hi John, I've checked the dead-letter queue for your endpoint. It appears your server returned 502 Bad Gateway intermittently during peak hours, causing the webhook delivery to fail and exhaust the exponential backoff retries. Can you check your load balancer logs for those spikes?</p>
+</div>
+
+<div class="mb-3">
+<label class="pm-form-label">Reply</label>
+<textarea class="pm-form-control" rows="3" placeholder="Type your reply here..."></textarea>
+</div>
+<div class="d-flex justify-content-between align-items-center">
+<div>
+<button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-paperclip"></i> Attach File</button>
+<button class="pm-btn pm-btn-sm text-danger" style="border:none;" onclick="processAction('ticketDetailModal','Ticket escalated to L3 Platform Engineering.','')"><i class="bi bi-ladder"></i> Escalate Ticket</button>
+</div>
+<button class="pm-btn pm-btn-primary" onclick="processAction('ticketDetailModal','Reply sent successfully.','')">Send Reply</button>
+</div>
+</div>
+</div></div></div>
+
+<!-- 12. incidentHistoryModal -->
+<div class="modal fade resettable" id="incidentHistoryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Incident History</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Incident ID</th><th>Date</th><th>Severity</th><th>Description</th><th>Duration</th></tr></thead>
+<tbody>
+<tr><td>INC-2608</td><td>14 Aug 2026</td><td><span class="pm-badge pm-badge-warning">SEV3</span></td><td>Webhook Latency Spike</td><td>45m</td></tr>
+<tr><td>INC-2591</td><td>02 Jul 2026</td><td><span class="pm-badge pm-badge-warning">SEV2</span></td><td>PesaLink Timeout</td><td>1h 20m</td></tr>
+<tr><td>INC-2504</td><td>15 Jun 2026</td><td><span class="pm-badge pm-badge-info">SEV4</span></td><td>Sandbox Unavailable</td><td>2h 10m</td></tr>
+<tr><td>INC-2112</td><td>10 Jan 2026</td><td><span class="pm-badge pm-badge-danger">SEV1</span></td><td>Database Core Outage</td><td>18m</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('viewRcaModal')">View RCAs</button></div>
+</div></div></div>
+
+<!-- 13. communityForumModal -->
+<div class="modal fade resettable" id="communityForumModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-people me-2"></i>Developer Community Forum</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-header-search mb-4" style="max-width:100%;">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search discussions, API questions, best practices...">
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2">
+<strong style="font-size:14px;">Trending Topics</strong>
+</div>
+<div class="p-3 border rounded mb-2" style="cursor:pointer; transition:all .2s;" onmouseover="this.style.background='var(--pm-surface-2)'" onmouseout="this.style.background=''">
+<div class="d-flex justify-content-between mb-1">
+<strong style="font-size:13px; color:var(--pm-primary)">Handling M-Pesa STK Push timeouts gracefully</strong>
+<span style="font-size:11px; color:var(--pm-muted)">24 replies</span>
+</div>
+<div style="font-size:12px; color:var(--pm-ink-soft);">Best practices for using the transaction query API when the webhook doesn't arrive within 30 seconds.</div>
+</div>
+<div class="p-3 border rounded mb-2" style="cursor:pointer; transition:all .2s;" onmouseover="this.style.background='var(--pm-surface-2)'" onmouseout="this.style.background=''">
+<div class="d-flex justify-content-between mb-1">
+<strong style="font-size:13px; color:var(--pm-primary)">Node.js SDK version 2.4.0 released</strong>
+<span style="font-size:11px; color:var(--pm-muted)">12 replies</span>
+</div>
+<div style="font-size:12px; color:var(--pm-ink-soft);">Includes native TypeScript support and better retry mechanisms for disbursements.</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary">Post a Question</button></div>
+</div></div></div>
+
+<!-- 14. slackIntegrationModal -->
+<div class="modal fade resettable" id="slackIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-slack me-2" style="color:#E01E5A"></i>Setup Dedicated Slack Channel</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<i class="bi bi-lock-fill text-muted" style="font-size:32px;"></i>
+<h5 class="mt-3" style="font-weight:700;">Enterprise Feature</h5>
+<p style="font-size:13px; color:var(--pm-ink-soft);">Dedicated shared Slack channels (Slack Connect) for real-time support are only available on the Enterprise tier.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('upgradeTierModal'); closeModal('slackIntegrationModal');">View Enterprise Plan</button></div>
+</div></div></div>
+
+<!-- 15. requestArchitectureReviewModal -->
+<div class="modal fade resettable" id="requestArchitectureReviewModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-diagram-3 text-info me-2"></i>Request Architecture Review</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;">Schedule a 60-minute session with a PayMo Solutions Architect to review your integration design, security posture, and scalability.</p>
+<div class="mb-3"><label class="pm-form-label">Main Topic / Focus Area</label><select class="pm-form-control"><option>Idempotency & Retry Patterns</option><option>Security & Tokenization</option><option>Webhook Architecture</option><option>High-volume Disbursements</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Preferred Date & Time</label><input type="datetime-local" class="pm-form-control"></div>
+<div class="mb-3"><label class="pm-form-label">Attendees (Emails)</label><input class="pm-form-control" placeholder="comma separated emails"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('requestArchitectureReviewModal','Review session requested. An invite will be sent shortly.','')">Request Session</button></div>
+</div></div></div>
+
+<!-- 16. quarterlyBusinessReviewModal -->
+<div class="modal fade resettable" id="quarterlyBusinessReviewModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-check text-warning me-2"></i>Schedule QBR</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;">Book your Quarterly Business Review with your TAM. We will review API usage metrics, SLA performance, upcoming roadmap features, and commercial optimization.</p>
+<div class="mb-3"><label class="pm-form-label">Preferred Week</label><select class="pm-form-control"><option>First week of October</option><option>Second week of October</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Discussion Points to Add</label><textarea class="pm-form-control" rows="3" placeholder="Any specific topics you want to cover?"></textarea></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('quarterlyBusinessReviewModal','QBR Scheduling request sent to your TAM.','')">Book QBR</button></div>
+</div></div></div>
+
+<!-- 17. statusPageSubscribeModal -->
+<div class="modal fade resettable" id="statusPageSubscribeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Status Page Notifications</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 border rounded mb-3 text-center" style="background:var(--pm-surface-2);">
+<h3 style="color:var(--pm-accent); margin:0;">All Systems Operational</h3>
+<p style="font-size:12px; margin:0; color:var(--pm-muted);">status.paymo.com</p>
+</div>
+<h6 style="font-size:13px; font-weight:700;">Subscribe to updates</h6>
+<div class="mb-3">
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Email Notifications</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">SMS Notifications</label></div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Webhook Integration</label></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Webhook URL for Status Updates</label><input class="pm-form-control" value="https://api.mybusiness.com/webhooks/paymo-status"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('statusPageSubscribeModal','Status page subscription updated successfully.','')">Save Preferences</button></div>
+</div></div></div>
+
+<!-- 18. customIntegrationModal -->
+<div class="modal fade resettable" id="customIntegrationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-code-slash text-primary me-2"></i>Custom Integration Assistance</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<i class="bi bi-lock-fill text-muted" style="font-size:32px;"></i>
+<h5 class="mt-3" style="font-weight:700;">Enterprise Feature</h5>
+<p style="font-size:13px; color:var(--pm-ink-soft);">Hands-on coding assistance and custom middleware development by PayMo engineers is restricted to the Enterprise tier.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('upgradeTierModal'); closeModal('customIntegrationModal');">View Enterprise Plan</button></div>
+</div></div></div>
+
+<!-- 19. uptimeCalcMethodologyModal -->
+<div class="modal fade resettable" id="uptimeCalcMethodologyModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Uptime Calculation Methodology</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;">Monthly Uptime Percentage is calculated using the following formula:</p>
+<div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2); font-family:monospace; font-size:14px; font-weight:700;">
+Uptime % = (Total Minutes in Month - Downtime Minutes) / Total Minutes in Month * 100
+</div>
+<h6 style="font-size:13px; font-weight:700;">Definition of Downtime:</h6>
+<p style="font-size:13px; color:var(--pm-ink-soft);">A minute is considered "Downtime" if the error rate (5XX HTTP status codes) for Core APIs exceeds 5% during that minute, measured server-side. Downtime excludes SLA Exclusions (e.g., planned maintenance, force majeure).</p>
+<h6 style="font-size:13px; font-weight:700;">SLA Credits:</h6>
+<p style="font-size:13px; color:var(--pm-ink-soft);">If uptime falls below 99.9% in a billing month, you are eligible for service credits applied to your next invoice. Credits must be claimed via a support ticket within 30 days of the affected month.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 20. onSiteSupportModal -->
+<div class="modal fade resettable" id="onSiteSupportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-building text-success me-2"></i>On-Site Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<i class="bi bi-lock-fill text-muted" style="font-size:32px;"></i>
+<h5 class="mt-3" style="font-weight:700;">Enterprise Feature</h5>
+<p style="font-size:13px; color:var(--pm-ink-soft);">Dispatching PayMo engineers to your premises for critical war rooms or major go-live events is available exclusively on the Enterprise tier.</p>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('upgradeTierModal'); closeModal('onSiteSupportModal');">Upgrade to Enterprise</button></div>
+</div></div></div>
+
+<!-- 21. manageSupportContactsModal -->
+<div class="modal fade resettable" id="manageSupportContactsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>Manage Support Contacts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px; color:var(--pm-ink-soft);">Authorized contacts who can open SEV1/SEV2 tickets and interact with the TAM.</p>
+<div class="status-row">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:28px;height:28px;font-size:10px;background:#0284C7">JD</div>
+<div><strong>John Doe</strong><div style="font-size:11px;color:var(--pm-muted)">Primary Tech Lead</div></div>
+</div>
+<span class="pm-badge pm-badge-success">Admin</span>
+</div>
+<div class="status-row">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:28px;height:28px;font-size:10px;background:var(--pm-gradient-rose)">AK</div>
+<div><strong>Alice Kamau</strong><div style="font-size:11px;color:var(--pm-muted)">Backend Engineer</div></div>
+</div>
+<button class="pm-btn pm-btn-sm text-danger" style="border:none;"><i class="bi bi-trash"></i></button>
+</div>
+<div class="mt-3">
+<h6 style="font-size:13px; font-weight:700;">Add New Contact</h6>
+<div class="d-flex gap-2">
+<input type="email" class="pm-form-control" placeholder="Email address">
+<button class="pm-btn pm-btn-primary">Add</button>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 22. chatSupportModal -->
+<div class="modal fade resettable" id="chatSupportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-chat-dots text-primary me-2"></i>Live Chat Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="height: 400px; display: flex; flex-direction: column; padding:0;">
+<div style="background:var(--pm-surface-2); padding:12px; border-bottom:1px solid var(--pm-border); text-align:center;">
+<span style="font-size:12px; color:var(--pm-muted);">You are connected to <strong>James (Support Engineer)</strong></span>
+</div>
+<div style="flex:1; overflow-y:auto; padding:16px; font-size:13px; background:#fff;">
+<div class="mb-3 d-flex gap-2">
+<div class="pm-avatar" style="width:24px; height:24px; font-size:10px; background:var(--pm-gradient-hero)">JS</div>
+<div class="p-2 rounded bg-light border" style="max-width:80%">Hello John. How can I help you with your integration today?</div>
+</div>
+</div>
+<div style="padding:16px; border-top:1px solid var(--pm-border); background:var(--pm-surface-2);">
+<div class="d-flex gap-2">
+<input type="text" class="pm-form-control" placeholder="Type a message...">
+<button class="pm-btn pm-btn-primary"><i class="bi bi-send"></i></button>
+</div>
+</div>
+</div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Tab Switching logic
+function switchTab(prefix,key,btn){
+    btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));
+    const panel=document.getElementById(prefix+'-'+key);
+    if(panel)panel.classList.add('active');
+}
+
+// Modal Helpers
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+
+// UI Interactions
+function selectTierCard(card){
+    document.querySelectorAll('.tier-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    const r=card.querySelector('input[type=radio]');
+    if(r)r.checked=true;
+}
+
+function selectRadioCard(card){
+    card.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background='';});
+    card.style.borderColor='var(--pm-primary)';
+    card.style.background='rgba(79,70,229,.04)';
+    const r=card.querySelector('input[type=radio]');
+    if(r)r.checked=true;
+}
+
+// Multi-step logic
+let steps = { ticket: 1, incident: 1 };
+function renderStepper(elId, labels, current) {
+    const wrap = document.getElementById(elId);
+    if (!wrap) return;
+    wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i + 1) < current ? 'completed' : (i + 1) === current ? 'active' : ''}"><div class="pm-step-num">${(i + 1) < current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length - 1 ? '<div class="pm-step-line"></div>' : ''}`).join('');
+}
+function showFlow(prefix, current, total) {
+    for (let i = 1; i <= total; i++) {
+        const el = document.getElementById(prefix + 'Step' + i);
+        if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+    }
+    const a = document.getElementById(prefix + 'Step' + current);
+    if (a) { a.classList.add('active'); a.style.display = 'block'; }
+}
+
+function nextMultiStep(type, total) {
+    let current = steps[type];
+    if (current === total - 1) {
+        showLoading(`#${type}Step${current}`, () => {
+            steps[type]++;
+            updateMultiStep(type, total);
+            document.getElementById(`${type}NextBtn`).textContent = 'Done';
+        });
+        return;
+    }
+    if (current >= total) {
+        closeModal(type === 'ticket' ? 'submitTicketModal' : 'declareIncidentModal');
+        return;
+    }
+    steps[type]++;
+    updateMultiStep(type, total);
+    if (current === total - 2) {
+        document.getElementById(`${type}NextBtn`).innerHTML = type === 'incident' ? 'Declare Incident <i class="bi bi-exclamation-triangle"></i>' : 'Submit Ticket <i class="bi bi-send"></i>';
+        if(type==='incident') document.getElementById(`${type}NextBtn`).classList.add('pm-btn-danger');
+    }
+}
+
+function updateMultiStep(type, total) {
+    const labels = type === 'ticket' ? ['Category', 'Details', 'Data', 'Done'] : ['Severity', 'Details', 'Declare'];
+    renderStepper(`${type}Stepper`, labels, steps[type]);
+    showFlow(type, steps[type], total);
+}
+
+// Processing / loading
+function showLoading(target, cb) {
+    const el = document.querySelector(target);
+    if (!el) { cb(); return; }
+    const ov = document.createElement('div');
+    ov.className = 'pm-loading-overlay';
+    ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';
+    el.style.position = 'relative';
+    el.appendChild(ov);
+    setTimeout(() => { ov.remove(); cb(); }, 1200);
+}
+
+function processAction(modalId, msg, ref) {
+    const modal = document.getElementById(modalId);
+    const body = modal.querySelector('.modal-body');
+    const footer = modal.querySelector('.modal-footer');
+    showLoading(`#${modalId} .modal-body`, () => {
+        body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}</div>`;
+        if(footer) footer.innerHTML = '<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';
+    });
+}
+
+// Resettable Modals
+function cacheResettable() {
+    document.querySelectorAll('.resettable').forEach(m => {
+        const b = m.querySelector('.modal-body');
+        const f = m.querySelector('.modal-footer');
+        if (b) m.dataset.originalBody = b.innerHTML;
+        if (f) m.dataset.originalFooter = f.innerHTML;
+        m.addEventListener('hidden.bs.modal', () => {
+            if (m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody;
+            if (m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter;
+            resetFlows();
+        });
+    });
+}
+
+function resetFlows() {
+    steps.ticket = 1;
+    steps.incident = 1;
+    renderStepper('ticketStepper', ['Category', 'Details', 'Data', 'Done'], 1);
+    renderStepper('incidentStepper', ['Severity', 'Details', 'Declare'], 1);
+    showFlow('ticket', 1, 4);
+    showFlow('incident', 1, 3);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    cacheResettable();
+    resetFlows();
+});
+</script>
+</body>
+</html>
