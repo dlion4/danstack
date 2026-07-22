@@ -77,37 +77,13 @@ const CARDS_FOR_LIMITS = ['Global Shopping — **3841']
 const CARDS_FOR_MERCHANT_LOCK = ['Subscription Master — **9021', 'AWS & Hosting — **4418']
 const CARDS_FOR_CVV = ['Global Web Shopping — **3841']
 const CARDS_FOR_ALIAS = ['Global Web Shopping — **3841']
-const CARDS_FOR_MANAGE_SUB = ['Sub Master (**9021)', 'Global Shopping (**3841)']
+
 
 const FLOW_DEFS: Record<string, { labels: string[] }> = {
   createCard: { labels: ['Type', 'Limits', 'Confirm', 'Done'] },
 }
 
 interface Result { msg: string; ref?: string }
-
-function Pills({
-  prefix, tabs, tabsState, onSwitch,
-}: {
-  prefix: string
-  tabs: { key: string; label: string }[]
-  tabsState: Record<string, string>
-  onSwitch: (prefix: string, key: string) => void
-}) {
-  const current = tabsState[prefix] ?? tabs[0].key
-  return (
-    <div className={`${styles.pills} mb-3`}>
-      {tabs.map((t) => (
-        <button
-          key={t.key}
-          className={`${styles.pill} ${current === t.key ? styles.pillActive : ''}`}
-          onClick={() => onSwitch(prefix, t.key)}
-        >
-          {t.label}
-        </button>
-      ))}
-    </div>
-  )
-}
 
 function Stepper({ flowKey, current }: { flowKey: string; current: number }) {
   const def = FLOW_DEFS[flowKey]
@@ -138,20 +114,20 @@ export default function VirtualDebitCardsModals({ active, onClose, onOpen }: Mod
   const [results, setResults] = useState<Record<string, Result>>({})
   const [busy, setBusy] = useState<string | null>(null)
   const [flows, setFlows] = useState<Record<string, number>>({ createCard: 1 })
-  const [tabs, setTabs] = useState<Record<string, string>>({})
   const [selectedCardType, setSelectedCardType] = useState('')
   const [selectedCardColor, setSelectedCardColor] = useState('vCardBg1')
   const [topUpAmount, setTopUpAmount] = useState('5000')
+  const [cardRevealed, setCardRevealed] = useState(false)
 
   useEffect(() => {
     if (active === null) {
       setResults({})
       setFlows({ createCard: 1 })
       setBusy(null)
-      setTabs({})
       setSelectedCardType('')
       setSelectedCardColor('vCardBg1')
       setTopUpAmount('5000')
+      setCardRevealed(false)
     }
   }, [active])
 
@@ -170,10 +146,6 @@ export default function VirtualDebitCardsModals({ active, onClose, onOpen }: Mod
     const cur = flows[key] ?? 1
     if (cur >= total) { onClose(); return }
     setFlows((prev) => ({ ...prev, [key]: cur + 1 }))
-  }
-
-  const switchTab = (prefix: string, key: string) => {
-    setTabs((prev) => ({ ...prev, [prefix]: key }))
   }
 
   const pinRef = useRef<(HTMLInputElement | null)[]>([])
@@ -343,21 +315,44 @@ export default function VirtualDebitCardsModals({ active, onClose, onOpen }: Mod
       title={<><i className="bi bi-eye me-2" />Reveal Card Details</>}
       footer={<button className={styles.btnPm} onClick={onClose}>Close</button>}
     >
-      {renderActionBody('viewCardDetailsModal', <>
-        <p style={{ fontSize: 13, color: 'var(--pm-muted)' }}>Enter your PayMo PIN to reveal the full card number and CVV for Global Shopping Card.</p>
-        <div className={styles.pinRow} style={{ margin: '20px 0' }}>
-          {[0, 1, 2, 3].map((i) => (
-            <input key={i} ref={(el) => { pinRef.current[i] = el }} type="password" maxLength={1}
-              onChange={() => handlePinInput(i)} />
-          ))}
+      {!cardRevealed ? (
+        <>
+          <p style={{ fontSize: 13, color: 'var(--pm-muted)' }}>Enter your PayMo PIN to reveal the full card number and CVV for Global Shopping Card.</p>
+          <div className={styles.pinRow} style={{ margin: '20px 0' }}>
+            {[0, 1, 2, 3].map((i) => (
+              <input key={i} ref={(el) => { pinRef.current[i] = el }} type="password" maxLength={1}
+                onChange={() => handlePinInput(i)} />
+            ))}
+          </div>
+          <button className={`${styles.btnPm} ${styles.btnPmP} w-100`} onClick={() => setCardRevealed(true)}>Authorize</button>
+        </>
+      ) : (
+        <div className="text-center">
+          <div className={`${styles.vCard} ${styles.vCardBg1} mx-auto`} style={{ maxWidth: 320, textAlign: 'left', cursor: 'default' }}>
+            <div className={styles.vCardBadge}>ACTIVE</div>
+            <div className={styles.vCardLogo}>PayMo</div>
+            <div className={styles.vCardChip} />
+            <div className={styles.vCardNumber}>4532 8821 0092 3841</div>
+            <div className={styles.vCardDetails}>
+              <div>JAMES KAMAU</div>
+              <div>12/28</div>
+            </div>
+            <div className={styles.vCardNetwork}>VISA</div>
+          </div>
+          <div className="d-flex justify-content-center mt-3">
+            <div className="text-center">
+              <div style={{ fontSize: 11, color: 'var(--pm-muted)' }}>CVV</div>
+              <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'monospace' }}>882</div>
+            </div>
+          </div>
+          <div className="mt-3 d-flex gap-2 justify-content-center">
+            <button className={`${styles.btnPm} ${styles.btnSm}`}><i className="bi bi-clipboard" /> Copy PAN</button>
+            <button className={`${styles.btnPm} ${styles.btnSm}`}><i className="bi bi-clipboard" /> Copy CVV</button>
+            <button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => setCardRevealed(false)}>Hide</button>
+          </div>
+          <p style={{ fontSize: 11, color: 'var(--pm-danger)', marginTop: 16 }}>Details will auto-hide in 60 seconds.</p>
         </div>
-        <button className={`${styles.btnPm} ${styles.btnPmP} w-100`} onClick={() => doAction('viewCardDetailsModal', `
-          <div class='${styles.vCard} ${styles.vCardBg1} mx-auto text-start' style='max-width:320px'><div class='${styles.vCardBadge}'>ACTIVE</div><div class='${styles.vCardLogo}'>PayMo</div><div class='${styles.vCardChip}'></div><div class='${styles.vCardNumber}'>4532 8821 0092 3841</div><div class='${styles.vCardDetails}'><div>JAMES KAMAU</div><div>12/28</div></div><div class='${styles.vCardNetwork}'>VISA</div></div>
-          <div class='d-flex justify-content-center mt-3 gap-3'><div class='text-center'><div style='font-size:11px;color:var(--pm-muted)'>CVV</div><div style='font-size:24px;font-weight:700;font-family:monospace'>882</div></div></div>
-          <div class='mt-3 d-flex gap-2 justify-content-center'><button class='${styles.btnPm} ${styles.btnSm}'><i class='bi bi-clipboard'></i> Copy PAN</button><button class='${styles.btnPm} ${styles.btnSm}'><i class='bi bi-clipboard'></i> Copy CVV</button></div>
-          <p style='font-size:11px;color:var(--pm-danger);margin-top:16px'>Details will auto-hide in 60 seconds.</p>
-        `, 'DET-4421')}>Authorize</button>
-      </>)}
+      )}
     </MBox>
   )
 
@@ -710,7 +705,7 @@ export default function VirtualDebitCardsModals({ active, onClose, onOpen }: Mod
           <input type="number" className={styles.formControl} />
         </div>
         <div className="mb-3"><label className={styles.formLabel}>Billing Cycle</label>
-          <select className={styles.formControl}><option>Monthly</option><option>Annually</option><option>Weekly</option></select>
+          <select className={styles.formControl}>{BILLING_CYCLES.map((c) => <option key={c}>{c}</option>)}</select>
         </div>
         <div className="mb-3"><label className={styles.formLabel}>Next Due Date</label>
           <input type="date" className={styles.formControl} />
@@ -765,16 +760,13 @@ export default function VirtualDebitCardsModals({ active, onClose, onOpen }: Mod
     >
       {renderActionBody('disputeTxModal', <>
         <div className="mb-3"><label className={styles.formLabel}>Transaction</label>
-          <select className={styles.formControl}>
-            <option>AliExpress · KES 6,240 · 25 Jun</option>
-            <option>Apple Services · KES 400 · 22 Jun</option>
-          </select>
+          <select className={styles.formControl}>{SUBS_FOR_DISPUTE.map((s) => <option key={s}>{s}</option>)}</select>
         </div>
         <div className="mb-3"><label className={styles.formLabel}>Dispute Reason</label>
           <select className={styles.formControl}>{DISPUTE_REASONS.map((r) => <option key={r}>{r}</option>)}</select>
         </div>
         <div className="mb-3"><label className={styles.formLabel}>Details</label>
-          <textarea className={styles.formControl} rows="3" />
+          <textarea className={styles.formControl} rows={3} />
         </div>
         <div className="form-check mb-3">
           <input className="form-check-input" type="checkbox" defaultChecked />

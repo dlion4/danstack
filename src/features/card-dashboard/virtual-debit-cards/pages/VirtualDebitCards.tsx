@@ -5,8 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import styles from '../styles/virtual-debit-cards.module.css'
 import VirtualDebitCardsModals from '../components/VirtualDebitCardsModals'
-import { useCardsShell } from '@/features/Layouts/dashboard-cards-layout/data/cardsLayoutContext'
-import { fetchCardsLayoutContent, findModule } from '@/features/Layouts/dashboard-cards-layout/data/cardsLayoutData'
 
 type BadgeTone = 'badgeS' | 'badgeW' | 'badgeD' | 'badgeI' | 'badgeP'
 type CardBg = 'vCardBg1' | 'vCardBg2' | 'vCardBg3' | 'vCardBg4' | 'vCardBg5' | 'vCardBgFrozen'
@@ -14,7 +12,7 @@ type CardStatus = 'active' | 'low' | 'frozen'
 
 interface StatCard { key: string; col: string; label: string; labelColor: string; value: string; badge: { icon: string; text: string; tone: BadgeTone }; lines: string[]; warnBorder?: boolean; miniBars?: { height: string; color: string }[]; progress?: { width: string; color: string } }
 interface AttentionItem { icon: string; iconBg: string; iconColor: string; iconText: string; title: string; sub: string; actionLabel: string; actionClass?: string; modal: string }
-interface SuggestionItem { icon: string; iconBg: string; iconColor: string; title: string; sub: string; actionLabel: string; modal: string }
+interface SuggestionItem { icon: string; iconBg: string; iconColor: string; iconText: string; title: string; sub: string; actionLabel: string; modal: string }
 interface QuickAction { icon: string; iconColor: string; label: string; modal: string }
 interface VirtualCard { alias: string; pan: string; exp: string; cvv: string; net: string; bg: CardBg; bal: string; status: CardStatus }
 interface ActivityItem { icon: string; iconColor: string; title: string; status: string; statusColor: string; card: string; amount: string; time: string }
@@ -46,16 +44,16 @@ const initialMockData: VirtualDebitCardsConfig = {
     { key: 'secured', col: 'col-lg-3 col-md-4', label: 'SECURED BY PAYMO', labelColor: 'var(--pm-accent)', value: 'KES 12,400', badge: { icon: 'bi-shield-check', text: 'Blocked attempts', tone: 'badgeS' }, lines: ['Frozen cards: <strong>1</strong>', 'Single-use burned: <strong>4</strong>'], warnBorder: true },
   ],
   attention: [
-    { icon: 'bi-exclamation-triangle', iconBg: 'var(--pm-danger-soft)', iconColor: 'var(--pm-danger)', iconText: 'AL', title: 'Declined: Insufficient Funds', sub: 'AWS Web Services · KES 4,500', actionLabel: 'Fund', actionClass: 'pm-btn-danger', modal: 'topUpCardModal' },
+    { icon: 'bi-exclamation-triangle', iconBg: 'var(--pm-danger-soft)', iconColor: 'var(--pm-danger)', iconText: 'AL', title: 'Declined: Insufficient Funds', sub: 'AWS Web Services · KES 4,500', actionLabel: 'Fund', actionClass: 'btnPmD', modal: 'topUpCardModal' },
     { icon: 'bi-clock', iconBg: 'var(--pm-warning-soft)', iconColor: 'var(--pm-warning)', iconText: 'EX', title: 'Card expiring in 15 days', sub: 'Global Shopping Card · **3841', actionLabel: 'Renew', modal: 'renewCardModal' },
     { icon: 'bi-arrow-repeat', iconBg: 'var(--pm-purple-soft)', iconColor: 'var(--pm-purple)', iconText: 'SB', title: 'Subscription increased', sub: 'Netflix · +KES 300 this month', actionLabel: 'Review', modal: 'subManagerModal' },
     { icon: 'bi-shield-check', iconBg: 'var(--pm-info-soft)', iconColor: 'var(--pm-info)', iconText: '3D', title: 'Pending 3D Secure Auth', sub: 'AliExpress · KES 2,100', actionLabel: 'Approve', modal: 'auth3DSModal' },
   ],
   suggestions: [
-    { icon: 'bi-lightning-charge', iconBg: 'var(--pm-accent-soft)', iconColor: 'var(--pm-accent)', title: 'Lock card to single merchant', sub: 'Secure your Netflix card further', actionLabel: 'Lock', modal: 'merchantLockModal' },
-    { icon: 'bi-credit-card-2-front', iconBg: 'var(--pm-info-soft)', iconColor: 'var(--pm-info)', title: 'Enable Dynamic CVV', sub: 'Rotate CVV daily on Shopping Card', actionLabel: 'Enable', modal: 'rotateCvvModal' },
-    { icon: 'bi-arrow-repeat', iconBg: 'var(--pm-warning-soft)', iconColor: 'var(--pm-warning)', title: 'Unused subscription detected', sub: 'Spotify not used in 60 days', actionLabel: 'Cancel', modal: 'cancelSubModal' },
-    { icon: 'bi-sliders', iconBg: 'var(--pm-danger-soft)', iconColor: 'var(--pm-danger)', title: 'Lower spending limit', sub: 'Freelance Services card rarely uses >KES 10k', actionLabel: 'Adjust', modal: 'editLimitsModal' },
+    { icon: 'bi-lightning-charge', iconBg: 'var(--pm-accent-soft)', iconColor: 'var(--pm-accent)', iconText: 'LC', title: 'Lock card to single merchant', sub: 'Secure your Netflix card further', actionLabel: 'Lock', modal: 'merchantLockModal' },
+    { icon: 'bi-credit-card-2-front', iconBg: 'var(--pm-info-soft)', iconColor: 'var(--pm-info)', iconText: 'CV', title: 'Enable Dynamic CVV', sub: 'Rotate CVV daily on Shopping Card', actionLabel: 'Enable', modal: 'rotateCvvModal' },
+    { icon: 'bi-arrow-repeat', iconBg: 'var(--pm-warning-soft)', iconColor: 'var(--pm-warning)', iconText: 'IN', title: 'Unused subscription detected', sub: 'Spotify not used in 60 days', actionLabel: 'Cancel', modal: 'cancelSubModal' },
+    { icon: 'bi-sliders', iconBg: 'var(--pm-danger-soft)', iconColor: 'var(--pm-danger)', iconText: 'LM', title: 'Lower spending limit', sub: 'Freelance Services card rarely uses >KES 10k', actionLabel: 'Adjust', modal: 'editLimitsModal' },
   ],
   quickActions: [
     { icon: 'bi-credit-card', iconColor: 'var(--pm-primary)', label: 'New Card', modal: 'createCardModal' },
@@ -84,7 +82,7 @@ const initialMockData: VirtualDebitCardsConfig = {
       title: 'State & Access',
       items: [
         { label: 'Card Status', sub: 'Active and accepting charges', actionLabel: 'Freeze', modal: 'freezeCardModal' },
-        { label: 'Terminate Card', sub: 'Permanently delete this card', actionLabel: 'Delete', actionClass: 'pm-btn-danger-soft', modal: 'deleteCardModal' },
+        { label: 'Terminate Card', sub: 'Permanently delete this card', actionLabel: 'Delete', actionClass: 'btnPmDSoft', modal: 'deleteCardModal' },
         { label: 'Card Alias', sub: 'Global Web Shopping', actionLabel: 'Edit', modal: 'editAliasModal' },
       ],
     },
@@ -108,7 +106,7 @@ const initialMockData: VirtualDebitCardsConfig = {
     { service: 'Apple Music', icon: 'bi-apple', iconColor: 'text-dark', card: 'Sub Master (**9021)', cycle: 'Monthly (22nd)', avg: 'KES 400', lastPaid: '22 Jun', nextDue: '22 Jul', status: 'Active', statusTone: 'badgeS', actionLabel: 'Manage', actionModal: 'manageSingleSubModal' },
     { service: 'Microsoft 365', icon: 'bi-microsoft', iconColor: 'text-info', card: 'Office Exp (**1184)', cycle: 'Annual (14 Aug)', avg: 'KES 12,000', lastPaid: 'Aug 2024', nextDue: '14 Aug 2025', status: 'Active', statusTone: 'badgeS', actionLabel: 'Manage', actionModal: 'manageSingleSubModal' },
     { service: 'Spotify', icon: 'bi-spotify', iconColor: 'text-success', card: 'Global Web (**3841)', cycle: 'Monthly (05th)', avg: 'KES 300', lastPaid: '05 Jun', nextDue: '05 Jul', status: 'Unused alert', statusTone: 'badgeW', actionLabel: 'Cancel', actionModal: 'cancelSubModal' },
-    { service: 'AWS Hosting', icon: 'bi-cloud-arrow-up', iconColor: 'text-dark', card: 'AWS & Host (**4418)', cycle: 'Monthly (28th)', avg: 'KES 4,500', lastPaid: '28 May', nextDue: 'Tomorrow', status: 'Fund required', statusTone: 'badgeD', actionLabel: 'Fund Card', actionClass: 'pm-btn-primary', actionModal: 'topUpCardModal' },
+    { service: 'AWS Hosting', icon: 'bi-cloud-arrow-up', iconColor: 'text-dark', card: 'AWS & Host (**4418)', cycle: 'Monthly (28th)', avg: 'KES 4,500', lastPaid: '28 May', nextDue: 'Tomorrow', status: 'Fund required', statusTone: 'badgeD', actionLabel: 'Fund Card', actionClass: 'btnPmP', actionModal: 'topUpCardModal' },
   ],
 }
 
@@ -170,7 +168,7 @@ export default function VirtualDebitCards() {
       <div className={styles.pageBar}>
         <div>
           <div className={styles.breadcrumb}>
-            <Link to="/">Home</Link> / <Link to="/cards">Cards</Link> / <strong>Virtual Debit Cards</strong>
+            <Link to="/">Home</Link> / <Link to="/cards/app">Cards</Link> / <strong>Virtual Debit Cards</strong>
           </div>
           <h2 className={styles.pageH2}>PAGE 5.3 — Virtual Debit Card Center</h2>
           <p className={styles.pageSub}>Create and manage multiple virtual debit cards for safer online shopping, compartmentalized subscriptions, and single-use e-commerce transactions.</p>

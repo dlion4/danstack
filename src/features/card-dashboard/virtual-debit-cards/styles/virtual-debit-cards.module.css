@@ -49,7 +49,7 @@
   --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
 
-  display: flex;
+  /* display: flex; */
   min-height: 100vh;
   font-family: var(--pm-font-sans);
   font-size: 14px;
@@ -928,10 +928,54 @@
 }
 
 /* ======================= MODAL LAYER ======================= */
+/*
+ * FIX: The previous modal layer had NO opaque background, NO width and NO
+ * max-height on `.modalContent`, which rendered every modal "card" transparent
+ * and unsized. The container below is now a real opaque, sized, scrollable
+ * surface so modals always render correctly regardless of Bootstrap globals.
+ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1050;
+  animation: fadeIn .2s;
+}
+
+.modalWrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1051;
+  padding: 20px;
+  overflow-y: auto;
+}
+
 .modalContent {
-  border: none;
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  border: 1px solid var(--pm-border);
   border-radius: var(--pm-r-lg);
   box-shadow: var(--pm-shadow-xl);
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn .25s;
+}
+
+.modalBoxLg {
+  max-width: 760px;
+}
+
+.modalBoxXl {
+  max-width: 1080px;
 }
 
 .modalHeader {
@@ -940,6 +984,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  background: var(--pm-surface);
 }
 
 .modalTitle {
@@ -956,39 +1003,20 @@
 .modalBody {
   padding: 24px;
   position: relative;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  background: var(--pm-surface);
 }
 
 .modalFooter {
   border-top: 1px solid var(--pm-border);
   padding: 16px 24px;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 8px;
-}
-
-/* ======================= MODAL LAYER ======================= */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-
-.modalWrap {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-}
-
-.modalBoxLg {
-  max-width: 900px;
-}
-
-.modalBoxXl {
-  max-width: 1200px;
+  flex-shrink: 0;
+  background: var(--pm-surface);
 }
 
 /* ======================= RESPONSIVE ======================= */

@@ -160,7 +160,7 @@ export default function AccountSettings() {
         )}
 
         {/* HERO STATS SECTION - FULL WIDTH */}
-        <div className="row g-3 mb-4">
+        <div className="row g-3">
           <div className="col-lg-4">
             <div className={`${styles.card} ${styles.cardAccent}`} style={{ minHeight: 170 }}>
               <p style={{ margin: '0', fontSize: 12, color: 'rgba(255,255,255,.78)', textTransform: 'uppercase', fontWeight: 600 }}>Card portfolio configured <span style={{ color: '#86efac' }}>●</span></p>
@@ -200,8 +200,8 @@ export default function AccountSettings() {
         </div>
 
         {/* CARD PREFERENCES & ALERTS SECTIONS - FULL WIDTH */}
-        <div className="row g-3 mb-4">
-          <div className="col-lg-4">
+        <div className="row g-3">
+          <div className="col-lg-12">
             <div className={styles.card}>
               <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap" style={{ gap: 8 }}>
                 <div>
@@ -267,7 +267,7 @@ export default function AccountSettings() {
             </div>
           </div>
 
-          <div className="col-lg-4">
+          <div className="col-lg-12">
             <div className={styles.card}>
               <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap" style={{ gap: 8 }}>
                 <div>
@@ -276,7 +276,7 @@ export default function AccountSettings() {
                 </div>
                 <button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => setActiveModal('notifSettingsModal')}><i className="bi bi-sliders" /> Configure All</button>
               </div>
-              <div className="row g-3">
+              <div className="row g-3 align-items-space-between">
                 <div className="col-lg-6">
                   <div className={styles.ub}>
                     <h4 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 16px' }}>Transaction Alerts</h4>

@@ -130,12 +130,8 @@ export default function Support() {
 
   return (
     <div className={styles.supportPage}>
-      <div className="container-fluid">
-        <div className={styles.main}>
-          {/* PAGE BAR - FULL WIDTH SECTION */}
-          <div className="row mb-4">
-            <div className="col-12">
-              <div className={styles.pageBar}>
+      <div className={styles.main}>
+        <div className={styles.pageBar}>
                 <div>
                   <div className={styles.breadcrumb}>
                     {config.breadcrumb.parents.map((p) => (
@@ -151,8 +147,6 @@ export default function Support() {
                   <button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={() => setActiveModal('contactSupportModal')}><i className="bi bi-headset" /> Contact Support</button>
                 </div>
               </div>
-            </div>
-          </div>
 
           {isLoading && (
             <div className="col-12">
@@ -172,7 +166,7 @@ export default function Support() {
           )}
 
           {/* HERO STATS SECTION - FULL WIDTH */}
-          <div className="row g-3 mb-4">
+          <div className="row g-3">
             <div className="col-lg-4">
               <div className={`${styles.card} ${styles.cardAccent}`} style={{ minHeight: 170 }}>
                 <p style={{ margin: '0', fontSize: 12, color: 'rgba(255,255,255,.78)', textTransform: 'uppercase', fontWeight: 600 }}>Support center live <span style={{ color: '#86efac' }}>●</span></p>
@@ -207,7 +201,7 @@ export default function Support() {
           </div>
 
           {/* ATTENTION / SUGGESTIONS / QUICK ACTIONS - FULL WIDTH SECTIONS */}
-          <div className="row g-3 mb-4">
+          <div className="row g-3">
             <div className="col-lg-4">
               <div className={styles.card}>
                 <div className="d-flex justify-content-between align-items-center mb-3">
@@ -260,7 +254,7 @@ export default function Support() {
           </div>
 
           {/* SUPPORT SECTIONS - FULL WIDTH */}
-          <div className="row g-3 mb-4">
+          <div className="row g-3">
             <div className="col-12">
               <div className={styles.card}>
                 <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap" style={{ gap: 8 }}>
@@ -406,7 +400,6 @@ export default function Support() {
         </div>
 
         <SupportModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} config={config} />
-      </div>
     </div>
   )
 }

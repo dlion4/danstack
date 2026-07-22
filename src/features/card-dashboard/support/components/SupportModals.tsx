@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import type { ReactNode } from 'react'
 import styles from '../styles/support.module.css'
 
@@ -50,59 +50,9 @@ function MBox({ id, active, title, size = 'md', onClose, children, footer }: MBo
   )
 }
 
-function BusyOverlay() {
-  return (
-    <div className={styles.loadingOv}>
-      <div className={styles.spinner} />
-      <p className={styles.loadingLabel}>Processing...</p>
-    </div>
-  )
-}
-
 const PIN_LENGTH = 4
 
-export default function SupportModals({ active, onClose, onOpen, config }: ModalsProps) {
-  const [results, setResults] = useState<Record<string, { msg: string; ref?: string }>>({})
-  const [busy, setBusy] = useState<string | null>(null)
-  const [flows, setFlows] = useState<Record<string, number>>({})
-  const [tabs, setTabs] = useState<Record<string, string>>({})
-  const [selectedCardType, setSelectedCardType] = useState('')
-  const [selectedCardColor, setSelectedCardColor] = useState('')
-  const [topUpAmount, setTopUpAmount] = useState('5000')
-
-  useEffect(() => {
-    if (active === null) {
-      setResults({})
-      setFlows({})
-      setBusy(null)
-      setTabs({})
-      setSelectedCardType('')
-      setSelectedCardColor('')
-      setTopUpAmount('5000')
-    }
-  }, [active])
-
-  const busyTimer = useRef<number | undefined>(undefined)
-  useEffect(() => () => window.clearTimeout(busyTimer.current), [])
-
-  const doAction = (modalId: string, msg: string, ref?: string) => {
-    setBusy(modalId)
-    busyTimer.current = window.setTimeout(() => {
-      setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }))
-      setBusy(null)
-    }, 1500)
-  }
-
-  const nextFlow = (key: string, total: number) => {
-    const cur = flows[key] ?? 1
-    if (cur >= total) { onClose(); return }
-    setFlows((prev) => ({ ...prev, [key]: cur + 1 }))
-  }
-
-  const switchTab = (prefix: string, key: string) => {
-    setTabs((prev) => ({ ...prev, [prefix]: key }))
-  }
-
+export default function SupportModals({ active, onClose }: ModalsProps) {
   const pinRef = useRef<(HTMLInputElement | null)[]>([])
   const handlePinInput = (idx: number) => {
     const el = pinRef.current[idx]
@@ -111,37 +61,8 @@ export default function SupportModals({ active, onClose, onOpen, config }: Modal
     }
   }
 
-  const selectBox = (cardType: string) => {
-    setSelectedCardType(cardType)
-  }
-
-  const selectColor = (color: string) => {
-    setSelectedCardColor(color)
-  }
-
-  const pickChip = (val: string) => {
-    setTopUpAmount(val)
-  }
-
-  const renderReceipt = (r: { msg: string; ref?: string }) => (
-    <div className={styles.receipt}>
-      <div className={styles.receiptIcon}><i className="bi bi-check-lg" /></div>
-      <h5 style={{ fontWeight: 700, color: 'var(--pm-accent)' }}>{r.msg}</h5>
-      {r.ref && <p style={{ fontSize: 12, color: 'var(--pm-muted)' }}>Reference: {r.ref}</p>}
-      <div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
-        <button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => downloadFile('receipt.txt', r.msg)}>
-          <i className="bi bi-download" /> Save
-        </button>
-        <button className={`${styles.btnPm} ${styles.btnSm}`} onClick={onClose}>Continue</button>
-      </div>
-    </div>
-  )
-
-  const renderActionBody = (modalId: string, defaultContent: ReactNode) => {
-    if (busy === modalId) return <BusyOverlay />
-    if (results[modalId]) return renderReceipt(results[modalId])
-    return defaultContent
-  }
+  // Submit actions close the modal (the MBox already gives clear open/close feedback).
+  const doAction = (_id: string, _msg: string, _ref?: string) => onClose()
 
   const renderChangePin = () => (
     <MBox id="changePinModal" active={active} onClose={onClose}
@@ -155,17 +76,17 @@ export default function SupportModals({ active, onClose, onOpen, config }: Modal
       <p style={{ fontSize: 13, color: 'var(--pm-ink-soft)', marginBottom: 16 }}>Enter your current PIN and choose a new 4-digit PIN for your card.</p>
       <div className="mb-3"><label className={styles.formLabel}>Current PIN</label>
         <div className={styles.pinRow}>
-          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={(e) => handlePinInput(i)} />)}
+          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={() => handlePinInput(i)} />)}
         </div>
       </div>
       <div className="mb-3"><label className={styles.formLabel}>New PIN</label>
         <div className={styles.pinRow}>
-          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={(e) => handlePinInput(i)} />)}
+          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={() => handlePinInput(i)} />)}
         </div>
       </div>
       <div className="mb-3"><label className={styles.formLabel}>Confirm New PIN</label>
         <div className={styles.pinRow}>
-          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={(e) => handlePinInput(i)} />)}
+          {[1,2,3,4].map(i => <input key={i} type="password" maxLength={1} onInput={() => handlePinInput(i)} />)}
         </div>
       </div>
     </MBox>
@@ -483,42 +404,6 @@ export default function SupportModals({ active, onClose, onOpen, config }: Modal
     caseExportModal: renderCaseExport(),
   }
 
-  const modalTitles: Record<string, string> = {
-    changePinModal: 'Change Card PIN',
-    freezeCardModal: 'Freeze / Unfreeze Card',
-    troubleshootModal: 'Transaction Troubleshooter',
-    contactSupportModal: 'Contact Support',
-    faqModal: 'FAQ by Card Type',
-    cardStatusModal: 'Card Status Checker',
-    binLookupModal: 'BIN Lookup Tool',
-    reportLostModal: 'Report Lost / Stolen Card',
-    renewCardModal: 'Renew / Replace Card',
-    emergencyModal: 'Travel Emergency Assistance',
-    disputeModal: 'File a Dispute',
-    feeCalcModal: 'Fee Calculator',
-    branchLocatorModal: 'Branch Locator',
-    caseExportModal: 'Export Cases',
-  }
-
   if (!active) return null
-  const content = modalContent[active]
-  const title = modalTitles[active] || ''
-  if (!content) return null
-
-  return (
-    <div id={active} className="modal fade show" style={{ display: 'block' }}>
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">{title}</h5>
-            <button type="button" className="btn-close" onClick={onClose} />
-          </div>
-          <div className="modal-body">
-            {content}
-          </div>
-        </div>
-      </div>
-      <div className={styles.backdrop} onClick={onClose} />
-    </div>
-  )
+  return <>{modalContent[active] ?? null}</>
 }
