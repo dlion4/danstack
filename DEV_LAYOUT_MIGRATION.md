@@ -85,5 +85,68 @@ Repeat per layout; substitute `<x>` = `business` | `utility` and `<X>` = `Busine
 
 Following steps 1–8 reproduces exactly what was done for `dev`, in the same structure as `cards`.
 
-## 5. Housekeeping note
+## 5. Business layout — completed (worked example of the playbook)
+
+The `business` layout was produced by the playbook above and **validated** (`tsc` clean, `build` exit 0, SSR `/business` + `/business/payroll` = 200, `/dev` unaffected). Files: `src/features/Layouts/dashboard-business-layout/` + `src/routes/business{.tsx,/index.tsx,/$module.tsx}` (+ regenerated `routeTree.gen.ts`). Business-specific deltas vs `dev` (i.e. what "port the data/chrome" meant in practice):
+
+- **Palette:** identical design tokens (`--paymo-*` indigo primary / emerald accent), so the CSS transform and helpers were reused **unchanged** — only the root class changed (`.businessRoot`). The emerald you see is the *accent* + literal brand/avatar gradients (`#10b981→#059669`), not a different token set.
+- **Brand:** the sidebar brand mark renders an **icon** (`bi-building`), not initials — `BusinessSidebar` renders `<i className={bi ${brand.icon}}/>` inside `.brand-icon`. Tag = `Biz`.
+- **Header:** no SANDBOX pill; instead an **account-id chip** dropdown (`DropdownName` adds `'accountId'`) showing `content.accountId` (`ACC-3942-019`) whose footer opens the `compliance` and `entity` asides; one `compliance` header-action; the user menu is Profile / Settings / **Team**. Search placeholder = "Search invoices, vendors, accounts…".
+- **Aside panels:** `compliance` (KYB + audit trail), `entity` (Modern Retail Ltd details), `payroll` (run payroll / payslips) → `AsideKind = 'compliance' | 'entity' | 'payroll'`. `BusinessModulePage.ASIDE_FOR` wires `compliance→compliance`, `payroll→payroll`, `team→entity`, `tax→compliance`.
+- **Notifications:** the Angular template hard-coded one alert and an empty array; for React I drove the dropdown from `content.notifications` and populated **4** consistent business alerts so the bell badge (4) matches the list.
+- **Nav / modules:** 4 groups (Overview / Operations / Intelligence / Infrastructure) and 13 `ModuleDef`s (`dashboard, insights, cash, movements, billing, vendors, payroll, forecast, tax, compliance, integrations, team, settings`) so the home grid + every module page render richly today.
+
+## 6. Utility layout — completed (worked example of the playbook)
+
+The `utility` layout was produced by the same playbook and **validated** (`tsc` clean, `build` exit 0, SSR `/utility` + `/utility/electricity` = 200, `/dev` and `/business` unaffected). Files: `src/features/Layouts/dashboard-utility-layout/` + `src/routes/utility{.tsx,/index.tsx,/$module.tsx}` (+ regenerated `routeTree.gen.ts`, which now registers dev + business + utility). Utility-specific deltas:
+
+- **No "home" nav entry.** The Angular sidebar had no dashboard item and its `activeSection` defaulted inconsistently (`electricity` in the sidebar, `dashboard` in the layout). For React I gave utility an **overview home** at the layout index (`/utility`, like dev/business) using a synthetic `home` `ModuleDef` (hero + stats), and the shell derives `activeSection` from the URL with an **empty fallback**, so the overview highlights no nav item and each `/utility/<service>` highlights its own.
+- **Header:** no account chip / compliance action; instead a **static wallet chip** (`content.walletBalance` = `KES 124,500`), an **Auto-Pay** header-action, a "Utility Alerts" dropdown (I populated 3 consistent alerts so the badge = 3 matches the list), search placeholder "Search billers, meters, history…", user = James K. / Account Holder / Profile·Settings·**Auto-Pay**.
+- **Aside panels:** `autoPay` (Auto-Pay Manager), `payBill` (Pay Utility Bill form), `savedAccounts` (list driven by `content.savedAccounts` — passed as a prop to `UtilityAside`) → `AsideKind = 'autoPay' | 'payBill' | 'savedAccounts'`. `UtilityModulePage.ASIDE_FOR` maps `autopay→autoPay`, `saved→savedAccounts`, and every billable service (`electricity/water/tv/internet/airtime/gas`) `→payBill`.
+- **Brand:** amber gradient + `bi-lightning-charge` icon, tag `Util`; account avatar `JK`. The Auto-Pay nav item carries a **numeric** badge (3) — rendered via `item.badge !== undefined`.
+- **Palette / CSS:** identical tokens and standalone stylesheet again, so `make_layout_css.py` was reused as-is with root class `.utilityRoot`.
+
+## 7. Housekeeping note
 `src/features/card-dashboard/VirtualDebitCards/` (PascalCase) is still an **orphan duplicate** no route references — safe to delete. The live page is the kebab-case `virtual-debit-cards/`.
+
+---
+
+# 7. UTILITY DEEP-DIVE PAGES (3.1–3.6) — progress & architecture
+
+The six utility deep-dive single-file pages (3.1–3.6) are refactored into
+`src/features/utility-dashboard/<page>/{pages,components,styles,data}` exactly
+like the cards pages, but sharing one reusable engine so each page stays small
+and consistent:
+
+- `src/features/utility-dashboard/_shared/modalKit.tsx` — the modal primitives
+  (`MBox`, `Stepper`, `Loading`, `Lbl`, `Fld` as components that take the page's
+  CSS map `s`, plus a `useModals(s, active, onClose)` hook that replaces the
+  legacy vanilla `openModal / processAction / next*Step / switchTab / pickChip`
+  logic with React state: opaque single-layer modals, loading→receipt flows,
+  multi-step wizards with steppers, tab pills, amount chips and selectable
+  grids). **This is the key reuse win — every deep-dive's modal file is just
+  data + JSX on top of the kit.**
+- `make_utility_page_css.py` + `util_common_extras.css` (tooling, optional) —
+  generate each page's cream CSS module (full design-system base + responsive
+  table→card / icon `min-width` guards + shared extras). Run:
+  `python3 make_utility_page_css.py <rootClass> <out.module.css> util_common_extras.css`
+- Each page imports its generated module as `s` and uses `s.utilPage` as the
+  root (token-scoping) class; the page renders inside the existing utility
+  shell, and a **named route** (`routes/utility/<page>.tsx`) overrides the
+  generic `routes/utility/$module.tsx` fallback (same pattern as the cards
+  named routes vs `transaction_dashboard/$section`).
+
+## Status (cumulative — latest ZIP is always the complete-so-far set)
+- ✅ **3.1 Utilities Command Center** — `/utility` — validated (tsc clean, build 0, SSR 200).
+- ✅ **3.3 Water Management Deep Dive** — `/utility/water` — validated (22 modals incl. 3 wizards + tabbed manage/analytics).
+- ✅ **3.4 Internet & Connectivity** — `/utility/internet` — validated (23 modals incl. 3 wizards, tabbed buy-data/outages, stateful speed-test).
+- ✅ **3.6 Utility Settings & Automation** — `/utility/settings` — validated (25 modals incl. 3 wizards, drag-priority list, member cards).
+- ✅ **3.2 Electricity Management Deep Dive** — `/utility/electricity` — validated (28 modals: 4 wizards [buy-token/pay-postpaid/add-meter 4-step, bulk-pay 3-step], 5 tabbed [manage-meter, auto-top-up, usage-analytics, dispute, outage-tracker], 10 loading→receipt actions, 9 display/info; prepaid meter grid via `serviceGrid`+inline status dots; postpaid filter tabs all/due/paid/dispute).
+- ✅ **3.5 Mobile Money & Airtime Hub** — `/utility/airtime` — validated (26 modals: 3 wizards [buy-airtime/send-cross-network/m-pesa-global 3-step], 4 tabbed [buy-data networks, agent-locator list/map, m-shwari save/loan/lock with per-tab actions, kcb save/loan], 11 loading→receipt actions incl. multi-claim Tunukiwa, 6 display; M-Pesa suite grid via 6 `.map()` service cards).
+
+**All 6 utility deep-dives (3.1–3.6) complete and 3-way validated** (tsc clean for all new files, `npm run build` exit 0, dev-server SSR 200 with all section markers present and zero runtime errors; no regression on `/utility`, `/utility/water`, `/utility/internet`, `/utility/settings`).
+
+Each page is verified three ways before being added to the ZIP:
+`npx tsc --noEmit` (filtered) clean, `npm run build` exit 0, and an SSR curl of
+the route returning 200 with the expected section markers and **no**
+`TypeError / ReferenceError / Internal Server Error`.
