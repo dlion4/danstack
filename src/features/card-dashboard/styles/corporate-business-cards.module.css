@@ -1,0 +1,59 @@
+.corporateApp { display: flex; min-height: 100vh; }
+.corporateSidebar { width: 88px; background: #27408B; color:#fff; display:flex; flex-direction:column; align-items:center; padding:20px 0; position:sticky; top:0; height:100vh; z-index:100; }
+.navItem { width:100%; height:48px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:transparent; border:none; transition:all .2s; }
+.navItemActive { background:#1D4ED8; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.badgeDot { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#EF4444; border-radius:50%; border:2px solid #334155; animation:pm-pulse 2s infinite; }
+@keyframes pm-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.2)} }
+.main { flex:1; min-width:0; display:flex; flex-direction:column; overflow-x:hidden; }
+.header { background:rgba(245,241,236,.7); backdrop-filter:blur(20px); border-bottom:1px solid #E5E2DC; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:sticky; top:0; z-index:50; }
+.headerTitle { flex-shrink:0; }
+.headerTitle h1 { margin:0; font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em; }
+.headerTitle p { margin:0; font-size:12px; color:#6B7280; }
+.headerSearch { flex:1; max-width:440px; position:relative; }
+.headerSearch input { width:100%; height:40px; padding:0 16px 0 40px; border:1px solid #D1D5DB; border-radius:8px; background:#fff; font-size:13px; transition:all .2s; }
+.headerSearch input:focus { outline:none; border-color:#3B82F6; box-shadow:0 0 0 3px rgba(59,140,246,.15); }
+.headerSearch .bi { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6B7280; }
+.headerActions { display:flex; align-items:center; gap:8px; }
+.headerBtn { width:40px; height:40px; border-radius:12px; border:1px solid #D1D5DB; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; color:#6B7280; position:relative; }
+.headerBtn:hover { background:#F3F4F6; color:#1D4ED8; transform:translateY(-1px); border-color:#3B82F6; }
+.profileBtn { display:flex; align-items:center; gap:10px; padding:5px 12px; border:1px solid #D1D5DB; background:#fff; border-radius:12px; cursor:pointer; transition:all .2s; }
+.profileBtn:hover { background:#F3F4F6; }
+.avatar { width:32px; height:32px; border-radius:50%; background:#3B82F6; color:#fff; font-weight:600; font-size:12px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; }
+.pageBar { padding:20px 32px 0; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.breadcrumb { font-size:12px; color:#6B7280; }
+.breadcrumb a { color:#3B82F6; text-decoration:none; }
+.breadcrumb a:hover { text-decoration:underline; }
+.pageH2 { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; margin:8px 0 2px; }
+.pageSub { font-size:13px; color:#6B7280; margin:0; }
+.content { padding:16px 32px 32px; display:flex; flex-direction:column; gap:20px; }
+.card { background:#fff; border:1px solid #D1D5DB; border-radius:12px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,0.04); transition:all .2s; }
+.cardAccent { background:linear-gradient(135deg,#1e293b,#0f172a,#4f46e5); color:#fff; border:none; }
+.sectionTitle { margin:0; }
+.sectionSub { margin:2px 0 0; }
+.feedItem { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #D1D5DB; }
+.iconCircle { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; background:#3B82F6; }
+.statusRow { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #D1D5DB; }
+.quickActionGrid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.quickActionBtn { padding:10px; border:1px solid #D1D5DB; border-radius:8px; background:#fff; text-align:center; cursor:pointer; font-size:13px; font-weight:500; transition:all .2s; }
+.quickActionBtn:hover { border-color:#3B82F6; background:rgba(59,140,246,.04); transform:translateY(-1px); }
+.btnPm { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid #D1D5DB; background:#fff; cursor:pointer; transition:all .2s; color:#1F2937; text-decoration:none; }
+.btnPmPrimary { background:#3B82F6; color:#fff; border-color:#3B82F6; }
+.btnPmPrimary:hover { background:#1D4ED8; border-color:#1D4ED8; }
+.btnSm { padding:5px 12px; font-size:12px; }
+.stepper { display:flex; align-items:center; gap:0; margin-bottom:24px; flex-wrap:wrap; }
+.step { display:flex; align-items:center; gap:8px; flex:1; min-width:90px; }
+.stepNum { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:#D1D5DB; color:#374151; transition:all .3s; }
+.step.active .stepNum { background:#3B82F6; color:#fff; }
+.step.completed .stepNum { background:#F59E0B; color#fff; }
+.stepLabel { font-size:11px; font-weight:600; color:#6B7280; }
+.step.active .stepLabel { color:#3B82F6; }
+.step.completed .stepLabel { color:#F59E0B; }
+.stepLine { flex:1; height:2px; background:#D1D5DB; margin:0 8px; }
+.tabPills { display:flex; gap:4px; padding:4px; background:#F3F4F6; border-radius:6px; overflow-x:auto; }
+.tabPill { padding:8px 16px; border:none; background:transparent; font-size:13px; font-weight:500; cursor:pointer; color:#6B7280; transition:all .2s; }
+.tabPill.active { background:#fff; color:#3B82F6; box-shadow:0 4px 12px rgba(0,0,0,0.05); font-weight:600; }
+.table { width:100%; border-collapse:collapse; font-size:13px; }
+.table th { text-align:left; padding:10px 12px; font-weight:600; font-size:11px; text-transform:uppercase; color:#6B7280; border-bottom:1px solid #D1D5DB; background:#F3F4F6; }
+.table td { padding:12px; border-bottom:1px solid #D1D5DB; vertical-align:middle; }
+.table tr:last-child td { border-bottom:none; }
+.table tr:hover td { background:#F3F4F6; }

@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Transfer Overview Command Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        
+        <div class="pm-main">
+            
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Transfers</a> / <strong>Command
+                            Center</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.1 — Transfer Overview Command Center</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Initiate instant transfers, schedule
+                        recurring payments, manage beneficiaries, and monitor all money movement across M-Pesa, banks,
+                        and internal wallets.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('transferHistoryModal')"><i class="bi bi-clock-history"></i>
+                        History</button><button class="btn-pm" onclick="openM('scheduleTransferModal')"><i
+                            class="bi bi-calendar-event"></i> Schedule</button><button class="btn-pm btn-pm-p"
+                        onclick="openM('initiateTransferModal')"><i class="bi bi-send"></i> Send Money</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Transfer center is live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">KES 2.84M transferred</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">This month across 1,248
+                                transactions. 98.7% success rate.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('initiateTransferModal')">Send</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('bulkTransferModal')">Bulk</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('scheduleTransferModal')">Schedule</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">COMPLETED</p>
+                            <div class="SV" style="margin:6px 0">1,189</div><span class="B B-s"><i
+                                    class="bi bi-check-circle"></i> 98.7%</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Avg time: <strong>12
+                                    seconds</strong></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">PENDING / SCHEDULED</p>
+                            <div class="SV" style="margin:6px 0">47</div><span class="B B-i"><i class="bi bi-clock"></i>
+                                32 today</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Next execution:
+                                <strong>Today 3:00 PM</strong></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">FAILED / REJECTED</p>
+                            <div class="SV" style="margin:6px 0">12</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> 1.0%</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Most common:
+                                <strong>Insufficient funds</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Scheduled transfer to landlord
+                                            failed</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 35,000 · Insufficient
+                                            funds</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('retryTransferModal')">Retry</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">3 recurring payments need funding
+                                            source update</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">M-Pesa number changed</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('manageBeneficiariesModal')">Update</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-shield-exclamation"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Large transfer (KES 450,000) pending
+                                            approval</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Requires 2FA confirmation
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('initiateTransferModal')">Approve</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-lightning-charge"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Set up auto-pay for 4 recurring
+                                            bills</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Save 3 hours/month</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('scheduleTransferModal')">Setup</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-people"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Add 6 frequent contacts as favorites
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Faster transfers</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('manageBeneficiariesModal')">Add</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Your rent transfer is due in 4 days
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 45,000 to Landlord</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('initiateTransferModal')">Pay
+                                    Early</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent transfer workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn"
+                                    onclick="openM('initiateTransferModal')"><i
+                                        class="bi bi-send text-primary me-1"></i> Send Money</button><button
+                                    class="quick-btn" onclick="openM('bulkTransferModal')"><i
+                                        class="bi bi-collection text-info me-1"></i> Bulk Transfer</button><button
+                                    class="quick-btn" onclick="openM('scheduleTransferModal')"><i
+                                        class="bi bi-calendar-event text-success me-1"></i> Schedule</button><button
+                                    class="quick-btn" onclick="openM('manageBeneficiariesModal')"><i
+                                        class="bi bi-person-plus text-warning me-1"></i> Beneficiaries</button><button
+                                    class="quick-btn" onclick="openM('transferHistoryModal')"><i
+                                        class="bi bi-clock-history me-1" style="color:var(--pm-purple)"></i>
+                                    History</button><button class="quick-btn" onclick="openM('transferLimitsModal')"><i
+                                        class="bi bi-sliders me-1" style="color:var(--pm-accent)"></i>
+                                    Limits</button><button class="quick-btn"
+                                    onclick="openM('internationalTransferModal')"><i class="bi bi-globe me-1"
+                                        style="color:var(--pm-danger)"></i> International</button><button
+                                    class="quick-btn" onclick="openM('qrPayModal')"><i class="bi bi-qr-code me-1"
+                                        style="color:var(--pm-primary)"></i> QR Pay</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Overview Dashboard -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-speedometer2" style="color:var(--pm-primary)"></i> Transfer
+                                Portfolio Overview</h3>
+                            <p class="ss">Real-time view of all transfer activity, success rates, and spending patterns.
+                            </p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('transferAnalyticsModal')"><i class="bi bi-bar-chart"></i>
+                                Analytics</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('initiateTransferModal')"><i class="bi bi-plus-lg"></i> New
+                                Transfer</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Recent Transfers</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Beneficiary</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                                <th>Status</th>
+                                                <th>Ref</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>27 Jun</td>
+                                                <td>Grace Kamau</td>
+                                                <td><strong>KES 12,500</strong></td>
+                                                <td>M-Pesa</td>
+                                                <td><span class="B B-s">Success</span></td>
+                                                <td>TRF-448291</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Details</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>26 Jun</td>
+                                                <td>Landlord Properties</td>
+                                                <td><strong>KES 45,000</strong></td>
+                                                <td>Bank</td>
+                                                <td><span class="B B-s">Success</span></td>
+                                                <td>TRF-447820</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Details</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>25 Jun</td>
+                                                <td>James Ochieng</td>
+                                                <td><strong>KES 8,200</strong></td>
+                                                <td>Internal</td>
+                                                <td><span class="B B-s">Success</span></td>
+                                                <td>TRF-447103</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Details</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>24 Jun</td>
+                                                <td>Equity Bank</td>
+                                                <td><strong>KES 120,000</strong></td>
+                                                <td>Bank</td>
+                                                <td><span class="B B-i">Pending</span></td>
+                                                <td>TRF-446991</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('retryTransferModal')">Track</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>23 Jun</td>
+                                                <td>Safaricom</td>
+                                                <td><strong>KES 1,500</strong></td>
+                                                <td>M-Pesa</td>
+                                                <td><span class="B B-s">Success</span></td>
+                                                <td>TRF-446450</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('transferDetailModal')">Details</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Transfer Channels</h4>
+                                <div class="sr">
+                                    <div><strong>M-Pesa</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">612 transfers</div>
+                                    </div><strong>KES 1.24M</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Bank Transfer</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">298 transfers</div>
+                                    </div><strong>KES 892K</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Internal Wallet</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">187 transfers</div>
+                                    </div><strong>KES 412K</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>International</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">51 transfers</div>
+                                    </div><strong>KES 296K</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Favorites & Beneficiaries -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-star-fill" style="color:var(--pm-warning)"></i> Favorites &
+                                Frequent Beneficiaries</h3>
+                            <p class="ss">Quick-send to your most used recipients with one tap.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('manageBeneficiariesModal')"><i class="bi bi-gear"></i>
+                                Manage</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('addBeneficiaryModal')"><i class="bi bi-plus-lg"></i> Add</button></div>
+                    </div>
+                    <div class="row g-2" id="favoritesGrid"></div>
+                </div>
+
+                <!-- SECTION: Scheduled & Recurring -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-calendar-check" style="color:var(--pm-accent)"></i> Scheduled
+                                & Recurring Transfers</h3>
+                            <p class="ss">Manage your automated payments and upcoming scheduled transfers.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('scheduleTransferModal')"><i class="bi bi-plus-lg"></i> New
+                                Schedule</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Schedule</th>
+                                    <th>Beneficiary</th>
+                                    <th>Amount</th>
+                                    <th>Frequency</th>
+                                    <th>Next Run</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Rent</td>
+                                    <td>Landlord Properties</td>
+                                    <td><strong>KES 45,000</strong></td>
+                                    <td>Monthly</td>
+                                    <td>01 Jul 2025</td>
+                                    <td><span class="B B-s">Active</span></td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('editScheduleModal')">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Salary Advance</td>
+                                    <td>Grace Kamau</td>
+                                    <td><strong>KES 15,000</strong></td>
+                                    <td>Bi-weekly</td>
+                                    <td>28 Jun 2025</td>
+                                    <td><span class="B B-s">Active</span></td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('editScheduleModal')">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Internet Bill</td>
+                                    <td>Safaricom Fibre</td>
+                                    <td><strong>KES 5,999</strong></td>
+                                    <td>Monthly</td>
+                                    <td>01 Jul 2025</td>
+                                    <td><span class="B B-w">Paused</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('editScheduleModal')">Resume</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION: Analytics Snapshot -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-graph-up-arrow" style="color:var(--pm-info)"></i> Transfer
+                                Analytics Snapshot</h3>
+                            <p class="ss">Spending patterns, success rates, and top recipients.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('transferAnalyticsModal')">Full Analytics</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Top Recipients (30 days)</h4>
+                                <div class="sr">
+                                    <div><strong>Grace Kamau</strong></div><strong>KES 187,500</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Landlord Properties</strong></div><strong>KES 135,000</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Equity Bank</strong></div><strong>KES 120,000</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Safaricom</strong></div><strong>KES 42,000</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Success Rate by Channel</h4>
+                                <div class="sr">
+                                    <div><strong>M-Pesa</strong></div><span class="B B-s">99.4%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Bank Transfer</strong></div><span class="B B-s">97.8%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Internal</strong></div><span class="B B-s">100%</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>International</strong></div><span class="B B-w">94.1%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Monthly Trend</h4>
+                                <div class="chart-bars" style="height:90px">
+                                    <div class="chart-bar" style="height:55%;background:var(--pm-primary)"><span
+                                            class="bar-label">Jan</span></div>
+                                    <div class="chart-bar" style="height:68%;background:var(--pm-primary)"><span
+                                            class="bar-label">Feb</span></div>
+                                    <div class="chart-bar" style="height:82%;background:var(--pm-warning)"><span
+                                            class="bar-label">Mar</span></div>
+                                    <div class="chart-bar" style="height:75%;background:var(--pm-primary)"><span
+                                            class="bar-label">Apr</span></div>
+                                    <div class="chart-bar" style="height:90%;background:var(--pm-accent)"><span
+                                            class="bar-label">May</span></div>
+                                    <div class="chart-bar" style="height:100%;background:var(--pm-primary)"><span
+                                            class="bar-label">Jun</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS (23+ unique) -->
+
+    <!-- M1: Initiate Transfer (Multi-step) -->
+    <div class="modal fade R" id="initiateTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-send text-primary me-2"></i>Initiate Transfer</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="initStepper"></div>
+                    <div id="initS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Beneficiary</h6>
+                        <div class="mb-3"><label class="FL">Search or Select</label><select class="FC">
+                                <option>Grace Kamau — 0712 345 890</option>
+                                <option>Landlord Properties — Bank 0012345678</option>
+                                <option>James Ochieng — 0722 111 222</option>
+                                <option>Equity Bank — 0012345678</option>
+                                <option>New Beneficiary</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Transfer Type</label>
+                            <div class="pills"><button class="pill active"
+                                    onclick="selectBox(this)">M-Pesa</button><button class="pill"
+                                    onclick="selectBox(this)">Bank</button><button class="pill"
+                                    onclick="selectBox(this)">Internal</button><button class="pill"
+                                    onclick="selectBox(this)">International</button></div>
+                        </div>
+                    </div>
+                    <div id="initS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Amount (KES)</label><input class="FC" value="12500">
+                            </div>
+                            <div class="col-md-6"><label class="FL">Reference / Note</label><input class="FC"
+                                    value="Rent June 2025"></div>
+                        </div>
+                        <div class="mt-3"><label class="FL">Funding Source</label><select class="FC">
+                                <option>PayMo Wallet (KES 24,500)</option>
+                                <option>M-Pesa (0712***890)</option>
+                                <option>Equity Bank ****4521</option>
+                            </select></div>
+                    </div>
+                    <div id="initS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Review & Confirm</h6>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">To</span><strong>Grace Kamau</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Amount</span><strong>KES 12,500</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Fee</span><strong>KES 0</strong></div>
+                            <div class="d-flex justify-content-between"><span class="text-muted">Total</span><strong
+                                    style="color:var(--pm-primary)">KES 12,500</strong></div>
+                        </div><label class="FL mt-3">Enter PIN</label>
+                        <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                    </div>
+                    <div id="initS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Transfer Successful!</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 12,500 sent to Grace Kamau via
+                                M-Pesa.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Reference</span><strong>TRF-448291</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Transaction
+                                        ID</span><strong>MPESA-9K2M4P</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Time</span><strong>27 Jun 2025, 14:32</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="initFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="initNext"
+                        onclick="nextFlow('init',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Bulk Transfer -->
+    <div class="modal fade R" id="bulkTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-collection text-info me-2"></i>Bulk Transfer</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="bulkStepper"></div>
+                    <div id="bulkS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Upload Beneficiaries</h6>
+                        <div class="mb-3"><label class="FL">Upload CSV</label><input type="file" class="FC"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> CSV format: Name, Phone/Bank, Amount, Reference
+                        </div>
+                    </div>
+                    <div id="bulkS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Review List</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Account</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Grace Kamau</td>
+                                        <td>0712 345 890</td>
+                                        <td>KES 12,500</td>
+                                    </tr>
+                                    <tr>
+                                        <td>John Otieno</td>
+                                        <td>0722 111 222</td>
+                                        <td>KES 8,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Landlord Ltd</td>
+                                        <td>Bank 0012345678</td>
+                                        <td>KES 45,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="bulkS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Confirm & Pay</h6>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-2"><span class="text-muted">Total
+                                    Beneficiaries</span><strong>3</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span class="text-muted">Total
+                                    Amount</span><strong>KES 65,500</strong></div>
+                            <div class="d-flex justify-content-between"><span class="text-muted">Total
+                                    Fee</span><strong>KES 0</strong></div>
+                        </div>
+                    </div>
+                    <div id="bulkS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-all"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bulk Transfer Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">3 transfers processed successfully.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="bulkFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="bulkNext"
+                        onclick="nextFlow('bulk',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Schedule Transfer -->
+    <div class="modal fade R" id="scheduleTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar-event text-success me-2"></i>Schedule Transfer</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="schedStepper"></div>
+                    <div id="schedS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Beneficiary & Amount</h6>
+                        <div class="mb-3"><label class="FL">Beneficiary</label><select class="FC">
+                                <option>Grace Kamau</option>
+                                <option>Landlord Properties</option>
+                            </select></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Amount</label><input class="FC" value="45000"></div>
+                            <div class="col-md-6"><label class="FL">Frequency</label><select class="FC">
+                                    <option>Monthly</option>
+                                    <option>Bi-weekly</option>
+                                    <option>Weekly</option>
+                                    <option>One-time</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="schedS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Schedule Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Start Date</label><input type="date" class="FC"
+                                    value="2025-07-01"></div>
+                            <div class="col-md-6"><label class="FL">End Date (optional)</label><input type="date"
+                                    class="FC"></div>
+                        </div>
+                        <div class="mb-3 mt-3"><label class="FL">Funding Source</label><select class="FC">
+                                <option>PayMo Wallet</option>
+                                <option>M-Pesa</option>
+                                <option>Bank</option>
+                            </select></div>
+                    </div>
+                    <div id="schedS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Confirmation</h6>
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Schedule Created</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your recurring transfer has been
+                                scheduled successfully.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="schedFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="schedNext"
+                        onclick="nextFlow('sched',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Manage Beneficiaries -->
+    <div class="modal fade R" id="manageBeneficiariesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus text-warning me-2"></i>Manage Beneficiaries</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('ben','list',this)">All</button><button class="pill"
+                            onclick="sw('ben','favorites',this)">Favorites</button><button class="pill"
+                            onclick="sw('ben','recent',this)">Recent</button></div>
+                    <div id="ben-list" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Account</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Grace Kamau</td>
+                                        <td>0712 345 890</td>
+                                        <td>M-Pesa</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('editBeneficiaryModal')">Edit</button> <button
+                                                class="btn-pm btn-sm"
+                                                onclick="openM('initiateTransferModal')">Send</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Landlord Properties</td>
+                                        <td>Bank 0012345678</td>
+                                        <td>Bank</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('editBeneficiaryModal')">Edit</button> <button
+                                                class="btn-pm btn-sm"
+                                                onclick="openM('initiateTransferModal')">Send</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="ben-favorites" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Grace Kamau</strong></div><button class="btn-pm btn-sm">Remove from
+                                Favorites</button>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Landlord Properties</strong></div><button class="btn-pm btn-sm">Remove from
+                                Favorites</button>
+                        </div>
+                    </div>
+                    <div id="ben-recent" class="tpanel">
+                        <div class="sr">
+                            <div><strong>James Ochieng</strong></div><button class="btn-pm btn-sm"
+                                onclick="openM('addBeneficiaryModal')">Add to Favorites</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('addBeneficiaryModal')">Add New Beneficiary</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Add Beneficiary -->
+    <div class="modal fade R" id="addBeneficiaryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus text-success me-2"></i>Add Beneficiary</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Name</label><input class="FC" value="Mary Wanjiku"></div>
+                    <div class="mb-3"><label class="FL">Phone / Account</label><input class="FC" value="0733 222 111">
+                    </div>
+                    <div class="mb-3"><label class="FL">Type</label><select class="FC">
+                            <option>M-Pesa</option>
+                            <option>Bank Account</option>
+                            <option>PayMo Wallet</option>
+                            <option>International</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Add to Favorites</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('addBeneficiaryModal','Beneficiary added successfully!','')">Add
+                        Beneficiary</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Transfer Detail -->
+    <div class="modal fade R" id="transferDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Transfer Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Reference</span><strong>TRF-448291</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>KES 12,500</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">To</span><strong>Grace
+                                Kamau</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Method</span><strong>M-Pesa</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Success</span></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun
+                                2025, 14:32</strong></div>
+                    </div>
+                    <div class="d-flex justify-content-center" style="gap:8px"><button class="btn-pm btn-sm"><i
+                                class="bi bi-download"></i> Receipt</button><button class="btn-pm btn-sm"><i
+                                class="bi bi-share"></i> Share</button><button class="btn-pm btn-sm"
+                            onclick="openM('disputeTransferModal')">Report Issue</button></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Edit Schedule -->
+    <div class="modal fade R" id="editScheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Schedule</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="45000"></div>
+                    <div class="mb-3"><label class="FL">Frequency</label><select class="FC">
+                            <option>Monthly</option>
+                            <option>Bi-weekly</option>
+                        </select></div>
+                    <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Active</label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Notify before execution</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editScheduleModal','Schedule updated successfully!','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: International Transfer -->
+    <div class="modal fade R" id="internationalTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe text-danger me-2"></i>International Transfer</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="intlStepper"></div>
+                    <div id="intlS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Recipient Details</h6>
+                        <div class="mb-3"><label class="FL">Country</label><select class="FC">
+                                <option>United Kingdom</option>
+                                <option>United States</option>
+                                <option>Germany</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Recipient Name</label><input class="FC" value="John Smith">
+                        </div>
+                        <div class="mb-3"><label class="FL">Account / IBAN</label><input class="FC"
+                                value="GB29NWBK60161331926819"></div>
+                    </div>
+                    <div id="intlS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Fees</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Amount (KES)</label><input class="FC"
+                                    value="150000"></div>
+                            <div class="col-md-6"><label class="FL">Currency</label><select class="FC">
+                                    <option>GBP</option>
+                                    <option>USD</option>
+                                    <option>EUR</option>
+                                </select></div>
+                        </div>
+                        <div class="p-3 rounded mt-3" style="background:var(--pm-warning-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Estimated fee: KES 2,850 | Exchange rate: 1 KES =
+                            0.0058 GBP</div>
+                    </div>
+                    <div id="intlS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Compliance</h6>
+                        <div class="mb-3"><label class="FL">Purpose of Transfer</label><select class="FC">
+                                <option>Family Support</option>
+                                <option>Business Payment</option>
+                                <option>Education</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Source of Funds</label><select class="FC">
+                                <option>Salary</option>
+                                <option>Savings</option>
+                                <option>Business Income</option>
+                            </select></div>
+                    </div>
+                    <div id="intlS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">International Transfer Initiated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Your transfer is being processed.
+                                Expected delivery: 1-3 business days.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="intlFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="intlNext"
+                        onclick="nextFlow('intl',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: QR Pay -->
+    <div class="modal fade R" id="qrPayModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-qr-code text-primary me-2"></i>QR Pay</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="p-4 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div
+                            style="width:180px;height:180px;background:linear-gradient(135deg,#4F46E5,#7C3AED);margin:0 auto;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff">
+                            <div><i class="bi bi-qr-code" style="font-size:80px"></i>
+                                <div style="margin-top:8px;font-weight:700">Scan to Pay</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="2500"></div>
+                    <div class="mb-3"><label class="FL">Reference</label><input class="FC" value="Lunch payment"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('qrPayModal','QR code generated! Recipient can scan to pay.','')">Generate
+                        QR</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Transfer Limits -->
+    <div class="modal fade R" id="transferLimitsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Transfer Limits & Security</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Daily Limit</label><input class="FC" value="500000"></div>
+                    <div class="mb-3"><label class="FL">Per Transaction Limit</label><input class="FC" value="200000">
+                    </div>
+                    <div class="mb-3"><label class="FL">International Limit</label><input class="FC" value="100000">
+                    </div>
+                    <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Require PIN for transfers above KES 10,000</label>
+                    </div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Require 2FA for international transfers</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('transferLimitsModal','Transfer limits updated successfully!','')">Save
+                        Limits</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Retry Transfer -->
+    <div class="modal fade R" id="retryTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-warning me-2"></i>Retry Failed Transfer
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#B45309">Failed Transfer Details</div>
+                        <div style="font-size:14px;margin-top:4px">Landlord Properties — KES 35,000</div>
+                        <div style="font-size:12px;color:#92400E">Reason: Insufficient funds in M-Pesa</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">New Funding Source</label><select class="FC">
+                            <option>PayMo Wallet (KES 24,500)</option>
+                            <option>Equity Bank ****4521</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('retryTransferModal','Transfer retried successfully!','')">Retry Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Transfer Analytics -->
+    <div class="modal fade R" id="transferAnalyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bar-chart-line me-2"></i>Transfer Analytics</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('an','volume',this)">Volume</button><button class="pill"
+                            onclick="sw('an','success',this)">Success Rate</button><button class="pill"
+                            onclick="sw('an','recipients',this)">Recipients</button></div>
+                    <div id="an-volume" class="tpanel active">
+                        <div class="chart-bars" style="height:120px">
+                            <div class="chart-bar" style="height:60%;background:var(--pm-primary)"><span
+                                    class="bar-label">Jan</span></div>
+                            <div class="chart-bar" style="height:75%;background:var(--pm-primary)"><span
+                                    class="bar-label">Feb</span></div>
+                            <div class="chart-bar" style="height:90%;background:var(--pm-warning)"><span
+                                    class="bar-label">Mar</span></div>
+                            <div class="chart-bar" style="height:82%;background:var(--pm-primary)"><span
+                                    class="bar-label">Apr</span></div>
+                            <div class="chart-bar" style="height:100%;background:var(--pm-accent)"><span
+                                    class="bar-label">May</span></div>
+                            <div class="chart-bar" style="height:95%;background:var(--pm-primary)"><span
+                                    class="bar-label">Jun</span></div>
+                        </div>
+                    </div>
+                    <div id="an-success" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Channel</th>
+                                        <th>Success Rate</th>
+                                        <th>Failed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M-Pesa</td>
+                                        <td><span class="B B-s">99.4%</span></td>
+                                        <td>7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank</td>
+                                        <td><span class="B B-s">97.8%</span></td>
+                                        <td>12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>International</td>
+                                        <td><span class="B B-w">94.1%</span></td>
+                                        <td>3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="an-recipients" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Grace Kamau</strong></div><strong>24 transfers</strong>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Landlord Properties</strong></div><strong>6 transfers</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Security Check -->
+    <div class="modal fade R" id="securityCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Transfer Security</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:28px;font-weight:800;color:var(--pm-accent)">96</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">SECURITY SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">2FA</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">ENABLED</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">14d</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">LAST REVIEW</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Transfer Notifications -->
+    <div class="modal fade R" id="transferNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Transfer Notifications</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)"><strong>Scheduled transfer
+                            failed</strong>
+                        <div style="font-size:11px">Landlord Properties — KES 35,000</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft)"><strong>Large transfer
+                            pending approval</strong>
+                        <div style="font-size:11px">KES 450,000 to James Ochieng</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft)"><strong>Recurring payment
+                            executed</strong>
+                        <div style="font-size:11px">Grace Kamau — KES 15,000</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.k@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Transfers</span><br><strong>1,248 this month</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Security</span><br><strong
+                                    style="color:var(--pm-accent)">96/100</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Attention Full -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Attention
+                        Items</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Scheduled transfer failed</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('retryTransferModal')">Retry</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>3 recurring payments need funding source</strong></div><button
+                            class="btn-pm btn-sm" onclick="openM('manageBeneficiariesModal')">Update</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Large transfer pending approval</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('initiateTransferModal')">Approve</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Dispute Transfer -->
+    <div class="modal fade R" id="disputeTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Report Transfer
+                        Issue</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Issue Type</label><select class="FC">
+                            <option>Wrong amount sent</option>
+                            <option>Transfer not received</option>
+                            <option>Wrong beneficiary</option>
+                            <option>Duplicate transfer</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Description</label><textarea class="FC"
+                            rows="3">The transfer was sent to the wrong number.</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('disputeTransferModal','Dispute submitted. Reference: DSP-88291','DSP-88291')">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Edit Beneficiary -->
+    <div class="modal fade R" id="editBeneficiaryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Beneficiary</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Name</label><input class="FC" value="Grace Kamau"></div>
+                    <div class="mb-3"><label class="FL">Phone / Account</label><input class="FC" value="0712 345 890">
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Favorite</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('editBeneficiaryModal','Beneficiary updated successfully!','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Fee Calculator -->
+    <div class="modal fade R" id="feeCalcModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Transfer Fee Calculator</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="50000"></div>
+                    <div class="mb-3"><label class="FL">Method</label><select class="FC">
+                            <option>M-Pesa</option>
+                            <option>Bank Transfer</option>
+                            <option>International</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between"><span>Estimated Fee</span><strong>KES 35</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Transfer History -->
+    <div class="modal fade R" id="transferHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Transfer History</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3"><select class="FC" style="width:auto">
+                            <option>All Methods</option>
+                            <option>M-Pesa</option>
+                            <option>Bank</option>
+                        </select><input class="FC" style="width:200px" placeholder="Search reference"></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Beneficiary</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Ref</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>Grace Kamau</td>
+                                    <td>KES 12,500</td>
+                                    <td>M-Pesa</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>TRF-448291</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun</td>
+                                    <td>Landlord</td>
+                                    <td>KES 45,000</td>
+                                    <td>Bank</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>TRF-447820</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Favorites Quick Send -->
+    <div class="modal fade R" id="favoritesQuickModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-star me-2"></i>Quick Send to Favorite</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="5000"></div>
+                    <div class="mb-3"><label class="FL">Note</label><input class="FC" value="Quick payment"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('favoritesQuickModal','Transfer sent successfully!','')">Send Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Add to Favorites from History -->
+    <div class="modal fade R" id="addToFavoritesModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-star me-2"></i>Add to Favorites</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Nickname</label><input class="FC" value="My Landlord"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Enable quick-send</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('addToFavoritesModal','Added to favorites!','')">Add</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.k@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Transfers</span><br><strong>1,248 this month</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Security</span><br><strong
+                                    style="color:var(--pm-accent)">96/100</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const favorites = [
+            { name: 'Grace Kamau', account: '0712 345 890', type: 'M-Pesa', color: '#10B981' },
+            { name: 'Landlord Properties', account: 'Bank 0012345678', type: 'Bank', color: '#3B82F6' },
+            { name: 'James Ochieng', account: '0722 111 222', type: 'M-Pesa', color: '#10B981' },
+            { name: 'Equity Bank', account: '0012345678', type: 'Bank', color: '#3B82F6' }
+        ];
+        function renderFavorites() { document.getElementById('favoritesGrid').innerHTML = favorites.map(f => `<div class="col-6 col-md-3"><div class="C" style="cursor:pointer" onclick="openM('favoritesQuickModal')"><div class="d-flex align-items-center gap-2"><div style="width:36px;height:36px;border-radius:50%;background:${f.color};color:#fff;display:flex;align-items:center;justify-content:center"><i class="bi bi-person"></i></div><div><strong>${f.name}</strong><div style="font-size:11px;color:var(--pm-muted)">${f.account}</div></div></div></div></div>`).join(''); }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function selectBox(el) { el.closest('.pills').querySelectorAll('.pill').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        const flows = { init: { current: 1, total: 4, labels: ['Beneficiary', 'Amount', 'Confirm', 'Done'] }, bulk: { current: 1, total: 4, labels: ['Upload', 'Review', 'Pay', 'Done'] }, sched: { current: 1, total: 3, labels: ['Details', 'Schedule', 'Confirm'] }, intl: { current: 1, total: 4, labels: ['Recipient', 'Amount', 'Compliance', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { init: 'initiateTransferModal', bulk: 'bulkTransferModal', sched: 'scheduleTransferModal', intl: 'internationalTransferModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'init') btn.innerHTML = 'Send Money <i class="bi bi-send"></i>'; else if (key === 'intl') btn.innerHTML = 'Confirm Transfer <i class="bi bi-globe"></i>'; else btn.innerHTML = 'Confirm <i class="bi bi-check-lg"></i>'; } }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { renderFavorites(); Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

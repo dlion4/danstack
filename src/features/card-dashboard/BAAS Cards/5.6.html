@@ -1,0 +1,3072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Corporate & Business Card Programs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+            --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+            --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+            --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+            --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-xl: 28px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, 0.06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pm-pulse 2s infinite
+        }
+
+        @keyframes pm-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px);
+            border-color: var(--pm-primary-light)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .pm-card {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .pm-card:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-card-accent {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 50%, #4F46E5 100%);
+            color: #fff;
+            border: none
+        }
+
+        .pm-card-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .pm-stat-value {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em
+        }
+
+        .pm-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .pm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .pm-badge-success {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .pm-badge-warning {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .pm-badge-danger {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .pm-badge-info {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .pm-badge-purple {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .pm-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink);
+            text-decoration: none
+        }
+
+        .pm-btn:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .pm-btn-primary {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .pm-btn-primary:hover {
+            background: var(--pm-primary-dark);
+            border-color: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .pm-btn-accent {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .pm-btn-accent:hover {
+            background: #059669;
+            border-color: #059669;
+            color: #fff
+        }
+
+        .pm-btn-danger {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .pm-btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .pm-progress {
+            height: 6px;
+            background: var(--pm-border);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .pm-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s
+        }
+
+        .pm-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .pm-divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .pm-section-title {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-section-sub {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        .pm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .pm-table th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .pm-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .pm-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .pm-table tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-action-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .pm-form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .pm-form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-form-control:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .pm-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 90px
+        }
+
+        .pm-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .pm-step.active .pm-step-num {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .pm-step.completed .pm-step-num {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .pm-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .pm-step.active .pm-step-label {
+            color: var(--pm-primary)
+        }
+
+        .pm-step.completed .pm-step-label {
+            color: var(--pm-accent)
+        }
+
+        .pm-step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pm-tab-pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pm-tab-pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-tab-pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .pm-receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .pm-receipt .receipt-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .feed-item:last-child {
+            border-bottom: none
+        }
+
+        .fade-step {
+            display: none
+        }
+
+        .fade-step.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .pm-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .pm-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .status-row:last-child {
+            border-bottom: none
+        }
+
+        .utility-block {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .c-card {
+            width: 100%;
+            height: 180px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--pm-shadow-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform .2s
+        }
+
+        .c-card:hover {
+            transform: translateY(-3px)
+        }
+
+        .c-card::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05)
+        }
+
+        .c-card .logo {
+            font-family: var(--pm-font-display);
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 1px
+        }
+
+        .c-card .chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
+            border-radius: 6px;
+            margin: 10px 0
+        }
+
+        .c-card .pan {
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin: auto 0 10px
+        }
+
+        .c-card .bot {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end
+        }
+
+        .c-card .name {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-action-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .pm-stat-value {
+                font-size: 22px
+            }
+
+            .pm-step {
+                min-width: unset
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav">
+                <button class="pm-nav-item"><i class="bi bi-house"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+                <button class="pm-nav-item active"><i class="bi bi-credit-card"></i><span
+                        class="badge-dot"></span></button>
+                <button class="pm-nav-item"><i class="bi bi-receipt"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-people"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-graph-up"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+            </nav>
+            <button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar"
+                            style="width:36px;height:36px;font-size:13px;background:var(--pm-primary)">TK</div>
+                        <div>
+                            <h1>Card Center</h1>
+                            <p>Cards, Virtual Credit & Debit Management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search cards, employees, transactions, approvals...">
+                </div>
+                <div class="pm-header-actions">
+                    <button class="pm-header-btn" onclick="openModal('reportsModal')"><i
+                            class="bi bi-file-earmark-bar-graph"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('approvalQueueModal')"><i
+                            class="bi bi-ui-checks"></i><span class="counter">8</span></button>
+                    <button class="pm-header-btn" onclick="openModal('notificationsModal')"><i
+                            class="bi bi-bell"></i><span class="counter">3</span></button>
+                    <div class="pm-profile-btn" onclick="openModal('companyProfileModal')">
+                        <div class="pm-avatar" style="background:#1E293B">A</div>
+                        <div>
+                            <div class="pm-name">Acme Corp</div>
+                            <div class="pm-role">Admin Access</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Corporate
+                            Programs</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        5.6 — Corporate & Business Card Programs</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage employee expense cards, setup
+                        policies, enforce approvals, automate reconciliation, and control corporate billing.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px">
+                    <button class="pm-btn" onclick="openModal('policyRulesModal')"><i class="bi bi-shield-lock"></i>
+                        Policies</button>
+                    <button class="pm-btn" onclick="openModal('reconciliationModal')"><i
+                            class="bi bi-journal-check"></i> Recon</button>
+                    <button class="pm-btn pm-btn-primary" onclick="openModal('issueCardModal')"><i
+                            class="bi bi-plus-lg"></i> Issue Card</button>
+                </div>
+            </div>
+            <div class="pm-content">
+
+                <!-- HERO STATS ROW -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card pm-card-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Corporate card program active
+                                <span style="color:#86efac">●</span></p>
+                            <div class="pm-stat-value" style="margin:8px 0;color:#fff">42 Active Cards</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">38 employee cards, 4
+                                department cards linked to the centralized Acme Corp billing account.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px">
+                                <button class="pm-btn pm-btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openModal('issueCardModal')">Issue New</button>
+                                <button class="pm-btn pm-btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openModal('cardRosterModal')">View Directory</button>
+                                <button class="pm-btn pm-btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openModal('fundingModal')">Fund Program</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="pm-card" style="min-height:170px">
+                            <p class="pm-stat-label" style="color:var(--pm-warning)">PENDING APPROVALS</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 485K</div>
+                            <span class="pm-badge pm-badge-warning"><i class="bi bi-clock"></i> 8 transactions</span>
+                            <div class="mt-3"><button class="pm-btn pm-btn-sm w-100"
+                                    onclick="openModal('approvalQueueModal')">Review Queue</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="pm-card" style="min-height:170px">
+                            <p class="pm-stat-label" style="color:var(--pm-info)">TOTAL SPEND (MTD)</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 2.4M</div>
+                            <span class="pm-badge pm-badge-success"><i class="bi bi-graph-down-arrow"></i> 12% under
+                                budget</span>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Company budget
+                                        limit</span><span>86%</span></div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:86%;background:var(--pm-info)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-danger)">
+                            <p class="pm-stat-label" style="color:var(--pm-danger)">MISSING RECEIPTS</p>
+                            <div class="pm-stat-value" style="margin:6px 0">14 items</div>
+                            <span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-triangle"></i> KES
+                                312,400 unverified</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Oldest missing: <strong>12 days ago</strong></div>
+                                <div class="mt-1"><button class="pm-btn pm-btn-sm text-danger border-danger"
+                                        onclick="openModal('missingReceiptsModal')">Chase Employees</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Attention Required</h3><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('attentionCenterModal')">View all</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">AP
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Large software purchase approval</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">S. Kamau · AWS AWS EMEA · KES
+                                        145,000</div>
+                                </div><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                    onclick="openModal('reviewTransactionModal')">Review</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">MR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Missing receipt over grace period</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">P. Ochieng · Emirates Air · KES
+                                        85,200</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('missingReceiptsModal')">Chase</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">PV
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Policy violation detected</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">J. Njoroge · Weekend spend
+                                        (blocked)</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('violationDetailsModal')">Inspect</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">BL</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Marketing Card approaching limit</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 490K / 500K used · Reset in 4
+                                        days</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('editLimitModal')">Top-up</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Smart Recommendations</h3><span
+                                    class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">SA
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Auto-approve recurring software</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Save 4 hours/month on SaaS
+                                        approvals</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('policyRulesModal')">Automate</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">MC</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Consolidate AWS spending</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">4 employees using personal cards
+                                        for AWS</div>
+                                </div><button class="pm-btn pm-btn-sm" onclick="openModal('issueCardModal')">Issue
+                                    Card</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">VR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Vendor redundancy detected</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Uber & Bolt used interchangeably
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('reportsModal')">Report</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">FR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Dormant cards present</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">3 issued cards not used in 90+
+                                        days</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('cardRosterModal')">Review</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="mb-3">
+                                <h3 class="pm-section-title">Program Quick Actions</h3>
+                                <p class="pm-section-sub">Frequent corporate card tasks</p>
+                            </div>
+                            <div class="quick-action-grid">
+                                <button class="quick-action-btn" onclick="openModal('issueCardModal')"><i
+                                        class="bi bi-plus-circle text-success me-1"></i> Issue Card</button>
+                                <button class="quick-action-btn" onclick="openModal('bulkIssueModal')"><i
+                                        class="bi bi-people text-primary me-1"></i> Bulk Upload</button>
+                                <button class="quick-action-btn" onclick="openModal('policyRulesModal')"><i
+                                        class="bi bi-shield-lock text-warning me-1"></i> Policy Rules</button>
+                                <button class="quick-action-btn" onclick="openModal('approvalQueueModal')"><i
+                                        class="bi bi-check-circle me-1" style="color:var(--pm-purple)"></i>
+                                    Approvals</button>
+                                <button class="quick-action-btn" onclick="openModal('reconciliationModal')"><i
+                                        class="bi bi-journal-check text-info me-1"></i> Accounting</button>
+                                <button class="quick-action-btn" onclick="openModal('reportsModal')"><i
+                                        class="bi bi-bar-chart text-danger me-1"></i> Reporting</button>
+                                <button class="quick-action-btn" onclick="openModal('missingReceiptsModal')"><i
+                                        class="bi bi-receipt me-1" style="color:var(--pm-primary)"></i>
+                                    Receipts</button>
+                                <button class="quick-action-btn" onclick="openModal('fundingModal')"><i
+                                        class="bi bi-cash text-success me-1"></i> Program Funding</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-credit-card-2-front"
+                                    style="color:var(--pm-primary)"></i> 5.6.1 — Corporate Card Program Setup</h3>
+                            <p class="pm-section-sub">Manage program configuration, bulk employee issuance, department
+                                cards, and shared project virtual cards.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('cardRosterModal')"><i class="bi bi-list-ul"></i> Full
+                                Directory</button><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('issueCardModal')"><i class="bi bi-plus-lg"></i> Issue Card</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recently Issued Cards</h4>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Cardholder / Dept</th>
+                                                <th>Type</th>
+                                                <th>Limit (KES)</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px">SK</div>
+                                                        <div><strong>Sarah Kamau</strong>
+                                                            <div style="font-size:11px;color:var(--pm-muted)">
+                                                                Engineering</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Virtual</span>
+                                                </td>
+                                                <td>150,000 /mo</td>
+                                                <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('manageEmployeeCardModal')">Manage</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px;background:var(--pm-danger)">
+                                                            M</div>
+                                                        <div><strong>Marketing Dept</strong>
+                                                            <div style="font-size:11px;color:var(--pm-muted)">Shared
+                                                                Procurement</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Virtual</span>
+                                                </td>
+                                                <td>500,000 /mo</td>
+                                                <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('manageEmployeeCardModal')">Manage</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px">PO</div>
+                                                        <div><strong>Peter Ochieng</strong>
+                                                            <div style="font-size:11px;color:var(--pm-muted)">Sales
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Physical</span>
+                                                </td>
+                                                <td>80,000 /mo</td>
+                                                <td><span class="pm-badge pm-badge-info">Dispatched</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('cardDeliveryModal')">Track</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px;background:var(--pm-warning)">
+                                                            P1</div>
+                                                        <div><strong>Project Alpha</strong>
+                                                            <div style="font-size:11px;color:var(--pm-muted)">Vendor
+                                                                Payments</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Virtual</span>
+                                                </td>
+                                                <td>1,000,000 fixed</td>
+                                                <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('manageEmployeeCardModal')">Manage</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Program Configuration</h4>
+                                <div class="status-row">
+                                    <div><strong>Billing Structure</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Corporate liability,
+                                            centralized</div>
+                                    </div><button class="pm-btn pm-btn-sm"
+                                        onclick="openModal('billingSetupModal')">Edit</button>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>Card Branding</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Acme Logo, Blue background
+                                        </div>
+                                    </div><button class="pm-btn pm-btn-sm"
+                                        onclick="openModal('brandingModal')">Edit</button>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>Issuance Scope</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Domestic & Regional allowed
+                                        </div>
+                                    </div><button class="pm-btn pm-btn-sm"
+                                        onclick="openModal('policyRulesModal')">Edit</button>
+                                </div>
+                                <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft)">
+                                    <div style="font-weight:700;font-size:12px;color:var(--pm-info)"><i
+                                            class="bi bi-building"></i> ACME CORP PROGRAM</div>
+                                    <div style="font-size:12px;color:var(--pm-ink-soft);margin-top:4px">KRA PIN:
+                                        P051283991K<br>Dedicated BIN: 481920<br>Billing cycle ends: 30th of month</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-shield-lock"
+                                    style="color:var(--pm-warning)"></i> 5.6.2 — Corporate Controls, Policies &
+                                Approvals</h3>
+                            <p class="pm-section-sub">Define strict spending policies, configure multi-tier approval
+                                workflows, and monitor real-time policy compliance.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('policyRulesModal')"><i class="bi bi-sliders"></i> Edit Global
+                                Rules</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Active Policy Groups</h4><button
+                                        class="pm-btn pm-btn-sm" onclick="openModal('createPolicyModal')">New</button>
+                                </div>
+                                <div class="p-3 rounded border mb-2" style="cursor:pointer"
+                                    onclick="openModal('policyRulesModal')"><strong>Executive Level</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 500K limit, T&E allowed, No
+                                        auto-blocks</div>
+                                    <div class="mt-2"><span class="pm-badge"
+                                            style="background:var(--pm-surface);border:1px solid var(--pm-border)">6
+                                            employees</span></div>
+                                </div>
+                                <div class="p-3 rounded border mb-2"
+                                    style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)"
+                                    onclick="openModal('policyRulesModal')"><strong>Standard Employee</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 50K limit, strict MCC blocks,
+                                        weekend block</div>
+                                    <div class="mt-2"><span class="pm-badge"
+                                            style="background:var(--pm-surface);border:1px solid var(--pm-border)">24
+                                            employees</span></div>
+                                </div>
+                                <div class="p-3 rounded border mb-2" style="cursor:pointer"
+                                    onclick="openModal('policyRulesModal')"><strong>Department Head</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 200K limit, Software & Procure
+                                        allowed</div>
+                                    <div class="mt-2"><span class="pm-badge"
+                                            style="background:var(--pm-surface);border:1px solid var(--pm-border)">8
+                                            employees</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Approval Workflow Queue</h4>
+                                    <button class="pm-btn pm-btn-sm pm-btn-primary"
+                                        onclick="openModal('approvalQueueModal')">Process All</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee</th>
+                                                <th>Merchant</th>
+                                                <th>Amount</th>
+                                                <th>Policy Flag</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px">SK</div>
+                                                        <span>S. Kamau</span>
+                                                    </div>
+                                                </td>
+                                                <td>AWS EMEA</td>
+                                                <td><strong>KES 145,000</strong></td>
+                                                <td><span class="pm-badge pm-badge-warning">Exceeds KES 100K
+                                                        auto-limit</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('reviewTransactionModal')">Review</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px">JW</div>
+                                                        <span>J. Wanjiku</span>
+                                                    </div>
+                                                </td>
+                                                <td>Sarova Stanley</td>
+                                                <td><strong>KES 24,500</strong></td>
+                                                <td><span class="pm-badge pm-badge-info">Requires Manager Auth</span>
+                                                </td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('reviewTransactionModal')">Review</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="pm-avatar"
+                                                            style="width:24px;height:24px;font-size:10px">DM</div>
+                                                        <span>D. Mutua</span>
+                                                    </div>
+                                                </td>
+                                                <td>Apple Store</td>
+                                                <td><strong>KES 184,000</strong></td>
+                                                <td><span class="pm-badge pm-badge-danger">Unauthorized MCC</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('reviewTransactionModal')">Review</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-receipt" style="color:var(--pm-accent)"></i>
+                                5.6.3 — Expense Management & Reconciliation</h3>
+                            <p class="pm-section-sub">Automate receipt matching, categorize spend by MCC and cost
+                                centers, and push reconciled data to accounting systems.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('reconciliationModal')"><i class="bi bi-journal-arrow-up"></i> Export
+                                GL</button><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('missingReceiptsModal')"><i class="bi bi-search"></i> Find
+                                Missing</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-3">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Receipt Status (MTD)</h4>
+                                <div class="pm-donut mx-auto mb-3"><svg viewBox="0 0 36 36" width="100%" height="100%">
+                                        <circle cx="18" cy="18" r="16" fill="none" stroke="var(--pm-surface)"
+                                            stroke-width="4"></circle>
+                                        <circle cx="18" cy="18" r="16" fill="none" stroke="var(--pm-accent)"
+                                            stroke-width="4" stroke-dasharray="82 100"></circle>
+                                        <circle cx="18" cy="18" r="16" fill="none" stroke="var(--pm-danger)"
+                                            stroke-width="4" stroke-dasharray="18 100" stroke-dashoffset="-82"></circle>
+                                    </svg>
+                                    <div class="pm-donut-label">82%</div>
+                                </div>
+                                <div class="text-center" style="font-size:12px;color:var(--pm-muted)">Matched & Verified
+                                </div>
+                                <hr class="pm-divider">
+                                <div class="d-flex justify-content-between mb-2" style="font-size:12px">
+                                    <span>Matched</span><strong style="color:var(--pm-accent)">142 trans</strong></div>
+                                <div class="d-flex justify-content-between mb-2" style="font-size:12px">
+                                    <span>Missing</span><strong style="color:var(--pm-danger)">14 trans</strong></div>
+                                <div class="d-flex justify-content-between" style="font-size:12px"><span>Grace
+                                        Period</span><strong>17 trans</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Transactions & Coding
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Employee</th>
+                                                <th>Merchant</th>
+                                                <th>Amount</th>
+                                                <th>Category / GL Code</th>
+                                                <th>Receipt</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>28 Jun</td>
+                                                <td>S. Kamau</td>
+                                                <td>Uber Kenya</td>
+                                                <td>KES 1,200</td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Travel
+                                                        (GL-6100)</span></td>
+                                                <td><span class="pm-badge pm-badge-success"><i class="bi bi-check"></i>
+                                                        Matched</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('expenseDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>27 Jun</td>
+                                                <td>P. Ochieng</td>
+                                                <td>Naivas Supermarket</td>
+                                                <td>KES 4,850</td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Office
+                                                        Supplies (GL-5400)</span></td>
+                                                <td><span class="pm-badge pm-badge-danger"><i class="bi bi-x"></i>
+                                                        Missing</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>26 Jun</td>
+                                                <td>Mktg Dept</td>
+                                                <td>Facebook Ads</td>
+                                                <td>KES 45,000</td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Advertising
+                                                        (GL-7200)</span></td>
+                                                <td><span class="pm-badge pm-badge-success"><i class="bi bi-check"></i>
+                                                        Auto</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('expenseDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>25 Jun</td>
+                                                <td>J. Wanjiku</td>
+                                                <td>Java House</td>
+                                                <td>KES 8,500</td>
+                                                <td><span class="pm-badge"
+                                                        style="background:var(--pm-surface);border:1px solid var(--pm-border)">Meals/Ent
+                                                        (GL-6300)</span></td>
+                                                <td><span class="pm-badge pm-badge-warning"><i class="bi bi-clock"></i>
+                                                        Day 3</span></td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-bank" style="color:var(--pm-info)"></i> 5.6.4 —
+                                Corporate Card Billing & Settlement</h3>
+                            <p class="pm-section-sub">Manage consolidated statements, centralized payment accounts, and
+                                early settlement options.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('statementModal')"><i class="bi bi-file-earmark-pdf"></i> Current
+                                Statement</button><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('settlementModal')"><i class="bi bi-cash"></i> Settle
+                                Balance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <div class="utility-block">
+                                <div class="p-3 rounded mb-3"
+                                    style="background:var(--pm-surface);border:1px solid var(--pm-border)">
+                                    <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">CURRENT STATEMENT
+                                        BALANCE</div>
+                                    <div style="font-size:28px;font-weight:700">KES 2,410,500</div>
+                                    <div style="font-size:12px;color:var(--pm-danger);margin-top:4px">Due on 05 Jul 2025
+                                    </div>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>Auto-Debit Source</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Equity Bank ***4491</div>
+                                    </div><span class="pm-badge pm-badge-success">Active</span>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>Unbilled Spend</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Current open cycle</div>
+                                    </div><strong>KES 185,200</strong>
+                                </div>
+                                <div class="mt-3"><button class="pm-btn pm-btn-sm w-100"
+                                        onclick="openModal('settlementModal')">Pay Now Manually</button></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Settlements & Invoices
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Statement Period</th>
+                                                <th>Amount Due</th>
+                                                <th>Status</th>
+                                                <th>Settled Date</th>
+                                                <th>Receipt</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>May 01 – May 31, 2025</td>
+                                                <td>KES 1,985,400</td>
+                                                <td><span class="pm-badge pm-badge-success">Paid in full</span></td>
+                                                <td>02 Jun 2025</td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('statementModal')"><i
+                                                            class="bi bi-download"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Apr 01 – Apr 30, 2025</td>
+                                                <td>KES 2,150,000</td>
+                                                <td><span class="pm-badge pm-badge-success">Paid in full</span></td>
+                                                <td>03 May 2025</td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('statementModal')"><i
+                                                            class="bi bi-download"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mar 01 – Mar 31, 2025</td>
+                                                <td>KES 1,740,200</td>
+                                                <td><span class="pm-badge pm-badge-success">Paid in full</span></td>
+                                                <td>04 Apr 2025</td>
+                                                <td><button class="pm-btn pm-btn-sm"
+                                                        onclick="openModal('statementModal')"><i
+                                                            class="bi bi-download"></i></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 20+ MODALS -->
+    <!-- ========================================================= -->
+
+    <!-- 1. Issue Card Modal -->
+    <div class="modal fade resettable" id="issueCardModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Issue Corporate Card</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stepper" id="issueStepper"></div>
+                    <div id="issueStep1" class="fade-step active">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 1: Card Assignment</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="pm-form-label">Assignment Type</label><select
+                                    class="pm-form-control">
+                                    <option>Individual Employee</option>
+                                    <option>Department (Shared)</option>
+                                    <option>Project (Shared)</option>
+                                    <option>Vendor-Locked</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="pm-form-label">Employee / Entity Name</label><input
+                                    class="pm-form-control" placeholder="Search employee directory..."></div>
+                            <div class="col-md-6"><label class="pm-form-label">Card Type</label>
+                                <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"
+                                    style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)"
+                                    onclick="selectRadioCard(this)"><input type="radio" checked name="ctype"><i
+                                        class="bi bi-phone" style="font-size:20px;color:var(--pm-primary)"></i>
+                                    <div><strong>Virtual Card</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Instant digital issue</div>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded d-flex align-items-center gap-3"
+                                    onclick="selectRadioCard(this)"><input type="radio" name="ctype"><i
+                                        class="bi bi-credit-card" style="font-size:20px;color:var(--pm-accent)"></i>
+                                    <div><strong>Physical Card</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Delivered in 3-5 days</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6"><label class="pm-form-label">Card Design</label>
+                                <div class="c-card">
+                                    <div class="logo">ACME CORP</div>
+                                    <div class="chip"></div>
+                                    <div class="pan">•••• •••• •••• 1234</div>
+                                    <div class="bot">
+                                        <div class="name">EMPLOYEE NAME</div>
+                                        <div
+                                            style="font-family:var(--pm-font-display);font-weight:700;font-style:italic">
+                                            VISA</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="issueStep2" class="fade-step">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 2: Controls & Policies</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="pm-form-label">Policy Group</label><select
+                                    class="pm-form-control">
+                                    <option>Standard Employee</option>
+                                    <option>Executive Level</option>
+                                    <option>Department Head</option>
+                                    <option>Custom Policy</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="pm-form-label">Monthly Spending Limit
+                                    (KES)</label><input class="pm-form-control" value="50000"></div>
+                            <div class="col-12"><label class="pm-form-label">Allowed Categories (MCC)</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            checked><label class="form-check-label">Travel & Flights</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            checked><label class="form-check-label">Accommodation</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                            checked><label class="form-check-label">Meals & Dining</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                            class="form-check-label">Software / SaaS</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                            class="form-check-label">Office Supplies</label></div>
+                                </div>
+                            </div>
+                            <div class="col-12"><label class="pm-form-label">Restrictions</label>
+                                <div class="form-check form-switch mb-1"><input class="form-check-input" type="checkbox"
+                                        checked><label class="form-check-label">Block weekend transactions</label></div>
+                                <div class="form-check form-switch mb-1"><input class="form-check-input" type="checkbox"
+                                        checked><label class="form-check-label">Block international / FX
+                                        transactions</label></div>
+                                <div class="form-check form-switch"><input class="form-check-input"
+                                        type="checkbox"><label class="form-check-label">Require pre-approval > KES
+                                        10,000</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="issueStep3" class="fade-step">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 3: Cost Center & Delivery</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="pm-form-label">Default GL Code / Cost
+                                    Center</label><select class="pm-form-control">
+                                    <option>Engineering (CC-400)</option>
+                                    <option>Sales (CC-200)</option>
+                                    <option>Marketing (CC-300)</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="pm-form-label">Receipt Policy</label><select
+                                    class="pm-form-control">
+                                    <option>Required for all transactions</option>
+                                    <option>Required > KES 5,000 only</option>
+                                    <option>Not required</option>
+                                </select></div>
+                            <div class="col-12">
+                                <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                        class="bi bi-envelope me-1"></i> Virtual card details will be securely emailed
+                                    to the employee with activation instructions. They must download the PayMo Corporate
+                                    app to view full PAN and CVV.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="issueStep4" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-credit-card"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Card Issued Successfully!</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">The virtual corporate card has been
+                                provisioned and the employee has been notified.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Cardholder</span><strong>Sarah Kamau</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Limit</span><strong>KES 50,000 /mo</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Type</span><strong>Virtual Visa</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Card
+                                        ID</span><strong>VCD-8841-92</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="issueFooter"><button class="pm-btn"
+                        data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="issueNextBtn"
+                        onclick="nextIssueStep()">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Bulk Issue Modal -->
+    <div class="modal fade resettable" id="bulkIssueModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people me-2"></i>Bulk Employee Card Upload</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3 text-center"
+                        style="background:var(--pm-surface-2);border:1px dashed var(--pm-border)"><i
+                            class="bi bi-file-earmark-spreadsheet d-block mb-2"
+                            style="font-size:32px;color:var(--pm-info)"></i><strong>Upload CSV File</strong>
+                        <div style="font-size:12px;color:var(--pm-muted);margin-bottom:10px">Format: Name, Email, Dept,
+                            Limit, Policy Group</div><button class="pm-btn pm-btn-sm"><i class="bi bi-upload"></i>
+                            Browse File</button>
+                    </div>
+                    <div class="text-center"><a href="#"
+                            style="font-size:12px;color:var(--pm-primary);text-decoration:none"><i
+                                class="bi bi-download"></i> Download CSV Template</a></div>
+                    <hr class="pm-divider">
+                    <div class="mb-3"><label class="pm-form-label">Default Card Type for Batch</label><select
+                            class="pm-form-control">
+                            <option>Virtual Cards</option>
+                            <option>Physical Cards (Central Delivery to HR)</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('bulkIssueModal','Batch upload successful. 24 cards are being provisioned.','BAT-1029')">Process
+                        Batch</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Policy Rules Modal -->
+    <div class="modal fade resettable" id="policyRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Corporate Spending Policies</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('policy','groups',this)">Policy Groups</button><button
+                            class="pm-tab-pill" onclick="switchTab('policy','mcc',this)">MCC
+                            Restrictions</button><button class="pm-tab-pill"
+                            onclick="switchTab('policy','approval',this)">Approval Routing</button></div>
+                    <div id="policy-groups" class="tab-panel active">
+                        <div class="d-flex justify-content-between mb-3"><label class="pm-form-label">Manage Policy
+                                Groups</label><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('createPolicyModal')">New Group</button></div>
+                        <div class="table-responsive">
+                            <table class="pm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Group Name</th>
+                                        <th>Default Limit</th>
+                                        <th>Rules</th>
+                                        <th>Members</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Standard Employee</td>
+                                        <td>KES 50K</td>
+                                        <td>Strict MCC, No weekends</td>
+                                        <td>24</td>
+                                        <td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Executive Level</td>
+                                        <td>KES 500K</td>
+                                        <td>All MCC, Global access</td>
+                                        <td>6</td>
+                                        <td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Department Head</td>
+                                        <td>KES 200K</td>
+                                        <td>SaaS + T&E</td>
+                                        <td>8</td>
+                                        <td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="policy-mcc" class="tab-panel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Global category blocks (applies to all cards
+                            unless explicitly overridden by an Executive policy).</p>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch p-2 border rounded"><input class="form-check-input"
+                                        type="checkbox" checked><label class="form-check-label">Gambling &
+                                        Betting</label></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch p-2 border rounded"><input class="form-check-input"
+                                        type="checkbox" checked><label class="form-check-label">Adult Content /
+                                        Entertainment</label></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch p-2 border rounded"><input class="form-check-input"
+                                        type="checkbox" checked><label class="form-check-label">Cryptocurrency &
+                                        Trading</label></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch p-2 border rounded"><input class="form-check-input"
+                                        type="checkbox"><label class="form-check-label">Alcohol & Bars</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="policy-approval" class="tab-panel">
+                        <div class="mb-3"><label class="pm-form-label">Auto-Approval Threshold</label><input
+                                class="pm-form-control" value="10000" type="number">
+                            <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Transactions below this
+                                amount require no manual pre-approval if within policy.</div>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Manager Approval</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">For transactions KES 10K - 100K</div>
+                            </div><span class="pm-badge pm-badge-success">Enabled</span>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Director / Finance Approval</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">For transactions > KES 100K</div>
+                            </div><span class="pm-badge pm-badge-success">Enabled</span>
+                        </div>
+                        <div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Auto-approve recurring software
+                                subscriptions (AWS, Google, etc.)</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('policyRulesModal','Policy rules updated across entire corporate portfolio.','')">Save
+                        Global Policies</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Create Policy Modal -->
+    <div class="modal fade resettable" id="createPolicyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-plus me-2"></i>Create New Policy Group</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Policy Group Name</label><input
+                            class="pm-form-control" placeholder="e.g. Sales Team Travel"></div>
+                    <div class="mb-3"><label class="pm-form-label">Base Monthly Limit (KES)</label><input
+                            class="pm-form-control" value="0"></div>
+                    <div class="mb-3"><label class="pm-form-label">Allowed Geographic Scope</label><select
+                            class="pm-form-control">
+                            <option>Domestic Only (Kenya)</option>
+                            <option>East Africa Region</option>
+                            <option>Global</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Time Restrictions</label><select
+                            class="pm-form-control">
+                            <option>Anytime</option>
+                            <option>Business Hours Only (8am - 6pm)</option>
+                            <option>Weekdays Only (Mon-Fri)</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Require receipts for all transactions in
+                            this group</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('createPolicyModal','New policy group created successfully.','')">Create
+                        Group</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Approval Queue Modal -->
+    <div class="modal fade resettable" id="approvalQueueModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-ui-checks me-2"></i>Manager Approval Queue</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-3"><label class="pm-form-label">Pending Requests
+                            (8)</label><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-check-all"></i>
+                            Bulk Approve Selected</button></div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th>Requestor</th>
+                                    <th>Merchant/Type</th>
+                                    <th>Amount</th>
+                                    <th>Status/Flag</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>S. Kamau</td>
+                                    <td>AWS EMEA</td>
+                                    <td>KES 145,000</td>
+                                    <td><span class="pm-badge pm-badge-warning">> KES 100K limit</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('reviewTransactionModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>J. Wanjiku</td>
+                                    <td>Sarova Stanley</td>
+                                    <td>KES 24,500</td>
+                                    <td><span class="pm-badge pm-badge-info">Manager Auth</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('reviewTransactionModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>D. Mutua</td>
+                                    <td>Apple Store</td>
+                                    <td>KES 184,000</td>
+                                    <td><span class="pm-badge pm-badge-danger">Unauthorized MCC</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('reviewTransactionModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>B. Kiptoo</td>
+                                    <td>Naivas Supermarket</td>
+                                    <td>KES 12,000</td>
+                                    <td><span class="pm-badge pm-badge-info">Manager Auth</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('reviewTransactionModal')">Review</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Review Transaction Modal -->
+    <div class="modal fade resettable" id="reviewTransactionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-search me-2"></i>Review Transaction Request</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div class="pm-avatar mx-auto mb-2" style="width:48px;height:48px;font-size:16px">SK</div>
+                        <h6 style="font-weight:700;margin:0">Sarah Kamau</h6>
+                        <div style="font-size:12px;color:var(--pm-muted)">Engineering Dept</div>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Merchant</span><strong>AWS EMEA</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong
+                                style="color:var(--pm-primary)">KES 145,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Category</span><strong>Software / IT</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Policy Flag</span><span
+                                class="pm-badge pm-badge-warning">Exceeds KES 100K</span></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Employee Note</label>
+                        <div class="p-3 border rounded" style="font-size:13px;font-style:italic">"Monthly server hosting
+                            bill. Spiked this month due to new database migration tests."</div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Manager Note (Optional)</label><textarea
+                            class="pm-form-control" rows="2"
+                            placeholder="Reason for approval or rejection..."></textarea></div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between"><button class="pm-btn pm-btn-danger"
+                        onclick="processAction('reviewTransactionModal','Transaction request rejected. Employee notified.','')"><i
+                            class="bi bi-x-circle"></i> Reject</button><button class="pm-btn pm-btn-success"
+                        style="background:var(--pm-accent);color:#fff;border:none"
+                        onclick="processAction('reviewTransactionModal','Transaction approved successfully.','AUTH-99120')"><i
+                            class="bi bi-check-circle"></i> Approve</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Reconciliation Modal -->
+    <div class="modal fade resettable" id="reconciliationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-journal-check me-2"></i>Accounting & Reconciliation</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">142</div>
+                                <div style="font-size:11px;font-weight:700;color:#1D4ED8">READY TO EXPORT</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">14</div>
+                                <div style="font-size:11px;font-weight:700;color:#B45309">MISSING RECEIPTS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">3</div>
+                                <div style="font-size:11px;font-weight:700;color:#991B1B">UNCODED (NO GL)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Export Target System</label><select
+                            class="pm-form-control">
+                            <option>QuickBooks Online</option>
+                            <option>Xero</option>
+                            <option>Sage 300</option>
+                            <option>SAP ERP</option>
+                            <option>Generic CSV Export</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Date Range</label>
+                        <div class="row g-2">
+                            <div class="col-6"><input type="date" class="pm-form-control" value="2025-06-01"></div>
+                            <div class="col-6"><input type="date" class="pm-form-control" value="2025-06-28"></div>
+                        </div>
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Only export fully reconciled transactions
+                            (receipt + GL code matched)</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('reconciliationModal','Data synced to QuickBooks Online successfully. 142 records pushed.','')"><i
+                            class="bi bi-cloud-upload"></i> Sync to Accounting</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Missing Receipts Modal -->
+    <div class="modal fade resettable" id="missingReceiptsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Missing Receipts Chase</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-3"><label class="pm-form-label">Outstanding Items
+                            (14)</label><button class="pm-btn pm-btn-sm text-danger border-danger"><i
+                                class="bi bi-envelope"></i> Chase All via Email</button></div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Date</th>
+                                    <th>Merchant</th>
+                                    <th>Amount</th>
+                                    <th>Days Old</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>P. Ochieng</td>
+                                    <td>16 Jun</td>
+                                    <td>Emirates Air</td>
+                                    <td>KES 85,200</td>
+                                    <td><strong style="color:var(--pm-danger)">12 days</strong></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                </tr>
+                                <tr>
+                                    <td>J. Wanjiku</td>
+                                    <td>20 Jun</td>
+                                    <td>Java House</td>
+                                    <td>KES 8,500</td>
+                                    <td><strong style="color:var(--pm-warning)">8 days</strong></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Mktg Dept</td>
+                                    <td>22 Jun</td>
+                                    <td>Google Ads</td>
+                                    <td>KES 120,000</td>
+                                    <td><strong style="color:var(--pm-warning)">6 days</strong></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                </tr>
+                                <tr>
+                                    <td>D. Mutua</td>
+                                    <td>25 Jun</td>
+                                    <td>Shell Station</td>
+                                    <td>KES 6,000</td>
+                                    <td>3 days</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('uploadReceiptModal')">Upload</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Upload Receipt Modal -->
+    <div class="modal fade resettable" id="uploadReceiptModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Upload Receipt</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-1"><span
+                                class="text-muted">Transaction</span><strong>Emirates Air</strong></div>
+                        <div class="d-flex justify-content-between mb-1"><span
+                                class="text-muted">Amount</span><strong>KES 85,200</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Employee</span><strong>P.
+                                Ochieng</strong></div>
+                    </div>
+                    <div class="p-4 border rounded mb-3 text-center" style="border-style:dashed!important"><i
+                            class="bi bi-file-earmark-image d-block mb-2"
+                            style="font-size:24px;color:var(--pm-muted)"></i><label class="pm-form-label mb-0"
+                            style="cursor:pointer;color:var(--pm-primary)">Click to browse or drag file here<input
+                                type="file" style="display:none"></label>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">PDF, JPG, PNG up to 5MB</div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Note / Purpose</label><input class="pm-form-control"
+                            placeholder="e.g. Flight to Dubai for tech conference"></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('uploadReceiptModal','Receipt uploaded and matched successfully.','')">Submit
+                        Receipt</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Card Directory / Roster Modal -->
+    <div class="modal fade resettable" id="cardRosterModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-ul me-2"></i>Corporate Card Directory</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap mb-3" style="gap:8px"><select class="pm-form-control"
+                            style="width:auto">
+                            <option>All Departments</option>
+                            <option>Engineering</option>
+                            <option>Sales</option>
+                            <option>Marketing</option>
+                        </select><select class="pm-form-control" style="width:auto">
+                            <option>All Statuses</option>
+                            <option>Active</option>
+                            <option>Frozen</option>
+                            <option>Pending Activation</option>
+                        </select><input class="pm-form-control" style="width:250px"
+                            placeholder="Search name or card last 4..."></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee / Dept</th>
+                                    <th>Card ending in</th>
+                                    <th>Type</th>
+                                    <th>Limit</th>
+                                    <th>Spend MTD</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sarah Kamau (Eng)</td>
+                                    <td>•••• 8821</td>
+                                    <td>Virtual</td>
+                                    <td>KES 150K</td>
+                                    <td>KES 42K</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Peter Ochieng (Sales)</td>
+                                    <td>•••• 4410</td>
+                                    <td>Physical</td>
+                                    <td>KES 80K</td>
+                                    <td>KES 76K</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Jane Wanjiku (Exec)</td>
+                                    <td>•••• 9022</td>
+                                    <td>Physical</td>
+                                    <td>KES 500K</td>
+                                    <td>KES 210K</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Mktg Procure (Dept)</td>
+                                    <td>•••• 1120</td>
+                                    <td>Virtual</td>
+                                    <td>KES 500K</td>
+                                    <td>KES 410K</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>David Mutua (Sales)</td>
+                                    <td>•••• 5531</td>
+                                    <td>Physical</td>
+                                    <td>KES 50K</td>
+                                    <td>KES 0</td>
+                                    <td><span class="pm-badge pm-badge-warning">Frozen</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Project Alpha (Shared)</td>
+                                    <td>•••• 7748</td>
+                                    <td>Virtual</td>
+                                    <td>KES 1M</td>
+                                    <td>KES 950K</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('manageEmployeeCardModal')">Manage</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('issueCardModal')">Issue New Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Manage Employee Card Modal -->
+    <div class="modal fade resettable" id="manageEmployeeCardModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-credit-card-2-front me-2"></i>Manage Card: Sarah Kamau</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div class="c-card mx-auto" style="width:280px;height:160px;transform:none">
+                            <div class="logo">ACME CORP</div>
+                            <div class="chip"></div>
+                            <div class="pan">•••• •••• •••• 8821</div>
+                            <div class="bot">
+                                <div class="name">SARAH KAMAU</div>
+                                <div style="font-family:var(--pm-font-display);font-weight:700;font-style:italic">VISA
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3"><button class="pm-btn pm-btn-sm pm-btn-outline"><i
+                                class="bi bi-snow"></i> Freeze Card</button><button
+                            class="pm-btn pm-btn-sm pm-btn-outline" onclick="openModal('editLimitModal')"><i
+                                class="bi bi-sliders"></i> Edit Limit</button><button
+                            class="pm-btn pm-btn-sm text-danger border-danger"><i class="bi bi-trash"></i>
+                            Cancel</button></div>
+                    <hr class="pm-divider">
+                    <div class="mb-3"><label class="pm-form-label">Policy Group</label><select class="pm-form-control">
+                            <option selected>Standard Employee (KES 50K Limit)</option>
+                            <option>Department Head (KES 200K Limit)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Linked Cost Center</label><select
+                            class="pm-form-control">
+                            <option selected>Engineering (CC-400)</option>
+                            <option>Product (CC-410)</option>
+                        </select></div>
+                    <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Online Transactions Allowed</label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">International Transactions Allowed</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('manageEmployeeCardModal','Card settings updated successfully.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Edit Limit Modal -->
+    <div class="modal fade resettable" id="editLimitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Adjust Card Limits</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Cardholder</span><strong>Sarah Kamau</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Current
+                                Limit</span><strong>KES 150,000 /mo</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Utilized</span><strong
+                                style="color:var(--pm-warning)">KES 142,000 (94%)</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">New Monthly Limit (KES)</label><input type="number"
+                            class="pm-form-control" value="200000"></div>
+                    <div class="mb-3"><label class="pm-form-label">Per-Transaction Limit (KES)</label><input
+                            type="number" class="pm-form-control" value="50000"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label" style="font-size:13px">Make this a temporary limit increase
+                            (Reverts at end of month)</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('editLimitModal','Card limits updated successfully. Employee notified.','')">Update
+                        Limit</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Expense Detail Modal -->
+    <div class="modal fade resettable" id="expenseDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt text-primary me-2"></i>Expense Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background:var(--pm-surface-2)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-ink);margin-bottom:8px">KES
+                                    1,200</div>
+                                <div class="d-flex justify-content-between mb-2" style="font-size:13px"><span
+                                        class="text-muted">Merchant</span><strong>Uber Kenya</strong></div>
+                                <div class="d-flex justify-content-between mb-2" style="font-size:13px"><span
+                                        class="text-muted">Date</span><strong>28 Jun 2025, 14:30</strong></div>
+                                <div class="d-flex justify-content-between mb-2" style="font-size:13px"><span
+                                        class="text-muted">Cardholder</span><strong>Sarah Kamau</strong></div>
+                                <div class="d-flex justify-content-between" style="font-size:13px"><span
+                                        class="text-muted">Auth Code</span><strong>A-991204</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3"><label class="pm-form-label">GL Category / Code</label><select
+                                    class="pm-form-control">
+                                    <option selected>Travel & Local Trans (GL-6100)</option>
+                                    <option>Meals & Ent (GL-6300)</option>
+                                </select></div>
+                            <div class="mb-3"><label class="pm-form-label">Cost Center</label><select
+                                    class="pm-form-control">
+                                    <option selected>Engineering (CC-400)</option>
+                                    <option>General Admin (CC-100)</option>
+                                </select></div>
+                            <div class="mb-3"><label class="pm-form-label">Business Purpose</label><input
+                                    class="pm-form-control" value="Ride to client site meeting at Westlands"></div>
+                        </div>
+                        <div class="col-12"><label class="pm-form-label">Receipt Image</label>
+                            <div class="p-3 border rounded text-center"><i class="bi bi-file-earmark-pdf"
+                                    style="font-size:32px;color:var(--pm-danger)"></i>
+                                <div class="mt-2" style="font-size:12px;font-weight:600">Uber_Receipt_Jun28.pdf</div>
+                                <button class="pm-btn pm-btn-sm mt-2"><i class="bi bi-eye"></i> View Document</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('expenseDetailModal','Expense coding saved and marked ready for sync.','')">Save
+                        Coding</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Attention Center Modal -->
+    <div class="modal fade resettable" id="attentionCenterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>Corporate
+                        Attention Center</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:450px;overflow-y:auto">
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-warning)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Large transaction requires approval</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">S. Kamau · AWS EMEA · KES 145,000
+                                </div>
+                            </div><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('reviewTransactionModal')">Review</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-danger)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Missing receipt limit exceeded (12 days)</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">P. Ochieng · Emirates Air · KES 85,200
+                                </div>
+                            </div><button class="pm-btn pm-btn-sm text-danger border-danger"
+                                onclick="openModal('missingReceiptsModal')">Chase</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-purple)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Policy violation - out of hours spend</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">J. Njoroge · Naivas · KES 8,000
+                                    (Blocked)</div>
+                            </div><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('violationDetailsModal')">Inspect</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-info)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Marketing Dept card limit warning</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">98% utilized (KES 490K/500K)</div>
+                            </div><button class="pm-btn pm-btn-sm" onclick="openModal('editLimitModal')">Top-up</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Violation Details Modal -->
+    <div class="modal fade resettable" id="violationDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-2"></i>Policy Violation
+                        Report</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3"><i class="bi bi-x-circle text-danger" style="font-size:48px"></i>
+                        <h5 style="margin-top:8px;font-weight:700">Transaction Blocked</h5>
+                        <p style="font-size:13px;color:var(--pm-muted)">Transaction violated active corporate policy.
+                        </p>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Employee</span><strong>J. Njoroge</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Merchant</span><strong>Naivas Supermarket</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>KES 8,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Time</span><strong>Sun, 22 Jun 14:15</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Violation
+                                Reason</span><strong style="color:var(--pm-danger)">Weekend Block Active</strong></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Action to Take</label><select
+                            class="pm-form-control">
+                            <option>Acknowledge & keep block</option>
+                            <option>Create one-time exception & notify employee</option>
+                            <option>Modify policy to allow weekend spend</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('violationDetailsModal','Violation logged. No policy changes made.','')">Confirm
+                        Action</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16. Funding Modal -->
+    <div class="modal fade resettable" id="fundingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cash-stack text-success me-2"></i>Corporate Program Funding
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3"
+                        style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+                        <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">CENTRAL BILLING WALLET</div>
+                        <div style="font-size:28px;font-weight:700">KES 8,540,000</div>
+                        <div style="font-size:12px;color:var(--pm-muted);margin-top:4px">Available for settlement and
+                            prepaid cards</div>
+                    </div>
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('fundTab','deposit',this)">Deposit</button><button class="pm-tab-pill"
+                            onclick="switchTab('fundTab','withdraw',this)">Withdraw</button><button class="pm-tab-pill"
+                            onclick="switchTab('fundTab','autofund',this)">Auto-Fund</button></div>
+                    <div id="fundTab-deposit" class="tab-panel active">
+                        <div class="mb-3"><label class="pm-form-label">Amount to Deposit (KES)</label><input
+                                type="number" class="pm-form-control" value="2000000"></div>
+                        <div class="mb-3"><label class="pm-form-label">Funding Source</label><select
+                                class="pm-form-control">
+                                <option>Linked Equity Bank (***4491)</option>
+                                <option>RTGS / EFT Transfer (Show details)</option>
+                            </select></div>
+                    </div>
+                    <div id="fundTab-withdraw" class="tab-panel">
+                        <div class="mb-3"><label class="pm-form-label">Amount to Withdraw (KES)</label><input
+                                type="number" class="pm-form-control" placeholder="0"></div>
+                        <div class="mb-3"><label class="pm-form-label">Destination</label><select
+                                class="pm-form-control">
+                                <option>Linked Equity Bank (***4491)</option>
+                            </select></div>
+                    </div>
+                    <div id="fundTab-autofund" class="tab-panel">
+                        <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Enable auto-funding</label></div>
+                        <div class="mb-3"><label class="pm-form-label">When wallet balance falls below
+                                (KES)</label><input type="number" class="pm-form-control" value="1000000"></div>
+                        <div class="mb-3"><label class="pm-form-label">Auto-transfer amount (KES)</label><input
+                                type="number" class="pm-form-control" value="5000000"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-success" style="background:var(--pm-accent);color:#fff;border:none"
+                        onclick="processAction('fundingModal','Deposit initiated. Funds will reflect instantly via RTGS API.','')">Initiate
+                        Transfer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Reports Modal -->
+    <div class="modal fade resettable" id="reportsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bar-chart text-danger me-2"></i>Corporate Spend Reports</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control">
+                            <option>Overall Spend Summary</option>
+                            <option>Departmental Breakdown</option>
+                            <option>Employee Spend Ranking</option>
+                            <option>Policy Violation Audit</option>
+                            <option>Merchant Concentration Report</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="pm-form-label">Date From</label><input type="date"
+                                class="pm-form-control" value="2025-06-01"></div>
+                        <div class="col-6"><label class="pm-form-label">Date To</label><input type="date"
+                                class="pm-form-control" value="2025-06-28"></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control">
+                            <option>PDF Executive Summary</option>
+                            <option>Excel Data Dump</option>
+                            <option>CSV Raw Data</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Delivery</label><select class="pm-form-control">
+                            <option>Download instantly</option>
+                            <option>Email to finance@acmecorp.co.ke</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('reportsModal','Report generated and downloaded successfully.','')"><i
+                            class="bi bi-download"></i> Generate Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 18. Statement Modal -->
+    <div class="modal fade resettable" id="statementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-pdf text-info me-2"></i>Corporate Billing
+                        Statement</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3 text-center"
+                        style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+                        <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">ACME CORP MAY STATEMENT</div>
+                        <div style="font-size:28px;font-weight:700">KES 1,985,400</div>
+                        <div style="font-size:12px;color:var(--pm-accent);margin-top:4px"><i
+                                class="bi bi-check-circle"></i> Settled in full on 02 Jun 2025</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Summary Item</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Purchases</td>
+                                    <td>KES 1,985,400</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advances</td>
+                                    <td>KES 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Fees & Charges</td>
+                                    <td>KES 0</td>
+                                </tr>
+                                <tr>
+                                    <td>Payments Received</td>
+                                    <td>(KES 1,985,400)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>New Balance</strong></td>
+                                    <td><strong>KES 0</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"><i class="bi bi-download"></i> Download PDF</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. Settlement Modal -->
+    <div class="modal fade resettable" id="settlementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cash text-success me-2"></i>Settle Statement Balance</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3"
+                        style="background:var(--pm-warning-soft);border:1px solid var(--pm-warning)">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div style="font-size:11px;font-weight:700;color:#B45309">CURRENT OUTSTANDING</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">KES 2,410,500</div>
+                            </div><span class="pm-badge pm-badge-warning">Due 05 Jul</span>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Payment Amount</label><select class="pm-form-control"
+                            onchange="document.getElementById('customAmt').style.display=this.value==='custom'?'block':'none'">
+                            <option value="full">Pay Full Statement (KES 2,410,500)</option>
+                            <option value="custom">Pay Custom Amount</option>
+                        </select><input type="number" id="customAmt" class="pm-form-control mt-2"
+                            placeholder="Enter amount" style="display:none"></div>
+                    <div class="mb-3"><label class="pm-form-label">Payment Source</label><select
+                            class="pm-form-control">
+                            <option>Deduct from Central Wallet (KES 8.5M avail)</option>
+                            <option>Direct Debit from Equity Bank (***4491)</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Auto-debit is scheduled for 05 Jul. Making a manual
+                        payment now will reduce or cancel the auto-debit amount.</div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('settlementModal','Payment of KES 2,410,500 processed successfully. Balance is now 0.','SET-99104')">Confirm
+                        Payment</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Card Delivery Tracking Modal -->
+    <div class="modal fade resettable" id="cardDeliveryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-truck me-2"></i>Track Physical Card Delivery</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-4" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Employee</span><strong>Peter Ochieng</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Card
+                                ending</span><strong>•••• 4410</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Tracking #</span><strong
+                                style="color:var(--pm-primary)">FGL-29188402</strong></div>
+                    </div>
+                    <div class="pm-stepper flex-column align-items-start gap-3 mb-0" style="position:relative">
+                        <div
+                            style="position:absolute;left:13px;top:20px;bottom:20px;width:2px;background:var(--pm-border);z-index:1">
+                        </div>
+                        <div class="d-flex gap-3 align-items-center w-100" style="z-index:2">
+                            <div class="pm-step-num" style="background:var(--pm-accent);color:#fff"><i
+                                    class="bi bi-check"></i></div>
+                            <div>
+                                <div style="font-weight:700;font-size:13px">Card Printed & Personalized</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">25 Jun 2025, 09:14</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 align-items-center w-100" style="z-index:2">
+                            <div class="pm-step-num" style="background:var(--pm-accent);color:#fff"><i
+                                    class="bi bi-check"></i></div>
+                            <div>
+                                <div style="font-weight:700;font-size:13px">Dispatched to Courier</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">26 Jun 2025, 14:30</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 align-items-center w-100" style="z-index:2">
+                            <div class="pm-step-num" style="background:var(--pm-primary);color:#fff"><i
+                                    class="bi bi-truck"></i></div>
+                            <div>
+                                <div style="font-weight:700;font-size:13px">Out for Delivery</div>
+                                <div style="font-size:11px;color:var(--pm-primary)">Expected today by 17:00</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 align-items-center w-100" style="z-index:2;opacity:0.5">
+                            <div class="pm-step-num"
+                                style="background:var(--pm-surface);border:2px solid var(--pm-border)">4</div>
+                            <div>
+                                <div style="font-weight:700;font-size:13px">Delivered</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Billing Setup Modal -->
+    <div class="modal fade resettable" id="billingSetupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building-gear me-2"></i>Corporate Billing Setup</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Liability Model</label><select
+                            class="pm-form-control">
+                            <option selected>Corporate Liability (Company pays all)</option>
+                            <option>Individual Liability (Employee pays, seeks reimbursement)</option>
+                            <option>Mixed (Company pays approved, employee pays personal)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Billing Cycle End Date</label><select
+                            class="pm-form-control">
+                            <option>End of Month (30th/31st)</option>
+                            <option>15th of Month</option>
+                            <option>Custom</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Auto-Debit Settlement</label><select
+                            class="pm-form-control">
+                            <option>Enabled - Full Balance</option>
+                            <option>Enabled - Minimum Payment</option>
+                            <option>Disabled - Manual settlement</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Settlement Grace Period</label><select
+                            class="pm-form-control">
+                            <option>5 days after statement</option>
+                            <option>10 days after statement</option>
+                            <option>15 days after statement</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('billingSetupModal','Billing configuration updated successfully.','')">Save
+                        Setup</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 22. Branding Modal -->
+    <div class="modal fade resettable" id="brandingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-palette me-2"></i>Card Branding & Design</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="c-card mx-auto mb-3" style="width:280px;height:160px;transform:none"
+                                id="previewCard">
+                                <div class="logo">ACME CORP</div>
+                                <div class="chip"></div>
+                                <div class="pan">•••• •••• •••• 1234</div>
+                                <div class="bot">
+                                    <div class="name">EMPLOYEE NAME</div>
+                                    <div style="font-family:var(--pm-font-display);font-weight:700;font-style:italic">
+                                        VISA</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12"><label class="pm-form-label">Company Logo (White/Transparent
+                                PNG)</label><input type="file" class="pm-form-control"></div>
+                        <div class="col-md-6"><label class="pm-form-label">Primary Card Color</label><input type="color"
+                                class="pm-form-control" style="height:40px;padding:4px" value="#0F172A"
+                                onchange="document.getElementById('previewCard').style.background='linear-gradient(135deg, '+this.value+' 0%, #1E293B 100%)'">
+                        </div>
+                        <div class="col-md-6"><label class="pm-form-label">Card Scheme</label><select
+                                class="pm-form-control">
+                                <option>Visa Corporate</option>
+                                <option>Mastercard Business</option>
+                            </select></div>
+                        <div class="col-12">
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                    checked><label class="form-check-label">Apply to all existing virtual cards
+                                    instantly</label></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('brandingModal','Card branding updated. Virtual cards will reflect new design immediately.','')">Save
+                        Branding</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 23. Notifications Modal -->
+    <div class="modal fade resettable" id="notificationsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Admin Notifications</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:450px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><i
+                            class="bi bi-ui-checks text-warning me-1"></i> <strong>8 transactions pending
+                            approval</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 hours ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><i
+                            class="bi bi-receipt text-danger me-1"></i> <strong>14 receipts missing beyond grace
+                            period</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">5 hours ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><i
+                            class="bi bi-credit-card text-info me-1"></i> <strong>Marketing Dept card near
+                            limit</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">1 day ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><i
+                            class="bi bi-check-circle text-success me-1"></i> <strong>Statement auto-debit
+                            successful</strong>
+                        <div style="font-size:11px;color:var(--pm-muted);margin-top:4px">May 03, 2025</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 24. Company Profile Modal -->
+    <div class="modal fade resettable" id="companyProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building me-2"></i>Company Profile & Access</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3"
+                        style="width:64px;height:64px;font-size:24px;background:#1E293B">A</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Acme Corporation Ltd</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">KRA PIN: P051283991K · IT & Software</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Admin Name</span><br><strong>Jane Doe (CFO)</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Total Issued Limits</span><br><strong>KES 4.2M</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Active Cards</span><br><strong>42</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Billing Cycle</span><br><strong>Ends 30th</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openModal(id) { const el = document.getElementById(id); if (el) { new bootstrap.Modal(el).show(); } }
+        function closeModal(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function selectRadioCard(card) { card.parentElement.querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = ''; const r = b.querySelector('input[type=radio]'); if (r) r.checked = false }); card.style.borderColor = 'var(--pm-primary)'; card.style.background = 'rgba(79,70,229,.04)'; const radio = card.querySelector('input[type=radio]'); if (radio) radio.checked = true; }
+        function switchTab(prefix, key, btn) { btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'pm-loading-overlay'; ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function processAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-arrow-repeat"></i> Reload Dashboard</button></div></div>`; footer.innerHTML = '<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>'; }); }
+
+        let issueStep = 1;
+        function renderStepper(elId, labels, current) { const wrap = document.getElementById(elId); if (!wrap) return; wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i + 1) < current ? 'completed' : (i + 1) === current ? 'active' : ''}"><div class="pm-step-num">${(i + 1) < current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length - 1 ? '<div class="pm-step-line"></div>' : ''}`).join(''); }
+        function showFlow(prefix, current, total) { for (let i = 1; i <= total; i++) { const el = document.getElementById(prefix + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(prefix + current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextIssueStep() { if (issueStep === 3) { showLoading('#issueCardModal .modal-body', () => { issueStep = 4; renderStepper('issueStepper', ['Assignment', 'Controls', 'Delivery', 'Done'], issueStep); showFlow('issueStep', issueStep, 4); document.getElementById('issueNextBtn').textContent = 'Done'; }); return; } if (issueStep >= 4) { closeModal('issueCardModal'); return; } issueStep++; renderStepper('issueStepper', ['Assignment', 'Controls', 'Delivery', 'Done'], issueStep); showFlow('issueStep', issueStep, 4); if (issueStep === 3) document.getElementById('issueNextBtn').innerHTML = 'Issue Card <i class="bi bi-check-circle"></i>'; }
+
+        function resetFlows() { issueStep = 1; renderStepper('issueStepper', ['Assignment', 'Controls', 'Delivery', 'Done'], 1); showFlow('issueStep', 1, 4); }
+        function cacheResettable() { document.querySelectorAll('.resettable').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.originalBody = b.innerHTML; if (f) m.dataset.originalFooter = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody; if (m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter; resetFlows(); }); }); }
+
+        document.addEventListener('DOMContentLoaded', () => { renderStepper('issueStepper', ['Assignment', 'Controls', 'Delivery', 'Done'], 1); cacheResettable(); });
+    </script>
+</body>
+
+</html>

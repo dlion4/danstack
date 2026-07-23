@@ -1,0 +1,2592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo BaaS — Settlement & Clearing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #1E40AF, #4F46E5);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bank"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-arrow-left-right"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-gear"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Settlement & Clearing</h1>
+                            <p>Real-time settlements, clearing house integration, reconciliation, and compliance</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search settlements, batches, disputes, reports..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('batchInboxModal')"><i class="bi bi-inbox"></i><span
+                            class="counter">14</span></button><button class="pm-header-btn"
+                        onclick="openM('notifModal')"><i class="bi bi-bell"></i><span class="counter">7</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Treasury Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">BaaS Transactions</a> /
+                        <strong>Settlement & Clearing</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.7 — Settlement & Clearing</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage real-time and batch settlements,
+                        PesaLink/RTGS clearing, reconciliation, disputes, and regulatory reporting across all
+                        bank-to-bank flows.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('healthCheckModal')"><i class="bi bi-heart-pulse"></i> Health
+                        Check</button><button class="btn-pm" onclick="openM('batchInboxModal')"><i
+                            class="bi bi-inbox"></i> Batches</button><button class="btn-pm btn-pm-p"
+                        onclick="openM('initiateSettlementModal')"><i class="bi bi-plus-lg"></i> New Settlement</button>
+                </div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Settlement engine live <span
+                                    style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">KES 2.84B settled today</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">1,284 transactions • 99.7%
+                                success rate • 14 batches processed • 3 disputes under review.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('initiateSettlementModal')">New Settlement</button><button
+                                    class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('reconciliationWizardModal')">Reconcile</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">SETTLED TODAY</p>
+                            <div class="SV" style="margin:6px 0">KES 2.84B</div><span class="B B-s"><i
+                                    class="bi bi-check2-circle"></i> 1,284 txns</span>
+                            <div class="pm-mini-bars mt-3">
+                                <div class="pm-mini-bar" style="height:85%;background:var(--pm-primary)"></div>
+                                <div class="pm-mini-bar" style="height:60%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:92%;background:var(--pm-primary)"></div>
+                                <div class="pm-mini-bar" style="height:45%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:78%;background:var(--pm-primary)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">PENDING CLEARING</p>
+                            <div class="SV" style="margin:6px 0">KES 184.6M</div><span class="B B-w"><i
+                                    class="bi bi-clock"></i> 47 batches</span>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>RTGS</span><span>KES 92M</span>
+                                </div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:62%;background:var(--pm-info)"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>PesaLink</span><span>KES
+                                        92.6M</span></div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:38%;background:var(--pm-accent)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">DISPUTES & EXCEPTIONS</p>
+                            <div class="SV" style="margin:6px 0">3 open</div><span class="B B-d"><i
+                                    class="bi bi-exclamation-triangle"></i> KES 4.2M at risk</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>High value: <strong>1</strong></div>
+                                <div>Medium: <strong>2</strong></div>
+                                <div>Auto-resolved today: <strong>9</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">High-value settlement failed</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Equity → KCB • KES 18.4M •
+                                            Retry pending</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm btn-pm-d"
+                                    onclick="openM('retrySettlementModal')">Retry</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">
+                                        <i class="bi bi-clock"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">RTGS cut-off in 47 minutes</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">14 batches queued • KES 92M
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('batchInboxModal')">Prioritize</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">
+                                        <i class="bi bi-shield-exclamation"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Dispute #SET-44892 awaiting evidence
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Co-op Bank • KES 2.1M</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Respond</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">
+                                        <i class="bi bi-lightning-charge"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable auto-retry on 3 failed
+                                            batches</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Recover KES 12.4M
+                                            automatically</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('autoRulesModal')">Enable</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px"><i
+                                            class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Shift 4 batches to PesaLink</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Save KES 18,400 in RTGS fees
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('batchInboxModal')">Shift</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">
+                                        <i class="bi bi-calendar-event"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Schedule weekend settlement run
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce Monday morning backlog
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('settlementCalendarModal')">Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent settlement workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn"
+                                    onclick="openM('initiateSettlementModal')"><i
+                                        class="bi bi-plus-circle text-primary me-1"></i> New Settlement</button><button
+                                    class="quick-btn" onclick="openM('reconciliationWizardModal')"><i
+                                        class="bi bi-list-check text-success me-1"></i> Reconcile</button><button
+                                    class="quick-btn" onclick="openM('batchUploadModal')"><i
+                                        class="bi bi-upload text-info me-1"></i> Bulk Upload</button><button
+                                    class="quick-btn" onclick="openM('disputeModal')"><i
+                                        class="bi bi-exclamation-triangle text-warning me-1"></i> Raise
+                                    Dispute</button><button class="quick-btn" onclick="openM('generateReportModal')"><i
+                                        class="bi bi-download text-muted me-1"></i> Reports</button><button
+                                    class="quick-btn" onclick="openM('autoRulesModal')"><i
+                                        class="bi bi-gear text-purple me-1"></i> Auto Rules</button><button
+                                    class="quick-btn" onclick="openM('nostroModal')"><i class="bi bi-bank2 me-1"
+                                        style="color:var(--pm-primary)"></i> Nostro</button><button class="quick-btn"
+                                    onclick="openM('complianceReportModal')"><i class="bi bi-file-earmark-text me-1"
+                                        style="color:var(--pm-accent)"></i> Compliance</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: Settlement Overview Dashboard -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-speedometer2" style="color:var(--pm-primary)"></i> 1.7.1 —
+                                Settlement Overview Dashboard</h3>
+                            <p class="ss">Real-time view of all settlement channels, success rates, pending volumes, and
+                                exception queues.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('settlementCalendarModal')"><i class="bi bi-calendar"></i>
+                                Calendar</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('initiateSettlementModal')">Initiate</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Settlement Channels
+                                    Performance</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Channel</th>
+                                                <th>Volume Today</th>
+                                                <th>Success</th>
+                                                <th>Pending</th>
+                                                <th>Avg Time</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>RTGS (KES)</strong></td>
+                                                <td>KES 1.42B</td>
+                                                <td><span class="B B-s">99.4%</span></td>
+                                                <td>KES 92M</td>
+                                                <td>42m</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>PesaLink</strong></td>
+                                                <td>KES 984M</td>
+                                                <td><span class="B B-s">99.9%</span></td>
+                                                <td>KES 41M</td>
+                                                <td>8s</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>EFT / ACH</strong></td>
+                                                <td>KES 312M</td>
+                                                <td><span class="B B-w">98.1%</span></td>
+                                                <td>KES 51M</td>
+                                                <td>3.2h</td>
+                                                <td><span class="B B-w">Delayed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>SWIFT (Cross-border)</strong></td>
+                                                <td>USD 4.8M</td>
+                                                <td><span class="B B-s">100%</span></td>
+                                                <td>USD 0.2M</td>
+                                                <td>4.1h</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Exception Queue</h4>
+                                <div class="sr">
+                                    <div><strong>Failed settlements</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">14 items • KES 18.4M</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('retrySettlementModal')">Retry
+                                        All</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Partial settlements</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">8 items • KES 6.2M</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('partialSettlementModal')">Resolve</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Compliance holds</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">3 items • KES 42M</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('complianceReportModal')">Review</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Duplicate detections</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">2 items • KES 1.8M</div>
+                                    </div><button class="btn-pm btn-sm"
+                                        onclick="openM('disputeModal')">Investigate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Real-time Settlement Engine -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-lightning-charge" style="color:var(--pm-accent)"></i> 1.7.2 —
+                                Real-time Settlement Engine</h3>
+                            <p class="ss">Instant settlement initiation, status tracking, and automated retry logic for
+                                high-value and time-critical transactions.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('initiateSettlementModal')"><i class="bi bi-plus-lg"></i> Instant
+                                Settlement</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Real-time Settlements
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Ref</th>
+                                                <th>From → To</th>
+                                                <th>Amount</th>
+                                                <th>Channel</th>
+                                                <th>Status</th>
+                                                <th>ETA</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>SET-88421</code></td>
+                                                <td>Equity → KCB</td>
+                                                <td><strong>KES 45.0M</strong></td>
+                                                <td>RTGS</td>
+                                                <td><span class="B B-i">In Progress</span></td>
+                                                <td>14m</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementDetailModal')">Track</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>SET-88422</code></td>
+                                                <td>Co-op → Stanbic</td>
+                                                <td><strong>KES 12.8M</strong></td>
+                                                <td>PesaLink</td>
+                                                <td><span class="B B-s">Settled</span></td>
+                                                <td>—</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementDetailModal')">Receipt</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>SET-88423</code></td>
+                                                <td>Absa → NCBA</td>
+                                                <td><strong>KES 8.4M</strong></td>
+                                                <td>RTGS</td>
+                                                <td><span class="B B-w">Retry #2</span></td>
+                                                <td>32m</td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('retrySettlementModal')">Force</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Engine Health</h4>
+                                <div class="sr">
+                                    <div><strong>Throughput</strong></div><strong>184 tx/min</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Queue Depth</strong></div><strong>47 pending</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Auto-retry Success</strong></div><strong>94.2%</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Manual Intervention</strong></div><strong>3 cases</strong>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('engineConfigModal')">Configure
+                                    Engine</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Clearing House Integration -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-building" style="color:var(--pm-info)"></i> 1.7.3 — Clearing
+                                House Integration</h3>
+                            <p class="ss">PesaLink, RTGS, ACH, and SWIFT clearing status, cut-off timers, and direct
+                                integration controls.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('clearingStatusModal')">Live Status</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">PesaLink Clearing</h4>
+                                <div class="sr">
+                                    <div><strong>Current Window</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Closes in 2h 14m</div>
+                                    </div><span class="B B-s">Open</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Transactions Cleared</strong></div><strong>892 / 920</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Net Position</strong></div><strong>+KES 184M</strong>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-2" onclick="openM('pesaLinkModal')">Manage
+                                    PesaLink</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">RTGS Clearing</h4>
+                                <div class="sr">
+                                    <div><strong>Current Window</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Closes in 47m</div>
+                                    </div><span class="B B-w">Closing Soon</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Transactions Cleared</strong></div><strong>214 / 261</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Net Position</strong></div><strong>-KES 92M</strong>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-2 btn-pm-d"
+                                    onclick="openM('rtgsUrgentModal')">Urgent Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Reconciliation & Dispute Resolution -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-list-check" style="color:var(--pm-purple)"></i> 1.7.4 —
+                                Reconciliation & Dispute Resolution</h3>
+                            <p class="ss">Automated and manual reconciliation, exception handling, and full dispute
+                                lifecycle management.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('reconciliationWizardModal')">Start Reconciliation</button><button
+                                class="btn-pm btn-sm" onclick="openM('disputeModal')">New Dispute</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Reconciliation Summary</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Batch</th>
+                                                <th>Expected</th>
+                                                <th>Actual</th>
+                                                <th>Variance</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>BAT-21092</code></td>
+                                                <td>KES 184.2M</td>
+                                                <td>KES 184.2M</td>
+                                                <td><span class="B B-s">0</span></td>
+                                                <td><span class="B B-s">Matched</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reconciliationDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>BAT-21093</code></td>
+                                                <td>KES 67.8M</td>
+                                                <td>KES 65.1M</td>
+                                                <td><span class="B B-d">-KES 2.7M</span></td>
+                                                <td><span class="B B-w">Exception</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('disputeModal')">Investigate</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Open Disputes</h4>
+                                <div class="sr">
+                                    <div><strong>#SET-44892</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Co-op vs KCB • KES 2.1M</div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Resolve</button>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>#SET-44889</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Equity vs Absa • KES 1.8M
+                                        </div>
+                                    </div><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Resolve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: Settlement Reports & Analytics -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bar-chart-line" style="color:var(--pm-info)"></i> 1.7.5 —
+                                Settlement Reports & Analytics</h3>
+                            <p class="ss">Daily, weekly, and monthly settlement performance, fee analysis, and
+                                regulatory reports.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('generateReportModal')">Generate Report</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">7-Day Settlement Trend</h4>
+                                <div class="chart-bars">
+                                    <div class="chart-bar" style="height:65%;background:var(--pm-primary)"><span
+                                            class="bar-label">Mon</span></div>
+                                    <div class="chart-bar" style="height:78%;background:var(--pm-primary)"><span
+                                            class="bar-label">Tue</span></div>
+                                    <div class="chart-bar" style="height:92%;background:var(--pm-accent)"><span
+                                            class="bar-label">Wed</span></div>
+                                    <div class="chart-bar" style="height:85%;background:var(--pm-primary)"><span
+                                            class="bar-label">Thu</span></div>
+                                    <div class="chart-bar" style="height:70%;background:var(--pm-info)"><span
+                                            class="bar-label">Fri</span></div>
+                                    <div class="chart-bar" style="height:55%;background:var(--pm-warning)"><span
+                                            class="bar-label">Sat</span></div>
+                                    <div class="chart-bar" style="height:48%;background:var(--pm-info)"><span
+                                            class="bar-label">Sun</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Key Metrics</h4>
+                                <div class="sr">
+                                    <div><strong>Total Settled (MTD)</strong></div><strong>KES 41.2B</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Average Fee per txn</strong></div><strong>KES 42</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Failed Rate</strong></div><strong>0.31%</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Regulatory Reports Filed</strong></div><strong>28 / 31</strong>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-2" onclick="openM('complianceReportModal')">View
+                                    Compliance</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 6: Automated Settlement Rules -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-gear-fill" style="color:var(--pm-warning)"></i> 1.7.6 —
+                                Automated Settlement Rules</h3>
+                            <p class="ss">Configure intelligent auto-settlement, retry logic, cut-off handling, and
+                                exception routing.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('autoRulesModal')">Manage Rules</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Automation Rules</h4>
+                                <div class="sr">
+                                    <div><strong>Auto-retry failed RTGS</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Max 3 attempts • 15 min
+                                            interval</div>
+                                    </div><span class="B B-s">Active</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Auto-escalate disputes > KES 5M</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Route to Treasury Manager
+                                        </div>
+                                    </div><span class="B B-s">Active</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Weekend batch deferral</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Hold non-urgent batches until
+                                            Monday 8 AM</div>
+                                    </div><span class="B B-w">Paused</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 7: Nostro/Vostro & Compliance -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-globe" style="color:var(--pm-purple)"></i> 1.7.7 —
+                                Nostro/Vostro & Regulatory Compliance</h3>
+                            <p class="ss">Cross-border account management, FX settlement, and automated regulatory
+                                reporting.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('nostroModal')">Nostro Accounts</button><button class="btn-pm btn-sm"
+                                onclick="openM('complianceReportModal')">Compliance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Nostro Positions</h4>
+                                <div class="sr">
+                                    <div><strong>USD Nostro (Citibank NY)</strong></div><strong>USD 8.4M</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR Nostro (Deutsche Bank)</strong></div><strong>EUR 3.2M</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>GBP Nostro (HSBC London)</strong></div><strong>GBP 1.1M</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Regulatory Reports</h4>
+                                <div class="sr">
+                                    <div><strong>CBK Daily Settlement Return</strong></div><span
+                                        class="B B-s">Submitted</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>KRA Withholding Tax</strong></div><span class="B B-w">Due in 2
+                                        days</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>AML Large Transaction Report</strong></div><span
+                                        class="B B-s">Submitted</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent
+                            Settlement Activity</h3><button class="btn-pm btn-sm"
+                            onclick="openM('activityLogModal')">Full Log</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Ref</th>
+                                    <th>From → To</th>
+                                    <th>Amount</th>
+                                    <th>Channel</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:32</td>
+                                    <td>SET-88422</td>
+                                    <td>Co-op → Stanbic</td>
+                                    <td><strong>KES 12.8M</strong></td>
+                                    <td>PesaLink</td>
+                                    <td><span class="B B-s">Settled</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('settlementDetailModal')">Receipt</button></td>
+                                </tr>
+                                <tr>
+                                    <td>14:28</td>
+                                    <td>SET-88421</td>
+                                    <td>Equity → KCB</td>
+                                    <td><strong>KES 45.0M</strong></td>
+                                    <td>RTGS</td>
+                                    <td><span class="B B-i">In Progress</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('settlementDetailModal')">Track</button></td>
+                                </tr>
+                                <tr>
+                                    <td>14:15</td>
+                                    <td>BAT-21093</td>
+                                    <td>Multiple</td>
+                                    <td><strong>KES 67.8M</strong></td>
+                                    <td>RTGS</td>
+                                    <td><span class="B B-w">Exception</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('disputeModal')">Investigate</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ==================== 23+ MODALS ==================== -->
+
+    <!-- M1: Initiate Settlement (Multi-step) -->
+    <div class="modal fade R" id="initiateSettlementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Initiate Settlement</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="initStepper"></div>
+                    <div id="initS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Parties & Amount</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Debit Bank</label><select class="FC">
+                                    <option>Equity Bank</option>
+                                    <option>Co-operative Bank</option>
+                                    <option>KCB Bank</option>
+                                    <option>Absa Bank</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Credit Bank</label><select class="FC">
+                                    <option>KCB Bank</option>
+                                    <option>Equity Bank</option>
+                                    <option>NCBA</option>
+                                    <option>Stanbic Bank</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Amount (KES)</label><input class="FC"
+                                    value="45000000"></div>
+                            <div class="col-md-6"><label class="FL">Purpose</label><select class="FC">
+                                    <option>Interbank transfer</option>
+                                    <option>Salary disbursement</option>
+                                    <option>Supplier payment</option>
+                                    <option>Government disbursement</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="initS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Channel & Timing</h6>
+                        <div class="mb-3"><label class="FL">Settlement Channel</label>
+                            <div class="pills"><button class="pill active"
+                                    onclick="this.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">RTGS</button><button
+                                    class="pill"
+                                    onclick="this.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">PesaLink</button><button
+                                    class="pill"
+                                    onclick="this.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">EFT</button>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Priority</label><select class="FC">
+                                    <option>Normal</option>
+                                    <option>Urgent (extra fee)</option>
+                                    <option>Same-day guaranteed</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Execution Time</label><select class="FC">
+                                    <option>Immediate</option>
+                                    <option>Next 30 minutes</option>
+                                    <option>End of day</option>
+                                    <option>Scheduled</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="initS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Confirmation & Security</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-1"><span>Debit Bank</span><strong>Equity
+                                    Bank</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>Credit Bank</span><strong>KCB
+                                    Bank</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>Amount</span><strong>KES
+                                    45,000,000</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>Channel</span><strong>RTGS</strong>
+                            </div>
+                            <div class="d-flex justify-content-between"><span>Fee</span><strong>KES 2,250</strong></div>
+                        </div><label class="FL">Authorizer PIN</label>
+                        <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                    </div>
+                    <div id="initS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Settlement Initiated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Reference: <strong>SET-88424</strong> •
+                                Expected completion: 14:47 EAT</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="initFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="initNext"
+                        onclick="nextFlow('init',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Settlement Detail -->
+    <div class="modal fade R" id="settlementDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Settlement Details — SET-88421
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Reference</span><strong>SET-88421</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">From</span><strong>Equity Bank</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">To</span><strong>KCB Bank</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Amount</span><strong>KES 45,000,000</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Channel</span><strong>RTGS</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Status</span><span class="B B-i">In Progress</span></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Initiated</span><strong>14:18 EAT</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">ETA</span><strong>14:47 EAT</strong></div>
+                                <div class="d-flex justify-content-between"><span
+                                        class="text-muted">Fee</span><strong>KES 2,250</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h6 style="font-weight:700">Timeline</h6>
+                        <div class="sr">
+                            <div><strong>14:18</strong> — Instruction received</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>14:19</strong> — Validation passed</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>14:22</strong> — Sent to CBK RTGS</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>14:47 (expected)</strong> — Settlement complete</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('retrySettlementModal')">Retry if Failed</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Retry Settlement -->
+    <div class="modal fade R" id="retrySettlementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-warning me-2"></i>Retry Failed Settlement
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Select Failed Settlements</label>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">SET-88423 • KES 8.4M • Absa → NCBA</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">SET-88419 • KES 12.1M • Co-op → Equity</label></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Retry Reason</label><select class="FC">
+                            <option>Network timeout</option>
+                            <option>Insufficient liquidity</option>
+                            <option>Technical error at receiving bank</option>
+                            <option>Other</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Retry will incur additional RTGS fee of KES 2,250 per
+                        transaction.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('retrySettlementModal','Retry initiated for 1 settlement. New reference: SET-88425','SET-88425')">Retry
+                        Now</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Reconciliation Wizard (Multi-step) -->
+    <div class="modal fade R" id="reconciliationWizardModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check text-success me-2"></i>Reconciliation Wizard</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="reconStepper"></div>
+                    <div id="reconS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Batches</h6>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">BAT-21092 • Equity Clearing • KES 184.2M</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">BAT-21093 • KCB Clearing • KES 67.8M</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">BAT-21094 • Co-op Clearing • KES 41.5M</label></div>
+                    </div>
+                    <div id="reconS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Run Matching</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                            <div style="font-size:13px;font-weight:700;color:#1D4ED8">Matching Engine Running...</div>
+                            <div class="progress mt-2" style="height:6px">
+                                <div class="progress-bar" style="width:78%"></div>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Matched</strong></div><strong>1,142 / 1,189</strong>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Exceptions</strong></div><strong>47 items</strong>
+                        </div>
+                    </div>
+                    <div id="reconS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Resolve Exceptions</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Variance</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>TRX-99182</td>
+                                        <td>KES 12,400</td>
+                                        <td><button class="btn-pm btn-sm" onclick="openM('disputeModal')">Create
+                                                Dispute</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TRX-99183</td>
+                                        <td>KES 8,900</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('partialSettlementModal')">Partial Accept</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="reconS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Reconciliation Complete</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">1,142 matched • 47 exceptions resolved •
+                                Report generated.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="reconFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="reconNext"
+                        onclick="nextFlow('recon',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Dispute Modal (Multi-step) -->
+    <div class="modal fade R" id="disputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Raise Settlement
+                        Dispute</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="dispStepper"></div>
+                    <div id="dispS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Settlement Ref</label><input class="FC"
+                                    value="SET-88419"></div>
+                            <div class="col-md-6"><label class="FL">Dispute Amount</label><input class="FC"
+                                    value="2700000"></div>
+                            <div class="col-12"><label class="FL">Reason</label><select class="FC">
+                                    <option>Amount mismatch</option>
+                                    <option>Wrong beneficiary</option>
+                                    <option>Duplicate settlement</option>
+                                    <option>Failed but debited</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="dispS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Evidence</h6>
+                        <div class="mb-3"><label class="FL">Description</label><textarea class="FC"
+                                rows="3">Expected credit of KES 67.8M but only KES 65.1M received. Difference of KES 2.7M.</textarea>
+                        </div>
+                        <div class="mb-3"><label class="FL">Upload Evidence</label><input type="file" class="FC"></div>
+                    </div>
+                    <div id="dispS3" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Dispute Filed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Case #SET-44901 created. Counterparty
+                                notified.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="dispFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="dispNext"
+                        onclick="nextFlow('disp',3)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Batch Inbox -->
+    <div class="modal fade R" id="batchInboxModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-inbox me-2"></i>Settlement Batch Inbox (47)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active">All</button><button
+                            class="pill">RTGS</button><button class="pill">PesaLink</button><button
+                            class="pill">EFT</button><button class="pill">Urgent</button></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Batch</th>
+                                    <th>Channel</th>
+                                    <th>Items</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>BAT-21092</td>
+                                    <td>RTGS</td>
+                                    <td>184</td>
+                                    <td>KES 184.2M</td>
+                                    <td><span class="B B-s">Ready</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('initiateSettlementModal')">Submit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>BAT-21093</td>
+                                    <td>PesaLink</td>
+                                    <td>892</td>
+                                    <td>KES 67.8M</td>
+                                    <td><span class="B B-w">Exception</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('reconciliationWizardModal')">Reconcile</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Auto Rules -->
+    <div class="modal fade R" id="autoRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear text-warning me-2"></i>Automated Settlement Rules</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active">Active Rules</button><button class="pill">Create
+                            New</button><button class="pill">History</button></div>
+                    <div class="sr">
+                        <div><strong>Auto-retry failed RTGS</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Max 3 attempts • 15 min interval</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                        </div>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Auto-escalate high-value disputes</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">> KES 5M → Treasury Manager</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                        </div>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Weekend deferral</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Non-urgent batches held until Monday</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('autoRulesModal','Automation rules updated successfully.','')">Save
+                        Rules</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Nostro Modal -->
+    <div class="modal fade R" id="nostroModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe me-2"></i>Nostro/Vostro Account Management</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Bank</th>
+                                    <th>Currency</th>
+                                    <th>Balance</th>
+                                    <th>Last Movement</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nostro USD</td>
+                                    <td>Citibank NY</td>
+                                    <td>USD</td>
+                                    <td><strong>8,420,000</strong></td>
+                                    <td>26 Jun 2025</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('fxSettlementModal')">FX
+                                            Settle</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Nostro EUR</td>
+                                    <td>Deutsche Bank</td>
+                                    <td>EUR</td>
+                                    <td><strong>3,210,000</strong></td>
+                                    <td>25 Jun 2025</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('fxSettlementModal')">FX
+                                            Settle</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Vostro KES</td>
+                                    <td>Standard Chartered</td>
+                                    <td>KES</td>
+                                    <td><strong>124,500,000</strong></td>
+                                    <td>27 Jun 2025</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('nostroTransferModal')">Transfer</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Compliance Report -->
+    <div class="modal fade R" id="complianceReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Regulatory Compliance Reports
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>CBK Daily Settlement Return</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">27 Jun 2025 • Submitted 09:12</div>
+                        </div><span class="B B-s">Submitted</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>KRA Withholding Tax</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Due 29 Jun 2025</div>
+                        </div><span class="B B-w">Pending</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>AML Large Transaction Report</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">26 Jun 2025 • Submitted</div>
+                        </div><span class="B B-s">Submitted</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>FX Position Report</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Monthly • Due 30 Jun</div>
+                        </div><span class="B B-w">Pending</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('complianceReportModal','Report generated and submitted to CBK.','CBK-20250627-001')">Submit
+                        Pending Reports</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10-23: Additional functional modals (abbreviated for space but all fully wired) -->
+    <div class="modal fade R" id="settlementCalendarModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar-event me-2"></i>Settlement Calendar</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;color:var(--pm-ink-soft)">June 2025 — RTGS cut-off 15:00 daily • PesaLink
+                        24/7 • Weekend deferral active for non-urgent batches.</p>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>RTGS</th>
+                                    <th>PesaLink</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td><span class="B B-w">Closing 47m</span></td>
+                                    <td>Open</td>
+                                    <td>High volume day</td>
+                                </tr>
+                                <tr>
+                                    <td>28 Jun</td>
+                                    <td>Open</td>
+                                    <td>Open</td>
+                                    <td>Weekend deferral starts 18:00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="fxSettlementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange me-2"></i>FX Settlement</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">From Nostro</label><select class="FC">
+                            <option>USD Nostro (Citibank) — 8.42M</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">To KES Account</label><select class="FC">
+                            <option>PayMo KES Treasury</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (USD)</label><input class="FC" value="500000"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:13px">Rate: 129.45 •
+                        Expected KES credit: 64,725,000</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('fxSettlementModal','FX settlement executed. KES 64,725,000 credited.','FX-20250627-8841')">Execute
+                        FX Settlement</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Settlement Health Check
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:28px;font-weight:800;color:var(--pm-accent)">97</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">HEALTH SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">99.7%</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">SUCCESS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">3</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">EXCEPTIONS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">14</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">BATCHES</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional 13 modals (all functional) -->
+    <div class="modal fade R" id="partialSettlementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-scissors me-2"></i>Partial Settlement Resolution</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Accept Partial Amount</label><input class="FC" value="65100000">
+                    </div>
+                    <div class="mb-3"><label class="FL">Reason for Partial</label><textarea class="FC"
+                            rows="2">Receiving bank liquidity constraint. Balance to be settled tomorrow.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('partialSettlementModal','Partial settlement accepted. Remaining KES 2.7M scheduled for tomorrow.','')">Accept
+                        Partial</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="generateReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Generate Settlement Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Daily Settlement Summary</option>
+                            <option>Weekly Performance</option>
+                            <option>Monthly Regulatory Return</option>
+                            <option>Fee Analysis</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Date Range</label>
+                        <div class="row g-2">
+                            <div class="col-6"><input type="date" class="FC" value="2025-06-01"></div>
+                            <div class="col-6"><input type="date" class="FC" value="2025-06-27"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('generateReportModal','Report generated successfully. Download started.','')">Generate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="engineConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cpu me-2"></i>Settlement Engine Configuration</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Max Concurrent Settlements</label><input class="FC" value="500">
+                    </div>
+                    <div class="mb-3"><label class="FL">Auto-retry Attempts</label><input class="FC" value="3"></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Enable weekend deferral</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Enable smart channel routing</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('engineConfigModal','Engine configuration saved. Changes effective immediately.','')">Save
+                        Config</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="activityLogModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Full Settlement Activity Log</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Ref</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:32</td>
+                                    <td>SET-88422</td>
+                                    <td>Settlement completed</td>
+                                    <td>System</td>
+                                    <td>Success</td>
+                                </tr>
+                                <tr>
+                                    <td>14:28</td>
+                                    <td>SET-88421</td>
+                                    <td>Submitted to RTGS</td>
+                                    <td>James K.</td>
+                                    <td>In Progress</td>
+                                </tr>
+                                <tr>
+                                    <td>14:15</td>
+                                    <td>BAT-21093</td>
+                                    <td>Exception detected</td>
+                                    <td>System</td>
+                                    <td>Flagged</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="pesaLinkModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-link-45deg me-2"></i>PesaLink Clearing Management</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Current Window</strong></div><span class="B B-s">Open (Closes 17:00)</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Transactions Processed</strong></div><strong>892 / 920</strong>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Net Position</strong></div><strong>+KES 184M</strong>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Force Close Window</label><button
+                            class="btn-pm btn-sm btn-pm-d w-100"
+                            onclick="doAction('pesaLinkModal','PesaLink window forced closed. Remaining 28 transactions moved to next window.','')">Force
+                            Close</button></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="rtgsUrgentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>RTGS Urgent
+                        Submission</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#991B1B">RTGS cut-off in 47 minutes</div>
+                        <div style="font-size:12px;color:#7F1D1D">14 batches (KES 92M) still pending submission.</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Priority Reason</label><select class="FC">
+                            <option>Government disbursement deadline</option>
+                            <option>Salary payment deadline</option>
+                            <option>Regulatory deadline</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-d"
+                        onclick="doAction('rtgsUrgentModal','14 batches submitted with urgent flag. Additional fee: KES 31,500','')">Submit
+                        All Urgent</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="clearingStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-broadcast me-2"></i>Live Clearing House Status</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>PesaLink</strong></div><span class="B B-s">Operational</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>RTGS (CBK)</strong></div><span class="B B-s">Operational</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>ACH / EFT</strong></div><span class="B B-w">Degraded (High volume)</span>
+                    </div>
+                    <div class="sr">
+                        <div><strong>SWIFT</strong></div><span class="B B-s">Operational</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="reconciliationDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check me-2"></i>Reconciliation Details — BAT-21092</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Expected
+                                Credits</span><strong>184</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Actual
+                                Credits</span><strong>184</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Variance</span><span
+                                class="B B-s">0</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@paymo.co.ke · Treasury</p>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Attention
+                        Items</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>High-value settlement failed</strong></div><button class="btn-pm btn-sm btn-pm-d"
+                            onclick="openM('retrySettlementModal')">Retry</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>RTGS cut-off in 47 minutes</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('rtgsUrgentModal')">Prioritize</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Dispute awaiting evidence</strong></div><button class="btn-pm btn-sm"
+                            onclick="openM('disputeModal')">Respond</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="notifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (7)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>High-value settlement failed</strong>
+                        <div style="font-size:11px;color:#7F1D1D">SET-88423 • KES 8.4M</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>RTGS
+                            cut-off approaching</strong>
+                        <div style="font-size:11px;color:#92400E">47 minutes remaining</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Dispute
+                            evidence requested</strong>
+                        <div style="font-size:11px;color:#1E40AF">#SET-44892</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="batchUploadModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Bulk Settlement Upload</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Upload CSV/Excel</label><input type="file" class="FC"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Template: Bank Code, Amount, Purpose, Reference. Max 500
+                        rows per upload.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('batchUploadModal','478 settlements uploaded and validated. Ready for submission.','')">Upload
+                        & Validate</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="nostroTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right me-2"></i>Nostro Internal Transfer</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">From Account</label><select class="FC">
+                            <option>USD Nostro (Citibank) — 8.42M</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">To Account</label><select class="FC">
+                            <option>KES Treasury Account</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="500000"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('nostroTransferModal','Internal transfer of USD 500,000 executed.','NT-20250627-001')">Execute
+                        Transfer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        const flows = { init: { current: 1, total: 4 }, recon: { current: 1, total: 4 }, disp: { current: 1, total: 3 } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = Array.from({ length: f.total }, (_, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">Step ${i + 1}</div></div>${i < f.total - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { showLoading('#' + key + 'S' + f.current, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(key === 'init' ? 'initiateSettlementModal' : key === 'recon' ? 'reconciliationWizardModal' : 'disputeModal'); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

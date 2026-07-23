@@ -1,0 +1,3273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo BaaS — System Health & Operations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #0f766e, #0369a1, #4F46E5);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        .health-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block
+        }
+
+        .health-green {
+            background: #10B981
+        }
+
+        .health-yellow {
+            background: #F59E0B
+        }
+
+        .health-red {
+            background: #EF4444
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-heart-pulse"></i><span class="badge-dot"></span></button></nav><button
+                class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">OP</div>
+                        <div>
+                            <h1>System Health & Operations</h1>
+                            <p>Real-time monitoring, incident management, reconciliation, fraud detection & support
+                                operations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search incidents, APIs, settlements, logs..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('globalStatusModal')"><i
+                            class="bi bi-globe"></i></button><button class="pm-header-btn"
+                        onclick="openM('incidentQueueModal')"><i class="bi bi-exclamation-triangle"></i><span
+                            class="counter">7</span></button><button class="pm-header-btn"
+                        onclick="openM('opsNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">14</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">MN</div>
+                        <div>
+                            <div class="pm-name">Michael N.</div>
+                            <div class="pm-role">Head of Operations</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">B2B Transactions</a> / <strong>System
+                            Health & Operations</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.17 — System Health & Operations</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Monitor platform uptime, transaction
+                        success rates, API performance, settlement reconciliation, fraud systems, infrastructure health,
+                        and operational support queues in real time.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('globalStatusModal')"><i class="bi bi-globe"></i> Global Status</button><button
+                        class="btn-pm" onclick="openM('incidentQueueModal')"><i class="bi bi-exclamation-triangle"></i>
+                        Incidents</button><button class="btn-pm btn-pm-p" onclick="openM('runHealthCheckModal')"><i
+                            class="bi bi-play-circle"></i> Run Health Check</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Platform status <span
+                                    style="color:#86efac">●</span> All systems operational</p>
+                            <div class="SV" style="margin:8px 0;color:#fff">99.97% Uptime</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Last 30 days • 4 minor
+                                incidents resolved • 0 critical outages</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('uptimeHistoryModal')">History</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('slaReportModal')">SLA Report</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">TRANSACTION SUCCESS</p>
+                            <div class="SV" style="margin:6px 0">99.4%</div><span class="B B-s"><i
+                                    class="bi bi-check-circle"></i> 1.24M txns today</span>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Failed</span><span>7,412
+                                        (0.6%)</span></div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:99.4%;background:var(--pm-accent)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">API RESPONSE (P95)</p>
+                            <div class="SV" style="margin:6px 0">187ms</div><span class="B B-i"><i
+                                    class="bi bi-speedometer2"></i> Within SLA</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Current load: <strong>42,800 req/min</strong></div>
+                                <div>Peak today: <strong>68,200 req/min</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">OPEN INCIDENTS</p>
+                            <div class="SV" style="margin:6px 0">7</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> 2 high priority</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Settlement delay: <strong>2</strong></div>
+                                <div>Fraud alert spike: <strong>1</strong></div>
+                                <div>API degradation: <strong>4</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('incidentQueueModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Settlement batch #S-88219 delayed
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">2h 14m behind SLA • KES 184M
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm btn-pm-d"
+                                    onclick="openM('settlementDetailModal')">Investigate</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Fraud detection false positive rate
+                                            4.2%</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Above threshold (2.5%)</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('fraudModelModal')">Tune
+                                    Model</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-server"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">API Gateway P99 latency 420ms</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">SLA breach risk (SLA: 300ms)
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('apiPerformanceModal')">Scale</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-lightning-charge"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Enable auto-scaling on API Gateway
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce P99 latency by 35%
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('infraScalingModal')">Enable</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-purple-soft);color:var(--pm-purple);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-shield-check"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Update fraud rules for weekend
+                                            patterns</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reduce false positives by 1.8%
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('fraudModelModal')">Apply</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock-history"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Schedule reconciliation catch-up job
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Clear 4 pending settlement
+                                            batches</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('settlementDetailModal')">Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent operations workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('runHealthCheckModal')"><i
+                                        class="bi bi-play-circle text-success me-1"></i> Run Health
+                                    Check</button><button class="quick-btn" onclick="openM('incidentQueueModal')"><i
+                                        class="bi bi-exclamation-triangle text-danger me-1"></i> View
+                                    Incidents</button><button class="quick-btn"
+                                    onclick="openM('settlementDetailModal')"><i
+                                        class="bi bi-bank text-primary me-1"></i> Settlement Status</button><button
+                                    class="quick-btn" onclick="openM('fraudModelModal')"><i
+                                        class="bi bi-shield-exclamation text-warning me-1"></i> Fraud
+                                    Console</button><button class="quick-btn" onclick="openM('apiPerformanceModal')"><i
+                                        class="bi bi-speedometer2 text-info me-1"></i> API Metrics</button><button
+                                    class="quick-btn" onclick="openM('auditLogModal')"><i
+                                        class="bi bi-file-earmark-text me-1" style="color:var(--pm-purple)"></i> Audit
+                                    Logs</button><button class="quick-btn" onclick="openM('supportTicketModal')"><i
+                                        class="bi bi-headset me-1" style="color:var(--pm-accent)"></i> Support
+                                    Queue</button><button class="quick-btn" onclick="openM('infraScalingModal')"><i
+                                        class="bi bi-server me-1" style="color:var(--pm-primary)"></i> Scale
+                                    Services</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: System Status Dashboard -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-heart-pulse-fill" style="color:var(--pm-primary)"></i> 1.17.1
+                                — System Status Dashboard</h3>
+                            <p class="ss">Real-time health of all B2B transaction services, APIs, settlement engines and
+                                fraud systems.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('globalStatusModal')"><i class="bi bi-globe"></i> Global
+                                View</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('runHealthCheckModal')"><i class="bi bi-play"></i> Run Full
+                                Check</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Service Health Overview</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Service</th>
+                                                <th>Status</th>
+                                                <th>Uptime</th>
+                                                <th>Latency (P95)</th>
+                                                <th>Error Rate</th>
+                                                <th>Last Incident</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Transaction Engine</strong></td>
+                                                <td><span class="B B-s"><i class="bi bi-check-circle"></i>
+                                                        Healthy</span></td>
+                                                <td>99.98%</td>
+                                                <td>142ms</td>
+                                                <td>0.12%</td>
+                                                <td>12 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('serviceDetailModal')">Details</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Settlement Engine</strong></td>
+                                                <td><span class="B B-w"><i class="bi bi-exclamation-triangle"></i>
+                                                        Degraded</span></td>
+                                                <td>99.71%</td>
+                                                <td>890ms</td>
+                                                <td>1.84%</td>
+                                                <td>27 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('settlementDetailModal')">Investigate</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>API Gateway</strong></td>
+                                                <td><span class="B B-s"><i class="bi bi-check-circle"></i>
+                                                        Healthy</span></td>
+                                                <td>99.99%</td>
+                                                <td>187ms</td>
+                                                <td>0.08%</td>
+                                                <td>19 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('apiPerformanceModal')">Metrics</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Fraud Detection</strong></td>
+                                                <td><span class="B B-w"><i class="bi bi-exclamation-triangle"></i>
+                                                        Degraded</span></td>
+                                                <td>99.82%</td>
+                                                <td>310ms</td>
+                                                <td>4.2% FP</td>
+                                                <td>27 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fraudModelModal')">Tune</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Reconciliation Service</strong></td>
+                                                <td><span class="B B-s"><i class="bi bi-check-circle"></i>
+                                                        Healthy</span></td>
+                                                <td>99.95%</td>
+                                                <td>420ms</td>
+                                                <td>0.31%</td>
+                                                <td>25 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reconciliationModal')">Run Now</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Notification Service</strong></td>
+                                                <td><span class="B B-s"><i class="bi bi-check-circle"></i>
+                                                        Healthy</span></td>
+                                                <td>99.97%</td>
+                                                <td>89ms</td>
+                                                <td>0.05%</td>
+                                                <td>20 Jun 2025</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('serviceDetailModal')">Details</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Regional Status</h4>
+                                <div class="sr">
+                                    <div><strong>Kenya (Primary)</strong></div><span class="B B-s">All Green</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Uganda</strong></div><span class="B B-s">All Green</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Tanzania</strong></div><span class="B B-w">API Degraded</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Rwanda</strong></div><span class="B B-s">All Green</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Nigeria</strong></div><span class="B B-w">Settlement Delayed</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Ghana</strong></div><span class="B B-s">All Green</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Transaction Health Monitor -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-activity" style="color:var(--pm-accent)"></i> 1.17.2 —
+                                Transaction Health Monitor</h3>
+                            <p class="ss">Live transaction volume, success rates, failure reasons, and channel
+                                performance across all corridors.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('liveTransactionFeedModal')">Live Feed</button><button
+                                class="btn-pm btn-sm" onclick="openM('failureAnalysisModal')">Failure Analysis</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Live Transaction Metrics
+                                    (Last 60 min)</h4>
+                                <div class="row g-3">
+                                    <div class="col-4">
+                                        <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                            <div style="font-size:22px;font-weight:700;color:var(--pm-accent)">42,811
+                                            </div>
+                                            <div style="font-size:11px;font-weight:600;color:#047857">Transactions</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                            <div style="font-size:22px;font-weight:700;color:var(--pm-info)">KES 8.42B
+                                            </div>
+                                            <div style="font-size:11px;font-weight:600;color:#1D4ED8">Volume</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                            <div style="font-size:22px;font-weight:700;color:var(--pm-purple)">99.41%
+                                            </div>
+                                            <div style="font-size:11px;font-weight:600;color:#6D28D9">Success Rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive mt-3">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Corridor</th>
+                                                <th>Count</th>
+                                                <th>Success</th>
+                                                <th>Avg Time</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Kenya → Uganda</td>
+                                                <td>8,421</td>
+                                                <td>99.7%</td>
+                                                <td>1.8s</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('corridorDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kenya → Tanzania</td>
+                                                <td>6,112</td>
+                                                <td>99.2%</td>
+                                                <td>2.4s</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('corridorDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Uganda → Kenya</td>
+                                                <td>5,890</td>
+                                                <td>99.5%</td>
+                                                <td>1.6s</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('corridorDetailModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nigeria → Ghana</td>
+                                                <td>3,421</td>
+                                                <td>98.1%</td>
+                                                <td>4.2s</td>
+                                                <td><button class="btn-pm btn-sm btn-pm-w"
+                                                        onclick="openM('corridorDetailModal')">Investigate</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Failure Breakdown (Last Hour)
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>Insufficient Funds</strong></div>
+                                    <div><span class="B B-d">2,841</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Invalid Account</strong></div>
+                                    <div><span class="B B-w">1,102</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Network Timeout</strong></div>
+                                    <div><span class="B B-w">892</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Fraud Block</strong></div>
+                                    <div><span class="B B-d">421</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Daily Limit Exceeded</strong></div>
+                                    <div><span class="B B-w">312</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Other</strong></div>
+                                    <div><span class="B B-i">844</span></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('failureAnalysisModal')">Deep
+                                    Dive into Failures</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: API & Integration Health -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-plug" style="color:var(--pm-info)"></i> 1.17.3 — API &
+                                Integration Health</h3>
+                            <p class="ss">Partner API performance, webhook delivery, integration status and rate
+                                limiting.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('apiPerformanceModal')">Performance</button><button class="btn-pm btn-sm"
+                                onclick="openM('webhookMonitorModal')">Webhooks</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Partner API Status</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Partner</th>
+                                                <th>Status</th>
+                                                <th>Latency</th>
+                                                <th>Success</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Equity Bank</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td>98ms</td>
+                                                <td>99.9%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('partnerApiDetailModal')">Logs</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>KCB Bank</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td>112ms</td>
+                                                <td>99.8%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('partnerApiDetailModal')">Logs</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stanbic Bank</td>
+                                                <td><span class="B B-w">Degraded</span></td>
+                                                <td>420ms</td>
+                                                <td>97.1%</td>
+                                                <td><button class="btn-pm btn-sm btn-pm-w"
+                                                        onclick="openM('partnerApiDetailModal')">Investigate</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Co-op Bank</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td>76ms</td>
+                                                <td>99.9%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('partnerApiDetailModal')">Logs</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Webhook Delivery</h4>
+                                <div class="sr">
+                                    <div><strong>Delivered (Last 24h)</strong></div>
+                                    <div><span class="B B-s">184,291</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Failed (Retries exhausted)</strong></div>
+                                    <div><span class="B B-d">312</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Pending Retry Queue</strong></div>
+                                    <div><span class="B B-w">1,842</span></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('webhookMonitorModal')">Monitor
+                                    Queue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Settlement & Reconciliation -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bank2" style="color:var(--pm-primary)"></i> 1.17.4 —
+                                Settlement & Reconciliation</h3>
+                            <p class="ss">Real-time settlement status, batch reconciliation, pending items and dispute
+                                resolution.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('settlementDetailModal')">Settlement Batches</button><button
+                                class="btn-pm btn-sm" onclick="openM('reconciliationModal')">Run Reconciliation</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Active Settlement Batches
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Batch ID</th>
+                                                <th>Corridor</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Progress</th>
+                                                <th>ETA</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>S-88219</td>
+                                                <td>KE → UG</td>
+                                                <td>KES 184.2M</td>
+                                                <td><span class="B B-w">Delayed</span></td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:67%;background:var(--pm-warning)"></div>
+                                                    </div>
+                                                </td>
+                                                <td>+2h 14m</td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('settlementDetailModal')">Investigate</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>S-88220</td>
+                                                <td>KE → TZ</td>
+                                                <td>KES 92.4M</td>
+                                                <td><span class="B B-s">Processing</span></td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:89%;background:var(--pm-accent)"></div>
+                                                    </div>
+                                                </td>
+                                                <td>41m</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementDetailModal')">Details</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>S-88221</td>
+                                                <td>UG → KE</td>
+                                                <td>KES 67.8M</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td>
+                                                    <div class="pm-progress">
+                                                        <div class="pm-progress-bar"
+                                                            style="width:100%;background:var(--pm-accent)"></div>
+                                                    </div>
+                                                </td>
+                                                <td>—</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementDetailModal')">Receipt</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Reconciliation Summary</h4>
+                                <div class="sr">
+                                    <div><strong>Matched Today</strong></div>
+                                    <div><span class="B B-s">1,241,892</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Unmatched</strong></div>
+                                    <div><span class="B B-w">4,812</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Disputed Items</strong></div>
+                                    <div><span class="B B-d">187</span></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('reconciliationModal')">Run Full
+                                    Reconciliation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: Fraud & Security Operations -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-shield-exclamation" style="color:var(--pm-danger)"></i>
+                                1.17.5 — Fraud & Security Operations</h3>
+                            <p class="ss">Real-time fraud detection, alert queue, model performance and manual review
+                                cases.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('fraudModelModal')">Model Console</button><button
+                                class="btn-pm btn-sm btn-pm-d" onclick="openM('fraudAlertQueueModal')">Alert
+                                Queue</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Fraud Detection Performance
+                                </h4>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                                            <div style="font-size:11px;font-weight:700;color:#991B1B">ALERTS TODAY</div>
+                                            <div style="font-size:26px;font-weight:700;color:var(--pm-danger)">1,842
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                            <div style="font-size:11px;font-weight:700;color:#047857">BLOCKED
+                                                TRANSACTIONS</div>
+                                            <div style="font-size:26px;font-weight:700;color:var(--pm-accent)">421</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive mt-3">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Rule</th>
+                                                <th>Triggered</th>
+                                                <th>Blocked</th>
+                                                <th>FP Rate</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Velocity Check</td>
+                                                <td>892</td>
+                                                <td>312</td>
+                                                <td>2.1%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fraudModelModal')">Tune</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Geo Anomaly</td>
+                                                <td>421</td>
+                                                <td>89</td>
+                                                <td>4.8%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fraudModelModal')">Tune</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Device Mismatch</td>
+                                                <td>312</td>
+                                                <td>18</td>
+                                                <td>1.2%</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('fraudModelModal')">Tune</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Manual Review Queue</h4>
+                                <div class="sr">
+                                    <div><strong>High Risk Cases</strong></div>
+                                    <div><span class="B B-d">87</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Medium Risk Cases</strong></div>
+                                    <div><span class="B B-w">214</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Low Risk Cases</strong></div>
+                                    <div><span class="B B-i">312</span></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3 btn-pm-d"
+                                    onclick="openM('fraudAlertQueueModal')">Review Queue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 6: Infrastructure & Uptime -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-server" style="color:var(--pm-primary)"></i> 1.17.6 —
+                                Infrastructure & Uptime</h3>
+                            <p class="ss">Server health, database performance, queue depths, auto-scaling events and
+                                capacity planning.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('infraScalingModal')">Scaling</button><button class="btn-pm btn-sm"
+                                onclick="openM('capacityPlanningModal')">Capacity</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Infrastructure Metrics</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Component</th>
+                                                <th>CPU</th>
+                                                <th>Memory</th>
+                                                <th>Disk</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Transaction DB Primary</td>
+                                                <td>42%</td>
+                                                <td>68%</td>
+                                                <td>54%</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('infraDetailModal')">Metrics</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>API Gateway Cluster</td>
+                                                <td>71%</td>
+                                                <td>82%</td>
+                                                <td>39%</td>
+                                                <td><span class="B B-w">Warning</span></td>
+                                                <td><button class="btn-pm btn-sm btn-pm-w"
+                                                        onclick="openM('infraScalingModal')">Scale</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Redis Cache</td>
+                                                <td>18%</td>
+                                                <td>44%</td>
+                                                <td>12%</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('infraDetailModal')">Metrics</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kafka Brokers</td>
+                                                <td>55%</td>
+                                                <td>61%</td>
+                                                <td>47%</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('infraDetailModal')">Metrics</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Auto-Scaling Events (24h)
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>API Gateway</strong></div>
+                                    <div><span class="B B-i">+12 nodes</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Worker Nodes</strong></div>
+                                    <div><span class="B B-i">+8 nodes</span></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>DB Read Replicas</strong></div>
+                                    <div><span class="B B-i">+3 replicas</span></div>
+                                </div>
+                                <button class="btn-pm btn-sm w-100 mt-3" onclick="openM('infraScalingModal')">Manage
+                                    Scaling Policies</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 7: Operations Queue & Support Tickets -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-headset" style="color:var(--pm-purple)"></i> 1.17.7 —
+                                Operations Queue & Support Tickets</h3>
+                            <p class="ss">Internal operations tickets, partner support requests, SLA tracking and
+                                escalation management.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('supportTicketModal')">Support Queue</button><button
+                                class="btn-pm btn-sm" onclick="openM('escalationModal')">Escalations</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-12">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Operations Ticket Queue</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Ticket</th>
+                                                <th>Type</th>
+                                                <th>Priority</th>
+                                                <th>Assignee</th>
+                                                <th>SLA</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>OP-44291</td>
+                                                <td>Partner Integration</td>
+                                                <td><span class="B B-d">High</span></td>
+                                                <td>James K.</td>
+                                                <td>2h remaining</td>
+                                                <td><span class="B B-w">In Progress</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('ticketDetailModal')">Open</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>OP-44288</td>
+                                                <td>Settlement Dispute</td>
+                                                <td><span class="B B-w">Medium</span></td>
+                                                <td>Grace M.</td>
+                                                <td>18h remaining</td>
+                                                <td><span class="B B-i">Waiting Partner</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('ticketDetailModal')">Open</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>OP-44285</td>
+                                                <td>API Key Request</td>
+                                                <td><span class="B B-i">Low</span></td>
+                                                <td>Auto</td>
+                                                <td>48h remaining</td>
+                                                <td><span class="B B-s">Resolved</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('ticketDetailModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- MODALS (23 total) -->
+
+    <!-- M1: Global Status -->
+    <div class="modal fade R" id="globalStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe me-2"></i>Global Platform Status</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('gs','all',this)">All
+                            Regions</button><button class="pill" onclick="sw('gs','ke',this)">Kenya</button><button
+                            class="pill" onclick="sw('gs','ug',this)">Uganda</button><button class="pill"
+                            onclick="sw('gs','tz',this)">Tanzania</button></div>
+                    <div id="gs-all" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Region</th>
+                                        <th>Status</th>
+                                        <th>Uptime</th>
+                                        <th>Active Incidents</th>
+                                        <th>Last Update</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Kenya (Primary)</td>
+                                        <td><span class="B B-s">Operational</span></td>
+                                        <td>99.98%</td>
+                                        <td>2</td>
+                                        <td>2 min ago</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Uganda</td>
+                                        <td><span class="B B-s">Operational</span></td>
+                                        <td>99.95%</td>
+                                        <td>1</td>
+                                        <td>5 min ago</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tanzania</td>
+                                        <td><span class="B B-w">Degraded</span></td>
+                                        <td>99.71%</td>
+                                        <td>3</td>
+                                        <td>1 min ago</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rwanda</td>
+                                        <td><span class="B B-s">Operational</span></td>
+                                        <td>99.99%</td>
+                                        <td>0</td>
+                                        <td>8 min ago</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nigeria</td>
+                                        <td><span class="B B-w">Degraded</span></td>
+                                        <td>99.68%</td>
+                                        <td>4</td>
+                                        <td>3 min ago</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ghana</td>
+                                        <td><span class="B B-s">Operational</span></td>
+                                        <td>99.92%</td>
+                                        <td>1</td>
+                                        <td>12 min ago</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="gs-ke" class="tpanel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Kenya region is fully operational. 2 minor
+                            incidents under active monitoring.</p>
+                    </div>
+                    <div id="gs-ug" class="tpanel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Uganda region operational. 1 settlement delay
+                            being investigated.</p>
+                    </div>
+                    <div id="gs-tz" class="tpanel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Tanzania experiencing API latency issues.
+                            Engineering team engaged.</p>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('globalStatusModal','Status page published to status.paymo.co.ke','')">Publish
+                        Status Page</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Incident Queue -->
+    <div class="modal fade R" id="incidentQueueModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Active Incident Queue (7)
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Severity</th>
+                                    <th>Started</th>
+                                    <th>Owner</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INC-88219</td>
+                                    <td>Settlement batch delay</td>
+                                    <td><span class="B B-d">High</span></td>
+                                    <td>2h 14m ago</td>
+                                    <td>James K.</td>
+                                    <td><span class="B B-w">Investigating</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('incidentDetailModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INC-88218</td>
+                                    <td>Stanbic API degradation</td>
+                                    <td><span class="B B-w">Medium</span></td>
+                                    <td>47m ago</td>
+                                    <td>Auto</td>
+                                    <td><span class="B B-w">Monitoring</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('incidentDetailModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INC-88217</td>
+                                    <td>Fraud false positive spike</td>
+                                    <td><span class="B B-w">Medium</span></td>
+                                    <td>1h 02m ago</td>
+                                    <td>Grace M.</td>
+                                    <td><span class="B B-i">In Progress</span></td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('fraudModelModal')">Tune</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>INC-88216</td>
+                                    <td>Nigeria settlement retry loop</td>
+                                    <td><span class="B B-d">High</span></td>
+                                    <td>3h 41m ago</td>
+                                    <td>James K.</td>
+                                    <td><span class="B B-w">Investigating</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('incidentDetailModal')">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td>INC-88215</td>
+                                    <td>Webhook delivery backlog</td>
+                                    <td><span class="B B-w">Medium</span></td>
+                                    <td>19m ago</td>
+                                    <td>Auto</td>
+                                    <td><span class="B B-w">Monitoring</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('webhookMonitorModal')">Clear</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-d" onclick="openM('createIncidentModal')">Create New Incident</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Run Health Check -->
+    <div class="modal fade R" id="runHealthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Run System Health Check</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Scope</label><select class="FC">
+                            <option>Full Platform Check</option>
+                            <option>Transaction Engine Only</option>
+                            <option>Settlement & Reconciliation</option>
+                            <option>API Gateway & Integrations</option>
+                            <option>Fraud & Security Systems</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Include Deep Diagnostics</label>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Database query performance</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Queue depth analysis</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Full reconciliation test</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('runHealthCheckModal','Health check started. Results will appear in the Operations Log within 3 minutes.','HC-20250627-9914')">Start
+                        Health Check</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Settlement Detail (multi-step) -->
+    <div class="modal fade R" id="settlementDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank2 me-2"></i>Settlement Batch Detail — S-88219</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="settleStepper"></div>
+                    <div id="settleS1" class="fstep active">
+                        <h6 style="font-weight:700">Batch Overview</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#B45309">STATUS</div>
+                                    <div style="font-size:20px;font-weight:700;color:var(--pm-warning)">Delayed +2h 14m
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">AMOUNT</div>
+                                    <div style="font-size:20px;font-weight:700">KES 184,200,000</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">TRANSACTIONS</div>
+                                    <div style="font-size:20px;font-weight:700">8,421</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3"><label class="FL">Delay Reason</label>
+                            <div class="p-3 rounded" style="background:var(--pm-danger-soft);font-size:13px">Upstream
+                                bank (Stanbic) experiencing connectivity issues. Manual intervention required.</div>
+                        </div>
+                    </div>
+                    <div id="settleS2" class="fstep">
+                        <h6 style="font-weight:700">Reconciliation Status</h6>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Bank</th>
+                                        <th>Expected</th>
+                                        <th>Received</th>
+                                        <th>Matched</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Equity Bank</td>
+                                        <td>KES 92.1M</td>
+                                        <td>KES 92.1M</td>
+                                        <td>100%</td>
+                                        <td><span class="B B-s">Complete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Stanbic Bank</td>
+                                        <td>KES 67.4M</td>
+                                        <td>KES 41.2M</td>
+                                        <td>61%</td>
+                                        <td><span class="B B-w">Partial</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>KCB Bank</td>
+                                        <td>KES 24.7M</td>
+                                        <td>KES 24.7M</td>
+                                        <td>100%</td>
+                                        <td><span class="B B-s">Complete</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="settleS3" class="fstep">
+                        <h6 style="font-weight:700">Resolution Actions</h6>
+                        <div class="mb-3"><label class="FL">Action</label><select class="FC">
+                                <option>Request manual push from Stanbic</option>
+                                <option>Split batch and settle partial</option>
+                                <option>Hold batch until EOD</option>
+                                <option>Escalate to partner relationship manager</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Notes for Partner</label><textarea class="FC"
+                                rows="3">Please investigate connectivity issues on your end. We have 26% of the batch still pending acknowledgment.</textarea>
+                        </div>
+                    </div>
+                    <div id="settleS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Resolution Logged</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Manual push request sent to Stanbic. ETA
+                                updated to +4h. Ticket INC-88219 updated.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="settleFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button><button class="btn-pm btn-pm-p" id="settleNext"
+                        onclick="nextFlow('settle',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Fraud Model Console -->
+    <div class="modal fade R" id="fraudModelModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation me-2"></i>Fraud Detection Model Console
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('fm','rules',this)">Active
+                            Rules</button><button class="pill"
+                            onclick="sw('fm','perf',this)">Performance</button><button class="pill"
+                            onclick="sw('fm','tune',this)">Tune Model</button></div>
+                    <div id="fm-rules" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rule</th>
+                                        <th>Threshold</th>
+                                        <th>Triggered (24h)</th>
+                                        <th>FP Rate</th>
+                                        <th>Enabled</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Velocity (5 txns/5min)</td>
+                                        <td>5</td>
+                                        <td>892</td>
+                                        <td>2.1%</td>
+                                        <td><input type="checkbox" checked></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Geo Anomaly</td>
+                                        <td>500km</td>
+                                        <td>421</td>
+                                        <td>4.8%</td>
+                                        <td><input type="checkbox" checked></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Device Mismatch</td>
+                                        <td>—</td>
+                                        <td>312</td>
+                                        <td>1.2%</td>
+                                        <td><input type="checkbox" checked></td>
+                                    </tr>
+                                    <tr>
+                                        <td>New Device + High Amount</td>
+                                        <td>KES 50K</td>
+                                        <td>189</td>
+                                        <td>3.4%</td>
+                                        <td><input type="checkbox"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="fm-perf" class="tpanel">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#047857">PRECISION</div>
+                                    <div style="font-size:28px;font-weight:700;color:var(--pm-accent)">94.2%</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#1D4ED8">RECALL</div>
+                                    <div style="font-size:28px;font-weight:700;color:var(--pm-info)">88.7%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fm-tune" class="tpanel">
+                        <div class="mb-3"><label class="FL">Adjust Velocity Threshold</label><input class="FC"
+                                value="5">
+                            <div class="form-text">Current FP rate 2.1%. Suggested: 6 (expected FP 1.4%)</div>
+                        </div>
+                        <div class="mb-3"><label class="FL">Geo Distance Threshold (km)</label><input class="FC"
+                                value="500">
+                            <div class="form-text">Current FP rate 4.8%. Suggested: 750 (expected FP 2.9%)</div>
+                        </div><button class="btn-pm btn-pm-p"
+                            onclick="doAction('fraudModelModal','Model parameters updated. New rules will apply to next transaction batch.','')">Apply
+                            Changes</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: API Performance -->
+    <div class="modal fade R" id="apiPerformanceModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-speedometer2 me-2"></i>API Gateway Performance</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#1D4ED8">REQUESTS/MIN</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">42,800</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">P95 LATENCY</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">187ms</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#B45309">ERROR RATE</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">0.08%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#6D28D9">ACTIVE NODES</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">28</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive mt-3">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Endpoint</th>
+                                    <th>Requests</th>
+                                    <th>P95</th>
+                                    <th>Errors</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/v1/transactions/initiate</td>
+                                    <td>18,421</td>
+                                    <td>142ms</td>
+                                    <td>0.04%</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                </tr>
+                                <tr>
+                                    <td>/v1/settlements/batch</td>
+                                    <td>4,892</td>
+                                    <td>890ms</td>
+                                    <td>1.84%</td>
+                                    <td><span class="B B-w">Degraded</span></td>
+                                </tr>
+                                <tr>
+                                    <td>/v1/fraud/score</td>
+                                    <td>12,310</td>
+                                    <td>310ms</td>
+                                    <td>0.12%</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('infraScalingModal')">Scale Gateway</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Webhook Monitor -->
+    <div class="modal fade R" id="webhookMonitorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-link-45deg me-2"></i>Webhook Delivery Monitor</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Partner</th>
+                                    <th>Endpoint</th>
+                                    <th>Delivered</th>
+                                    <th>Failed</th>
+                                    <th>Retry Queue</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Equity Bank</td>
+                                    <td>https://api.equity.co.ke/webhook</td>
+                                    <td>84,291</td>
+                                    <td>12</td>
+                                    <td>3</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('webhookMonitorModal','Webhook queue cleared for Equity Bank.','')">Clear
+                                            Retries</button></td>
+                                </tr>
+                                <tr>
+                                    <td>KCB Bank</td>
+                                    <td>https://webhook.kcbgroup.com/b2b</td>
+                                    <td>42,891</td>
+                                    <td>89</td>
+                                    <td>41</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="doAction('webhookMonitorModal','Webhook queue cleared for KCB Bank.','')">Clear
+                                            Retries</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Stanbic Bank</td>
+                                    <td>https://api.stanbic.co.ug/callback</td>
+                                    <td>18,421</td>
+                                    <td>211</td>
+                                    <td>178</td>
+                                    <td><button class="btn-pm btn-sm btn-pm-w"
+                                            onclick="openM('partnerApiDetailModal')">Investigate</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('webhookMonitorModal','All failed webhooks re-queued for delivery.','')">Re-queue
+                        All</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Fraud Alert Queue -->
+    <div class="modal fade R" id="fraudAlertQueueModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation me-2"></i>Fraud Alert Queue (312)</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Alert ID</th>
+                                    <th>Transaction</th>
+                                    <th>Risk Score</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>FA-99142</td>
+                                    <td>KE-UG-4428191</td>
+                                    <td><span class="B B-d">94</span></td>
+                                    <td>Velocity + New Device</td>
+                                    <td><span class="B B-w">Pending Review</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('fraudReviewModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td>FA-99141</td>
+                                    <td>KE-TZ-4428188</td>
+                                    <td><span class="B B-w">72</span></td>
+                                    <td>Geo Anomaly</td>
+                                    <td><span class="B B-i">Under Review</span></td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('fraudReviewModal')">Review</button></td>
+                                </tr>
+                                <tr>
+                                    <td>FA-99140</td>
+                                    <td>UG-KE-4428182</td>
+                                    <td><span class="B B-w">68</span></td>
+                                    <td>Amount Pattern</td>
+                                    <td><span class="B B-s">Approved</span></td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('fraudReviewModal')">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('fraudAlertQueueModal','Bulk approval applied to 42 low-risk alerts.','')">Bulk
+                        Approve Low Risk</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Fraud Review Modal -->
+    <div class="modal fade R" id="fraudReviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-search me-2"></i>Fraud Case Review — FA-99142</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <div style="font-size:11px;font-weight:700;color:#991B1B">RISK SCORE: 94/100</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--pm-danger)">Velocity (5 txns in 4 min) +
+                            New Device + High Amount (KES 125,000)</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Transaction Details</label>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                            <div>From: 0712***890 → To: UG-0772***112</div>
+                            <div>Time: 27 Jun 2025 14:22 EAT</div>
+                            <div>Device: iPhone 14 (new)</div>
+                            <div>Location: Nairobi, KE → Kampala, UG (impossible travel)</div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Decision</label><select class="FC">
+                            <option>Block Transaction</option>
+                            <option>Allow with 3D Secure</option>
+                            <option>Allow (False Positive)</option>
+                            <option>Escalate to Manual Review</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                            rows="3">High velocity + impossible travel. Strong fraud signal. Recommend block.</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-d"
+                        onclick="doAction('fraudReviewModal','Transaction blocked. Customer notified via SMS and push. Case closed.','')">Block
+                        Transaction</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Incident Detail (multi-step) -->
+    <div class="modal fade R" id="incidentDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Incident Management —
+                        INC-88219</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="incStepper"></div>
+                    <div id="incS1" class="fstep active">
+                        <h6 style="font-weight:700">Incident Summary</h6>
+                        <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                            <div style="font-size:13px">Settlement batch S-88219 delayed by 2h 14m due to upstream
+                                connectivity issues with Stanbic Bank.</div>
+                        </div>
+                    </div>
+                    <div id="incS2" class="fstep">
+                        <h6 style="font-weight:700">Timeline & Updates</h6>
+                        <div class="sr">
+                            <div><strong>14:22</strong> — Incident created</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>14:45</strong> — Assigned to James K.</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>15:10</strong> — Stanbic contacted</div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>16:30</strong> — Partial settlement executed</div>
+                        </div>
+                    </div>
+                    <div id="incS3" class="fstep">
+                        <h6 style="font-weight:700">Resolution & Post-Mortem</h6>
+                        <div class="mb-3"><label class="FL">Resolution</label><textarea class="FC"
+                                rows="3">Stanbic confirmed DNS issue on their end. Manual push completed at 16:30. Full batch settled by 17:45.</textarea>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">Schedule post-mortem meeting</label></div>
+                    </div>
+                    <div id="incS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Incident Closed</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">INC-88219 marked as resolved. Post-mortem
+                                scheduled for 30 Jun 2025.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="incFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button><button class="btn-pm btn-pm-p" id="incNext"
+                        onclick="nextFlow('inc',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Create Incident -->
+    <div class="modal fade R" id="createIncidentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Create New Incident</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Title</label><input class="FC" value="New incident title"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Severity</label><select class="FC">
+                                <option>High</option>
+                                <option>Medium</option>
+                                <option>Low</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Component</label><select class="FC">
+                                <option>Settlement Engine</option>
+                                <option>API Gateway</option>
+                                <option>Fraud Detection</option>
+                                <option>Database</option>
+                            </select></div>
+                    </div>
+                    <div class="mb-3 mt-3"><label class="FL">Description</label><textarea class="FC"
+                            rows="4">Describe the incident...</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-d"
+                        onclick="doAction('createIncidentModal','Incident INC-88222 created and assigned to on-call engineer.','INC-88222')">Create
+                        Incident</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Partner API Detail -->
+    <div class="modal fade R" id="partnerApiDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plug me-2"></i>Partner API Detail — Stanbic Bank</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('pa','health',this)">Health</button><button class="pill"
+                            onclick="sw('pa','logs',this)">Logs</button><button class="pill"
+                            onclick="sw('pa','config',this)">Config</button></div>
+                    <div id="pa-health" class="tpanel active">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#B45309">STATUS</div>
+                                    <div style="font-size:20px;font-weight:700;color:var(--pm-warning)">Degraded</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">LATENCY</div>
+                                    <div style="font-size:20px;font-weight:700">420ms</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pa-logs" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Event</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>16:42</td>
+                                        <td>Timeout on /settle</td>
+                                        <td>504</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16:41</td>
+                                        <td>Success on /balance</td>
+                                        <td>200</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="pa-config" class="tpanel">
+                        <div class="mb-3"><label class="FL">Base URL</label><input class="FC"
+                                value="https://api.stanbic.co.ug/b2b"></div>
+                        <div class="mb-3"><label class="FL">Timeout (ms)</label><input class="FC" value="5000"></div>
+                        <div class="mb-3"><label class="FL">Retry Attempts</label><input class="FC" value="3"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('partnerApiDetailModal','Partner API configuration updated.','')">Save
+                        Config</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Infrastructure Detail -->
+    <div class="modal fade R" id="infraDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-server me-2"></i>Infrastructure Component Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Component</label><select class="FC">
+                            <option>Transaction DB Primary</option>
+                            <option>API Gateway Cluster</option>
+                            <option>Redis Cache</option>
+                        </select></div>
+                    <div class="row g-3">
+                        <div class="col-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#1D4ED8">CPU</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">42%</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#B45309">MEMORY</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">68%</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">DISK</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">54%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3"><label class="FL">Recent Alerts</label>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">No critical
+                            alerts in the last 24 hours.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('infraScalingModal')">Scale Component</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Infra Scaling -->
+    <div class="modal fade R" id="infraScalingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-server me-2"></i>Auto-Scaling Configuration</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Component</label><select class="FC">
+                            <option>API Gateway Cluster</option>
+                            <option>Worker Nodes</option>
+                            <option>DB Read Replicas</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Min Nodes</label><input class="FC" value="12"></div>
+                    <div class="mb-3"><label class="FL">Max Nodes</label><input class="FC" value="48"></div>
+                    <div class="mb-3"><label class="FL">Scale Up Threshold</label><input class="FC"
+                            value="70% CPU for 5 min"></div>
+                    <div class="mb-3"><label class="FL">Scale Down Threshold</label><input class="FC"
+                            value="30% CPU for 15 min"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('infraScalingModal','Scaling policy updated. Changes will apply immediately.','')">Save
+                        Policy</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Capacity Planning -->
+    <div class="modal fade R" id="capacityPlanningModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up-arrow me-2"></i>Capacity Planning</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Forecast Period</label><select class="FC">
+                            <option>Next 30 days</option>
+                            <option>Next 90 days</option>
+                            <option>Next 12 months</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span>Projected Peak Load</span><strong>2.8x
+                                current</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Required Nodes (API)</span><strong>78
+                                (current 28)</strong></div>
+                        <div class="d-flex justify-content-between"><span>Budget Impact</span><strong>+KES
+                                4.2M/month</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('capacityPlanningModal','Capacity plan approved and submitted to finance.','')">Approve
+                        Plan</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Support Ticket Detail -->
+    <div class="modal fade R" id="ticketDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-headset me-2"></i>Support Ticket — OP-44291</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Status</label><select class="FC">
+                            <option>In Progress</option>
+                            <option>Waiting Partner</option>
+                            <option>Resolved</option>
+                            <option>Escalated</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Assignee</label><select class="FC">
+                            <option>James K.</option>
+                            <option>Grace M.</option>
+                            <option>Michael N.</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Internal Notes</label><textarea class="FC"
+                            rows="4">Partner has been contacted. Awaiting response on their API endpoint change.</textarea>
+                    </div>
+                    <div class="mb-3"><label class="FL">SLA Remaining</label>
+                        <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:13px">2 hours
+                            remaining. Escalate if not resolved.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('ticketDetailModal','Ticket OP-44291 updated. Partner notified.','')">Save &
+                        Notify</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Escalation Modal -->
+    <div class="modal fade R" id="escalationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-up-circle me-2"></i>Escalate Ticket</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Ticket</label><select class="FC">
+                            <option>OP-44291 — Partner Integration</option>
+                            <option>OP-44288 — Settlement Dispute</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Escalate To</label><select class="FC">
+                            <option>Head of Operations</option>
+                            <option>CTO</option>
+                            <option>Partner Relationship Manager</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reason</label><textarea class="FC"
+                            rows="3">Partner not responding within SLA. Business impact increasing.</textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-d"
+                        onclick="doAction('escalationModal','Ticket escalated to Head of Operations. Urgent response requested.','')">Escalate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Audit Log -->
+    <div class="modal fade R" id="auditLogModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>System Audit Log</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-2 mb-3"><input class="FC" placeholder="Search logs..."
+                            style="max-width:300px"><select class="FC" style="width:auto">
+                            <option>Last 24 hours</option>
+                            <option>Last 7 days</option>
+                        </select></div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Actor</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:42</td>
+                                    <td>James K.</td>
+                                    <td>Incident Updated</td>
+                                    <td>INC-88219 status changed to Investigating</td>
+                                    <td>102.68.XX.XX</td>
+                                </tr>
+                                <tr>
+                                    <td>14:38</td>
+                                    <td>System</td>
+                                    <td>Health Check</td>
+                                    <td>Full platform check completed — 99.97% healthy</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>14:22</td>
+                                    <td>Grace M.</td>
+                                    <td>Fraud Rule Tuned</td>
+                                    <td>Velocity threshold changed from 5 to 6</td>
+                                    <td>102.68.XX.XX</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('caseExportModal')">Export Logs</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Live Transaction Feed -->
+    <div class="modal fade R" id="liveTransactionFeedModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-activity me-2"></i>Live Transaction Feed</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>ID</th>
+                                    <th>Corridor</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:42:18</td>
+                                    <td>KE-UG-4429218</td>
+                                    <td>Kenya → Uganda</td>
+                                    <td>KES 12,500</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>14:42:17</td>
+                                    <td>KE-TZ-4429217</td>
+                                    <td>Kenya → Tanzania</td>
+                                    <td>KES 45,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>14:42:15</td>
+                                    <td>UG-KE-4429216</td>
+                                    <td>Uganda → Kenya</td>
+                                    <td>KES 8,200</td>
+                                    <td><span class="B B-w">Failed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Failure Analysis -->
+    <div class="modal fade R" id="failureAnalysisModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-x-circle me-2"></i>Failure Analysis</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Time Range</label><select class="FC">
+                            <option>Last 60 minutes</option>
+                            <option>Last 24 hours</option>
+                            <option>Last 7 days</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#991B1B">Top Failure Reasons</div>
+                        <div class="mt-2" style="font-size:13px">1. Insufficient Funds (42%)<br>2. Invalid Account
+                            Number (18%)<br>3. Network Timeout (14%)<br>4. Fraud Block (9%)<br>5. Daily Limit Exceeded
+                            (7%)</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('fraudModelModal')">Investigate Fraud Blocks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Corridor Detail -->
+    <div class="modal fade R" id="corridorDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe me-2"></i>Corridor Performance — Kenya → Uganda</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">SUCCESS RATE</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-accent)">99.7%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#1D4ED8">AVG TIME</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-info)">1.8s</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3"><label class="FL">Top Failure Reasons</label>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">• Invalid
+                            beneficiary account (62%)<br>• Daily limit exceeded (21%)<br>• Network timeout (17%)</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Reconciliation Modal -->
+    <div class="modal fade R" id="reconciliationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check2-circle me-2"></i>Run Reconciliation</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Scope</label><select class="FC">
+                            <option>Full Platform (All Corridors)</option>
+                            <option>Kenya Only</option>
+                            <option>Uganda Only</option>
+                            <option>Tanzania Only</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Date Range</label><input type="date" class="FC"
+                            value="2025-06-27"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Reconciliation typically takes 8–15 minutes depending on
+                        volume.</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reconciliationModal','Reconciliation job started. Results will be available in 12 minutes.','REC-20250627-8821')">Start
+                        Reconciliation</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">MN</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Michael Njoroge</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">michael.n@paymo.co.ke · +254 700 123 456</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Head of Operations</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">On-call</span><br><strong>Active</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M24: SLA Report -->
+    <div class="modal fade R" id="slaReportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>SLA Performance Report</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">UPTIME SLA</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-accent)">99.97%</div>
+                                <div style="font-size:12px;color:#065F46">Target: 99.9%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#1D4ED8">INCIDENT RESPONSE</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-info)">4.2 min</div>
+                                <div style="font-size:12px;color:#1E40AF">Target: &lt;15 min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('slaReportModal','SLA report exported to finance team.','')">Export
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M25: Uptime History -->
+    <div class="modal fade R" id="uptimeHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Uptime History (30 Days)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Uptime</th>
+                                    <th>Incidents</th>
+                                    <th>MTTR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 2025</td>
+                                    <td>99.98%</td>
+                                    <td>2</td>
+                                    <td>12m</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 2025</td>
+                                    <td>100%</td>
+                                    <td>0</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 2025</td>
+                                    <td>99.71%</td>
+                                    <td>1</td>
+                                    <td>2h 14m</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M26: Ops Notifications -->
+    <div class="modal fade R" id="opsNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Operations Notifications (14)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Settlement batch S-88219 delayed</strong>
+                        <div style="font-size:11px;color:#7F1D1D">2h 14m behind SLA</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>API
+                            Gateway P99 latency breach</strong>
+                        <div style="font-size:11px;color:#92400E">420ms (SLA 300ms)</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Health
+                            check completed</strong>
+                        <div style="font-size:11px;color:#1E40AF">99.97% healthy</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('notifSettingsModal')">Settings</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M27: Service Detail -->
+    <div class="modal fade R" id="serviceDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-info-circle me-2"></i>Service Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Service</label><select class="FC">
+                            <option>Transaction Engine</option>
+                            <option>Settlement Engine</option>
+                            <option>API Gateway</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Healthy</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Uptime</span><strong>99.98%</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Last
+                                Incident</span><strong>12 Jun 2025</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M28: Corridor Performance Modal -->
+    <div class="modal fade R" id="corridorPerformanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe me-2"></i>Corridor Performance</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;color:var(--pm-ink-soft)">Detailed performance metrics for all corridors
+                        will be displayed here with charts and tables.</p>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M29: Case Export Modal -->
+    <div class="modal fade R" id="caseExportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Audit Logs</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>CSV</option>
+                            <option>JSON</option>
+                            <option>PDF</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Date Range</label><input type="date" class="FC"
+                            value="2025-06-01"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('caseExportModal','Audit logs exported successfully.','')">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M30: Notif Settings -->
+    <div class="modal fade R" id="notifSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Notification Preferences</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Email on critical incidents</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">SMS on high severity</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Daily summary report</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('notifSettingsModal','Notification preferences saved.','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const R = document.querySelectorAll('.R');
+        R.forEach(m => {
+            const b = m.querySelector('.modal-body');
+            const f = m.querySelector('.modal-footer');
+            if (b) m.dataset.ob = b.innerHTML;
+            if (f) m.dataset.of = f.innerHTML;
+            m.addEventListener('hidden.bs.modal', () => {
+                if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob;
+                if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of;
+                resetAllFlows();
+            });
+        });
+
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+
+        // Multi-step flows
+        const flows = { settle: { current: 1, total: 4, labels: ['Overview', 'Reconciliation', 'Resolution', 'Done'] }, inc: { current: 1, total: 4, labels: ['Summary', 'Timeline', 'Resolution', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { const modalBody = document.querySelector('#' + (key === 'settle' ? 'settlementDetailModal' : 'incidentDetailModal') + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(key === 'settle' ? 'settlementDetailModal' : 'incidentDetailModal'); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function resetAllFlows() { Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }
+
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); });
+    </script>
+</body>
+
+</html>

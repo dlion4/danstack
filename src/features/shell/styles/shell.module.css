@@ -83,6 +83,7 @@
   width: var(--sidebar-collapsed);
   background: var(--sh-surface);
   border-right: 1px solid var(--sh-border);
+  border-radius: 0 var(--sh-radius) var(--sh-radius) 0;
   z-index: 1040;
   display: flex;
   flex-direction: column;
@@ -352,6 +353,7 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--sh-border);
+  border-radius: 0 0 var(--sh-radius-sm) var(--sh-radius-sm);
   z-index: 1020;
   display: flex;
   align-items: center;
@@ -634,6 +636,8 @@
    MAIN CONTENT
    ============================================================ */
 .mainContent {
+  flex: 1;
+  min-width: 0;
   margin-left: var(--sidebar-collapsed);
   margin-top: var(--header-height);
   min-height: calc(100vh - var(--header-height));
@@ -670,6 +674,7 @@
   background: #fff;
   border-left: 1px solid var(--sh-border);
   box-shadow: -12px 0 50px rgba(18, 16, 32, 0.12);
+  border-radius: var(--sh-radius) 0 0 var(--sh-radius);
   z-index: 1050;
   transform: translateX(100%);
   transition: transform var(--transition-slow);

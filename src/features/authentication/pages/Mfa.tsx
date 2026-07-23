@@ -33,7 +33,9 @@ import type { CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+if (typeof document !== 'undefined') {
+  import('bootstrap/dist/js/bootstrap.bundle.min.js')
+}
 import styles from '../styles/mfa.module.css';
 
 /* --------------------------------------------------------------------------

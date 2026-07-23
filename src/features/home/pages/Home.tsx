@@ -29,7 +29,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // keeps modals/offcanvas/accordions alive
+// keeps modals/offcanvas/accordions alive — browser-only to avoid SSR `document` crash
+if (typeof document !== 'undefined') {
+  import('bootstrap/dist/js/bootstrap.bundle.min.js')
+}
 import styles from '../styles/homepage.module.css';
 
 import heroPhoneImg from '../../../../public/assets/hero-phone.jpg';
