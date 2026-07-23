@@ -1,0 +1,67 @@
+maintain all functionality, all modals and functional modals all multistep modals, maintain the theme the events the buttons should not be empty, no broken urls no empty sections        
+      
+make the ui responsive and when it resizes to mobile size the icons are visible not crabbed or squeezed up or color of fonts or icons don't crash      
+      
+You are an expert Frontend Engineer specializing in React, TypeScript, and TanStack Query.         
+        
+I have a single-file, 2000-line plus legacy web pages containing hardcoded HTML layout structure, Bootstrap utility classes, in-page CSS styles, and heavy vanilla JavaScript (which utilizes interactive Bootstrap JS modals/plugins, `innerHTML`, and direct DOM manipulation selectors like `document.getElementById`).        
+        
+I want to migrate this entire page into a clean, modern **Vite + React Single-File Component ( .tsx)** that utilizes **TanStack Query** for data fetching so that it is optimized and ready to connect to a backend API database.        
+        
+Please refactor my code according to the following strict architectural rules:        
+        
+1. FILE STRUCTURE REQUIREMENT        
+        
+* Combine the layout, styles, and logic into three single component files.        
+   split this into multiple files. 
+
+pagename/components
+
+pagename/page
+
+pagename/style
+
+        
+        
+ 2. TEMPLATE REFLECTION and  LAYOUT (TSX conversion)        
+        
+* Convert the 2000 lines of raw HTML into perfectly formatted React TSX.        
+        
+* Convert all instances of `class="..."` to `className="..."`.        
+        
+* Convert any inline styles `style="..."` to React object syntax `style={{...}}`.        
+        
+* Ensure EVERY single Bootstrap layout grid element, class name, and container remains perfectly intact so the visual UI does not break.        
+        
+3. BACKEND-READY DATA EXTRACTION (The Core Goal)        
+        
+* Identify any repeating blocks of hardcoded text, content, pricing, images, or cards.        
+        
+* Extract that hardcoded content completely out of the HTML template layout skeleton.        
+        
+* Place that extracted content into a clean JavaScript array of objects at the top of the file called `initialMockData`.        
+        
+* In the TSX layout, replace those repeated hardcoded blocks with a clean `.map()` loop that reads from the data array.        
+        
+       
+4. HANDLING VANILLA DOM MANIPULATION and ; BOOTSTRAP JS        
+        
+* Look closely at my custom vanilla JavaScript logic.         
+        
+* Do not delete it. Instead, bridge it safely using React hooks.        
+        
+* If the code uses heavy `innerHTML` modifications or manual DOM additions, wrap those sections cleanly inside a React `useRef` wrapper hook paired with a `useEffect` lifecycle hook so the DOM manipulation happens in an isolated sandbox without breaking the component lifecycle.        
+        
+---      
+  
+files are 3.1 to 3.6 html  are MY RAW HTML/CSS/JS SINGLE FILEs TO REFACTOR:        
+      src/features/utility-dashboard/BAAS Utility✅
+
+ styles are to long put in a separate         
+  name.module.css files    
+
+IN the same manner and deisgn the transfer-overview page from page 1.1.html  in the same maner the transaction-dahsboard  pages or responsiveness of the dashboard-cards pages has been structure, in cream theme design formart and the mobile resposinveness
+danstack\src\features\transaction-dashboard refer to like two pages of transfer manangement and lanother the style and the refactoring reposisnve ness and mainatna all functionality
+
+folder to build into is:
+src/features/utility-dashboard

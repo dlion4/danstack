@@ -1,0 +1,2884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Mobile Money & Airtime Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+            --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+            --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+            --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+            --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-xl: 28px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, 0.06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pm-pulse 2s infinite
+        }
+
+        @keyframes pm-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px);
+            border-color: var(--pm-primary-light)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .pm-card {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .pm-card:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-card-accent {
+            background: linear-gradient(135deg, #047857 0%, #0f766e 50%, #0369a1 100%);
+            color: #fff;
+            border: none
+        }
+
+        .pm-stat-value {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em
+        }
+
+        .pm-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .pm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .pm-badge-success {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .pm-badge-warning {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .pm-badge-danger {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .pm-badge-info {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .pm-badge-purple {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .pm-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink);
+            text-decoration: none
+        }
+
+        .pm-btn:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .pm-btn-primary {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .pm-btn-primary:hover {
+            background: var(--pm-primary-dark);
+            border-color: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .pm-btn-accent {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .pm-btn-accent:hover {
+            background: #059669;
+            border-color: #059669;
+            color: #fff
+        }
+
+        .pm-btn-danger {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .pm-btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .pm-progress {
+            height: 6px;
+            background: var(--pm-border);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .pm-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s
+        }
+
+        .pm-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .pm-divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .pm-section-title {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-section-sub {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        .pm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .pm-table th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .pm-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .pm-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .pm-table tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-mini-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px
+        }
+
+        .pm-mini-bar {
+            width: 14px;
+            border-radius: 3px 3px 0 0;
+            background: var(--pm-primary);
+            transition: height .3s
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-action-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .pm-form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .pm-form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-form-control:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .pm-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 90px
+        }
+
+        .pm-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .pm-step.active .pm-step-num {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .pm-step.completed .pm-step-num {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .pm-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .pm-step.active .pm-step-label {
+            color: var(--pm-primary)
+        }
+
+        .pm-step.completed .pm-step-label {
+            color: var(--pm-accent)
+        }
+
+        .pm-step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pm-tab-pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pm-tab-pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-tab-pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .pm-pin-input {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pm-pin-input input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-pin-input input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .pm-receipt .receipt-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .pm-amount-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .pm-amount-chip {
+            padding: 8px 16px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-pill);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-amount-chip:hover,
+        .pm-amount-chip.active {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .06);
+            color: var(--pm-primary)
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .feed-item:last-child {
+            border-bottom: none
+        }
+
+        .fade-step {
+            display: none
+        }
+
+        .fade-step.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .pm-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .pm-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 110px;
+            padding: 12px 0 18px
+        }
+
+        .chart-bar {
+            flex: 1;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            min-width: 18px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .chart-bar:hover {
+            opacity: .88
+        }
+
+        .chart-bar .bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--pm-muted)
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .status-row:last-child {
+            border-bottom: none
+        }
+
+        .utility-block {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .mpesa-card {
+            background: var(--pm-gradient-hero);
+            color: white;
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .mpesa-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-action-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .pm-stat-value {
+                font-size: 22px
+            }
+
+            .pm-step {
+                min-width: unset
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav">
+                <button class="pm-nav-item"><i class="bi bi-house"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-lightning-charge"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-droplet"></i></button>
+                <button class="pm-nav-item active"><i class="bi bi-phone"></i><span class="badge-dot"></span></button>
+                <button class="pm-nav-item"><i class="bi bi-bank"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+            </nav>
+            <button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Mobile Money & Airtime Hub</h1>
+                            <p>M-Pesa, Airtel Money, Fuliza, M-Shwari, Airtime & Data Bundles</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search numbers, agents, Pochi la Biashara, Fuliza...">
+                </div>
+                <div class="pm-header-actions">
+                    <button class="pm-header-btn" onclick="openModal('mobileMoneyAnalyticsModal')"><i
+                            class="bi bi-bar-chart-line"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('notificationsModal')"><i
+                            class="bi bi-bell"></i><span class="counter">4</span></button>
+                    <div class="pm-profile-btn" onclick="openModal('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">+254 712 ***890</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Utilities Hub</a> / <strong>Mobile
+                            Money & Airtime</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        2.6 — Mobile Money & Airtime Hub</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Unified management for your Safaricom,
+                        Airtel, and Telkom lines. Deep integration with M-Pesa ecosystem, interoperability transfers,
+                        and smart data bundles.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px">
+                    <button class="pm-btn" onclick="openModal('agentLocatorModal')"><i class="bi bi-geo-alt"></i> Find
+                        Agent</button>
+                    <button class="pm-btn" onclick="openModal('addPhoneNumberModal')"><i class="bi bi-sim"></i> Link
+                        Line</button>
+                    <button class="pm-btn" onclick="openModal('buyAirtimeModal')"><i class="bi bi-phone"></i> Buy
+                        Airtime</button>
+                    <button class="pm-btn-primary pm-btn" onclick="openModal('sendMoneyCrossNetworkModal')"><i
+                            class="bi bi-send"></i> Send Money</button>
+                </div>
+            </div>
+            <div class="pm-content">
+
+                <!-- HERO STATS ROW -->
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card mpesa-card" style="min-height:160px;background:var(--pm-gradient-accent)">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <p class="pm-stat-label" style="color:rgba(255,255,255,0.8)">M-PESA WALLET BALANCE</p>
+                                <i class="bi bi-shield-check" style="color:#A7F3D0"></i>
+                            </div>
+                            <div class="pm-stat-value" style="margin:6px 0;color:#fff">KES 48,250</div>
+                            <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:16px">
+                                <div>Total Received Today: <strong>KES 12,400</strong></div>
+                                <div>Total Sent Today: <strong>KES 3,200</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px">
+                            <p class="pm-stat-label" style="color:var(--pm-accent)">TOTAL AIRTIME (ALL NETWORKS)</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 1,480</div>
+                            <span class="pm-badge pm-badge-success"><i class="bi bi-sim"></i> 3 Lines Linked</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div class="d-flex justify-content-between"><span>Safaricom</span><strong>KES
+                                        1,200</strong></div>
+                                <div class="d-flex justify-content-between"><span>Airtel</span><strong>KES 250</strong>
+                                </div>
+                                <div class="d-flex justify-content-between"><span>Telkom</span><strong>KES 30</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px">
+                            <p class="pm-stat-label" style="color:var(--pm-info)">ACTIVE DATA BUNDLES</p>
+                            <div class="pm-stat-value" style="margin:6px 0">14.2 GB</div>
+                            <span class="pm-badge pm-badge-warning"><i class="bi bi-clock"></i> 2.5 GB expiring in 2
+                                days</span>
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between mb-1"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Monthly Usage</span><span>14.2 /
+                                        20 GB</span></div>
+                                <div class="pm-progress">
+                                    <div class="pm-progress-bar" style="width:71%;background:var(--pm-info)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-purple)">
+                            <p class="pm-stat-label" style="color:var(--pm-purple)">FULIZA LIMIT AVAILABLE</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 14,000</div>
+                            <span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-circle"></i> KES 6,000
+                                Used</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Total Limit: <strong>KES 20,000</strong></div>
+                                <div>Daily Fee Accruing: <strong>KES 14.00</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS ROW -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Attention Required</h3><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('attentionDetailModal')">View all</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">FZ
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Fuliza outstanding balance</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 6,000 utilized · Day 4 of 30
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                                    onclick="openModal('fulizaManagementModal')">Repay</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">DT
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Data bundle expiring soon</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">2.5GB Safaricom expires in 48 hrs
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('buyDataModal')">Renew</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">MS</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">M-Shwari savings goal off-track</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Deposit KES 2,000 to meet June
+                                        target</div>
+                                </div><button class="pm-btn pm-btn-sm" onclick="openModal('mShwariModal')">Save</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">BP
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">4,200 Bonga Points available</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Redeem for 500 Minutes or Data
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('bongaPointsModal')">Redeem</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Smart Suggestions</h3><span
+                                    class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">TN
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Tunukiwa Offer Available Now!</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">1GB for 1 hour @ KES 20 (Save 80%)
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('tunukiwaOffersModal')">Claim</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">AR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Enable auto-renew for 12GB plan</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Avoid running out of data
+                                        mid-meeting</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('airtimeAutoRenewModal')">Setup</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">IO</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Send to Airtel for free via PayMo</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Save KES 50 on interoperability
+                                        fees</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('sendMoneyCrossNetworkModal')">Send</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-primary-light);color:#fff;font-size:12px">MI</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Move idle funds to Mali</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Earn 9% p.a. daily interest on KES
+                                        20,000</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('maliInvestmentModal')">Invest</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="mb-3">
+                                <h3 class="pm-section-title">Mobile Money Actions</h3>
+                                <p class="pm-section-sub">Frequent transfers and airtime operations</p>
+                            </div>
+                            <div class="quick-action-grid">
+                                <button class="quick-action-btn" onclick="openModal('buyAirtimeModal')"><i
+                                        class="bi bi-phone text-success me-1"></i> Buy Airtime</button>
+                                <button class="quick-action-btn" onclick="openModal('buyDataModal')"><i
+                                        class="bi bi-wifi text-primary me-1"></i> Buy Data</button>
+                                <button class="quick-action-btn" onclick="openModal('sendMoneyCrossNetworkModal')"><i
+                                        class="bi bi-send text-info me-1"></i> Send Money</button>
+                                <button class="quick-action-btn" onclick="openModal('kcbMpesaModal')"><i
+                                        class="bi bi-bank text-warning me-1"></i> KCB M-Pesa</button>
+                                <button class="quick-action-btn" onclick="openModal('pochiLaBiasharaModal')"><i
+                                        class="bi bi-briefcase me-1" style="color:var(--pm-purple)"></i> Pochi</button>
+                                <button class="quick-action-btn" onclick="openModal('mPesaGlobalModal')"><i
+                                        class="bi bi-globe text-secondary me-1"></i> Global Tx</button>
+                                <button class="quick-action-btn" onclick="openModal('airtimeResaleModal')"><i
+                                        class="bi bi-shop text-danger me-1"></i> Airtime Resale</button>
+                                <button class="quick-action-btn" onclick="openModal('agentLocatorModal')"><i
+                                        class="bi bi-geo-alt me-1" style="color:var(--pm-primary)"></i> Find
+                                    Agent</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-sim" style="color:var(--pm-accent)"></i> 2.6.1
+                                — Airtime & Data Management</h3>
+                            <p class="pm-section-sub">Unified dashboard for Safaricom, Airtel, and Telkom balances,
+                                bundle status, and auto-renewals.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('airtimeAutoRenewModal')"><i class="bi bi-arrow-repeat"></i>
+                                Auto-Renew</button><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('addPhoneNumberModal')"><i class="bi bi-plus-lg"></i> Link
+                                Line</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Phone Number</th>
+                                    <th>Network</th>
+                                    <th>Airtime Balance</th>
+                                    <th>Active Data</th>
+                                    <th>Voice/SMS</th>
+                                    <th>Auto-Renew</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>0712 345 890</strong> <span class="pm-badge ms-1"
+                                            style="background:var(--pm-surface-2)">Default</span></td>
+                                    <td><span style="color:#047857;font-weight:600">Safaricom</span></td>
+                                    <td>KES 1,200.00</td>
+                                    <td>11.7 GB (30 Days)</td>
+                                    <td>500 Min, 1000 SMS</td>
+                                    <td><span class="pm-badge pm-badge-success">On (12GB)</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('buyDataModal')">Top-up</button><button
+                                                class="pm-btn pm-btn-sm" onclick="openModal('manageLinkedLineModal')"><i
+                                                    class="bi bi-gear"></i></button></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>0733 987 456</strong></td>
+                                    <td><span style="color:#DC2626;font-weight:600">Airtel</span></td>
+                                    <td>KES 250.00</td>
+                                    <td>2.5 GB (Exp. 2 Days)</td>
+                                    <td>100 Min</td>
+                                    <td><span class="pm-badge pm-badge-info">Alert Only</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('buyDataModal')">Top-up</button><button
+                                                class="pm-btn pm-btn-sm" onclick="openModal('manageLinkedLineModal')"><i
+                                                    class="bi bi-gear"></i></button></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>0777 112 233</strong></td>
+                                    <td><span style="color:#3B82F6;font-weight:600">Telkom</span></td>
+                                    <td>KES 30.00</td>
+                                    <td>0 MB</td>
+                                    <td>0 Min</td>
+                                    <td><span class="pm-badge"
+                                            style="background:#f3f4f6;color:var(--pm-muted)">Off</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('buyAirtimeModal')">Top-up</button><button
+                                                class="pm-btn pm-btn-sm" onclick="openModal('manageLinkedLineModal')"><i
+                                                    class="bi bi-gear"></i></button></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-shuffle" style="color:var(--pm-info)"></i>
+                                2.6.2 — Mobile Money Interoperability & Agents</h3>
+                            <p class="pm-section-sub">Cross-network transfers, transparent fee calculator, and nearby
+                                agent locator with GPS.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('linkBankAccountModal')"><i class="bi bi-bank"></i> Link
+                                Bank</button><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('sendMoneyCrossNetworkModal')"><i class="bi bi-send"></i> Send
+                                Money</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Interoperability Transfer
+                                    Network</h4>
+                                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="pm-icon-circle"
+                                            style="background:var(--pm-accent-soft);color:#047857"><i
+                                                class="bi bi-phone"></i></div>
+                                        <div><strong>M-Pesa to Airtel Money</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">Real-time · Up to KES 250K
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div><span class="pm-badge pm-badge-success">0% PayMo Fee</span></div>
+                                </div>
+                                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="pm-icon-circle"
+                                            style="background:var(--pm-info-soft);color:#1D4ED8"><i
+                                                class="bi bi-phone"></i></div>
+                                        <div><strong>M-Pesa to T-Kash</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">Real-time · Up to KES 250K
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div><span class="pm-badge pm-badge-success">0% PayMo Fee</span></div>
+                                </div>
+                                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="pm-icon-circle"
+                                            style="background:var(--pm-warning-soft);color:#B45309"><i
+                                                class="bi bi-bank"></i></div>
+                                        <div><strong>Mobile to PesaLink (Bank)</strong>
+                                            <div style="font-size:11px;color:var(--pm-muted)">Real-time to 50+ banks
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div><span class="pm-badge pm-badge-warning">Standard Bank Fees</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Nearby Agents Locator</h4>
+                                <div class="p-3 rounded mb-3"
+                                    style="background:var(--pm-surface);border:1px dashed var(--pm-border);text-align:center">
+                                    <i class="bi bi-map text-muted" style="font-size:32px"></i>
+                                    <div style="font-weight:600;margin-top:8px">Location Access Required</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Enable GPS to see agents near you.
+                                    </div>
+                                    <button class="pm-btn pm-btn-sm mt-2" onclick="openModal('agentLocatorModal')">Open
+                                        Map View</button>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                                    <span><strong>Kencom Agency (M-Pesa)</strong></span><span>120m away</span></div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                                    <span><strong>Airtel Shop Westlands</strong></span><span>350m away</span></div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                                    <span><strong>Equity Agent (Tuskys)</strong></span><span>400m away</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-shield-check"
+                                    style="color:var(--pm-purple)"></i> 2.6.3 — M-Pesa Deep Integration Suite</h3>
+                            <p class="pm-section-sub">Manage your Fuliza limit, M-Shwari savings, Mali investments,
+                                Pochi la Biashara and Global transfers directly.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('mobileMoneyAnalyticsModal')"><i class="bi bi-graph-up"></i> M-Pesa
+                                Analytics</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i
+                                        class="bi bi-arrow-repeat"></i></div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">Fuliza Management</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">Overdraft limit &
+                                    repayment</p>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-danger)">-KES 6,000</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Limit: KES 20,000</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3 pm-btn-danger"
+                                    onclick="openModal('fulizaManagementModal')">Repay & Manage</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info)"><i
+                                        class="bi bi-piggy-bank"></i></div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">M-Shwari</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">Savings & Loan status
+                                </p>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-info)">KES 12,450</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Loan Limit: KES 8,000</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('mShwariModal')">Save or
+                                    Borrow</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i
+                                        class="bi bi-briefcase"></i></div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">Pochi La Biashara</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">Business wallet
+                                    separation</p>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-accent)">KES 45,900</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Received today: KES 8,500</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3 pm-btn-accent"
+                                    onclick="openModal('pochiLaBiasharaModal')">View Pochi</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i
+                                        class="bi bi-bank"></i></div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">KCB M-Pesa</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">Bank account
+                                    integration</p>
+                                <div style="font-size:20px;font-weight:700">KES 0.00</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Target Savings: Active</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('kcbMpesaModal')">Open
+                                    Account</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-primary-light);color:#fff"><i
+                                        class="bi bi-graph-up-arrow"></i></div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">Mali Investment</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">Unit trust / Money
+                                    market</p>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-primary)">KES 102,500</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Earned YTD: KES 4,120 (9.2% p.a)</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3"
+                                    onclick="openModal('maliInvestmentModal')">Invest More</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="utility-block text-center position-relative">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-gradient-slate);color:#fff"><i class="bi bi-globe"></i>
+                                </div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0">M-Pesa Global</h4>
+                                <p style="font-size:11px;color:var(--pm-muted);margin:4px 0 12px">International
+                                    remittance</p>
+                                <div style="font-size:20px;font-weight:700">3 Transfers</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">This month to UG/TZ</div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('mPesaGlobalModal')">Send
+                                    Global</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="pm-section-title"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i>
+                            Recent Mobile Money & Airtime Transactions</h3><button class="pm-btn pm-btn-sm"
+                            onclick="openModal('transactionHistoryModal')">View All</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Details</th>
+                                    <th>Amount</th>
+                                    <th>Network/Wallet</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 2025</td>
+                                    <td>Send Money</td>
+                                    <td>To: John Doe (Airtel)</td>
+                                    <td><strong style="color:var(--pm-danger)">-KES 1,500</strong></td>
+                                    <td>M-Pesa</td>
+                                    <td><span class="pm-badge pm-badge-success">Completed</span></td>
+                                    <td><button class="pm-btn pm-btn-sm" onclick="openModal('receiptModal')"><i
+                                                class="bi bi-receipt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 2025</td>
+                                    <td>Buy Data</td>
+                                    <td>12GB Monthly Bundle</td>
+                                    <td><strong style="color:var(--pm-danger)">-KES 1,000</strong></td>
+                                    <td>Safaricom</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td><button class="pm-btn pm-btn-sm" onclick="openModal('receiptModal')"><i
+                                                class="bi bi-receipt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 2025</td>
+                                    <td>Pochi Payment</td>
+                                    <td>From: Jane Smith</td>
+                                    <td><strong style="color:var(--pm-accent)">+KES 4,500</strong></td>
+                                    <td>M-Pesa Pochi</td>
+                                    <td><span class="pm-badge pm-badge-success">Received</span></td>
+                                    <td><button class="pm-btn pm-btn-sm" onclick="openModal('receiptModal')"><i
+                                                class="bi bi-receipt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 2025</td>
+                                    <td>Fuliza Repay</td>
+                                    <td>Auto-deduction</td>
+                                    <td><strong style="color:var(--pm-danger)">-KES 500</strong></td>
+                                    <td>M-Pesa</td>
+                                    <td><span class="pm-badge pm-badge-success">Cleared</span></td>
+                                    <td><button class="pm-btn pm-btn-sm" onclick="openModal('receiptModal')"><i
+                                                class="bi bi-receipt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>24 Jun 2025</td>
+                                    <td>Buy Airtime</td>
+                                    <td>For 0733***456</td>
+                                    <td><strong style="color:var(--pm-danger)">-KES 250</strong></td>
+                                    <td>Airtel</td>
+                                    <td><span class="pm-badge pm-badge-success">Completed</span></td>
+                                    <td><button class="pm-btn pm-btn-sm" onclick="openModal('receiptModal')"><i
+                                                class="bi bi-receipt"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 25+ MODALS FOR COMPREHENSIVE FUNCTIONALITY -->
+    <!-- ============================================================ -->
+
+    <!-- 1. Buy Airtime Modal -->
+    <div class="modal fade resettable" id="buyAirtimeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-phone text-success me-2"></i>Buy Airtime</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stepper" id="airtimeStepper"></div>
+                    <div id="airtimeStep1" class="fade-step active">
+                        <h6 style="font-weight:700">Step 1: Details</h6>
+                        <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active">My Number</button><button
+                                class="pm-tab-pill">Other Number</button></div>
+                        <div class="mb-3"><label class="pm-form-label">Phone Number</label><select
+                                class="pm-form-control">
+                                <option>0712 345 890 (Safaricom)</option>
+                                <option>0733 987 456 (Airtel)</option>
+                                <option>0777 112 233 (Telkom)</option>
+                            </select></div><label class="pm-form-label">Quick Amount</label>
+                        <div class="pm-amount-chips mb-3"><span class="pm-amount-chip"
+                                onclick="pickChip(this,'airAmt','50')">50</span><span class="pm-amount-chip"
+                                onclick="pickChip(this,'airAmt','100')">100</span><span class="pm-amount-chip active"
+                                onclick="pickChip(this,'airAmt','250')">250</span><span class="pm-amount-chip"
+                                onclick="pickChip(this,'airAmt','500')">500</span><span class="pm-amount-chip"
+                                onclick="pickChip(this,'airAmt','1000')">1,000</span></div><input id="airAmt"
+                            type="number" class="pm-form-control" value="250" placeholder="Custom amount">
+                    </div>
+                    <div id="airtimeStep2" class="fade-step">
+                        <h6 style="font-weight:700">Step 2: Pay</h6>
+                        <div class="mb-3"><label class="pm-form-label">Payment Method</label>
+                            <div class="p-3 border rounded mb-2 d-flex gap-3 align-items-center"
+                                style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)"
+                                onclick="selectRadioCard(this)"><input type="radio" checked name="airpay"><i
+                                    class="bi bi-wallet2 text-primary" style="font-size:20px"></i>
+                                <div><strong>M-Pesa Wallet</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">KES 48,250 available</div>
+                                </div>
+                            </div>
+                            <div class="p-3 border rounded d-flex gap-3 align-items-center"
+                                onclick="selectRadioCard(this)"><input type="radio" name="airpay"><i
+                                    class="bi bi-bank text-info" style="font-size:20px"></i>
+                                <div><strong>Equity Bank</strong>
+                                    <div style="font-size:11px;color:var(--pm-muted)">***4521</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-1"><span>Amount</span><strong>KES 250</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1"><span>Fee</span><strong>KES 0</strong>
+                            </div>
+                            <hr class="pm-divider">
+                            <div class="d-flex justify-content-between"><span
+                                    style="font-weight:700">Total</span><strong
+                                    style="color:var(--pm-primary);font-size:18px">KES 250</strong></div>
+                        </div>
+                    </div>
+                    <div id="airtimeStep3" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Airtime Purchased!</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 250 added to 0712 345 890.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary" id="airtimeNextBtn" onclick="nextFlowStep('airtime',3)">Continue
+                        <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Buy Data Modal -->
+    <div class="modal fade resettable" id="buyDataModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-wifi text-primary me-2"></i>Buy Data Bundles</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('dataNet','saf',this)">Safaricom</button><button class="pm-tab-pill"
+                            onclick="switchTab('dataNet','air',this)">Airtel</button><button class="pm-tab-pill"
+                            onclick="switchTab('dataNet','tk',this)">Telkom</button></div>
+                    <div class="mb-3"><label class="pm-form-label">Phone Number</label><input type="text"
+                            class="pm-form-control" value="0712 345 890"></div>
+                    <div id="dataNet-saf" class="tab-panel active"><label class="pm-form-label">Select Bundle</label>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><strong>1.2GB</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">24 Hrs</span><br>KES 99</div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><strong>2.5GB</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">7 Days</span><br>KES 300</div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center"
+                                    style="cursor:pointer;border-color:var(--pm-primary);background:rgba(79,70,229,.04)"
+                                    onclick="selectBox(this)"><strong>12GB</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">30 Days</span><br>KES 1,000</div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><strong>25GB</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">30 Days</span><br>KES 2,000</div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><strong>No Expiry</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">1GB</span><br>KES 100</div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="p-3 border rounded text-center" style="cursor:pointer"
+                                    onclick="selectBox(this)"><strong>All in One</strong><br><span
+                                        style="font-size:11px;color:var(--pm-muted)">15GB+Min</span><br>KES 2,000</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dataNet-air" class="tab-panel">
+                        <p class="text-muted" style="font-size:13px">Airtel Amazing Data offers will load here.</p>
+                    </div>
+                    <div id="dataNet-tk" class="tab-panel">
+                        <p class="text-muted" style="font-size:13px">Telkom Freedom Data offers will load here.</p>
+                    </div>
+                    <div class="form-check mb-3"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Buy once (do not auto-renew)</label></div>
+                    <div class="mb-3"><label class="pm-form-label">Pay Using</label><select class="pm-form-control">
+                            <option>M-Pesa (Direct)</option>
+                            <option>Airtime Balance (KES 1,200)</option>
+                            <option>Bonga Points (4,200 pts)</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('buyDataModal','12GB Data Bundle Purchased Successfully!','BND-20250627-01')">Buy
+                        Bundle KES 1,000</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Send Money Cross Network -->
+    <div class="modal fade resettable" id="sendMoneyCrossNetworkModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-send text-info me-2"></i>Send Money Across Networks</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stepper" id="xnetStepper"></div>
+                    <div id="xnetStep1" class="fade-step active">
+                        <h6 style="font-weight:700">Step 1: Recipient</h6>
+                        <div class="mb-3"><label class="pm-form-label">Recipient Number</label><input type="text"
+                                class="pm-form-control" placeholder="07XX XXX XXX"></div>
+                        <div class="mb-3"><label class="pm-form-label">Destination Network</label><select
+                                class="pm-form-control">
+                                <option>Airtel Money</option>
+                                <option>T-Kash</option>
+                                <option>M-Pesa</option>
+                            </select></div>
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px"><i
+                                class="bi bi-info-circle me-1"></i> Send to Airtel Money or T-Kash easily. Name
+                            verification will appear on the next step.</div>
+                    </div>
+                    <div id="xnetStep2" class="fade-step">
+                        <h6 style="font-weight:700">Step 2: Amount & Verify</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-1"><span class="text-muted">Sending
+                                    to</span><strong>John Doe</strong></div>
+                            <div class="d-flex justify-content-between"><span
+                                    class="text-muted">Network</span><strong>Airtel Money</strong></div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                                class="pm-form-control" value="1500"></div>
+                        <div class="p-3 border rounded">
+                            <div class="d-flex justify-content-between mb-1"><span>Amount</span><strong>KES
+                                    1,500</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>Network Fee</span><strong>KES
+                                    22</strong></div>
+                            <hr class="pm-divider">
+                            <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                    Deducted</span><strong style="color:var(--pm-primary)">KES 1,522</strong></div>
+                        </div>
+                    </div>
+                    <div id="xnetStep3" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Money Sent!</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 1,500 successfully sent to John Doe
+                                (Airtel).</p>
+                            <div style="font-size:11px;color:var(--pm-muted)">Ref: XNET-PM-20250627</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary" id="xnetNextBtn" onclick="nextFlowStep('xnet',3)">Verify <i
+                            class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Agent Locator -->
+    <div class="modal fade resettable" id="agentLocatorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-geo-alt text-primary me-2"></i>Find Nearby Mobile Money
+                        Agents</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('agentView','list',this)">List View</button><button class="pm-tab-pill"
+                            onclick="switchTab('agentView','map',this)">Map View</button></div>
+                    <div class="mb-3 d-flex gap-2"><select class="pm-form-control" style="width:auto">
+                            <option>All Networks</option>
+                            <option>M-Pesa Only</option>
+                            <option>Airtel Money Only</option>
+                        </select><input type="text" class="pm-form-control" placeholder="Search area (e.g. Westlands)">
+                    </div>
+                    <div id="agentView-list" class="tab-panel active">
+                        <div class="status-row">
+                            <div><strong>Kencom Agency</strong> <span class="pm-badge pm-badge-success">M-Pesa</span>
+                                <div style="font-size:11px;color:var(--pm-muted)">Cash-in / Cash-out · 4.8 ⭐ (120
+                                    reviews)</div>
+                            </div>
+                            <div class="text-end">
+                                <div style="font-weight:700">120m</div><button
+                                    class="pm-btn pm-btn-sm mt-1">Directions</button>
+                            </div>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Westlands Comm.</strong> <span
+                                    class="pm-badge pm-badge-danger">Airtel</span><span
+                                    class="pm-badge pm-badge-success ms-1">M-Pesa</span>
+                                <div style="font-size:11px;color:var(--pm-muted)">Super Agent · 4.5 ⭐ (85 reviews)</div>
+                            </div>
+                            <div class="text-end">
+                                <div style="font-weight:700">350m</div><button
+                                    class="pm-btn pm-btn-sm mt-1">Directions</button>
+                            </div>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Tuskys Kiosk</strong> <span class="pm-badge pm-badge-info">T-Kash</span>
+                                <div style="font-size:11px;color:var(--pm-muted)">Cash-in only · 4.0 ⭐ (22 reviews)
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div style="font-weight:700">400m</div><button
+                                    class="pm-btn pm-btn-sm mt-1">Directions</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agentView-map" class="tab-panel">
+                        <div
+                            style="height:300px;background:#E5E7EB;border-radius:var(--pm-r-md);display:flex;align-items:center;justify-content:center;color:var(--pm-muted);font-weight:600">
+                            <i class="bi bi-map me-2" style="font-size:24px"></i> Interactive Map Rendering...</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Fuliza Management -->
+    <div class="modal fade resettable" id="fulizaManagementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-danger me-2"></i>Fuliza M-Pesa Management
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div style="font-size:11px;font-weight:700;color:var(--pm-muted);letter-spacing:1px">AVAILABLE
+                            LIMIT</div>
+                        <div
+                            style="font-size:36px;font-weight:800;color:var(--pm-danger);font-family:var(--pm-font-display);line-height:1">
+                            KES 14,000</div>
+                        <div style="font-size:13px;color:var(--pm-ink-soft);margin-top:8px">Total Limit: <strong>KES
+                                20,000</strong></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Utilized: KES
+                                6,000</span><span>30%</span></div>
+                        <div class="pm-progress" style="height:10px;border-radius:5px">
+                            <div class="pm-progress-bar" style="width:30%;background:var(--pm-danger)"></div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft)">
+                        <div class="d-flex justify-content-between mb-1"><span
+                                style="color:#991B1B;font-size:13px">Outstanding Balance</span><strong
+                                style="color:var(--pm-danger)">KES 6,000</strong></div>
+                        <div class="d-flex justify-content-between mb-1"><span
+                                style="color:#991B1B;font-size:13px">Accrued Fees (4 days)</span><strong
+                                style="color:var(--pm-danger)">KES 56.00</strong></div>
+                        <div class="d-flex justify-content-between"><span style="color:#991B1B;font-size:13px">Total
+                                Due</span><strong style="color:var(--pm-danger);font-size:16px">KES 6,056.00</strong>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Repay Amount</label><input type="number"
+                            class="pm-form-control" value="6056"></div>
+                    <div class="mb-3"><label class="pm-form-label">Source</label><select class="pm-form-control">
+                            <option>PayMo Wallet</option>
+                            <option>Bank (Equity)</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-danger"
+                        onclick="processAction('fulizaManagementModal','Fuliza balance fully repaid! Limit restored to KES 20,000.','FUL-20250627')">Repay
+                        KES 6,056</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. M-Shwari -->
+    <div class="modal fade resettable" id="mShwariModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-piggy-bank text-info me-2"></i>M-Shwari Services</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('mshwariTab','save',this)">Save</button><button class="pm-tab-pill"
+                            onclick="switchTab('mshwariTab','loan',this)">Loan</button><button class="pm-tab-pill"
+                            onclick="switchTab('mshwariTab','lock',this)">Lock Savings</button></div>
+                    <div id="mshwariTab-save" class="tab-panel active">
+                        <div class="p-3 rounded mb-3 text-center" style="background:var(--pm-info-soft)">
+                            <div style="font-size:11px;font-weight:700;color:#1E40AF">SAVINGS BALANCE</div>
+                            <div style="font-size:28px;font-weight:700;color:var(--pm-info)">KES 12,450</div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Action</label><select class="pm-form-control">
+                                <option>Deposit to M-Shwari</option>
+                                <option>Withdraw to M-Pesa</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                                class="pm-form-control" value="2000"></div><button class="pm-btn pm-btn-primary w-100"
+                            onclick="processAction('mShwariModal','Successfully deposited KES 2,000 to M-Shwari Savings.','')">Process
+                            Deposit</button>
+                    </div>
+                    <div id="mshwariTab-loan" class="tab-panel">
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);text-align:center">
+                            <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">LOAN LIMIT</div>
+                            <div style="font-size:28px;font-weight:700">KES 8,000</div>
+                        </div>
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">No active loan. You can borrow up to your
+                            limit at a facility fee of 9% for 30 days.</p>
+                        <div class="mb-3"><label class="pm-form-label">Request Loan Amount</label><input type="number"
+                                class="pm-form-control" placeholder="Max 8,000"></div><button
+                            class="pm-btn pm-btn-primary w-100"
+                            onclick="processAction('mShwariModal','Loan request of KES 5,000 approved and disbursed to M-Pesa.','')">Request
+                            Loan</button>
+                    </div>
+                    <div id="mshwariTab-lock" class="tab-panel">
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Lock your savings to earn higher interest (up
+                            to 6% p.a.) and prevent early withdrawal.</p>
+                        <div class="mb-3"><label class="pm-form-label">Amount to Lock</label><input type="number"
+                                class="pm-form-control" value="5000"></div>
+                        <div class="mb-3"><label class="pm-form-label">Duration</label><select class="pm-form-control">
+                                <option>1 Month</option>
+                                <option>3 Months</option>
+                                <option>6 Months</option>
+                            </select></div><button class="pm-btn pm-btn-primary w-100"
+                            onclick="processAction('mShwariModal','KES 5,000 successfully locked for 3 months.','')">Lock
+                            Savings</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Pochi La Biashara -->
+    <div class="modal fade resettable" id="pochiLaBiasharaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-briefcase me-2" style="color:var(--pm-purple)"></i>Pochi La
+                        Biashara</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#6D28D9">POCHI BALANCE</div>
+                                <div style="font-size:28px;font-weight:700;color:var(--pm-purple)">KES 45,900</div>
+                                <button class="pm-btn pm-btn-sm mt-2"
+                                    onclick="processAction('pochiLaBiasharaModal','Funds withdrawn from Pochi to Main M-Pesa account successfully.','')">Withdraw
+                                    to Main</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background:var(--pm-surface-2)">
+                                <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">QUICK STATS</div>
+                                <div class="mt-2 d-flex justify-content-between"><span>Received Today</span><strong
+                                        style="color:var(--pm-accent)">KES 8,500</strong></div>
+                                <div class="mt-2 d-flex justify-content-between"><span>Txn Count</span><strong>12
+                                        Payments</strong></div>
+                                <div class="mt-2 d-flex justify-content-between"><span>Opt-in Status</span><span
+                                        class="pm-badge pm-badge-success">Active</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 style="font-weight:700">Recent Pochi Transactions</h6>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:30</td>
+                                    <td>0711***222</td>
+                                    <td>+KES 1,200</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>12:15</td>
+                                    <td>0722***444</td>
+                                    <td>+KES 500</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:05</td>
+                                    <td>0799***888</td>
+                                    <td>+KES 6,800</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('exportStatementModal')">Export
+                        Statement</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. M-Pesa Global -->
+    <div class="modal fade resettable" id="mPesaGlobalModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-globe me-2 text-secondary"></i>M-Pesa Global Transfers</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stepper" id="globalStepper"></div>
+                    <div id="globalStep1" class="fade-step active">
+                        <h6 style="font-weight:700">Step 1: Destination</h6>
+                        <div class="mb-3"><label class="pm-form-label">Send To</label><select class="pm-form-control">
+                                <option>Mobile Number (East Africa)</option>
+                                <option>Bank Account (Global)</option>
+                                <option>Western Union Location</option>
+                                <option>PayPal</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">Country</label><select class="pm-form-control">
+                                <option>Uganda (MTN / Airtel)</option>
+                                <option>Tanzania (Vodacom / Airtel)</option>
+                                <option>Rwanda (MTN)</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">Recipient Number</label><input type="text"
+                                class="pm-form-control" placeholder="+256 7XX XXX XXX"></div>
+                    </div>
+                    <div id="globalStep2" class="fade-step">
+                        <h6 style="font-weight:700">Step 2: Amount</h6>
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                                class="pm-form-control" value="5000"></div>
+                        <div class="p-3 border rounded mb-3">
+                            <div class="d-flex justify-content-between mb-1"><span class="text-muted">Exchange
+                                    Rate</span><strong>1 KES = 28.5 UGX</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="text-muted">Recipient
+                                    gets</span><strong style="color:var(--pm-accent)">142,500 UGX</strong></div>
+                            <div class="d-flex justify-content-between"><span class="text-muted">Transfer
+                                    Fee</span><strong>KES 100</strong></div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Source of Funds</label><select
+                                class="pm-form-control">
+                                <option>M-Pesa</option>
+                                <option>PayMo Wallet</option>
+                            </select></div>
+                    </div>
+                    <div id="globalStep3" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Global Transfer Sent</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">142,500 UGX sent successfully to +256 7XX
+                                XXX XXX.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary" id="globalNextBtn" onclick="nextFlowStep('global',3)">Next <i
+                            class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Airtime Auto-Renew -->
+    <div class="modal fade resettable" id="airtimeAutoRenewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-success me-2"></i>Auto-Renew Rules</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Select Line</label><select class="pm-form-control">
+                            <option>0712 345 890 (Safaricom)</option>
+                            <option>0733 987 456 (Airtel)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Type</label><select class="pm-form-control">
+                            <option>Data Bundle</option>
+                            <option>Airtime Top-up</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Bundle/Amount</label><select class="pm-form-control">
+                            <option>12GB Monthly (KES 1,000)</option>
+                            <option>25GB Monthly (KES 2,000)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Trigger Rule</label><select class="pm-form-control">
+                            <option>When bundle expires (time)</option>
+                            <option>When data drops below 500MB</option>
+                            <option>Specific date (e.g. 1st of month)</option>
+                        </select></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Charge from PayMo Wallet first, fallback
+                                to M-Pesa</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('airtimeAutoRenewModal','Auto-renew rule created successfully!','')">Save
+                        Rule</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Tunukiwa Offers -->
+    <div class="modal fade resettable" id="tunukiwaOffersModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-stars text-accent me-2"></i>Special Offers (Tunukiwa)</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;color:var(--pm-ink-soft)">Personalized offers valid for a limited time for
+                        0712 345 890.</p>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent)">
+                                <i class="bi bi-wifi"></i></div>
+                            <div>
+                                <div style="font-weight:700">1GB for 1 Hour</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Valid until 6 PM</div>
+                            </div>
+                        </div>
+                        <div><button class="pm-btn pm-btn-sm pm-btn-accent"
+                                onclick="processAction('tunukiwaOffersModal','1GB Tunukiwa offer claimed successfully for KES 20.','')">KES
+                                20</button></div>
+                    </div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info)"><i
+                                    class="bi bi-telephone"></i></div>
+                            <div>
+                                <div style="font-weight:700">500 Min All-Net</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Valid for 3 Days</div>
+                            </div>
+                        </div>
+                        <div><button class="pm-btn pm-btn-sm"
+                                onclick="processAction('tunukiwaOffersModal','500 Min offer claimed successfully for KES 150.','')">KES
+                                150</button></div>
+                    </div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="pm-icon-circle"
+                                style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i
+                                    class="bi bi-chat"></i></div>
+                            <div>
+                                <div style="font-weight:700">Unlimited SMS</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Valid for 24 Hrs</div>
+                            </div>
+                        </div>
+                        <div><button class="pm-btn pm-btn-sm"
+                                onclick="processAction('tunukiwaOffersModal','Unlimited SMS offer claimed for KES 10.','')">KES
+                                10</button></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Airtime Resale -->
+    <div class="modal fade resettable" id="airtimeResaleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shop text-danger me-2"></i>Airtime Resale (Agent Mode)</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2)">
+                        <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">COMMISSION RATE</div>
+                        <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">5% Cashback</div>
+                        <div style="font-size:12px;color:var(--pm-ink-soft)">On every KES 100+ sold</div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Customer Number</label><input type="text"
+                            class="pm-form-control" placeholder="07XX XXX XXX"></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                            class="pm-form-control" value="500"></div>
+                    <div class="p-3 border rounded">
+                        <div class="d-flex justify-content-between mb-1"><span>Customer receives</span><strong>KES
+                                500</strong></div>
+                        <div class="d-flex justify-content-between mb-1"><span>You pay (from Wallet)</span><strong>KES
+                                475</strong></div>
+                        <hr class="pm-divider">
+                        <div class="d-flex justify-content-between"><span
+                                style="font-weight:700;color:var(--pm-accent)">Your Profit</span><strong
+                                style="color:var(--pm-accent)">KES 25</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-danger"
+                        onclick="processAction('airtimeResaleModal','Airtime sold successfully. KES 25 commission added to Wallet.','')">Sell
+                        Airtime</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Bonga Points -->
+    <div class="modal fade resettable" id="bongaPointsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gift text-purple me-2"
+                            style="color:var(--pm-purple)"></i>Redeem Bonga Points</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">AVAILABLE POINTS</div>
+                        <div
+                            style="font-size:36px;font-weight:800;color:var(--pm-purple);font-family:var(--pm-font-display)">
+                            4,200</div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Redeem for</label><select class="pm-form-control">
+                            <option>Data Bundles</option>
+                            <option>Airtime / Minutes</option>
+                            <option>Lipa na Bonga (Merchant)</option>
+                            <option>SMS</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Select Option</label>
+                        <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"
+                            onclick="selectRadioCard(this)">
+                            <div class="d-flex align-items-center gap-2"><input type="radio" name="bp" checked>
+                                <div><strong>1GB Data</strong> (Valid 7 days)</div>
+                            </div>
+                            <div><span class="pm-badge pm-badge-purple">1,000 pts</span></div>
+                        </div>
+                        <div class="p-3 border rounded d-flex justify-content-between align-items-center"
+                            onclick="selectRadioCard(this)">
+                            <div class="d-flex align-items-center gap-2"><input type="radio" name="bp">
+                                <div><strong>2.5GB Data</strong> (Valid 30 days)</div>
+                            </div>
+                            <div><span class="pm-badge pm-badge-purple">2,500 pts</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('bongaPointsModal','Bonga points redeemed successfully for 1GB Data!','')">Redeem
+                        Now</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. KCB M-Pesa -->
+    <div class="modal fade resettable" id="kcbMpesaModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank text-warning me-2"></i>KCB M-Pesa Account</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('kcbTab','save',this)">Save</button><button class="pm-tab-pill"
+                            onclick="switchTab('kcbTab','loan',this)">Loan Limit</button></div>
+                    <div id="kcbTab-save" class="tab-panel active">
+                        <div class="p-3 rounded mb-3 text-center" style="background:var(--pm-warning-soft)">
+                            <div style="font-size:11px;font-weight:700;color:#B45309">ACCOUNT BALANCE</div>
+                            <div style="font-size:28px;font-weight:700;color:var(--pm-warning)">KES 0.00</div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Action</label><select class="pm-form-control">
+                                <option>Deposit from M-Pesa</option>
+                                <option>Withdraw to M-Pesa</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">Amount</label><input type="number"
+                                class="pm-form-control" placeholder="Min KES 100"></div><button
+                            class="pm-btn pm-btn-primary w-100"
+                            onclick="processAction('kcbMpesaModal','Deposit to KCB M-Pesa successful.','')">Submit</button>
+                    </div>
+                    <div id="kcbTab-loan" class="tab-panel">
+                        <div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2)">
+                            <div style="font-size:11px;font-weight:700;color:var(--pm-muted)">LOAN LIMIT</div>
+                            <div style="font-size:28px;font-weight:700">KES 15,000</div>
+                        </div>
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">1.08% monthly interest rate. Repayment
+                            period: 30 days.</p>
+                        <div class="mb-3"><label class="pm-form-label">Amount to Borrow</label><input type="number"
+                                class="pm-form-control" value="5000"></div><button class="pm-btn pm-btn-primary w-100"
+                            onclick="processAction('kcbMpesaModal','Loan of KES 5,000 disbursed to M-Pesa.','')">Request
+                            Loan</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Mali Investment -->
+    <div class="modal fade resettable" id="maliInvestmentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Mali Unit Trust</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100"
+                                style="background:var(--pm-primary-light);color:white">
+                                <div style="font-size:11px;font-weight:700">TOTAL INVESTMENT</div>
+                                <div style="font-size:24px;font-weight:700">KES 102,500</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">CURRENT YIELD</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">9.2% p.a.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Action</label><select class="pm-form-control">
+                            <option>Invest (Deposit)</option>
+                            <option>Withdraw</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input type="number"
+                            class="pm-form-control" value="10000"></div>
+                    <p style="font-size:11px;color:var(--pm-muted)">Interest is calculated daily and credited to your
+                        principal balance. Withdrawals reflect instantly in M-Pesa.</p>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('maliInvestmentModal','KES 10,000 invested successfully into Mali!','')">Confirm
+                        Transaction</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Analytics -->
+    <div class="modal fade resettable" id="mobileMoneyAnalyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pie-chart me-2"></i>M-Pesa Spend Analytics</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active">Cash Flow</button><button
+                            class="pm-tab-pill">Fee Breakdown</button><button class="pm-tab-pill">Fuliza Costs</button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background:var(--pm-surface-2)">
+                                <h6 style="font-size:13px;font-weight:700">Money In (June)</h6>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">KES 145,200</div>
+                                <div class="pm-progress mt-2">
+                                    <div class="pm-progress-bar" style="width:100%;background:var(--pm-accent)"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background:var(--pm-surface-2)">
+                                <h6 style="font-size:13px;font-weight:700">Money Out (June)</h6>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">KES 98,450</div>
+                                <div class="pm-progress mt-2">
+                                    <div class="pm-progress-bar" style="width:68%;background:var(--pm-danger)"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <h6 style="font-weight:700;margin-top:16px">Top Spend Categories</h6>
+                            <div class="table-responsive">
+                                <table class="pm-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Amount</th>
+                                            <th>% of Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Send Money</td>
+                                            <td>KES 45,000</td>
+                                            <td>45%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>PayBill / Till</td>
+                                            <td>KES 32,100</td>
+                                            <td>32%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Withdrawal</td>
+                                            <td>KES 15,000</td>
+                                            <td>15%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Airtime/Data</td>
+                                            <td>KES 6,350</td>
+                                            <td>8%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('exportStatementModal')">Export Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16. Add Phone Number -->
+    <div class="modal fade resettable" id="addPhoneNumberModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sim me-2 text-primary"></i>Link New Phone Number</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Phone Number</label><input type="text"
+                            class="pm-form-control" placeholder="07XX XXX XXX"></div>
+                    <div class="mb-3"><label class="pm-form-label">Network</label><select class="pm-form-control">
+                            <option>Safaricom</option>
+                            <option>Airtel</option>
+                            <option>Telkom</option>
+                            <option>Equitel</option>
+                            <option>Faiba</option>
+                        </select></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Set as primary line for notifications</label></div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i
+                            class="bi bi-shield-lock me-1"></i> An OTP will be sent to this number to verify ownership.
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('addPhoneNumberModal','OTP sent. Phone number verified and linked!','')">Send
+                        OTP</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Link Bank Account -->
+    <div class="modal fade resettable" id="linkBankAccountModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank me-2"></i>Link Bank for Interoperability</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Select Bank</label><select class="pm-form-control">
+                            <option>Equity Bank</option>
+                            <option>KCB</option>
+                            <option>Co-operative Bank</option>
+                            <option>Absa</option>
+                            <option>Standard Chartered</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Account Number</label><input type="text"
+                            class="pm-form-control" placeholder="Enter account number"></div>
+                    <div class="mb-3"><label class="pm-form-label">PesaLink Alias (Phone)</label><input type="text"
+                            class="pm-form-control" value="0712345890"></div>
+                    <p style="font-size:12px;color:var(--pm-muted)">By linking this account, you agree to allow PayMo to
+                        initiate PesaLink and EFT transfers on your behalf.</p>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('linkBankAccountModal','Bank account linked successfully via PesaLink!','')">Link
+                        Bank</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 18. Transaction History -->
+    <div class="modal fade resettable" id="transactionHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check me-2"></i>Full Mobile Money History</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap gap-2 mb-3"><select class="pm-form-control" style="width:auto">
+                            <option>All Categories</option>
+                            <option>Send Money</option>
+                            <option>Buy Airtime</option>
+                            <option>Fuliza/Loan</option>
+                            <option>Pochi</option>
+                        </select><select class="pm-form-control" style="width:auto">
+                            <option>Last 30 Days</option>
+                            <option>Last 3 Months</option>
+                        </select><input type="text" class="pm-form-control" style="width:200px"
+                            placeholder="Search reference"></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Ref/Name</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>Send Money</td>
+                                    <td>John Doe</td>
+                                    <td>-KES 1,500</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun</td>
+                                    <td>Data Bundle</td>
+                                    <td>Safaricom</td>
+                                    <td>-KES 1,000</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun</td>
+                                    <td>Pochi Payment</td>
+                                    <td>Jane Smith</td>
+                                    <td>+KES 4,500</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun</td>
+                                    <td>Fuliza Repay</td>
+                                    <td>Auto</td>
+                                    <td>-KES 500</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>24 Jun</td>
+                                    <td>Buy Airtime</td>
+                                    <td>Airtel 0733***</td>
+                                    <td>-KES 250</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>22 Jun</td>
+                                    <td>Withdrawal</td>
+                                    <td>Agent #44512</td>
+                                    <td>-KES 5,000</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>21 Jun</td>
+                                    <td>Mali Invest</td>
+                                    <td>Unit Trust</td>
+                                    <td>-KES 10,000</td>
+                                    <td><span class="pm-badge pm-badge-success">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('exportStatementModal')">Export
+                        PDF/CSV</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. Export Statement -->
+    <div class="modal fade resettable" id="exportStatementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Statements</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Data Source</label><select class="pm-form-control">
+                            <option>Combined PayMo Wallet & M-Pesa</option>
+                            <option>M-Pesa Only</option>
+                            <option>Pochi La Biashara</option>
+                            <option>Airtime Purchase History</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="pm-form-label">From</label><input type="date"
+                                class="pm-form-control" value="2025-01-01"></div>
+                        <div class="col-6"><label class="pm-form-label">To</label><input type="date"
+                                class="pm-form-control" value="2025-06-27"></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control">
+                            <option>PDF Document</option>
+                            <option>Excel Spreadsheet</option>
+                            <option>CSV Format</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Password protect PDF (Uses ID Number)</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('exportStatementModal','Statement generated and downloading...','')">Generate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Notifications -->
+    <div class="modal fade resettable" id="notificationsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (4)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:400px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><i
+                            class="bi bi-exclamation-triangle text-danger me-1"></i> <strong>Fuliza utilized</strong> —
+                        You have an outstanding Fuliza balance of KES 6,000.<div
+                            style="font-size:11px;color:var(--pm-muted);margin-top:4px">2 hrs ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><i
+                            class="bi bi-clock text-warning me-1"></i> <strong>Data expiring</strong> — Safaricom 2.5GB
+                        bundle expires in 48 hours.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">5
+                            hrs ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><i
+                            class="bi bi-stars text-accent me-1"></i> <strong>Tunukiwa Offer</strong> — Get 1GB for KES
+                        20 valid for 1 hour.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Yesterday
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><i
+                            class="bi bi-briefcase text-purple me-1"></i> <strong>Pochi Transfer</strong> — You received
+                        KES 4,500 from Jane Smith.<div style="font-size:11px;color:var(--pm-muted);margin-top:4px">
+                            Yesterday</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Mark all as read</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Profile -->
+    <div class="modal fade resettable" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person me-2"></i>Profile & Security</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">+254 712 345 890 · Primary Line</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Lines Linked</span><br><strong>3 Numbers</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">KYC
+                                    Level</span><br><strong style="color:var(--pm-accent)">Tier 3 (Verified)</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Bank Linked</span><br><strong>Equity Bank</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">M-Pesa Limits</span><br><strong>Up to 500k/day</strong></div>
+                        </div>
+                    </div><button class="pm-btn pm-btn-outline w-100 mt-3">Change App PIN</button>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 22. Attention Detail -->
+    <div class="modal fade resettable" id="attentionDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>Attention Required
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-danger)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Fuliza outstanding balance</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 6,000 utilized · Day 4 of 30</div>
+                            </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                                onclick="openModal('fulizaManagementModal');closeModal('attentionDetailModal')">Repay</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-warning)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>Data bundle expiring soon</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">2.5GB Safaricom expires in 48 hrs
+                                </div>
+                            </div><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('buyDataModal');closeModal('attentionDetailModal')">Renew</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-info)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>M-Shwari savings goal off-track</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Deposit KES 2,000 to meet June target
+                                </div>
+                            </div><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('mShwariModal');closeModal('attentionDetailModal')">Save</button>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2" style="border-left:3px solid var(--pm-purple)!important">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><strong>4,200 Bonga Points available</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Redeem for 500 Minutes or Data</div>
+                            </div><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('bongaPointsModal');closeModal('attentionDetailModal')">Redeem</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 23. Manage Linked Line -->
+    <div class="modal fade resettable" id="manageLinkedLineModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Manage Linked Line</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3 text-center" style="background:var(--pm-surface-2)"><strong>0733 987
+                            456</strong><br><span class="pm-badge pm-badge-danger mt-1">Airtel Money</span></div>
+                    <div class="mb-3"><label class="pm-form-label">Nickname</label><input type="text"
+                            class="pm-form-control" value="Airtel Business Line"></div>
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Set as Primary Line (Default for TX)</label></div>
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Sync Airtel Money balance</label></div><button
+                        class="pm-btn pm-btn-danger w-100 pm-btn-outline"><i class="bi bi-trash"></i> Remove this
+                        line</button>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('manageLinkedLineModal','Line settings updated!','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 24. Receipt Modal (Generic) -->
+    <div class="modal fade resettable" id="receiptModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction Receipt</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-receipt">
+                        <div class="receipt-icon"><i class="bi bi-check-lg"></i></div>
+                        <h5 style="font-weight:700;color:var(--pm-accent)">Transaction Successful</h5>
+                        <div class="p-3 rounded mt-3" style="background:#fff;text-align:left;font-size:13px">
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Type</span><strong>Send Money (Airtel)</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Recipient</span><strong>John Doe</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Amount</span><strong>KES 1,500.00</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Fee</span><strong>KES 22.00</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span
+                                    class="text-muted">Reference</span><strong>XNET-8834199</strong></div>
+                            <div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27
+                                    Jun 2025, 14:32</strong></div>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center mt-3"><button class="pm-btn pm-btn-sm"
+                                onclick="location.reload()"><i class="bi bi-download"></i> Download</button><button
+                                class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-share"></i>
+                                Share</button></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openModal(id) { const el = document.getElementById(id); if (el) { new bootstrap.Modal(el).show(); } }
+        function closeModal(id) { const el = document.getElementById(id); if (el) { const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); } }
+        function switchTab(prefix, key, btn) { btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll(`[id^="${prefix}-"]`).forEach(p => p.classList.remove('active')); const panel = document.getElementById(`${prefix}-${key}`); if (panel) panel.classList.add('active'); }
+        function pickChip(el, targetId, val) { el.parentElement.querySelectorAll('.pm-amount-chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); const inp = document.getElementById(targetId); if (inp) inp.value = val; }
+        function selectBox(el) { el.closest('.row').querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = '' }); el.style.borderColor = 'var(--pm-primary)'; el.style.background = 'rgba(79,70,229,.04)'; }
+        function selectRadioCard(card) { card.parentElement.querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = ''; const r = b.querySelector('input[type=radio]'); if (r) r.checked = false }); card.style.borderColor = 'var(--pm-primary)'; card.style.background = 'rgba(79,70,229,.04)'; const r = card.querySelector('input[type=radio]'); if (r) r.checked = true; }
+        function moveFocus(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'pm-loading-overlay'; ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1200); }
+        function processAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}<div class="mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Receipt</button></div></div>`; footer.innerHTML = '<button class="pm-btn pm-btn-primary w-100" data-bs-dismiss="modal">Done</button>'; }); }
+        function cacheResettable() { document.querySelectorAll('.resettable').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.originalBody = b.innerHTML; if (f) m.dataset.originalFooter = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody; if (m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter; resetFlows(); }); }); }
+        function renderStepper(elId, labels, current) { const wrap = document.getElementById(elId); if (!wrap) return; wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i + 1) < current ? 'completed' : (i + 1) === current ? 'active' : ''}"><div class="pm-step-num">${(i + 1) < current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length - 1 ? '<div class="pm-step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(prefix, current, total) { for (let i = 1; i <= total; i++) { const el = document.getElementById(prefix + 'Step' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(prefix + 'Step' + current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+
+        let flows = { airtime: 1, xnet: 1, global: 1 };
+        function nextFlowStep(flow, total) {
+            const current = flows[flow];
+            if (current === total - 1) {
+                showLoading(`#${flow}Step${current}`, () => {
+                    flows[flow]++;
+                    renderStepper(`${flow}Stepper`, getLabels(flow), flows[flow]);
+                    showFlowStep(flow, flows[flow], total);
+                    const btn = document.getElementById(`${flow}NextBtn`);
+                    if (btn) btn.textContent = 'Done';
+                });
+                return;
+            }
+            if (current >= total) { closeModal(getModalId(flow)); return; }
+            flows[flow]++;
+            renderStepper(`${flow}Stepper`, getLabels(flow), flows[flow]);
+            showFlowStep(flow, flows[flow], total);
+            const btn = document.getElementById(`${flow}NextBtn`);
+            if (btn && flows[flow] === total - 1) btn.innerHTML = 'Confirm & Pay <i class="bi bi-check2"></i>';
+        }
+        function getLabels(flow) {
+            if (flow === 'airtime') return ['Details', 'Pay', 'Done'];
+            if (flow === 'xnet') return ['Recipient', 'Amount', 'Done'];
+            if (flow === 'global') return ['Destination', 'Amount', 'Done'];
+            return [];
+        }
+        function getModalId(flow) {
+            if (flow === 'airtime') return 'buyAirtimeModal';
+            if (flow === 'xnet') return 'sendMoneyCrossNetworkModal';
+            if (flow === 'global') return 'mPesaGlobalModal';
+            return '';
+        }
+        function resetFlows() {
+            flows = { airtime: 1, xnet: 1, global: 1 };
+            renderStepper('airtimeStepper', ['Details', 'Pay', 'Done'], 1); showFlowStep('airtime', 1, 3);
+            renderStepper('xnetStepper', ['Recipient', 'Amount', 'Done'], 1); showFlowStep('xnet', 1, 3);
+            renderStepper('globalStepper', ['Destination', 'Amount', 'Done'], 1); showFlowStep('global', 1, 3);
+        }
+        document.addEventListener('DOMContentLoaded', () => { cacheResettable(); resetFlows(); });
+    </script>
+</body>
+
+</html>

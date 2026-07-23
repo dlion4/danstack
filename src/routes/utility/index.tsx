@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import UtilityHome from '@/features/Layouts/dashboard-utility-layout/pages/UtilityHome'
+import UtilitiesCommandCenter from '@/features/utility-dashboard/utilities-command-center/pages/UtilitiesCommandCenter'
 
-export const Route = createFileRoute('/utility/')({ component: UtilityHome })
+// 3.1 — Utilities Command Center is the utility layout overview (/utility).
+export const Route = createFileRoute('/utility/')({ component: UtilitiesCommandCenter })

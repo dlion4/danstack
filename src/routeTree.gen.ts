@@ -18,6 +18,7 @@ import { Route as UtilityIndexRouteImport } from './routes/utility/index'
 import { Route as DevIndexRouteImport } from './routes/dev/index'
 import { Route as BusinessIndexRouteImport } from './routes/business/index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
+import { Route as UtilityWaterRouteImport } from './routes/utility/water'
 import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
 import { Route as Transaction_dashboardAppRouteImport } from './routes/transaction_dashboard/app'
 import { Route as DevModuleRouteImport } from './routes/dev/$module'
@@ -108,6 +109,11 @@ const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => HomeRoute,
+} as any)
+const UtilityWaterRoute = UtilityWaterRouteImport.update({
+  id: '/water',
+  path: '/water',
+  getParentRoute: () => UtilityRoute,
 } as any)
 const UtilityModuleRoute = UtilityModuleRouteImport.update({
   id: '/$module',
@@ -390,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
+  '/utility/water': typeof UtilityWaterRoute
   '/business/': typeof BusinessIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
@@ -441,6 +448,7 @@ export interface FileRoutesByTo {
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev/$module': typeof DevModuleRoute
   '/utility/$module': typeof UtilityModuleRoute
+  '/utility/water': typeof UtilityWaterRoute
   '/': typeof HomeIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
@@ -498,6 +506,7 @@ export interface FileRoutesById {
   '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
+  '/utility/water': typeof UtilityWaterRoute
   '/_home/': typeof HomeIndexRoute
   '/business/': typeof BusinessIndexRoute
   '/dev/': typeof DevIndexRoute
@@ -556,6 +565,7 @@ export interface FileRouteTypes {
     | '/dev/$module'
     | '/transaction_dashboard/app'
     | '/utility/$module'
+    | '/utility/water'
     | '/business/'
     | '/dev/'
     | '/utility/'
@@ -607,6 +617,7 @@ export interface FileRouteTypes {
     | '/cards/app'
     | '/dev/$module'
     | '/utility/$module'
+    | '/utility/water'
     | '/'
     | '/dev'
     | '/utility'
@@ -663,6 +674,7 @@ export interface FileRouteTypes {
     | '/dev/$module'
     | '/transaction_dashboard/app'
     | '/utility/$module'
+    | '/utility/water'
     | '/_home/'
     | '/business/'
     | '/dev/'
@@ -783,6 +795,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRoute
+    }
+    '/utility/water': {
+      id: '/utility/water'
+      path: '/water'
+      fullPath: '/utility/water'
+      preLoaderRoute: typeof UtilityWaterRouteImport
+      parentRoute: typeof UtilityRoute
     }
     '/utility/$module': {
       id: '/utility/$module'
@@ -1149,11 +1168,13 @@ const DevRouteWithChildren = DevRoute._addFileChildren(DevRouteChildren)
 
 interface UtilityRouteChildren {
   UtilityModuleRoute: typeof UtilityModuleRoute
+  UtilityWaterRoute: typeof UtilityWaterRoute
   UtilityIndexRoute: typeof UtilityIndexRoute
 }
 
 const UtilityRouteChildren: UtilityRouteChildren = {
   UtilityModuleRoute: UtilityModuleRoute,
+  UtilityWaterRoute: UtilityWaterRoute,
   UtilityIndexRoute: UtilityIndexRoute,
 }
 

@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+"""Emit a per-page cream-theme CSS module for the utility-dashboard pages.
+
+Usage: python3 make_utility_page_css.py <rootClass> <out.module.css> [extras.css file]
+
+The base is a single canonical, fully-responsive cream design system (the same
+look + mobile behaviour as the dashboard-cards / transfer pages): opaque modal
+layer, multi-step stepper, tab pills, tables that collapse to labelled cards on
+mobile, and icon/step min-width guards so nothing squeezes or loses contrast
+when the viewport shrinks. `__ROOT__` is replaced by the page root class.
+Page-specific classes can be appended via an optional extras file.
+"""
+import sys, pathlib
+
+root, out = sys.argv[1], sys.argv[2]
+extras = pathlib.Path(sys.argv[3]).read_text() if len(sys.argv) > 3 else ""
+
+BASE = r"""/* ============================================================================
+ * __ROOT__ — cream + indigo/emerald utility page theme (auto-generated base)
+ * Fully responsive: opaque modals, stepper, tab pills, tables -> labelled
+ * cards on mobile, and icon/step min-width guards (no squeeze / contrast loss).
+ * ========================================================================== */
+.__ROOT__ {
+  --pm-primary: #4F46E5; --pm-primary-dark: #3730A3; --pm-primary-light: #818CF8;
+  --pm-accent: #10B981; --pm-accent-soft: #D1FAE5; --pm-warning: #F59E0B; --pm-warning-soft: #FEF3C7;
+  --pm-danger: #EF4444; --pm-danger-soft: #FEE2E2; --pm-info: #3B82F6; --pm-info-soft: #DBEAFE;
+  --pm-purple: #8B5CF6; --pm-purple-soft: #EDE9FE;
+  --pm-bg: #F5F1EC; --pm-bg-2: #EEE8DF; --pm-surface: #FFFFFF; --pm-surface-2: #FAF7F3;
+  --pm-ink: #1A1F2E; --pm-ink-soft: #4B5563; --pm-muted: #9CA3AF; --pm-border: #E5E2DC; --pm-border-2: #D4D0C8;
+  --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+  --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  --pm-shadow-sm: 0 1px 2px rgba(26,31,46,.04); --pm-shadow-md: 0 4px 12px rgba(26,31,46,.06);
+  --pm-shadow-lg: 0 10px 30px rgba(26,31,46,.08); --pm-shadow-xl: 0 20px 50px rgba(26,31,46,.12);
+  --pm-shadow-glow: 0 0 0 3px rgba(79,70,229,.15);
+  --pm-r-sm: 8px; --pm-r-md: 14px; --pm-r-lg: 20px; --pm-r-pill: 999px;
+  --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+  display: flex; flex-direction: column; min-height: 100vh;
+  font-family: var(--pm-font-sans); font-size: 14px; line-height: 1.5; color: var(--pm-ink);
+  background: radial-gradient(1200px 600px at -10% -20%, rgba(79,70,229,.08), transparent 60%),
+              radial-gradient(1000px 500px at 110% 10%, rgba(236,72,153,.06), transparent 60%),
+              radial-gradient(800px 400px at 50% 120%, rgba(16,185,129,.06), transparent 60%), var(--pm-bg);
+}
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-x: hidden; }
+.pageBar { padding: 20px 32px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.breadcrumb { font-size: 12px; color: var(--pm-muted); }
+.breadcrumb a { color: var(--pm-primary); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.pageH2 { font-family: var(--pm-font-display); font-size: 20px; font-weight: 700; margin: 8px 0 2px; color: var(--pm-ink); }
+.pageSub { font-size: 13px; color: var(--pm-ink-soft); margin: 0; }
+.content { padding: 16px 32px 32px; display: flex; flex-direction: column; gap: 20px; }
+.card { background: var(--pm-surface); border: 1px solid var(--pm-border); border-radius: var(--pm-r-lg); padding: 20px; box-shadow: var(--pm-shadow-sm); transition: all .2s; }
+.card:hover { box-shadow: var(--pm-shadow-md); }
+.cardAccent { background: linear-gradient(135deg, #1E293B 0%, #0F172A 50%, #4F46E5 100%); color: #fff; border: none; }
+.cardDark { background: var(--pm-gradient-slate); color: #fff; border: none; }
+.sv { font-family: var(--pm-font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.sl { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--pm-muted); font-weight: 600; }
+.sectionTitle { font-family: var(--pm-font-display); font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; color: var(--pm-ink); }
+.sectionSub { font-size: 12px; color: var(--pm-ink-soft); margin: 2px 0 0; }
+.divider { border: none; border-top: 1px solid var(--pm-border); margin: 16px 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--pm-r-pill); font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badgeS { background: var(--pm-accent-soft); color: #047857; }
+.badgeW { background: var(--pm-warning-soft); color: #B45309; }
+.badgeD { background: var(--pm-danger-soft); color: #DC2626; }
+.badgeI { background: var(--pm-info-soft); color: #1D4ED8; }
+.badgeP { background: var(--pm-purple-soft); color: #6D28D9; }
+.badgeNeutral { background: var(--pm-surface); border: 1px solid var(--pm-border); color: var(--pm-ink-soft); }
+.btnPm { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--pm-r-sm); font-size: 13px; font-weight: 600; border: 1px solid var(--pm-border); background: #fff; cursor: pointer; transition: all .2s; color: var(--pm-ink); text-decoration: none; white-space: nowrap; }
+.btnPm:hover { background: var(--pm-surface-2); transform: translateY(-1px); box-shadow: var(--pm-shadow-sm); }
+.btnPm i { flex-shrink: 0; }
+.btnPmP { background: var(--pm-primary); color: #fff; border-color: var(--pm-primary); }
+.btnPmP:hover { background: var(--pm-primary-dark); border-color: var(--pm-primary-dark); color: #fff; }
+.btnPmA { background: var(--pm-accent); color: #fff; border-color: var(--pm-accent); }
+.btnPmA:hover { background: #059669; border-color: #059669; color: #fff; }
+.btnPmD { background: var(--pm-danger); color: #fff; border-color: var(--pm-danger); }
+.btnPmDSoft { background: var(--pm-danger-soft); color: var(--pm-danger); border-color: var(--pm-danger-soft); }
+.btnPmDSoft:hover { background: #FECDD3; }
+.btnPmW { background: var(--pm-warning); color: #fff; border-color: var(--pm-warning); }
+.btnSm { padding: 5px 12px; font-size: 12px; }
+.btnGhostLight { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.22); color: #fff; }
+.btnGhostLight:hover { background: rgba(255,255,255,.2); color: #fff; }
+.progress { height: 6px; background: var(--pm-border); border-radius: 3px; overflow: hidden; }
+.progressBar { height: 100%; border-radius: 3px; transition: width .4s; }
+.iconCircle { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.iconCircle i { flex-shrink: 0; line-height: 1; }
+.feedItem { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--pm-border); }
+.feedItem:last-child { border-bottom: none; }
+.statusRow { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--pm-border); gap: 12px; }
+.statusRow:last-child { border-bottom: none; }
+.utilityBlock { background: var(--pm-surface-2); border-radius: var(--pm-r-md); padding: 16px; height: 100%; }
+.quickActionGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.quickActionBtn { padding: 10px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); background: #fff; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; transition: all .2s; color: var(--pm-ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.quickActionBtn:hover { border-color: var(--pm-primary); background: rgba(79,70,229,.04); transform: translateY(-1px); }
+.quickActionBtn i { flex-shrink: 0; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--pm-muted); border-bottom: 1px solid var(--pm-border); background: var(--pm-surface-2); }
+.table td { padding: 12px; border-bottom: 1px solid var(--pm-border); vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: var(--pm-surface-2); }
+.formLabel { font-size: 12px; font-weight: 600; color: var(--pm-ink-soft); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+.formControl { width: 100%; padding: 10px 14px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-sm); font-size: 14px; transition: all .2s; background: #fff; color: var(--pm-ink); }
+.formControl:focus { outline: none; border-color: var(--pm-primary); box-shadow: var(--pm-shadow-glow); }
+.stepper { display: flex; align-items: center; gap: 0; margin-bottom: 24px; flex-wrap: wrap; }
+.stepperColumn { flex-direction: column; align-items: flex-start; gap: 16px; }
+.step { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 90px; }
+.stepNum { width: 28px; height: 28px; min-width: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: var(--pm-border); color: var(--pm-muted); transition: all .3s; flex-shrink: 0; }
+.stepActive .stepNum { background: var(--pm-primary); color: #fff; }
+.stepDone .stepNum { background: var(--pm-accent); color: #fff; }
+.stepLabel { font-size: 11px; font-weight: 600; color: var(--pm-muted); }
+.stepActive .stepLabel { color: var(--pm-primary); }
+.stepDone .stepLabel { color: var(--pm-accent); }
+.stepLine { flex: 1; height: 2px; background: var(--pm-border); margin: 0 8px; }
+.tabPills { display: flex; gap: 4px; padding: 4px; background: var(--pm-surface-2); border-radius: var(--pm-r-sm); overflow-x: auto; }
+.tabPill { padding: 8px 16px; border-radius: 6px; border: none; background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .2s; color: var(--pm-ink-soft); }
+.tabPillActive { background: #fff; color: var(--pm-primary); box-shadow: var(--pm-shadow-sm); font-weight: 600; }
+.receipt { background: var(--pm-surface-2); border: 1px dashed var(--pm-border-2); border-radius: var(--pm-r-md); padding: 20px; text-align: center; }
+.receiptIcon { width: 56px; height: 56px; background: var(--pm-accent-soft); color: var(--pm-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; }
+.donut { position: relative; width: 130px; height: 130px; }
+.donutLabel { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--pm-font-display); font-weight: 700; font-size: 22px; color: var(--pm-ink); }
+.avatar { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background: var(--pm-gradient-hero); color: #fff; font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--pm-font-display); }
+/* ---- modal layer (opaque, single layer) ---- */
+.backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(2px); z-index: 1050; animation: fadeIn .2s; }
+.modalWrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1051; padding: 20px; overflow-y: auto; }
+.modalContent { background: var(--pm-surface); color: var(--pm-ink); border: 1px solid var(--pm-border); border-radius: var(--pm-r-lg); box-shadow: var(--pm-shadow-xl); width: 100%; max-width: 520px; max-height: calc(100vh - 40px); display: flex; flex-direction: column; overflow: hidden; animation: fadeIn .25s; }
+.modalBoxLg { max-width: 760px; }
+.modalBoxXl { max-width: 1080px; }
+.modalHeader { border-bottom: 1px solid var(--pm-border); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; background: var(--pm-surface); }
+.modalTitle { font-family: var(--pm-font-display); font-weight: 700; font-size: 16px; margin: 0; color: var(--pm-ink); display: flex; align-items: center; gap: 8px; }
+.modalBody { padding: 24px; position: relative; overflow-y: auto; flex: 1 1 auto; background: var(--pm-surface); }
+.modalFooter { border-top: 1px solid var(--pm-border); padding: 16px 24px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; background: var(--pm-surface); }
+.loadingOv { position: absolute; inset: 0; background: rgba(255,255,255,.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: var(--pm-r-lg); }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--pm-border); border-top-color: var(--pm-primary); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ======================= RESPONSIVE ======================= */
+@media (max-width: 992px) {
+  .content { padding: 16px 20px 24px; }
+  .pageBar { padding: 16px 20px 0; }
+}
+@media (max-width: 768px) {
+  .pageBar { padding: 12px 16px 0; flex-direction: column; align-items: stretch; }
+  .pageBar > div:last-child { width: 100%; }
+  .pageBar > div:last-child > div { width: 100%; }
+  .pageBar > div:last-child > div > button { flex: 1; justify-content: center; }
+  .content { padding: 12px 16px 24px; gap: 16px; }
+  .card { padding: 16px; }
+  .sectionTitle { font-size: 15px; }
+  .sv { font-size: 22px; }
+  .iconCircle { width: 36px; height: 36px; min-width: 36px; font-size: 14px; }
+  .btnPm { padding: 7px 12px; font-size: 12px; }
+  .btnSm { padding: 4px 10px; font-size: 11px; }
+  .step { min-width: 60px; }
+  .table { font-size: 12px; }
+  .table th, .table td { padding: 8px 10px; }
+  .feedItem { gap: 10px; padding: 8px 0; }
+  .modalContent { max-width: calc(100vw - 32px); }
+  .modalHeader, .modalBody, .modalFooter { padding: 14px 16px; }
+  /* tables -> labelled cards */
+  .table thead { display: none; }
+  .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+  .table tr { margin-bottom: 12px; border: 1px solid var(--pm-border); border-radius: var(--pm-r-md); padding: 12px; background: var(--pm-surface); }
+  .table td { padding: 8px 0; border-bottom: 1px solid var(--pm-border); display: flex; justify-content: space-between; align-items: center; text-align: right; gap: 12px; }
+  .table td:last-child { border-bottom: none; }
+  .table td::before { content: attr(data-label); font-weight: 600; text-align: left; color: var(--pm-muted); font-size: 11px; text-transform: uppercase; }
+  .table td:first-child { padding-top: 0; }
+  .table td:last-child { padding-bottom: 0; }
+}
+@media (max-width: 576px) {
+  .content { padding: 10px 10px 20px; gap: 12px; }
+  .pageBar { padding: 10px 10px 0; }
+  .card { padding: 14px; border-radius: 12px; }
+  .sv { font-size: 20px; }
+  .sectionTitle { font-size: 14px; }
+  .sectionSub { font-size: 11px; }
+  .btnPm { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
+  .btnSm { padding: 4px 8px; font-size: 10px; }
+  .quickActionGrid { grid-template-columns: 1fr; }
+  .feedItem { flex-wrap: wrap; gap: 8px; }
+  .feedItem > button { width: 100%; margin-top: 4px; }
+  .iconCircle { width: 32px; height: 32px; min-width: 32px; font-size: 12px; }
+  .pageH2 { font-size: 15px; }
+  .table td { padding: 6px 0; font-size: 12px; }
+  .table td::before { font-size: 10px; }
+  .step { min-width: unset; flex-direction: column; align-items: center; text-align: center; }
+  .stepLine { display: none; }
+  .stepper { gap: 8px; }
+  .modalContent { max-width: calc(100vw - 16px); border-radius: 12px; }
+  .modalHeader, .modalBody, .modalFooter { padding: 12px; }
+  .modalTitle { font-size: 14px; }
+  .formLabel { font-size: 11px; }
+  .formControl { padding: 8px 12px; font-size: 13px; }
+  .receipt { padding: 16px; }
+  .receiptIcon { width: 48px; height: 48px; font-size: 24px; }
+  .donut { width: 110px; height: 110px; }
+  .donutLabel { font-size: 18px; }
+}
+"""
+
+css = BASE.replace("__ROOT__", root) + "\n/* ===== page-specific extras ===== */\n" + extras
+dest = pathlib.Path(out)
+dest.parent.mkdir(parents=True, exist_ok=True)
+dest.write_text(css)
+print("wrote", dest, len(css.splitlines()), "lines (root =", root, ", extras =", len(extras.splitlines()), "lines )")
