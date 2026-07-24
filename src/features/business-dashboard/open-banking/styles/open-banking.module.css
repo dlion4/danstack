@@ -263,8 +263,23 @@
   .feedItem { gap: 8px; }
   .tbl th { padding: 8px 10px; }
   .tbl td { padding: 8px 10px; }
-<<<<<<< HEAD
 }
-=======
+
+/* ============================================================================
+ * Shell-child overrides — appended during the BusinessShell migration.
+ * ----------------------------------------------------------------------------
+ * .bizPage was authored as a standalone page root: `display:flex` to sit beside
+ * the page's own <aside>, plus `min-height:100vh`. Inside BusinessShell the
+ * sidebar/header belong to the shell and .bizPage is only a token carrier, so
+ * the flex row and the viewport-height floor would add a stray column and a
+ * second full-height scroll area. Reset both and let content define the height.
+ * The theme tokens above still apply — that is why the wrapper is kept.
+ * ========================================================================== */
+.bizPage {
+  display: block;
+  min-height: calc(100vh - var(--header-height, 72px));
+  width: 100%;
+  /* The shell (.main-content.flush) drops its padding so the page's own cream
+     gradient runs edge-to-edge and .content below supplies the original 32px
+     gutters — same full-bleed result as the standalone legacy HTML. */
 }
->>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081

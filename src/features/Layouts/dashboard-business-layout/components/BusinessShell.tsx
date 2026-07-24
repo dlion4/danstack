@@ -29,16 +29,22 @@ import BusinessSidebar from './BusinessSidebar';
 import BusinessHeader from './BusinessHeader';
 import type { DropdownName } from './BusinessHeader';
 import BusinessAside from './BusinessAside';
+import BusinessPageBar from './BusinessPageBar';
 import BusinessToasts from './BusinessToasts';
 import type { BusinessToastRecord } from './BusinessToasts';
+import { resolveBusinessPageMeta } from '../data/businessPageMeta';
 
 const s = styles as Record<string, string>;
 
 let toastIdSeq = 0;
 
 export default function BusinessShell() {
-  /* ---------- TanStack Query: backend-ready business layout content ---------- */
-  const { data: apiData, isLoading } = useQuery({
+  /* ---------- TanStack Query: backend-ready business layout content ----------
+   * fetchBusinessLayoutContent() never rejects (it falls back to bundled mock
+   * data), so there is no error state and no need to gate <Outlet /> behind a
+   * spinner — the chrome renders immediately from mock content and swaps in
+   * live data if/when the API responds. */
+  const { data: apiData } = useQuery({
     queryKey: ['business-layout-content'],
     queryFn: fetchBusinessLayoutContent,
     staleTime: 5 * 60_000,
@@ -64,6 +70,9 @@ export default function BusinessShell() {
     // base path is /business  -> the module slug (if any) is segments[1]
     return segments.length >= 2 ? segments[1] : 'dashboard';
   }, [pathname]);
+
+  /* ---------- shell-owned page bar (breadcrumb + title) for child routes ---- */
+  const pageMeta = useMemo(() => resolveBusinessPageMeta(pathname), [pathname]);
 
   /* ======================================================================
    * TOAST ENGINE
@@ -255,16 +264,15 @@ export default function BusinessShell() {
           unreadCount={unreadCount}
         />
 
-        <main className={cx(s['main-content'], expanded && isDesktop && s['sidebar-expanded'])}>
-          {isLoading ? (
-            <div className="d-flex justify-content-center align-items-center" style={{ padding: 80 }}>
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading business workspace…</span>
-              </div>
-            </div>
-          ) : (
-            <Outlet />
+        <main
+          className={cx(
+            s['main-content'],
+            expanded && isDesktop && s['sidebar-expanded'],
+            pageMeta && s.flush,
           )}
+        >
+          {pageMeta && <BusinessPageBar meta={pageMeta} />}
+          <Outlet />
         </main>
 
         <BusinessAside activePanel={activePanel} onClose={closeAside} onToast={showToast} />

@@ -839,6 +839,65 @@
     margin-left: var(--sidebar-width);
 }
 
+/* Migrated business-dashboard pages (page 3.x) carry their own .bizPage theme
+   and internal 32px gutters, so the shell drops its padding and lets them run
+   edge-to-edge — matching the full-width legacy HTML. Applied only when a page
+   bar is present, so /business Home + ModulePage keep the padded shell.
+   The cream base matches the pages' --pm-bg so the shell-owned page bar sits on
+   the same surface as the content below it (no seam at the boundary). */
+.main-content.flush {
+    padding: 0;
+    background: #f5f1ec;
+}
+
+/* -------- Shell-owned page bar (breadcrumb + title) -------- */
+.pageBar {
+    padding: 1.25rem 2rem 0;
+}
+
+.pageBreadcrumb {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.pageBreadcrumb a {
+    color: var(--paymo-primary);
+    text-decoration: none;
+}
+
+.pageBreadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.pageHeading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0 0.15rem;
+    color: var(--text);
+}
+
+.pageSubtitle {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 90ch;
+}
+
+@media (max-width: 767.98px) {
+    .pageBar {
+        padding: 1rem 1rem 0;
+    }
+
+    .pageHeading {
+        font-size: 1.05rem;
+    }
+
+    .pageSubtitle {
+        font-size: 0.78rem;
+    }
+}
+
 .body-placeholder {
     display: flex;
     align-items: center;

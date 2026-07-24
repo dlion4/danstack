@@ -87,10 +87,20 @@ const initialMockData: DisbursementsConfig = {
 }
 
 /* ---------- TanStack Query fetcher ---------- */
+/**
+ * Frontend-only demo: no /api/business-dashboard/bulk-disbursements backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchDisbursementsData(): Promise<DisbursementsConfig> {
-  const res = await fetch('/api/business-dashboard/bulk-disbursements')
-  if (!res.ok) throw new Error('Network error')
-  return res.json()
+  try {
+    const res = await fetch('/api/business-dashboard/bulk-disbursements', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as DisbursementsConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function BulkDisbursements() {
@@ -109,7 +119,8 @@ export default function BulkDisbursements() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={s.content}>
+    <div className={s.bizPage}>
+      <div className={s.content}>
           {/* HERO STATS */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -195,9 +206,9 @@ export default function BulkDisbursements() {
             </div>
           </div>
         </div>
-</div>
 
       {/* MODALS */}
       <BulkDisbursementsModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-   )
+    </div>
+  )
 }
