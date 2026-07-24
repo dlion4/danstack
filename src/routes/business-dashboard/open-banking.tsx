@@ -8,4 +8,8 @@ import OpenBanking from '@/features/business-dashboard/open-banking/pages/OpenBa
  */
 export const Route = createFileRoute('/business-dashboard/open-banking')({
   component: OpenBanking,
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081

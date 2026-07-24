@@ -410,4 +410,8 @@ export default function MultiCurrencyTreasuryModals({ active, onClose, onOpen }:
       {renderFAQ()}
     </>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081

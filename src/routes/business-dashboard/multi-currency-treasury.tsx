@@ -8,4 +8,8 @@ import MultiCurrencyTreasury from '@/features/business-dashboard/multi-currency-
  */
 export const Route = createFileRoute('/business-dashboard/multi-currency-treasury')({
   component: MultiCurrencyTreasury,
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081

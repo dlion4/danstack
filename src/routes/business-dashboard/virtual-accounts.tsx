@@ -8,4 +8,8 @@ import VirtualAccounts from '@/features/business-dashboard/virtual-accounts/page
  */
 export const Route = createFileRoute('/business-dashboard/virtual-accounts')({
   component: VirtualAccounts,
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081
