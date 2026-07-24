@@ -139,16 +139,26 @@ const initialMockData: SettingsConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business/settings-administration backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchSettingsContent(): Promise<SettingsConfig> {
-  const res = await fetch('/api/business/settings-administration')
-  if (!res.ok) throw new Error('Failed to fetch settings data')
-  return res.json()
+  try {
+    const res = await fetch('/api/business/settings-administration', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as SettingsConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function SettingsAdministration() {
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['business-settings-administration'],
     queryFn: fetchSettingsContent,
     staleTime: 5 * 60_000,
@@ -159,14 +169,6 @@ export default function SettingsAdministration() {
   const s = styles as Record<string, string>
   const cx = (...cls: (string | false | undefined)[]) => cls.filter(Boolean).join(' ')
 
-  if (isLoading) {
-    return (
-      <div className={s.bizPage} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className={s.spinner} />
-        <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
-      </div>
-    )
-  }
 
   return (
     <div className={s.bizPage}>
@@ -567,7 +569,10 @@ export default function SettingsAdministration() {
                 </div>
               </div>
             </div>
+        </div>
       </div>
+
+      {/* MODALS */}
       <SettingsAdministrationModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
     </div>
   )

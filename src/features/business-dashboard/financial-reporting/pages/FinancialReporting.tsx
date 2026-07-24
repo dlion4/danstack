@@ -93,10 +93,20 @@ const initialMockData: FRConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business-dashboard/financial-reporting backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchFRData(): Promise<FRConfig> {
-  const res = await fetch('/api/business-dashboard/financial-reporting')
-  if (!res.ok) throw new Error('Network error')
-  return res.json()
+  try {
+    const res = await fetch('/api/business-dashboard/financial-reporting', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as FRConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function FinancialReporting() {
@@ -360,7 +370,8 @@ export default function FinancialReporting() {
             </div>
           </div>
         </div>
-      </div>
+
+      {/* MODALS */}
       <FinancialReportingModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
     </div>
   )

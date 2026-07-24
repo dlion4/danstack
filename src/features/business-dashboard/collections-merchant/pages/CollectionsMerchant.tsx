@@ -136,16 +136,26 @@ const initialMockData: CollectionsConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business/collections-merchant backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchCollectionsContent(): Promise<CollectionsConfig> {
-  const res = await fetch('/api/business/collections-merchant')
-  if (!res.ok) throw new Error('Failed to fetch collections data')
-  return res.json()
+  try {
+    const res = await fetch('/api/business/collections-merchant', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as CollectionsConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function CollectionsMerchant() {
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['business-collections-merchant'],
     queryFn: fetchCollectionsContent,
     staleTime: 5 * 60_000,
@@ -156,17 +166,10 @@ export default function CollectionsMerchant() {
   const s = styles as Record<string, string>
   const cx = (...cls: (string | false | undefined)[]) => cls.filter(Boolean).join(' ')
 
-  if (isLoading) {
-    return (
-      <div className={s.spinnerWrap} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className={s.spinner} />
-        <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
-      </div>
-    )
-  }
 
   return (
-    <div className={s.content}>
+    <div className={s.bizPage}>
+      <div className={s.content}>
           {/* Hero Stats Row */}
           <div className="row g-3">
             {/* Collected Today (accent card) */}
@@ -505,9 +508,9 @@ export default function CollectionsMerchant() {
             </div>
           </div>
         </div>
-</div>
 
       {/* MODALS */}
       <CollectionsMerchantModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-   )
+    </div>
+  )
 }

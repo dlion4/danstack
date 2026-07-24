@@ -96,10 +96,20 @@ const initialMockData: APConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business-dashboard/accounts-payable backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchAPData(): Promise<APConfig> {
-  const res = await fetch('/api/business-dashboard/accounts-payable')
-  if (!res.ok) throw new Error('Network error')
-  return res.json()
+  try {
+    const res = await fetch('/api/business-dashboard/accounts-payable', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as APConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function AccountsPayable() {
@@ -110,7 +120,8 @@ export default function AccountsPayable() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={s.content}>
+    <div className={s.bizPage}>
+      <div className={s.content}>
           {/* HERO */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -254,6 +265,9 @@ export default function AccountsPayable() {
             </div>
           </div>
       </div>
-<AccountsPayableModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-   )
+
+      {/* MODALS */}
+      <AccountsPayableModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
+    </div>
+  )
 }

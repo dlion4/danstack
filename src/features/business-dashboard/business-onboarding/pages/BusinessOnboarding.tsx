@@ -177,16 +177,26 @@ const initialMockData: OnboardConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business/business-onboarding backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchOnboardContent(): Promise<OnboardConfig> {
-  const res = await fetch('/api/business/business-onboarding')
-  if (!res.ok) throw new Error('Failed to fetch onboarding data')
-  return res.json()
+  try {
+    const res = await fetch('/api/business/business-onboarding', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as OnboardConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function BusinessOnboarding() {
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['business-onboarding'],
     queryFn: fetchOnboardContent,
     staleTime: 5 * 60_000,
@@ -197,14 +207,6 @@ export default function BusinessOnboarding() {
   const s = styles as Record<string, string>
   const cx = (...cls: (string | false | undefined)[]) => cls.filter(Boolean).join(' ')
 
-  if (isLoading) {
-    return (
-      <div className={s.bizPage} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className={s.spinner} />
-        <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
-      </div>
-    )
-  }
 
   return (
     <div className={s.bizPage}>

@@ -6,6 +6,13 @@ import styles from '../styles/settings-administration.module.css'
    Settings, Account & Administration — modal layer (legacy page 3.14)
    ========================================================================== */
 
+/**
+ * Badge tone keys resolved against the CSS module (`s[tone]`). Mirrors the
+ * BadgeTone union in ../pages/SettingsAdministration, plus '' for rows that
+ * intentionally render no badge (e.g. not-yet-connected integrations).
+ */
+type BadgeTone = 'badgeS' | 'badgeW' | 'badgeD' | 'badgeI' | 'badgeP' | ''
+
 interface ModalsProps { active: string | null; onClose: () => void; onOpen: (id: string) => void }
 type Size = 'md' | 'lg' | 'xl'
 interface MBoxProps { id: string; active: string | null; title: ReactNode; size?: Size; onClose: () => void; children: ReactNode; footer?: ReactNode }

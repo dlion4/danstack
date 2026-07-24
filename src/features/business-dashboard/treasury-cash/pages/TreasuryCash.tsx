@@ -77,10 +77,20 @@ const initialMockData: TreasuryConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business-dashboard/treasury-cash backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchTreasuryData(): Promise<TreasuryConfig> {
-  const res = await fetch('/api/business-dashboard/treasury-cash')
-  if (!res.ok) throw new Error('Network error')
-  return res.json()
+  try {
+    const res = await fetch('/api/business-dashboard/treasury-cash', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as TreasuryConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function TreasuryCash() {
@@ -91,7 +101,8 @@ export default function TreasuryCash() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={s.content}>
+    <div className={s.bizPage}>
+      <div className={s.content}>
           {/* HERO */}
           <div className="row g-3">{config.heroStats.map((hs) => (<div key={hs.key} className={hs.col}>
             <div className={cx(s.card, hs.key === 'cash' ? s.cardAccent : '')} style={{ cursor: 'pointer' }} onClick={() => setActiveModal(hs.key === 'cash' ? 'accountDetailModal' : hs.key === 'fx' ? 'bookFXModal' : hs.key === 'mmf' ? 'investmentPortfolioModal' : 'autoSweepModal')}>
@@ -133,6 +144,9 @@ export default function TreasuryCash() {
             <div className="table-responsive"><table className={s.tbl}><thead><tr><th>Type</th><th>Amount</th><th>Yield</th><th>Maturity</th><th>Status</th><th>Action</th></tr></thead>
               <tbody>{config.investments.map((inv) => (<tr key={inv.type}><td><strong>{inv.type}</strong></td><td>{inv.amount}</td><td>{inv.yieldRate}</td><td>{inv.maturity}</td><td><span className={cx(s.badge, s[inv.statusTone])}>{inv.status}</span></td><td><button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal(inv.modal)}>View</button></td></tr>))}</tbody></table></div></div>
       </div>
-<TreasuryCashModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-   )
+
+      {/* MODALS */}
+      <TreasuryCashModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
+    </div>
+  )
 }

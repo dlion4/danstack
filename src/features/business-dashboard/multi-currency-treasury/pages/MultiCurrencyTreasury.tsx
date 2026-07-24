@@ -121,16 +121,26 @@ const initialMockData: FXConfig = {
   ],
 }
 
+/**
+ * Frontend-only demo: no /api/business/multi-currency-treasury backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchFXContent(): Promise<FXConfig> {
-  const res = await fetch('/api/business/multi-currency-treasury')
-  if (!res.ok) throw new Error('Failed to fetch FX data')
-  return res.json()
+  try {
+    const res = await fetch('/api/business/multi-currency-treasury', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as FXConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function MultiCurrencyTreasury() {
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['business-multi-currency-treasury'],
     queryFn: fetchFXContent,
     staleTime: 5 * 60_000,
@@ -141,87 +151,10 @@ export default function MultiCurrencyTreasury() {
   const s = styles as Record<string, string>
   const cx = (...cls: (string | false | undefined)[]) => cls.filter(Boolean).join(' ')
 
-  if (isLoading) {
-    return (
-<<<<<<< HEAD
-      <div className={s.bizPage} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-=======
-      <div className="container-fluid" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
->>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081
-        <div className={s.spinner} />
-        <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
-      </div>
-    )
-  }
 
   return (
-<<<<<<< HEAD
     <div className={s.bizPage}>
       <div className={s.content}>
-=======
-    <div className={cx(s.bizPage, 'container-fluid')}>
-      {/* SIDEBAR */}
-      <aside className={s.sidebar}>
-        <div className={s.sidebarLogo}>P</div>
-        <nav className={s.sidebarNav}>
-          {config.nav.map((n, i) => (
-            <button key={i} className={`${s.navItem} ${n.active ? s.navItemActive : ''}`} title={n.title}>
-              <i className={`bi ${n.icon}`} />
-              {n.dot && <span className={s.badgeDot} />}
-            </button>
-          ))}
-        </nav>
-        <button className={s.sidebarHelp} title="Help"><i className="bi bi-question-circle" /></button>
-      </aside>
-
-      {/* MAIN */}
-      <div className={s.main}>
-        {/* HEADER */}
-        <header className={s.header}>
-          <div className={s.headerTitle} style={{ flexShrink: 0 }}>
-            <div className="d-flex align-items-center gap-2">
-              <div className={cx(s.avatar, s.avatarLarge)}>MN</div>
-              <div>
-                <h1>{config.headerTitle}</h1>
-                <p>{config.headerSub}</p>
-              </div>
-            </div>
-          </div>
-          <div className={s.headerSearch}>
-            <i className="bi bi-search" />
-            <input type="text" placeholder={config.searchPlaceholder} />
-          </div>
-          <div className={s.headerActions}>
-            <button className={s.headerBtn} onClick={() => setActiveModal('fxHealthModal')}><i className="bi bi-heart-pulse" /></button>
-            <button className={s.headerBtn} onClick={() => setActiveModal('fxNotifModal')}><i className="bi bi-bell" /><span className={s.counter}>7</span></button>
-            <div className={s.profileBtn} onClick={() => setActiveModal('profileModal')}>
-              <div className={s.avatar}>{config.user.initials}</div>
-              <div>
-                <div className={s.profileName}>{config.user.name}</div>
-                <div className={s.profileRole}>{config.user.role}</div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* PAGE BAR */}
-        <div className={s.pageBar}>
-          <div>
-            <div className={s.breadcrumb}><a href="#">Home</a> / <a href="#">{config.breadcrumb.parent}</a> / <strong>{config.breadcrumb.current}</strong></div>
-            <h2 className={s.pageH2}>{config.pageTitle}</h2>
-            <p className={s.pageSub}>{config.pageSub}</p>
-          </div>
-          <div className="d-flex flex-wrap" style={{ gap: 8 }}>
-            <button className={s.btnPm} onClick={() => setActiveModal('fxHealthModal')}><i className="bi bi-heart-pulse" /> Health Check</button>
-            <button className={s.btnPm} onClick={() => setActiveModal('fxNotifModal')}><i className="bi bi-bell" /> Alerts</button>
-            <button className={s.btnPm} onClick={() => setActiveModal('transferModal')}><i className="bi bi-arrow-left-right" /> Transfer</button>
-            <button className={cx(s.btnPm, s.btnPmP)} onClick={() => setActiveModal('tradeModal')}><i className="bi bi-currency-exchange" /> Trade FX</button>
-          </div>
-        </div>
-
-        {/* CONTENT */}
-        <div className={s.content}>
->>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081
           {/* HERO STATS */}
           <div className="row g-3">
             <div className="col-lg-4">
@@ -495,14 +428,6 @@ export default function MultiCurrencyTreasury() {
                 </div>
               </div>
             </div>
-<<<<<<< HEAD
-      </div>
-      <MultiCurrencyTreasuryModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
-}
-=======
-          </div>
         </div>
       </div>
 
@@ -511,4 +436,3 @@ export default function MultiCurrencyTreasury() {
     </div>
   )
 }
->>>>>>> 67ec0783282ff3af84799b285b5c1e31eb9f4081

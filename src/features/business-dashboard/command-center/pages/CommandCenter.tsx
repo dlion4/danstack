@@ -120,17 +120,27 @@ const initialMockData: CommandCenterConfig = {
 }
 
 /* ---------- TanStack Query fetcher (backend-ready) ---------- */
+/**
+ * Frontend-only demo: no /api/business/command-center backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
 async function fetchCommandCenterContent(): Promise<CommandCenterConfig> {
-  const res = await fetch('/api/business/command-center')
-  if (!res.ok) throw new Error('Failed to fetch command center data')
-  return res.json()
+  try {
+    const res = await fetch('/api/business/command-center', { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return (await res.json()) as CommandCenterConfig
+  } catch {
+    return initialMockData
+  }
 }
 
 export default function CommandCenter() {
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
   /* ---------- TanStack Query ---------- */
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['business-command-center'],
     queryFn: fetchCommandCenterContent,
     staleTime: 5 * 60_000,
@@ -141,17 +151,10 @@ export default function CommandCenter() {
   const s = styles as Record<string, string>
   const cx = (...cls: (string | false | undefined)[]) => cls.filter(Boolean).join(' ')
 
-  if (isLoading) {
-    return (
-      <div className={s.spinnerWrap} style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <div className={s.spinner} />
-        <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
-      </div>
-    )
-  }
 
   return (
-    <div className={s.content}>
+    <div className={s.bizPage}>
+      <div className={s.content}>
           {/* HERO ROW: Key Metrics */}
           <div className="row g-3">
             {config.statCards.map((sc) => (
@@ -441,9 +444,9 @@ export default function CommandCenter() {
             </div>
           </div>
         </div>
-</div>
 
       {/* MODALS */}
       <CommandCenterModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-   )
+    </div>
+  )
 }
