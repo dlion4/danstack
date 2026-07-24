@@ -110,45 +110,7 @@ export default function AccountsPayable() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={s.bizPage}>
-      <aside className={s.sidebar}>
-        <div className={s.sidebarLogo}>PB</div>
-        <nav className={s.sidebarNav}>
-          {config.nav.map((n) => (
-            <button key={n.title} className={`${s.navItem} ${n.active ? s.navItemActive : ''}`} title={n.title}>
-              <i className={`bi ${n.icon}`} />{n.dot && <span className={s.badgeDot} />}
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      <div className={s.main}>
-        <header className={s.header}>
-          <div className={s.headerTitle}><h1>{config.headerTitle}</h1><p>{config.headerSub}</p></div>
-          <div className={s.headerSearch}><i className="bi bi-search" /><input type="text" placeholder={config.searchPlaceholder} /></div>
-          <div className={s.headerActions}>
-            <button className={s.headerBtn} onClick={() => setActiveModal('notificationsModal')}><i className="bi bi-bell" /><span className={s.counter}>3</span></button>
-            <button className={s.headerBtn} onClick={() => setActiveModal('approvalQueueModal')}><i className="bi bi-check2-square" /></button>
-            <button className={s.profileBtn} onClick={() => setActiveModal('profileModal')}>
-              <div className={s.avatar} style={{ background: config.user.avatarBg }}>{config.user.initials}</div>
-              <div><div className={s.profileName}>{config.user.name}</div><div className={s.profileRole}>{config.user.role}</div></div>
-            </button>
-          </div>
-        </header>
-
-        <div className={s.pageBar}>
-          <div>
-            <div className={s.breadcrumb}><a href="#">{config.breadcrumb.parent}</a> · {config.breadcrumb.current}</div>
-            <h2 className={s.pageH2}>{config.pageTitle}</h2>
-            <p className={s.pageSub}>{config.pageSub}</p>
-          </div>
-          <div className="d-flex gap-2">
-            <button className={cx(s.btnPm, s.btnSm, s.btnPmP)} onClick={() => setActiveModal('processInvoiceModal')}><i className="bi bi-file-earmark-plus" /> Process Invoice</button>
-            <button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal('addSupplierModal')}><i className="bi bi-person-plus" /> Add Supplier</button>
-          </div>
-        </div>
-
-        <div className={s.content}>
+    <div className={s.content}>
           {/* HERO */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -291,10 +253,7 @@ export default function AccountsPayable() {
               </table>
             </div>
           </div>
-        </div>
       </div>
-
-      <AccountsPayableModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+<AccountsPayableModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
+   )
 }

@@ -1,0 +1,30 @@
+$files = @(
+  "src/features/business-dashboard/business-onboarding/components/BusinessOnboardingModals.tsx",
+  "src/features/business-dashboard/business-onboarding/pages/BusinessOnboarding.tsx",
+  "src/features/business-dashboard/business-onboarding/styles/business-onboarding.module.css",
+  "src/features/business-dashboard/multi-currency-treasury/components/MultiCurrencyTreasuryModals.tsx",
+  "src/features/business-dashboard/multi-currency-treasury/pages/MultiCurrencyTreasury.tsx",
+  "src/features/business-dashboard/multi-currency-treasury/styles/multi-currency-treasury.module.css",
+  "src/features/business-dashboard/open-banking/components/OpenBankingModals.tsx",
+  "src/features/business-dashboard/open-banking/pages/OpenBanking.tsx",
+  "src/features/business-dashboard/open-banking/styles/open-banking.module.css",
+  "src/features/business-dashboard/settings-administration/components/SettingsAdministrationModals.tsx",
+  "src/features/business-dashboard/settings-administration/pages/SettingsAdministration.tsx",
+  "src/features/business-dashboard/settings-administration/styles/settings-administration.module.css",
+  "src/features/business-dashboard/support-disputes/components/SupportDisputesModals.tsx",
+  "src/features/business-dashboard/support-disputes/pages/SupportDisputes.tsx",
+  "src/features/business-dashboard/support-disputes/styles/support-disputes.module.css",
+  "src/features/business-dashboard/virtual-accounts/components/VirtualAccountsModals.tsx",
+  "src/features/business-dashboard/virtual-accounts/pages/VirtualAccounts.tsx",
+  "src/features/business-dashboard/virtual-accounts/styles/virtual-accounts.module.css",
+  "src/routes/business-dashboard/business-onboarding.tsx",
+  "src/routes/business-dashboard/multi-currency-treasury.tsx",
+  "src/routes/business-dashboard/open-banking.tsx",
+  "src/routes/business-dashboard/settings-administration.tsx",
+  "src/routes/business-dashboard/support-disputes.tsx",
+  "src/routes/business-dashboard/virtual-accounts.tsx"
+)
+
+foreach ($file in $files) {
+  New-Item -ItemType File -Force -Path $file
+}

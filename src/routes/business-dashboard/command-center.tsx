@@ -3,7 +3,7 @@ import CommandCenter from '@/features/business-dashboard/command-center/pages/Co
 
 /**
  * business-dashboard/command-center.tsx — Business Command Center (Page 3.1).
- * Renders inside BusinessShell.
+ * Renders inside BusinessShell as a child route.
  * Mounts at /business-dashboard/command-center
  */
 export const Route = createFileRoute('/business-dashboard/command-center')({

@@ -109,9 +109,7 @@ export default function BulkDisbursements() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={cx(s.bizPage, 'container-fluid')}>
-      {/* CONTENT */}
-      <div className={s.content}>
+    <div className={s.content}>
           {/* HERO STATS */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -197,9 +195,9 @@ export default function BulkDisbursements() {
             </div>
           </div>
         </div>
+</div>
 
       {/* MODALS */}
       <BulkDisbursementsModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+   )
 }

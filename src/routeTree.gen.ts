@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UtilityRouteImport } from './routes/utility'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DevRouteImport } from './routes/dev'
+import { Route as BusinessDashboardRouteImport } from './routes/business-dashboard'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as HomeRouteImport } from './routes/_home'
 import { Route as UtilityIndexRouteImport } from './routes/utility/index'
@@ -29,12 +30,18 @@ import { Route as Transaction_dashboardAppRouteImport } from './routes/transacti
 import { Route as DevModuleRouteImport } from './routes/dev/$module'
 import { Route as CardsAppRouteImport } from './routes/cards/app'
 import { Route as BusinessModuleRouteImport } from './routes/business/$module'
+import { Route as BusinessDashboardVirtualAccountsRouteImport } from './routes/business-dashboard/virtual-accounts'
 import { Route as BusinessDashboardTreasuryCashRouteImport } from './routes/business-dashboard/treasury-cash'
+import { Route as BusinessDashboardSupportDisputesRouteImport } from './routes/business-dashboard/support-disputes'
+import { Route as BusinessDashboardSettingsAdministrationRouteImport } from './routes/business-dashboard/settings-administration'
 import { Route as BusinessDashboardPayrollHrRouteImport } from './routes/business-dashboard/payroll-hr'
+import { Route as BusinessDashboardOpenBankingRouteImport } from './routes/business-dashboard/open-banking'
+import { Route as BusinessDashboardMultiCurrencyTreasuryRouteImport } from './routes/business-dashboard/multi-currency-treasury'
 import { Route as BusinessDashboardInvoicingBillingRouteImport } from './routes/business-dashboard/invoicing-billing'
 import { Route as BusinessDashboardFinancialReportingRouteImport } from './routes/business-dashboard/financial-reporting'
 import { Route as BusinessDashboardCommandCenterRouteImport } from './routes/business-dashboard/command-center'
 import { Route as BusinessDashboardCollectionsMerchantRouteImport } from './routes/business-dashboard/collections-merchant'
+import { Route as BusinessDashboardBusinessOnboardingRouteImport } from './routes/business-dashboard/business-onboarding'
 import { Route as BusinessDashboardBulkDisbursementsRouteImport } from './routes/business-dashboard/bulk-disbursements'
 import { Route as BusinessDashboardAccountsPayableRouteImport } from './routes/business-dashboard/accounts-payable'
 import { Route as AuthSecurityRouteImport } from './routes/auth/security'
@@ -94,6 +101,11 @@ const DevRoute = DevRouteImport.update({
   path: '/dev',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessDashboardRoute = BusinessDashboardRouteImport.update({
+  id: '/business-dashboard',
+  path: '/business-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessRoute = BusinessRouteImport.update({
   id: '/business',
   path: '/business',
@@ -119,9 +131,9 @@ const BusinessIndexRoute = BusinessIndexRouteImport.update({
   getParentRoute: () => BusinessRoute,
 } as any)
 const BusinessDashboardIndexRoute = BusinessDashboardIndexRouteImport.update({
-  id: '/business-dashboard/',
-  path: '/business-dashboard/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => BusinessDashboardRoute,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
@@ -179,53 +191,89 @@ const BusinessModuleRoute = BusinessModuleRouteImport.update({
   path: '/$module',
   getParentRoute: () => BusinessRoute,
 } as any)
+const BusinessDashboardVirtualAccountsRoute =
+  BusinessDashboardVirtualAccountsRouteImport.update({
+    id: '/virtual-accounts',
+    path: '/virtual-accounts',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
 const BusinessDashboardTreasuryCashRoute =
   BusinessDashboardTreasuryCashRouteImport.update({
-    id: '/business-dashboard/treasury-cash',
-    path: '/business-dashboard/treasury-cash',
-    getParentRoute: () => rootRouteImport,
+    id: '/treasury-cash',
+    path: '/treasury-cash',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardSupportDisputesRoute =
+  BusinessDashboardSupportDisputesRouteImport.update({
+    id: '/support-disputes',
+    path: '/support-disputes',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardSettingsAdministrationRoute =
+  BusinessDashboardSettingsAdministrationRouteImport.update({
+    id: '/settings-administration',
+    path: '/settings-administration',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardPayrollHrRoute =
   BusinessDashboardPayrollHrRouteImport.update({
-    id: '/business-dashboard/payroll-hr',
-    path: '/business-dashboard/payroll-hr',
-    getParentRoute: () => rootRouteImport,
+    id: '/payroll-hr',
+    path: '/payroll-hr',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardOpenBankingRoute =
+  BusinessDashboardOpenBankingRouteImport.update({
+    id: '/open-banking',
+    path: '/open-banking',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardMultiCurrencyTreasuryRoute =
+  BusinessDashboardMultiCurrencyTreasuryRouteImport.update({
+    id: '/multi-currency-treasury',
+    path: '/multi-currency-treasury',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardInvoicingBillingRoute =
   BusinessDashboardInvoicingBillingRouteImport.update({
-    id: '/business-dashboard/invoicing-billing',
-    path: '/business-dashboard/invoicing-billing',
-    getParentRoute: () => rootRouteImport,
+    id: '/invoicing-billing',
+    path: '/invoicing-billing',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardFinancialReportingRoute =
   BusinessDashboardFinancialReportingRouteImport.update({
-    id: '/business-dashboard/financial-reporting',
-    path: '/business-dashboard/financial-reporting',
-    getParentRoute: () => rootRouteImport,
+    id: '/financial-reporting',
+    path: '/financial-reporting',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardCommandCenterRoute =
   BusinessDashboardCommandCenterRouteImport.update({
-    id: '/business-dashboard/command-center',
-    path: '/business-dashboard/command-center',
-    getParentRoute: () => rootRouteImport,
+    id: '/command-center',
+    path: '/command-center',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardCollectionsMerchantRoute =
   BusinessDashboardCollectionsMerchantRouteImport.update({
-    id: '/business-dashboard/collections-merchant',
-    path: '/business-dashboard/collections-merchant',
-    getParentRoute: () => rootRouteImport,
+    id: '/collections-merchant',
+    path: '/collections-merchant',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardBusinessOnboardingRoute =
+  BusinessDashboardBusinessOnboardingRouteImport.update({
+    id: '/business-onboarding',
+    path: '/business-onboarding',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardBulkDisbursementsRoute =
   BusinessDashboardBulkDisbursementsRouteImport.update({
-    id: '/business-dashboard/bulk-disbursements',
-    path: '/business-dashboard/bulk-disbursements',
-    getParentRoute: () => rootRouteImport,
+    id: '/bulk-disbursements',
+    path: '/bulk-disbursements',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardAccountsPayableRoute =
   BusinessDashboardAccountsPayableRouteImport.update({
-    id: '/business-dashboard/accounts-payable',
-    path: '/business-dashboard/accounts-payable',
-    getParentRoute: () => rootRouteImport,
+    id: '/accounts-payable',
+    path: '/accounts-payable',
+    getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const AuthSecurityRoute = AuthSecurityRouteImport.update({
   id: '/auth/security',
@@ -465,6 +513,7 @@ const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
   '/business': typeof HomeBusinessRoute
+  '/business-dashboard': typeof BusinessDashboardRouteWithChildren
   '/dev': typeof DevRouteWithChildren
   '/login': typeof LoginRoute
   '/utility': typeof UtilityRouteWithChildren
@@ -479,12 +528,18 @@ export interface FileRoutesByFullPath {
   '/auth/security': typeof AuthSecurityRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
+  '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
   '/business-dashboard/collections-merchant': typeof BusinessDashboardCollectionsMerchantRoute
   '/business-dashboard/command-center': typeof BusinessDashboardCommandCenterRoute
   '/business-dashboard/financial-reporting': typeof BusinessDashboardFinancialReportingRoute
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
+  '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
+  '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
+  '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
+  '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
+  '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev/$module': typeof DevModuleRoute
@@ -545,12 +600,18 @@ export interface FileRoutesByTo {
   '/auth/security': typeof AuthSecurityRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
+  '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
   '/business-dashboard/collections-merchant': typeof BusinessDashboardCollectionsMerchantRoute
   '/business-dashboard/command-center': typeof BusinessDashboardCommandCenterRoute
   '/business-dashboard/financial-reporting': typeof BusinessDashboardFinancialReportingRoute
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
+  '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
+  '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
+  '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
+  '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
+  '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev/$module': typeof DevModuleRoute
@@ -600,6 +661,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
   '/business': typeof BusinessRouteWithChildren
+  '/business-dashboard': typeof BusinessDashboardRouteWithChildren
   '/dev': typeof DevRouteWithChildren
   '/login': typeof LoginRoute
   '/utility': typeof UtilityRouteWithChildren
@@ -615,12 +677,18 @@ export interface FileRoutesById {
   '/auth/security': typeof AuthSecurityRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
+  '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
   '/business-dashboard/collections-merchant': typeof BusinessDashboardCollectionsMerchantRoute
   '/business-dashboard/command-center': typeof BusinessDashboardCommandCenterRoute
   '/business-dashboard/financial-reporting': typeof BusinessDashboardFinancialReportingRoute
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
+  '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
+  '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
+  '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
+  '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
+  '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev/$module': typeof DevModuleRoute
@@ -673,6 +741,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/business'
+    | '/business-dashboard'
     | '/dev'
     | '/login'
     | '/utility'
@@ -687,12 +756,18 @@ export interface FileRouteTypes {
     | '/auth/security'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
+    | '/business-dashboard/business-onboarding'
     | '/business-dashboard/collections-merchant'
     | '/business-dashboard/command-center'
     | '/business-dashboard/financial-reporting'
     | '/business-dashboard/invoicing-billing'
+    | '/business-dashboard/multi-currency-treasury'
+    | '/business-dashboard/open-banking'
     | '/business-dashboard/payroll-hr'
+    | '/business-dashboard/settings-administration'
+    | '/business-dashboard/support-disputes'
     | '/business-dashboard/treasury-cash'
+    | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
     | '/dev/$module'
@@ -753,12 +828,18 @@ export interface FileRouteTypes {
     | '/auth/security'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
+    | '/business-dashboard/business-onboarding'
     | '/business-dashboard/collections-merchant'
     | '/business-dashboard/command-center'
     | '/business-dashboard/financial-reporting'
     | '/business-dashboard/invoicing-billing'
+    | '/business-dashboard/multi-currency-treasury'
+    | '/business-dashboard/open-banking'
     | '/business-dashboard/payroll-hr'
+    | '/business-dashboard/settings-administration'
+    | '/business-dashboard/support-disputes'
     | '/business-dashboard/treasury-cash'
+    | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
     | '/dev/$module'
@@ -807,6 +888,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_home'
     | '/business'
+    | '/business-dashboard'
     | '/dev'
     | '/login'
     | '/utility'
@@ -822,12 +904,18 @@ export interface FileRouteTypes {
     | '/auth/security'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
+    | '/business-dashboard/business-onboarding'
     | '/business-dashboard/collections-merchant'
     | '/business-dashboard/command-center'
     | '/business-dashboard/financial-reporting'
     | '/business-dashboard/invoicing-billing'
+    | '/business-dashboard/multi-currency-treasury'
+    | '/business-dashboard/open-banking'
     | '/business-dashboard/payroll-hr'
+    | '/business-dashboard/settings-administration'
+    | '/business-dashboard/support-disputes'
     | '/business-dashboard/treasury-cash'
+    | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
     | '/dev/$module'
@@ -879,6 +967,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
   BusinessRoute: typeof BusinessRouteWithChildren
+  BusinessDashboardRoute: typeof BusinessDashboardRouteWithChildren
   DevRoute: typeof DevRouteWithChildren
   LoginRoute: typeof LoginRoute
   UtilityRoute: typeof UtilityRouteWithChildren
@@ -891,17 +980,8 @@ export interface RootRouteChildren {
   AuthRecoveryRoute: typeof AuthRecoveryRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSecurityRoute: typeof AuthSecurityRoute
-  BusinessDashboardAccountsPayableRoute: typeof BusinessDashboardAccountsPayableRoute
-  BusinessDashboardBulkDisbursementsRoute: typeof BusinessDashboardBulkDisbursementsRoute
-  BusinessDashboardCollectionsMerchantRoute: typeof BusinessDashboardCollectionsMerchantRoute
-  BusinessDashboardCommandCenterRoute: typeof BusinessDashboardCommandCenterRoute
-  BusinessDashboardFinancialReportingRoute: typeof BusinessDashboardFinancialReportingRoute
-  BusinessDashboardInvoicingBillingRoute: typeof BusinessDashboardInvoicingBillingRoute
-  BusinessDashboardPayrollHrRoute: typeof BusinessDashboardPayrollHrRoute
-  BusinessDashboardTreasuryCashRoute: typeof BusinessDashboardTreasuryCashRoute
   CardsAppRoute: typeof CardsAppRouteWithChildren
   Transaction_dashboardAppRoute: typeof Transaction_dashboardAppRouteWithChildren
-  BusinessDashboardIndexRoute: typeof BusinessDashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -925,6 +1005,13 @@ declare module '@tanstack/react-router' {
       path: '/dev'
       fullPath: '/dev'
       preLoaderRoute: typeof DevRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-dashboard': {
+      id: '/business-dashboard'
+      path: '/business-dashboard'
+      fullPath: '/business-dashboard'
+      preLoaderRoute: typeof BusinessDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business': {
@@ -964,10 +1051,10 @@ declare module '@tanstack/react-router' {
     }
     '/business-dashboard/': {
       id: '/business-dashboard/'
-      path: '/business-dashboard'
+      path: '/'
       fullPath: '/business-dashboard/'
       preLoaderRoute: typeof BusinessDashboardIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/_home/': {
       id: '/_home/'
@@ -1046,61 +1133,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessModuleRouteImport
       parentRoute: typeof BusinessRoute
     }
+    '/business-dashboard/virtual-accounts': {
+      id: '/business-dashboard/virtual-accounts'
+      path: '/virtual-accounts'
+      fullPath: '/business-dashboard/virtual-accounts'
+      preLoaderRoute: typeof BusinessDashboardVirtualAccountsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
     '/business-dashboard/treasury-cash': {
       id: '/business-dashboard/treasury-cash'
-      path: '/business-dashboard/treasury-cash'
+      path: '/treasury-cash'
       fullPath: '/business-dashboard/treasury-cash'
       preLoaderRoute: typeof BusinessDashboardTreasuryCashRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/support-disputes': {
+      id: '/business-dashboard/support-disputes'
+      path: '/support-disputes'
+      fullPath: '/business-dashboard/support-disputes'
+      preLoaderRoute: typeof BusinessDashboardSupportDisputesRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/settings-administration': {
+      id: '/business-dashboard/settings-administration'
+      path: '/settings-administration'
+      fullPath: '/business-dashboard/settings-administration'
+      preLoaderRoute: typeof BusinessDashboardSettingsAdministrationRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/payroll-hr': {
       id: '/business-dashboard/payroll-hr'
-      path: '/business-dashboard/payroll-hr'
+      path: '/payroll-hr'
       fullPath: '/business-dashboard/payroll-hr'
       preLoaderRoute: typeof BusinessDashboardPayrollHrRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/open-banking': {
+      id: '/business-dashboard/open-banking'
+      path: '/open-banking'
+      fullPath: '/business-dashboard/open-banking'
+      preLoaderRoute: typeof BusinessDashboardOpenBankingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/multi-currency-treasury': {
+      id: '/business-dashboard/multi-currency-treasury'
+      path: '/multi-currency-treasury'
+      fullPath: '/business-dashboard/multi-currency-treasury'
+      preLoaderRoute: typeof BusinessDashboardMultiCurrencyTreasuryRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/invoicing-billing': {
       id: '/business-dashboard/invoicing-billing'
-      path: '/business-dashboard/invoicing-billing'
+      path: '/invoicing-billing'
       fullPath: '/business-dashboard/invoicing-billing'
       preLoaderRoute: typeof BusinessDashboardInvoicingBillingRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/financial-reporting': {
       id: '/business-dashboard/financial-reporting'
-      path: '/business-dashboard/financial-reporting'
+      path: '/financial-reporting'
       fullPath: '/business-dashboard/financial-reporting'
       preLoaderRoute: typeof BusinessDashboardFinancialReportingRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/command-center': {
       id: '/business-dashboard/command-center'
-      path: '/business-dashboard/command-center'
+      path: '/command-center'
       fullPath: '/business-dashboard/command-center'
       preLoaderRoute: typeof BusinessDashboardCommandCenterRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/collections-merchant': {
       id: '/business-dashboard/collections-merchant'
-      path: '/business-dashboard/collections-merchant'
+      path: '/collections-merchant'
       fullPath: '/business-dashboard/collections-merchant'
       preLoaderRoute: typeof BusinessDashboardCollectionsMerchantRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/business-onboarding': {
+      id: '/business-dashboard/business-onboarding'
+      path: '/business-onboarding'
+      fullPath: '/business-dashboard/business-onboarding'
+      preLoaderRoute: typeof BusinessDashboardBusinessOnboardingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/bulk-disbursements': {
       id: '/business-dashboard/bulk-disbursements'
-      path: '/business-dashboard/bulk-disbursements'
+      path: '/bulk-disbursements'
       fullPath: '/business-dashboard/bulk-disbursements'
       preLoaderRoute: typeof BusinessDashboardBulkDisbursementsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/accounts-payable': {
       id: '/business-dashboard/accounts-payable'
-      path: '/business-dashboard/accounts-payable'
+      path: '/accounts-payable'
       fullPath: '/business-dashboard/accounts-payable'
       preLoaderRoute: typeof BusinessDashboardAccountsPayableRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BusinessDashboardRoute
     }
     '/auth/security': {
       id: '/auth/security'
@@ -1418,6 +1547,52 @@ const BusinessRouteWithChildren = BusinessRoute._addFileChildren(
   BusinessRouteChildren,
 )
 
+interface BusinessDashboardRouteChildren {
+  BusinessDashboardAccountsPayableRoute: typeof BusinessDashboardAccountsPayableRoute
+  BusinessDashboardBulkDisbursementsRoute: typeof BusinessDashboardBulkDisbursementsRoute
+  BusinessDashboardBusinessOnboardingRoute: typeof BusinessDashboardBusinessOnboardingRoute
+  BusinessDashboardCollectionsMerchantRoute: typeof BusinessDashboardCollectionsMerchantRoute
+  BusinessDashboardCommandCenterRoute: typeof BusinessDashboardCommandCenterRoute
+  BusinessDashboardFinancialReportingRoute: typeof BusinessDashboardFinancialReportingRoute
+  BusinessDashboardInvoicingBillingRoute: typeof BusinessDashboardInvoicingBillingRoute
+  BusinessDashboardMultiCurrencyTreasuryRoute: typeof BusinessDashboardMultiCurrencyTreasuryRoute
+  BusinessDashboardOpenBankingRoute: typeof BusinessDashboardOpenBankingRoute
+  BusinessDashboardPayrollHrRoute: typeof BusinessDashboardPayrollHrRoute
+  BusinessDashboardSettingsAdministrationRoute: typeof BusinessDashboardSettingsAdministrationRoute
+  BusinessDashboardSupportDisputesRoute: typeof BusinessDashboardSupportDisputesRoute
+  BusinessDashboardTreasuryCashRoute: typeof BusinessDashboardTreasuryCashRoute
+  BusinessDashboardVirtualAccountsRoute: typeof BusinessDashboardVirtualAccountsRoute
+  BusinessDashboardIndexRoute: typeof BusinessDashboardIndexRoute
+}
+
+const BusinessDashboardRouteChildren: BusinessDashboardRouteChildren = {
+  BusinessDashboardAccountsPayableRoute: BusinessDashboardAccountsPayableRoute,
+  BusinessDashboardBulkDisbursementsRoute:
+    BusinessDashboardBulkDisbursementsRoute,
+  BusinessDashboardBusinessOnboardingRoute:
+    BusinessDashboardBusinessOnboardingRoute,
+  BusinessDashboardCollectionsMerchantRoute:
+    BusinessDashboardCollectionsMerchantRoute,
+  BusinessDashboardCommandCenterRoute: BusinessDashboardCommandCenterRoute,
+  BusinessDashboardFinancialReportingRoute:
+    BusinessDashboardFinancialReportingRoute,
+  BusinessDashboardInvoicingBillingRoute:
+    BusinessDashboardInvoicingBillingRoute,
+  BusinessDashboardMultiCurrencyTreasuryRoute:
+    BusinessDashboardMultiCurrencyTreasuryRoute,
+  BusinessDashboardOpenBankingRoute: BusinessDashboardOpenBankingRoute,
+  BusinessDashboardPayrollHrRoute: BusinessDashboardPayrollHrRoute,
+  BusinessDashboardSettingsAdministrationRoute:
+    BusinessDashboardSettingsAdministrationRoute,
+  BusinessDashboardSupportDisputesRoute: BusinessDashboardSupportDisputesRoute,
+  BusinessDashboardTreasuryCashRoute: BusinessDashboardTreasuryCashRoute,
+  BusinessDashboardVirtualAccountsRoute: BusinessDashboardVirtualAccountsRoute,
+  BusinessDashboardIndexRoute: BusinessDashboardIndexRoute,
+}
+
+const BusinessDashboardRouteWithChildren =
+  BusinessDashboardRoute._addFileChildren(BusinessDashboardRouteChildren)
+
 interface DevRouteChildren {
   DevModuleRoute: typeof DevModuleRoute
   DevIndexRoute: typeof DevIndexRoute
@@ -1557,6 +1732,7 @@ const Transaction_dashboardAppRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
   BusinessRoute: BusinessRouteWithChildren,
+  BusinessDashboardRoute: BusinessDashboardRouteWithChildren,
   DevRoute: DevRouteWithChildren,
   LoginRoute: LoginRoute,
   UtilityRoute: UtilityRouteWithChildren,
@@ -1569,21 +1745,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRecoveryRoute: AuthRecoveryRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSecurityRoute: AuthSecurityRoute,
-  BusinessDashboardAccountsPayableRoute: BusinessDashboardAccountsPayableRoute,
-  BusinessDashboardBulkDisbursementsRoute:
-    BusinessDashboardBulkDisbursementsRoute,
-  BusinessDashboardCollectionsMerchantRoute:
-    BusinessDashboardCollectionsMerchantRoute,
-  BusinessDashboardCommandCenterRoute: BusinessDashboardCommandCenterRoute,
-  BusinessDashboardFinancialReportingRoute:
-    BusinessDashboardFinancialReportingRoute,
-  BusinessDashboardInvoicingBillingRoute:
-    BusinessDashboardInvoicingBillingRoute,
-  BusinessDashboardPayrollHrRoute: BusinessDashboardPayrollHrRoute,
-  BusinessDashboardTreasuryCashRoute: BusinessDashboardTreasuryCashRoute,
   CardsAppRoute: CardsAppRouteWithChildren,
   Transaction_dashboardAppRoute: Transaction_dashboardAppRouteWithChildren,
-  BusinessDashboardIndexRoute: BusinessDashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

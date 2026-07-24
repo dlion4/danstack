@@ -151,9 +151,7 @@ export default function CommandCenter() {
   }
 
   return (
-    <div className={cx(s.bizPage, 'container-fluid')}>
-      {/* CONTENT */}
-      <div className={s.content}>
+    <div className={s.content}>
           {/* HERO ROW: Key Metrics */}
           <div className="row g-3">
             {config.statCards.map((sc) => (
@@ -443,9 +441,9 @@ export default function CommandCenter() {
             </div>
           </div>
         </div>
+</div>
 
       {/* MODALS */}
       <CommandCenterModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+   )
 }

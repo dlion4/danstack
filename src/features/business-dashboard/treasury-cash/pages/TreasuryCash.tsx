@@ -91,26 +91,7 @@ export default function TreasuryCash() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={s.bizPage}>
-      <aside className={s.sidebar}><div className={s.sidebarLogo}>PB</div>
-        <nav className={s.sidebarNav}>{config.nav.map((n) => (<button key={n.title} className={`${s.navItem} ${n.active ? s.navItemActive : ''}`} title={n.title}><i className={`bi ${n.icon}`} />{n.dot && <span className={s.badgeDot} />}</button>))}</nav>
-      </aside>
-      <div className={s.main}>
-        <header className={s.header}>
-          <div className={s.headerTitle}><h1>{config.headerTitle}</h1><p>{config.headerSub}</p></div>
-          <div className={s.headerSearch}><i className="bi bi-search" /><input type="text" placeholder={config.searchPlaceholder} /></div>
-          <div className={s.headerActions}>
-            <button className={s.headerBtn} onClick={() => setActiveModal('notificationsModal')}><i className="bi bi-bell" /><span className={s.counter}>3</span></button>
-            <button className={s.profileBtn} onClick={() => setActiveModal('profileModal')}>
-              <div className={s.avatar} style={{ background: config.user.avatarBg }}>{config.user.initials}</div>
-              <div><div className={s.profileName}>{config.user.name}</div><div className={s.profileRole}>{config.user.role}</div></div>
-            </button>
-          </div>
-        </header>
-        <div className={s.pageBar}><div><div className={s.breadcrumb}><a href="#">{config.breadcrumb.parent}</a> · {config.breadcrumb.current}</div><h2 className={s.pageH2}>{config.pageTitle}</h2><p className={s.pageSub}>{config.pageSub}</p></div>
-          <div className="d-flex gap-2"><button className={cx(s.btnPm, s.btnSm, s.btnPmP)} onClick={() => setActiveModal('transferFundsModal')}><i className="bi bi-arrow-left-right" /> Transfer</button><button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal('addAccountModal')}><i className="bi bi-plus-circle" /> Add Account</button></div>
-        </div>
-        <div className={s.content}>
+    <div className={s.content}>
           {/* HERO */}
           <div className="row g-3">{config.heroStats.map((hs) => (<div key={hs.key} className={hs.col}>
             <div className={cx(s.card, hs.key === 'cash' ? s.cardAccent : '')} style={{ cursor: 'pointer' }} onClick={() => setActiveModal(hs.key === 'cash' ? 'accountDetailModal' : hs.key === 'fx' ? 'bookFXModal' : hs.key === 'mmf' ? 'investmentPortfolioModal' : 'autoSweepModal')}>
@@ -151,9 +132,7 @@ export default function TreasuryCash() {
           <div className={s.card}><div className="d-flex justify-content-between align-items-center mb-3"><div><h3 className={cx(s.st, 'text-purple')}><i className="bi bi-graph-up-arrow" style={{ color: 'var(--pm-purple)' }} /> 3.7.4 — Investment & MMF Portfolio</h3><p className={s.ss}>Manage money market funds, T-bills, and fixed deposits.</p></div><button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal('investCashModal')}><i className="bi bi-graph-up-arrow" /> Invest</button></div>
             <div className="table-responsive"><table className={s.tbl}><thead><tr><th>Type</th><th>Amount</th><th>Yield</th><th>Maturity</th><th>Status</th><th>Action</th></tr></thead>
               <tbody>{config.investments.map((inv) => (<tr key={inv.type}><td><strong>{inv.type}</strong></td><td>{inv.amount}</td><td>{inv.yieldRate}</td><td>{inv.maturity}</td><td><span className={cx(s.badge, s[inv.statusTone])}>{inv.status}</span></td><td><button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal(inv.modal)}>View</button></td></tr>))}</tbody></table></div></div>
-        </div>
       </div>
-      <TreasuryCashModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+<TreasuryCashModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
+   )
 }

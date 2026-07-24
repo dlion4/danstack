@@ -108,51 +108,7 @@ export default function FinancialReporting() {
 
   return (
     <div className={s.bizPage}>
-      <aside className={s.sidebar}>
-        <div className={s.sidebarLogo}>P</div>
-        <nav className={s.sidebarNav}>
-          {config.nav.map((n) => (
-            <button key={n.title} className={`${s.navItem} ${n.active ? s.navItemActive : ''}`} title={n.title}>
-              <i className={`bi ${n.icon}`} />{n.dot && <span className={s.badgeDot} />}
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      <div className={s.main}>
-        <header className={s.header}>
-          <div className={s.headerTitle}>
-            <div className="d-flex align-items-center gap-2">
-              <div className={s.avatar} style={{ width: 36, height: 36, fontSize: 13, background: config.user.avatarBg }}>{config.user.initials}</div>
-              <div><h1>{config.headerTitle}</h1><p>{config.headerSub}</p></div>
-            </div>
-          </div>
-          <div className={s.headerSearch}><i className="bi bi-search" /><input type="text" placeholder={config.searchPlaceholder} /></div>
-          <div className={s.headerActions}>
-            <button className={s.headerBtn} onClick={() => setActiveModal('taxReadinessModal')} title="Tax Readiness"><i className="bi bi-bank" /><span className={s.counter}>2</span></button>
-            <button className={s.headerBtn} onClick={() => setActiveModal('reconciliationExceptionsModal')} title="Exceptions"><i className="bi bi-exclamation-triangle" /><span className={s.counter} style={{ background: 'var(--pm-warning)' }}>4</span></button>
-            <button className={s.headerBtn} onClick={() => setActiveModal('reportDeliverySettingsModal')} title="Report Settings"><i className="bi bi-sliders" /></button>
-            <button className={s.profileBtn} onClick={() => setActiveModal('profileModal')}>
-              <div className={s.avatar} style={{ background: config.user.avatarBg }}>{config.user.initials}</div>
-              <div><div className={s.profileName}>{config.user.name}</div><div className={s.profileRole}>{config.user.role}</div></div>
-            </button>
-          </div>
-        </header>
-
-        <div className={s.pageBar}>
-          <div>
-            <div className={s.breadcrumb}><a href="#">Home</a> / <a href="#">{config.breadcrumb.parent}</a> / <strong>{config.breadcrumb.current}</strong></div>
-            <h2 className={s.pageH2}>{config.pageTitle}</h2>
-            <p className={s.pageSub}>{config.pageSub}</p>
-          </div>
-          <div className="d-flex flex-wrap" style={{ gap: 8 }}>
-            <button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal('inviteAuditorModal')}><i className="bi bi-person-lock" /> Auditor Access</button>
-            <button className={cx(s.btnPm, s.btnSm)} onClick={() => setActiveModal('runMonthEndModal')}><i className="bi bi-calendar2-check" /> Month-End Close</button>
-            <button className={cx(s.btnPm, s.btnSm, s.btnPmP)} onClick={() => setActiveModal('generateCustomReportModal')}><i className="bi bi-file-earmark-plus" /> Create Report</button>
-          </div>
-        </div>
-
-        <div className={s.content}>
+      <div className={s.content}>
           {/* HERO */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -405,7 +361,6 @@ export default function FinancialReporting() {
           </div>
         </div>
       </div>
-
       <FinancialReportingModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
     </div>
   )

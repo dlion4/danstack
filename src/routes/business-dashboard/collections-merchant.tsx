@@ -3,7 +3,7 @@ import CollectionsMerchant from '@/features/business-dashboard/collections-merch
 
 /**
  * business-dashboard/collections-merchant.tsx — Collections & Merchant Services (Page 3.2).
- * Renders inside BusinessShell.
+ * Renders inside BusinessShell as a child route.
  * Mounts at /business-dashboard/collections-merchant
  */
 export const Route = createFileRoute('/business-dashboard/collections-merchant')({

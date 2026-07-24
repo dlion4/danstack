@@ -158,7 +158,7 @@ export default function CollectionsMerchant() {
 
   if (isLoading) {
     return (
-      <div className="container-fluid" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div className={s.spinnerWrap} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <div className={s.spinner} />
         <span style={{ marginTop: 12, fontWeight: 600, color: 'var(--pm-primary)' }}>Loading workspace…</span>
       </div>
@@ -166,9 +166,7 @@ export default function CollectionsMerchant() {
   }
 
   return (
-    <div className={cx(s.bizPage, 'container-fluid')}>
-      {/* CONTENT */}
-      <div className={s.content}>
+    <div className={s.content}>
           {/* Hero Stats Row */}
           <div className="row g-3">
             {/* Collected Today (accent card) */}
@@ -507,9 +505,9 @@ export default function CollectionsMerchant() {
             </div>
           </div>
         </div>
+</div>
 
       {/* MODALS */}
       <CollectionsMerchantModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+   )
 }

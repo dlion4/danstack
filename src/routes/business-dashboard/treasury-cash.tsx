@@ -3,8 +3,8 @@ import TreasuryCash from '@/features/business-dashboard/treasury-cash/pages/Trea
 
 /**
  * business-dashboard/treasury-cash.tsx — Treasury, Cash Management & Forex (Page 3.7).
- * Self-contained page with its own sidebar, header, and modal layer.
- * Renders at /business-dashboard/treasury-cash
+ * Renders inside BusinessShell as a child route.
+ * Mounts at /business-dashboard/treasury-cash
  */
 export const Route = createFileRoute('/business-dashboard/treasury-cash')({
   component: TreasuryCash,

@@ -137,9 +137,7 @@ export default function InvoicingBilling() {
   const config = apiData ?? initialMockData
 
   return (
-    <div className={cx(s.bizPage, 'container-fluid')}>
-      {/* CONTENT */}
-      <div className={s.content}>
+    <div className={s.content}>
           {/* HERO STATS */}
           <div className="row g-3">
             {config.heroStats.map((hs) => (
@@ -371,9 +369,9 @@ export default function InvoicingBilling() {
             </div>
           </div>
         </div>
+</div>
 
       {/* MODALS */}
       <InvoicingBillingModals active={activeModal} onClose={() => setActiveModal(null)} onOpen={setActiveModal} />
-    </div>
-  )
+   )
 }
