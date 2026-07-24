@@ -1034,7 +1034,7 @@ function selectRadioCard(card){
 }
 
 // Multi-step logic
-let steps = { ticket: 1, incident: 1 };
+const steps = { ticket: 1, incident: 1 };
 function renderStepper(elId, labels, current) {
     const wrap = document.getElementById(elId);
     if (!wrap) return;
@@ -1050,7 +1050,7 @@ function showFlow(prefix, current, total) {
 }
 
 function nextMultiStep(type, total) {
-    let current = steps[type];
+    const current = steps[type];
     if (current === total - 1) {
         showLoading(`#${type}Step${current}`, () => {
             steps[type]++;

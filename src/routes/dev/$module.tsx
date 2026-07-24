@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
-import DevModulePage from '@/features/Layouts/dashboard-dev-layout/pages/DevModulePage'
+import { createFileRoute } from "@tanstack/react-router";
+import DevModulePage from "@/features/Layouts/dashboard-dev-layout/pages/DevModulePage";
 
 /**
  * dev/$module.tsx — generic /dev/<module> destination for the dev layout.
@@ -9,11 +9,11 @@ import DevModulePage from '@/features/Layouts/dashboard-dev-layout/pages/DevModu
  * index (/dev). Unknown slugs render a friendly empty state inside
  * DevModulePage instead of a broken page.
  */
-export const Route = createFileRoute('/dev/$module')({
-  component: DevModuleRoute,
-})
+export const Route = createFileRoute("/dev/$module")({
+	component: DevModuleRoute,
+});
 
 function DevModuleRoute() {
-  const { module } = Route.useParams()
-  return <DevModulePage module={module} />
+	const { module } = Route.useParams();
+	return <DevModulePage module={module} />;
 }

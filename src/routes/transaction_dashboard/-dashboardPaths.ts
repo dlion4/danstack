@@ -13,8 +13,6 @@
      // ...render <Outlet /> bare when isBare, else with site chrome
    ========================================================================== */
 
-export const DASH_PATHS = [
-  '/transaction_dashboard',
-] as const
+export const DASH_PATHS = ["/transaction_dashboard"] as const;
 
-export type DashPath = (typeof DASH_PATHS)[number]
+export type DashPath = (typeof DASH_PATHS)[number];

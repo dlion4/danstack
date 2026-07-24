@@ -1,6 +1,6 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
-import Header from '../components/homeLayout/Header'
-import Footer from '../components/homeLayout/Footer'
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import Footer from "../components/homeLayout/Footer";
+import Header from "../components/homeLayout/Header";
 
 /**
  * _home — Pathless LAYOUT route.
@@ -12,18 +12,18 @@ import Footer from '../components/homeLayout/Footer'
  * URL impact: none. `_home` does not appear in the URL. Its children keep their
  * own paths (e.g. routes/_home/index.tsx -> "/", routes/_home/about.tsx -> "/about").
  */
-export const Route = createFileRoute('/_home')({
-  component: HomeLayout,
-})
+export const Route = createFileRoute("/_home")({
+	component: HomeLayout,
+});
 
 function HomeLayout() {
-  return (
-    <>
-      <Header />
-      <main className="min-h-screen pt-32 pb-20">
-        <Outlet />
-      </main>
-      <Footer />
-    </>
-  )
+	return (
+		<>
+			<Header />
+			<main className="min-h-screen pt-32 pb-20">
+				<Outlet />
+			</main>
+			<Footer />
+		</>
+	);
 }

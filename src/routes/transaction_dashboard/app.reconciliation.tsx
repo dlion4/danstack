@@ -6,6 +6,8 @@ import Reconciliation from "@/features/transaction-dashboard/reconciliation/page
  * Child of routes/app.tsx, so it renders INSIDE the app shell
  * (sidebar + top nav + right aside stay fixed; only this body swaps in).
  */
-export const Route = createFileRoute("/transaction_dashboard/app/reconciliation")({
+export const Route = createFileRoute(
+	"/transaction_dashboard/app/reconciliation",
+)({
 	component: Reconciliation,
 });

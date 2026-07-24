@@ -17,9 +17,9 @@ import {
 } from "../../../../shared/components/modals";
 // } from "../../../../shared/components/modals";
 import shared from "../../../../shared/styles/appPage.module.css";
- 
+
 const s = shared as Record<string, string>;
- 
+
 interface RailRow {
 	id: string;
 	name: string;
@@ -27,7 +27,7 @@ interface RailRow {
 	fee: string;
 	success: string;
 }
- 
+
 export interface InitiateTransferModalsProps {
 	modalState: Record<string, boolean>;
 	openModal: (id: string) => void;
@@ -39,7 +39,7 @@ export interface InitiateTransferModalsProps {
 		purposeCodes: string[];
 	};
 }
- 
+
 export function InitiateTransferModals({
 	modalState,
 	closeModal,
@@ -47,7 +47,7 @@ export function InitiateTransferModals({
 }: InitiateTransferModalsProps) {
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
- 
+
 	return (
 		<>
 			{/* New Transfer — multi-step flow */}
@@ -102,7 +102,9 @@ export function InitiateTransferModals({
 								<ReviewRow label="Amount" value="KES 250,000" />
 								<ReviewRow label="Fee" value="KES 175" />
 								<ReviewRow label="Total debit" value="KES 250,175" highlight />
-								<label className={`${s.fieldLabel} mt-3 d-block`}>Enter PIN</label>
+								<label className={`${s.fieldLabel} mt-3 d-block`}>
+									Enter PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -120,7 +122,7 @@ export function InitiateTransferModals({
 					</>
 				)}
 			</FlowModal>
- 
+
 			{/* Bulk upload */}
 			<SimpleModal
 				show={isOpen("bulkUploadModal")}
@@ -140,7 +142,7 @@ export function InitiateTransferModals({
 					<span>Columns: Name, Account/Phone, Bank, Amount, Reference.</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Templates */}
 			<TabbedModal
 				show={isOpen("templateModal")}
@@ -194,7 +196,7 @@ export function InitiateTransferModals({
 					},
 				]}
 			/>
- 
+
 			{/* Rail health */}
 			<SimpleModal
 				show={isOpen("railHealthModal")}
@@ -234,7 +236,7 @@ export function InitiateTransferModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Fee calculator */}
 			<SimpleModal
 				show={isOpen("feeCalcModal")}
@@ -255,7 +257,7 @@ export function InitiateTransferModals({
 					<strong>KES 175</strong>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Rail comparison */}
 			<SimpleModal
 				show={isOpen("railCompareModal")}
@@ -289,7 +291,7 @@ export function InitiateTransferModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Add source account */}
 			<SimpleModal
 				show={isOpen("addAccountModal")}
@@ -309,7 +311,7 @@ export function InitiateTransferModals({
 				</div>
 				<SelectField label="Bank" options={data.banks} />
 			</SimpleModal>
- 
+
 			{/* Beneficiary address book */}
 			<TabbedModal
 				show={isOpen("beneficiaryModal")}
@@ -375,7 +377,7 @@ export function InitiateTransferModals({
 					},
 				]}
 			/>
- 
+
 			{/* Verify account name */}
 			<SimpleModal
 				show={isOpen("verifyAccountModal")}
@@ -390,7 +392,7 @@ export function InitiateTransferModals({
 					</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Upload supporting document */}
 			<SimpleModal
 				show={isOpen("uploadDocModal")}
@@ -409,7 +411,7 @@ export function InitiateTransferModals({
 					<span>Max 10 MB. Invoices, contracts and KYC docs accepted.</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Terms */}
 			<SimpleModal
 				show={isOpen("termsModal")}
@@ -420,20 +422,20 @@ export function InitiateTransferModals({
 			>
 				<div style={{ fontSize: 14, color: "var(--ink-700)", lineHeight: 1.7 }}>
 					<p>
-						By submitting a transfer you confirm that the beneficiary details are
-						correct and that funds are for a lawful purpose.
+						By submitting a transfer you confirm that the beneficiary details
+						are correct and that funds are for a lawful purpose.
 					</p>
 					<p>
-						Transfers are subject to AML/CFT screening, maker-checker approval and
-						applicable daily and single-transaction limits.
+						Transfers are subject to AML/CFT screening, maker-checker approval
+						and applicable daily and single-transaction limits.
 					</p>
 					<p className="mb-0">
-						Completed transfers cannot be reversed. Fees are non-refundable once a
-						transfer settles on the selected rail.
+						Completed transfers cannot be reversed. Fees are non-refundable once
+						a transfer settles on the selected rail.
 					</p>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Submit success */}
 			<SimpleModal
 				show={isOpen("submitSuccessModal")}
@@ -452,7 +454,7 @@ export function InitiateTransferModals({
 					</p>
 				</div>
 			</SimpleModal>
- 
+
 			{/* Draft saved */}
 			<SimpleModal
 				show={isOpen("draftSavedModal")}
@@ -462,7 +464,9 @@ export function InitiateTransferModals({
 			>
 				<div className={`${s.hintBoxSuccess} ${s.hintBox}`}>
 					<i className="bi bi-check-circle" />
-					<span>Your transfer draft has been saved and can be resumed later.</span>
+					<span>
+						Your transfer draft has been saved and can be resumed later.
+					</span>
 				</div>
 			</SimpleModal>
 		</>

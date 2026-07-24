@@ -2644,7 +2644,7 @@
         }
 
         function calcFees() {
-            let amt = parseFloat(document.getElementById('calcAmt').value) || 0;
+            const amt = parseFloat(document.getElementById('calcAmt').value) || 0;
             document.querySelector('.calc-pb-fee').innerText = (amt * 0.015).toFixed(0);
             document.querySelector('.calc-pb-net').innerText = (amt - (amt * 0.015)).toFixed(0);
             document.querySelector('.calc-till-fee').innerText = (amt * 0.01).toFixed(0);

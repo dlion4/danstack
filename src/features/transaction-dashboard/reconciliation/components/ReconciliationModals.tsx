@@ -18,7 +18,12 @@
  * ========================================================================== */
 "use client";
 import { useEffect, useState } from "react";
-import { FlowModal, ModalShell, ReviewRow, SimpleModal } from "../../../../shared/components/modals";
+import {
+	FlowModal,
+	ModalShell,
+	ReviewRow,
+	SimpleModal,
+} from "../../../../shared/components/modals";
 import { cx } from "../../../shell/data/shellData";
 import styles from "../styles/reconciliation.module.css";
 
@@ -57,7 +62,12 @@ function Field({
 	return (
 		<div className={className}>
 			{label && <label className={s.fieldLabel}>{label}</label>}
-			<input type={type} className={s.field} defaultValue={defaultValue} placeholder={placeholder} />
+			<input
+				type={type}
+				className={s.field}
+				defaultValue={defaultValue}
+				placeholder={placeholder}
+			/>
 		</div>
 	);
 }
@@ -91,13 +101,33 @@ function StepTitle({ children }: { children: string }) {
  * BulkItemPicker — legacy M4 Step 1 checkbox rows with a live selected total.
  * ======================================================================== */
 const BULK_ITEMS = [
-	{ ref: "EQ-882910", amount: "KES 2,800,000", match: "96% match", tone: s.badgeSuccess, checked: true },
-	{ ref: "KCB-991028", amount: "KES 2,800,000", match: "94% match", tone: s.badgeSuccess, checked: true },
-	{ ref: "COOP-77102", amount: "KES 450,000", match: "72% match", tone: s.badgeWarn, checked: false },
+	{
+		ref: "EQ-882910",
+		amount: "KES 2,800,000",
+		match: "96% match",
+		tone: s.badgeSuccess,
+		checked: true,
+	},
+	{
+		ref: "KCB-991028",
+		amount: "KES 2,800,000",
+		match: "94% match",
+		tone: s.badgeSuccess,
+		checked: true,
+	},
+	{
+		ref: "COOP-77102",
+		amount: "KES 450,000",
+		match: "72% match",
+		tone: s.badgeWarn,
+		checked: false,
+	},
 ];
 
 function BulkItemPicker() {
-	const [selected, setSelected] = useState<boolean[]>(BULK_ITEMS.map((i) => i.checked));
+	const [selected, setSelected] = useState<boolean[]>(
+		BULK_ITEMS.map((i) => i.checked),
+	);
 	const count = selected.filter(Boolean).length;
 	const total = BULK_ITEMS.filter((_, i) => selected[i])
 		.map((i) => Number(i.amount.replace(/[^\d]/g, "")))
@@ -111,7 +141,9 @@ function BulkItemPicker() {
 						className="form-check-input"
 						type="checkbox"
 						checked={selected[i]}
-						onChange={() => setSelected((prev) => prev.map((v, idx) => (idx === i ? !v : v)))}
+						onChange={() =>
+							setSelected((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
+						}
 					/>
 					<span className={s.checkRowLabel}>
 						<span>
@@ -197,16 +229,33 @@ function RuleEngineModal({
 			title="Auto-Reconciliation Rules Engine"
 			footer={
 				<>
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={onClose}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={onClose}
+					>
 						Close
 					</button>
 					{tab === "create" && (
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={next}>
-							{isLast ? "Done" : step === total - 1 ? "Create Rule" : "Continue"} {!isLast && <i className="bi bi-arrow-right" />}
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={next}
+						>
+							{isLast
+								? "Done"
+								: step === total - 1
+									? "Create Rule"
+									: "Continue"}{" "}
+							{!isLast && <i className="bi bi-arrow-right" />}
 						</button>
 					)}
 					{tab === "test" && !testDone && (
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={runTest}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={runTest}
+						>
 							Run Test
 						</button>
 					)}
@@ -222,7 +271,12 @@ function RuleEngineModal({
 							{ key: "test", label: "Test Rule" },
 						] as const
 					).map((t) => (
-						<button key={t.key} type="button" className={cx(s.pill, tab === t.key && s.pillActive)} onClick={() => setTab(t.key)}>
+						<button
+							key={t.key}
+							type="button"
+							className={cx(s.pill, tab === t.key && s.pillActive)}
+							onClick={() => setTab(t.key)}
+						>
 							{t.label}
 						</button>
 					))}
@@ -234,10 +288,13 @@ function RuleEngineModal({
 							<div className={s.stepper}>
 								{labels.map((label, i) => {
 									const n = i + 1;
-									const state = n < step ? "stepDone" : n === step ? "stepActive" : "";
+									const state =
+										n < step ? "stepDone" : n === step ? "stepActive" : "";
 									return (
 										<div className={cx(s.step, s[state])} key={label}>
-											<div className={s.stepNum}>{n < step ? <i className="bi bi-check" /> : n}</div>
+											<div className={s.stepNum}>
+												{n < step ? <i className="bi bi-check" /> : n}
+											</div>
 											<div className={s.stepLabel}>{label}</div>
 											{i < labels.length - 1 && <div className={s.stepLine} />}
 										</div>
@@ -250,10 +307,18 @@ function RuleEngineModal({
 								<StepTitle>Step 1: Rule Basics</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<Field label="Rule Name" defaultValue="Payroll Auto-Match v2" className="" />
+										<Field
+											label="Rule Name"
+											defaultValue="Payroll Auto-Match v2"
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<SelectField label="Applies To" options={["Equity → KCB", "All Banks", "M-Pesa B2B"]} className="" />
+										<SelectField
+											label="Applies To"
+											options={["Equity → KCB", "All Banks", "M-Pesa B2B"]}
+											className=""
+										/>
 									</div>
 								</div>
 							</>
@@ -263,26 +328,56 @@ function RuleEngineModal({
 								<StepTitle>Step 2: Matching Conditions</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-4">
-										<Field label="Amount Tolerance" defaultValue="± KES 500" className="" />
+										<Field
+											label="Amount Tolerance"
+											defaultValue="± KES 500"
+											className=""
+										/>
 									</div>
 									<div className="col-md-4">
-										<SelectField label="Date Window" options={["± 1 day", "± 3 days", "Same day only"]} className="" />
+										<SelectField
+											label="Date Window"
+											options={["± 1 day", "± 3 days", "Same day only"]}
+											className=""
+										/>
 									</div>
 									<div className="col-md-4">
-										<Field label="Reference Prefix" defaultValue="PAY-" className="" />
+										<Field
+											label="Reference Prefix"
+											defaultValue="PAY-"
+											className=""
+										/>
 									</div>
 								</div>
 								<div className="mt-3">
 									<label className={s.fieldLabel}>Additional Conditions</label>
 									<div className="form-check mb-1">
-										<input className="form-check-input" type="checkbox" defaultChecked id="condCredit" />
-										<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="condCredit">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											defaultChecked
+											id="condCredit"
+										/>
+										<label
+											className="form-check-label"
+											style={{ fontSize: 13 }}
+											htmlFor="condCredit"
+										>
 											Must be credit on receiving bank
 										</label>
 									</div>
 									<div className="form-check">
-										<input className="form-check-input" type="checkbox" defaultChecked id="condDesc" />
-										<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="condDesc">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											defaultChecked
+											id="condDesc"
+										/>
+										<label
+											className="form-check-label"
+											style={{ fontSize: 13 }}
+											htmlFor="condDesc"
+										>
 											Description contains "payroll"
 										</label>
 									</div>
@@ -294,10 +389,22 @@ function RuleEngineModal({
 								<StepTitle>Step 3: Actions &amp; Notifications</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField label="On Match" options={["Auto-confirm", "Require review", "Notify team"]} className="" />
+										<SelectField
+											label="On Match"
+											options={[
+												"Auto-confirm",
+												"Require review",
+												"Notify team",
+											]}
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<SelectField label="Notify On" options={["Match success", "Match failure", "Both"]} className="" />
+										<SelectField
+											label="Notify On"
+											options={["Match success", "Match failure", "Both"]}
+											className=""
+										/>
 									</div>
 								</div>
 							</>
@@ -308,7 +415,9 @@ function RuleEngineModal({
 									<i className="bi bi-check-lg" />
 								</div>
 								<h5 className={s.receiptTitle}>Rule Created Successfully</h5>
-								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>Payroll Auto-Match v2 will run on every incoming statement.</p>
+								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+									Payroll Auto-Match v2 will run on every incoming statement.
+								</p>
 							</div>
 						)}
 					</>
@@ -335,7 +444,11 @@ function RuleEngineModal({
 										<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
 									</td>
 									<td>
-										<button type="button" className={cx(s.btn, s.btnSm)} onClick={openPerformance}>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={openPerformance}
+										>
 											Edit
 										</button>
 									</td>
@@ -348,7 +461,11 @@ function RuleEngineModal({
 										<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
 									</td>
 									<td>
-										<button type="button" className={cx(s.btn, s.btnSm)} onClick={openPerformance}>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={openPerformance}
+										>
 											Edit
 										</button>
 									</td>
@@ -363,10 +480,18 @@ function RuleEngineModal({
 						<StepTitle>Test Rule Against Sample</StepTitle>
 						<div className="row g-3 mt-2">
 							<div className="col-md-6">
-								<Field label="Test Amount" defaultValue="2,800,500" className="" />
+								<Field
+									label="Test Amount"
+									defaultValue="2,800,500"
+									className=""
+								/>
 							</div>
 							<div className="col-md-6">
-								<Field label="Test Reference" defaultValue="PAY-2025-0627-001" className="" />
+								<Field
+									label="Test Reference"
+									defaultValue="PAY-2025-0627-001"
+									className=""
+								/>
 							</div>
 						</div>
 					</div>
@@ -376,14 +501,29 @@ function RuleEngineModal({
 						<div className={s.receiptIcon}>
 							<i className="bi bi-check-lg" />
 						</div>
-						<h5 className={s.receiptTitle}>Rule test passed! Match confidence 98%.</h5>
+						<h5 className={s.receiptTitle}>
+							Rule test passed! Match confidence 98%.
+						</h5>
 					</div>
 				)}
 
 				{loading && (
 					<div className={s.loadingOverlay}>
-						<div className="spinner-border" role="status" style={{ width: "3rem", height: "3rem" }} />
-						<p style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: "var(--pri)" }}>Processing…</p>
+						<div
+							className="spinner-border"
+							role="status"
+							style={{ width: "3rem", height: "3rem" }}
+						/>
+						<p
+							style={{
+								marginTop: 16,
+								fontSize: 14,
+								fontWeight: 600,
+								color: "var(--pri)",
+							}}
+						>
+							Processing…
+						</p>
 					</div>
 				)}
 			</div>
@@ -394,7 +534,12 @@ function RuleEngineModal({
 /* ==========================================================================
  * Public component — renders every modal driven by the page's modalState map.
  * ======================================================================== */
-export function ReconciliationModals({ modalState, openModal, closeModal, data }: ReconciliationModalsProps) {
+export function ReconciliationModals({
+	modalState,
+	openModal,
+	closeModal,
+	data,
+}: ReconciliationModalsProps) {
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
 	/** close current modal then open the next (legacy stacked instances) */
@@ -421,24 +566,44 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 								<StepTitle>Step 1: Select Unmatched Items</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<div className="p-3 border rounded" style={{ borderColor: "var(--border)" }}>
-											<h6 style={{ fontSize: 13, fontWeight: 700 }}>Debit (Equity Bank)</h6>
-											<div className={s.rowItem} style={{ borderBottom: "none", padding: "8px 0 0" }}>
+										<div
+											className="p-3 border rounded"
+											style={{ borderColor: "var(--border)" }}
+										>
+											<h6 style={{ fontSize: 13, fontWeight: 700 }}>
+												Debit (Equity Bank)
+											</h6>
+											<div
+												className={s.rowItem}
+												style={{ borderBottom: "none", padding: "8px 0 0" }}
+											>
 												<div style={{ minWidth: 0 }}>
 													<strong>EQ-882910</strong>
-													<div className={s.rowSub}>27 Jun • Payroll transfer</div>
+													<div className={s.rowSub}>
+														27 Jun • Payroll transfer
+													</div>
 												</div>
 												<strong>KES 2,800,000</strong>
 											</div>
 										</div>
 									</div>
 									<div className="col-md-6">
-										<div className="p-3 border rounded" style={{ borderColor: "var(--border)" }}>
-											<h6 style={{ fontSize: 13, fontWeight: 700 }}>Credit (KCB Bank)</h6>
-											<div className={s.rowItem} style={{ borderBottom: "none", padding: "8px 0 0" }}>
+										<div
+											className="p-3 border rounded"
+											style={{ borderColor: "var(--border)" }}
+										>
+											<h6 style={{ fontSize: 13, fontWeight: 700 }}>
+												Credit (KCB Bank)
+											</h6>
+											<div
+												className={s.rowItem}
+												style={{ borderBottom: "none", padding: "8px 0 0" }}
+											>
 												<div style={{ minWidth: 0 }}>
 													<strong>KCB-991028</strong>
-													<div className={s.rowSub}>27 Jun • Incoming transfer</div>
+													<div className={s.rowSub}>
+														27 Jun • Incoming transfer
+													</div>
 												</div>
 												<strong>KES 2,800,000</strong>
 											</div>
@@ -448,9 +613,20 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 								<div className="mt-3">
 									<label className={s.fieldLabel}>Match Confidence</label>
 									<div className={s.progress}>
-										<div className={s.progressBar} style={{ width: "96%", background: "var(--success)" }} />
+										<div
+											className={s.progressBar}
+											style={{ width: "96%", background: "var(--success)" }}
+										/>
 									</div>
-									<div style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 6 }}>96% — Amount, date and reference prefix match</div>
+									<div
+										style={{
+											fontSize: 12,
+											color: "var(--ink-500)",
+											marginTop: 6,
+										}}
+									>
+										96% — Amount, date and reference prefix match
+									</div>
 								</div>
 							</>
 						)}
@@ -459,14 +635,30 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 								<StepTitle>Step 2: Confirm Details &amp; Notes</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField label="Match Type" options={["Exact match", "Amount tolerance match", "Reference similarity match"]} className="" />
+										<SelectField
+											label="Match Type"
+											options={[
+												"Exact match",
+												"Amount tolerance match",
+												"Reference similarity match",
+											]}
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<Field label="Internal Reference" defaultValue="PAY-2025-0627-001" className="" />
+										<Field
+											label="Internal Reference"
+											defaultValue="PAY-2025-0627-001"
+											className=""
+										/>
 									</div>
 									<div className="col-12">
 										<label className={s.fieldLabel}>Notes</label>
-										<textarea className={s.field} rows={3} defaultValue="Payroll transfer from Equity to KCB for June salaries. Approved by Finance on 26 Jun." />
+										<textarea
+											className={s.field}
+											rows={3}
+											defaultValue="Payroll transfer from Equity to KCB for June salaries. Approved by Finance on 26 Jun."
+										/>
 									</div>
 								</div>
 							</>
@@ -477,7 +669,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<i className="bi bi-check-lg" />
 								</div>
 								<h5 className={s.receiptTitle}>Match Confirmed</h5>
-								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>Transaction EQ-882910 successfully matched to KCB-991028.</p>
+								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+									Transaction EQ-882910 successfully matched to KCB-991028.
+								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
 									<ReviewRow label="Match ID" value="MATCH-20250627-88291" />
 									<ReviewRow label="Amount" value="KES 2,800,000" />
@@ -505,16 +699,33 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 								<StepTitle>Step 1: Transaction Details</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField label="Bank" options={data.banks} className="" />
+										<SelectField
+											label="Bank"
+											options={data.banks}
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<Field label="Reference" defaultValue="EQ-991022" className="" />
+										<Field
+											label="Reference"
+											defaultValue="EQ-991022"
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<Field label="Amount" defaultValue="1,450,000" className="" />
+										<Field
+											label="Amount"
+											defaultValue="1,450,000"
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<Field label="Date" type="date" defaultValue="2025-06-26" className="" />
+										<Field
+											label="Date"
+											type="date"
+											defaultValue="2025-06-26"
+											className=""
+										/>
 									</div>
 								</div>
 							</>
@@ -522,13 +733,30 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						{step === 2 && (
 							<>
 								<StepTitle>Step 2: Issue &amp; Priority</StepTitle>
-								<SelectField label="Issue Type" options={["Amount mismatch", "Duplicate transaction", "Missing reference", "FX rate difference", "Timing difference"]} />
+								<SelectField
+									label="Issue Type"
+									options={[
+										"Amount mismatch",
+										"Duplicate transaction",
+										"Missing reference",
+										"FX rate difference",
+										"Timing difference",
+									]}
+								/>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField label="Priority" options={["High", "Medium", "Low"]} className="" />
+										<SelectField
+											label="Priority"
+											options={["High", "Medium", "Low"]}
+											className=""
+										/>
 									</div>
 									<div className="col-md-6">
-										<SelectField label="Assigned To" options={["James K.", "Grace M.", "Auto-assign"]} className="" />
+										<SelectField
+											label="Assigned To"
+											options={["James K.", "Grace M.", "Auto-assign"]}
+											className=""
+										/>
 									</div>
 								</div>
 								<div className="mb-3 mt-3">
@@ -547,7 +775,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<i className="bi bi-flag" />
 								</div>
 								<h5 className={s.receiptTitle}>Exception Created</h5>
-								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>Exception EXC-20250627-9910 has been logged and assigned.</p>
+								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+									Exception EXC-20250627-9910 has been logged and assigned.
+								</p>
 							</div>
 						)}
 					</>
@@ -598,7 +828,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<i className="bi bi-check2-all" />
 								</div>
 								<h5 className={s.receiptTitle}>Bulk Match Complete</h5>
-								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>2 transactions matched successfully. 0 exceptions created.</p>
+								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+									2 transactions matched successfully. 0 exceptions created.
+								</p>
 							</div>
 						)}
 					</>
@@ -619,20 +851,33 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 					<label className={s.fieldLabel}>Statement Date Range</label>
 					<div className="row g-3">
 						<div className="col-6">
-							<input type="date" className={s.field} defaultValue="2025-06-01" />
+							<input
+								type="date"
+								className={s.field}
+								defaultValue="2025-06-01"
+							/>
 						</div>
 						<div className="col-6">
-							<input type="date" className={s.field} defaultValue="2025-06-27" />
+							<input
+								type="date"
+								className={s.field}
+								defaultValue="2025-06-27"
+							/>
 						</div>
 					</div>
 				</div>
 				<div className="mb-3">
-					<label className={s.fieldLabel}>Upload File (PDF / CSV / MT940)</label>
+					<label className={s.fieldLabel}>
+						Upload File (PDF / CSV / MT940)
+					</label>
 					<input type="file" className={s.field} />
 				</div>
 				<div className={cx(s.hintBox)}>
 					<i className="bi bi-info-circle" />
-					<span>Supported formats: PDF (Equity, KCB), CSV (Co-op), MT940 (Stanbic, international).</span>
+					<span>
+						Supported formats: PDF (Equity, KCB), CSV (Co-op), MT940 (Stanbic,
+						international).
+					</span>
 				</div>
 			</SimpleModal>
 
@@ -666,7 +911,15 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<strong>KES 81,250 difference</strong> — Bank used lower rate
 					</div>
 				</div>
-				<SelectField label="Resolution Action" options={["Accept bank rate (write-off)", "Dispute with bank", "Adjust internal records", "Request rate correction"]} />
+				<SelectField
+					label="Resolution Action"
+					options={[
+						"Accept bank rate (write-off)",
+						"Dispute with bank",
+						"Adjust internal records",
+						"Request rate correction",
+					]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M7: Export Report ============ */}
@@ -680,7 +933,13 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 			>
 				<SelectField
 					label="Report Type"
-					options={["Daily Reconciliation Summary", "Monthly Reconciliation Report", "Exception & Discrepancy Report", "Audit Trail Export", "Bank Reconciliation Certificate"]}
+					options={[
+						"Daily Reconciliation Summary",
+						"Monthly Reconciliation Report",
+						"Exception & Discrepancy Report",
+						"Audit Trail Export",
+						"Bank Reconciliation Certificate",
+					]}
 				/>
 				<div className="row g-3 mb-3">
 					<div className="col-6">
@@ -692,8 +951,18 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<input type="date" className={s.field} defaultValue="2025-06-27" />
 					</div>
 				</div>
-				<SelectField label="Format" options={["PDF (Signed)", "Excel (.xlsx)", "CSV", "MT940"]} />
-				<SelectField label="Delivery" options={["Download now", "Email to finance@company.co.ke", "WhatsApp link"]} />
+				<SelectField
+					label="Format"
+					options={["PDF (Signed)", "Excel (.xlsx)", "CSV", "MT940"]}
+				/>
+				<SelectField
+					label="Delivery"
+					options={[
+						"Download now",
+						"Email to finance@company.co.ke",
+						"WhatsApp link",
+					]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M8: Audit Log (xl) ============ */}
@@ -719,9 +988,16 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<option>Flag</option>
 						<option>Rule Run</option>
 					</select>
-					<input className={s.field} style={{ width: 220 }} placeholder="Search reference..." />
+					<input
+						className={s.field}
+						style={{ width: 220 }}
+						placeholder="Search reference..."
+					/>
 				</div>
-				<div className={s.tableWrap} style={{ maxHeight: 400, overflowY: "auto" }}>
+				<div
+					className={s.tableWrap}
+					style={{ maxHeight: 400, overflowY: "auto" }}
+				>
 					<table className={s.table}>
 						<thead>
 							<tr>
@@ -788,10 +1064,18 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				title="Rule Performance Dashboard"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("rulePerformanceModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("rulePerformanceModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("rulePerformanceModal", "ruleEngineModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => swap("rulePerformanceModal", "ruleEngineModal")}
+						>
 							Edit Rule
 						</button>
 					</>
@@ -801,19 +1085,25 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 					<div className="col-md-4">
 						<div className={cx(s.tile, s.tileSuccess)}>
 							<div className={s.tileTitle}>Match Rate</div>
-							<div className={s.tileValue} style={{ fontSize: 28 }}>99.2%</div>
+							<div className={s.tileValue} style={{ fontSize: 28 }}>
+								99.2%
+							</div>
 						</div>
 					</div>
 					<div className="col-md-4">
 						<div className={cx(s.tile, s.tileInfo)}>
 							<div className={s.tileTitle}>Items Processed</div>
-							<div className={s.tileValue} style={{ fontSize: 28 }}>12,481</div>
+							<div className={s.tileValue} style={{ fontSize: 28 }}>
+								12,481
+							</div>
 						</div>
 					</div>
 					<div className="col-md-4">
 						<div className={cx(s.tile, s.tileWarn)}>
 							<div className={s.tileTitle}>False Positives</div>
-							<div className={s.tileValue} style={{ fontSize: 28 }}>0.8%</div>
+							<div className={s.tileValue} style={{ fontSize: 28 }}>
+								0.8%
+							</div>
 						</div>
 					</div>
 				</div>
@@ -862,10 +1152,18 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 			>
 				<div className="row g-3">
 					<div className="col-md-6">
-						<SelectField label="Bank Pair" options={["All Pairs", "Equity ↔ KCB", "KCB ↔ M-Pesa"]} className="" />
+						<SelectField
+							label="Bank Pair"
+							options={["All Pairs", "Equity ↔ KCB", "KCB ↔ M-Pesa"]}
+							className=""
+						/>
 					</div>
 					<div className="col-md-6">
-						<SelectField label="Matched By" options={["All", "System", "Manual"]} className="" />
+						<SelectField
+							label="Matched By"
+							options={["All", "System", "Manual"]}
+							className=""
+						/>
 					</div>
 				</div>
 			</SimpleModal>
@@ -878,10 +1176,18 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				title="Reconciliation Notifications (14)"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => swap("reconcileNotifModal", "reconSettingsModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => swap("reconcileNotifModal", "reconSettingsModal")}
+						>
 							Settings
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => close("reconcileNotifModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => close("reconcileNotifModal")}
+						>
 							Close
 						</button>
 					</>
@@ -913,16 +1219,37 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				successMsg="Settings saved successfully."
 			>
 				<Field label="Default Amount Tolerance" defaultValue="KES 500" />
-				<SelectField label="Default Date Window" options={["± 3 days", "± 1 day", "Same day"]} />
+				<SelectField
+					label="Default Date Window"
+					options={["± 3 days", "± 1 day", "Same day"]}
+				/>
 				<div className="form-check form-switch mb-2">
-					<input className="form-check-input" type="checkbox" defaultChecked id="reconAuto" />
-					<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="reconAuto">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="reconAuto"
+					/>
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="reconAuto"
+					>
 						Auto-run on statement upload
 					</label>
 				</div>
 				<div className="form-check form-switch">
-					<input className="form-check-input" type="checkbox" defaultChecked id="reconEmail" />
-					<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="reconEmail">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="reconEmail"
+					/>
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="reconEmail"
+					>
 						Email daily summary
 					</label>
 				</div>
@@ -955,7 +1282,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<span className={cx(s.badge, s.badgeSuccess)}>Full</span>
 								</td>
 								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>Edit</button>
+									<button type="button" className={cx(s.btn, s.btnSm)}>
+										Edit
+									</button>
 								</td>
 							</tr>
 							<tr>
@@ -965,7 +1294,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<span className={cx(s.badge, s.badgeInfo)}>Match + Flag</span>
 								</td>
 								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>Edit</button>
+									<button type="button" className={cx(s.btn, s.btnSm)}>
+										Edit
+									</button>
 								</td>
 							</tr>
 							<tr>
@@ -975,7 +1306,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 									<span className={cx(s.badge, s.badgeWarn)}>View Only</span>
 								</td>
 								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>Edit</button>
+									<button type="button" className={cx(s.btn, s.btnSm)}>
+										Edit
+									</button>
 								</td>
 							</tr>
 						</tbody>
@@ -994,10 +1327,22 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 			>
 				<SelectField label="Bank" options={["Equity Bank", "KCB Bank"]} />
 				<Field label="Reference" defaultValue="EQ-882910" />
-				<SelectField label="Dispute Reason" options={["Incorrect amount", "Duplicate debit", "Failed credit", "FX error"]} />
+				<SelectField
+					label="Dispute Reason"
+					options={[
+						"Incorrect amount",
+						"Duplicate debit",
+						"Failed credit",
+						"FX error",
+					]}
+				/>
 				<div className="mb-3">
 					<label className={s.fieldLabel}>Description</label>
-					<textarea className={s.field} rows={3} defaultValue="Bank debited KES 2,800,000 but only KES 2,750,000 was authorized." />
+					<textarea
+						className={s.field}
+						rows={3}
+						defaultValue="Bank debited KES 2,800,000 but only KES 2,750,000 was authorized."
+					/>
 				</div>
 			</SimpleModal>
 
@@ -1012,13 +1357,25 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 			>
 				<div className="row g-3">
 					<div className="col-md-6">
-						<SelectField label="Status" options={["All", "Unmatched", "Exception"]} className="" />
+						<SelectField
+							label="Status"
+							options={["All", "Unmatched", "Exception"]}
+							className=""
+						/>
 					</div>
 					<div className="col-md-6">
-						<SelectField label="Priority" options={["All", "High", "Medium"]} className="" />
+						<SelectField
+							label="Priority"
+							options={["All", "High", "Medium"]}
+							className=""
+						/>
 					</div>
 					<div className="col-md-6">
-						<SelectField label="Bank" options={["All Banks", "Equity", "KCB", "Co-op", "Stanbic"]} className="" />
+						<SelectField
+							label="Bank"
+							options={["All Banks", "Equity", "KCB", "Co-op", "Stanbic"]}
+							className=""
+						/>
 					</div>
 					<div className="col-md-6">
 						<Field label="Amount Range" placeholder="Min - Max" className="" />
@@ -1041,7 +1398,9 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				submitLabel="Start Auto-Recon"
 				successMsg="Auto-reconciliation completed. 42 items matched, 5 exceptions created. Reference: AUTO-20250627-001"
 			>
-				<p style={{ fontSize: 14 }}>Auto-reconciliation will process all pending items using active rules.</p>
+				<p style={{ fontSize: 14 }}>
+					Auto-reconciliation will process all pending items using active rules.
+				</p>
 				<div className={cx(s.tile, s.tileSuccess)}>
 					<div className="d-flex justify-content-between mb-1">
 						<span>Items to process</span>
@@ -1061,7 +1420,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				iconCls="bi bi-exclamation-circle"
 				title="All Items Requiring Attention"
 				footer={
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("attentionFullModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={() => close("attentionFullModal")}
+					>
 						Close
 					</button>
 				}
@@ -1071,7 +1434,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<div className={s.rowTitle}>Equity credit not matched</div>
 						<div className={s.rowSub}>KES 2.8M</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionFullModal", "manualMatchModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionFullModal", "manualMatchModal")}
+					>
 						Match
 					</button>
 				</div>
@@ -1080,7 +1447,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<div className={s.rowTitle}>KCB debit duplicate</div>
 						<div className={s.rowSub}>KES 450k</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionFullModal", "discrepancyModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionFullModal", "discrepancyModal")}
+					>
 						Review
 					</button>
 				</div>
@@ -1089,7 +1460,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 						<div className={s.rowTitle}>SWIFT FX rate pending</div>
 						<div className={s.rowSub}>USD 125k</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionFullModal", "fxRateModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionFullModal", "fxRateModal")}
+					>
 						Resolve
 					</button>
 				</div>
@@ -1103,7 +1478,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				iconCls="bi bi-heart-pulse"
 				title="Reconciliation Health Check"
 				footer={
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("healthCheckModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={() => close("healthCheckModal")}
+					>
 						Close
 					</button>
 				}
@@ -1135,7 +1514,8 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 					</div>
 				</div>
 				<div className={cx(s.tile, s.tileSuccess)} style={{ fontSize: 12 }}>
-					<i className="bi bi-check-circle me-1" /> All systems operational. Last full reconciliation completed successfully at 14:12.
+					<i className="bi bi-check-circle me-1" /> All systems operational.
+					Last full reconciliation completed successfully at 14:12.
 				</div>
 			</ModalShell>
 
@@ -1146,7 +1526,11 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				iconCls="bi bi-person-circle"
 				title="Profile"
 				footer={
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("profileModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={() => close("profileModal")}
+					>
 						Close
 					</button>
 				}
@@ -1154,18 +1538,24 @@ export function ReconciliationModals({ modalState, openModal, closeModal, data }
 				<div className="text-center">
 					<div className={cx(s.avatar, s.avatarLg)}>JK</div>
 					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
-					<p style={{ fontSize: 13, color: "var(--ink-500)" }}>james.k@email.com · +254 712 345 890</p>
+					<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+						james.k@email.com · +254 712 345 890
+					</p>
 					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Role</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Role
+								</span>
 								<br />
 								<strong>Finance Manager</strong>
 							</div>
 						</div>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Reconciliations</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Reconciliations
+								</span>
 								<br />
 								<strong>124,892</strong>
 							</div>

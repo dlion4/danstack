@@ -6,6 +6,8 @@ import PaymentRails from "@/features/transaction-dashboard/payment-rails/pages/P
  * The PaymentRails feature was already refactored; this route wires it into
  * the app shell so the page is reachable at /app/payment-rails.
  */
-export const Route = createFileRoute("/transaction_dashboard/app/payment-rails")({
+export const Route = createFileRoute(
+	"/transaction_dashboard/app/payment-rails",
+)({
 	component: PaymentRails,
 });

@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import AppShell from '@/features/shell/components/AppShell';
+import { createFileRoute } from "@tanstack/react-router";
+import AppShell from "@/features/shell/components/AppShell";
 
 /**
  * app.tsx — LAYOUT route for the authenticated app shell.
@@ -10,11 +10,11 @@ import AppShell from '@/features/shell/components/AppShell';
  * The AppShell (sidebar + top nav + right aside) wraps every /app/* page.
  * Auth pages live in routes/auth/* and are NOT children of this route.
  */
-export const Route = createFileRoute('/transaction_dashboard/app')({
-  component: AppLayout,
+export const Route = createFileRoute("/transaction_dashboard/app")({
+	component: AppLayout,
 });
 
 function AppLayout() {
-  // AppShell renders its own <Outlet /> for child pages.
-  return <AppShell />;
+	// AppShell renders its own <Outlet /> for child pages.
+	return <AppShell />;
 }

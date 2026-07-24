@@ -2496,18 +2496,18 @@
 
         function showStep(prefix, current, total) {
             for (let i = 1; i <= total; i++) {
-                let el = document.getElementById(prefix + 'Step' + i);
+                const el = document.getElementById(prefix + 'Step' + i);
                 if (el) { el.classList.remove('active'); el.style.display = 'none'; }
             }
-            let active = document.getElementById(prefix + 'Step' + current);
+            const active = document.getElementById(prefix + 'Step' + current);
             if (active) { active.classList.add('active'); active.style.display = 'block'; }
         }
 
         function updateStepper(id, current, total) {
             let html = '';
             for (let i = 1; i <= total; i++) {
-                let cls = i < current ? 'completed' : i === current ? 'active' : '';
-                let num = i < current ? '<i class="bi bi-check"></i>' : i;
+                const cls = i < current ? 'completed' : i === current ? 'active' : '';
+                const num = i < current ? '<i class="bi bi-check"></i>' : i;
                 html += `<div class="pm-step ${cls}"><div class="pm-step-num">${num}</div></div>`;
                 if (i < total) html += `<div class="pm-step-line" style="flex:1;height:2px;background:var(--pm-border);margin:0 8px;${i < current ? 'background:var(--pm-accent)' : ''}"></div>`;
             }
@@ -2565,7 +2565,7 @@
         // Reset Modals on close
         document.addEventListener('DOMContentLoaded', () => {
             ['runPayrollModal', 'interCompanyTransferModal', 'inviteUserModal'].forEach(id => {
-                let m = document.getElementById(id);
+                const m = document.getElementById(id);
                 if (m) {
                     m.addEventListener('hidden.bs.modal', () => {
                         payStep = 1; transStep = 1; invStep = 1;
@@ -2579,25 +2579,25 @@
 
         // Utilities
         function openModal(id) {
-            let el = document.getElementById(id);
+            const el = document.getElementById(id);
             if (el) new bootstrap.Modal(el).show();
         }
         function closeModal(id) {
-            let el = document.getElementById(id);
-            if (el) { let m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+            const el = document.getElementById(id);
+            if (el) { const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
         }
         function showLoading(containerId, cb) {
-            let el = document.getElementById(containerId);
-            let ov = document.createElement('div');
+            const el = document.getElementById(containerId);
+            const ov = document.createElement('div');
             ov.className = 'pm-loading-overlay';
             ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-weight:600">Processing...</p>';
             el.style.position = 'relative'; el.appendChild(ov);
             setTimeout(() => { ov.remove(); cb(); }, 1200);
         }
         function simulateProcess(modalId, msg, ref = '') {
-            let modal = document.getElementById(modalId);
-            let body = modal.querySelector('.modal-body');
-            let foot = modal.querySelector('.modal-footer');
+            const modal = document.getElementById(modalId);
+            const body = modal.querySelector('.modal-body');
+            const foot = modal.querySelector('.modal-footer');
             showLoading(body.id || body.parentElement.id || body.tagName, () => {
                 body.innerHTML = `<div class="text-center p-4">
             <div class="pm-icon-circle mx-auto mb-3" style="width:64px;height:64px;font-size:28px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-check-lg"></i></div>

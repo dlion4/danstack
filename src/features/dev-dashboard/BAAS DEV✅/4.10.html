@@ -748,7 +748,7 @@ Please migrate to v2.x to avoid service disruption...</textarea></div>
 function openModal(id){
   // Hide current modals
   document.querySelectorAll('.modal.show').forEach(m => {
-    let bsM = bootstrap.Modal.getInstance(m);
+    const bsM = bootstrap.Modal.getInstance(m);
     if(bsM) bsM.hide();
   });
   const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}

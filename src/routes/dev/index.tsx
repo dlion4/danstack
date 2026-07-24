@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
-import DevHome from '@/features/Layouts/dashboard-dev-layout/pages/DevHome'
+import { createFileRoute } from "@tanstack/react-router";
+import DevHome from "@/features/Layouts/dashboard-dev-layout/pages/DevHome";
 
-export const Route = createFileRoute('/dev/')({ component: DevHome })
+export const Route = createFileRoute("/dev/")({ component: DevHome });

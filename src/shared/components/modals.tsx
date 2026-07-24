@@ -19,8 +19,8 @@
  *   PinRow / ReviewRow / SelectField ... small field helpers
  * ========================================================================== */
 "use client";
-import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cx } from "../../features/shell/data/shellData";
 import s from "../styles/appPage.module.css";
 
@@ -291,7 +291,7 @@ export function FlowModal({
 	const mounted = useReactModal(show, onClose);
 	const labels = Array.isArray(steps)
 		? steps
-		: stepsLabels ?? Array.from({ length: steps }, (_, i) => `Step ${i + 1}`);
+		: (stepsLabels ?? Array.from({ length: steps }, (_, i) => `Step ${i + 1}`));
 	const total = labels.length;
 	const [step, setStep] = useState(1);
 	const [phase, setPhase] = useState<Phase>("form");
@@ -363,12 +363,17 @@ export function FlowModal({
 										const state =
 											n < step ? "stepDone" : n === step ? "stepActive" : "";
 										return (
-											<div className={cx(styles.step, styles[state])} key={label}>
+											<div
+												className={cx(styles.step, styles[state])}
+												key={label}
+											>
 												<div className={styles.stepNum}>
 													{n < step ? <i className="bi bi-check" /> : n}
 												</div>
 												<div className={styles.stepLabel}>{label}</div>
-												{i < labels.length - 1 && <div className={styles.stepLine} />}
+												{i < labels.length - 1 && (
+													<div className={styles.stepLine} />
+												)}
 											</div>
 										);
 									})}
@@ -426,8 +431,7 @@ export function FlowModal({
 							className={cx(styles.btn, styles.btnPrimary)}
 							onClick={next}
 						>
-							{nextLabel}{" "}
-							{!isLastStep && <i className="bi bi-arrow-right" />}
+							{nextLabel} {!isLastStep && <i className="bi bi-arrow-right" />}
 						</button>
 					</div>
 				</div>

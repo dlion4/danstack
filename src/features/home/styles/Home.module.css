@@ -13,10 +13,10 @@
 
 /* The homepage's root wrapper — add home-specific layout here */
 .page {
-  position: relative;
+	position: relative;
 }
 
 /* Example home-only block — rename / extend as you build out the homepage */
 .hero {
-  /* e.g. background, padding, min-heights specific to the home hero */
+	/* e.g. background, padding, min-heights specific to the home hero */
 }

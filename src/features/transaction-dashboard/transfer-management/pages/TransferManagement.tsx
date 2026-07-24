@@ -11,18 +11,18 @@
  *     modals (see TransferManagementModals).
  * ========================================================================== */
 "use client";
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { cx } from "../../../shell/data/shellData";
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import s from "../../../../shared/styles/appPage.module.css";
+import { cx } from "../../../shell/data/shellData";
 import {
-	TransferManagementModals,
 	type TransferManagementData,
+	TransferManagementModals,
 } from "../components/TransferManagementModals";
- 
+
 type Tone = "success" | "warn" | "danger" | "info" | "purple" | "neutral";
- 
+
 const toneBadge: Record<Tone, string> = {
 	success: s.badgeSuccess,
 	warn: s.badgeWarn,
@@ -39,7 +39,7 @@ const toneIcon: Record<Tone, string> = {
 	purple: s.tonePurple,
 	neutral: s.toneNeutral,
 };
- 
+
 interface StatCard {
 	label: string;
 	value: string;
@@ -130,7 +130,7 @@ interface ComplianceBox {
 	value: string;
 	tone: Tone;
 }
- 
+
 export interface TransferManagementContent extends TransferManagementData {
 	heroTitle: string;
 	heroValue: string;
@@ -149,7 +149,7 @@ export interface TransferManagementContent extends TransferManagementData {
 	approvals: ApprovalRow[];
 	compliance: ComplianceBox[];
 }
- 
+
 const initialMockData: TransferManagementContent = {
 	heroTitle: "Transfer engine is live",
 	heroValue: "KES 184.7M transferred today",
@@ -167,14 +167,22 @@ const initialMockData: TransferManagementContent = {
 		{
 			label: "SUCCESS RATE (30D)",
 			value: "98.7%",
-			badge: { text: "+0.4% vs last month", icon: "bi-graph-up-arrow", tone: "success" },
+			badge: {
+				text: "+0.4% vs last month",
+				icon: "bi-graph-up-arrow",
+				tone: "success",
+			},
 			sub: "Domestic 99.1% • International 96.4%",
 			labelTone: "info",
 		},
 		{
 			label: "AVERAGE SETTLEMENT",
 			value: "18s",
-			badge: { text: "PesaLink instant", icon: "bi-lightning-charge", tone: "success" },
+			badge: {
+				text: "PesaLink instant",
+				icon: "bi-lightning-charge",
+				tone: "success",
+			},
 			sub: "RTGS 42 min avg • SWIFT 4.2 hrs avg",
 			labelTone: "success",
 			edge: "success",
@@ -233,32 +241,163 @@ const initialMockData: TransferManagementContent = {
 		},
 	],
 	quickActions: [
-		{ icon: "bi-arrow-left-right", tone: "success", label: "Domestic Transfer", modal: "initiateTransferModal" },
-		{ icon: "bi-globe", tone: "info", label: "International", modal: "internationalModal" },
-		{ icon: "bi-calendar-event", tone: "success", label: "Schedule", modal: "scheduleTransferModal" },
-		{ icon: "bi-arrow-repeat", tone: "purple", label: "Recurring", modal: "recurringModal" },
-		{ icon: "bi-people", tone: "warn", label: "Beneficiaries", modal: "beneficiaryModal" },
-		{ icon: "bi-collection", tone: "success", label: "Bulk Transfer", modal: "bulkTransferModal" },
-		{ icon: "bi-check2-square", tone: "danger", label: "Approvals", modal: "approvalQueueModal" },
-		{ icon: "bi-clock-history", tone: "neutral", label: "History", modal: "transferHistoryModal" },
+		{
+			icon: "bi-arrow-left-right",
+			tone: "success",
+			label: "Domestic Transfer",
+			modal: "initiateTransferModal",
+		},
+		{
+			icon: "bi-globe",
+			tone: "info",
+			label: "International",
+			modal: "internationalModal",
+		},
+		{
+			icon: "bi-calendar-event",
+			tone: "success",
+			label: "Schedule",
+			modal: "scheduleTransferModal",
+		},
+		{
+			icon: "bi-arrow-repeat",
+			tone: "purple",
+			label: "Recurring",
+			modal: "recurringModal",
+		},
+		{
+			icon: "bi-people",
+			tone: "warn",
+			label: "Beneficiaries",
+			modal: "beneficiaryModal",
+		},
+		{
+			icon: "bi-collection",
+			tone: "success",
+			label: "Bulk Transfer",
+			modal: "bulkTransferModal",
+		},
+		{
+			icon: "bi-check2-square",
+			tone: "danger",
+			label: "Approvals",
+			modal: "approvalQueueModal",
+		},
+		{
+			icon: "bi-clock-history",
+			tone: "neutral",
+			label: "History",
+			modal: "transferHistoryModal",
+		},
 	],
 	domestic: [
-		{ date: "27 Jun", beneficiary: "Grace Wanjiku", bank: "Equity Bank", amount: "KES 85,000", method: "PesaLink", status: "Instant", statusTone: "success", action: { label: "Receipt", modal: "transferReceiptModal" } },
-		{ date: "27 Jun", beneficiary: "ABC Suppliers Ltd", bank: "KCB Bank", amount: "KES 420,000", method: "RTGS", status: "Processing", statusTone: "info", action: { label: "Track", modal: "trackTransferModal" } },
-		{ date: "26 Jun", beneficiary: "James Otieno", bank: "Co-op Bank", amount: "KES 12,500", method: "EFT", status: "Completed", statusTone: "success", action: { label: "Receipt", modal: "transferReceiptModal" } },
-		{ date: "26 Jun", beneficiary: "Property Management", bank: "NCBA", amount: "KES 185,000", method: "PesaLink", status: "Instant", statusTone: "success", action: { label: "Receipt", modal: "transferReceiptModal" } },
+		{
+			date: "27 Jun",
+			beneficiary: "Grace Wanjiku",
+			bank: "Equity Bank",
+			amount: "KES 85,000",
+			method: "PesaLink",
+			status: "Instant",
+			statusTone: "success",
+			action: { label: "Receipt", modal: "transferReceiptModal" },
+		},
+		{
+			date: "27 Jun",
+			beneficiary: "ABC Suppliers Ltd",
+			bank: "KCB Bank",
+			amount: "KES 420,000",
+			method: "RTGS",
+			status: "Processing",
+			statusTone: "info",
+			action: { label: "Track", modal: "trackTransferModal" },
+		},
+		{
+			date: "26 Jun",
+			beneficiary: "James Otieno",
+			bank: "Co-op Bank",
+			amount: "KES 12,500",
+			method: "EFT",
+			status: "Completed",
+			statusTone: "success",
+			action: { label: "Receipt", modal: "transferReceiptModal" },
+		},
+		{
+			date: "26 Jun",
+			beneficiary: "Property Management",
+			bank: "NCBA",
+			amount: "KES 185,000",
+			method: "PesaLink",
+			status: "Instant",
+			statusTone: "success",
+			action: { label: "Receipt", modal: "transferReceiptModal" },
+		},
 	],
 	bankStatus: [
-		{ name: "Equity Bank", rails: "PesaLink • RTGS • EFT", status: "Online", tone: "success" },
-		{ name: "KCB Bank", rails: "PesaLink • RTGS • EFT", status: "Online", tone: "success" },
-		{ name: "Co-op Bank", rails: "PesaLink • EFT", status: "Maintenance", tone: "warn" },
-		{ name: "NCBA", rails: "PesaLink • RTGS", status: "Online", tone: "success" },
-		{ name: "Family Bank", rails: "PesaLink only", status: "Online", tone: "success" },
+		{
+			name: "Equity Bank",
+			rails: "PesaLink • RTGS • EFT",
+			status: "Online",
+			tone: "success",
+		},
+		{
+			name: "KCB Bank",
+			rails: "PesaLink • RTGS • EFT",
+			status: "Online",
+			tone: "success",
+		},
+		{
+			name: "Co-op Bank",
+			rails: "PesaLink • EFT",
+			status: "Maintenance",
+			tone: "warn",
+		},
+		{
+			name: "NCBA",
+			rails: "PesaLink • RTGS",
+			status: "Online",
+			tone: "success",
+		},
+		{
+			name: "Family Bank",
+			rails: "PesaLink only",
+			status: "Online",
+			tone: "success",
+		},
 	],
 	intl: [
-		{ date: "26 Jun", beneficiary: "Peter Ochieng", dest: "Uganda (UGX)", amount: "USD 2,500", fx: "1 USD = 3,680 UGX", method: "Wave", status: "Delivered", statusTone: "success", action: { label: "Receipt", modal: "intlReceiptModal" } },
-		{ date: "25 Jun", beneficiary: "Tech Solutions Ltd", dest: "UK (GBP)", amount: "USD 18,400", fx: "1 USD = 0.78 GBP", method: "SWIFT", status: "In Transit", statusTone: "info", action: { label: "Track", modal: "trackIntlModal" } },
-		{ date: "24 Jun", beneficiary: "Mary Njeri", dest: "Tanzania (TZS)", amount: "USD 850", fx: "1 USD = 2,680 TZS", method: "Remitly", status: "Delivered", statusTone: "success", action: { label: "Receipt", modal: "intlReceiptModal" } },
+		{
+			date: "26 Jun",
+			beneficiary: "Peter Ochieng",
+			dest: "Uganda (UGX)",
+			amount: "USD 2,500",
+			fx: "1 USD = 3,680 UGX",
+			method: "Wave",
+			status: "Delivered",
+			statusTone: "success",
+			action: { label: "Receipt", modal: "intlReceiptModal" },
+		},
+		{
+			date: "25 Jun",
+			beneficiary: "Tech Solutions Ltd",
+			dest: "UK (GBP)",
+			amount: "USD 18,400",
+			fx: "1 USD = 0.78 GBP",
+			method: "SWIFT",
+			status: "In Transit",
+			statusTone: "info",
+			action: { label: "Track", modal: "trackIntlModal" },
+		},
+		{
+			date: "24 Jun",
+			beneficiary: "Mary Njeri",
+			dest: "Tanzania (TZS)",
+			amount: "USD 850",
+			fx: "1 USD = 2,680 TZS",
+			method: "Remitly",
+			status: "Delivered",
+			statusTone: "success",
+			action: { label: "Receipt", modal: "intlReceiptModal" },
+		},
 	],
 	fxRates: [
 		{ code: "USD", rate: "129.45", delta: "-0.12", up: false },
@@ -268,16 +407,92 @@ const initialMockData: TransferManagementContent = {
 		{ code: "TZS", rate: "0.048", delta: "-0.002", up: false },
 	],
 	schedules: [
-		{ name: "Monthly Rent", beneficiary: "Property Mgmt Ltd", amount: "KES 65,000", frequency: "Monthly", next: "01 Jul 2025", status: "Active", statusTone: "success", action: { label: "Edit", modal: "editRecurringModal" } },
-		{ name: "Staff Salaries", beneficiary: "Payroll Run (42 staff)", amount: "KES 2.8M", frequency: "Monthly", next: "28 Jun 2025", status: "Approval Pending", statusTone: "warn", action: { label: "Approve", modal: "approvalQueueModal" } },
-		{ name: "Internet Bill", beneficiary: "Safaricom Fibre", amount: "KES 5,999", frequency: "Monthly", next: "01 Jul 2025", status: "Active", statusTone: "success", action: { label: "Edit", modal: "editRecurringModal" } },
-		{ name: "School Fees", beneficiary: "Strathmore University", amount: "KES 185,000", frequency: "Termly", next: "15 Aug 2025", status: "Active", statusTone: "success", action: { label: "Edit", modal: "editRecurringModal" } },
+		{
+			name: "Monthly Rent",
+			beneficiary: "Property Mgmt Ltd",
+			amount: "KES 65,000",
+			frequency: "Monthly",
+			next: "01 Jul 2025",
+			status: "Active",
+			statusTone: "success",
+			action: { label: "Edit", modal: "editRecurringModal" },
+		},
+		{
+			name: "Staff Salaries",
+			beneficiary: "Payroll Run (42 staff)",
+			amount: "KES 2.8M",
+			frequency: "Monthly",
+			next: "28 Jun 2025",
+			status: "Approval Pending",
+			statusTone: "warn",
+			action: { label: "Approve", modal: "approvalQueueModal" },
+		},
+		{
+			name: "Internet Bill",
+			beneficiary: "Safaricom Fibre",
+			amount: "KES 5,999",
+			frequency: "Monthly",
+			next: "01 Jul 2025",
+			status: "Active",
+			statusTone: "success",
+			action: { label: "Edit", modal: "editRecurringModal" },
+		},
+		{
+			name: "School Fees",
+			beneficiary: "Strathmore University",
+			amount: "KES 185,000",
+			frequency: "Termly",
+			next: "15 Aug 2025",
+			status: "Active",
+			statusTone: "success",
+			action: { label: "Edit", modal: "editRecurringModal" },
+		},
 	],
 	history: [
-		{ date: "27 Jun", ref: "TRF-20250627-88341", beneficiary: "Grace Wanjiku", bank: "Equity Bank", amount: "KES 85,000", method: "PesaLink", status: "Success", statusTone: "success", action: { label: "View", modal: "transferReceiptModal" } },
-		{ date: "27 Jun", ref: "TRF-20250627-88342", beneficiary: "ABC Suppliers Ltd", bank: "KCB Bank", amount: "KES 420,000", method: "RTGS", status: "Processing", statusTone: "info", action: { label: "Track", modal: "trackTransferModal" } },
-		{ date: "26 Jun", ref: "TRF-20250626-77219", beneficiary: "Peter Ochieng", bank: "Wave (Uganda)", amount: "USD 2,500", method: "Wave", status: "Delivered", statusTone: "success", action: { label: "View", modal: "intlReceiptModal" } },
-		{ date: "26 Jun", ref: "TRF-20250626-77220", beneficiary: "James Otieno", bank: "Co-op Bank", amount: "KES 12,500", method: "EFT", status: "Success", statusTone: "success", action: { label: "View", modal: "transferReceiptModal" } },
+		{
+			date: "27 Jun",
+			ref: "TRF-20250627-88341",
+			beneficiary: "Grace Wanjiku",
+			bank: "Equity Bank",
+			amount: "KES 85,000",
+			method: "PesaLink",
+			status: "Success",
+			statusTone: "success",
+			action: { label: "View", modal: "transferReceiptModal" },
+		},
+		{
+			date: "27 Jun",
+			ref: "TRF-20250627-88342",
+			beneficiary: "ABC Suppliers Ltd",
+			bank: "KCB Bank",
+			amount: "KES 420,000",
+			method: "RTGS",
+			status: "Processing",
+			statusTone: "info",
+			action: { label: "Track", modal: "trackTransferModal" },
+		},
+		{
+			date: "26 Jun",
+			ref: "TRF-20250626-77219",
+			beneficiary: "Peter Ochieng",
+			bank: "Wave (Uganda)",
+			amount: "USD 2,500",
+			method: "Wave",
+			status: "Delivered",
+			statusTone: "success",
+			action: { label: "View", modal: "intlReceiptModal" },
+		},
+		{
+			date: "26 Jun",
+			ref: "TRF-20250626-77220",
+			beneficiary: "James Otieno",
+			bank: "Co-op Bank",
+			amount: "KES 12,500",
+			method: "EFT",
+			status: "Success",
+			statusTone: "success",
+			action: { label: "View", modal: "transferReceiptModal" },
+		},
 	],
 	limits: [
 		{ label: "Daily Transfer Limit", value: "KES 5,000,000" },
@@ -298,13 +513,13 @@ const initialMockData: TransferManagementContent = {
 	],
 	banks: ["Equity Bank", "KCB Bank", "Co-op Bank", "NCBA", "Family Bank"],
 };
- 
+
 async function fetchTransferManagement(): Promise<TransferManagementContent> {
 	const res = await fetch("/api/transfer-management");
 	if (!res.ok) throw new Error(`HTTP ${res.status}`);
 	return (await res.json()) as TransferManagementContent;
 }
- 
+
 const softTone: Record<Tone, string> = {
 	success: s.softBoxSuccess,
 	warn: s.softBoxWarn,
@@ -313,12 +528,14 @@ const softTone: Record<Tone, string> = {
 	purple: s.softBoxPurple,
 	neutral: s.softBox,
 };
- 
+
 export default function TransferManagement() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
-	const openModal = (id: string) => setModalState((p) => ({ ...p, [id]: true }));
-	const closeModal = (id: string) => setModalState((p) => ({ ...p, [id]: false }));
- 
+	const openModal = (id: string) =>
+		setModalState((p) => ({ ...p, [id]: true }));
+	const closeModal = (id: string) =>
+		setModalState((p) => ({ ...p, [id]: false }));
+
 	const { data, error, isLoading } = useQuery({
 		queryKey: ["paymo-transfer-management"],
 		queryFn: fetchTransferManagement,
@@ -326,12 +543,15 @@ export default function TransferManagement() {
 		retry: 1,
 	});
 	const c = data ?? initialMockData;
- 
+
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
 			{isLoading && (
 				<div className={s.qLoading} role="status" aria-live="polite">
-					<div className="spinner-border" style={{ width: "3rem", height: "3rem" }} />
+					<div
+						className="spinner-border"
+						style={{ width: "3rem", height: "3rem" }}
+					/>
 					<span>Loading transfer management…</span>
 				</div>
 			)}
@@ -342,43 +562,59 @@ export default function TransferManagement() {
 						Transfer data unavailable
 					</strong>
 					<div className="small mt-1">
-						<code>/api/transfer-management</code> — {(error as Error).message}. Showing
-						bundled sample data.
+						<code>/api/transfer-management</code> — {(error as Error).message}.
+						Showing bundled sample data.
 					</div>
 				</div>
 			)}
- 
+
 			<div className={s.stack}>
 				{/* page bar */}
 				<div className={s.pageBar}>
 					<div>
 						<div className={s.breadcrumb}>
-							<Link to="/app">Home</Link> / <Link to="/app/transfers">Transactions</Link> /{" "}
+							<Link to="/app">Home</Link> /{" "}
+							<Link to="/app/transfers">Transactions</Link> /{" "}
 							<strong>Transfer Management</strong>
 						</div>
 						<h1 className={s.pageTitle}>Transfer Management</h1>
 						<p className={s.pageCopy}>
-							Domestic, international, scheduled, recurring &amp; compliance-controlled
-							bank transfers.
+							Domestic, international, scheduled, recurring &amp;
+							compliance-controlled bank transfers.
 						</p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("transferHealthModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSm)}
+							onClick={() => openModal("transferHealthModal")}
+						>
 							<i className="bi bi-heart-pulse" /> Health Check
 						</button>
-						<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("bulkTransferModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSm)}
+							onClick={() => openModal("bulkTransferModal")}
+						>
 							<i className="bi bi-collection" /> Bulk Transfer
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary, s.btnSm)} onClick={() => openModal("initiateTransferModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary, s.btnSm)}
+							onClick={() => openModal("initiateTransferModal")}
+						>
 							<i className="bi bi-plus-lg" /> New Transfer
 						</button>
 					</div>
 				</div>
- 
+
 				{/* hero + stats */}
 				<div className="row g-3">
 					<div className="col-lg-4">
-						<div className={cx(s.card, s.cardAccent)} style={{ minHeight: 180 }}>
+						<div
+							className={cx(s.card, s.cardAccent)}
+							style={{ minHeight: 180 }}
+						>
 							<p style={{ margin: 0, fontSize: 13 }}>
 								{c.heroTitle} <span style={{ color: "#86efac" }}>●</span>
 							</p>
@@ -387,13 +623,25 @@ export default function TransferManagement() {
 							</div>
 							<p style={{ margin: 0, fontSize: 13 }}>{c.heroSub}</p>
 							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-								<button type="button" className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)} onClick={() => openModal("initiateTransferModal")}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+									onClick={() => openModal("initiateTransferModal")}
+								>
 									New Transfer
 								</button>
-								<button type="button" className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)} onClick={() => openModal("scheduleTransferModal")}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+									onClick={() => openModal("scheduleTransferModal")}
+								>
 									Schedule
 								</button>
-								<button type="button" className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)} onClick={() => openModal("bulkTransferModal")}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+									onClick={() => openModal("bulkTransferModal")}
+								>
 									Bulk
 								</button>
 							</div>
@@ -401,12 +649,20 @@ export default function TransferManagement() {
 					</div>
 					{c.stats.map((stat) => (
 						<div className="col-lg-4 col-md-6" key={stat.label}>
-							<div className={cx(s.card, stat.edge === "warn" && s.cardWarnEdge, stat.edge === "success" && s.cardAccentEdge)} style={{ minHeight: 180 }}>
+							<div
+								className={cx(
+									s.card,
+									stat.edge === "warn" && s.cardWarnEdge,
+									stat.edge === "success" && s.cardAccentEdge,
+								)}
+								style={{ minHeight: 180 }}
+							>
 								<p className={s.statLabel}>{stat.label}</p>
 								<div className={s.statValue}>{stat.value}</div>
 								{stat.badge && (
 									<span className={cx(s.badge, toneBadge[stat.badge.tone])}>
-										<i className={cx("bi", stat.badge.icon)} /> {stat.badge.text}
+										<i className={cx("bi", stat.badge.icon)} />{" "}
+										{stat.badge.text}
 									</span>
 								)}
 								{stat.sub && <div className={s.statSub}>{stat.sub}</div>}
@@ -414,14 +670,18 @@ export default function TransferManagement() {
 						</div>
 					))}
 				</div>
- 
+
 				{/* attention / suggestions / quick actions */}
 				<div className="row g-3">
 					<div className="col-lg-4">
 						<div className={s.card}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
-								<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("attentionModal")}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("attentionModal")}
+								>
 									View all
 								</button>
 							</div>
@@ -436,7 +696,11 @@ export default function TransferManagement() {
 											<div className={s.rowSub}>{item.sub}</div>
 										</div>
 									</div>
-									<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm)}
+										onClick={() => openModal(item.modal)}
+									>
 										{item.action}
 									</button>
 								</div>
@@ -462,7 +726,11 @@ export default function TransferManagement() {
 											<div className={s.rowSub}>{item.sub}</div>
 										</div>
 									</div>
-									<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(item.modal)}>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm)}
+										onClick={() => openModal(item.modal)}
+									>
 										{item.action}
 									</button>
 								</div>
@@ -477,7 +745,12 @@ export default function TransferManagement() {
 							</div>
 							<div className={s.quickGrid}>
 								{c.quickActions.map((qa) => (
-									<button type="button" className={s.quickBtn} key={qa.label} onClick={() => openModal(qa.modal)}>
+									<button
+										type="button"
+										className={s.quickBtn}
+										key={qa.label}
+										onClick={() => openModal(qa.modal)}
+									>
 										<i className={cx("bi", qa.icon)} />
 										{qa.label}
 									</button>
@@ -486,23 +759,33 @@ export default function TransferManagement() {
 						</div>
 					</div>
 				</div>
- 
+
 				{/* 1.3.1 domestic */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-bank2" /> Domestic Bank Transfers (PesaLink, EFT, RTGS)
+								<i className="bi bi-bank2" /> Domestic Bank Transfers (PesaLink,
+								EFT, RTGS)
 							</h3>
 							<p className={s.sectionSub}>
-								Instant PesaLink, same-day EFT and real-time RTGS to 47+ Kenyan banks.
+								Instant PesaLink, same-day EFT and real-time RTGS to 47+ Kenyan
+								banks.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("bankDirectoryModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("bankDirectoryModal")}
+							>
 								<i className="bi bi-list-ul" /> Bank Directory
 							</button>
-							<button type="button" className={cx(s.btn, s.btnPrimary, s.btnSm)} onClick={() => openModal("initiateTransferModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnPrimary, s.btnSm)}
+								onClick={() => openModal("initiateTransferModal")}
+							>
 								<i className="bi bi-plus-lg" /> New Transfer
 							</button>
 						</div>
@@ -535,10 +818,18 @@ export default function TransferManagement() {
 													</td>
 													<td>{r.method}</td>
 													<td>
-														<span className={cx(s.badge, toneBadge[r.statusTone])}>{r.status}</span>
+														<span
+															className={cx(s.badge, toneBadge[r.statusTone])}
+														>
+															{r.status}
+														</span>
 													</td>
 													<td>
-														<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(r.action.modal)}>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal(r.action.modal)}
+														>
 															{r.action.label}
 														</button>
 													</td>
@@ -558,30 +849,42 @@ export default function TransferManagement() {
 											<div className={s.rowTitle}>{b.name}</div>
 											<div className={s.rowSub}>{b.rails}</div>
 										</div>
-										<span className={cx(s.badge, toneBadge[b.tone])}>{b.status}</span>
+										<span className={cx(s.badge, toneBadge[b.tone])}>
+											{b.status}
+										</span>
 									</div>
 								))}
 							</div>
 						</div>
 					</div>
 				</div>
- 
+
 				{/* 1.3.2 international */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-globe" style={{ color: "var(--info)" }} /> International Transfers &amp; Remittances
+								<i className="bi bi-globe" style={{ color: "var(--info)" }} />{" "}
+								International Transfers &amp; Remittances
 							</h3>
 							<p className={s.sectionSub}>
-								SWIFT, Wave, Remitly, WorldRemit &amp; regional corridors with live FX and compliance screening.
+								SWIFT, Wave, Remitly, WorldRemit &amp; regional corridors with
+								live FX and compliance screening.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("fxRatesModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("fxRatesModal")}
+							>
 								<i className="bi bi-currency-exchange" /> FX Rates
 							</button>
-							<button type="button" className={cx(s.btn, s.btnPrimary, s.btnSm)} onClick={() => openModal("internationalModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnPrimary, s.btnSm)}
+								onClick={() => openModal("internationalModal")}
+							>
 								<i className="bi bi-plus-lg" /> New International
 							</button>
 						</div>
@@ -616,10 +919,18 @@ export default function TransferManagement() {
 													<td>{r.fx}</td>
 													<td>{r.method}</td>
 													<td>
-														<span className={cx(s.badge, toneBadge[r.statusTone])}>{r.status}</span>
+														<span
+															className={cx(s.badge, toneBadge[r.statusTone])}
+														>
+															{r.status}
+														</span>
 													</td>
 													<td>
-														<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(r.action.modal)}>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal(r.action.modal)}
+														>
 															{r.action.label}
 														</button>
 													</td>
@@ -638,7 +949,14 @@ export default function TransferManagement() {
 										<strong>{f.code}</strong>
 										<div>
 											<strong>{f.rate}</strong>{" "}
-											<span style={{ fontSize: 12, color: f.up ? "var(--danger)" : "var(--pri)" }}>{f.delta}</span>
+											<span
+												style={{
+													fontSize: 12,
+													color: f.up ? "var(--danger)" : "var(--pri)",
+												}}
+											>
+												{f.delta}
+											</span>
 										</div>
 									</div>
 								))}
@@ -646,29 +964,44 @@ export default function TransferManagement() {
 						</div>
 					</div>
 				</div>
- 
+
 				{/* 1.3.3 scheduled & recurring */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-arrow-repeat" style={{ color: "var(--purple)" }} /> Scheduled &amp; Recurring Transfers
+								<i
+									className="bi bi-arrow-repeat"
+									style={{ color: "var(--purple)" }}
+								/>{" "}
+								Scheduled &amp; Recurring Transfers
 							</h3>
 							<p className={s.sectionSub}>
-								One-time future transfers and recurring payments with approval workflows and failure handling.
+								One-time future transfers and recurring payments with approval
+								workflows and failure handling.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("scheduleTransferModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("scheduleTransferModal")}
+							>
 								<i className="bi bi-plus-lg" /> New Schedule
 							</button>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("recurringModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("recurringModal")}
+							>
 								<i className="bi bi-arrow-repeat" /> Recurring
 							</button>
 						</div>
 					</div>
 					<div className={s.subBlock}>
-						<h4 className={s.blockHead}>Active Schedules &amp; Recurring Runs</h4>
+						<h4 className={s.blockHead}>
+							Active Schedules &amp; Recurring Runs
+						</h4>
 						<div className={s.tableWrap}>
 							<table className={s.table}>
 								<thead>
@@ -691,10 +1024,16 @@ export default function TransferManagement() {
 											<td>{r.frequency}</td>
 											<td>{r.next}</td>
 											<td>
-												<span className={cx(s.badge, toneBadge[r.statusTone])}>{r.status}</span>
+												<span className={cx(s.badge, toneBadge[r.statusTone])}>
+													{r.status}
+												</span>
 											</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(r.action.modal)}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal(r.action.modal)}
+												>
 													{r.action.label}
 												</button>
 											</td>
@@ -705,21 +1044,36 @@ export default function TransferManagement() {
 						</div>
 					</div>
 				</div>
- 
+
 				{/* 1.3.4 history */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-clock-history" style={{ color: "var(--ink-500)" }} /> Transfer History &amp; Reconciliation
+								<i
+									className="bi bi-clock-history"
+									style={{ color: "var(--ink-500)" }}
+								/>{" "}
+								Transfer History &amp; Reconciliation
 							</h3>
-							<p className={s.sectionSub}>Full audit trail, receipt vault, reconciliation tools and export options.</p>
+							<p className={s.sectionSub}>
+								Full audit trail, receipt vault, reconciliation tools and export
+								options.
+							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("reconciliationModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("reconciliationModal")}
+							>
 								<i className="bi bi-check2-square" /> Reconcile
 							</button>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("transferHistoryModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("transferHistoryModal")}
+							>
 								<i className="bi bi-download" /> Export
 							</button>
 						</div>
@@ -749,10 +1103,16 @@ export default function TransferManagement() {
 											<td>{r.amount}</td>
 											<td>{r.method}</td>
 											<td>
-												<span className={cx(s.badge, toneBadge[r.statusTone])}>{r.status}</span>
+												<span className={cx(s.badge, toneBadge[r.statusTone])}>
+													{r.status}
+												</span>
 											</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal(r.action.modal)}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal(r.action.modal)}
+												>
 													{r.action.label}
 												</button>
 											</td>
@@ -763,21 +1123,36 @@ export default function TransferManagement() {
 						</div>
 					</div>
 				</div>
- 
+
 				{/* 1.3.5 limits / approvals / compliance */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-shield-check" style={{ color: "var(--danger)" }} /> Transfer Limits, Approvals &amp; Compliance
+								<i
+									className="bi bi-shield-check"
+									style={{ color: "var(--danger)" }}
+								/>{" "}
+								Transfer Limits, Approvals &amp; Compliance
 							</h3>
-							<p className={s.sectionSub}>Limits, maker-checker approval workflows, AML screening and regulatory reporting.</p>
+							<p className={s.sectionSub}>
+								Limits, maker-checker approval workflows, AML screening and
+								regulatory reporting.
+							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("limitsModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("limitsModal")}
+							>
 								<i className="bi bi-sliders" /> Limits
 							</button>
-							<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => openModal("approvalQueueModal")}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => openModal("approvalQueueModal")}
+							>
 								<i className="bi bi-check2-square" /> Approvals
 							</button>
 						</div>
@@ -800,7 +1175,9 @@ export default function TransferManagement() {
 								{c.approvals.map((a) => (
 									<div className={s.rowItem} key={a.label}>
 										<strong>{a.label}</strong>
-										<span className={cx(s.badge, toneBadge[a.tone])}>{a.badge}</span>
+										<span className={cx(s.badge, toneBadge[a.tone])}>
+											{a.badge}
+										</span>
 									</div>
 								))}
 							</div>
@@ -809,7 +1186,11 @@ export default function TransferManagement() {
 							<div className={s.subBlock}>
 								<h4 className={s.blockHead}>Compliance Status</h4>
 								{c.compliance.map((cb) => (
-									<div className={cx(s.softBox, softTone[cb.tone])} style={{ marginBottom: 8 }} key={cb.label}>
+									<div
+										className={cx(s.softBox, softTone[cb.tone])}
+										style={{ marginBottom: 8 }}
+										key={cb.label}
+									>
 										<div className={s.softLabel}>{cb.label}</div>
 										<div className={s.softValue}>{cb.value}</div>
 									</div>
@@ -819,7 +1200,7 @@ export default function TransferManagement() {
 					</div>
 				</div>
 			</div>
- 
+
 			<TransferManagementModals
 				modalState={modalState}
 				openModal={openModal}

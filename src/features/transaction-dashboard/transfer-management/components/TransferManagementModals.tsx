@@ -14,20 +14,20 @@ import {
 	TabbedModal,
 } from "../../../../shared/components/modals";
 import shared from "../../../../shared/styles/appPage.module.css";
- 
+
 const s = shared as Record<string, string>;
- 
+
 export interface TransferManagementData {
 	banks: string[];
 }
- 
+
 export interface TransferManagementModalsProps {
 	modalState: Record<string, boolean>;
 	openModal: (id: string) => void;
 	closeModal: (id: string) => void;
 	data: TransferManagementData;
 }
- 
+
 export function TransferManagementModals({
 	modalState,
 	closeModal,
@@ -35,7 +35,7 @@ export function TransferManagementModals({
 }: TransferManagementModalsProps) {
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
- 
+
 	return (
 		<>
 			{/* initiate domestic transfer — flow */}
@@ -86,7 +86,9 @@ export function TransferManagementModals({
 								<ReviewRow label="Amount" value="KES 85,000" />
 								<ReviewRow label="Fee (PesaLink)" value="KES 50" />
 								<ReviewRow label="Total debit" value="KES 85,050" highlight />
-								<label className={`${s.fieldLabel} mt-3 d-block`}>Enter PIN</label>
+								<label className={`${s.fieldLabel} mt-3 d-block`}>
+									Enter PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -105,7 +107,7 @@ export function TransferManagementModals({
 					</>
 				)}
 			</FlowModal>
- 
+
 			{/* international transfer — flow */}
 			<FlowModal
 				show={isOpen("internationalModal")}
@@ -142,7 +144,11 @@ export function TransferManagementModals({
 								</div>
 								<div className="col-md-6">
 									<label className={s.fieldLabel}>FX Rate</label>
-									<input className={s.field} defaultValue="1 USD = 3,680 UGX" readOnly />
+									<input
+										className={s.field}
+										defaultValue="1 USD = 3,680 UGX"
+										readOnly
+									/>
 								</div>
 							</div>
 						)}
@@ -158,16 +164,19 @@ export function TransferManagementModals({
 								<div className={s.receiptIcon}>
 									<i className="bi bi-check-lg" />
 								</div>
-								<h5 className={s.receiptTitle}>International Transfer Queued</h5>
+								<h5 className={s.receiptTitle}>
+									International Transfer Queued
+								</h5>
 								<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
-									USD 2,500 to Uganda via Wave. Compliance screening in progress.
+									USD 2,500 to Uganda via Wave. Compliance screening in
+									progress.
 								</p>
 							</div>
 						)}
 					</>
 				)}
 			</FlowModal>
- 
+
 			{/* schedule transfer */}
 			<SimpleModal
 				show={isOpen("scheduleTransferModal")}
@@ -189,7 +198,7 @@ export function TransferManagementModals({
 					</div>
 				</div>
 			</SimpleModal>
- 
+
 			{/* recurring */}
 			<SimpleModal
 				show={isOpen("recurringModal")}
@@ -216,7 +225,7 @@ export function TransferManagementModals({
 					</div>
 				</div>
 			</SimpleModal>
- 
+
 			{/* edit recurring */}
 			<SimpleModal
 				show={isOpen("editRecurringModal")}
@@ -237,7 +246,7 @@ export function TransferManagementModals({
 					</div>
 				</div>
 			</SimpleModal>
- 
+
 			{/* bulk transfer */}
 			<SimpleModal
 				show={isOpen("bulkTransferModal")}
@@ -254,10 +263,12 @@ export function TransferManagementModals({
 				</div>
 				<div className={s.hintBox}>
 					<i className="bi bi-info-circle" />
-					<span>Columns: Name, Account, Bank, Amount, Reference. Max 5,000 rows.</span>
+					<span>
+						Columns: Name, Account, Bank, Amount, Reference. Max 5,000 rows.
+					</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* health check */}
 			<SimpleModal
 				show={isOpen("transferHealthModal")}
@@ -282,7 +293,7 @@ export function TransferManagementModals({
 					))}
 				</div>
 			</SimpleModal>
- 
+
 			{/* attention (all) */}
 			<SimpleModal
 				show={isOpen("attentionModal")}
@@ -295,16 +306,21 @@ export function TransferManagementModals({
 					<i className="bi bi-exclamation-octagon" />
 					<span>KES 12.5M transfer failed AML compliance (Equity → KCB).</span>
 				</div>
-				<div className={`${s.hintBox} ${s.hintBoxWarn}`} style={{ marginTop: 10 }}>
+				<div
+					className={`${s.hintBox} ${s.hintBoxWarn}`}
+					style={{ marginTop: 10 }}
+				>
 					<i className="bi bi-clock" />
-					<span>3 recurring salary transfers need re-authorisation before 28 Jun.</span>
+					<span>
+						3 recurring salary transfers need re-authorisation before 28 Jun.
+					</span>
 				</div>
 				<div className={s.hintBox} style={{ marginTop: 10 }}>
 					<i className="bi bi-bank" />
 					<span>Co-op Bank maintenance tonight 02:00 – 04:00 EAT.</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* compliance review */}
 			<SimpleModal
 				show={isOpen("complianceModal")}
@@ -317,7 +333,9 @@ export function TransferManagementModals({
 			>
 				<div className={`${s.hintBox} ${s.hintBoxDanger}`}>
 					<i className="bi bi-exclamation-octagon" />
-					<span>AML flag: unusual pattern on Equity → KCB transfer of KES 12.5M.</span>
+					<span>
+						AML flag: unusual pattern on Equity → KCB transfer of KES 12.5M.
+					</span>
 				</div>
 				<div className="mt-3">
 					<ReviewRow label="Rule triggered" value="Velocity + threshold" />
@@ -325,7 +343,7 @@ export function TransferManagementModals({
 					<ReviewRow label="Status" value="Held for review" />
 				</div>
 			</SimpleModal>
- 
+
 			{/* bank status */}
 			<SimpleModal
 				show={isOpen("bankStatusModal")}
@@ -351,7 +369,9 @@ export function TransferManagementModals({
 									</td>
 									<td>PesaLink • RTGS • EFT</td>
 									<td>
-										<span className={`${s.badge} ${i === 2 ? s.badgeWarn : s.badgeSuccess}`}>
+										<span
+											className={`${s.badge} ${i === 2 ? s.badgeWarn : s.badgeSuccess}`}
+										>
 											{i === 2 ? "Maintenance" : "Online"}
 										</span>
 									</td>
@@ -361,7 +381,7 @@ export function TransferManagementModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* bank directory */}
 			<SimpleModal
 				show={isOpen("bankDirectoryModal")}
@@ -394,7 +414,7 @@ export function TransferManagementModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* beneficiaries */}
 			<TabbedModal
 				show={isOpen("beneficiaryModal")}
@@ -467,7 +487,7 @@ export function TransferManagementModals({
 					},
 				]}
 			/>
- 
+
 			{/* approvals queue */}
 			<SimpleModal
 				show={isOpen("approvalQueueModal")}
@@ -505,7 +525,7 @@ export function TransferManagementModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* history / export */}
 			<SimpleModal
 				show={isOpen("transferHistoryModal")}
@@ -525,9 +545,12 @@ export function TransferManagementModals({
 						<input type="date" className={s.field} defaultValue="2025-06-30" />
 					</div>
 				</div>
-				<SelectField label="Format" options={["CSV", "Excel (XLSX)", "PDF", "ISO 20022"]} />
+				<SelectField
+					label="Format"
+					options={["CSV", "Excel (XLSX)", "PDF", "ISO 20022"]}
+				/>
 			</SimpleModal>
- 
+
 			{/* reconciliation */}
 			<SimpleModal
 				show={isOpen("reconciliationModal")}
@@ -540,7 +563,10 @@ export function TransferManagementModals({
 			>
 				<div className={s.hintBox}>
 					<i className="bi bi-info-circle" />
-					<span>Match ledger entries against bank statements for the selected period.</span>
+					<span>
+						Match ledger entries against bank statements for the selected
+						period.
+					</span>
 				</div>
 				<div className="mt-3">
 					<ReviewRow label="Transfers in period" value="2,841" />
@@ -548,7 +574,7 @@ export function TransferManagementModals({
 					<ReviewRow label="Exceptions" value="3" />
 				</div>
 			</SimpleModal>
- 
+
 			{/* limits */}
 			<SimpleModal
 				show={isOpen("limitsModal")}
@@ -573,7 +599,7 @@ export function TransferManagementModals({
 					<span>Limit increases require CFO approval and updated KYC.</span>
 				</div>
 			</SimpleModal>
- 
+
 			{/* fx rates */}
 			<SimpleModal
 				show={isOpen("fxRatesModal")}
@@ -610,7 +636,7 @@ export function TransferManagementModals({
 					</table>
 				</div>
 			</SimpleModal>
- 
+
 			{/* receipts / tracking */}
 			<SimpleModal
 				show={isOpen("transferReceiptModal")}
@@ -633,7 +659,7 @@ export function TransferManagementModals({
 					<ReviewRow label="Settled" value="27 Jun 2025, 10:42" />
 				</div>
 			</SimpleModal>
- 
+
 			<SimpleModal
 				show={isOpen("intlReceiptModal")}
 				onClose={() => close("intlReceiptModal")}
@@ -654,7 +680,7 @@ export function TransferManagementModals({
 					<ReviewRow label="Fee" value="USD 12.00" />
 				</div>
 			</SimpleModal>
- 
+
 			<SimpleModal
 				show={isOpen("trackTransferModal")}
 				onClose={() => close("trackTransferModal")}
@@ -668,7 +694,7 @@ export function TransferManagementModals({
 					<ReviewRow label="Settled" value="Pending" />
 				</div>
 			</SimpleModal>
- 
+
 			<SimpleModal
 				show={isOpen("trackIntlModal")}
 				onClose={() => close("trackIntlModal")}
