@@ -28,3 +28,30 @@
     overflow-x: hidden;
   }
 }
+
+/* =============================================================================
+ * Business dashboard shell global patch:
+ *  - Bootstrap modal safe-area padding so bottom sheets don't sit under the
+ *    iOS home indicator.
+ *  - 44px min tap target for icon-only buttons in forms/toolbars.
+ *  - Ensure .table-responsive never traps double scrollbars inside a module
+ *    that already manages its own horizontal scroll.
+ * =========================================================================== */
+:where(.modal) {
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+           max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+:where(.modal-dialog) {
+  margin: 0.5rem auto;
+}
+@media (max-width: 767.98px) {
+  :where(.modal-dialog.modal-dialog-bottom,
+         .modal.fade.show .modal-dialog) {
+    margin: max(0.5rem, env(safe-area-inset-top)) auto
+            max(0.5rem, env(safe-area-inset-bottom));
+  }
+  :where(.btn.icon-btn, .btn-close, button.icon) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

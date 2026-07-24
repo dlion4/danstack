@@ -11,16 +11,23 @@
  * ARCHITECTURE .: Layout route renders <BusinessShell>, whose <Outlet /> hosts
  *                 the page route (BusinessHome, BusinessModulePage…).
  * ========================================================================== */
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Outlet, useRouterState } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
 
-import { useQuery } from "@tanstack/react-query";
-import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-	BusinessShellContextValue,
-	ToastInput,
-} from "../data/businessLayoutContext";
-import { BusinessShellContext } from "../data/businessLayoutContext";
-import type { AsideKind, ToastTone } from "../data/businessLayoutData";
+/* ---------------------------------------------------------------------------
+ * Bootstrap + Bootstrap Icons — imported ONCE here in the shell so that every
+ * child route under /business-dashboard (15 pages + all modals) shares the
+ * grid, utility classes (row / col-lg-4 / d-flex / btn / modal / etc.) and the
+ * ~690 bi-* icons used throughout the migrated pages. The legacy BAAS business
+ * HTML loads these from CDN; in the React shell we bundle them once instead of
+ * re-importing per page (which would duplicate CSS in dev HMR).
+ * JS bundle is loaded async on mount so modals (new bootstrap.Modal(...)) work
+ * without each page having to ship its own <script>.
+ * ------------------------------------------------------------------------- */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 import {
 	cx,
 	fetchBusinessLayoutContent,
@@ -41,18 +48,29 @@ const s = styles as Record<string, string>;
 let toastIdSeq = 0;
 
 export default function BusinessShell() {
-	/* ---------- TanStack Query: backend-ready business layout content ----------
-	 * fetchBusinessLayoutContent() never rejects (it falls back to bundled mock
-	 * data), so there is no error state and no need to gate <Outlet /> behind a
-	 * spinner — the chrome renders immediately from mock content and swaps in
-	 * live data if/when the API responds. */
-	const { data: apiData } = useQuery({
-		queryKey: ["business-layout-content"],
-		queryFn: fetchBusinessLayoutContent,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-	const content = apiData ?? initialMockData;
+  /* ---------- Bootstrap JS (async, one-shot) ---------------------------------
+   * Loaded once so any child page/modal that calls `new bootstrap.Modal(el)`
+   * (or Tooltip/Popover) works without every page re-importing the bundle. */
+  useEffect(() => {
+    let cancelled = false;
+    import('bootstrap/dist/js/bootstrap.bundle.min.js').catch((err) => {
+      if (!cancelled) console.warn('[BusinessShell] Bootstrap JS failed to load:', err);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  /* ---------- TanStack Query: backend-ready business layout content ----------
+   * fetchBusinessLayoutContent() never rejects (it falls back to bundled mock
+   * data), so there is no error state and no need to gate <Outlet /> behind a
+   * spinner — the chrome renders immediately from mock content and swaps in
+   * live data if/when the API responds. */
+  const { data: apiData } = useQuery({
+    queryKey: ['business-layout-content'],
+    queryFn: fetchBusinessLayoutContent,
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
+  const content = apiData ?? initialMockData;
 
 	/* ---------- layout state ---------- */
 	const [isDesktop, setIsDesktop] = useState(true);
