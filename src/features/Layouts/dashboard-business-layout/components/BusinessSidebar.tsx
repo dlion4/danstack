@@ -2,9 +2,9 @@
  * BusinessSidebar.tsx — collapsible left navigation for the Business Layout.
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: Angular dashboard-business-sidebar.*
- * LEGACY BRIDGE: every nav-link is now a real router <Link>. The "dashboard"
- *   item points at the layout index (/business); all others resolve to the
- *   /business/$module route. The brand mark renders an icon (per the design).
+* LEGACY BRIDGE: every nav-link is now a real router <Link>. The "dashboard"
+  * item points at the layout index (/business-dashboard); all others resolve to the
+  * /business-dashboard/$module route. The brand mark renders an icon (per the design).
  * ========================================================================== */
 import { Link } from "@tanstack/react-router";
 import type {
@@ -56,7 +56,7 @@ export default function BusinessSidebar({
 		<aside className={classes} aria-label="Business navigation">
 			<div className="d-flex align-items-center justify-content-between mb-2">
 				<Link
-					to="/business"
+					to="/business-dashboard"
 					className={s.brand}
 					aria-label="Go to business dashboard"
 				>
@@ -127,8 +127,8 @@ export default function BusinessSidebar({
 										key={item.key}
 										to={
 											item.key === "dashboard"
-												? "/business"
-												: "/business/$module"
+												? "/business-dashboard"
+												: "/business-dashboard/$module"
 										}
 										params={
 											item.key === "dashboard"
@@ -149,7 +149,7 @@ export default function BusinessSidebar({
 			</div>
 
 			<Link
-				to="/business"
+				to="/business-dashboard"
 				className={s["sidebar-account"]}
 				onClick={() => {
 					if (!isDesktop) onCloseMobile();

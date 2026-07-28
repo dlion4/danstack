@@ -4,12 +4,7 @@ import styles from "../styles/command-center.module.css";
 
 /* ============================================================================
    Business Command Center — modal layer (legacy page 3.1, 21 modals)
-   LEGACY BRIDGE:
-     openM(id)          → parent lifts `active` state
-     doAction(id,msg)   → `results` state; shows loading spinner, then receipt
-     nextFlow(key,total)→ `flows` state with stepper + receipt last step
-     sw(prefix,key,btn) → `tabs` state (pill switcher)
-     cacheAndReset()    → useEffect on close resets flows + results + tabs
+   REBUILT from original 3.1.html to retain 100% functionality and visuals.
    ========================================================================== */
 
 interface ModalsProps {
@@ -28,15 +23,6 @@ interface MBoxProps {
 	onClose: () => void;
 	children: ReactNode;
 	footer?: ReactNode;
-}
-
-/* ---------- LEGACY BRIDGE: file download helper ---------- */
-function downloadFile(name: string, content: string, type = "text/plain") {
-	const a = document.createElement("a");
-	a.href = URL.createObjectURL(new Blob([content], { type }));
-	a.download = name;
-	a.click();
-	URL.revokeObjectURL(a.href);
 }
 
 /* ---------- modal shell ---------- */
@@ -85,77 +71,9 @@ function BusyOverlay() {
 	return (
 		<div className={s.loadingOv}>
 			<div className={s.spinner} />
-			<p className={s.loadingLabel}>Processing...</p>
-		</div>
-	);
-}
-
-/* ---------- data arrays ---------- */
-const CUSTOMERS = ["Acme Corp", "Global Industries", "+ Add New Customer"];
-const DEPARTMENTS = ["Finance", "HR", "Sales", "Operations"];
-const ROLES = [
-	{ label: "Admin", desc: "Manage settings, approve payments", checked: true },
-	{ label: "Finance / Maker", desc: "Create invoices, initiate payments" },
-	{ label: "Viewer", desc: "Read-only access to reports" },
-];
-
-/* LEGACY BRIDGE: flow definitions */
-const FLOW_DEFS: Record<string, { labels: string[] }> = {
-	payroll: { labels: ["Select", "Review", "Approve"] },
-	transfer: { labels: ["Details", "Amount", "Authorize"] },
-	invite: { labels: ["Details", "Role", "Limits"] },
-};
-
-interface Result {
-	msg: string;
-	ref?: string;
-}
-
-function Stepper({ flowKey, current }: { flowKey: string; current: number }) {
-	const s = styles as Record<string, string>;
-	const def = FLOW_DEFS[flowKey];
-	if (!def) return null;
-	return (
-		<div className={s.stepper}>
-			{def.labels.map((label, i) => {
-				const stepNum = i + 1;
-				const done = stepNum < current;
-				const active = stepNum === current;
-				return (
-					<div
-						key={label}
-						style={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: 8,
-							position: "relative",
-							zIndex: 2,
-						}}
-					>
-						{i > 0 && (
-							<div
-								className={s.stepLine}
-								style={{
-									position: "absolute",
-									top: 14,
-									left: "-50%",
-									width: "100%",
-									...(done ? { background: "var(--pm-accent)" } : {}),
-								}}
-							/>
-						)}
-						<div
-							className={`${s.step} ${done ? s.stepDone : ""} ${active ? s.stepActive : ""}`}
-						>
-							<div className={s.stepN}>
-								{done ? <i className="bi bi-check" /> : stepNum}
-							</div>
-							<div className={s.stepL}>{label}</div>
-						</div>
-					</div>
-				);
-			})}
+			<p className={s.loadingLabel} style={{ marginTop: 12, fontWeight: 600 }}>
+				Processing...
+			</p>
 		</div>
 	);
 }
@@ -169,42 +87,45 @@ export default function CommandCenterModals({
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
-	const [results, setResults] = useState<Record<string, Result>>({});
+	const [results, setResults] = useState<Record<string, { msg: string; ref?: string }>>({});
 	const [busy, setBusy] = useState<string | null>(null);
 	const [flows, setFlows] = useState<Record<string, number>>({
 		payroll: 1,
 		transfer: 1,
 		invite: 1,
 	});
-	const [tabs, setTabs] = useState<Record<string, string>>({});
+	const [tabs, setTabs] = useState<Record<string, string>>({
+		bizSettings: "general",
+		aging: "all",
+		roleMatrix: "owner",
+	});
 
-	/* LEGACY BRIDGE: cacheAndReset → fresh state on next open */
+	/* Reset state on close */
 	useEffect(() => {
 		if (active === null) {
 			setResults({});
 			setFlows({ payroll: 1, transfer: 1, invite: 1 });
 			setBusy(null);
-			setTabs({});
+			setTabs({ bizSettings: "general", aging: "all", roleMatrix: "owner" });
 		}
 	}, [active]);
 
 	const busyTimer = useRef<number | undefined>(undefined);
 	useEffect(() => () => window.clearTimeout(busyTimer.current), []);
 
-	/* LEGACY BRIDGE: doAction(modalId, msg, ref) */
 	const doAction = (modalId: string, msg: string, ref?: string) => {
 		setBusy(modalId);
 		busyTimer.current = window.setTimeout(() => {
 			setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }));
 			setBusy(null);
-		}, 1500);
+		}, 1200);
 	};
 
-	/* LEGACY BRIDGE: nextFlow(key, total) */
-	const nextFlow = (key: string, total: number) => {
+	const nextFlow = (key: string, total: number, msg?: string, ref?: string) => {
 		const cur = flows[key] ?? 1;
 		if (cur >= total) {
-			onClose();
+			if (msg) doAction(`${key}Modal`, msg, ref);
+			else onClose();
 			return;
 		}
 		setFlows((prev) => ({ ...prev, [key]: cur + 1 }));
@@ -214,39 +135,36 @@ export default function CommandCenterModals({
 		setTabs((prev) => ({ ...prev, [prefix]: key }));
 	};
 
-	/* Receipt renderer */
-	const renderReceipt = (r: Result) => (
-		<div className={s.receipt}>
-			<div className={s.receiptIcon}>
+	const renderReceipt = (res: { msg: string; ref?: string }) => (
+		<div className="text-center p-4">
+			<div
+				className={cx(s.iconCircle, "mx-auto mb-3")}
+				style={{
+					width: 64,
+					height: 64,
+					fontSize: 28,
+					background: "var(--pm-accent-soft)",
+					color: "var(--pm-accent)",
+				}}
+			>
 				<i className="bi bi-check-lg" />
 			</div>
-			<h5 style={{ fontWeight: 700, color: "var(--pm-accent)" }}>{r.msg}</h5>
-			{r.ref && (
-				<p style={{ fontSize: 12, color: "var(--pm-muted)" }}>Ref: {r.ref}</p>
+			<h5 style={{ fontWeight: 700 }}>{res.msg}</h5>
+			{res.ref && (
+				<p style={{ fontSize: 12, color: "var(--pm-muted)" }}>Ref: {res.ref}</p>
 			)}
-			<div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
-				<button
-					className={cx(s.btnPm, s.btnSm)}
-					onClick={() => downloadFile("receipt.txt", r.msg)}
-				>
-					<i className="bi bi-download" /> Save
-				</button>
-				<button className={cx(s.btnPm, s.btnSm)}>
-					<i className="bi bi-share" /> Continue
-				</button>
-			</div>
 		</div>
 	);
 
-	const renderActionBody = (modalId: string, defaultContent: ReactNode) => {
-		if (busy === modalId) return <BusyOverlay />;
-		if (results[modalId]) return renderReceipt(results[modalId]);
-		return defaultContent;
+	const renderBody = (id: string, content: ReactNode) => {
+		if (busy === id) return <BusyOverlay />;
+		if (results[id]) return renderReceipt(results[id]);
+		return content;
 	};
 
 	/* ==========================================================================
-     M1: New Invoice
-     ======================================================================== */
+	 M1: New Invoice
+	 ======================================================================== */
 	const renderNewInvoice = () => (
 		<MBox
 			id="newInvoiceModal"
@@ -259,34 +177,36 @@ export default function CommandCenterModals({
 				</>
 			}
 			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction(
-								"newInvoiceModal",
-								"Invoice #INV-2025-142 created & sent successfully!",
-								"INV-2025-142",
-							)
-						}
-					>
-						Create Invoice
-					</button>
-				</>
+				!results.newInvoiceModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() =>
+								doAction(
+									"newInvoiceModal",
+									"Invoice #INV-2025-142 created & sent successfully!",
+									"INV-2025-142",
+								)
+							}
+						>
+							Create Invoice
+						</button>
+					</>
+				)
 			}
 		>
-			{renderActionBody(
+			{renderBody(
 				"newInvoiceModal",
 				<>
 					<div className="mb-3">
 						<label className={s.formLabel}>Customer</label>
 						<select className={s.formControl}>
-							{CUSTOMERS.map((c) => (
-								<option key={c}>{c}</option>
-							))}
+							<option>Acme Corp</option>
+							<option>Global Industries</option>
+							<option>+ Add New Customer</option>
 						</select>
 					</div>
 					<div className="mb-3">
@@ -325,17 +245,25 @@ export default function CommandCenterModals({
 					</div>
 				</>,
 			)}
+			{results.newInvoiceModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
+				</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M2: Run Payroll (Multistep, 3 steps)
-     ======================================================================== */
+	 M2: Run Payroll
+	 ======================================================================== */
 	const renderRunPayroll = () => {
 		const step = flows.payroll;
+		const id = "runPayrollModal";
 		return (
 			<MBox
-				id="runPayrollModal"
+				id={id}
 				active={active}
 				size="lg"
 				onClose={onClose}
@@ -346,114 +274,191 @@ export default function CommandCenterModals({
 					</>
 				}
 				footer={
-					<>
-						<button className={s.btnPm} onClick={onClose}>
-							Cancel
-						</button>
-						<button
-							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("payroll", 3)}
-						>
-							{step >= 3
-								? "Approve & Execute"
-								: 'Continue <i className="bi bi-arrow-right" />'}
-						</button>
-					</>
+					!results[id] && (
+						<>
+							<button className={s.btnPm} onClick={onClose}>
+								Cancel
+							</button>
+							<button
+								className={cx(s.btnPm, s.btnPmP)}
+								onClick={() =>
+									nextFlow(
+										"payroll",
+										3,
+										"Payroll executed successfully! KES 450,500 disbursed.",
+										"PAY-10029",
+									)
+								}
+							>
+								{step === 3 ? (
+									<>
+										Approve & Execute <i className="bi bi-lock" />
+									</>
+								) : (
+									<>
+										Continue <i className="bi bi-arrow-right" />
+									</>
+								)}
+							</button>
+						</>
+					)
 				}
 			>
-				<Stepper flowKey="payroll" current={step} />
-				{step === 1 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>
-							Step 1: Select Employees for October 2025
-						</h6>
-						<div
-							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<div
-								className="d-flex justify-content-between"
-								style={{ fontSize: 13 }}
-							>
-								<span>24 Employees Selected</span>
-								<strong>Total: KES 450,500</strong>
-							</div>
-						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>Funding Source</label>
-							<select className={s.formControl}>
-								<option>PayMo Business Wallet (KES 2.45M)</option>
-								<option>Equity Bank ****4521</option>
-							</select>
-						</div>
-					</div>
-				)}
-				{step === 2 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Review Payroll Summary</h6>
-						<div className="table-responsive">
-							<table className={s.tbl}>
-								<thead>
-									<tr>
-										<th>Employee</th>
-										<th>Gross</th>
-										<th>Tax (PAYE)</th>
-										<th>Net</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Amina D. (Admin)</td>
-										<td>200,000</td>
-										<td>45,000</td>
-										<td>155,000</td>
-									</tr>
-									<tr>
-										<td>Peter K. (Finance)</td>
-										<td>150,000</td>
-										<td>32,500</td>
-										<td>117,500</td>
-									</tr>
-									<tr>
-										<td>Sarah W. (HR)</td>
-										<td>120,000</td>
-										<td>24,000</td>
-										<td>96,000</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				)}
-				{step === 3 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Approve & Execute</h6>
-						<div
-							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
-						>
-							<i className="bi bi-exclamation-triangle text-warning me-1" /> You
-							are authorizing KES 450,500 disbursement to 24 employees. This
-							action is irreversible.
-						</div>
-						<div className={s.pinRow}>
-							{[0, 1, 2, 3].map((i) => (
-								<input
-									key={i}
-									type="text"
-									maxLength={1}
-									className={s.formControl}
-									style={{
-										width: 50,
-										height: 60,
-										textAlign: "center",
-										fontSize: 24,
-										fontWeight: 700,
-									}}
-									placeholder="·"
-								/>
+				{renderBody(
+					id,
+					<>
+						<div className={s.stepper}>
+							{[1, 2, 3].map((n) => (
+								<div
+									key={n}
+									className={cx(
+										s.step,
+										step === n && s.stepActive,
+										step > n && s.stepDone,
+									)}
+								>
+									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepL}>
+										{n === 1 ? "Select" : n === 2 ? "Review" : "Approve"}
+									</div>
+								</div>
 							))}
 						</div>
+						{step === 1 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Select Payroll Period</h6>
+								<div className="row g-3 mt-1">
+									<div className="col-md-6">
+										<label className={s.formLabel}>Month</label>
+										<select className={s.formControl}>
+											<option>October 2025</option>
+											<option>September 2025</option>
+										</select>
+									</div>
+									<div className="col-md-6">
+										<label className={s.formLabel}>Department / Group</label>
+										<select className={s.formControl}>
+											<option>All Employees (24)</option>
+											<option>Management (4)</option>
+											<option>Engineering (12)</option>
+										</select>
+									</div>
+									<div className="col-12">
+										<div
+											className="p-3 border rounded"
+											style={{ background: "var(--pm-surface-2)" }}
+										>
+											<div className="d-flex justify-content-between mb-2">
+												<span>Gross Pay</span>
+												<strong>KES 620,000</strong>
+											</div>
+											<div className="d-flex justify-content-between mb-2">
+												<span className="text-danger">PAYE & Statutory</span>
+												<strong className="text-danger">- KES 169,500</strong>
+											</div>
+											<hr className={s.divider} />
+											<div className="d-flex justify-content-between">
+												<span style={{ fontWeight: 700 }}>Net Disbursement</span>
+												<strong style={{ color: "var(--pm-success)" }}>
+													KES 450,500
+												</strong>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Review Discrepancies</h6>
+								<div
+									className="p-3 rounded mb-3"
+									style={{
+										background: "var(--pm-warning-soft)",
+										fontSize: 13,
+									}}
+								>
+									<i className="bi bi-exclamation-triangle" /> 1 employee banking
+									detail missing. They will be paid via M-Pesa.
+								</div>
+								<div className="table-responsive">
+									<table className={s.tbl}>
+										<thead>
+											<tr>
+												<th>Employee</th>
+												<th>Gross</th>
+												<th>Net</th>
+												<th>Method</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>James K.</td>
+												<td>120,000</td>
+												<td>86,400</td>
+												<td>Bank Transfer</td>
+											</tr>
+											<tr>
+												<td>Grace M.</td>
+												<td>95,000</td>
+												<td>71,200</td>
+												<td>Bank Transfer</td>
+											</tr>
+											<tr>
+												<td>David O.</td>
+												<td>60,000</td>
+												<td>48,500</td>
+												<td>M-Pesa B2C</td>
+											</tr>
+											<tr>
+												<td colSpan={4} className="text-center text-muted">
+													... 21 more rows
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+						{step === 3 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Authorize Execution</h6>
+								<div
+									className="p-3 rounded mb-3"
+									style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+								>
+									Authorization required for <strong>KES 450,500</strong>{" "}
+									disbursement to 24 employees. Funds will be deducted from
+									TechSolutions Ltd main wallet.
+								</div>
+								<label className="formLabel text-center d-block">
+									Enter your Director PIN
+								</label>
+								<div className={cx(s.pinRow, "mt-2")}>
+									<input type="password" maxLength={1} />
+									<input type="password" maxLength={1} />
+									<input type="password" maxlength={1} />
+									<input type="password" maxlength={1} />
+								</div>
+								<div className="form-check mt-4 text-center d-flex justify-content-center">
+									<input
+										className="form-check-input me-2"
+										type="checkbox"
+										defaultChecked
+									/>
+									<label className="form-check-label" style={{ fontSize: 12 }}>
+										Auto-file KRA P10, NSSF, and SHIF returns
+									</label>
+								</div>
+							</div>
+						)}
+					</>,
+				)}
+				{results[id] && (
+					<div className={s.modalFooter}>
+						<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+							Done
+						</button>
 					</div>
 				)}
 			</MBox>
@@ -461,121 +466,144 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M3: Inter-Company Transfer (Multistep, 3 steps)
-     ======================================================================== */
+	 M3: Inter-Company Transfer
+	 ======================================================================== */
 	const renderInterCompanyTransfer = () => {
 		const step = flows.transfer;
+		const id = "interCompanyTransferModal";
 		return (
 			<MBox
-				id="interCompanyTransferModal"
+				id={id}
 				active={active}
 				size="lg"
 				onClose={onClose}
 				title={
 					<>
-						<i
-							className="bi bi-arrow-left-right me-2"
-							style={{ color: "var(--pm-purple)" }}
-						/>
-						Inter-Company Transfer
+						<i className="bi bi-arrow-left-right text-purple me-2" />
+						Inter-Company Fund Transfer
 					</>
 				}
 				footer={
-					<>
-						<button className={s.btnPm} onClick={onClose}>
-							Cancel
-						</button>
-						<button
-							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("transfer", 3)}
-						>
-							{step >= 3 ? "Authorize" : "Continue"}
-						</button>
-					</>
+					!results[id] && (
+						<>
+							<button className={s.btnPm} onClick={onClose}>
+								Cancel
+							</button>
+							<button
+								className={cx(s.btnPm, s.btnPmP)}
+								onClick={() =>
+									nextFlow(
+										"transfer",
+										3,
+										"Transfer of KES 500,000 completed instantly.",
+										"TRF-59001",
+									)
+								}
+							>
+								{step === 3 ? "Authorize <i class=\"bi bi-lock\"></i>" : "Continue"}
+							</button>
+						</>
+					)
 				}
 			>
-				<Stepper flowKey="transfer" current={step} />
-				{step === 1 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Transfer Details</h6>
-						<div className="mb-3">
-							<label className={s.formLabel}>From Account</label>
-							<select className={s.formControl}>
-								<option>TechSolutions Ltd (KES 2.45M)</option>
-								<option>TS Logistics (KES 8.10M)</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>To Account</label>
-							<select className={s.formControl}>
-								<option>TS Logistics & Delivery</option>
-								<option>TechSolutions Foundation</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>Amount (KES)</label>
-							<input
-								type="number"
-								className={s.formControl}
-								defaultValue="500000"
-							/>
-						</div>
-					</div>
-				)}
-				{step === 2 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Review Transfer</h6>
-						<div
-							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<div
-								className="d-flex justify-content-between mb-2"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">From</span>
-								<strong>TechSolutions Ltd</strong>
-							</div>
-							<div
-								className="d-flex justify-content-between mb-2"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">To</span>
-								<strong>TS Logistics & Delivery</strong>
-							</div>
-							<div
-								className="d-flex justify-content-between"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">Amount</span>
-								<strong style={{ color: "var(--pm-primary)" }}>
-									KES 500,000
-								</strong>
-							</div>
-						</div>
-					</div>
-				)}
-				{step === 3 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Authorize with PIN</h6>
-						<div className={s.pinRow}>
-							{[0, 1, 2, 3].map((i) => (
-								<input
-									key={i}
-									type="text"
-									maxLength={1}
-									className={s.formControl}
-									style={{
-										width: 50,
-										height: 60,
-										textAlign: "center",
-										fontSize: 24,
-										fontWeight: 700,
-									}}
-									placeholder="·"
-								/>
+				{renderBody(
+					id,
+					<>
+						<div className={s.stepper}>
+							{[1, 2, 3].map((n) => (
+								<div
+									key={n}
+									className={cx(
+										s.step,
+										step === n && s.stepActive,
+										step > n && s.stepDone,
+									)}
+								>
+									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepL}>
+										{n === 1 ? "Details" : n === 2 ? "Review" : "Authorize"}
+									</div>
+								</div>
 							))}
 						</div>
+						{step === 1 && (
+							<div className={s.fstepActive}>
+								<div className="mb-3">
+									<label className={s.formLabel}>From Account (Debit)</label>
+									<select className={s.formControl}>
+										<option>TechSolutions Ltd (KES 2.45M)</option>
+										<option>TS Logistics (KES 8.10M)</option>
+									</select>
+								</div>
+								<div className="mb-3">
+									<label className={s.formLabel}>To Account (Credit)</label>
+									<select className={s.formControl}>
+										<option>TS Logistics & Delivery</option>
+										<option>TechSolutions Foundation</option>
+									</select>
+								</div>
+								<div className="mb-3">
+									<label className={s.formLabel}>Amount to Transfer (KES)</label>
+									<input
+										type="number"
+										className={s.formControl}
+										defaultValue="500000"
+									/>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Confirm Transfer</h6>
+								<div
+									className="p-3 border rounded"
+									style={{ background: "var(--pm-surface-2)" }}
+								>
+									<div className="d-flex justify-content-between mb-2">
+										<span className="text-muted">Source</span>
+										<strong>TechSolutions Ltd</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className="text-muted">Destination</span>
+										<strong>TS Logistics & Delivery</strong>
+									</div>
+									<hr className={s.divider} />
+									<div className="d-flex justify-content-between">
+										<span className="text-muted">Transfer Amount</span>
+										<strong style={{ color: "var(--pm-primary)" }}>
+											KES 500,000.00
+										</strong>
+									</div>
+								</div>
+							</div>
+						)}
+						{step === 3 && (
+							<div className={s.fstepActive}>
+								<div
+									className="p-3 rounded mb-3"
+									style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
+								>
+									Confirm authorization for <strong>KES 500,000</strong> internal
+									transfer. This action is processed instantly.
+								</div>
+								<label className="formLabel text-center d-block">
+									Enter Director PIN
+								</label>
+								<div className={cx(s.pinRow, "mt-2")}>
+									<input type="password" maxLength={1} />
+									<input type="password" maxLength={1} />
+									<input type="password" maxlength={1} />
+									<input type="password" maxlength={1} />
+								</div>
+							</div>
+						)}
+					</>,
+				)}
+				{results[id] && (
+					<div className={s.modalFooter}>
+						<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+							Done
+						</button>
 					</div>
 				)}
 			</MBox>
@@ -583,125 +611,165 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M4: Invite User (Multistep, 3 steps)
-     ======================================================================== */
+	 M4: Invite User
+	 ======================================================================== */
 	const renderInviteUser = () => {
 		const step = flows.invite;
+		const id = "inviteUserModal";
 		return (
 			<MBox
-				id="inviteUserModal"
+				id={id}
 				active={active}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-person-plus me-2" />
-						Invite Team Member
+						<i className="bi bi-person-plus text-warning me-2" />
+						Invite New Team Member
 					</>
 				}
 				footer={
-					<>
-						<button className={s.btnPm} onClick={onClose}>
-							Cancel
-						</button>
-						<button
-							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("invite", 3)}
-						>
-							{step >= 3 ? "Send Invite" : "Continue"}
-						</button>
-					</>
+					!results[id] && (
+						<>
+							<button className={s.btnPm} onClick={onClose}>
+								Cancel
+							</button>
+							<button
+								className={cx(s.btnPm, s.btnPmP)}
+								onClick={() =>
+									nextFlow(
+										"invite",
+										3,
+										"Invitation sent! They will receive an email to set up MFA.",
+									)
+								}
+							>
+								{step === 3 ? "Send Invite <i class=\"bi bi-envelope\"></i>" : "Continue"}
+							</button>
+						</>
+					)
 				}
 			>
-				<Stepper flowKey="invite" current={step} />
-				{step === 1 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Member Details</h6>
-						<div className="mb-3">
-							<label className={s.formLabel}>Full Name</label>
-							<input className={s.formControl} defaultValue="John Mwangi" />
+				{renderBody(
+					id,
+					<>
+						<div className={s.stepper}>
+							{[1, 2, 3].map((n) => (
+								<div
+									key={n}
+									className={cx(
+										s.step,
+										step === n && s.stepActive,
+										step > n && s.stepDone,
+									)}
+								>
+									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepL}>
+										{n === 1 ? "Details" : n === 2 ? "Role" : "Limits"}
+									</div>
+								</div>
+							))}
 						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>Email</label>
-							<input
-								className={s.formControl}
-								defaultValue="john@techsol.co.ke"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>Department</label>
-							<select className={s.formControl}>
-								{DEPARTMENTS.map((d) => (
-									<option key={d}>{d}</option>
-								))}
-							</select>
-						</div>
-					</div>
-				)}
-				{step === 2 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Assign Role</h6>
-						{ROLES.map((r) => (
-							<div
-								key={r.label}
-								className="p-3 border rounded mb-2"
-								style={{
-									...(r.checked
-										? {
-												borderColor: "var(--pm-primary)",
-												background: "rgba(79,70,229,.04)",
-											}
-										: {}),
-								}}
-							>
+						{step === 1 && (
+							<div className={s.fstepActive}>
+								<div className="mb-3">
+									<label className={s.formLabel}>Full Name</label>
+									<input
+										className={s.formControl}
+										placeholder="e.g. John Doe"
+									/>
+								</div>
+								<div className="mb-3">
+									<label className={s.formLabel}>Work Email</label>
+									<input
+										type="email"
+										className={s.formControl}
+										placeholder="john@company.com"
+									/>
+								</div>
+								<div className="mb-3">
+									<label className={s.formLabel}>Department</label>
+									<select className={s.formControl}>
+										<option>Finance</option>
+										<option>Operations</option>
+										<option>Sales / Invoicing</option>
+										<option>Human Resources</option>
+									</select>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Assign User Role</h6>
+								<div className="p-3 border rounded mb-2">
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="radio"
+											name="userRole"
+											defaultChecked
+										/>
+										<label className="form-check-label">
+											<strong>Admin</strong> - Full access to all features
+										</label>
+									</div>
+								</div>
+								<div className="p-3 border rounded mb-2">
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="radio"
+											name="userRole"
+										/>
+										<label className="form-check-label">
+											<strong>Maker / Finance</strong> - Create payments but cannot
+											approve
+										</label>
+									</div>
+								</div>
+								<div className="p-3 border rounded">
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="radio"
+											name="userRole"
+										/>
+										<label className="form-check-label">
+											<strong>Viewer</strong> - Read-only access to reports
+										</label>
+									</div>
+								</div>
+							</div>
+						)}
+						{step === 3 && (
+							<div className={s.fstepActive}>
+								<h6 style={{ fontWeight: 700 }}>Set Approval Limits</h6>
+								<div className="mb-3">
+									<label className={s.formLabel}>Daily Limit (KES)</label>
+									<input
+										type="number"
+										className={s.formControl}
+										defaultValue="500000"
+									/>
+								</div>
 								<div className="form-check">
 									<input
 										className="form-check-input"
-										type="radio"
-										name="role"
-										defaultChecked={r.checked}
+										type="checkbox"
+										defaultChecked
 									/>
 									<label className="form-check-label">
-										<strong>{r.label}</strong> - {r.desc}
+										Require MFA for all logins
 									</label>
 								</div>
 							</div>
-						))}
-					</div>
+						)}
+					</>,
 				)}
-				{step === 3 && (
-					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>
-							Step 3: Approval Limits & Security
-						</h6>
-						<div className="mb-3">
-							<label className={s.formLabel}>Approval Limit (KES)</label>
-							<input
-								type="number"
-								className={s.formControl}
-								defaultValue="1000000"
-							/>
-						</div>
-						<div className="form-check mb-2">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								disabled
-							/>
-							<label className="form-check-label">
-								Require 2FA/MFA (Enforced for Admin)
-							</label>
-						</div>
-						<div className="form-check">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-							/>
-							<label className="form-check-label">
-								Allow access to multi-business switcher
-							</label>
-						</div>
+				{results[id] && (
+					<div className={s.modalFooter}>
+						<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+							Done
+						</button>
 					</div>
 				)}
 			</MBox>
@@ -709,8 +777,8 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M5: KYB Upload Modal
-     ======================================================================== */
+	 M5: KYB Upload
+	 ======================================================================== */
 	const renderKybUpload = () => (
 		<MBox
 			id="kybUploadModal"
@@ -723,39 +791,43 @@ export default function CommandCenterModals({
 				</>
 			}
 			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction(
-								"kybUploadModal",
-								"Document uploaded and sent for verification.",
-								"KYB-99120",
-							)
-						}
-					>
-						Submit for Verification
-					</button>
-				</>
+				!results.kybUploadModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() =>
+								doAction(
+									"kybUploadModal",
+									"Document uploaded and sent for verification.",
+									"KYB-99120",
+								)
+							}
+						>
+							Submit for Verification
+						</button>
+					</>
+				)
 			}
 		>
-			{renderActionBody(
+			{renderBody(
 				"kybUploadModal",
 				<>
 					<div
 						className="p-3 rounded mb-3"
 						style={{ background: "var(--pm-danger-soft)", fontSize: 13 }}
 					>
-						<i className="bi bi-exclamation-triangle text-danger" /> Missing
-						Annual Returns (CR12). Limit restrictions will apply in 5 days.
+						<i className="bi bi-exclamation-triangle"></i> Missing Annual
+						Returns (CR12). Limit restrictions will apply in 5 days.
 					</div>
 					<div className="mb-3">
 						<label className={s.formLabel}>Document Type</label>
-						<select className={s.formControl} disabled>
+						<select className={s.formControl}>
 							<option>CR12 / Annual Returns</option>
+							<option>Business Permit (2025)</option>
+							<option>VAT / Tax Compliance Certificate</option>
 						</select>
 					</div>
 					<div className={s.uploadZone}>
@@ -772,17 +844,25 @@ export default function CommandCenterModals({
 					</div>
 				</>,
 			)}
+			{results.kybUploadModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
+				</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M6: Business Settings Modal (with tabs)
-     ======================================================================== */
+	 M6: Business Settings
+	 ======================================================================== */
 	const renderBusinessSettings = () => {
-		const currentTab = tabs.bizSettings ?? "general";
+		const tab = tabs.bizSettings;
+		const id = "businessSettingsModal";
 		return (
 			<MBox
-				id="businessSettingsModal"
+				id={id}
 				active={active}
 				size="lg"
 				onClose={onClose}
@@ -793,51 +873,47 @@ export default function CommandCenterModals({
 					</>
 				}
 				footer={
-					<>
-						<button className={s.btnPm} onClick={onClose}>
-							Close
-						</button>
-						<button
-							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() =>
-								doAction(
-									"businessSettingsModal",
-									"Settings updated successfully!",
-								)
-							}
-						>
-							Save Changes
-						</button>
-					</>
+					!results[id] && (
+						<>
+							<button className={s.btnPm} onClick={onClose}>
+								Close
+							</button>
+							<button
+								className={cx(s.btnPm, s.btnPmP)}
+								onClick={() =>
+									doAction(id, "Settings updated successfully!")
+								}
+							>
+								Save Changes
+							</button>
+						</>
+					)
 				}
 			>
-				{renderActionBody(
-					"businessSettingsModal",
+				{renderBody(
+					id,
 					<>
-						<div className={cx(s.pills, "mb-3")}>
+						<div className={s.pills}>
 							<button
-								className={cx(s.pill, currentTab === "general" && s.pillActive)}
+								className={cx(s.pill, tab === "general" && s.pillActive)}
 								onClick={() => switchTab("bizSettings", "general")}
 							>
 								General
 							</button>
 							<button
-								className={cx(s.pill, currentTab === "address" && s.pillActive)}
+								className={cx(s.pill, tab === "address" && s.pillActive)}
 								onClick={() => switchTab("bizSettings", "address")}
 							>
 								Address & Contacts
 							</button>
 							<button
-								className={cx(
-									s.pill,
-									currentTab === "signatories" && s.pillActive,
-								)}
+								className={cx(s.pill, tab === "signatories" && s.pillActive)}
 								onClick={() => switchTab("bizSettings", "signatories")}
 							>
 								Signatories
 							</button>
 						</div>
-						{currentTab === "general" && (
+						{tab === "general" && (
 							<div className="row g-3 mt-2">
 								<div className="col-md-6">
 									<label className={s.formLabel}>Trading Name</label>
@@ -872,44 +948,61 @@ export default function CommandCenterModals({
 								</div>
 							</div>
 						)}
-						{currentTab === "address" && (
+						{tab === "address" && (
 							<div className="row g-3 mt-2">
-								<div className="col-md-6">
+								<div className="col-md-12">
 									<label className={s.formLabel}>Physical Address</label>
 									<input
 										className={s.formControl}
-										defaultValue="123 Westlands Rd, Nairobi"
+										defaultValue="123 Westlands Road, Nairobi"
 									/>
 								</div>
 								<div className="col-md-6">
-									<label className={s.formLabel}>Postal Code</label>
-									<input className={s.formControl} defaultValue="00100" />
+									<label className={s.formLabel}>City / Town</label>
+									<input className={s.formControl} defaultValue="Nairobi" />
+								</div>
+								<div className="col-md-6">
+									<label className={s.formLabel}>KRA PIN</label>
+									<input
+										className={s.formControl}
+										defaultValue="P051234567M"
+										disabled
+									/>
 								</div>
 							</div>
 						)}
-						{currentTab === "signatories" && (
+						{tab === "signatories" && (
 							<div className="mt-2">
-								<div
-									className="p-3 border rounded mb-2"
-									style={{ fontSize: 13 }}
-								>
-									<strong>Amina D.</strong> — Director (Primary)
-									<br />
-									<span className="text-muted">
-										ID: 29123456 · Signature captured
-									</span>
+								<div className="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+									<div>
+										<strong>Amina D.</strong>
+										<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+											Director · Primary Signatory
+										</div>
+									</div>
+									<span className={cx(s.badge, s.badgeS)}>Verified</span>
 								</div>
+								<button className={cx(s.btnPm, s.btnSm)}>
+									<i className="bi bi-plus-lg" /> Add Signatory
+								</button>
 							</div>
 						)}
 					</>,
+				)}
+				{results[id] && (
+					<div className={s.modalFooter}>
+						<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+							Done
+						</button>
+					</div>
 				)}
 			</MBox>
 		);
 	};
 
 	/* ==========================================================================
-     M7: Switch Business Modal
-     ======================================================================== */
+	 M7: Switch Business
+	 ======================================================================== */
 	const renderSwitchBusiness = () => (
 		<MBox
 			id="switchBusinessModal"
@@ -934,9 +1027,7 @@ export default function CommandCenterModals({
 				}}
 			>
 				<div className="d-flex align-items-center gap-2">
-					<div className={s.avatar} style={{ background: "var(--pm-ink)" }}>
-						TS
-					</div>
+					<div className={s.avatar}>TS</div>
 					<div>
 						<div style={{ fontWeight: 600, fontSize: 14 }}>
 							TechSolutions Ltd
@@ -990,8 +1081,8 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M8: Cash Flow Details
-     ======================================================================== */
+	 M8: Cash Flow Details
+	 ======================================================================== */
 	const renderCashFlow = () => (
 		<MBox
 			id="cashFlowDetailsModal"
@@ -1062,14 +1153,14 @@ export default function CommandCenterModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>M-Pesa Till (Buy Goods)</td>
-							<td>KES 450,000</td>
-							<td>Tomorrow, 8:00 AM</td>
+							<td data-label="Source">M-Pesa Till (Buy Goods)</td>
+							<td data-label="Amount">KES 450,000</td>
+							<td data-label="Expected Date">Tomorrow, 8:00 AM</td>
 						</tr>
 						<tr>
-							<td>Visa/Mastercard Gateway</td>
-							<td>KES 400,000</td>
-							<td>Tomorrow, 2:00 PM</td>
+							<td data-label="Source">Visa/Mastercard Gateway</td>
+							<td data-label="Amount">KES 400,000</td>
+							<td data-label="Expected Date">Tomorrow, 2:00 PM</td>
 						</tr>
 					</tbody>
 				</table>
@@ -1078,112 +1169,138 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M9: Aging Invoices Modal
-     ======================================================================== */
-	const renderAgingInvoices = () => (
-		<MBox
-			id="agingInvoicesModal"
-			active={active}
-			size="lg"
-			onClose={onClose}
-			title={
-				<>
-					<i className="bi bi-receipt me-2" />
-					Outstanding Invoices (Aging Report)
-				</>
-			}
-			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Close
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction(
-								"agingInvoicesModal",
-								"Reminders sent to all overdue customers via Email & SMS.",
-							)
-						}
-					>
-						<i className="bi bi-envelope-check" /> Send Batch Reminders
-					</button>
-				</>
-			}
-		>
-			<div className={cx(s.pills, "mb-3")}>
-				<button className={cx(s.pill, s.pillActive)}>All (750K)</button>
-				<button className={s.pill}>0-30 Days (420K)</button>
-				<button className={s.pill}>31-60 Days (185K)</button>
-				<button className={s.pill} style={{ color: "var(--pm-danger)" }}>
-					61-90+ Days (145K)
-				</button>
-			</div>
-			<div className="table-responsive mt-3">
-				<table className={s.tbl}>
-					<thead>
-						<tr>
-							<th>Invoice</th>
-							<th>Customer</th>
-							<th>Amount</th>
-							<th>Days Overdue</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>INV-2025-081</td>
-							<td>Acme Corp</td>
-							<td>KES 85,000</td>
-							<td>
-								<span className={cx(s.badge, s.badgeD)}>72 days</span>
-							</td>
-							<td>
-								<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
-							</td>
-						</tr>
-						<tr>
-							<td>INV-2025-084</td>
-							<td>Global Industries</td>
-							<td>KES 60,000</td>
-							<td>
-								<span className={cx(s.badge, s.badgeD)}>65 days</span>
-							</td>
-							<td>
-								<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
-							</td>
-						</tr>
-						<tr>
-							<td>INV-2025-092</td>
-							<td>StartUp Inc</td>
-							<td>KES 185,000</td>
-							<td>
-								<span className={cx(s.badge, s.badgeW)}>45 days</span>
-							</td>
-							<td>
-								<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
-							</td>
-						</tr>
-						<tr>
-							<td>INV-2025-104</td>
-							<td>Retail Chain A</td>
-							<td>KES 420,000</td>
-							<td>
-								<span className={cx(s.badge, s.badgeI)}>15 days</span>
-							</td>
-							<td>
-								<button className={cx(s.btnPm, s.btnSm)}>View</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</MBox>
-	);
+	 M9: Aging Invoices
+	 ======================================================================== */
+	const renderAgingInvoices = () => {
+		const tab = tabs.aging;
+		const id = "agingInvoicesModal";
+		return (
+			<MBox
+				id={id}
+				active={active}
+				size="lg"
+				onClose={onClose}
+				title={
+					<>
+						<i className="bi bi-receipt me-2" />
+						Outstanding Invoices (Aging Report)
+					</>
+				}
+				footer={
+					!results[id] && (
+						<>
+							<button className={s.btnPm} onClick={onClose}>
+								Close
+							</button>
+							<button
+								className={cx(s.btnPm, s.btnPmP)}
+								onClick={() =>
+									doAction(
+										id,
+										"Reminders sent to all overdue customers via Email & SMS.",
+									)
+								}
+							>
+								<i className="bi bi-envelope-check" /> Send Batch Reminders
+							</button>
+						</>
+					)
+				}
+			>
+				{renderBody(
+					id,
+					<>
+						<div className={s.pills}>
+							<button
+								className={cx(s.pill, tab === "all" && s.pillActive)}
+								onClick={() => switchTab("aging", "all")}
+							>
+								All (750K)
+							</button>
+							<button
+								className={cx(s.pill, tab === "0-30" && s.pillActive)}
+								onClick={() => switchTab("aging", "0-30")}
+							>
+								0-30 Days (420K)
+							</button>
+							<button
+								className={cx(s.pill, tab === "31-60" && s.pillActive)}
+								onClick={() => switchTab("aging", "31-60")}
+							>
+								31-60 Days (185K)
+							</button>
+							<button
+								className={cx(s.pill, tab === "61+" && s.pillActive)}
+								style={{ color: "var(--pm-danger)" }}
+								onClick={() => switchTab("aging", "61+")}
+							>
+								61-90+ Days (145K)
+							</button>
+						</div>
+						<div className="table-responsive mt-3">
+							<table className={s.tbl}>
+								<thead>
+									<tr>
+										<th>Invoice</th>
+										<th>Customer</th>
+										<th>Amount</th>
+										<th>Days Overdue</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>INV-2025-081</td>
+										<td>Acme Corp</td>
+										<td>KES 85,000</td>
+										<td>
+											<span className={cx(s.badge, s.badgeD)}>72 days</span>
+										</td>
+										<td>
+											<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
+										</td>
+									</tr>
+									<tr>
+										<td>INV-2025-084</td>
+										<td>Global Industries</td>
+										<td>KES 60,000</td>
+										<td>
+											<span className={cx(s.badge, s.badgeD)}>65 days</span>
+										</td>
+										<td>
+											<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
+										</td>
+									</tr>
+									<tr>
+										<td>INV-2025-092</td>
+										<td>StartUp Inc</td>
+										<td>KES 185,000</td>
+										<td>
+											<span className={cx(s.badge, s.badgeW)}>45 days</span>
+										</td>
+										<td>
+											<button className={cx(s.btnPm, s.btnSm)}>Remind</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</>,
+				)}
+				{results[id] && (
+					<div className={s.modalFooter}>
+						<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+							Done
+						</button>
+					</div>
+				)}
+			</MBox>
+		);
+	};
 
 	/* ==========================================================================
-     M10: View User Modal
-     ======================================================================== */
+	 M10: View User
+	 ======================================================================== */
 	const renderViewUser = () => (
 		<MBox
 			id="viewUserModal"
@@ -1196,20 +1313,22 @@ export default function CommandCenterModals({
 				</>
 			}
 			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => doAction("viewUserModal", "User settings updated!")}
-					>
-						Save
-					</button>
-				</>
+				!results.viewUserModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() => doAction("viewUserModal", "User settings updated!")}
+						>
+							Save
+						</button>
+					</>
+				)
 			}
 		>
-			{renderActionBody(
+			{renderBody(
 				"viewUserModal",
 				<>
 					<div className="mb-3">
@@ -1245,12 +1364,19 @@ export default function CommandCenterModals({
 					</div>
 				</>,
 			)}
+			{results.viewUserModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
+				</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M11: Disburse Funds Modal
-     ======================================================================== */
+	 M11: Disburse Funds
+	 ======================================================================== */
 	const renderDisburseFunds = () => (
 		<MBox
 			id="disburseFundsModal"
@@ -1263,26 +1389,28 @@ export default function CommandCenterModals({
 				</>
 			}
 			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction(
-								"disburseFundsModal",
-								"Disbursement initiated! Ref: DSP-44829",
-								"DSP-44829",
-							)
-						}
-					>
-						Disburse
-					</button>
-				</>
+				!results.disburseFundsModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() =>
+								doAction(
+									"disburseFundsModal",
+									"Disbursement initiated! Ref: DSP-44829",
+									"DSP-44829",
+								)
+							}
+						>
+							Disburse
+						</button>
+					</>
+				)
 			}
 		>
-			{renderActionBody(
+			{renderBody(
 				"disburseFundsModal",
 				<>
 					<div className="mb-3">
@@ -1307,127 +1435,19 @@ export default function CommandCenterModals({
 					</div>
 				</>,
 			)}
+			{results.disburseFundsModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
+				</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M12: Revenue Details
-     ======================================================================== */
-	const renderRevenueDetails = () => (
-		<MBox
-			id="revenueDetailsModal"
-			active={active}
-			size="lg"
-			onClose={onClose}
-			title={
-				<>
-					<i className="bi bi-graph-up-arrow text-success me-2" />
-					Revenue Breakdown
-				</>
-			}
-			footer={
-				<button className={s.btnPm} onClick={onClose}>
-					Close
-				</button>
-			}
-		>
-			<div className="row g-3 mb-3">
-				<div className="col-md-4">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-accent-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#047857", fontWeight: 600 }}>
-							INVOICES
-						</div>
-						<div style={{ fontSize: 24, fontWeight: 700 }}>KES 1.2M</div>
-					</div>
-				</div>
-				<div className="col-md-4">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-info-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#1D4ED8", fontWeight: 600 }}>
-							M-PESA
-						</div>
-						<div style={{ fontSize: 24, fontWeight: 700 }}>KES 420K</div>
-					</div>
-				</div>
-				<div className="col-md-4">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-surface-2)" }}
-					>
-						<div
-							style={{
-								fontSize: 11,
-								color: "var(--pm-muted)",
-								fontWeight: 600,
-							}}
-						>
-							CARD
-						</div>
-						<div style={{ fontSize: 24, fontWeight: 700 }}>KES 200K</div>
-					</div>
-				</div>
-			</div>
-		</MBox>
-	);
-
-	/* ==========================================================================
-     M13: Expense Details
-     ======================================================================== */
-	const renderExpenseDetails = () => (
-		<MBox
-			id="expenseDetailsModal"
-			active={active}
-			onClose={onClose}
-			title={
-				<>
-					<i className="bi bi-graph-down-arrow text-danger me-2" />
-					Expense Breakdown
-				</>
-			}
-			footer={
-				<button className={s.btnPm} onClick={onClose}>
-					Close
-				</button>
-			}
-		>
-			<div className="p-3 border rounded mb-2">
-				<div
-					className="d-flex justify-content-between"
-					style={{ fontSize: 13 }}
-				>
-					<span>Payroll (24 employees)</span>
-					<strong style={{ color: "var(--pm-danger)" }}>KES 450,500</strong>
-				</div>
-			</div>
-			<div className="p-3 border rounded mb-2">
-				<div
-					className="d-flex justify-content-between"
-					style={{ fontSize: 13 }}
-				>
-					<span>Supplier Payments</span>
-					<strong>KES 320,000</strong>
-				</div>
-			</div>
-			<div className="p-3 border rounded mb-2">
-				<div
-					className="d-flex justify-content-between"
-					style={{ fontSize: 13 }}
-				>
-					<span>Operating Expenses</span>
-					<strong>KES 169,500</strong>
-				</div>
-			</div>
-		</MBox>
-	);
-
-	/* ==========================================================================
-     M14: Pending Approvals
-     ======================================================================== */
+	 M12: Pending Approvals
+	 ======================================================================== */
 	const renderPendingApprovals = () => (
 		<MBox
 			id="pendingApprovalsModal"
@@ -1492,152 +1512,84 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M15: Consolidated Report
-     ======================================================================== */
+	 M13: Consolidated Report
+	 ======================================================================== */
 	const renderConsolidatedReport = () => (
 		<MBox
 			id="consolidatedReportModal"
 			active={active}
-			size="xl"
 			onClose={onClose}
 			title={
 				<>
 					<i className="bi bi-file-earmark-bar-graph me-2" />
-					Consolidated Group Report
+					Export Business Reports
 				</>
 			}
 			footer={
-				<>
-					<button className={cx(s.btnPm, s.btnSm)}>
-						<i className="bi bi-download" /> Export PDF
-					</button>
-					<button className={s.btnPm} onClick={onClose}>
-						Close
-					</button>
-				</>
+				!results.consolidatedReportModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() =>
+								doAction(
+									"consolidatedReportModal",
+									"Report generated and downloaded.",
+								)
+							}
+						>
+							Download
+						</button>
+					</>
+				)
 			}
 		>
-			<div className="row g-3 mb-3">
-				<div className="col-md-3">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-accent-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#047857", fontWeight: 600 }}>
-							GROUP REVENUE
-						</div>
-						<div style={{ fontSize: 22, fontWeight: 700 }}>KES 4.82M</div>
+			{renderBody(
+				"consolidatedReportModal",
+				<>
+					<div className="mb-3">
+						<label className={s.formLabel}>Report Type</label>
+						<select className={s.formControl}>
+							<option>Consolidated Cash Flow</option>
+							<option>Group Revenue Summary</option>
+							<option>Payroll Audit Trail</option>
+							<option>Tax / Statutory Deductions</option>
+						</select>
 					</div>
-				</div>
-				<div className="col-md-3">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-danger-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#DC2626", fontWeight: 600 }}>
-							GROUP EXPENSES
+					<div className="row g-2 mb-3">
+						<div className="col-6">
+							<label className={s.formLabel}>From</label>
+							<input type="date" className={s.formControl} />
 						</div>
-						<div style={{ fontSize: 22, fontWeight: 700 }}>KES 2.1M</div>
-					</div>
-				</div>
-				<div className="col-md-3">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-info-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#1D4ED8", fontWeight: 600 }}>
-							NET POSITION
+						<div className="col-6">
+							<label className={s.formLabel}>To</label>
+							<input type="date" className={s.formControl} />
 						</div>
-						<div style={{ fontSize: 22, fontWeight: 700 }}>KES 2.72M</div>
 					</div>
-				</div>
-				<div className="col-md-3">
-					<div
-						className="p-3 rounded"
-						style={{ background: "var(--pm-purple-soft)" }}
-					>
-						<div style={{ fontSize: 11, color: "#6D28D9", fontWeight: 600 }}>
-							TOTAL INVOICES
-						</div>
-						<div style={{ fontSize: 22, fontWeight: 700 }}>42</div>
+					<div className="mb-3">
+						<label className={s.formLabel}>Format</label>
+						<select className={s.formControl}>
+							<option>PDF</option>
+							<option>Excel</option>
+						</select>
 					</div>
+				</>,
+			)}
+			{results.consolidatedReportModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
 				</div>
-			</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M16: Health Check
-     ======================================================================== */
-	const renderHealthCheck = () => (
-		<MBox
-			id="healthCheckModal"
-			active={active}
-			onClose={onClose}
-			title={
-				<>
-					<i className="bi bi-activity text-success me-2" />
-					Business Health Check
-				</>
-			}
-			footer={
-				<button className={s.btnPm} onClick={onClose}>
-					Close
-				</button>
-			}
-		>
-			<div
-				className="p-4 rounded mb-3"
-				style={{ background: "var(--pm-accent-soft)", textAlign: "center" }}
-			>
-				<div
-					style={{
-						fontSize: 48,
-						fontWeight: 700,
-						color: "#047857",
-						fontFamily: "var(--pm-font-display)",
-					}}
-				>
-					96/100
-				</div>
-				<div style={{ fontWeight: 700, color: "#065F46" }}>
-					Excellent Business Health Score
-				</div>
-			</div>
-			<div
-				className="p-3 border rounded mb-2 d-flex justify-content-between"
-				style={{ fontSize: 13 }}
-			>
-				<span>KYC/KYB Compliance</span>
-				<span className={cx(s.badge, s.badgeS)}>Verified</span>
-			</div>
-			<div
-				className="p-3 border rounded mb-2 d-flex justify-content-between"
-				style={{ fontSize: 13 }}
-			>
-				<span>Transaction Success Rate</span>
-				<span className={cx(s.badge, s.badgeS)}>98.7%</span>
-			</div>
-			<div
-				className="p-3 border rounded mb-2 d-flex justify-content-between"
-				style={{ fontSize: 13 }}
-			>
-				<span>Outstanding Invoices</span>
-				<span className={cx(s.badge, s.badgeW)}>KES 750K</span>
-			</div>
-			<div
-				className="p-3 border rounded d-flex justify-content-between"
-				style={{ fontSize: 13 }}
-			>
-				<span>Annual Returns</span>
-				<span className={cx(s.badge, s.badgeD)}>Missing</span>
-			</div>
-		</MBox>
-	);
-
-	/* ==========================================================================
-     M17: Notifications
-     ======================================================================== */
+	 M14: Notifications
+	 ======================================================================== */
 	const renderNotifications = () => (
 		<MBox
 			id="notificationsModal"
@@ -1646,7 +1598,7 @@ export default function CommandCenterModals({
 			title={
 				<>
 					<i className="bi bi-bell me-2" />
-					Notifications
+					Business Alerts
 				</>
 			}
 			footer={
@@ -1656,49 +1608,80 @@ export default function CommandCenterModals({
 			}
 		>
 			<div
-				className="p-3 rounded mb-2"
-				style={{ background: "var(--pm-danger-soft)" }}
+				className="modal-body"
+				style={{ maxHeight: 400, overflowY: "auto", padding: 0 }}
 			>
-				<strong>Payroll requires approval</strong>
-				<div style={{ fontSize: 11 }}>October payroll — KES 450,500</div>
-			</div>
-			<div
-				className="p-3 rounded mb-2"
-				style={{ background: "var(--pm-warning-soft)" }}
-			>
-				<strong>KYB Update overdue</strong>
-				<div style={{ fontSize: 11 }}>CR12 missing — 5 days remaining</div>
-			</div>
-			<div
-				className="p-3 rounded mb-2"
-				style={{ background: "var(--pm-info-soft)" }}
-			>
-				<strong>3 invoices aging {">"}60 days</strong>
-				<div style={{ fontSize: 11 }}>KES 145,000 outstanding</div>
-			</div>
-			<div
-				className="p-3 rounded"
-				style={{ background: "var(--pm-accent-soft)" }}
-			>
-				<strong>Revenue milestone reached!</strong>
-				<div style={{ fontSize: 11 }}>KES 1.82M this month — 12% growth</div>
+				<div
+					className="p-3 rounded mb-2"
+					style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
+				>
+					<strong>Payroll Approval Required</strong>
+					<br />
+					Sarah W. initiated Oct Payroll.{" "}
+					<a
+						href="#"
+						onClick={(e) => {
+							e.preventDefault();
+							onOpen("runPayrollModal");
+						}}
+					>
+						Review
+					</a>
+				</div>
+				<div
+					className="p-3 rounded mb-2"
+					style={{ background: "var(--pm-danger-soft)", fontSize: 13 }}
+				>
+					<strong>KYB Expiring</strong>
+					<br />
+					Annual returns due in 5 days.{" "}
+					<a
+						href="#"
+						onClick={(e) => {
+							e.preventDefault();
+							onOpen("kybUploadModal");
+						}}
+					>
+						Upload
+					</a>
+				</div>
+				<div
+					className="p-3 rounded mb-2"
+					style={{ background: "var(--pm-info-soft)", fontSize: 13 }}
+				>
+					<strong>Settlement Completed</strong>
+					<br />
+					KES 850K settled to Equity Bank.
+				</div>
+				<div
+					className="p-3 rounded mb-2"
+					style={{
+						background: "var(--pm-surface-2)",
+						border: "1px solid var(--pm-border)",
+						fontSize: 13,
+					}}
+				>
+					<strong>New User Invite Accepted</strong>
+					<br />
+					John M. joined as Sales.
+				</div>
 			</div>
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M18: Role Permissions Matrix
-     ======================================================================== */
+	 M15: Role Permissions Matrix
+	 ======================================================================== */
 	const renderRolePermissions = () => (
 		<MBox
 			id="rolePermissionsModal"
 			active={active}
-			size="xl"
+			size="lg"
 			onClose={onClose}
 			title={
 				<>
 					<i className="bi bi-shield-lock me-2" />
-					Roles & Permissions Matrix
+					Role Permissions Matrix
 				</>
 			}
 			footer={
@@ -1708,49 +1691,47 @@ export default function CommandCenterModals({
 			}
 		>
 			<div className="table-responsive">
-				<table className={s.tbl}>
+				<table className={cx(s.tbl, "text-center")}>
 					<thead>
 						<tr>
-							<th>Permission</th>
+							<th className="text-start">Feature</th>
+							<th>Owner</th>
 							<th>Admin</th>
-							<th>Finance</th>
-							<th>HR</th>
+							<th>Fin/HR</th>
+							<th>Sales</th>
 							<th>Viewer</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>Create Invoice</td>
+							<td className="text-start">Multi-Business Toggle</td>
+							<td>✅</td>
+							<td>❌</td>
+							<td>❌</td>
+							<td>❌</td>
+							<td>❌</td>
+						</tr>
+						<tr>
+							<td className="text-start">Manage Team</td>
 							<td>✅</td>
 							<td>✅</td>
+							<td>❌</td>
 							<td>❌</td>
 							<td>❌</td>
 						</tr>
 						<tr>
-							<td>Approve Payments</td>
+							<td className="text-start">Approve Payroll</td>
 							<td>✅</td>
-							<td>✅ (≤1M)</td>
-							<td>✅ (Payroll only)</td>
+							<td>✅</td>
+							<td>❌</td>
+							<td>❌</td>
 							<td>❌</td>
 						</tr>
 						<tr>
-							<td>Run Payroll</td>
-							<td>✅</td>
-							<td>❌</td>
-							<td>✅</td>
-							<td>❌</td>
-						</tr>
-						<tr>
-							<td>View Reports</td>
+							<td className="text-start">Initiate Payments</td>
 							<td>✅</td>
 							<td>✅</td>
 							<td>✅</td>
-							<td>✅</td>
-						</tr>
-						<tr>
-							<td>Manage Users</td>
-							<td>✅</td>
-							<td>❌</td>
 							<td>❌</td>
 							<td>❌</td>
 						</tr>
@@ -1761,8 +1742,172 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M19: Collection Target
-     ======================================================================== */
+	 M16: Health Check
+	 ======================================================================== */
+	const renderHealthCheck = () => (
+		<MBox
+			id="healthCheckModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-activity text-success me-2" />
+					Business Health Audit
+				</>
+			}
+			footer={
+				<button className={s.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className="text-center mb-4">
+				<div
+					className={s.sv}
+					style={{ fontSize: 42, color: "var(--pm-primary)" }}
+				>
+					92/100
+				</div>
+				<div style={{ fontWeight: 600, color: "var(--pm-muted)" }}>
+					Good Health Score
+				</div>
+			</div>
+			<div
+				className="p-3 rounded mb-2 d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<span>KYC/KYB Compliance</span>
+				<span className={cx(s.badge, s.badgeS)}>Verified</span>
+			</div>
+			<div
+				className="p-3 rounded mb-2 d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<span>Tax Compliance</span>
+				<span className={cx(s.badge, s.badgeS)}>Active</span>
+			</div>
+			<div
+				className="p-3 rounded d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<span>MFA Enforcement</span>
+				<span className={cx(s.badge, s.badgeS)}>Enforced</span>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+	 M17: Revenue Details
+	 ======================================================================== */
+	const renderRevenueDetails = () => (
+		<MBox
+			id="revenueDetailsModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-graph-up text-primary me-2" />
+					Revenue Breakdown
+				</>
+			}
+			footer={
+				<button className={s.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className={cx(s.sv, "text-center mb-4")}>KES 1.82M</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Source</th>
+							<th>Amount</th>
+							<th>% of Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Invoices Paid</td>
+							<td>KES 1.20M</td>
+							<td>66%</td>
+						</tr>
+						<tr>
+							<td>M-Pesa Till (Walk-in)</td>
+							<td>KES 420K</td>
+							<td>23%</td>
+						</tr>
+						<tr>
+							<td>Payment Links</td>
+							<td>KES 200K</td>
+							<td>11%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+	 M18: Expense Details
+	 ======================================================================== */
+	const renderExpenseDetails = () => (
+		<MBox
+			id="expenseDetailsModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-graph-down text-danger me-2" />
+					Expense Breakdown
+				</>
+			}
+			footer={
+				<button className={s.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className={cx(s.sv, "text-center mb-4 text-danger")}>KES 940K</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Category</th>
+							<th>Amount</th>
+							<th>% of Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Payroll & Salaries</td>
+							<td>KES 450K</td>
+							<td>48%</td>
+						</tr>
+						<tr>
+							<td>Supplier Payments</td>
+							<td>KES 320K</td>
+							<td>34%</td>
+						</tr>
+						<tr>
+							<td>KRA Taxes & Levies</td>
+							<td>KES 120K</td>
+							<td>13%</td>
+						</tr>
+						<tr>
+							<td>Other OpEx</td>
+							<td>KES 50K</td>
+							<td>5%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+	 M19: Collection Target
+	 ======================================================================== */
 	const renderCollectionTarget = () => (
 		<MBox
 			id="collectionTargetModal"
@@ -1770,27 +1915,32 @@ export default function CommandCenterModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-bullseye text-primary me-2" />
-					Set Collection Targets
+					<i className="bi bi-sliders text-primary me-2" />
+					Edit Collection Targets
 				</>
 			}
 			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction("collectionTargetModal", "Targets updated for November!")
-						}
-					>
-						Save Targets
-					</button>
-				</>
+				!results.collectionTargetModal && (
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() =>
+								doAction(
+									"collectionTargetModal",
+									"Monthly targets updated successfully!",
+								)
+							}
+						>
+							Save Targets
+						</button>
+					</>
+				)
 			}
 		>
-			{renderActionBody(
+			{renderBody(
 				"collectionTargetModal",
 				<>
 					<div className="mb-3">
@@ -1817,12 +1967,19 @@ export default function CommandCenterModals({
 					</div>
 				</>,
 			)}
+			{results.collectionTargetModal && (
+				<div className={s.modalFooter}>
+					<button className={cx(s.btnPm, s.btnPmP)} onClick={onClose}>
+						Done
+					</button>
+				</div>
+			)}
 		</MBox>
 	);
 
 	/* ==========================================================================
-     M20: Business Profile Modal
-     ======================================================================== */
+	 M20: Business Profile
+	 ======================================================================== */
 	const renderBusinessProfile = () => (
 		<MBox
 			id="businessProfileModal"
@@ -1884,8 +2041,8 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M21: Connect Bank
-     ======================================================================== */
+	 M21: Connect Bank
+	 ======================================================================== */
 	const renderConnectBank = () => (
 		<MBox
 			id="connectBankModal"
@@ -1893,7 +2050,7 @@ export default function CommandCenterModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-bank2 me-2" />
+					<i className="bi bi-bank2 text-primary me-2" />
 					Connect Bank Account
 				</>
 			}
@@ -1904,7 +2061,7 @@ export default function CommandCenterModals({
 			}
 		>
 			<div
-				className="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"
+				className="p-3 border rounded mb-3 d-flex justify-content-between align-items-center"
 				style={{
 					borderColor: "var(--pm-primary)",
 					background: "rgba(79,70,229,.04)",
@@ -1930,19 +2087,16 @@ export default function CommandCenterModals({
 				<i className="bi bi-check-circle-fill text-primary" />
 			</div>
 			<button
-				className={cx(s.btnPm, s.btnSm, "w-100 mt-2")}
+				className={cx(s.btnPm, s.btnSm, "w-100")}
 				onClick={() =>
-					doAction("connectBankModal", "New bank account connection initiated.")
+					doAction("connectBankModal", "Bank account connection initiated.")
 				}
 			>
-				<i className="bi bi-plus-lg" /> Add New Bank
+				<i className="bi bi-plus-lg" /> Add New Bank Account
 			</button>
 		</MBox>
 	);
 
-	/* ==========================================================================
-     Render all modals
-     ======================================================================== */
 	return (
 		<>
 			{renderNewInvoice()}
@@ -1956,13 +2110,13 @@ export default function CommandCenterModals({
 			{renderAgingInvoices()}
 			{renderViewUser()}
 			{renderDisburseFunds()}
-			{renderRevenueDetails()}
-			{renderExpenseDetails()}
 			{renderPendingApprovals()}
 			{renderConsolidatedReport()}
-			{renderHealthCheck()}
 			{renderNotifications()}
 			{renderRolePermissions()}
+			{renderHealthCheck()}
+			{renderRevenueDetails()}
+			{renderExpenseDetails()}
 			{renderCollectionTarget()}
 			{renderBusinessProfile()}
 			{renderConnectBank()}

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import SettingsAdministrationModals from "../components/SettingsAdministrationModals";
 import styles from "../styles/settings-administration.module.css";
 
@@ -594,6 +595,37 @@ async function fetchSettingsContent(): Promise<SettingsConfig> {
 export default function SettingsAdministration() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-building",
+				label: "Edit Profile",
+				onClick: () => setActiveModal("editProfileModal"),
+			},
+			{
+				icon: "bi-person-plus",
+				label: "Invite User",
+				onClick: () => setActiveModal("userInviteModal"),
+			},
+			{
+				icon: "bi-file-earmark-check",
+				label: "Compliance",
+				onClick: () => setActiveModal("complianceModal"),
+			},
+			{
+				icon: "bi-key",
+				label: "API Keys",
+				tone: "primary",
+				onClick: () => setActiveModal("apiKeyModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["business-settings-administration"],
 		queryFn: fetchSettingsContent,
@@ -607,7 +639,7 @@ export default function SettingsAdministration() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1243,21 +1275,21 @@ export default function SettingsAdministration() {
 							<tbody>
 								{config.userRows.map((u) => (
 									<tr key={u.name}>
-										<td>
+										<td data-label="Name">
 											<strong>{u.name}</strong>
 										</td>
-										<td>
+										<td data-label="Role">
 											<span className={cx(s.badge, s[u.roleTone])}>
 												{u.role}
 											</span>
 										</td>
-										<td>{u.dept}</td>
-										<td>{u.limit}</td>
-										<td>
+										<td data-label="Department">{u.dept}</td>
+										<td data-label="Limit">{u.limit}</td>
+										<td data-label="MFA">
 											<span className={cx(s.badge, s[u.mfaTone])}>{u.mfa}</span>
 										</td>
-										<td>{u.lastLogin}</td>
-										<td>
+										<td data-label="Last Login">{u.lastLogin}</td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal("userInviteModal")}
@@ -1752,11 +1784,13 @@ export default function SettingsAdministration() {
 					</div>
 				</div>
 			</div>
-	<SettingsAdministrationModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<SettingsAdministrationModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

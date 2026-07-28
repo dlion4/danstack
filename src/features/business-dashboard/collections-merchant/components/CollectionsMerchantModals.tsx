@@ -902,23 +902,23 @@ export default function CollectionsMerchantModals({
 								</thead>
 								<tbody>
 									<tr>
-										<td>10:41 AM</td>
-										<td>/v1/stkpush/process</td>
-										<td>
+										<td data-label="Time">10:41 AM</td>
+										<td data-label="Endpoint">/v1/stkpush/process</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>200 OK</span>
 										</td>
 									</tr>
 									<tr>
-										<td>10:35 AM</td>
-										<td>/v1/validation</td>
-										<td>
+										<td data-label="Time">10:35 AM</td>
+										<td data-label="Endpoint">/v1/validation</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>200 OK</span>
 										</td>
 									</tr>
 									<tr>
-										<td>09:12 AM</td>
-										<td>/v1/stkpush/process</td>
-										<td>
+										<td data-label="Time">09:12 AM</td>
+										<td data-label="Endpoint">/v1/stkpush/process</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeD)}>500 ERR</span>
 										</td>
 									</tr>
@@ -1037,22 +1037,22 @@ export default function CollectionsMerchantModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>SET-8821</td>
-							<td>Today 4PM</td>
-							<td>KES 142,500</td>
-							<td>KES 2,137</td>
-							<td>KES 140,363</td>
-							<td>
+							<td data-label="Batch ID">SET-8821</td>
+							<td data-label="Date">Today 4PM</td>
+							<td data-label="Gross">KES 142,500</td>
+							<td data-label="Fees">KES 2,137</td>
+							<td data-label="Net Payout">KES 140,363</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeI)}>Processing</span>
 							</td>
 						</tr>
 						<tr>
-							<td>SET-8820</td>
-							<td>Yesterday</td>
-							<td>KES 210,000</td>
-							<td>KES 3,150</td>
-							<td>KES 206,850</td>
-							<td>
+							<td data-label="Batch ID">SET-8820</td>
+							<td data-label="Date">Yesterday</td>
+							<td data-label="Gross">KES 210,000</td>
+							<td data-label="Fees">KES 3,150</td>
+							<td data-label="Net Payout">KES 206,850</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Cleared</span>
 							</td>
 						</tr>
@@ -1336,28 +1336,44 @@ export default function CollectionsMerchantModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>M-Pesa PayBill</td>
-							<td>1.5%</td>
-							<td className="calc-pb-fee">750</td>
-							<td className="calc-pb-net">49,250</td>
+							<td data-label="Method">M-Pesa PayBill</td>
+							<td data-label="MDR">1.5%</td>
+							<td data-label="Fee" className="calc-pb-fee">
+								750
+							</td>
+							<td data-label="You Receive" className="calc-pb-net">
+								49,250
+							</td>
 						</tr>
 						<tr>
-							<td>M-Pesa Till</td>
-							<td>1.0%</td>
-							<td className="calc-till-fee">500</td>
-							<td className="calc-till-net">49,500</td>
+							<td data-label="Method">M-Pesa Till</td>
+							<td data-label="MDR">1.0%</td>
+							<td data-label="Fee" className="calc-till-fee">
+								500
+							</td>
+							<td data-label="You Receive" className="calc-till-net">
+								49,500
+							</td>
 						</tr>
 						<tr>
-							<td>Card (Visa/MC)</td>
-							<td>2.9%</td>
-							<td className="calc-card-fee">1,450</td>
-							<td className="calc-card-net">48,550</td>
+							<td data-label="Method">Card (Visa/MC)</td>
+							<td data-label="MDR">2.9%</td>
+							<td data-label="Fee" className="calc-card-fee">
+								1,450
+							</td>
+							<td data-label="You Receive" className="calc-card-net">
+								48,550
+							</td>
 						</tr>
 						<tr>
-							<td>PesaLink</td>
-							<td>Fixed</td>
-							<td className="calc-pesa-fee">45</td>
-							<td className="calc-pesa-net">49,955</td>
+							<td data-label="Method">PesaLink</td>
+							<td data-label="MDR">Fixed</td>
+							<td data-label="Fee" className="calc-pesa-fee">
+								45
+							</td>
+							<td data-label="You Receive" className="calc-pesa-net">
+								49,955
+							</td>
 						</tr>
 					</tbody>
 				</table>

@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
+import VirtualAccountsExtraModals from "../components/VirtualAccountsExtraModals";
 import VirtualAccountsModals from "../components/VirtualAccountsModals";
 import styles from "../styles/virtual-accounts.module.css";
 
@@ -476,6 +478,37 @@ async function fetchVAContent(): Promise<VAConfig> {
 export default function VirtualAccounts() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-heart-pulse",
+				label: "Health",
+				onClick: () => setActiveModal("healthCheckModal"),
+			},
+			{
+				icon: "bi-list-check",
+				label: "Reconcile",
+				onClick: () => setActiveModal("reconModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "New VA",
+				onClick: () => setActiveModal("createVA"),
+			},
+			{
+				icon: "bi-diagram-3",
+				label: "New Sub-Account",
+				tone: "primary",
+				onClick: () => setActiveModal("createSub"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["business-virtual-accounts"],
 		queryFn: fetchVAContent,
@@ -489,7 +522,7 @@ export default function VirtualAccounts() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -755,7 +788,7 @@ export default function VirtualAccounts() {
 								className={cx(s.btnPm, s.btnSm)}
 								onClick={() => setActiveModal("consolidateModal")}
 							>
-								<i className="bi bi-compress-arrows" /> Consolidate
+								<i className="bi bi-arrows-angle-contract" /> Consolidate
 							</button>
 							<button
 								className={cx(s.btnPm, s.btnSm, s.btnPmP)}
@@ -795,22 +828,22 @@ export default function VirtualAccounts() {
 										<tbody>
 											{config.vaRows.map((v) => (
 												<tr key={v.id}>
-													<td>
+													<td data-label="ID">
 														<code>{v.id}</code>
 													</td>
-													<td>{v.name}</td>
-													<td>{v.type}</td>
-													<td>
+													<td data-label="Name">{v.name}</td>
+													<td data-label="Type">{v.type}</td>
+													<td data-label="Balance">
 														<strong>KES {v.balance}</strong>
 													</td>
-													<td>{v.subs}</td>
-													<td>
+													<td data-label="Subs">{v.subs}</td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s.badgeS)}>
 															Active
 														</span>
 													</td>
-													<td>{v.rules}</td>
-													<td>
+													<td data-label="Rules">{v.rules}</td>
+													<td data-label="Actions">
 														<div className="d-flex" style={{ gap: 4 }}>
 															<button
 																className={cx(s.btnPm, s.btnSm)}
@@ -897,13 +930,13 @@ export default function VirtualAccounts() {
 										<tbody>
 											{config.fundingRows.map((f) => (
 												<tr key={f.date + f.va}>
-													<td>{f.date}</td>
-													<td>{f.va}</td>
-													<td>{f.desc}</td>
-													<td>
+													<td data-label="Date">{f.date}</td>
+													<td data-label="VA">{f.va}</td>
+													<td data-label="Source">{f.desc}</td>
+													<td data-label="Amount">
 														<strong>{f.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[f.statusTone])}>
 															{f.status}
 														</span>
@@ -967,15 +1000,15 @@ export default function VirtualAccounts() {
 							<tbody>
 								{config.subRows.map((sub) => (
 									<tr key={sub.id}>
-										<td>
+										<td data-label="Sub-ID">
 											<code>{sub.id}</code>
 										</td>
-										<td>{sub.parent}</td>
-										<td>
+										<td data-label="Parent">{sub.parent}</td>
+										<td data-label="Balance">
 											<strong>KES {sub.balance}</strong>
 										</td>
-										<td>KES {sub.limit}</td>
-										<td>
+										<td data-label="Limit">KES {sub.limit}</td>
+										<td data-label="Status">
 											<span
 												className={cx(
 													s.badge,
@@ -985,7 +1018,7 @@ export default function VirtualAccounts() {
 												{sub.status === "active" ? "Active" : "Warning"}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<div className="d-flex" style={{ gap: 4 }}>
 												<button
 													className={cx(s.btnPm, s.btnSm)}
@@ -1260,16 +1293,16 @@ export default function VirtualAccounts() {
 										<tbody>
 											{config.reconRows.map((r) => (
 												<tr key={r.va}>
-													<td>{r.va}</td>
-													<td>{r.book}</td>
-													<td>{r.bank}</td>
-													<td>{r.diff}</td>
-													<td>
+													<td data-label="VA / Sub">{r.va}</td>
+													<td data-label="Book Balance">{r.book}</td>
+													<td data-label="Bank Balance">{r.bank}</td>
+													<td data-label="Difference">{r.diff}</td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[r.statusTone])}>
 															{r.status}
 														</span>
 													</td>
-													<td>
+													<td data-label="Action">
 														{r.action ? (
 															<button
 																className={cx(s.btnPm, s.btnSm)}
@@ -1459,11 +1492,81 @@ export default function VirtualAccounts() {
 					</div>
 				</div>
 			</div>
-	<VirtualAccountsModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<VirtualAccountsModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+			{/* ================================================================
+			 * Restored tools — dialogs that exist in the original page but whose
+			 * trigger buttons were lost in the first React port. Labels and icons
+			 * are taken from the legacy markup.
+			 * ============================================================== */}
+			<div className={s.card} style={{ marginTop: 16 }}>
+				<div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+					<div>
+						<h3 className={s.st} style={{ margin: 0 }}>
+							<i className="bi bi-grid-3x3-gap" /> More Tools &amp; Reports
+						</h3>
+						<p
+							style={{
+								fontSize: 12,
+								color: "var(--pm-muted)",
+								margin: "4px 0 0",
+							}}
+						>
+							Additional workflows from this module (4).
+						</p>
+					</div>
+				</div>
+				<div className={s.restoredGrid}>
+					<button
+						key="hierarchyModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("hierarchyModal")}
+					>
+						<i className="bi bi-diagram-3" aria-hidden="true" />
+						<span>Account Hierarchy</span>
+					</button>
+					<button
+						key="activityModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("activityModal")}
+					>
+						<i className="bi bi-activity" aria-hidden="true" />
+						<span>Activity Feed</span>
+					</button>
+					<button
+						key="txnDetailModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("txnDetailModal")}
+					>
+						<i className="bi bi-list-columns" aria-hidden="true" />
+						<span>Transaction Detail</span>
+					</button>
+					<button
+						key="vaHealthModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("vaHealthModal")}
+					>
+						<i className="bi bi-heart-pulse" aria-hidden="true" />
+						<span>VA Health Check</span>
+					</button>
+				</div>
+			</div>
+
+			{/* Modals ported from the original HTML that the first pass missed */}
+			<VirtualAccountsExtraModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

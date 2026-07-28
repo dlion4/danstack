@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import TreasuryCashModals from "../components/TreasuryCashModals";
 import styles from "../styles/treasury-cash.module.css";
 
@@ -398,6 +399,38 @@ export default function TreasuryCash() {
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-ui-checks",
+				label: "Pending Approvals",
+				onClick: () => setActiveModal("approvalQueueModal"),
+			},
+			{
+				icon: "bi-graph-up",
+				label: "Forecast",
+				onClick: () => setActiveModal("cashflowForecastModal"),
+			},
+			{
+				icon: "bi-arrow-left-right",
+				label: "Internal Transfer",
+				onClick: () => setActiveModal("transferFundsModal"),
+			},
+			{
+				icon: "bi-currency-exchange",
+				label: "Book FX Trade",
+				tone: "primary",
+				onClick: () => setActiveModal("bookFXModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["treasury-cash"],
 		queryFn: fetchTreasuryData,
@@ -407,7 +440,7 @@ export default function TreasuryCash() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO */}
 				<div className="row g-3">
@@ -567,18 +600,18 @@ export default function TreasuryCash() {
 							<tbody>
 								{config.accounts.map((ar) => (
 									<tr key={ar.bank + ar.account}>
-										<td>
+										<td data-label="Bank">
 											<strong>{ar.bank}</strong>
 										</td>
-										<td>{ar.account}</td>
-										<td>{ar.balance}</td>
-										<td>{ar.type}</td>
-										<td>
+										<td data-label="Account">{ar.account}</td>
+										<td data-label="Balance">{ar.balance}</td>
+										<td data-label="Type">{ar.type}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[ar.statusTone])}>
 												{ar.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(ar.modal)}
@@ -629,17 +662,17 @@ export default function TreasuryCash() {
 							<tbody>
 								{config.transfers.map((tr) => (
 									<tr key={tr.id}>
-										<td>
+										<td data-label="ID">
 											<strong>{tr.id}</strong>
 										</td>
-										<td>{tr.from}</td>
-										<td>{tr.amount}</td>
-										<td>
+										<td data-label="From → To">{tr.from}</td>
+										<td data-label="Amount">{tr.amount}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[tr.statusTone])}>
 												{tr.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(tr.modal)}
@@ -691,18 +724,18 @@ export default function TreasuryCash() {
 							<tbody>
 								{config.fxPositions.map((fx) => (
 									<tr key={fx.pair}>
-										<td>
+										<td data-label="Pair">
 											<strong>{fx.pair}</strong>
 										</td>
-										<td>{fx.rate}</td>
-										<td>{fx.exposure}</td>
-										<td>{fx.direction}</td>
-										<td>
+										<td data-label="Rate">{fx.rate}</td>
+										<td data-label="Exposure">{fx.exposure}</td>
+										<td data-label="Direction">{fx.direction}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[fx.statusTone])}>
 												{fx.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(fx.modal)}
@@ -754,18 +787,18 @@ export default function TreasuryCash() {
 							<tbody>
 								{config.investments.map((inv) => (
 									<tr key={inv.type}>
-										<td>
+										<td data-label="Type">
 											<strong>{inv.type}</strong>
 										</td>
-										<td>{inv.amount}</td>
-										<td>{inv.yieldRate}</td>
-										<td>{inv.maturity}</td>
-										<td>
+										<td data-label="Amount">{inv.amount}</td>
+										<td data-label="Yield">{inv.yieldRate}</td>
+										<td data-label="Maturity">{inv.maturity}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[inv.statusTone])}>
 												{inv.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(inv.modal)}
@@ -780,11 +813,13 @@ export default function TreasuryCash() {
 					</div>
 				</div>
 			</div>
-	<TreasuryCashModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<TreasuryCashModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

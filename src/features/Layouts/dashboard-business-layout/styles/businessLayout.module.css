@@ -911,9 +911,122 @@
 	background: #f5f1ec;
 }
 
-/* -------- Shell-owned page bar (breadcrumb + title) -------- */
+/* -------- Shell-owned page bar (breadcrumb + title + actions) -------- */
 .pageBar {
 	padding: 1.25rem 2rem 0;
+}
+
+.pageBarMain {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.pageBarText {
+	min-width: 0;
+	flex: 1 1 320px;
+}
+
+/* Legacy `pm-page-bar` action buttons, re-published by each page. */
+.pageActions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	flex-shrink: 0;
+	padding-top: 0.35rem;
+}
+
+.pageAction {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.85rem;
+	min-height: 38px;
+	border-radius: 999px;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--text);
+	font-family: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+	cursor: pointer;
+	transition:
+		background var(--transition-fast),
+		border-color var(--transition-fast),
+		color var(--transition-fast),
+		box-shadow var(--transition-fast),
+		transform var(--transition-fast);
+}
+
+.pageAction i {
+	font-size: 0.95rem;
+	line-height: 1;
+}
+
+.pageAction:hover {
+	border-color: var(--paymo-primary);
+	color: var(--paymo-primary);
+	box-shadow: var(--shadow-sm);
+	transform: translateY(-1px);
+}
+
+.pageAction:focus-visible {
+	outline: 2px solid var(--paymo-primary);
+	outline-offset: 2px;
+}
+
+.pageActionPrimary,
+.pageActionPrimary:hover {
+	background: var(--paymo-primary);
+	border-color: var(--paymo-primary);
+	color: #fff;
+}
+
+.pageActionPrimary:hover {
+	background: var(--paymo-primary-600);
+	border-color: var(--paymo-primary-600);
+}
+
+.pageActionDark,
+.pageActionDark:hover {
+	background: #1e293b;
+	border-color: #1e293b;
+	color: #fff;
+}
+
+.pageActionDark:hover {
+	background: #0f172a;
+	border-color: #0f172a;
+}
+
+.pageActionAccent,
+.pageActionAccent:hover {
+	background: var(--paymo-accent);
+	border-color: var(--paymo-accent);
+	color: #fff;
+}
+
+.pageActionAccent:hover {
+	background: #059669;
+	border-color: #059669;
+}
+
+.pageActionDanger,
+.pageActionDanger:hover {
+	background: var(--paymo-danger);
+	border-color: var(--paymo-danger);
+	color: #fff;
+}
+
+.pageActionDanger:hover {
+	background: #dc2626;
+	border-color: #dc2626;
 }
 
 .pageBreadcrumb {
@@ -945,6 +1058,36 @@
 	max-width: 90ch;
 }
 
+@media (max-width: 991.98px) {
+	.pageBar {
+		padding: 1rem 1.25rem 0;
+	}
+
+	/* Actions drop below the title rather than squeezing it.
+	   `flex-wrap: wrap` MUST be reset here: on a column flex container wrapping
+	   happens along the cross (horizontal) axis, which spawns extra columns and
+	   lets the children size to max-content — that pushed the heading/subtitle
+	   to ~572px inside a 358px bar and clipped them off-screen. */
+	.pageBarMain {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		gap: 0.75rem;
+	}
+
+	.pageBarText {
+		flex: 0 0 auto;
+		width: 100%;
+		min-width: 0;
+	}
+
+	.pageActions {
+		width: 100%;
+		min-width: 0;
+		padding-top: 0;
+	}
+}
+
 @media (max-width: 767.98px) {
 	.pageBar {
 		padding: 1rem 1rem 0;
@@ -956,6 +1099,31 @@
 
 	.pageSubtitle {
 		font-size: 0.78rem;
+	}
+
+	/* Mobile: horizontally scrollable action strip so the icons stay legible
+	   at full size instead of being crushed into a wrapped column. */
+	.pageActions {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		margin: 0 -1rem;
+		padding: 0 1rem 0.25rem;
+	}
+
+	.pageActions::-webkit-scrollbar {
+		display: none;
+	}
+
+	.pageAction {
+		min-height: 44px;
+		padding: 0.55rem 0.9rem;
+		font-size: 0.78rem;
+	}
+
+	.pageAction i {
+		font-size: 1rem;
 	}
 }
 

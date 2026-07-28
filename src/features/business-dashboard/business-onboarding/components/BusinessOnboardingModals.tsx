@@ -983,25 +983,25 @@ export default function BusinessOnboardingModals({
 								</thead>
 								<tbody>
 									<tr>
-										<td>ABC Traders Ltd</td>
-										<td>
+										<td data-label="Business">ABC Traders Ltd</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>Valid</span>
 										</td>
-										<td>—</td>
+										<td data-label="Issues">—</td>
 									</tr>
 									<tr>
-										<td>XYZ SACCO</td>
-										<td>
+										<td data-label="Business">XYZ SACCO</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeW)}>Warning</span>
 										</td>
-										<td>Director ID mismatch</td>
+										<td data-label="Issues">Director ID mismatch</td>
 									</tr>
 									<tr>
-										<td>Delta Logistics</td>
-										<td>
+										<td data-label="Business">Delta Logistics</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>Valid</span>
 										</td>
-										<td>—</td>
+										<td data-label="Issues">—</td>
 									</tr>
 								</tbody>
 							</table>
@@ -1146,56 +1146,56 @@ export default function BusinessOnboardingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Greenfield Logistics</td>
-							<td>
+							<td data-label="Business">Greenfield Logistics</td>
+							<td data-label="TCC">
 								<span className={cx(s.badge, s.badgeW)}>Expires 4d</span>
 							</td>
-							<td>
+							<td data-label="Permit">
 								<span className={cx(s.badge, s.badgeS)}>Valid</span>
 							</td>
-							<td>
+							<td data-label="UBO">
 								<span className={cx(s.badge, s.badgeS)}>3/3</span>
 							</td>
-							<td>
+							<td data-label="Directors">
 								<span className={cx(s.badge, s.badgeS)}>4/4</span>
 							</td>
-							<td>
+							<td data-label="Score">
 								<strong>82</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Shalom SACCO</td>
-							<td>
+							<td data-label="Business">Shalom SACCO</td>
+							<td data-label="TCC">
 								<span className={cx(s.badge, s.badgeS)}>Valid</span>
 							</td>
-							<td>
+							<td data-label="Permit">
 								<span className={cx(s.badge, s.badgeS)}>Valid</span>
 							</td>
-							<td>
+							<td data-label="UBO">
 								<span className={cx(s.badge, s.badgeW)}>1/2</span>
 							</td>
-							<td>
+							<td data-label="Directors">
 								<span className={cx(s.badge, s.badgeS)}>12/12</span>
 							</td>
-							<td>
+							<td data-label="Score">
 								<strong>91</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>TechNova Solutions</td>
-							<td>
+							<td data-label="Business">TechNova Solutions</td>
+							<td data-label="TCC">
 								<span className={cx(s.badge, s.badgeS)}>Valid</span>
 							</td>
-							<td>
+							<td data-label="Permit">
 								<span className={cx(s.badge, s.badgeS)}>Valid</span>
 							</td>
-							<td>
+							<td data-label="UBO">
 								<span className={cx(s.badge, s.badgeS)}>2/2</span>
 							</td>
-							<td>
+							<td data-label="Directors">
 								<span className={cx(s.badge, s.badgeS)}>3/3</span>
 							</td>
-							<td>
+							<td data-label="Score">
 								<strong>96</strong>
 							</td>
 						</tr>
@@ -1260,13 +1260,13 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Greenfield Logistics</td>
-									<td>LLC</td>
-									<td>
+									<td data-label="Business">Greenfield Logistics</td>
+									<td data-label="Type">LLC</td>
+									<td data-label="Stage">
 										<span className={cx(s.badge, s.badgeW)}>Director KYC</span>
 									</td>
-									<td>7</td>
-									<td>
+									<td data-label="Days Open">7</td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("directorKYCModal")}
@@ -1276,13 +1276,13 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Shalom SACCO</td>
-									<td>Cooperative</td>
-									<td>
+									<td data-label="Business">Shalom SACCO</td>
+									<td data-label="Type">Cooperative</td>
+									<td data-label="Stage">
 										<span className={cx(s.badge, s.badgeI)}>Docs Review</span>
 									</td>
-									<td>3</td>
-									<td>
+									<td data-label="Days Open">3</td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("verifyDocumentModal")}
@@ -1292,13 +1292,13 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>TechNova Solutions</td>
-									<td>LLC</td>
-									<td>
+									<td data-label="Business">TechNova Solutions</td>
+									<td data-label="Type">LLC</td>
+									<td data-label="Stage">
 										<span className={cx(s.badge, s.badgeW)}>Director KYC</span>
 									</td>
-									<td>5</td>
-									<td>
+									<td data-label="Days Open">5</td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("directorKYCModal")}
@@ -1324,14 +1324,14 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Peter Ochieng</td>
-									<td>Greenfield Logistics</td>
-									<td>
+									<td data-label="Director">Peter Ochieng</td>
+									<td data-label="Business">Greenfield Logistics</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeW)}>
 											Pending Selfie
 										</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("directorKYCModal")}
@@ -1341,12 +1341,12 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Grace Wanjiku</td>
-									<td>TechNova Solutions</td>
-									<td>
+									<td data-label="Director">Grace Wanjiku</td>
+									<td data-label="Business">TechNova Solutions</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeI)}>OCR Complete</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("directorKYCModal")}
@@ -1372,14 +1372,14 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>TCC</td>
-									<td>Greenfield Logistics</td>
-									<td>
+									<td data-label="Document">TCC</td>
+									<td data-label="Business">Greenfield Logistics</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeW)}>
 											Pending Review
 										</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("verifyDocumentModal")}
@@ -1389,14 +1389,14 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>County Permit</td>
-									<td>Mama Mboga Traders</td>
-									<td>
+									<td data-label="Document">County Permit</td>
+									<td data-label="Business">Mama Mboga Traders</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeW)}>
 											Pending Review
 										</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() => onOpen("verifyDocumentModal")}
@@ -1445,13 +1445,13 @@ export default function BusinessOnboardingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Greenfield Logistics</td>
-							<td>
+							<td data-label="Business">Greenfield Logistics</td>
+							<td data-label="Level">
 								<span className={cx(s.badge, s.badgeI)}>Level 2</span>
 							</td>
-							<td>25 Jun 2025</td>
-							<td>James M.</td>
-							<td>
+							<td data-label="Submitted">25 Jun 2025</td>
+							<td data-label="Approver">James M.</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() => onOpen("approveBusinessModal")}
@@ -1461,13 +1461,13 @@ export default function BusinessOnboardingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>Shalom SACCO</td>
-							<td>
+							<td data-label="Business">Shalom SACCO</td>
+							<td data-label="Level">
 								<span className={cx(s.badge, s.badgeP)}>Level 3</span>
 							</td>
-							<td>22 Jun 2025</td>
-							<td>Sarah K.</td>
-							<td>
+							<td data-label="Submitted">22 Jun 2025</td>
+							<td data-label="Approver">Sarah K.</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() => onOpen("approveBusinessModal")}
@@ -1477,13 +1477,13 @@ export default function BusinessOnboardingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>TechNova Solutions</td>
-							<td>
+							<td data-label="Business">TechNova Solutions</td>
+							<td data-label="Level">
 								<span className={cx(s.badge, s.badgeD)}>Board</span>
 							</td>
-							<td>20 Jun 2025</td>
-							<td>Board</td>
-							<td>
+							<td data-label="Submitted">20 Jun 2025</td>
+							<td data-label="Approver">Board</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() => onOpen("approveBusinessModal")}
@@ -1870,34 +1870,34 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Greenfield Logistics</td>
-									<td>30 Jun 2025</td>
-									<td>30 Jun 2026</td>
-									<td>
+									<td data-label="Business">Greenfield Logistics</td>
+									<td data-label="Current Expiry">30 Jun 2025</td>
+									<td data-label="New Expiry">30 Jun 2026</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Ready</span>
 									</td>
 								</tr>
 								<tr>
-									<td>Shalom SACCO</td>
-									<td>15 Jul 2025</td>
-									<td>15 Jul 2026</td>
-									<td>
+									<td data-label="Business">Shalom SACCO</td>
+									<td data-label="Current Expiry">15 Jul 2025</td>
+									<td data-label="New Expiry">15 Jul 2026</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Ready</span>
 									</td>
 								</tr>
 								<tr>
-									<td>TechNova Solutions</td>
-									<td>22 Jul 2025</td>
-									<td>22 Jul 2026</td>
-									<td>
+									<td data-label="Business">TechNova Solutions</td>
+									<td data-label="Current Expiry">22 Jul 2025</td>
+									<td data-label="New Expiry">22 Jul 2026</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Ready</span>
 									</td>
 								</tr>
 								<tr>
-									<td>Hope Children NGO</td>
-									<td>05 Aug 2025</td>
-									<td>05 Aug 2026</td>
-									<td>
+									<td data-label="Business">Hope Children NGO</td>
+									<td data-label="Current Expiry">05 Aug 2025</td>
+									<td data-label="New Expiry">05 Aug 2026</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Ready</span>
 									</td>
 								</tr>
@@ -2126,36 +2126,36 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>27 Jun 14:32</td>
-									<td>Greenfield Logistics</td>
-									<td>TCC Upload</td>
-									<td>Compliance Analyst</td>
-									<td>102.134.45.12</td>
-									<td>Document DOC-88291 uploaded</td>
+									<td data-label="Timestamp">27 Jun 14:32</td>
+									<td data-label="Business">Greenfield Logistics</td>
+									<td data-label="Action">TCC Upload</td>
+									<td data-label="User">Compliance Analyst</td>
+									<td data-label="IP">102.134.45.12</td>
+									<td data-label="Details">Document DOC-88291 uploaded</td>
 								</tr>
 								<tr>
-									<td>27 Jun 11:45</td>
-									<td>Shalom SACCO</td>
-									<td>Director KYC Verified</td>
-									<td>James M.</td>
-									<td>102.134.45.12</td>
-									<td>Peter Ochieng verified</td>
+									<td data-label="Timestamp">27 Jun 11:45</td>
+									<td data-label="Business">Shalom SACCO</td>
+									<td data-label="Action">Director KYC Verified</td>
+									<td data-label="User">James M.</td>
+									<td data-label="IP">102.134.45.12</td>
+									<td data-label="Details">Peter Ochieng verified</td>
 								</tr>
 								<tr>
-									<td>26 Jun 16:20</td>
-									<td>TechNova Solutions</td>
-									<td>UBO Added</td>
-									<td>Compliance Analyst</td>
-									<td>102.134.45.12</td>
-									<td>Grace Wanjiku added (30%)</td>
+									<td data-label="Timestamp">26 Jun 16:20</td>
+									<td data-label="Business">TechNova Solutions</td>
+									<td data-label="Action">UBO Added</td>
+									<td data-label="User">Compliance Analyst</td>
+									<td data-label="IP">102.134.45.12</td>
+									<td data-label="Details">Grace Wanjiku added (30%)</td>
 								</tr>
 								<tr>
-									<td>25 Jun 09:15</td>
-									<td>Hope Children NGO</td>
-									<td>Approved</td>
-									<td>Head of Compliance</td>
-									<td>102.134.45.12</td>
-									<td>Full access granted</td>
+									<td data-label="Timestamp">25 Jun 09:15</td>
+									<td data-label="Business">Hope Children NGO</td>
+									<td data-label="Action">Approved</td>
+									<td data-label="User">Head of Compliance</td>
+									<td data-label="IP">102.134.45.12</td>
+									<td data-label="Details">Full access granted</td>
 								</tr>
 							</tbody>
 						</table>
@@ -2689,22 +2689,22 @@ export default function BusinessOnboardingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>TCC Expiry (30/14/7/1 days)</td>
-									<td>
+									<td data-label="Alert Type">TCC Expiry (30/14/7/1 days)</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2713,18 +2713,20 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Director KYC Pending (7/3/1 days)</td>
-									<td>
+									<td data-label="Alert Type">
+										Director KYC Pending (7/3/1 days)
+									</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input type="checkbox" className="form-check-input" />
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2733,22 +2735,22 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Beneficial Ownership Overdue</td>
-									<td>
+									<td data-label="Alert Type">Beneficial Ownership Overdue</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2757,38 +2759,40 @@ export default function BusinessOnboardingModals({
 									</td>
 								</tr>
 								<tr>
-									<td>New Application Received</td>
-									<td>
+									<td data-label="Alert Type">New Application Received</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input type="checkbox" className="form-check-input" />
 									</td>
-									<td>
+									<td data-label="Email">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>
 								<tr>
-									<td>Application Approved / Rejected</td>
-									<td>
+									<td data-label="Alert Type">
+										Application Approved / Rejected
+									</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"

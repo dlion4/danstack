@@ -1133,38 +1133,38 @@ export default function SupportDisputesModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Customer Tickets</td>
-									<td>98%</td>
-									<td>97.2%</td>
-									<td>11</td>
-									<td>
+									<td data-label="Category">Customer Tickets</td>
+									<td data-label="Target">98%</td>
+									<td data-label="Actual">97.2%</td>
+									<td data-label="Breaches">11</td>
+									<td data-label="Trend">
 										<span className={cx(s.badge, s.badgeS)}>↑ 1.2%</span>
 									</td>
 								</tr>
 								<tr>
-									<td>Merchant Disputes</td>
-									<td>95%</td>
-									<td>93.4%</td>
-									<td>19</td>
-									<td>
+									<td data-label="Category">Merchant Disputes</td>
+									<td data-label="Target">95%</td>
+									<td data-label="Actual">93.4%</td>
+									<td data-label="Breaches">19</td>
+									<td data-label="Trend">
 										<span className={cx(s.badge, s.badgeD)}>↓ 0.8%</span>
 									</td>
 								</tr>
 								<tr>
-									<td>Chargebacks</td>
-									<td>90%</td>
-									<td>89.1%</td>
-									<td>8</td>
-									<td>
+									<td data-label="Category">Chargebacks</td>
+									<td data-label="Target">90%</td>
+									<td data-label="Actual">89.1%</td>
+									<td data-label="Breaches">8</td>
+									<td data-label="Trend">
 										<span className={cx(s.badge, s.badgeW)}>↓ 2.1%</span>
 									</td>
 								</tr>
 								<tr>
-									<td>Refunds</td>
-									<td>97%</td>
-									<td>96.8%</td>
-									<td>4</td>
-									<td>
+									<td data-label="Category">Refunds</td>
+									<td data-label="Target">97%</td>
+									<td data-label="Actual">96.8%</td>
+									<td data-label="Breaches">4</td>
+									<td data-label="Trend">
 										<span className={cx(s.badge, s.badgeS)}>↑ 0.5%</span>
 									</td>
 								</tr>
@@ -1544,29 +1544,29 @@ export default function SupportDisputesModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>14:45</td>
-									<td>Finance — Grace</td>
-									<td>Refund approved</td>
-									<td>RF-4421</td>
-									<td>
+									<td data-label="Time">14:45</td>
+									<td data-label="User">Finance — Grace</td>
+									<td data-label="Action">Refund approved</td>
+									<td data-label="Case">RF-4421</td>
+									<td data-label="Result">
 										<span className={cx(s.badge, s.badgeS)}>Success</span>
 									</td>
 								</tr>
 								<tr>
-									<td>14:32</td>
-									<td>Merchant — XYZ</td>
-									<td>Evidence uploaded</td>
-									<td>CB-9912</td>
-									<td>
+									<td data-label="Time">14:32</td>
+									<td data-label="User">Merchant — XYZ</td>
+									<td data-label="Action">Evidence uploaded</td>
+									<td data-label="Case">CB-9912</td>
+									<td data-label="Result">
 										<span className={cx(s.badge, s.badgeS)}>Verified</span>
 									</td>
 								</tr>
 								<tr>
-									<td>14:18</td>
-									<td>Support — James</td>
-									<td>Ticket assigned</td>
-									<td>T-8821</td>
-									<td>
+									<td data-label="Time">14:18</td>
+									<td data-label="User">Support — James</td>
+									<td data-label="Action">Ticket assigned</td>
+									<td data-label="Case">T-8821</td>
+									<td data-label="Result">
 										<span className={cx(s.badge, s.badgeI)}>Assigned</span>
 									</td>
 								</tr>
@@ -2059,42 +2059,22 @@ export default function SupportDisputesModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>SLA breach risk</td>
-									<td>
+									<td data-label="Alert Type">SLA breach risk</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
-										<input
-											type="checkbox"
-											className="form-check-input"
-											defaultChecked
-										/>
-									</td>
-								</tr>
-								<tr>
-									<td>New high-priority ticket</td>
-									<td>
-										<input
-											type="checkbox"
-											className="form-check-input"
-											defaultChecked
-										/>
-									</td>
-									<td>
-										<input type="checkbox" className="form-check-input" />
-									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2103,38 +2083,58 @@ export default function SupportDisputesModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Evidence deadline</td>
-									<td>
+									<td data-label="Alert Type">New high-priority ticket</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
+										<input type="checkbox" className="form-check-input" />
+									</td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+								</tr>
+								<tr>
+									<td data-label="Alert Type">Evidence deadline</td>
+									<td data-label="Push">
+										<input
+											type="checkbox"
+											className="form-check-input"
+											defaultChecked
+										/>
+									</td>
+									<td data-label="Email">
+										<input
+											type="checkbox"
+											className="form-check-input"
+											defaultChecked
+										/>
+									</td>
+									<td data-label="SMS">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>
 								<tr>
-									<td>Refund approved</td>
-									<td>
+									<td data-label="Alert Type">Refund approved</td>
+									<td data-label="Push">
 										<input type="checkbox" className="form-check-input" />
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>

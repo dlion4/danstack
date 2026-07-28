@@ -58,6 +58,7 @@ import { Route as BusinessDashboardCollectionsMerchantRouteImport } from './rout
 import { Route as BusinessDashboardBusinessOnboardingRouteImport } from './routes/business-dashboard/business-onboarding'
 import { Route as BusinessDashboardBulkDisbursementsRouteImport } from './routes/business-dashboard/bulk-disbursements'
 import { Route as BusinessDashboardAccountsPayableRouteImport } from './routes/business-dashboard/accounts-payable'
+import { Route as BusinessDashboardModuleRouteImport } from './routes/business-dashboard/$module'
 import { Route as AuthSecurityRouteImport } from './routes/auth/security'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
@@ -367,6 +368,11 @@ const BusinessDashboardAccountsPayableRoute =
     path: '/accounts-payable',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
+const BusinessDashboardModuleRoute = BusinessDashboardModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
 const AuthSecurityRoute = AuthSecurityRouteImport.update({
   id: '/auth/security',
   path: '/auth/security',
@@ -619,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business-dashboard/$module': typeof BusinessDashboardModuleRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
   '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
@@ -704,6 +711,7 @@ export interface FileRoutesByTo {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business-dashboard/$module': typeof BusinessDashboardModuleRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
   '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
@@ -795,6 +803,7 @@ export interface FileRoutesById {
   '/auth/recovery': typeof AuthRecoveryRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/security': typeof AuthSecurityRoute
+  '/business-dashboard/$module': typeof BusinessDashboardModuleRoute
   '/business-dashboard/accounts-payable': typeof BusinessDashboardAccountsPayableRoute
   '/business-dashboard/bulk-disbursements': typeof BusinessDashboardBulkDisbursementsRoute
   '/business-dashboard/business-onboarding': typeof BusinessDashboardBusinessOnboardingRoute
@@ -888,6 +897,7 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business-dashboard/$module'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
     | '/business-dashboard/business-onboarding'
@@ -973,6 +983,7 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business-dashboard/$module'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
     | '/business-dashboard/business-onboarding'
@@ -1063,6 +1074,7 @@ export interface FileRouteTypes {
     | '/auth/recovery'
     | '/auth/register'
     | '/auth/security'
+    | '/business-dashboard/$module'
     | '/business-dashboard/accounts-payable'
     | '/business-dashboard/bulk-disbursements'
     | '/business-dashboard/business-onboarding'
@@ -1504,6 +1516,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessDashboardAccountsPayableRouteImport
       parentRoute: typeof BusinessDashboardRoute
     }
+    '/business-dashboard/$module': {
+      id: '/business-dashboard/$module'
+      path: '/$module'
+      fullPath: '/business-dashboard/$module'
+      preLoaderRoute: typeof BusinessDashboardModuleRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
     '/auth/security': {
       id: '/auth/security'
       path: '/auth/security'
@@ -1821,6 +1840,7 @@ const BusinessRouteWithChildren = BusinessRoute._addFileChildren(
 )
 
 interface BusinessDashboardRouteChildren {
+  BusinessDashboardModuleRoute: typeof BusinessDashboardModuleRoute
   BusinessDashboardAccountsPayableRoute: typeof BusinessDashboardAccountsPayableRoute
   BusinessDashboardBulkDisbursementsRoute: typeof BusinessDashboardBulkDisbursementsRoute
   BusinessDashboardBusinessOnboardingRoute: typeof BusinessDashboardBusinessOnboardingRoute
@@ -1839,6 +1859,7 @@ interface BusinessDashboardRouteChildren {
 }
 
 const BusinessDashboardRouteChildren: BusinessDashboardRouteChildren = {
+  BusinessDashboardModuleRoute: BusinessDashboardModuleRoute,
   BusinessDashboardAccountsPayableRoute: BusinessDashboardAccountsPayableRoute,
   BusinessDashboardBulkDisbursementsRoute:
     BusinessDashboardBulkDisbursementsRoute,

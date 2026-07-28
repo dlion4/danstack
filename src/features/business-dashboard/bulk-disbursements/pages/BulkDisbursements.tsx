@@ -1,4 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
+import BulkDisbursementsExtraModals from "../components/BulkDisbursementsExtraModals";
 import BulkDisbursementsModals from "../components/BulkDisbursementsModals";
 import styles from "../styles/bulk-disbursements.module.css";
 
@@ -316,16 +319,68 @@ const initialMockData: DisbursementsConfig = {
 };
 
 /* ---------- TanStack Query fetcher ---------- */
+/**
+ * Frontend-only demo: no /api/business-dashboard/bulk-disbursements backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
+async function fetchDisbursementsData(): Promise<DisbursementsConfig> {
+	try {
+		const res = await fetch("/api/business-dashboard/bulk-disbursements", {
+			headers: { Accept: "application/json" },
+		});
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		return (await res.json()) as DisbursementsConfig;
+	} catch {
+		return initialMockData;
+	}
+}
+
 export default function BulkDisbursements() {
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-	const config = initialMockData;
+
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-plus-circle",
+				label: "Add Float",
+				onClick: () => setActiveModal("fundWalletModal"),
+			},
+			{
+				icon: "bi-people",
+				label: "Directory",
+				onClick: () => setActiveModal("recipientValidationModal"),
+			},
+			{
+				icon: "bi-send-plus",
+				label: "New Bulk Payout",
+				tone: "primary",
+				onClick: () => setActiveModal("newDisbursementModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
+	const { data: apiData } = useQuery({
+		queryKey: ["bulk-disbursements"],
+		queryFn: fetchDisbursementsData,
+		staleTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+
+	const config = apiData ?? initialMockData;
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -522,19 +577,19 @@ export default function BulkDisbursements() {
 							<tbody>
 								{config.batchHistory.map((bh) => (
 									<tr key={bh.id}>
-										<td>
+										<td data-label="Batch ID">
 											<strong>{bh.id}</strong>
 										</td>
-										<td>{bh.type}</td>
-										<td>{bh.recipients}</td>
-										<td>{bh.amount}</td>
-										<td>{bh.date}</td>
-										<td>
+										<td data-label="Type">{bh.type}</td>
+										<td data-label="Recipients">{bh.recipients}</td>
+										<td data-label="Amount">{bh.amount}</td>
+										<td data-label="Date">{bh.date}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[bh.statusTone])}>
 												{bh.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(bh.modal)}
@@ -549,11 +604,207 @@ export default function BulkDisbursements() {
 					</div>
 				</div>
 			</div>
-	<BulkDisbursementsModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<BulkDisbursementsModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+			{/* ================================================================
+			 * Restored tools — dialogs that exist in the original page but whose
+			 * trigger buttons were lost in the first React port. Labels and icons
+			 * are taken from the legacy markup.
+			 * ============================================================== */}
+			<div className={s.card} style={{ marginTop: 16 }}>
+				<div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+					<div>
+						<h3 className={s.st} style={{ margin: 0 }}>
+							<i className="bi bi-grid-3x3-gap" /> More Tools &amp; Reports
+						</h3>
+						<p
+							style={{
+								fontSize: 12,
+								color: "var(--pm-muted)",
+								margin: "4px 0 0",
+							}}
+						>
+							Additional workflows from this module (18).
+						</p>
+					</div>
+				</div>
+				<div className={s.restoredGrid}>
+					<button
+						key="addBeneficiaryModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("addBeneficiaryModal")}
+					>
+						<i className="bi bi-person-plus" aria-hidden="true" />
+						<span>Add Beneficiary</span>
+					</button>
+					<button
+						key="exportAnalyticsModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("exportAnalyticsModal")}
+					>
+						<i className="bi bi-bar-chart" aria-hidden="true" />
+						<span>Analytics Reports</span>
+					</button>
+					<button
+						key="apiIntegrationModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("apiIntegrationModal")}
+					>
+						<i className="bi bi-key" aria-hidden="true" />
+						<span>API Keys</span>
+					</button>
+					<button
+						key="approvalWorkflowModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("approvalWorkflowModal")}
+					>
+						<i className="bi bi-diagram-2" aria-hidden="true" />
+						<span>Approval Workflows</span>
+					</button>
+					<button
+						key="approveBatchModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("approveBatchModal")}
+					>
+						<i className="bi bi-check2-square" aria-hidden="true" />
+						<span>Approve Batch</span>
+					</button>
+					<button
+						key="auditLogModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("auditLogModal")}
+					>
+						<i className="bi bi-journal-text" aria-hidden="true" />
+						<span>Audit Log</span>
+					</button>
+					<button
+						key="beneficiaryDirectoryModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("beneficiaryDirectoryModal")}
+					>
+						<i className="bi bi-people" aria-hidden="true" />
+						<span>Beneficiary Directory</span>
+					</button>
+					<button
+						key="bulkReceiptModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("bulkReceiptModal")}
+					>
+						<i className="bi bi-receipt" aria-hidden="true" />
+						<span>Bulk Receipts</span>
+					</button>
+					<button
+						key="beneficiaryFeedbackModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("beneficiaryFeedbackModal")}
+					>
+						<i className="bi bi-chat-dots" aria-hidden="true" />
+						<span>Collection & Feedback</span>
+					</button>
+					<button
+						key="biometricVerificationModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("biometricVerificationModal")}
+					>
+						<i className="bi bi-fingerprint" aria-hidden="true" />
+						<span>Compliance Report</span>
+					</button>
+					<button
+						key="disbursementSettingsModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("disbursementSettingsModal")}
+					>
+						<i className="bi bi-sliders" aria-hidden="true" />
+						<span>Disbursement Settings</span>
+					</button>
+					<button
+						key="failedTransfersModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("failedTransfersModal")}
+					>
+						<i className="bi bi-x-circle" aria-hidden="true" />
+						<span>Failed Transfers</span>
+					</button>
+					<button
+						key="ngoProgramModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("ngoProgramModal")}
+					>
+						<i className="bi bi-globe" aria-hidden="true" />
+						<span>NGO Programs</span>
+					</button>
+					<button
+						key="disputeDisbursementModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("disputeDisbursementModal")}
+					>
+						<i className="bi bi-arrow-counterclockwise" aria-hidden="true" />
+						<span>Recall / Reverse</span>
+					</button>
+					<button
+						key="retryTransferModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("retryTransferModal")}
+					>
+						<i className="bi bi-arrow-repeat" aria-hidden="true" />
+						<span>Retry Transfer</span>
+					</button>
+					<button
+						key="scheduleDisbursementModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("scheduleDisbursementModal")}
+					>
+						<i className="bi bi-calendar-event" aria-hidden="true" />
+						<span>Schedule Disbursement</span>
+					</button>
+					<button
+						key="subsidyVoucherModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("subsidyVoucherModal")}
+					>
+						<i className="bi bi-ticket-perforated" aria-hidden="true" />
+						<span>Subsidy Vouchers</span>
+					</button>
+					<button
+						key="transactionReceiptModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("transactionReceiptModal")}
+					>
+						<i className="bi bi-receipt-cutoff" aria-hidden="true" />
+						<span>Transaction Receipt</span>
+					</button>
+				</div>
+			</div>
+
+			{/* Modals ported from the original HTML that the first pass missed */}
+			<BulkDisbursementsExtraModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

@@ -85,61 +85,124 @@ export interface BusinessLayoutContent {
  * GET /api/business-layout-content should return this same shape.
  * ------------------------------------------------------------------------ */
 export const initialMockData: BusinessLayoutContent = {
-	brand: { name: "Paymo", tag: "Biz", initials: "MK", icon: "bi-building" },
+  brand: { name: "Paymo", tag: "Biz", initials: "MK", icon: "bi-building" },
 
-	user: {
-		name: "Martha K.",
-		role: "Business Admin",
-		email: "admin@modernretail.co.ke",
-		initials: "MK",
-	},
+  user: {
+    name: "Martha K.",
+    role: "Business Admin",
+    email: "admin@modernretail.co.ke",
+    initials: "MK",
+  },
 
-	accountId: "ACC-3942-019",
+  accountId: "ACC-3942-019",
 
-	navGroups: [
-		{
-			title: "Overview",
-			items: [
-				{ key: "dashboard", label: "Dashboard", icon: "bi-grid-1x2" },
-				{
-					key: "insights",
-					label: "Insights",
-					icon: "bi-activity",
-					badge: "New",
-				},
-			],
-		},
-		{
-			title: "Operations",
-			items: [
-				{ key: "cash", label: "Cash Management", icon: "bi-wallet2" },
-				{ key: "movements", label: "Movements", icon: "bi-arrow-left-right" },
-				{ key: "billing", label: "Billing", icon: "bi-receipt" },
-				{ key: "vendors", label: "Vendors", icon: "bi-people" },
-				{ key: "payroll", label: "Payroll", icon: "bi-cash-stack" },
-			],
-		},
-		{
-			title: "Intelligence",
-			items: [
-				{ key: "forecast", label: "Forecasting", icon: "bi-pie-chart" },
-				{
-					key: "tax",
-					label: "Tax Compliance",
-					icon: "bi-file-earmark-bar-graph",
-				},
-			],
-		},
-		{
-			title: "Infrastructure",
-			items: [
-				{ key: "compliance", label: "Compliance", icon: "bi-shield-check" },
-				{ key: "integrations", label: "Integrations", icon: "bi-plug" },
-				{ key: "team", label: "Team", icon: "bi-people-fill" },
-				{ key: "settings", label: "Settings", icon: "bi-gear" },
-			],
-		},
-	],
+  navGroups: [
+    {
+      title: "Overview",
+      items: [
+{
+	        key: "dashboard",
+	        label: "Dashboard",
+	        icon: "bi-grid-1x2",
+	      },
+	      {
+	        key: "financial-reporting",
+	        label: "Financial Reporting",
+	        icon: "bi-activity",
+	        badge: "New",
+	      },
+      ],
+    },
+    {
+      title: "Operations",
+      items: [
+{
+	        key: "accounts-payable",
+	        label: "Accounts Payable",
+	        icon: "bi-people",
+	      },
+	      {
+	        key: "bulk-disbursements",
+	        label: "Bulk Disbursements",
+	        icon: "bi-arrow-left-right",
+	      },
+	      {
+	        key: "invoicing-billing",
+	        label: "Invoicing & Billing",
+	        icon: "bi-receipt",
+	      },
+	      {
+	        key: "payroll-hr",
+	        label: "Payroll & HR",
+	        icon: "bi-cash-stack",
+	      },
+	      {
+	        key: "treasury-cash",
+	        label: "Treasury & Cash",
+	        icon: "bi-wallet2",
+	      },
+      ],
+    },
+    {
+      title: "Intelligence",
+      items: [
+{
+	        key: "multi-currency-treasury",
+	        label: "Multi-Currency Treasury",
+	        icon: "bi-pie-chart",
+	      },
+	      {
+	        key: "open-banking",
+	        label: "Open Banking",
+	        icon: "bi-file-earmark-bar-graph",
+	        badge: "Beta",
+	      },
+      ],
+    },
+    {
+      title: "Infrastructure",
+      items: [
+{
+	        key: "collections-merchant",
+	        label: "Collections & Merchant",
+	        icon: "bi-shield-check",
+	      },
+	      {
+	        key: "business-onboarding",
+	        label: "Business Onboarding",
+	        icon: "bi-plug",
+	      },
+	      {
+	        key: "support-disputes",
+	        label: "Support & Disputes",
+	        icon: "bi-people-fill",
+	      },
+	      {
+	        key: "settings-administration",
+	        label: "Settings & Administration",
+	        icon: "bi-gear",
+	      },
+      ],
+    },
+    {
+      title: "Control",
+      items: [
+{
+	        key: "command-center",
+	        label: "Command Center",
+	        icon: "bi-terminal",
+	      },
+	      {
+	        key: "virtual-accounts",
+	        label: "Virtual Accounts",
+	        icon: "bi-credit-card",
+	        badge: "Beta",
+	      },
+      ],
+    },
+  ],
+
+
 
 	notifications: [
 		{

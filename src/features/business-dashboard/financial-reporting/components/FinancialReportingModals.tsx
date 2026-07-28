@@ -744,47 +744,47 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>2025-06-28 14:32:01</td>
-							<td>Titus G. / 197.232.14.8</td>
-							<td>Disbursements</td>
-							<td>Approved Bulk Batch 9921</td>
-							<td>
+							<td data-label="Timestamp">2025-06-28 14:32:01</td>
+							<td data-label="User/IP">Titus G. / 197.232.14.8</td>
+							<td data-label="Module">Disbursements</td>
+							<td data-label="Action">Approved Bulk Batch 9921</td>
+							<td data-label="Verification Hash">
 								<code style={{ fontSize: 10 }}>a4b1c2d3e4f5...</code>
 							</td>
 						</tr>
 						<tr>
-							<td>2025-06-28 14:30:15</td>
-							<td>Grace M. / 197.232.14.8</td>
-							<td>Disbursements</td>
-							<td>Created Bulk Batch 9921</td>
-							<td>
+							<td data-label="Timestamp">2025-06-28 14:30:15</td>
+							<td data-label="User/IP">Grace M. / 197.232.14.8</td>
+							<td data-label="Module">Disbursements</td>
+							<td data-label="Action">Created Bulk Batch 9921</td>
+							<td data-label="Verification Hash">
 								<code style={{ fontSize: 10 }}>b9x8y7z6a5b4...</code>
 							</td>
 						</tr>
 						<tr>
-							<td>2025-06-28 10:15:44</td>
-							<td>System API</td>
-							<td>Reporting</td>
-							<td>Generated VAT Extract</td>
-							<td>
+							<td data-label="Timestamp">2025-06-28 10:15:44</td>
+							<td data-label="User/IP">System API</td>
+							<td data-label="Module">Reporting</td>
+							<td data-label="Action">Generated VAT Extract</td>
+							<td data-label="Verification Hash">
 								<code style={{ fontSize: 10 }}>c1d2e3f4g5h6...</code>
 							</td>
 						</tr>
 						<tr>
-							<td>2025-06-27 16:45:12</td>
-							<td>Grace M. / 197.232.14.8</td>
-							<td>Payroll</td>
-							<td>Initiated June Payroll Run</td>
-							<td>
+							<td data-label="Timestamp">2025-06-27 16:45:12</td>
+							<td data-label="User/IP">Grace M. / 197.232.14.8</td>
+							<td data-label="Module">Payroll</td>
+							<td data-label="Action">Initiated June Payroll Run</td>
+							<td data-label="Verification Hash">
 								<code style={{ fontSize: 10 }}>z9y8x7w6v5u4...</code>
 							</td>
 						</tr>
 						<tr>
-							<td>2025-06-27 09:12:33</td>
-							<td>James K. / 105.161.88.2</td>
-							<td>Invoicing</td>
-							<td>Voided INV-2041</td>
-							<td>
+							<td data-label="Timestamp">2025-06-27 09:12:33</td>
+							<td data-label="User/IP">James K. / 105.161.88.2</td>
+							<td data-label="Module">Invoicing</td>
+							<td data-label="Action">Voided INV-2041</td>
+							<td data-label="Verification Hash">
 								<code style={{ fontSize: 10 }}>f5e4d3c2b1a0...</code>
 							</td>
 						</tr>
@@ -983,28 +983,28 @@ export default function FinancialReportingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>30 Jun</td>
-									<td>Monthly Payroll Run</td>
-									<td>
+									<td data-label="Date">30 Jun</td>
+									<td data-label="Description">Monthly Payroll Run</td>
+									<td data-label="Type">
 										<span className={cx(s.badge, s.badgeD)}>Out</span>
 									</td>
-									<td>KES 3,250,000</td>
+									<td data-label="Amount">KES 3,250,000</td>
 								</tr>
 								<tr>
-									<td>02 Jul</td>
-									<td>Invoice #2201 (Acme)</td>
-									<td>
+									<td data-label="Date">02 Jul</td>
+									<td data-label="Description">Invoice #2201 (Acme)</td>
+									<td data-label="Type">
 										<span className={cx(s.badge, s.badgeS)}>In</span>
 									</td>
-									<td>KES 1,800,000</td>
+									<td data-label="Amount">KES 1,800,000</td>
 								</tr>
 								<tr>
-									<td>05 Jul</td>
-									<td>Supplier Run (Q2)</td>
-									<td>
+									<td data-label="Date">05 Jul</td>
+									<td data-label="Description">Supplier Run (Q2)</td>
+									<td data-label="Type">
 										<span className={cx(s.badge, s.badgeD)}>Out</span>
 									</td>
-									<td>KES 1,150,000</td>
+									<td data-label="Amount">KES 1,150,000</td>
 								</tr>
 							</tbody>
 						</table>
@@ -1284,35 +1284,35 @@ export default function FinancialReportingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>INV-2045</td>
-									<td>28 Jun 2025</td>
-									<td>KES 45,000</td>
-									<td>
+									<td data-label="Invoice #">INV-2045</td>
+									<td data-label="Date">28 Jun 2025</td>
+									<td data-label="Amount">KES 45,000</td>
+									<td data-label="e-TIMS CU Number">
 										<code style={{ fontSize: 11 }}>KRA-CU-99812A</code>
 									</td>
-									<td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Synced</span>
 									</td>
 								</tr>
 								<tr>
-									<td>INV-2044</td>
-									<td>27 Jun 2025</td>
-									<td>KES 120,500</td>
-									<td>
+									<td data-label="Invoice #">INV-2044</td>
+									<td data-label="Date">27 Jun 2025</td>
+									<td data-label="Amount">KES 120,500</td>
+									<td data-label="e-TIMS CU Number">
 										<code style={{ fontSize: 11 }}>KRA-CU-99811B</code>
 									</td>
-									<td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Synced</span>
 									</td>
 								</tr>
 								<tr>
-									<td>INV-2043</td>
-									<td>26 Jun 2025</td>
-									<td>KES 15,000</td>
-									<td>
+									<td data-label="Invoice #">INV-2043</td>
+									<td data-label="Date">26 Jun 2025</td>
+									<td data-label="Amount">KES 15,000</td>
+									<td data-label="e-TIMS CU Number">
 										<code style={{ fontSize: 11 }}>KRA-CU-99810C</code>
 									</td>
-									<td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Synced</span>
 									</td>
 								</tr>
@@ -1357,42 +1357,42 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Gross Revenue (YTD)</td>
-							<td>KES 32.5M</td>
-							<td>KES 15.7M</td>
-							<td>
+							<td data-label="Metric">Gross Revenue (YTD)</td>
+							<td data-label="Nairobi HQ">KES 32.5M</td>
+							<td data-label="Mombasa Branch">KES 15.7M</td>
+							<td data-label="Consolidated">
 								<strong>KES 48.2M</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Operating Expenses</td>
-							<td>KES 14.1M</td>
-							<td>KES 6.8M</td>
-							<td>
+							<td data-label="Metric">Operating Expenses</td>
+							<td data-label="Nairobi HQ">KES 14.1M</td>
+							<td data-label="Mombasa Branch">KES 6.8M</td>
+							<td data-label="Consolidated">
 								<strong>KES 20.9M</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Headcount</td>
-							<td>28</td>
-							<td>14</td>
-							<td>
+							<td data-label="Metric">Headcount</td>
+							<td data-label="Nairobi HQ">28</td>
+							<td data-label="Mombasa Branch">14</td>
+							<td data-label="Consolidated">
 								<strong>42</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Profit Margin</td>
-							<td>56%</td>
-							<td>56%</td>
-							<td>
+							<td data-label="Metric">Profit Margin</td>
+							<td data-label="Nairobi HQ">56%</td>
+							<td data-label="Mombasa Branch">56%</td>
+							<td data-label="Consolidated">
 								<strong>56%</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Collection Speed (DSO)</td>
-							<td>22 Days</td>
-							<td>34 Days</td>
-							<td>
+							<td data-label="Metric">Collection Speed (DSO)</td>
+							<td data-label="Nairobi HQ">22 Days</td>
+							<td data-label="Mombasa Branch">34 Days</td>
+							<td data-label="Consolidated">
 								<strong>26 Days</strong>
 							</td>
 						</tr>
@@ -1491,38 +1491,38 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Acme Corp Ltd</td>
-							<td>KES 12,500,000</td>
-							<td>14</td>
-							<td>28 Days</td>
-							<td>
+							<td data-label="Customer Name">Acme Corp Ltd</td>
+							<td data-label="Revenue (YTD)">KES 12,500,000</td>
+							<td data-label="Invoices">14</td>
+							<td data-label="Avg Time to Pay">28 Days</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
 						</tr>
 						<tr>
-							<td>TechFlow Solutions</td>
-							<td>KES 8,200,000</td>
-							<td>42</td>
-							<td>4 Days</td>
-							<td>
+							<td data-label="Customer Name">TechFlow Solutions</td>
+							<td data-label="Revenue (YTD)">KES 8,200,000</td>
+							<td data-label="Invoices">42</td>
+							<td data-label="Avg Time to Pay">4 Days</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>VIP</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Global Logistics Ke</td>
-							<td>KES 5,400,000</td>
-							<td>6</td>
-							<td>65 Days</td>
-							<td>
+							<td data-label="Customer Name">Global Logistics Ke</td>
+							<td data-label="Revenue (YTD)">KES 5,400,000</td>
+							<td data-label="Invoices">6</td>
+							<td data-label="Avg Time to Pay">65 Days</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeW)}>Slow Payer</span>
 							</td>
 						</tr>
 						<tr>
-							<td>City Retail Chain</td>
-							<td>KES 3,100,000</td>
-							<td>22</td>
-							<td>18 Days</td>
-							<td>
+							<td data-label="Customer Name">City Retail Chain</td>
+							<td data-label="Revenue (YTD)">KES 3,100,000</td>
+							<td data-label="Invoices">22</td>
+							<td data-label="Avg Time to Pay">18 Days</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
 						</tr>
@@ -1583,10 +1583,10 @@ export default function FinancialReportingModals({
 						</thead>
 						<tbody>
 							<tr>
-								<td>Payroll & Benefits</td>
-								<td>KES 18.2M</td>
-								<td>64%</td>
-								<td>
+								<td data-label="Category">Payroll & Benefits</td>
+								<td data-label="Amount (YTD)">KES 18.2M</td>
+								<td data-label="% of Opex">64%</td>
+								<td data-label="Trend (vs Last Year)">
 									+12%{" "}
 									<i
 										className="bi bi-arrow-up-right"
@@ -1595,10 +1595,10 @@ export default function FinancialReportingModals({
 								</td>
 							</tr>
 							<tr>
-								<td>Inventory & Raw Mat</td>
-								<td>KES 6.5M</td>
-								<td>23%</td>
-								<td>
+								<td data-label="Category">Inventory & Raw Mat</td>
+								<td data-label="Amount (YTD)">KES 6.5M</td>
+								<td data-label="% of Opex">23%</td>
+								<td data-label="Trend (vs Last Year)">
 									+4%{" "}
 									<i
 										className="bi bi-arrow-up-right"
@@ -1607,10 +1607,10 @@ export default function FinancialReportingModals({
 								</td>
 							</tr>
 							<tr>
-								<td>Software & IT</td>
-								<td>KES 1.8M</td>
-								<td>6%</td>
-								<td>
+								<td data-label="Category">Software & IT</td>
+								<td data-label="Amount (YTD)">KES 1.8M</td>
+								<td data-label="% of Opex">6%</td>
+								<td data-label="Trend (vs Last Year)">
 									+18%{" "}
 									<i
 										className="bi bi-arrow-up-right"
@@ -1619,10 +1619,10 @@ export default function FinancialReportingModals({
 								</td>
 							</tr>
 							<tr>
-								<td>Utilities</td>
-								<td>KES 1.1M</td>
-								<td>4%</td>
-								<td>
+								<td data-label="Category">Utilities</td>
+								<td data-label="Amount (YTD)">KES 1.1M</td>
+								<td data-label="% of Opex">4%</td>
+								<td data-label="Trend (vs Last Year)">
 									−2%{" "}
 									<i
 										className="bi bi-arrow-down-right"
@@ -1678,11 +1678,11 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>28 Jun</td>
-							<td>EQU-RTGS-9912A</td>
-							<td>KES 45,000</td>
-							<td>INV-2045 (Acme Corp)?</td>
-							<td>
+							<td data-label="Date">28 Jun</td>
+							<td data-label="Bank Reference">EQU-RTGS-9912A</td>
+							<td data-label="Amount">KES 45,000</td>
+							<td data-label="Suggested Match">INV-2045 (Acme Corp)?</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -1697,20 +1697,20 @@ export default function FinancialReportingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>27 Jun</td>
-							<td>KCB-EFT-4412X</td>
-							<td>KES 32,500</td>
-							<td>No match found</td>
-							<td>
+							<td data-label="Date">27 Jun</td>
+							<td data-label="Bank Reference">KCB-EFT-4412X</td>
+							<td data-label="Amount">KES 32,500</td>
+							<td data-label="Suggested Match">No match found</td>
+							<td data-label="Action">
 								<button className={cx(s.btnPm, s.btnSm)}>Manual Map</button>
 							</td>
 						</tr>
 						<tr>
-							<td>25 Jun</td>
-							<td>MPESA-P9212K</td>
-							<td>KES 15,000</td>
-							<td>INV-2043 (Retail)?</td>
-							<td>
+							<td data-label="Date">25 Jun</td>
+							<td data-label="Bank Reference">MPESA-P9212K</td>
+							<td data-label="Amount">KES 15,000</td>
+							<td data-label="Suggested Match">INV-2043 (Retail)?</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -1725,11 +1725,11 @@ export default function FinancialReportingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>22 Jun</td>
-							<td>EQU-DEP-CASH</td>
-							<td>KES 50,000</td>
-							<td>No match found</td>
-							<td>
+							<td data-label="Date">22 Jun</td>
+							<td data-label="Bank Reference">EQU-DEP-CASH</td>
+							<td data-label="Amount">KES 50,000</td>
+							<td data-label="Suggested Match">No match found</td>
+							<td data-label="Action">
 								<button className={cx(s.btnPm, s.btnSm)}>Manual Map</button>
 							</td>
 						</tr>
@@ -2040,11 +2040,11 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>PAYE (P10)</td>
-							<td>09 Jul 2025</td>
-							<td>42</td>
-							<td>KES 450,200</td>
-							<td>
+							<td data-label="Filing">PAYE (P10)</td>
+							<td data-label="Due Date">09 Jul 2025</td>
+							<td data-label="Employees">42</td>
+							<td data-label="Total Due">KES 450,200</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -2056,11 +2056,11 @@ export default function FinancialReportingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>NSSF</td>
-							<td>09 Jul 2025</td>
-							<td>42</td>
-							<td>KES 84,000</td>
-							<td>
+							<td data-label="Filing">NSSF</td>
+							<td data-label="Due Date">09 Jul 2025</td>
+							<td data-label="Employees">42</td>
+							<td data-label="Total Due">KES 84,000</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -2072,11 +2072,11 @@ export default function FinancialReportingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>SHIF</td>
-							<td>09 Jul 2025</td>
-							<td>42</td>
-							<td>KES 72,500</td>
-							<td>
+							<td data-label="Filing">SHIF</td>
+							<td data-label="Due Date">09 Jul 2025</td>
+							<td data-label="Employees">42</td>
+							<td data-label="Total Due">KES 72,500</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -2088,11 +2088,11 @@ export default function FinancialReportingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>Housing Levy</td>
-							<td>09 Jul 2025</td>
-							<td>42</td>
-							<td>KES 48,000</td>
-							<td>
+							<td data-label="Filing">Housing Levy</td>
+							<td data-label="Due Date">09 Jul 2025</td>
+							<td data-label="Employees">42</td>
+							<td data-label="Total Due">KES 48,000</td>
+							<td data-label="Action">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -2163,52 +2163,52 @@ export default function FinancialReportingModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>1001</td>
-									<td>PayMo Wallet</td>
-									<td>12,450,800</td>
-									<td>−</td>
+									<td data-label="GL Code">1001</td>
+									<td data-label="Account Name">PayMo Wallet</td>
+									<td data-label="Debit (KES)">12,450,800</td>
+									<td data-label="Credit (KES)">−</td>
 								</tr>
 								<tr>
-									<td>1100</td>
-									<td>Accounts Receivable</td>
-									<td>4,200,000</td>
-									<td>−</td>
+									<td data-label="GL Code">1100</td>
+									<td data-label="Account Name">Accounts Receivable</td>
+									<td data-label="Debit (KES)">4,200,000</td>
+									<td data-label="Credit (KES)">−</td>
 								</tr>
 								<tr>
-									<td>2001</td>
-									<td>Accounts Payable</td>
-									<td>−</td>
-									<td>2,150,000</td>
+									<td data-label="GL Code">2001</td>
+									<td data-label="Account Name">Accounts Payable</td>
+									<td data-label="Debit (KES)">−</td>
+									<td data-label="Credit (KES)">2,150,000</td>
 								</tr>
 								<tr>
-									<td>3001</td>
-									<td>Retained Earnings</td>
-									<td>−</td>
-									<td>8,500,800</td>
+									<td data-label="GL Code">3001</td>
+									<td data-label="Account Name">Retained Earnings</td>
+									<td data-label="Debit (KES)">−</td>
+									<td data-label="Credit (KES)">8,500,800</td>
 								</tr>
 								<tr>
-									<td>4001</td>
-									<td>Sales Revenue</td>
-									<td>−</td>
-									<td>48,200,000</td>
+									<td data-label="GL Code">4001</td>
+									<td data-label="Account Name">Sales Revenue</td>
+									<td data-label="Debit (KES)">−</td>
+									<td data-label="Credit (KES)">48,200,000</td>
 								</tr>
 								<tr>
-									<td>5001</td>
-									<td>Payroll Expenses</td>
-									<td>18,200,000</td>
-									<td>−</td>
+									<td data-label="GL Code">5001</td>
+									<td data-label="Account Name">Payroll Expenses</td>
+									<td data-label="Debit (KES)">18,200,000</td>
+									<td data-label="Credit (KES)">−</td>
 								</tr>
 								<tr>
-									<td>5010</td>
-									<td>COGS</td>
-									<td>21,000,000</td>
-									<td>−</td>
+									<td data-label="GL Code">5010</td>
+									<td data-label="Account Name">COGS</td>
+									<td data-label="Debit (KES)">21,000,000</td>
+									<td data-label="Credit (KES)">−</td>
 								</tr>
 								<tr style={{ fontWeight: 700 }}>
-									<td></td>
-									<td>TOTAL</td>
-									<td>55,850,800</td>
-									<td>55,850,800</td>
+									<td data-label="GL Code"></td>
+									<td data-label="Account Name">TOTAL</td>
+									<td data-label="Debit (KES)">55,850,800</td>
+									<td data-label="Credit (KES)">55,850,800</td>
 								</tr>
 							</tbody>
 						</table>
@@ -2400,30 +2400,30 @@ export default function FinancialReportingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Liquidity Ratio (Current)</td>
-							<td>2.4x (Very Healthy)</td>
-							<td>
+							<td data-label="Indicator">Liquidity Ratio (Current)</td>
+							<td data-label="Status">2.4x (Very Healthy)</td>
+							<td data-label="Score">
 								<span className={cx(s.badge, s.badgeS)}>Strong</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Days Sales Outstanding</td>
-							<td>26 Days</td>
-							<td>
+							<td data-label="Indicator">Days Sales Outstanding</td>
+							<td data-label="Status">26 Days</td>
+							<td data-label="Score">
 								<span className={cx(s.badge, s.badgeS)}>Strong</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Expense to Revenue Ratio</td>
-							<td>43% (Within target)</td>
-							<td>
+							<td data-label="Indicator">Expense to Revenue Ratio</td>
+							<td data-label="Status">43% (Within target)</td>
+							<td data-label="Score">
 								<span className={cx(s.badge, s.badgeS)}>Strong</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Revenue Concentration</td>
-							<td>Top client is 26%</td>
-							<td>
+							<td data-label="Indicator">Revenue Concentration</td>
+							<td data-label="Status">Top client is 26%</td>
+							<td data-label="Score">
 								<span className={cx(s.badge, s.badgeW)}>Fair</span>
 							</td>
 						</tr>

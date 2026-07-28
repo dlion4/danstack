@@ -584,11 +584,11 @@ export default function AccountsPayableModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>INV-4419</td>
-							<td>OfficeMart</td>
-							<td>KES 12,500</td>
-							<td>HR Dept</td>
-							<td>
+							<td data-label="Invoice">INV-4419</td>
+							<td data-label="Supplier">OfficeMart</td>
+							<td data-label="Amount">KES 12,500</td>
+							<td data-label="Requested By">HR Dept</td>
+							<td data-label="Action">
 								<div className="d-flex gap-1">
 									<button
 										className={cx(s.btnPm, s.btnSm, s.btnPmP)}
@@ -612,11 +612,11 @@ export default function AccountsPayableModals({
 							</td>
 						</tr>
 						<tr>
-							<td>INV-8822</td>
-							<td>CreativeHub</td>
-							<td>KES 45,000</td>
-							<td>Marketing</td>
-							<td>
+							<td data-label="Invoice">INV-8822</td>
+							<td data-label="Supplier">CreativeHub</td>
+							<td data-label="Amount">KES 45,000</td>
+							<td data-label="Requested By">Marketing</td>
+							<td data-label="Action">
 								<div className="d-flex gap-1">
 									<button
 										className={cx(s.btnPm, s.btnSm, s.btnPmP)}

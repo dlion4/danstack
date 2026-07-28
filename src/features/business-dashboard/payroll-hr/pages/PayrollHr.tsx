@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import PayrollHrModals from "../components/PayrollHrModals";
 import styles from "../styles/payroll-hr.module.css";
 
@@ -479,6 +480,38 @@ export default function PayrollHr() {
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-shield-check",
+				label: "Compliance Hub",
+				onClick: () => setActiveModal("complianceAlertsModal"),
+			},
+			{
+				icon: "bi-file-earmark-excel",
+				label: "Import Roster",
+				onClick: () => setActiveModal("importEmployeesModal"),
+			},
+			{
+				icon: "bi-person-plus",
+				label: "Add Employee",
+				tone: "accent",
+				onClick: () => setActiveModal("addEmployeeModal"),
+			},
+			{
+				icon: "bi-play-circle",
+				label: "Run Payroll",
+				tone: "primary",
+				onClick: () => setActiveModal("runPayrollModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["payroll-hr"],
 		queryFn: fetchPayrollData,
@@ -489,7 +522,7 @@ export default function PayrollHr() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -718,18 +751,18 @@ export default function PayrollHr() {
 							<tbody>
 								{config.employees.map((emp) => (
 									<tr key={emp.name}>
-										<td>
+										<td data-label="Name">
 											<strong>{emp.name}</strong>
 										</td>
-										<td>{emp.department}</td>
-										<td>{emp.position}</td>
-										<td>{emp.salary}</td>
-										<td>
+										<td data-label="Department">{emp.department}</td>
+										<td data-label="Position">{emp.position}</td>
+										<td data-label="Salary">{emp.salary}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[emp.statusTone])}>
 												{emp.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(emp.modal)}
@@ -782,18 +815,18 @@ export default function PayrollHr() {
 							<tbody>
 								{config.batches.map((b) => (
 									<tr key={b.id}>
-										<td>
+										<td data-label="Batch ID">
 											<strong>{b.id}</strong>
 										</td>
-										<td>{b.period}</td>
-										<td>{b.employees}</td>
-										<td>{b.totalCost}</td>
-										<td>
+										<td data-label="Period">{b.period}</td>
+										<td data-label="Employees">{b.employees}</td>
+										<td data-label="Total Cost">{b.totalCost}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[b.statusTone])}>
 												{b.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(b.modal)}
@@ -890,18 +923,18 @@ export default function PayrollHr() {
 							<tbody>
 								{config.requests.map((req) => (
 									<tr key={req.name + req.type}>
-										<td>
+										<td data-label="Employee">
 											<strong>{req.name}</strong>
 										</td>
-										<td>{req.type}</td>
-										<td>{req.dates}</td>
-										<td>{req.amount}</td>
-										<td>
+										<td data-label="Type">{req.type}</td>
+										<td data-label="Dates">{req.dates}</td>
+										<td data-label="Amount">{req.amount}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[req.statusTone])}>
 												{req.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(req.modal)}
@@ -916,11 +949,13 @@ export default function PayrollHr() {
 					</div>
 				</div>
 			</div>
-	<PayrollHrModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<PayrollHrModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

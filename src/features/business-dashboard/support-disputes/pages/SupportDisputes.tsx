@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import SupportDisputesModals from "../components/SupportDisputesModals";
 import styles from "../styles/support-disputes.module.css";
 
@@ -593,6 +594,38 @@ async function fetchSupportContent(): Promise<SupportConfig> {
 
 export default function SupportDisputes() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-heart-pulse",
+				label: "SLA Health",
+				onClick: () => setActiveModal("slaHealthModal"),
+			},
+			{
+				icon: "bi-collection",
+				label: "Bulk Refund",
+				onClick: () => setActiveModal("bulkRefundModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "New Ticket",
+				onClick: () => setActiveModal("newTicketModal"),
+			},
+			{
+				icon: "bi-exclamation-triangle",
+				label: "Escalate",
+				tone: "danger",
+				onClick: () => setActiveModal("emergencyEscalationModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const [ticketFilter, setTicketFilter] = useState("all");
 
 	const { data: apiData } = useQuery({
@@ -630,7 +663,7 @@ export default function SupportDisputes() {
 	};
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -969,24 +1002,24 @@ export default function SupportDisputes() {
 										<tbody>
 											{filteredTickets.map((t) => (
 												<tr key={t.id}>
-													<td>
+													<td data-label="ID">
 														<code>{t.id}</code>
 													</td>
-													<td>{t.type}</td>
-													<td>{t.party}</td>
-													<td>{t.subject}</td>
-													<td>
+													<td data-label="Type">{t.type}</td>
+													<td data-label="Customer/Merchant">{t.party}</td>
+													<td data-label="Subject">{t.subject}</td>
+													<td data-label="Priority">
 														<span className={priorityBadge(t.priority)}>
 															{t.priority}
 														</span>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={statusBadge(t.status)}>
 															{t.status}
 														</span>
 													</td>
-													<td>{t.age}</td>
-													<td>
+													<td data-label="Age">{t.age}</td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal(t.modal)}
@@ -1116,19 +1149,19 @@ export default function SupportDisputes() {
 										<tbody>
 											{config.chargebacks.map((cb) => (
 												<tr key={cb.caseId}>
-													<td>{cb.caseId}</td>
-													<td>{cb.card}</td>
-													<td>{cb.merchant}</td>
-													<td>
+													<td data-label="Case ID">{cb.caseId}</td>
+													<td data-label="Card">{cb.card}</td>
+													<td data-label="Merchant">{cb.merchant}</td>
+													<td data-label="Amount">
 														<strong>{cb.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Stage">
 														<span className={cx(s.badge, s[cb.stageTone])}>
 															{cb.stage}
 														</span>
 													</td>
-													<td>{cb.due}</td>
-													<td>
+													<td data-label="Due">{cb.due}</td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal("chargebackModal")}
@@ -1236,18 +1269,18 @@ export default function SupportDisputes() {
 										<tbody>
 											{config.refunds.map((r) => (
 												<tr key={r.refId}>
-													<td>{r.refId}</td>
-													<td>{r.customer}</td>
-													<td>{r.txn}</td>
-													<td>
+													<td data-label="Ref ID">{r.refId}</td>
+													<td data-label="Customer">{r.customer}</td>
+													<td data-label="Original Txn">{r.txn}</td>
+													<td data-label="Amount">
 														<strong>{r.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[r.statusTone])}>
 															{r.status}
 														</span>
 													</td>
-													<td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal("refundModal")}
@@ -1609,11 +1642,11 @@ export default function SupportDisputes() {
 							<tbody>
 								{config.activityRows.map((a) => (
 									<tr key={a.time + a.caseRef}>
-										<td>{a.time}</td>
-										<td>{a.action}</td>
-										<td>{a.caseRef}</td>
-										<td>{a.user}</td>
-										<td>
+										<td data-label="Time">{a.time}</td>
+										<td data-label="Action">{a.action}</td>
+										<td data-label="Case">{a.caseRef}</td>
+										<td data-label="User">{a.user}</td>
+										<td data-label="Result">
 											<span className={cx(s.badge, s[a.resultTone])}>
 												{a.result}
 											</span>
@@ -1625,11 +1658,13 @@ export default function SupportDisputes() {
 					</div>
 				</div>
 			</div>
-	<SupportDisputesModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<SupportDisputesModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

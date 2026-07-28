@@ -1,5 +1,5 @@
 /* ============================================================================
- * BusinessModulePage.tsx — generic /business/$module destination.
+ * BusinessModulePage.tsx — generic /business-dashboard/$module destination.
  * ----------------------------------------------------------------------------
  * Every sidebar entry (except the dashboard home) resolves here. It reads the
  * module param, finds the matching module def, and renders hero + stats +
@@ -63,7 +63,7 @@ export default function BusinessModulePage({
 						</p>
 						<div className={d.actionRow} style={{ justifyContent: "center" }}>
 							<Link
-								to="/business"
+								to="/business-dashboard"
 								className={c.btnPrimary}
 								style={{ textDecoration: "none" }}
 							>
@@ -164,7 +164,7 @@ export default function BusinessModulePage({
 			{/* ---------- back link ---------- */}
 			<div className={d.actionRow}>
 				<Link
-					to="/business"
+					to="/business-dashboard"
 					className={c.btnLink}
 					style={{ textDecoration: "none" }}
 				>

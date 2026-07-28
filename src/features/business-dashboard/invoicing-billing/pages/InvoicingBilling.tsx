@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import InvoicingBillingModals from "../components/InvoicingBillingModals";
 import styles from "../styles/invoicing-billing.module.css";
 
@@ -496,6 +497,32 @@ export default function InvoicingBilling() {
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-link-45deg",
+				label: "Payment Link",
+				onClick: () => setActiveModal("newPaymentLinkModal"),
+			},
+			{
+				icon: "bi-arrow-repeat",
+				label: "Subscription",
+				onClick: () => setActiveModal("newSubscriptionModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "New Invoice",
+				tone: "primary",
+				onClick: () => setActiveModal("newInvoiceModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["invoicing-billing"],
 		queryFn: fetchInvoicingData,
@@ -506,7 +533,7 @@ export default function InvoicingBilling() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -721,18 +748,18 @@ export default function InvoicingBilling() {
 							<tbody>
 								{config.invoices.map((inv) => (
 									<tr key={inv.id}>
-										<td>
+										<td data-label="Invoice #">
 											<strong>{inv.id}</strong>
 										</td>
-										<td>{inv.customer}</td>
-										<td>{inv.amount}</td>
-										<td>{inv.dueDate}</td>
-										<td>
+										<td data-label="Customer">{inv.customer}</td>
+										<td data-label="Amount">{inv.amount}</td>
+										<td data-label="Due Date">{inv.dueDate}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[inv.statusTone])}>
 												{inv.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(inv.modal)}
@@ -945,18 +972,18 @@ export default function InvoicingBilling() {
 							<tbody>
 								{config.subscriberRows.map((sr) => (
 									<tr key={sr.name}>
-										<td>
+										<td data-label="Customer">
 											<strong>{sr.name}</strong>
 										</td>
-										<td>{sr.plan}</td>
-										<td>{sr.amount}</td>
-										<td>{sr.nextBill}</td>
-										<td>
+										<td data-label="Plan">{sr.plan}</td>
+										<td data-label="Amount">{sr.amount}</td>
+										<td data-label="Next Bill">{sr.nextBill}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[sr.statusTone])}>
 												{sr.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(sr.modal)}
@@ -971,11 +998,13 @@ export default function InvoicingBilling() {
 					</div>
 				</div>
 			</div>
-	<InvoicingBillingModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<InvoicingBillingModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

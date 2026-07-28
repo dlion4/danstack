@@ -52,6 +52,7 @@ function MBox({
 }: MBoxProps) {
 	const s = styles as Record<string, string>;
 	if (active !== id) return null;
+
 	return (
 		<>
 			<div className={s.backdrop} onClick={onClose} />
@@ -812,16 +813,16 @@ export default function SettingsAdministrationModals({
 								</thead>
 								<tbody>
 									<tr>
-										<td>Production Key</td>
-										<td>
+										<td data-label="Key Name">Production Key</td>
+										<td data-label="Environment">
 											<span className={cx(s.badge, s.badgeD)}>Live</span>
 										</td>
-										<td>12 Jan 2025</td>
-										<td>Today 08:45</td>
-										<td>
+										<td data-label="Created">12 Jan 2025</td>
+										<td data-label="Last Used">Today 08:45</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>Active</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() =>
@@ -837,16 +838,16 @@ export default function SettingsAdministrationModals({
 										</td>
 									</tr>
 									<tr>
-										<td>Sandbox Key</td>
-										<td>
+										<td data-label="Key Name">Sandbox Key</td>
+										<td data-label="Environment">
 											<span className={cx(s.badge, s.badgeI)}>Test</span>
 										</td>
-										<td>12 Jan 2025</td>
-										<td>26 Jun 14:20</td>
-										<td>
+										<td data-label="Created">12 Jan 2025</td>
+										<td data-label="Last Used">26 Jun 14:20</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s.badgeS)}>Active</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() =>
@@ -1097,8 +1098,261 @@ export default function SettingsAdministrationModals({
 		</div>
 	);
 
+	/* ------------------------------------------------------------------
+	 * M: Compliance Calendar & Regulatory Reporting
+	 * (legacy `complianceModal`, page 3.14). Tabbed: Calendar / Reports /
+	 * Score — the calendar tab lists statutory deadlines by regulator.
+	 * ---------------------------------------------------------------- */
+	const complianceTab = tabs.compliance ?? "calendar";
+	const setComplianceTab = (key: string) =>
+		setTabs((prev) => ({ ...prev, compliance: key }));
+	const renderComplianceCalendar = () => (
+		<MBox
+			id="complianceModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-calendar-check me-2" />
+					Compliance Calendar &amp; Regulatory Reporting
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={() =>
+							doAction(
+								"complianceModal",
+								"Compliance pack generated for all upcoming deadlines.",
+								"CMP-20250728-001",
+							)
+						}
+					>
+						<i className="bi bi-file-earmark-arrow-down" /> Generate Pack
+					</button>
+				</>
+			}
+		>
+			{renderActionBody(
+				"complianceModal",
+				<>
+					<div className={s.pills} style={{ marginBottom: 16 }}>
+						{(
+							[
+								{ key: "calendar", label: "Calendar" },
+								{ key: "reports", label: "Reports" },
+								{ key: "score", label: "Score" },
+							] as const
+						).map((tb) => (
+							<button
+								key={tb.key}
+								className={cx(s.pill, complianceTab === tb.key && s.pillActive)}
+								onClick={() => setComplianceTab(tb.key)}
+							>
+								{tb.label}
+							</button>
+						))}
+					</div>
+
+					{complianceTab === "calendar" && (
+						<div className="table-responsive">
+							<table className={s.tbl}>
+								<thead>
+									<tr>
+										<th>Deadline</th>
+										<th>Regulator</th>
+										<th>Report</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{[
+										{
+											date: "05 Jul 2025",
+											reg: "KRA",
+											report: "TCC Renewal",
+											days: "9 days",
+											tone: "badgeW",
+											cta: "Upload",
+										},
+										{
+											date: "10 Jul 2025",
+											reg: "NSSF",
+											report: "Monthly Return",
+											days: "14 days",
+											tone: "badgeI",
+											cta: "Generate",
+										},
+										{
+											date: "10 Jul 2025",
+											reg: "SHIF",
+											report: "Monthly Contribution",
+											days: "14 days",
+											tone: "badgeI",
+											cta: "Submit",
+										},
+										{
+											date: "31 Jul 2025",
+											reg: "NITA",
+											report: "Annual Return",
+											days: "25 days",
+											tone: "badgeS",
+											cta: "Prepare",
+										},
+									].map((r) => (
+										<tr key={`${r.reg}-${r.report}`}>
+											<td data-label="Deadline" style={{ fontWeight: 600 }}>
+												{r.date}
+											</td>
+											<td data-label="Regulator">
+												<span className={cx(s.badge, s.badgeDark)}>
+													{r.reg}
+												</span>
+											</td>
+											<td data-label="Report">{r.report}</td>
+											<td data-label="Status">
+												<span className={cx(s.badge, s[r.tone])}>{r.days}</span>
+											</td>
+											<td data-label="Action">
+												<button
+													className={cx(s.btnPm, s.btnSm)}
+													onClick={() =>
+														doAction(
+															"complianceModal",
+															`${r.report} (${r.reg}) submitted successfully.`,
+															`${r.reg}-20250728`,
+														)
+													}
+												>
+													{r.cta}
+												</button>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
+
+					{complianceTab === "reports" && (
+						<div className="row g-3">
+							{[
+								{
+									icon: "bi-file-earmark-text",
+									name: "PAYE (P10) Monthly",
+									desc: "KRA · last filed 09 Jun 2025",
+								},
+								{
+									icon: "bi-file-earmark-spreadsheet",
+									name: "VAT Return (VAT3)",
+									desc: "KRA · last filed 20 Jun 2025",
+								},
+								{
+									icon: "bi-people",
+									name: "NSSF Contribution Schedule",
+									desc: "NSSF · last filed 10 Jun 2025",
+								},
+								{
+									icon: "bi-heart-pulse",
+									name: "SHIF Contribution Schedule",
+									desc: "SHIF · last filed 10 Jun 2025",
+								},
+							].map((rep) => (
+								<div key={rep.name} className="col-md-6">
+									<div className={s.actionCard}>
+										<div className={s.iconCircleSm}>
+											<i className={`bi ${rep.icon}`} />
+										</div>
+										<div style={{ flex: 1, minWidth: 0 }}>
+											<div style={{ fontWeight: 600, fontSize: 13 }}>
+												{rep.name}
+											</div>
+											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												{rep.desc}
+											</div>
+										</div>
+										<button
+											className={cx(s.btnPm, s.btnSm)}
+											onClick={() =>
+												downloadFile(
+													`${rep.name.replace(/\s+/g, "-")}.csv`,
+													`Report,${rep.name}\nRegulator,${rep.desc}\n`,
+													"text/csv",
+												)
+											}
+										>
+											<i className="bi bi-download" />
+										</button>
+									</div>
+								</div>
+							))}
+						</div>
+					)}
+
+					{complianceTab === "score" && (
+						<>
+							<div className={s.statusBlock} style={{ textAlign: "center" }}>
+								<div
+									style={{
+										fontSize: 40,
+										fontWeight: 700,
+										color: "var(--pm-accent)",
+										fontFamily: "var(--pm-font-display)",
+									}}
+								>
+									91
+									<span style={{ fontSize: 18, color: "var(--pm-muted)" }}>
+										/100
+									</span>
+								</div>
+								<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+									Excellent — all statutory filings current
+								</div>
+							</div>
+							{[
+								{ label: "Statutory filings", pct: 100 },
+								{ label: "KYB documentation", pct: 94 },
+								{ label: "Beneficial ownership", pct: 88 },
+								{ label: "Director verification", pct: 82 },
+							].map((row) => (
+								<div key={row.label} className="mt-3">
+									<div
+										className="d-flex justify-content-between mb-1"
+										style={{ fontSize: 12 }}
+									>
+										<span>{row.label}</span>
+										<strong>{row.pct}%</strong>
+									</div>
+									<div className={s.progress}>
+										<div
+											className={s.progressBar}
+											style={{
+												width: `${row.pct}%`,
+												background:
+													row.pct >= 90
+														? "var(--pm-accent)"
+														: "var(--pm-warning)",
+											}}
+										/>
+									</div>
+								</div>
+							))}
+						</>
+					)}
+				</>,
+			)}
+		</MBox>
+	);
+
 	return (
 		<>
+			{renderComplianceCalendar()}
 			{renderEditProfile()}
 			{renderKyc()}
 			{renderUserInvite()}
@@ -1124,12 +1378,12 @@ export default function SettingsAdministrationModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Equity Bank</td>
-									<td>0123456789</td>
-									<td>
+									<td data-label="Bank">Equity Bank</td>
+									<td data-label="Account No.">0123456789</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Verified</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1141,12 +1395,12 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>KCB Bank</td>
-									<td>9876543210</td>
-									<td>
+									<td data-label="Bank">KCB Bank</td>
+									<td data-label="Account No.">9876543210</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Verified</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1158,12 +1412,12 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Co-op Bank</td>
-									<td>4567890123</td>
-									<td>
+									<td data-label="Bank">Co-op Bank</td>
+									<td data-label="Account No.">4567890123</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeW)}>Pending</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1194,117 +1448,6 @@ export default function SettingsAdministrationModals({
 				undefined,
 				undefined,
 				"lg",
-			)}
-			{renderSimple(
-				"complianceModal",
-				<>
-					<i className="bi bi-calendar-event me-2" />
-					Compliance Calendar & Regulatory Reporting
-				</>,
-				<>
-					<div className={cx(s.pills, "mb-3")}>
-						<button className={cx(s.pill, s.pillActive)}>Calendar</button>
-						<button className={s.pill}>Reports</button>
-						<button className={s.pill}>Score</button>
-					</div>
-					<div className="table-responsive">
-						<table className={s.tbl}>
-							<thead>
-								<tr>
-									<th>Deadline</th>
-									<th>Regulator</th>
-									<th>Report</th>
-									<th>Status</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>05 Jul 2025</td>
-									<td>KRA</td>
-									<td>TCC Renewal</td>
-									<td>
-										<span className={cx(s.badge, s.badgeD)}>9 days</span>
-									</td>
-									<td>
-										<button
-											className={cx(s.btnPm, s.btnSm)}
-											onClick={() => onOpen("kycModal")}
-										>
-											Upload
-										</button>
-									</td>
-								</tr>
-								<tr>
-									<td>10 Jul 2025</td>
-									<td>NSSF</td>
-									<td>Monthly Return</td>
-									<td>
-										<span className={cx(s.badge, s.badgeW)}>14 days</span>
-									</td>
-									<td>
-										<button
-											className={cx(s.btnPm, s.btnSm)}
-											onClick={() =>
-												doAction(
-													"complianceModal",
-													"NSSF return generated.",
-													"",
-												)
-											}
-										>
-											Generate
-										</button>
-									</td>
-								</tr>
-								<tr>
-									<td>31 Jul 2025</td>
-									<td>NITA</td>
-									<td>Annual Return</td>
-									<td>
-										<span className={cx(s.badge, s.badgeI)}>25 days</span>
-									</td>
-									<td>
-										<button
-											className={cx(s.btnPm, s.btnSm)}
-											onClick={() =>
-												doAction(
-													"complianceModal",
-													"NITA return generated.",
-													"",
-												)
-											}
-										>
-											Generate
-										</button>
-									</td>
-								</tr>
-								<tr>
-									<td>31 Dec 2025</td>
-									<td>Nairobi County</td>
-									<td>Business Permit</td>
-									<td>
-										<span className={cx(s.badge, s.badgeS)}>6 months</span>
-									</td>
-									<td>
-										<button
-											className={cx(s.btnPm, s.btnSm)}
-											onClick={() =>
-												doAction("complianceModal", "Reminder set.", "")
-											}
-										>
-											Set Reminder
-										</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</>,
-				"Export Full Report",
-				"Compliance report exported successfully.",
-				undefined,
-				"xl",
 			)}
 			{renderSimple(
 				"auditLogModal",
@@ -1345,32 +1488,32 @@ export default function SettingsAdministrationModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>27 Jun 09:15</td>
-									<td>James K.</td>
-									<td>Profile Updated</td>
-									<td>Trading name changed</td>
-									<td>41.204.12.45</td>
+									<td data-label="Timestamp">27 Jun 09:15</td>
+									<td data-label="User">James K.</td>
+									<td data-label="Action">Profile Updated</td>
+									<td data-label="Details">Trading name changed</td>
+									<td data-label="IP">41.204.12.45</td>
 								</tr>
 								<tr>
-									<td>27 Jun 08:45</td>
-									<td>Grace W.</td>
-									<td>Payroll Approved</td>
-									<td>June 2025 payroll • KES 2.4M</td>
-									<td>41.204.18.22</td>
+									<td data-label="Timestamp">27 Jun 08:45</td>
+									<td data-label="User">Grace W.</td>
+									<td data-label="Action">Payroll Approved</td>
+									<td data-label="Details">June 2025 payroll • KES 2.4M</td>
+									<td data-label="IP">41.204.18.22</td>
 								</tr>
 								<tr>
-									<td>26 Jun 14:30</td>
-									<td>Peter O.</td>
-									<td>Invoice Created</td>
-									<td>INV-2025-0842 • KES 185,000</td>
-									<td>41.204.5.11</td>
+									<td data-label="Timestamp">26 Jun 14:30</td>
+									<td data-label="User">Peter O.</td>
+									<td data-label="Action">Invoice Created</td>
+									<td data-label="Details">INV-2025-0842 • KES 185,000</td>
+									<td data-label="IP">41.204.5.11</td>
 								</tr>
 								<tr>
-									<td>25 Jun 16:05</td>
-									<td>Grace W.</td>
-									<td>API Key Created</td>
-									<td>Production key • pk_live_8f3a</td>
-									<td>41.204.18.22</td>
+									<td data-label="Timestamp">25 Jun 16:05</td>
+									<td data-label="User">Grace W.</td>
+									<td data-label="Action">API Key Created</td>
+									<td data-label="Details">Production key • pk_live_8f3a</td>
+									<td data-label="IP">41.204.18.22</td>
 								</tr>
 							</tbody>
 						</table>
@@ -1462,13 +1605,13 @@ export default function SettingsAdministrationModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>
+									<td data-label="Role">
 										<strong>Owner</strong>
 									</td>
-									<td>Full access</td>
-									<td>Unlimited</td>
-									<td>1</td>
-									<td>
+									<td data-label="Description">Full access</td>
+									<td data-label="Approval Limit">Unlimited</td>
+									<td data-label="Users">1</td>
+									<td data-label="Actions">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1480,13 +1623,15 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Role">
 										<strong>Finance Manager</strong>
 									</td>
-									<td>Collections, disbursements, payroll</td>
-									<td>KES 500,000</td>
-									<td>2</td>
-									<td>
+									<td data-label="Description">
+										Collections, disbursements, payroll
+									</td>
+									<td data-label="Approval Limit">KES 500,000</td>
+									<td data-label="Users">2</td>
+									<td data-label="Actions">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1498,13 +1643,13 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Role">
 										<strong>Accountant</strong>
 									</td>
-									<td>Bookkeeping, reconciliation</td>
-									<td>KES 100,000</td>
-									<td>3</td>
-									<td>
+									<td data-label="Description">Bookkeeping, reconciliation</td>
+									<td data-label="Approval Limit">KES 100,000</td>
+									<td data-label="Users">3</td>
+									<td data-label="Actions">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1516,13 +1661,13 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Role">
 										<strong>HR Manager</strong>
 									</td>
-									<td>Payroll, employee data</td>
-									<td>KES 50,000</td>
-									<td>1</td>
-									<td>
+									<td data-label="Description">Payroll, employee data</td>
+									<td data-label="Approval Limit">KES 50,000</td>
+									<td data-label="Users">1</td>
+									<td data-label="Actions">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1564,17 +1709,17 @@ export default function SettingsAdministrationModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>
+									<td data-label="Branch">
 										<strong>Head Office</strong>
 									</td>
-									<td>Westlands, Nairobi</td>
-									<td>James K.</td>
-									<td>28</td>
-									<td>KES 12.4M</td>
-									<td>
+									<td data-label="Location">Westlands, Nairobi</td>
+									<td data-label="Manager">James K.</td>
+									<td data-label="Employees">28</td>
+									<td data-label="Collections MTD">KES 12.4M</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Active</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1586,17 +1731,17 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Branch">
 										<strong>Mombasa Branch</strong>
 									</td>
-									<td>Mombasa CBD</td>
-									<td>Grace W.</td>
-									<td>12</td>
-									<td>KES 4.8M</td>
-									<td>
+									<td data-label="Location">Mombasa CBD</td>
+									<td data-label="Manager">Grace W.</td>
+									<td data-label="Employees">12</td>
+									<td data-label="Collections MTD">KES 4.8M</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Active</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1608,17 +1753,17 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Branch">
 										<strong>Kisumu Branch</strong>
 									</td>
-									<td>Kisumu CBD</td>
-									<td>Peter O.</td>
-									<td>5</td>
-									<td>KES 1.9M</td>
-									<td>
+									<td data-label="Location">Kisumu CBD</td>
+									<td data-label="Manager">Peter O.</td>
+									<td data-label="Employees">5</td>
+									<td data-label="Collections MTD">KES 1.9M</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeS)}>Active</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -1630,17 +1775,17 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>
+									<td data-label="Branch">
 										<strong>Nakuru Branch</strong>
 									</td>
-									<td>Nakuru Town</td>
-									<td>—</td>
-									<td>2</td>
-									<td>KES 680K</td>
-									<td>
+									<td data-label="Location">Nakuru Town</td>
+									<td data-label="Manager">—</td>
+									<td data-label="Employees">2</td>
+									<td data-label="Collections MTD">KES 680K</td>
+									<td data-label="Status">
 										<span className={cx(s.badge, s.badgeI)}>Setup</span>
 									</td>
-									<td>
+									<td data-label="Action">
 										<button
 											className={cx(s.btnPm, s.btnSm)}
 											onClick={() =>
@@ -2183,22 +2328,22 @@ export default function SettingsAdministrationModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Document Expiry</td>
-									<td>
+									<td data-label="Alert Type">Document Expiry</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2207,18 +2352,18 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>New User Invited</td>
-									<td>
+									<td data-label="Alert Type">New User Invited</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input type="checkbox" className="form-check-input" />
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2227,22 +2372,22 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Compliance Deadline</td>
-									<td>
+									<td data-label="Alert Type">Compliance Deadline</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -2251,22 +2396,22 @@ export default function SettingsAdministrationModals({
 									</td>
 								</tr>
 								<tr>
-									<td>Security Alert</td>
-									<td>
+									<td data-label="Alert Type">Security Alert</td>
+									<td data-label="Push">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="SMS">
 										<input
 											type="checkbox"
 											className="form-check-input"
 											defaultChecked
 										/>
 									</td>
-									<td>
+									<td data-label="Email">
 										<input
 											type="checkbox"
 											className="form-check-input"

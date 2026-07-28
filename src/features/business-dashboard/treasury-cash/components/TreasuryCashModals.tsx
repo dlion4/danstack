@@ -158,11 +158,16 @@ export default function TreasuryCashModals({
 		cb: 1,
 		invest: 1,
 	});
+	/* LEGACY BRIDGE: switchTab('forecast', …) on the cash-flow forecast modal. */
+	const [forecastHorizon, setForecastHorizon] = useState<"30" | "60" | "90">(
+		"30",
+	);
 
 	useEffect(() => {
 		if (active === null) {
 			setResults({});
 			setFlows({ addBank: 1, transfer: 1, fx: 1, cb: 1, invest: 1 });
+			setForecastHorizon("30");
 			setBusy(null);
 		}
 	}, [active]);
@@ -1206,9 +1211,176 @@ export default function TreasuryCashModals({
 		</MBox>
 	);
 
+	/* ------------------------------------------------------------------
+	 * M: Cash Flow Forecast Model (legacy `cashflowForecastModal`, page 3.7).
+	 * Horizon tabs + weekly projection bars + inflow/outflow breakdown.
+	 * ---------------------------------------------------------------- */
+	const FORECAST_WEEKS: Record<string, { label: string; net: number }[]> = {
+		"30": [
+			{ label: "Jun 28", net: 62 },
+			{ label: "Jul 05", net: 78 },
+			{ label: "Jul 12", net: 54 },
+			{ label: "Jul 19", net: 88 },
+			{ label: "Jul 26", net: 71 },
+		],
+		"60": [
+			{ label: "Jul 05", net: 78 },
+			{ label: "Jul 19", net: 88 },
+			{ label: "Aug 02", net: 66 },
+			{ label: "Aug 16", net: 92 },
+			{ label: "Aug 30", net: 74 },
+		],
+		"90": [
+			{ label: "Jul", net: 74 },
+			{ label: "Aug", net: 81 },
+			{ label: "Sep", net: 58 },
+			{ label: "Oct", net: 95 },
+			{ label: "Nov", net: 83 },
+		],
+	};
+	const renderCashflowForecast = () => (
+		<MBox
+			id="cashflowForecastModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-graph-up text-primary me-2" />
+					Cash Flow Forecast Model
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={() =>
+							doAction(
+								"cashflowForecastModal",
+								"Forecast model exported to XLSX.",
+								"FCST-20250728-001",
+							)
+						}
+					>
+						<i className="bi bi-download" /> Export Model
+					</button>
+				</>
+			}
+		>
+			{renderActionBody(
+				"cashflowForecastModal",
+				<>
+					<div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+						<div className={s.pills}>
+							{(
+								[
+									{ key: "30", label: "30 Days" },
+									{ key: "60", label: "60 Days" },
+									{ key: "90", label: "90 Days" },
+								] as const
+							).map((h) => (
+								<button
+									key={h.key}
+									className={cx(
+										s.pill,
+										forecastHorizon === h.key && s.pillActive,
+									)}
+									onClick={() => setForecastHorizon(h.key)}
+								>
+									{h.label}
+								</button>
+							))}
+						</div>
+						<button
+							className={cx(s.btnPm, s.btnSm)}
+							onClick={() => onOpen("investmentPortfolioModal")}
+						>
+							<i className="bi bi-sliders" /> Scenarios
+						</button>
+					</div>
+
+					<div className={s.chartBars} style={{ marginBottom: 28 }}>
+						{FORECAST_WEEKS[forecastHorizon].map((w) => (
+							<div
+								key={w.label}
+								className={s.chartBar}
+								style={{
+									height: `${w.net}%`,
+									background: "var(--pm-primary)",
+								}}
+								title={`${w.label}: net position index ${w.net}`}
+							>
+								<span className={s.barLabel}>{w.label}</span>
+							</div>
+						))}
+					</div>
+
+					<div className="row g-3">
+						<div className="col-md-6">
+							<div className={s.statusBlock}>
+								<h6
+									style={{
+										fontSize: 13,
+										fontWeight: 700,
+										color: "var(--pm-accent)",
+									}}
+								>
+									<i className="bi bi-arrow-down-circle me-1" />
+									Expected Inflows (+18.2M)
+								</h6>
+								<ul
+									style={{
+										margin: 0,
+										paddingLeft: 18,
+										fontSize: 12,
+										lineHeight: 1.9,
+									}}
+								>
+									<li>Accounts Receivable (Due): KES 12.5M</li>
+									<li>Recurring Subscription Revenue: KES 4.2M</li>
+									<li>Interest / Maturities: KES 1.5M</li>
+								</ul>
+							</div>
+						</div>
+						<div className="col-md-6">
+							<div className={s.statusBlock}>
+								<h6
+									style={{
+										fontSize: 13,
+										fontWeight: 700,
+										color: "var(--pm-danger)",
+									}}
+								>
+									<i className="bi bi-arrow-up-circle me-1" />
+									Expected Outflows (-14.8M)
+								</h6>
+								<ul
+									style={{
+										margin: 0,
+										paddingLeft: 18,
+										fontSize: 12,
+										lineHeight: 1.9,
+									}}
+								>
+									<li>Payroll (Jul 25): KES 8.2M</li>
+									<li>Accounts Payable (Suppliers): KES 4.5M</li>
+									<li>Taxes (PAYE, VAT): KES 2.1M</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
 	return (
 		<>
 			{renderTransferFunds()}
+			{renderCashflowForecast()}
 			{renderAddAccount()}
 			{renderBookFX()}
 			{renderCrossBorder()}

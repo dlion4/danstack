@@ -1031,36 +1031,36 @@ export default function MultiCurrencyTreasuryModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>USD Exposure</td>
-							<td>
+							<td data-label="Area">USD Exposure</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
-							<td>68% hedged</td>
-							<td>—</td>
+							<td data-label="Issue">68% hedged</td>
+							<td data-label="Action">—</td>
 						</tr>
 						<tr>
-							<td>GBP Volatility</td>
-							<td>
+							<td data-label="Area">GBP Volatility</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeW)}>Watch</span>
 							</td>
-							<td>1.8% volatility</td>
-							<td>Increase hedge</td>
+							<td data-label="Issue">1.8% volatility</td>
+							<td data-label="Action">Increase hedge</td>
 						</tr>
 						<tr>
-							<td>Compliance</td>
-							<td>
+							<td data-label="Area">Compliance</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeW)}>Action</span>
 							</td>
-							<td>STR pending</td>
-							<td>File today</td>
+							<td data-label="Issue">STR pending</td>
+							<td data-label="Action">File today</td>
 						</tr>
 						<tr>
-							<td>Reconciliation</td>
-							<td>
+							<td data-label="Area">Reconciliation</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
-							<td>1 exception resolved</td>
-							<td>—</td>
+							<td data-label="Issue">1 exception resolved</td>
+							<td data-label="Action">—</td>
 						</tr>
 					</tbody>
 				</table>
@@ -1345,12 +1345,12 @@ export default function MultiCurrencyTreasuryModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>USD</td>
-							<td>ACCT-USD-001</td>
-							<td>Equity Bank</td>
-							<td>318,400</td>
-							<td>500,000</td>
-							<td>
+							<td data-label="Currency">USD</td>
+							<td data-label="Account ID">ACCT-USD-001</td>
+							<td data-label="Bank">Equity Bank</td>
+							<td data-label="Balance">318,400</td>
+							<td data-label="Limit">500,000</td>
+							<td data-label="Actions">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -1362,12 +1362,12 @@ export default function MultiCurrencyTreasuryModals({
 							</td>
 						</tr>
 						<tr>
-							<td>EUR</td>
-							<td>ACCT-EUR-001</td>
-							<td>KCB Bank</td>
-							<td>142,800</td>
-							<td>200,000</td>
-							<td>
+							<td data-label="Currency">EUR</td>
+							<td data-label="Account ID">ACCT-EUR-001</td>
+							<td data-label="Bank">KCB Bank</td>
+							<td data-label="Balance">142,800</td>
+							<td data-label="Limit">200,000</td>
+							<td data-label="Actions">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>
@@ -1379,12 +1379,12 @@ export default function MultiCurrencyTreasuryModals({
 							</td>
 						</tr>
 						<tr>
-							<td>KES</td>
-							<td>ACCT-KES-001</td>
-							<td>Equity Bank</td>
-							<td>48,240,000</td>
-							<td>100,000,000</td>
-							<td>
+							<td data-label="Currency">KES</td>
+							<td data-label="Account ID">ACCT-KES-001</td>
+							<td data-label="Bank">Equity Bank</td>
+							<td data-label="Balance">48,240,000</td>
+							<td data-label="Limit">100,000,000</td>
+							<td data-label="Actions">
 								<button
 									className={cx(s.btnPm, s.btnSm)}
 									onClick={() =>

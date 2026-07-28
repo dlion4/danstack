@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import OpenBankingModals from "../components/OpenBankingModals";
 import styles from "../styles/open-banking.module.css";
 
@@ -470,6 +471,37 @@ async function fetchOBContent(): Promise<OBConfig> {
 export default function OpenBanking() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-heart-pulse",
+				label: "Health Check",
+				onClick: () => setActiveModal("healthCheckModal"),
+			},
+			{
+				icon: "bi-bell",
+				label: "Alerts",
+				onClick: () => setActiveModal("notifModal"),
+			},
+			{
+				icon: "bi-arrow-left-right",
+				label: "Transfer",
+				onClick: () => setActiveModal("transferModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "Connect Bank",
+				tone: "primary",
+				onClick: () => setActiveModal("connectBankModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["business-open-banking"],
 		queryFn: fetchOBContent,
@@ -483,7 +515,7 @@ export default function OpenBanking() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -778,15 +810,15 @@ export default function OpenBanking() {
 										<tbody>
 											{config.bankAccounts.map((ba) => (
 												<tr key={ba.account}>
-													<td>
+													<td data-label="Bank">
 														<strong>{ba.bank}</strong>
 													</td>
-													<td>{ba.account}</td>
-													<td>{ba.type}</td>
-													<td>
+													<td data-label="Account">{ba.account}</td>
+													<td data-label="Type">{ba.type}</td>
+													<td data-label="Balance">
 														<strong>{ba.balance}</strong>
 													</td>
-													<td>
+													<td data-label="Consent">
 														<span
 															className={cx(
 																s.badge,
@@ -800,7 +832,7 @@ export default function OpenBanking() {
 															{ba.consent}
 														</span>
 													</td>
-													<td>
+													<td data-label="Sync">
 														<span
 															className={cx(
 																s.badge,
@@ -810,7 +842,7 @@ export default function OpenBanking() {
 															{ba.sync}
 														</span>
 													</td>
-													<td>
+													<td data-label="Actions">
 														<div className="d-flex" style={{ gap: 4 }}>
 															<button
 																className={cx(s.btnPm, s.btnSm)}
@@ -967,19 +999,19 @@ export default function OpenBanking() {
 										<tbody>
 											{config.transferRows.map((t) => (
 												<tr key={t.ref}>
-													<td>{t.date}</td>
-													<td>
+													<td data-label="Date">{t.date}</td>
+													<td data-label="From → To">
 														{t.from} → {t.to}
 													</td>
-													<td>
+													<td data-label="Amount">
 														<strong>{t.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[t.statusTone])}>
 															{t.status}
 														</span>
 													</td>
-													<td>{t.ref}</td>
+													<td data-label="Ref">{t.ref}</td>
 												</tr>
 											))}
 										</tbody>
@@ -1106,13 +1138,15 @@ export default function OpenBanking() {
 										<tbody>
 											{config.reconMatches.map((m) => (
 												<tr key={m.desc}>
-													<td>{m.desc}</td>
-													<td>
+													<td data-label="Description">{m.desc}</td>
+													<td data-label="Amount">
 														<strong>{m.amount}</strong>
 													</td>
-													<td>{m.bank}</td>
-													<td>{m.confidence > 0 ? `${m.confidence}%` : "—"}</td>
-													<td>
+													<td data-label="Bank">{m.bank}</td>
+													<td data-label="Confidence">
+														{m.confidence > 0 ? `${m.confidence}%` : "—"}
+													</td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[m.statusTone])}>
 															{m.status}
 														</span>
@@ -1347,11 +1381,13 @@ export default function OpenBanking() {
 					</div>
 				</div>
 			</div>
-	<OpenBankingModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<OpenBankingModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

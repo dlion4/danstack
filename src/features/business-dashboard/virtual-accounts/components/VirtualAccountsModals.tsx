@@ -526,19 +526,19 @@ export default function VirtualAccountsModals({
 								</thead>
 								<tbody>
 									<tr>
-										<td>VA-003</td>
-										<td>KES 2,500,000</td>
-										<td>Bank Transfer</td>
+										<td data-label="VA">VA-003</td>
+										<td data-label="Amount">KES 2,500,000</td>
+										<td data-label="Source">Bank Transfer</td>
 									</tr>
 									<tr>
-										<td>VA-007</td>
-										<td>KES 5,000,000</td>
-										<td>Bank Transfer</td>
+										<td data-label="VA">VA-007</td>
+										<td data-label="Amount">KES 5,000,000</td>
+										<td data-label="Source">Bank Transfer</td>
 									</tr>
 									<tr>
-										<td>VA-009</td>
-										<td>KES 1,000,000</td>
-										<td>PayMo Wallet</td>
+										<td data-label="VA">VA-009</td>
+										<td data-label="Amount">KES 1,000,000</td>
+										<td data-label="Source">PayMo Wallet</td>
 									</tr>
 								</tbody>
 							</table>
@@ -1194,9 +1194,9 @@ export default function VirtualAccountsModals({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Up to KES 100K</td>
-									<td>System</td>
-									<td>
+									<td data-label="Amount Range">Up to KES 100K</td>
+									<td data-label="Approver">System</td>
+									<td data-label="Auto-approve">
 										<input
 											type="checkbox"
 											className="form-check-input"
@@ -1205,23 +1205,23 @@ export default function VirtualAccountsModals({
 									</td>
 								</tr>
 								<tr>
-									<td>KES 100K – 500K</td>
-									<td>Manager</td>
-									<td>
+									<td data-label="Amount Range">KES 100K – 500K</td>
+									<td data-label="Approver">Manager</td>
+									<td data-label="Auto-approve">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>
 								<tr>
-									<td>KES 500K – 2M</td>
-									<td>Director</td>
-									<td>
+									<td data-label="Amount Range">KES 500K – 2M</td>
+									<td data-label="Approver">Director</td>
+									<td data-label="Auto-approve">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>
 								<tr>
-									<td>Above KES 2M</td>
-									<td>CFO + Board</td>
-									<td>
+									<td data-label="Amount Range">Above KES 2M</td>
+									<td data-label="Approver">CFO + Board</td>
+									<td data-label="Auto-approve">
 										<input type="checkbox" className="form-check-input" />
 									</td>
 								</tr>
@@ -1402,7 +1402,7 @@ export default function VirtualAccountsModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-compress-arrows text-primary me-2" />
+					<i className="bi bi-arrows-angle-contract text-primary me-2" />
 					Consolidate Virtual Accounts
 				</>
 			}
@@ -1950,32 +1950,32 @@ export default function VirtualAccountsModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>VA-003</td>
-							<td>
+							<td data-label="Account">VA-003</td>
+							<td data-label="Score">
 								<strong>98</strong>
 							</td>
-							<td>None</td>
-							<td>
+							<td data-label="Issues">None</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
 						</tr>
 						<tr>
-							<td>VA-007</td>
-							<td>
+							<td data-label="Account">VA-007</td>
+							<td data-label="Score">
 								<strong>91</strong>
 							</td>
-							<td>1 limit breach</td>
-							<td>
+							<td data-label="Issues">1 limit breach</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeW)}>Warning</span>
 							</td>
 						</tr>
 						<tr>
-							<td>SUB-0144</td>
-							<td>
+							<td data-label="Account">SUB-0144</td>
+							<td data-label="Score">
 								<strong>72</strong>
 							</td>
-							<td>Over limit, no rule</td>
-							<td>
+							<td data-label="Issues">Over limit, no rule</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeD)}>Critical</span>
 							</td>
 						</tr>

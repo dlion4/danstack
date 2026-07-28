@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import BusinessOnboardingModals from "../components/BusinessOnboardingModals";
 import styles from "../styles/business-onboarding.module.css";
 
@@ -572,17 +574,73 @@ const initialMockData: OnboardConfig = {
 	],
 };
 
+/**
+ * Frontend-only demo: no /api/business/business-onboarding backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
+async function fetchOnboardContent(): Promise<OnboardConfig> {
+	try {
+		const res = await fetch("/api/business/business-onboarding", {
+			headers: { Accept: "application/json" },
+		});
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		return (await res.json()) as OnboardConfig;
+	} catch {
+		return initialMockData;
+	}
+}
+
 export default function BusinessOnboarding() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-	const config = initialMockData;
+
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-shield-check",
+				label: "Compliance Check",
+				onClick: () => setActiveModal("complianceCheckModal"),
+			},
+			{
+				icon: "bi-list-task",
+				label: "Pending Queue",
+				onClick: () => setActiveModal("pendingQueueModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "Onboard Business",
+				onClick: () => setActiveModal("onboardNewModal"),
+			},
+			{
+				icon: "bi-upload",
+				label: "Bulk Onboard",
+				tone: "primary",
+				onClick: () => setActiveModal("bulkOnboardModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
+	const { data: apiData } = useQuery({
+		queryKey: ["business-onboarding"],
+		queryFn: fetchOnboardContent,
+		staleTime: 5 * 60_000,
+		retry: 1,
+	});
+	const config = apiData ?? initialMockData;
 
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
-		<div className={s.content}>
+		<div className={s.bizPage}>
+			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
 					<div className="col-lg-4">
@@ -986,18 +1044,18 @@ export default function BusinessOnboarding() {
 										<tbody>
 											{config.docQueue.map((d) => (
 												<tr key={d.business + d.document}>
-													<td>
+													<td data-label="Business">
 														<strong>{d.business}</strong>
 													</td>
-													<td>{d.document}</td>
-													<td>
+													<td data-label="Document">{d.document}</td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[d.statusTone])}>
 															{d.status}
 														</span>
 													</td>
-													<td>{d.uploaded}</td>
-													<td>{d.expiry}</td>
-													<td>
+													<td data-label="Uploaded">{d.uploaded}</td>
+													<td data-label="Expiry">{d.expiry}</td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal(d.modal)}
@@ -1238,17 +1296,17 @@ export default function BusinessOnboarding() {
 							<tbody>
 								{config.activityRows.map((a) => (
 									<tr key={a.ref}>
-										<td>{a.date}</td>
-										<td>{a.business}</td>
-										<td>{a.action}</td>
-										<td>{a.user}</td>
-										<td>
+										<td data-label="Date">{a.date}</td>
+										<td data-label="Business">{a.business}</td>
+										<td data-label="Action">{a.action}</td>
+										<td data-label="User">{a.user}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[a.statusTone])}>
 												{a.status}
 											</span>
 										</td>
-										<td>{a.ref}</td>
-										<td>
+										<td data-label="Reference">{a.ref}</td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(a.modal)}
@@ -1264,10 +1322,10 @@ export default function BusinessOnboarding() {
 				</div>
 			</div>
 			<BusinessOnboardingModals
-	active={activeModal}
-	onClose={() => setActiveModal(null)}
-	onOpen={setActiveModal}
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
 			/>
-		</>
-	)
+		</div>
+	);
 }

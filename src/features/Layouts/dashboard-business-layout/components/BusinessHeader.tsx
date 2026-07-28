@@ -238,7 +238,7 @@ export default function BusinessHeader({
 							</div>
 							<div className={cx(s["panel-footer"], "text-center")}>
 								<Link
-									to="/business/$module"
+									to="/business-dashboard/$module"
 									params={{ module: "insights" }}
 									className={cx(s.btnLink, s.btnLinkPrimary)}
 									onClick={() => onToggleDropdown("notifications")}

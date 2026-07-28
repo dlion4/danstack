@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import MultiCurrencyTreasuryModals from "../components/MultiCurrencyTreasuryModals";
 import styles from "../styles/multi-currency-treasury.module.css";
 
@@ -517,6 +518,37 @@ async function fetchFXContent(): Promise<FXConfig> {
 export default function MultiCurrencyTreasury() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-heart-pulse",
+				label: "Health Check",
+				onClick: () => setActiveModal("fxHealthModal"),
+			},
+			{
+				icon: "bi-list-check",
+				label: "Reconcile",
+				onClick: () => setActiveModal("reportExportModal"),
+			},
+			{
+				icon: "bi-arrow-left-right",
+				label: "Transfer",
+				onClick: () => setActiveModal("transferModal"),
+			},
+			{
+				icon: "bi-currency-exchange",
+				label: "Trade FX",
+				tone: "primary",
+				onClick: () => setActiveModal("tradeModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["business-multi-currency-treasury"],
 		queryFn: fetchFXContent,
@@ -530,7 +562,7 @@ export default function MultiCurrencyTreasury() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -825,22 +857,22 @@ export default function MultiCurrencyTreasury() {
 										<tbody>
 											{config.currencies.map((c) => (
 												<tr key={c.code}>
-													<td>
+													<td data-label="Currency">
 														<strong>{c.code}</strong>
 													</td>
-													<td>
+													<td data-label="Balance">
 														<strong>
 															{c.symbol} {c.balance}
 														</strong>
 													</td>
-													<td>{c.volume}</td>
-													<td>
+													<td data-label="Volume (MTD)">{c.volume}</td>
+													<td data-label="Change">
 														<span className={cx(s.badge, s[c.changeTone])}>
 															{c.change}
 														</span>
 													</td>
-													<td>{c.progress}%</td>
-													<td>
+													<td data-label="Hedge %">{c.progress}%</td>
+													<td data-label="Progress">
 														<div className={s.progress}>
 															<div
 																className={s.progressBar}
@@ -851,7 +883,7 @@ export default function MultiCurrencyTreasury() {
 															/>
 														</div>
 													</td>
-													<td>
+													<td data-label="Actions">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal("transferModal")}
@@ -998,18 +1030,18 @@ export default function MultiCurrencyTreasury() {
 							<tbody>
 								{config.contracts.map((c) => (
 									<tr key={c.id}>
-										<td>
+										<td data-label="Contract">
 											<code>{c.id}</code>
 										</td>
-										<td>{c.pair}</td>
-										<td>{c.amount}</td>
-										<td>{c.rate}</td>
-										<td>{c.value}</td>
-										<td>{c.expiry}</td>
-										<td>
+										<td data-label="Pair">{c.pair}</td>
+										<td data-label="Amount">{c.amount}</td>
+										<td data-label="Rate">{c.rate}</td>
+										<td data-label="Value">{c.value}</td>
+										<td data-label="Expiry">{c.expiry}</td>
+										<td data-label="P&L">
 											<span className={cx(s.badge, s[c.pnlTone])}>{c.pnl}</span>
 										</td>
-										<td>
+										<td data-label="Actions">
 											<div className="d-flex" style={{ gap: 4 }}>
 												<button
 													className={cx(s.btnPm, s.btnSm)}
@@ -1088,13 +1120,13 @@ export default function MultiCurrencyTreasury() {
 										<tbody>
 											{config.transferRows.map((t) => (
 												<tr key={t.date + t.from}>
-													<td>{t.date}</td>
-													<td>{t.from}</td>
-													<td>{t.to}</td>
-													<td>
+													<td data-label="Date">{t.date}</td>
+													<td data-label="From">{t.from}</td>
+													<td data-label="To">{t.to}</td>
+													<td data-label="Amount">
 														<strong>{t.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[t.statusTone])}>
 															{t.status}
 														</span>
@@ -1125,15 +1157,15 @@ export default function MultiCurrencyTreasury() {
 										<tbody>
 											{config.compliance.map((c) => (
 												<tr key={c.area}>
-													<td>
+													<td data-label="Area">
 														<strong>{c.area}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[c.tone])}>
 															{c.status}
 														</span>
 													</td>
-													<td>{c.filing}</td>
+													<td data-label="Detail">{c.filing}</td>
 												</tr>
 											))}
 										</tbody>
@@ -1144,11 +1176,13 @@ export default function MultiCurrencyTreasury() {
 					</div>
 				</div>
 			</div>
-	<MultiCurrencyTreasuryModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<MultiCurrencyTreasuryModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

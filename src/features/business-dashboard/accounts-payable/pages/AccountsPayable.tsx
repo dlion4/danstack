@@ -1,4 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
+import AccountsPayableExtraModals from "../components/AccountsPayableExtraModals";
 import AccountsPayableModals from "../components/AccountsPayableModals";
 import styles from "../styles/accounts-payable.module.css";
 
@@ -380,15 +383,66 @@ const initialMockData: APConfig = {
 	],
 };
 
+/**
+ * Frontend-only demo: no /api/business-dashboard/accounts-payable backend exists yet. Try the real
+ * endpoint so this page works unchanged once it ships, but fall back to the
+ * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
+ * JSON) so the page always renders instead of surfacing an error state.
+ */
+async function fetchAPData(): Promise<APConfig> {
+	try {
+		const res = await fetch("/api/business-dashboard/accounts-payable", {
+			headers: { Accept: "application/json" },
+		});
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		return (await res.json()) as APConfig;
+	} catch {
+		return initialMockData;
+	}
+}
+
 export default function AccountsPayable() {
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-	const config = initialMockData;
+
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-cloud-arrow-up",
+				label: "Upload Invoice",
+				onClick: () => setActiveModal("processInvoiceModal"),
+			},
+			{
+				icon: "bi-collection-play",
+				label: "Bulk Run",
+				onClick: () => setActiveModal("bulkPaySuppliersModal"),
+			},
+			{
+				icon: "bi-person-plus",
+				label: "Add Supplier",
+				tone: "primary",
+				onClick: () => setActiveModal("addSupplierModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
+	const { data: apiData } = useQuery({
+		queryKey: ["accounts-payable"],
+		queryFn: fetchAPData,
+		staleTime: 5 * 60 * 1000,
+		retry: 1,
+	});
+	const config = apiData ?? initialMockData;
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* HERO */}
 				<div className="row g-3">
@@ -552,18 +606,18 @@ export default function AccountsPayable() {
 							<tbody>
 								{config.suppliers.map((sr) => (
 									<tr key={sr.name}>
-										<td>
+										<td data-label="Supplier">
 											<strong>{sr.name}</strong>
 										</td>
-										<td>{sr.category}</td>
-										<td>{sr.invoices}</td>
-										<td>{sr.outstanding}</td>
-										<td>
+										<td data-label="Category">{sr.category}</td>
+										<td data-label="Invoices">{sr.invoices}</td>
+										<td data-label="Outstanding">{sr.outstanding}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[sr.statusTone])}>
 												{sr.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(sr.modal)}
@@ -615,18 +669,18 @@ export default function AccountsPayable() {
 							<tbody>
 								{config.invoices.map((inv) => (
 									<tr key={inv.id}>
-										<td>
+										<td data-label="Invoice #">
 											<strong>{inv.id}</strong>
 										</td>
-										<td>{inv.supplier}</td>
-										<td>{inv.amount}</td>
-										<td>{inv.dueDate}</td>
-										<td>
+										<td data-label="Supplier">{inv.supplier}</td>
+										<td data-label="Amount">{inv.amount}</td>
+										<td data-label="Due Date">{inv.dueDate}</td>
+										<td data-label="Status">
 											<span className={cx(s.badge, s[inv.statusTone])}>
 												{inv.status}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(inv.modal)}
@@ -734,18 +788,23 @@ export default function AccountsPayable() {
 							<tbody>
 								{config.discounts.map((dr) => (
 									<tr key={dr.supplier}>
-										<td>
+										<td data-label="Supplier">
 											<strong>{dr.supplier}</strong>
 										</td>
-										<td>{dr.discount}</td>
-										<td>{dr.terms}</td>
-										<td style={{ color: "var(--pm-accent)" }}>{dr.savings}</td>
-										<td>
+										<td data-label="Discount">{dr.discount}</td>
+										<td data-label="Terms">{dr.terms}</td>
+										<td
+											data-label="Savings"
+											style={{ color: "var(--pm-accent)" }}
+										>
+											{dr.savings}
+										</td>
+										<td data-label="Expires">
 											<span className={cx(s.badge, s[dr.expiresTone])}>
 												{dr.expires}
 											</span>
 										</td>
-										<td>
+										<td data-label="Action">
 											<button
 												className={cx(s.btnPm, s.btnSm)}
 												onClick={() => setActiveModal(dr.modal)}
@@ -760,11 +819,198 @@ export default function AccountsPayable() {
 					</div>
 				</div>
 			</div>
-	<AccountsPayableModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<AccountsPayableModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+			{/* ================================================================
+			 * Restored tools — dialogs that exist in the original page but whose
+			 * trigger buttons were lost in the first React port. Labels and icons
+			 * are taken from the legacy markup.
+			 * ============================================================== */}
+			<div className={s.card} style={{ marginTop: 16 }}>
+				<div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+					<div>
+						<h3 className={s.st} style={{ margin: 0 }}>
+							<i className="bi bi-grid-3x3-gap" /> More Tools &amp; Reports
+						</h3>
+						<p
+							style={{
+								fontSize: 12,
+								color: "var(--pm-muted)",
+								margin: "4px 0 0",
+							}}
+						>
+							Additional workflows from this module (17).
+						</p>
+					</div>
+				</div>
+				<div className={s.restoredGrid}>
+					<button
+						key="payableAgingModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("payableAgingModal")}
+					>
+						<i className="bi bi-hourglass-split" aria-hidden="true" />
+						<span>Aging Report</span>
+					</button>
+					<button
+						key="approveExpenseModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("approveExpenseModal")}
+					>
+						<i className="bi bi-check2-circle" aria-hidden="true" />
+						<span>Approve Expense</span>
+					</button>
+					<button
+						key="attentionActionModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("attentionActionModal")}
+					>
+						<i className="bi bi-exclamation-triangle" aria-hidden="true" />
+						<span>Attention Items</span>
+					</button>
+					<button
+						key="createPoModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("createPoModal")}
+					>
+						<i className="bi bi-file-earmark-plus" aria-hidden="true" />
+						<span>Create PO</span>
+					</button>
+					<button
+						key="departmentApprovalModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("departmentApprovalModal")}
+					>
+						<i className="bi bi-building-check" aria-hidden="true" />
+						<span>Department Approvals</span>
+					</button>
+					<button
+						key="dpoAnalyticsModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("dpoAnalyticsModal")}
+					>
+						<i className="bi bi-graph-up" aria-hidden="true" />
+						<span>DPO Dashboards</span>
+					</button>
+					<button
+						key="earlyPaymentDiscountModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("earlyPaymentDiscountModal")}
+					>
+						<i className="bi bi-percent" aria-hidden="true" />
+						<span>Early Payment Discount</span>
+					</button>
+					<button
+						key="exportApReportModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("exportApReportModal")}
+					>
+						<i className="bi bi-download" aria-hidden="true" />
+						<span>Export AP Data</span>
+					</button>
+					<button
+						key="expenseClaimModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("expenseClaimModal")}
+					>
+						<i className="bi bi-wallet2" aria-hidden="true" />
+						<span>File Expense Claim</span>
+					</button>
+					<button
+						key="disputeInvoiceModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("disputeInvoiceModal")}
+					>
+						<i className="bi bi-flag" aria-hidden="true" />
+						<span>Flag / Dispute Invoice</span>
+					</button>
+					<button
+						key="kybVerificationModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("kybVerificationModal")}
+					>
+						<i className="bi bi-patch-check" aria-hidden="true" />
+						<span>KYB Verification</span>
+					</button>
+					<button
+						key="paySupplierModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("paySupplierModal")}
+					>
+						<i className="bi bi-cash-coin" aria-hidden="true" />
+						<span>Pay Supplier</span>
+					</button>
+					<button
+						key="paymentReceiptModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("paymentReceiptModal")}
+					>
+						<i className="bi bi-receipt" aria-hidden="true" />
+						<span>Payment Receipts</span>
+					</button>
+					<button
+						key="supplierProfileModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("supplierProfileModal")}
+					>
+						<i className="bi bi-person-badge" aria-hidden="true" />
+						<span>Supplier Profile</span>
+					</button>
+					<button
+						key="supplierStatementModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("supplierStatementModal")}
+					>
+						<i className="bi bi-file-earmark-spreadsheet" aria-hidden="true" />
+						<span>Supplier Statements</span>
+					</button>
+					<button
+						key="uploadInvoiceModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("uploadInvoiceModal")}
+					>
+						<i className="bi bi-cloud-arrow-up" aria-hidden="true" />
+						<span>Upload Invoice</span>
+					</button>
+					<button
+						key="vendorPerformanceModal"
+						type="button"
+						className={s.restoredBtn}
+						onClick={() => setActiveModal("vendorPerformanceModal")}
+					>
+						<i className="bi bi-star" aria-hidden="true" />
+						<span>Vendor Performance</span>
+					</button>
+				</div>
+			</div>
+
+			{/* Modals ported from the original HTML that the first pass missed */}
+			<AccountsPayableExtraModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

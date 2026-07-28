@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useBusinessPageActions } from "@/features/Layouts/dashboard-business-layout/data/businessLayoutContext";
 import CollectionsMerchantModals from "../components/CollectionsMerchantModals";
 import styles from "../styles/collections-merchant.module.css";
 
@@ -553,6 +554,32 @@ async function fetchCollectionsContent(): Promise<CollectionsConfig> {
 export default function CollectionsMerchant() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
+	/* ---------- LEGACY BRIDGE: pm-page-bar action buttons ----------------
+	 * The legacy HTML rendered these next to the page title with
+	 * onclick="openModal('…')". The shell owns the page bar now, so the
+	 * page publishes them and BusinessPageBar renders them. */
+	useBusinessPageActions(
+		[
+			{
+				icon: "bi-qr-code",
+				label: "Generate QR",
+				onClick: () => setActiveModal("generateQRModal"),
+			},
+			{
+				icon: "bi-clock-history",
+				label: "Settlements",
+				onClick: () => setActiveModal("settlementModal"),
+			},
+			{
+				icon: "bi-plus-lg",
+				label: "Collect Payment",
+				tone: "primary",
+				onClick: () => setActiveModal("receivePaymentModal"),
+			},
+		],
+		[setActiveModal],
+	);
+
 	const { data: apiData } = useQuery({
 		queryKey: ["business-collections-merchant"],
 		queryFn: fetchCollectionsContent,
@@ -566,7 +593,7 @@ export default function CollectionsMerchant() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<>
+		<div className={s.bizPage}>
 			<div className={s.content}>
 				{/* Hero Stats Row */}
 				<div className="row g-3">
@@ -986,21 +1013,21 @@ export default function CollectionsMerchant() {
 										<tbody>
 											{config.txnFeed.map((t) => (
 												<tr key={t.ref}>
-													<td>{t.time}</td>
-													<td>{t.customer}</td>
-													<td>
+													<td data-label="Time">{t.time}</td>
+													<td data-label="Customer">{t.customer}</td>
+													<td data-label="Ref">
 														<code>{t.ref}</code>
 													</td>
-													<td>{t.method}</td>
-													<td>
+													<td data-label="Method">{t.method}</td>
+													<td data-label="Amount">
 														<strong>{t.amount}</strong>
 													</td>
-													<td>
+													<td data-label="Status">
 														<span className={cx(s.badge, s[t.statusTone])}>
 															{t.status}
 														</span>
 													</td>
-													<td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal(t.modal)}
@@ -1188,18 +1215,18 @@ export default function CollectionsMerchant() {
 										<tbody>
 											{config.customerRows.map((c) => (
 												<tr key={c.name}>
-													<td>
+													<td data-label="Customer Name">
 														<strong>{c.name}</strong>
 													</td>
-													<td>{c.phone}</td>
-													<td>
+													<td data-label="Contact">{c.phone}</td>
+													<td data-label="Segment">
 														<span className={cx(s.badge, s[c.segmentTone])}>
 															{c.segment}
 														</span>
 													</td>
-													<td>{c.ltv}</td>
-													<td>{c.last}</td>
-													<td>
+													<td data-label="LTV">{c.ltv}</td>
+													<td data-label="Last Payment">{c.last}</td>
+													<td data-label="Action">
 														<button
 															className={cx(s.btnPm, s.btnSm)}
 															onClick={() => setActiveModal(c.modal)}
@@ -1322,11 +1349,13 @@ export default function CollectionsMerchant() {
 					</div>
 				</div>
 			</div>
-	<CollectionsMerchantModals
-		active={activeModal}
-		onClose={() => setActiveModal(null)}
-		onOpen={setActiveModal}
-	/>
-		</>
-	)
+
+			{/* MODALS */}
+			<CollectionsMerchantModals
+				active={activeModal}
+				onClose={() => setActiveModal(null)}
+				onOpen={setActiveModal}
+			/>
+		</div>
+	);
 }

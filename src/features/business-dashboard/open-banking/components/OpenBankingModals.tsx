@@ -737,23 +737,23 @@ export default function OpenBankingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>27 Jun</td>
-							<td>Client payment — ABC Ltd</td>
-							<td>
+							<td data-label="Date">27 Jun</td>
+							<td data-label="Description">Client payment — ABC Ltd</td>
+							<td data-label="Amount">
 								<strong>+KES 1,850,000</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>26 Jun</td>
-							<td>Supplier payment — XYZ Corp</td>
-							<td>
+							<td data-label="Date">26 Jun</td>
+							<td data-label="Description">Supplier payment — XYZ Corp</td>
+							<td data-label="Amount">
 								<strong>-KES 425,000</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>25 Jun</td>
-							<td>Transfer from KCB</td>
-							<td>
+							<td data-label="Date">25 Jun</td>
+							<td data-label="Description">Transfer from KCB</td>
+							<td data-label="Amount">
 								<strong>+KES 500,000</strong>
 							</td>
 						</tr>
@@ -795,11 +795,11 @@ export default function OpenBankingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Equity Bank</td>
-							<td>****4521</td>
-							<td>Valid</td>
-							<td>Live</td>
-							<td>
+							<td data-label="Bank">Equity Bank</td>
+							<td data-label="Account">****4521</td>
+							<td data-label="Consent">Valid</td>
+							<td data-label="Sync">Live</td>
+							<td data-label="Actions">
 								<div className="d-flex" style={{ gap: 4 }}>
 									<button
 										className={cx(s.btnPm, s.btnSm)}
@@ -823,11 +823,11 @@ export default function OpenBankingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>KCB Bank</td>
-							<td>****7782</td>
-							<td>Valid</td>
-							<td>Live</td>
-							<td>
+							<td data-label="Bank">KCB Bank</td>
+							<td data-label="Account">****7782</td>
+							<td data-label="Consent">Valid</td>
+							<td data-label="Sync">Live</td>
+							<td data-label="Actions">
 								<div className="d-flex" style={{ gap: 4 }}>
 									<button
 										className={cx(s.btnPm, s.btnSm)}
@@ -851,11 +851,11 @@ export default function OpenBankingModals({
 							</td>
 						</tr>
 						<tr>
-							<td>Family Bank</td>
-							<td>****5543</td>
-							<td>Expired</td>
-							<td>Paused</td>
-							<td>
+							<td data-label="Bank">Family Bank</td>
+							<td data-label="Account">****5543</td>
+							<td data-label="Consent">Expired</td>
+							<td data-label="Sync">Paused</td>
+							<td data-label="Actions">
 								<div className="d-flex" style={{ gap: 4 }}>
 									<button
 										className={cx(s.btnPm, s.btnSm, s.btnPmP)}
@@ -1134,52 +1134,52 @@ export default function OpenBankingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Equity Bank</td>
-							<td>8s</td>
-							<td>KES 0</td>
-							<td>99.9%</td>
-							<td>Real-time</td>
-							<td>
+							<td data-label="Bank">Equity Bank</td>
+							<td data-label="Settlement">8s</td>
+							<td data-label="Fee">KES 0</td>
+							<td data-label="Uptime">99.9%</td>
+							<td data-label="Sync Speed">Real-time</td>
+							<td data-label="Score">
 								<strong>98</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>KCB Bank</td>
-							<td>12s</td>
-							<td>KES 0</td>
-							<td>99.8%</td>
-							<td>Real-time</td>
-							<td>
+							<td data-label="Bank">KCB Bank</td>
+							<td data-label="Settlement">12s</td>
+							<td data-label="Fee">KES 0</td>
+							<td data-label="Uptime">99.8%</td>
+							<td data-label="Sync Speed">Real-time</td>
+							<td data-label="Score">
 								<strong>96</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Co-op Bank</td>
-							<td>15s</td>
-							<td>KES 0</td>
-							<td>99.7%</td>
-							<td>Real-time</td>
-							<td>
+							<td data-label="Bank">Co-op Bank</td>
+							<td data-label="Settlement">15s</td>
+							<td data-label="Fee">KES 0</td>
+							<td data-label="Uptime">99.7%</td>
+							<td data-label="Sync Speed">Real-time</td>
+							<td data-label="Score">
 								<strong>94</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Stanbic Bank</td>
-							<td>22s</td>
-							<td>KES 25</td>
-							<td>99.5%</td>
-							<td>15 min</td>
-							<td>
+							<td data-label="Bank">Stanbic Bank</td>
+							<td data-label="Settlement">22s</td>
+							<td data-label="Fee">KES 25</td>
+							<td data-label="Uptime">99.5%</td>
+							<td data-label="Sync Speed">15 min</td>
+							<td data-label="Score">
 								<strong>82</strong>
 							</td>
 						</tr>
 						<tr>
-							<td>Family Bank</td>
-							<td>18s</td>
-							<td>KES 0</td>
-							<td>98.2%</td>
-							<td>3 hr</td>
-							<td>
+							<td data-label="Bank">Family Bank</td>
+							<td data-label="Settlement">18s</td>
+							<td data-label="Fee">KES 0</td>
+							<td data-label="Uptime">98.2%</td>
+							<td data-label="Sync Speed">3 hr</td>
+							<td data-label="Score">
 								<strong>71</strong>
 							</td>
 						</tr>
@@ -1489,34 +1489,34 @@ export default function OpenBankingModals({
 					</thead>
 					<tbody>
 						<tr>
-							<td>Equity Bank</td>
-							<td>Valid (83d)</td>
-							<td>Live</td>
-							<td>
+							<td data-label="Bank">Equity Bank</td>
+							<td data-label="Consent">Valid (83d)</td>
+							<td data-label="Sync">Live</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
 						</tr>
 						<tr>
-							<td>KCB Bank</td>
-							<td>Valid (45d)</td>
-							<td>Live</td>
-							<td>
+							<td data-label="Bank">KCB Bank</td>
+							<td data-label="Consent">Valid (45d)</td>
+							<td data-label="Sync">Live</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeS)}>Healthy</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Co-op Bank</td>
-							<td>Expiring (7d)</td>
-							<td>Live</td>
-							<td>
+							<td data-label="Bank">Co-op Bank</td>
+							<td data-label="Consent">Expiring (7d)</td>
+							<td data-label="Sync">Live</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeW)}>Watch</span>
 							</td>
 						</tr>
 						<tr>
-							<td>Family Bank</td>
-							<td>Expired</td>
-							<td>Paused</td>
-							<td>
+							<td data-label="Bank">Family Bank</td>
+							<td data-label="Consent">Expired</td>
+							<td data-label="Sync">Paused</td>
+							<td data-label="Status">
 								<span className={cx(s.badge, s.badgeD)}>Disconnected</span>
 							</td>
 						</tr>

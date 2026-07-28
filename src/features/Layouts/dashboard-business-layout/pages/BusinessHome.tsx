@@ -110,7 +110,7 @@ export default function BusinessHome() {
 					{quickLinks.map((mod) => (
 						<Link
 							key={mod.key}
-							to="/business/$module"
+							to="/business-dashboard/$module"
 							params={{ module: mod.key }}
 							className={d.moduleCard}
 						>
