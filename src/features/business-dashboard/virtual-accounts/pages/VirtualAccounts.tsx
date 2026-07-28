@@ -489,7 +489,7 @@ export default function VirtualAccounts() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1459,13 +1459,11 @@ export default function VirtualAccounts() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<VirtualAccountsModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<VirtualAccountsModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

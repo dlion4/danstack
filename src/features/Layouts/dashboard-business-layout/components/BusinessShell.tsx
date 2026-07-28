@@ -2,32 +2,24 @@
  * BusinessShell.tsx — the reusable Paymo BAAS Business Layout shell.
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: Angular dashboard-business-layout (typescript + html).
- *   Owns layout composition + ALL interactive state and bridges the legacy
- *   Angular lifecycle (resize, Escape, Ctrl/Cmd+B, click-outside, dropdowns,
- *   aside panels, toasts) into React hooks. Child pages render into <Outlet />
- *   and can call useBusinessShell() to fire toasts or open an aside panel.
- *
- * STACK ........: Vite + React + TypeScript + TanStack Router + TanStack Query
- * ARCHITECTURE .: Layout route renders <BusinessShell>, whose <Outlet /> hosts
- *                 the page route (BusinessHome, BusinessModulePage…).
+ * ARCHITECTURE: Layout route renders <BusinessShell>, whose <Outlet /> hosts
+ * the page route.
  * ========================================================================== */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useRouterState } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 
-/* ---------------------------------------------------------------------------
- * Bootstrap + Bootstrap Icons — imported ONCE here in the shell so that every
- * child route under /business-dashboard (15 pages + all modals) shares the
- * grid, utility classes (row / col-lg-4 / d-flex / btn / modal / etc.) and the
- * ~690 bi-* icons used throughout the migrated pages. The legacy BAAS business
- * HTML loads these from CDN; in the React shell we bundle them once instead of
- * re-importing per page (which would duplicate CSS in dev HMR).
- * JS bundle is loaded async on mount so modals (new bootstrap.Modal(...)) work
- * without each page having to ship its own <script>.
- * ------------------------------------------------------------------------- */
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import { useQuery } from "@tanstack/react-query";
+import { Outlet, useRouterState } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import {
+	BusinessShellContext,
+	type BusinessShellContextValue,
+} from "../data/businessLayoutContext";
+import type {
+	AsideKind,
+	ToastInput,
+	ToastTone,
+} from "../data/businessLayoutData";
 import {
 	cx,
 	fetchBusinessLayoutContent,
@@ -44,61 +36,40 @@ import type { BusinessToastRecord } from "./BusinessToasts";
 import BusinessToasts from "./BusinessToasts";
 
 const s = styles as Record<string, string>;
-
 let toastIdSeq = 0;
-
 export default function BusinessShell() {
-  /* ---------- Bootstrap JS (async, one-shot) ---------------------------------
-   * Loaded once so any child page/modal that calls `new bootstrap.Modal(el)`
-   * (or Tooltip/Popover) works without every page re-importing the bundle. */
-  useEffect(() => {
-    let cancelled = false;
-    import('bootstrap/dist/js/bootstrap.bundle.min.js').catch((err) => {
-      if (!cancelled) console.warn('[BusinessShell] Bootstrap JS failed to load:', err);
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  /* ---------- TanStack Query: backend-ready business layout content ----------
-   * fetchBusinessLayoutContent() never rejects (it falls back to bundled mock
-   * data), so there is no error state and no need to gate <Outlet /> behind a
-   * spinner — the chrome renders immediately from mock content and swaps in
-   * live data if/when the API responds. */
-  const { data: apiData } = useQuery({
-    queryKey: ['business-layout-content'],
-    queryFn: fetchBusinessLayoutContent,
-    staleTime: 5 * 60_000,
-    retry: 1,
-  });
-  const content = apiData ?? initialMockData;
-
-	/* ---------- layout state ---------- */
+	useEffect(() => {
+		let cancelled = false;
+		import("bootstrap/dist/js/bootstrap.bundle.min.js").catch((err) => {
+			if (!cancelled)
+				console.warn("[BusinessShell] Bootstrap JS failed to load:", err);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, []);
+	const { data: apiData } = useQuery({
+		queryKey: ["business-layout-content"],
+		queryFn: fetchBusinessLayoutContent,
+		staleTime: 5 * 60_000,
+		retry: 1,
+	});
+	const content = apiData ?? initialMockData;
 	const [isDesktop, setIsDesktop] = useState(true);
 	const [expanded, setExpanded] = useState(true);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [openDropdown, setOpenDropdown] = useState<DropdownName | null>(null);
 	const [activePanel, setActivePanel] = useState<AsideKind | null>(null);
-
-	/* ---------- toasts ---------- */
 	const [toasts, setToasts] = useState<BusinessToastRecord[]>([]);
 	const leavingTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
 		new Map(),
 	);
-
-	/* ---------- active section from the URL (for nav highlighting) ---------- */
 	const pathname = useRouterState({ select: (st) => st.location.pathname });
 	const activeSection = useMemo(() => {
 		const segments = pathname.split("/").filter(Boolean);
-		// base path is /business  -> the module slug (if any) is segments[1]
 		return segments.length >= 2 ? segments[1] : "dashboard";
 	}, [pathname]);
-
-	/* ---------- shell-owned page bar (breadcrumb + title) for child routes ---- */
 	const pageMeta = useMemo(() => resolveBusinessPageMeta(pathname), [pathname]);
-
-	/* ======================================================================
-	 * TOAST ENGINE
-	 * ==================================================================== */
 	const dismissToast = useCallback((id: number) => {
 		setToasts((prev) =>
 			prev.map((t) => (t.id === id ? { ...t, leaving: true } : t)),
@@ -109,7 +80,6 @@ export default function BusinessShell() {
 		}, 300);
 		leavingTimersRef.current.set(id, timer);
 	}, []);
-
 	const showToast = useCallback(
 		(toast: ToastInput | string, tone?: ToastTone) => {
 			const input: ToastInput =
@@ -133,7 +103,6 @@ export default function BusinessShell() {
 		},
 		[dismissToast],
 	);
-
 	useEffect(
 		() => () => {
 			leavingTimersRef.current.forEach(clearTimeout);
@@ -141,28 +110,15 @@ export default function BusinessShell() {
 		},
 		[],
 	);
-
-	/* ======================================================================
-	 * SIDEBAR
-	 * ==================================================================== */
 	const toggleSidebar = useCallback(() => {
 		if (isDesktop) setExpanded((v) => !v);
 		else setMobileOpen((v) => !v);
 	}, [isDesktop]);
-
 	const closeMobile = useCallback(() => setMobileOpen(false), []);
-
-	/* ======================================================================
-	 * DROPDOWNS
-	 * ==================================================================== */
 	const toggleDropdown = useCallback((name: DropdownName) => {
 		setOpenDropdown((prev) => (prev === name ? null : name));
 	}, []);
 	const closeAllDropdowns = useCallback(() => setOpenDropdown(null), []);
-
-	/* ======================================================================
-	 * RIGHT ASIDE
-	 * ==================================================================== */
 	const openAside = useCallback(
 		(kind: AsideKind) => {
 			setActivePanel(kind);
@@ -171,16 +127,11 @@ export default function BusinessShell() {
 		[closeAllDropdowns],
 	);
 	const closeAside = useCallback(() => setActivePanel(null), []);
-
-	/* ======================================================================
-	 * ACTIONS
-	 * ==================================================================== */
 	const handleLogout = useCallback(() => {
 		closeAllDropdowns();
 		closeAside();
 		showToast("Logged out successfully", "success");
 	}, [closeAllDropdowns, closeAside, showToast]);
-
 	const handleSearchSubmit = useCallback(
 		(query: string) => {
 			const q = query.trim();
@@ -189,10 +140,6 @@ export default function BusinessShell() {
 		},
 		[showToast],
 	);
-
-	/* ======================================================================
-	 * LEGACY BRIDGE: window resize
-	 * ==================================================================== */
 	useEffect(() => {
 		const onResize = () => {
 			const desktop = window.innerWidth >= 992;
@@ -206,10 +153,6 @@ export default function BusinessShell() {
 		window.addEventListener("resize", onResize);
 		return () => window.removeEventListener("resize", onResize);
 	}, [isDesktop]);
-
-	/* ======================================================================
-	 * LEGACY BRIDGE: keydown (Escape + Ctrl/Cmd+B)
-	 * ==================================================================== */
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
 			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
@@ -226,10 +169,6 @@ export default function BusinessShell() {
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
 	}, [closeAllDropdowns, closeAside, closeMobile, isDesktop, toggleSidebar]);
-
-	/* ======================================================================
-	 * LEGACY BRIDGE: click-outside closes dropdowns ([data-dropdown])
-	 * ==================================================================== */
 	useEffect(() => {
 		if (!openDropdown) return undefined;
 		const onDocClick = (e: MouseEvent) => {
@@ -247,8 +186,6 @@ export default function BusinessShell() {
 			document.removeEventListener("click", onDocClick);
 		};
 	}, [openDropdown, closeAllDropdowns]);
-
-	/* ---------- body scroll lock ---------- */
 	useEffect(() => {
 		const lock = (!isDesktop && mobileOpen) || activePanel !== null;
 		document.body.style.overflow = lock ? "hidden" : "";
@@ -256,18 +193,11 @@ export default function BusinessShell() {
 			document.body.style.overflow = "";
 		};
 	}, [isDesktop, mobileOpen, activePanel]);
-
-	/* ---------- context value ---------- */
 	const ctxValue: BusinessShellContextValue = useMemo(
 		() => ({ showToast, openAside }),
 		[showToast, openAside],
 	);
-
 	const unreadCount = content.notifications.filter((n) => n.unread).length;
-
-	/* ======================================================================
-	 * TEMPLATE
-	 * ==================================================================== */
 	return (
 		<BusinessShellContext.Provider value={ctxValue}>
 			<div className={s.businessRoot}>
@@ -281,7 +211,6 @@ export default function BusinessShell() {
 					onCloseMobile={closeMobile}
 					onLogout={handleLogout}
 				/>
-
 				<div
 					className={cx(
 						s["sidebar-backdrop"],
@@ -290,7 +219,6 @@ export default function BusinessShell() {
 					aria-hidden="true"
 					onClick={closeMobile}
 				/>
-
 				<BusinessHeader
 					content={content}
 					expanded={expanded && isDesktop}
@@ -302,7 +230,6 @@ export default function BusinessShell() {
 					onSearchSubmit={handleSearchSubmit}
 					unreadCount={unreadCount}
 				/>
-
 				<main
 					className={cx(
 						s["main-content"],
@@ -313,13 +240,11 @@ export default function BusinessShell() {
 					{pageMeta && <BusinessPageBar meta={pageMeta} />}
 					<Outlet />
 				</main>
-
 				<BusinessAside
 					activePanel={activePanel}
 					onClose={closeAside}
 					onToast={showToast}
 				/>
-
 				<BusinessToasts toasts={toasts} onDismiss={dismissToast} />
 			</div>
 		</BusinessShellContext.Provider>

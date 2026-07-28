@@ -530,7 +530,7 @@ export default function MultiCurrencyTreasury() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1144,13 +1144,11 @@ export default function MultiCurrencyTreasury() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<MultiCurrencyTreasuryModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<MultiCurrencyTreasuryModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

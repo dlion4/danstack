@@ -11,12 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UtilityRouteImport } from './routes/utility'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DevDashboardRouteImport } from './routes/dev-dashboard'
 import { Route as DevRouteImport } from './routes/dev'
 import { Route as BusinessDashboardRouteImport } from './routes/business-dashboard'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as HomeRouteImport } from './routes/_home'
 import { Route as UtilityIndexRouteImport } from './routes/utility/index'
 import { Route as DevIndexRouteImport } from './routes/dev/index'
+import { Route as DevDashboardIndexRouteImport } from './routes/dev-dashboard/index'
 import { Route as BusinessIndexRouteImport } from './routes/business/index'
 import { Route as BusinessDashboardIndexRouteImport } from './routes/business-dashboard/index'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
@@ -28,6 +30,18 @@ import { Route as UtilityAirtimeRouteImport } from './routes/utility/airtime'
 import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
 import { Route as Transaction_dashboardAppRouteImport } from './routes/transaction_dashboard/app'
 import { Route as DevModuleRouteImport } from './routes/dev/$module'
+import { Route as DevDashboardWebhooksEventsRouteImport } from './routes/dev-dashboard/webhooks-events'
+import { Route as DevDashboardSupportSlasRouteImport } from './routes/dev-dashboard/support-slas'
+import { Route as DevDashboardSecurityRouteImport } from './routes/dev-dashboard/security'
+import { Route as DevDashboardSdksRouteImport } from './routes/dev-dashboard/sdks'
+import { Route as DevDashboardPlaygroundRouteImport } from './routes/dev-dashboard/playground'
+import { Route as DevDashboardPartnerMarketplaceRouteImport } from './routes/dev-dashboard/partner-marketplace'
+import { Route as DevDashboardMonitoringIncidentsRouteImport } from './routes/dev-dashboard/monitoring-incidents'
+import { Route as DevDashboardIntegrationArchitectureRouteImport } from './routes/dev-dashboard/integration-architecture'
+import { Route as DevDashboardDeveloperDashboardRouteImport } from './routes/dev-dashboard/developer-dashboard'
+import { Route as DevDashboardComplianceAuditRouteImport } from './routes/dev-dashboard/compliance-audit'
+import { Route as DevDashboardApiReferenceRouteImport } from './routes/dev-dashboard/api-reference'
+import { Route as DevDashboardApiGovernanceRouteImport } from './routes/dev-dashboard/api-governance'
 import { Route as CardsAppRouteImport } from './routes/cards/app'
 import { Route as BusinessModuleRouteImport } from './routes/business/$module'
 import { Route as BusinessDashboardVirtualAccountsRouteImport } from './routes/business-dashboard/virtual-accounts'
@@ -96,6 +110,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevDashboardRoute = DevDashboardRouteImport.update({
+  id: '/dev-dashboard',
+  path: '/dev-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevRoute = DevRouteImport.update({
   id: '/dev',
   path: '/dev',
@@ -124,6 +143,11 @@ const DevIndexRoute = DevIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DevRoute,
+} as any)
+const DevDashboardIndexRoute = DevDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DevDashboardRoute,
 } as any)
 const BusinessIndexRoute = BusinessIndexRouteImport.update({
   id: '/',
@@ -181,6 +205,74 @@ const DevModuleRoute = DevModuleRouteImport.update({
   path: '/$module',
   getParentRoute: () => DevRoute,
 } as any)
+const DevDashboardWebhooksEventsRoute =
+  DevDashboardWebhooksEventsRouteImport.update({
+    id: '/webhooks-events',
+    path: '/webhooks-events',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardSupportSlasRoute = DevDashboardSupportSlasRouteImport.update({
+  id: '/support-slas',
+  path: '/support-slas',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardSecurityRoute = DevDashboardSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardSdksRoute = DevDashboardSdksRouteImport.update({
+  id: '/sdks',
+  path: '/sdks',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardPlaygroundRoute = DevDashboardPlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardPartnerMarketplaceRoute =
+  DevDashboardPartnerMarketplaceRouteImport.update({
+    id: '/partner-marketplace',
+    path: '/partner-marketplace',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardMonitoringIncidentsRoute =
+  DevDashboardMonitoringIncidentsRouteImport.update({
+    id: '/monitoring-incidents',
+    path: '/monitoring-incidents',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardIntegrationArchitectureRoute =
+  DevDashboardIntegrationArchitectureRouteImport.update({
+    id: '/integration-architecture',
+    path: '/integration-architecture',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardDeveloperDashboardRoute =
+  DevDashboardDeveloperDashboardRouteImport.update({
+    id: '/developer-dashboard',
+    path: '/developer-dashboard',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardComplianceAuditRoute =
+  DevDashboardComplianceAuditRouteImport.update({
+    id: '/compliance-audit',
+    path: '/compliance-audit',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardApiReferenceRoute =
+  DevDashboardApiReferenceRouteImport.update({
+    id: '/api-reference',
+    path: '/api-reference',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardApiGovernanceRoute =
+  DevDashboardApiGovernanceRouteImport.update({
+    id: '/api-governance',
+    path: '/api-governance',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
 const CardsAppRoute = CardsAppRouteImport.update({
   id: '/cards/app',
   path: '/cards/app',
@@ -515,6 +607,7 @@ export interface FileRoutesByFullPath {
   '/business': typeof HomeBusinessRoute
   '/business-dashboard': typeof BusinessDashboardRouteWithChildren
   '/dev': typeof DevRouteWithChildren
+  '/dev-dashboard': typeof DevDashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/utility': typeof UtilityRouteWithChildren
   '/auth/account-status': typeof AuthAccountStatusRoute
@@ -542,6 +635,18 @@ export interface FileRoutesByFullPath {
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
+  '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
+  '/dev-dashboard/compliance-audit': typeof DevDashboardComplianceAuditRoute
+  '/dev-dashboard/developer-dashboard': typeof DevDashboardDeveloperDashboardRoute
+  '/dev-dashboard/integration-architecture': typeof DevDashboardIntegrationArchitectureRoute
+  '/dev-dashboard/monitoring-incidents': typeof DevDashboardMonitoringIncidentsRoute
+  '/dev-dashboard/partner-marketplace': typeof DevDashboardPartnerMarketplaceRoute
+  '/dev-dashboard/playground': typeof DevDashboardPlaygroundRoute
+  '/dev-dashboard/sdks': typeof DevDashboardSdksRoute
+  '/dev-dashboard/security': typeof DevDashboardSecurityRoute
+  '/dev-dashboard/support-slas': typeof DevDashboardSupportSlasRoute
+  '/dev-dashboard/webhooks-events': typeof DevDashboardWebhooksEventsRoute
   '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
@@ -552,6 +657,7 @@ export interface FileRoutesByFullPath {
   '/utility/water': typeof UtilityWaterRoute
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
+  '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
@@ -614,6 +720,18 @@ export interface FileRoutesByTo {
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
+  '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
+  '/dev-dashboard/compliance-audit': typeof DevDashboardComplianceAuditRoute
+  '/dev-dashboard/developer-dashboard': typeof DevDashboardDeveloperDashboardRoute
+  '/dev-dashboard/integration-architecture': typeof DevDashboardIntegrationArchitectureRoute
+  '/dev-dashboard/monitoring-incidents': typeof DevDashboardMonitoringIncidentsRoute
+  '/dev-dashboard/partner-marketplace': typeof DevDashboardPartnerMarketplaceRoute
+  '/dev-dashboard/playground': typeof DevDashboardPlaygroundRoute
+  '/dev-dashboard/sdks': typeof DevDashboardSdksRoute
+  '/dev-dashboard/security': typeof DevDashboardSecurityRoute
+  '/dev-dashboard/support-slas': typeof DevDashboardSupportSlasRoute
+  '/dev-dashboard/webhooks-events': typeof DevDashboardWebhooksEventsRoute
   '/dev/$module': typeof DevModuleRoute
   '/utility/$module': typeof UtilityModuleRoute
   '/utility/airtime': typeof UtilityAirtimeRoute
@@ -623,6 +741,7 @@ export interface FileRoutesByTo {
   '/utility/water': typeof UtilityWaterRoute
   '/': typeof HomeIndexRoute
   '/business-dashboard': typeof BusinessDashboardIndexRoute
+  '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
@@ -663,6 +782,7 @@ export interface FileRoutesById {
   '/business': typeof BusinessRouteWithChildren
   '/business-dashboard': typeof BusinessDashboardRouteWithChildren
   '/dev': typeof DevRouteWithChildren
+  '/dev-dashboard': typeof DevDashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/utility': typeof UtilityRouteWithChildren
   '/_home/business': typeof HomeBusinessRoute
@@ -691,6 +811,18 @@ export interface FileRoutesById {
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
   '/cards/app': typeof CardsAppRouteWithChildren
+  '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
+  '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
+  '/dev-dashboard/compliance-audit': typeof DevDashboardComplianceAuditRoute
+  '/dev-dashboard/developer-dashboard': typeof DevDashboardDeveloperDashboardRoute
+  '/dev-dashboard/integration-architecture': typeof DevDashboardIntegrationArchitectureRoute
+  '/dev-dashboard/monitoring-incidents': typeof DevDashboardMonitoringIncidentsRoute
+  '/dev-dashboard/partner-marketplace': typeof DevDashboardPartnerMarketplaceRoute
+  '/dev-dashboard/playground': typeof DevDashboardPlaygroundRoute
+  '/dev-dashboard/sdks': typeof DevDashboardSdksRoute
+  '/dev-dashboard/security': typeof DevDashboardSecurityRoute
+  '/dev-dashboard/support-slas': typeof DevDashboardSupportSlasRoute
+  '/dev-dashboard/webhooks-events': typeof DevDashboardWebhooksEventsRoute
   '/dev/$module': typeof DevModuleRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
@@ -702,6 +834,7 @@ export interface FileRoutesById {
   '/_home/': typeof HomeIndexRoute
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
+  '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
@@ -743,6 +876,7 @@ export interface FileRouteTypes {
     | '/business'
     | '/business-dashboard'
     | '/dev'
+    | '/dev-dashboard'
     | '/login'
     | '/utility'
     | '/auth/account-status'
@@ -770,6 +904,18 @@ export interface FileRouteTypes {
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
+    | '/dev-dashboard/api-governance'
+    | '/dev-dashboard/api-reference'
+    | '/dev-dashboard/compliance-audit'
+    | '/dev-dashboard/developer-dashboard'
+    | '/dev-dashboard/integration-architecture'
+    | '/dev-dashboard/monitoring-incidents'
+    | '/dev-dashboard/partner-marketplace'
+    | '/dev-dashboard/playground'
+    | '/dev-dashboard/sdks'
+    | '/dev-dashboard/security'
+    | '/dev-dashboard/support-slas'
+    | '/dev-dashboard/webhooks-events'
     | '/dev/$module'
     | '/transaction_dashboard/app'
     | '/utility/$module'
@@ -780,6 +926,7 @@ export interface FileRouteTypes {
     | '/utility/water'
     | '/business-dashboard/'
     | '/business/'
+    | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
     | '/cards/app/account-settings'
@@ -842,6 +989,18 @@ export interface FileRouteTypes {
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
+    | '/dev-dashboard/api-governance'
+    | '/dev-dashboard/api-reference'
+    | '/dev-dashboard/compliance-audit'
+    | '/dev-dashboard/developer-dashboard'
+    | '/dev-dashboard/integration-architecture'
+    | '/dev-dashboard/monitoring-incidents'
+    | '/dev-dashboard/partner-marketplace'
+    | '/dev-dashboard/playground'
+    | '/dev-dashboard/sdks'
+    | '/dev-dashboard/security'
+    | '/dev-dashboard/support-slas'
+    | '/dev-dashboard/webhooks-events'
     | '/dev/$module'
     | '/utility/$module'
     | '/utility/airtime'
@@ -851,6 +1010,7 @@ export interface FileRouteTypes {
     | '/utility/water'
     | '/'
     | '/business-dashboard'
+    | '/dev-dashboard'
     | '/dev'
     | '/utility'
     | '/cards/app/account-settings'
@@ -890,6 +1050,7 @@ export interface FileRouteTypes {
     | '/business'
     | '/business-dashboard'
     | '/dev'
+    | '/dev-dashboard'
     | '/login'
     | '/utility'
     | '/_home/business'
@@ -918,6 +1079,18 @@ export interface FileRouteTypes {
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
     | '/cards/app'
+    | '/dev-dashboard/api-governance'
+    | '/dev-dashboard/api-reference'
+    | '/dev-dashboard/compliance-audit'
+    | '/dev-dashboard/developer-dashboard'
+    | '/dev-dashboard/integration-architecture'
+    | '/dev-dashboard/monitoring-incidents'
+    | '/dev-dashboard/partner-marketplace'
+    | '/dev-dashboard/playground'
+    | '/dev-dashboard/sdks'
+    | '/dev-dashboard/security'
+    | '/dev-dashboard/support-slas'
+    | '/dev-dashboard/webhooks-events'
     | '/dev/$module'
     | '/transaction_dashboard/app'
     | '/utility/$module'
@@ -929,6 +1102,7 @@ export interface FileRouteTypes {
     | '/_home/'
     | '/business-dashboard/'
     | '/business/'
+    | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
     | '/cards/app/account-settings'
@@ -969,6 +1143,7 @@ export interface RootRouteChildren {
   BusinessRoute: typeof BusinessRouteWithChildren
   BusinessDashboardRoute: typeof BusinessDashboardRouteWithChildren
   DevRoute: typeof DevRouteWithChildren
+  DevDashboardRoute: typeof DevDashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   UtilityRoute: typeof UtilityRouteWithChildren
   AuthAccountStatusRoute: typeof AuthAccountStatusRoute
@@ -998,6 +1173,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev-dashboard': {
+      id: '/dev-dashboard'
+      path: '/dev-dashboard'
+      fullPath: '/dev-dashboard'
+      preLoaderRoute: typeof DevDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev': {
@@ -1041,6 +1223,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/'
       preLoaderRoute: typeof DevIndexRouteImport
       parentRoute: typeof DevRoute
+    }
+    '/dev-dashboard/': {
+      id: '/dev-dashboard/'
+      path: '/'
+      fullPath: '/dev-dashboard/'
+      preLoaderRoute: typeof DevDashboardIndexRouteImport
+      parentRoute: typeof DevDashboardRoute
     }
     '/business/': {
       id: '/business/'
@@ -1118,6 +1307,90 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/$module'
       preLoaderRoute: typeof DevModuleRouteImport
       parentRoute: typeof DevRoute
+    }
+    '/dev-dashboard/webhooks-events': {
+      id: '/dev-dashboard/webhooks-events'
+      path: '/webhooks-events'
+      fullPath: '/dev-dashboard/webhooks-events'
+      preLoaderRoute: typeof DevDashboardWebhooksEventsRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/support-slas': {
+      id: '/dev-dashboard/support-slas'
+      path: '/support-slas'
+      fullPath: '/dev-dashboard/support-slas'
+      preLoaderRoute: typeof DevDashboardSupportSlasRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/security': {
+      id: '/dev-dashboard/security'
+      path: '/security'
+      fullPath: '/dev-dashboard/security'
+      preLoaderRoute: typeof DevDashboardSecurityRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/sdks': {
+      id: '/dev-dashboard/sdks'
+      path: '/sdks'
+      fullPath: '/dev-dashboard/sdks'
+      preLoaderRoute: typeof DevDashboardSdksRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/playground': {
+      id: '/dev-dashboard/playground'
+      path: '/playground'
+      fullPath: '/dev-dashboard/playground'
+      preLoaderRoute: typeof DevDashboardPlaygroundRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/partner-marketplace': {
+      id: '/dev-dashboard/partner-marketplace'
+      path: '/partner-marketplace'
+      fullPath: '/dev-dashboard/partner-marketplace'
+      preLoaderRoute: typeof DevDashboardPartnerMarketplaceRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/monitoring-incidents': {
+      id: '/dev-dashboard/monitoring-incidents'
+      path: '/monitoring-incidents'
+      fullPath: '/dev-dashboard/monitoring-incidents'
+      preLoaderRoute: typeof DevDashboardMonitoringIncidentsRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/integration-architecture': {
+      id: '/dev-dashboard/integration-architecture'
+      path: '/integration-architecture'
+      fullPath: '/dev-dashboard/integration-architecture'
+      preLoaderRoute: typeof DevDashboardIntegrationArchitectureRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/developer-dashboard': {
+      id: '/dev-dashboard/developer-dashboard'
+      path: '/developer-dashboard'
+      fullPath: '/dev-dashboard/developer-dashboard'
+      preLoaderRoute: typeof DevDashboardDeveloperDashboardRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/compliance-audit': {
+      id: '/dev-dashboard/compliance-audit'
+      path: '/compliance-audit'
+      fullPath: '/dev-dashboard/compliance-audit'
+      preLoaderRoute: typeof DevDashboardComplianceAuditRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/api-reference': {
+      id: '/dev-dashboard/api-reference'
+      path: '/api-reference'
+      fullPath: '/dev-dashboard/api-reference'
+      preLoaderRoute: typeof DevDashboardApiReferenceRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/api-governance': {
+      id: '/dev-dashboard/api-governance'
+      path: '/api-governance'
+      fullPath: '/dev-dashboard/api-governance'
+      preLoaderRoute: typeof DevDashboardApiGovernanceRouteImport
+      parentRoute: typeof DevDashboardRoute
     }
     '/cards/app': {
       id: '/cards/app'
@@ -1605,6 +1878,43 @@ const DevRouteChildren: DevRouteChildren = {
 
 const DevRouteWithChildren = DevRoute._addFileChildren(DevRouteChildren)
 
+interface DevDashboardRouteChildren {
+  DevDashboardApiGovernanceRoute: typeof DevDashboardApiGovernanceRoute
+  DevDashboardApiReferenceRoute: typeof DevDashboardApiReferenceRoute
+  DevDashboardComplianceAuditRoute: typeof DevDashboardComplianceAuditRoute
+  DevDashboardDeveloperDashboardRoute: typeof DevDashboardDeveloperDashboardRoute
+  DevDashboardIntegrationArchitectureRoute: typeof DevDashboardIntegrationArchitectureRoute
+  DevDashboardMonitoringIncidentsRoute: typeof DevDashboardMonitoringIncidentsRoute
+  DevDashboardPartnerMarketplaceRoute: typeof DevDashboardPartnerMarketplaceRoute
+  DevDashboardPlaygroundRoute: typeof DevDashboardPlaygroundRoute
+  DevDashboardSdksRoute: typeof DevDashboardSdksRoute
+  DevDashboardSecurityRoute: typeof DevDashboardSecurityRoute
+  DevDashboardSupportSlasRoute: typeof DevDashboardSupportSlasRoute
+  DevDashboardWebhooksEventsRoute: typeof DevDashboardWebhooksEventsRoute
+  DevDashboardIndexRoute: typeof DevDashboardIndexRoute
+}
+
+const DevDashboardRouteChildren: DevDashboardRouteChildren = {
+  DevDashboardApiGovernanceRoute: DevDashboardApiGovernanceRoute,
+  DevDashboardApiReferenceRoute: DevDashboardApiReferenceRoute,
+  DevDashboardComplianceAuditRoute: DevDashboardComplianceAuditRoute,
+  DevDashboardDeveloperDashboardRoute: DevDashboardDeveloperDashboardRoute,
+  DevDashboardIntegrationArchitectureRoute:
+    DevDashboardIntegrationArchitectureRoute,
+  DevDashboardMonitoringIncidentsRoute: DevDashboardMonitoringIncidentsRoute,
+  DevDashboardPartnerMarketplaceRoute: DevDashboardPartnerMarketplaceRoute,
+  DevDashboardPlaygroundRoute: DevDashboardPlaygroundRoute,
+  DevDashboardSdksRoute: DevDashboardSdksRoute,
+  DevDashboardSecurityRoute: DevDashboardSecurityRoute,
+  DevDashboardSupportSlasRoute: DevDashboardSupportSlasRoute,
+  DevDashboardWebhooksEventsRoute: DevDashboardWebhooksEventsRoute,
+  DevDashboardIndexRoute: DevDashboardIndexRoute,
+}
+
+const DevDashboardRouteWithChildren = DevDashboardRoute._addFileChildren(
+  DevDashboardRouteChildren,
+)
+
 interface UtilityRouteChildren {
   UtilityModuleRoute: typeof UtilityModuleRoute
   UtilityAirtimeRoute: typeof UtilityAirtimeRoute
@@ -1734,6 +2044,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessRoute: BusinessRouteWithChildren,
   BusinessDashboardRoute: BusinessDashboardRouteWithChildren,
   DevRoute: DevRouteWithChildren,
+  DevDashboardRoute: DevDashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   UtilityRoute: UtilityRouteWithChildren,
   AuthAccountStatusRoute: AuthAccountStatusRoute,

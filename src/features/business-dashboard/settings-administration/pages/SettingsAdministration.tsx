@@ -607,7 +607,7 @@ export default function SettingsAdministration() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1752,13 +1752,11 @@ export default function SettingsAdministration() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<SettingsAdministrationModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<SettingsAdministrationModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

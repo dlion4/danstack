@@ -630,7 +630,7 @@ export default function SupportDisputes() {
 	};
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1625,13 +1625,11 @@ export default function SupportDisputes() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<SupportDisputesModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<SupportDisputesModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

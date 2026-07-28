@@ -407,7 +407,7 @@ export default function TreasuryCash() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO */}
 				<div className="row g-3">
@@ -780,13 +780,11 @@ export default function TreasuryCash() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<TreasuryCashModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<TreasuryCashModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

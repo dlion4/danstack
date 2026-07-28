@@ -418,7 +418,7 @@ export default function FinancialReporting() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO */}
 				<div className="row g-3">
@@ -1507,13 +1507,11 @@ export default function FinancialReporting() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<FinancialReportingModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<FinancialReportingModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

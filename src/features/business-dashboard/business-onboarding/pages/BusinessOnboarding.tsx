@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import BusinessOnboardingModals from "../components/BusinessOnboardingModals";
 import styles from "../styles/business-onboarding.module.css";
@@ -573,42 +572,17 @@ const initialMockData: OnboardConfig = {
 	],
 };
 
-/**
- * Frontend-only demo: no /api/business/business-onboarding backend exists yet. Try the real
- * endpoint so this page works unchanged once it ships, but fall back to the
- * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
- * JSON) so the page always renders instead of surfacing an error state.
- */
-async function fetchOnboardContent(): Promise<OnboardConfig> {
-	try {
-		const res = await fetch("/api/business/business-onboarding", {
-			headers: { Accept: "application/json" },
-		});
-		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-		return (await res.json()) as OnboardConfig;
-	} catch {
-		return initialMockData;
-	}
-}
-
 export default function BusinessOnboarding() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-
-	const { data: apiData } = useQuery({
-		queryKey: ["business-onboarding"],
-		queryFn: fetchOnboardContent,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-	const config = apiData ?? initialMockData;
+	const config = initialMockData;
 
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
-			<div className={s.content}>
+		<>
+		<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
 					<div className="col-lg-4">
@@ -1290,10 +1264,10 @@ export default function BusinessOnboarding() {
 				</div>
 			</div>
 			<BusinessOnboardingModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
+	active={activeModal}
+	onClose={() => setActiveModal(null)}
+	onOpen={setActiveModal}
 			/>
-		</div>
-	);
+		</>
+	)
 }

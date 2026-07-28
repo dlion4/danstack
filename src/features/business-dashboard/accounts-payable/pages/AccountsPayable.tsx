@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import AccountsPayableModals from "../components/AccountsPayableModals";
 import styles from "../styles/accounts-payable.module.css";
@@ -381,39 +380,15 @@ const initialMockData: APConfig = {
 	],
 };
 
-/**
- * Frontend-only demo: no /api/business-dashboard/accounts-payable backend exists yet. Try the real
- * endpoint so this page works unchanged once it ships, but fall back to the
- * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
- * JSON) so the page always renders instead of surfacing an error state.
- */
-async function fetchAPData(): Promise<APConfig> {
-	try {
-		const res = await fetch("/api/business-dashboard/accounts-payable", {
-			headers: { Accept: "application/json" },
-		});
-		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-		return (await res.json()) as APConfig;
-	} catch {
-		return initialMockData;
-	}
-}
-
 export default function AccountsPayable() {
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-	const { data: apiData } = useQuery({
-		queryKey: ["accounts-payable"],
-		queryFn: fetchAPData,
-		staleTime: 5 * 60 * 1000,
-		retry: 1,
-	});
-	const config = apiData ?? initialMockData;
+	const config = initialMockData;
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO */}
 				<div className="row g-3">
@@ -785,13 +760,11 @@ export default function AccountsPayable() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<AccountsPayableModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<AccountsPayableModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

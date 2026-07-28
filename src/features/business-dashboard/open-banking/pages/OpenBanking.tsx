@@ -483,7 +483,7 @@ export default function OpenBanking() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -1347,13 +1347,11 @@ export default function OpenBanking() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<OpenBankingModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<OpenBankingModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

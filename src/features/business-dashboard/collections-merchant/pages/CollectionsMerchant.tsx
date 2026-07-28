@@ -566,7 +566,7 @@ export default function CollectionsMerchant() {
 		cls.filter(Boolean).join(" ");
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* Hero Stats Row */}
 				<div className="row g-3">
@@ -1322,13 +1322,11 @@ export default function CollectionsMerchant() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<CollectionsMerchantModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<CollectionsMerchantModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

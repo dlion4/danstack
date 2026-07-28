@@ -506,7 +506,7 @@ export default function InvoicingBilling() {
 	const config = apiData ?? initialMockData;
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -971,13 +971,11 @@ export default function InvoicingBilling() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<InvoicingBillingModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<InvoicingBillingModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }

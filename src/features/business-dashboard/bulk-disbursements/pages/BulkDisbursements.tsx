@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import BulkDisbursementsModals from "../components/BulkDisbursementsModals";
 import styles from "../styles/bulk-disbursements.module.css";
@@ -317,42 +316,16 @@ const initialMockData: DisbursementsConfig = {
 };
 
 /* ---------- TanStack Query fetcher ---------- */
-/**
- * Frontend-only demo: no /api/business-dashboard/bulk-disbursements backend exists yet. Try the real
- * endpoint so this page works unchanged once it ships, but fall back to the
- * bundled mock data on any failure (offline, 404, SSR origin-less fetch, bad
- * JSON) so the page always renders instead of surfacing an error state.
- */
-async function fetchDisbursementsData(): Promise<DisbursementsConfig> {
-	try {
-		const res = await fetch("/api/business-dashboard/bulk-disbursements", {
-			headers: { Accept: "application/json" },
-		});
-		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-		return (await res.json()) as DisbursementsConfig;
-	} catch {
-		return initialMockData;
-	}
-}
-
 export default function BulkDisbursements() {
 	const s = styles as Record<string, string>;
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-
-	const { data: apiData } = useQuery({
-		queryKey: ["bulk-disbursements"],
-		queryFn: fetchDisbursementsData,
-		staleTime: 5 * 60 * 1000,
-		retry: 1,
-	});
-
-	const config = apiData ?? initialMockData;
+	const config = initialMockData;
 
 	return (
-		<div className={s.bizPage}>
+		<>
 			<div className={s.content}>
 				{/* HERO STATS */}
 				<div className="row g-3">
@@ -576,13 +549,11 @@ export default function BulkDisbursements() {
 					</div>
 				</div>
 			</div>
-
-			{/* MODALS */}
-			<BulkDisbursementsModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
-			/>
-		</div>
-	);
+	<BulkDisbursementsModals
+		active={activeModal}
+		onClose={() => setActiveModal(null)}
+		onOpen={setActiveModal}
+	/>
+		</>
+	)
 }
