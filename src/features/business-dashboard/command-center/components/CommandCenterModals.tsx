@@ -87,7 +87,9 @@ export default function CommandCenterModals({
 	const cx = (...cls: (string | false | undefined)[]) =>
 		cls.filter(Boolean).join(" ");
 
-	const [results, setResults] = useState<Record<string, { msg: string; ref?: string }>>({});
+	const [results, setResults] = useState<
+		Record<string, { msg: string; ref?: string }>
+	>({});
 	const [busy, setBusy] = useState<string | null>(null);
 	const [flows, setFlows] = useState<Record<string, number>>({
 		payroll: 1,
@@ -317,7 +319,9 @@ export default function CommandCenterModals({
 										step > n && s.stepDone,
 									)}
 								>
-									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepN}>
+										{step > n ? <i className="bi bi-check" /> : n}
+									</div>
 									<div className={s.stepL}>
 										{n === 1 ? "Select" : n === 2 ? "Review" : "Approve"}
 									</div>
@@ -358,7 +362,9 @@ export default function CommandCenterModals({
 											</div>
 											<hr className={s.divider} />
 											<div className="d-flex justify-content-between">
-												<span style={{ fontWeight: 700 }}>Net Disbursement</span>
+												<span style={{ fontWeight: 700 }}>
+													Net Disbursement
+												</span>
 												<strong style={{ color: "var(--pm-success)" }}>
 													KES 450,500
 												</strong>
@@ -378,8 +384,8 @@ export default function CommandCenterModals({
 										fontSize: 13,
 									}}
 								>
-									<i className="bi bi-exclamation-triangle" /> 1 employee banking
-									detail missing. They will be paid via M-Pesa.
+									<i className="bi bi-exclamation-triangle" /> 1 employee
+									banking detail missing. They will be paid via M-Pesa.
 								</div>
 								<div className="table-responsive">
 									<table className={s.tbl}>
@@ -500,7 +506,9 @@ export default function CommandCenterModals({
 									)
 								}
 							>
-								{step === 3 ? "Authorize <i class=\"bi bi-lock\"></i>" : "Continue"}
+								{step === 3
+									? 'Authorize <i class="bi bi-lock"></i>'
+									: "Continue"}
 							</button>
 						</>
 					)
@@ -519,7 +527,9 @@ export default function CommandCenterModals({
 										step > n && s.stepDone,
 									)}
 								>
-									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepN}>
+										{step > n ? <i className="bi bi-check" /> : n}
+									</div>
 									<div className={s.stepL}>
 										{n === 1 ? "Details" : n === 2 ? "Review" : "Authorize"}
 									</div>
@@ -543,7 +553,9 @@ export default function CommandCenterModals({
 									</select>
 								</div>
 								<div className="mb-3">
-									<label className={s.formLabel}>Amount to Transfer (KES)</label>
+									<label className={s.formLabel}>
+										Amount to Transfer (KES)
+									</label>
 									<input
 										type="number"
 										className={s.formControl}
@@ -583,8 +595,8 @@ export default function CommandCenterModals({
 									className="p-3 rounded mb-3"
 									style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
 								>
-									Confirm authorization for <strong>KES 500,000</strong> internal
-									transfer. This action is processed instantly.
+									Confirm authorization for <strong>KES 500,000</strong>{" "}
+									internal transfer. This action is processed instantly.
 								</div>
 								<label className="formLabel text-center d-block">
 									Enter Director PIN
@@ -643,7 +655,9 @@ export default function CommandCenterModals({
 									)
 								}
 							>
-								{step === 3 ? "Send Invite <i class=\"bi bi-envelope\"></i>" : "Continue"}
+								{step === 3
+									? 'Send Invite <i class="bi bi-envelope"></i>'
+									: "Continue"}
 							</button>
 						</>
 					)
@@ -662,7 +676,9 @@ export default function CommandCenterModals({
 										step > n && s.stepDone,
 									)}
 								>
-									<div className={s.stepN}>{step > n ? <i className="bi bi-check" /> : n}</div>
+									<div className={s.stepN}>
+										{step > n ? <i className="bi bi-check" /> : n}
+									</div>
 									<div className={s.stepL}>
 										{n === 1 ? "Details" : n === 2 ? "Role" : "Limits"}
 									</div>
@@ -721,8 +737,8 @@ export default function CommandCenterModals({
 											name="userRole"
 										/>
 										<label className="form-check-label">
-											<strong>Maker / Finance</strong> - Create payments but cannot
-											approve
+											<strong>Maker / Finance</strong> - Create payments but
+											cannot approve
 										</label>
 									</div>
 								</div>
@@ -880,9 +896,7 @@ export default function CommandCenterModals({
 							</button>
 							<button
 								className={cx(s.btnPm, s.btnPmP)}
-								onClick={() =>
-									doAction(id, "Settings updated successfully!")
-								}
+								onClick={() => doAction(id, "Settings updated successfully!")}
 							>
 								Save Changes
 							</button>
@@ -1320,7 +1334,9 @@ export default function CommandCenterModals({
 						</button>
 						<button
 							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => doAction("viewUserModal", "User settings updated!")}
+							onClick={() =>
+								doAction("viewUserModal", "User settings updated!")
+							}
 						>
 							Save
 						</button>

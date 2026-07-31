@@ -313,7 +313,7 @@
 	);
 }
 
-.authBrand > * {
+.authBrand > *:not(.gridOverlay):not(.blob) {
 	position: relative;
 	z-index: 2;
 }

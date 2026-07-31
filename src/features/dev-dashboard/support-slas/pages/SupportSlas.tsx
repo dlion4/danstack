@@ -34,9 +34,9 @@ export default function SupportSlas() {
 	const c = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
-	const [supportTab, setSupportTab] = useState<"overview" | "premium" | "enterprise">(
-		"overview",
-	);
+	const [supportTab, setSupportTab] = useState<
+		"overview" | "premium" | "enterprise"
+	>("overview");
 	const open = (id: string) => setActiveModal(id);
 
 	useEffect(() => {
@@ -67,7 +67,10 @@ export default function SupportSlas() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{c.header.actions.map((a) => (
 							<button
 								key={a.modal}
@@ -90,7 +93,8 @@ export default function SupportSlas() {
 								className={`${s.btnPm} ${a.primary ? s.btnPmP : ""}`}
 								onClick={() => open(a.modal)}
 							>
-								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} /> {a.label}
+								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} />{" "}
+								{a.label}
 							</button>
 						))}
 						<button
@@ -124,7 +128,9 @@ export default function SupportSlas() {
 								<div
 									className={`${s.card} h-100`}
 									style={
-										h.accentBorder ? { borderLeft: `3px solid ${h.accentBorder}` } : undefined
+										h.accentBorder
+											? { borderLeft: `3px solid ${h.accentBorder}` }
+											: undefined
 									}
 								>
 									<p className={s.sl} style={{ color: h.labelColor }}>
@@ -143,7 +149,10 @@ export default function SupportSlas() {
 									{h.badges && (
 										<div className="d-flex flex-wrap gap-1 mt-2">
 											{h.badges.map((b) => (
-												<span key={b.text} className={`${s.badge} ${s[b.tone]}`}>
+												<span
+													key={b.text}
+													className={`${s.badge} ${s[b.tone]}`}
+												>
 													{b.text}
 												</span>
 											))}
@@ -182,7 +191,10 @@ export default function SupportSlas() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-headset" style={{ color: "var(--pm-primary)" }} />{" "}
+										<i
+											className="bi bi-headset"
+											style={{ color: "var(--pm-primary)" }}
+										/>{" "}
 										4.11.1 — Technical Support
 									</h3>
 									<div className="d-flex gap-2 flex-wrap">
@@ -267,7 +279,10 @@ export default function SupportSlas() {
 								{supportTab === "premium" && (
 									<div className="row g-2">
 										{c.premiumBenefits.map((b) => (
-											<div className={b.full ? "col-12" : "col-md-6"} key={b.title}>
+											<div
+												className={b.full ? "col-12" : "col-md-6"}
+												key={b.title}
+											>
 												<div
 													className={`p-3 border rounded h-100 ${
 														b.full
@@ -320,8 +335,8 @@ export default function SupportSlas() {
 											Unlock Enterprise Features
 										</h6>
 										<p style={{ fontSize: 12, color: "var(--pm-muted)" }}>
-											Upgrade to Enterprise to access 24/7 dedicated support, shared Slack
-											channels, and on-site assistance.
+											Upgrade to Enterprise to access 24/7 dedicated support,
+											shared Slack channels, and on-site assistance.
 										</p>
 										<div className="d-flex gap-2 justify-content-center mt-3 flex-wrap">
 											<button
@@ -377,7 +392,9 @@ export default function SupportSlas() {
 											<div className={`${s.sevBlock} ${s[sv.key]}`}>
 												<div className="d-flex justify-content-between align-items-center gap-2">
 													<strong style={{ fontSize: 12 }}>{sv.level}</strong>
-													<span className={`${s.badge} ${s[sv.tone]}`}>{sv.sla}</span>
+													<span className={`${s.badge} ${s[sv.tone]}`}>
+														{sv.sla}
+													</span>
 												</div>
 												<p
 													style={{
@@ -414,7 +431,10 @@ export default function SupportSlas() {
 							<div className={s.card}>
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-shield-check" style={{ color: "var(--pm-accent)" }} />{" "}
+										<i
+											className="bi bi-shield-check"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
 										4.11.3 — Service Level Agreements
 									</h3>
 									<button
@@ -435,7 +455,9 @@ export default function SupportSlas() {
 													</td>
 													<td data-label="Target">{r.target}</td>
 													<td data-label="Actual">
-														<span className={`${s.badge} ${s[r.tone]}`}>{r.actual}</span>
+														<span className={`${s.badge} ${s[r.tone]}`}>
+															{r.actual}
+														</span>
 													</td>
 												</tr>
 											))}
@@ -466,7 +488,10 @@ export default function SupportSlas() {
 					<div className={s.card}>
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<h3 className={s.sectionTitle}>
-								<i className="bi bi-ticket-detailed" style={{ color: "var(--pm-muted)" }} />{" "}
+								<i
+									className="bi bi-ticket-detailed"
+									style={{ color: "var(--pm-muted)" }}
+								/>{" "}
 								Recent Support Tickets
 							</h3>
 							<button
@@ -487,18 +512,27 @@ export default function SupportSlas() {
 							>
 								<div style={{ minWidth: 0 }}>
 									<div className="d-flex align-items-center gap-2 flex-wrap">
-										<span className={`${s.badge} ${s[t.tone]}`}>{t.status}</span>
+										<span className={`${s.badge} ${s[t.tone]}`}>
+											{t.status}
+										</span>
 										<strong style={{ fontSize: 14 }}>
 											[{t.id}] {t.title}
 										</strong>
 									</div>
 									<div
-										style={{ fontSize: 11, color: "var(--pm-muted)", marginTop: 4 }}
+										style={{
+											fontSize: 11,
+											color: "var(--pm-muted)",
+											marginTop: 4,
+										}}
 									>
 										{t.meta}
 									</div>
 								</div>
-								<i className="bi bi-chevron-right" style={{ color: "var(--pm-muted)" }} />
+								<i
+									className="bi bi-chevron-right"
+									style={{ color: "var(--pm-muted)" }}
+								/>
 							</button>
 						))}
 					</div>

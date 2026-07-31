@@ -3,34 +3,43 @@
  * Scoped under .bizPage. Includes responsive layer and React specific classes.
  * ========================================================================== */
 
-
 /* PayMo Master CSS */
 .bizPage {
-	--pm-primary: #4F46E5;
-	--pm-primary-dark: #3730A3;
-	--pm-primary-light: #818CF8;
-	--pm-accent: #10B981;
-	--pm-accent-soft: #D1FAE5;
-	--pm-warning: #F59E0B;
-	--pm-warning-soft: #FEF3C7;
-	--pm-danger: #EF4444;
-	--pm-danger-soft: #FEE2E2;
-	--pm-info: #3B82F6;
-	--pm-info-soft: #DBEAFE;
-	--pm-purple: #8B5CF6;
-	--pm-purple-soft: #EDE9FE;
-	--pm-bg: #F5F1EC;
-	--pm-bg-2: #EEE8DF;
-	--pm-surface: #FFFFFF;
-	--pm-surface-2: #FAF7F3;
-	--pm-ink: #1A1F2E;
-	--pm-ink-soft: #4B5563;
-	--pm-muted: #9CA3AF;
-	--pm-border: #E5E2DC;
-	--pm-border-2: #D4D0C8;
-	--pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
-	--pm-gradient-biz: linear-gradient(135deg, #1E293B 0%, #334155 50%, #475569 100%);
-	--pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+	--pm-primary: #4f46e5;
+	--pm-primary-dark: #3730a3;
+	--pm-primary-light: #818cf8;
+	--pm-accent: #10b981;
+	--pm-accent-soft: #d1fae5;
+	--pm-warning: #f59e0b;
+	--pm-warning-soft: #fef3c7;
+	--pm-danger: #ef4444;
+	--pm-danger-soft: #fee2e2;
+	--pm-info: #3b82f6;
+	--pm-info-soft: #dbeafe;
+	--pm-purple: #8b5cf6;
+	--pm-purple-soft: #ede9fe;
+	--pm-bg: #f5f1ec;
+	--pm-bg-2: #eee8df;
+	--pm-surface: #ffffff;
+	--pm-surface-2: #faf7f3;
+	--pm-ink: #1a1f2e;
+	--pm-ink-soft: #4b5563;
+	--pm-muted: #9ca3af;
+	--pm-border: #e5e2dc;
+	--pm-border-2: #d4d0c8;
+	--pm-gradient-hero: linear-gradient(
+		135deg,
+		#4f46e5 0%,
+		#7c3aed 50%,
+		#ec4899 100%
+	);
+	--pm-gradient-biz: linear-gradient(
+		135deg,
+		#1e293b 0%,
+		#334155 50%,
+		#475569 100%
+	);
+	--pm-gradient-slate: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
 	--pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
 	--pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
@@ -41,8 +50,8 @@
 	--pm-r-lg: 20px;
 	--pm-r-xl: 28px;
 	--pm-r-pill: 999px;
-	--pm-font-sans: 'Inter', sans-serif;
-	--pm-font-display: 'Space Grotesk', 'Inter', sans-serif;
+	--pm-font-sans: "Inter", sans-serif;
+	--pm-font-display: "Space Grotesk", "Inter", sans-serif;
 }
 
 * {
@@ -62,13 +71,19 @@
 .bizPage {
 	display: flex;
 	min-height: 100vh;
-	background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.05), transparent 60%), var(--pm-bg);
+	background:
+		radial-gradient(
+			1200px 600px at -10% -20%,
+			rgba(79, 70, 229, 0.05),
+			transparent 60%
+		),
+		var(--pm-bg);
 }
 
 .pm-sidebar {
 	width: 88px;
 	flex-shrink: 0;
-	background: #0F172A;
+	background: #0f172a;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -77,7 +92,7 @@
 	top: 0;
 	height: 100vh;
 	z-index: 100;
-	border-right: 1px solid #1E293B;
+	border-right: 1px solid #1e293b;
 }
 
 .pm-sidebar-logo {
@@ -116,13 +131,13 @@
 	cursor: pointer;
 	background: transparent;
 	border: none;
-	transition: all .2s;
+	transition: all 0.2s;
 	position: relative;
 }
 
 .pm-nav-item:hover {
 	color: #fff;
-	background: rgba(255, 255, 255, .08);
+	background: rgba(255, 255, 255, 0.08);
 }
 
 .pm-nav-item.active {
@@ -139,7 +154,7 @@
 	height: 8px;
 	background: var(--pm-danger);
 	border-radius: 50%;
-	border: 2px solid #0F172A;
+	border: 2px solid #0f172a;
 }
 
 .pm-main {
@@ -150,7 +165,7 @@
 }
 
 .header {
-	background: rgba(255, 255, 255, .8);
+	background: rgba(255, 255, 255, 0.8);
 	backdrop-filter: blur(20px);
 	border-bottom: 1px solid var(--pm-border);
 	padding: 16px 32px;
@@ -191,7 +206,7 @@
 	border-radius: var(--pm-r-md);
 	background: var(--pm-surface-2);
 	font-size: 13px;
-	transition: all .2s;
+	transition: all 0.2s;
 }
 
 .headerSearch input:focus {
@@ -225,7 +240,7 @@
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	transition: all .2s;
+	transition: all 0.2s;
 	color: var(--pm-ink-soft);
 	position: relative;
 }
@@ -263,7 +278,7 @@
 	background: #fff;
 	border-radius: 12px;
 	cursor: pointer;
-	transition: all .2s;
+	transition: all 0.2s;
 }
 
 .pm-profile-btn:hover {
@@ -329,7 +344,7 @@
 	border-radius: var(--pm-r-lg);
 	padding: 20px;
 	box-shadow: var(--pm-shadow-sm);
-	transition: all .2s;
+	transition: all 0.2s;
 }
 
 .card:hover {
@@ -351,13 +366,17 @@
 }
 
 .cardBiz::after {
-	content: '';
+	content: "";
 	position: absolute;
 	top: -50%;
 	right: -20%;
 	width: 300px;
 	height: 300px;
-	background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.1) 0%,
+		transparent 70%
+	);
 	border-radius: 50%;
 }
 
@@ -371,7 +390,7 @@
 .sl {
 	font-size: 11px;
 	text-transform: uppercase;
-	letter-spacing: .05em;
+	letter-spacing: 0.05em;
 	color: var(--pm-muted);
 	font-weight: 600;
 	margin-bottom: 4px;
@@ -394,22 +413,22 @@
 
 .badgeW {
 	background: var(--pm-warning-soft);
-	color: #B45309;
+	color: #b45309;
 }
 
 .badgeD {
 	background: var(--pm-danger-soft);
-	color: #DC2626;
+	color: #dc2626;
 }
 
 .badgeI {
 	background: var(--pm-info-soft);
-	color: #1D4ED8;
+	color: #1d4ed8;
 }
 
 .badgeP {
 	background: var(--pm-purple-soft);
-	color: #6D28D9;
+	color: #6d28d9;
 }
 
 .badgeDark {
@@ -430,7 +449,7 @@
 	border: 1px solid var(--pm-border);
 	background: #fff;
 	cursor: pointer;
-	transition: all .2s;
+	transition: all 0.2s;
 	color: var(--pm-ink);
 	font-family: var(--pm-font-sans);
 }
@@ -485,7 +504,7 @@
 .progressBar {
 	height: 100%;
 	border-radius: 3px;
-	transition: width .4s ease;
+	transition: width 0.4s ease;
 }
 
 .iconCircle {
@@ -534,7 +553,7 @@
 	font-weight: 600;
 	font-size: 11px;
 	text-transform: uppercase;
-	letter-spacing: .05em;
+	letter-spacing: 0.05em;
 	color: var(--pm-muted);
 	border-bottom: 1px solid var(--pm-border);
 	background: var(--pm-surface-2);
@@ -570,7 +589,7 @@
 	cursor: pointer;
 	font-size: 13px;
 	font-weight: 500;
-	transition: all .2s;
+	transition: all 0.2s;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -579,7 +598,7 @@
 
 .quickBtn:hover {
 	border-color: var(--pm-primary);
-	background: rgba(79, 70, 229, .04);
+	background: rgba(79, 70, 229, 0.04);
 	transform: translateY(-2px);
 	box-shadow: var(--pm-shadow-sm);
 }
@@ -661,7 +680,7 @@
 	border: 1px solid var(--pm-border);
 	border-radius: var(--pm-r-sm);
 	font-size: 14px;
-	transition: all .2s;
+	transition: all 0.2s;
 	background: #fff;
 }
 
@@ -680,7 +699,7 @@
 }
 
 .stepper::before {
-	content: '';
+	content: "";
 	position: absolute;
 	top: 14px;
 	left: 0;
@@ -711,7 +730,7 @@
 	background: #fff;
 	border: 2px solid var(--pm-border);
 	color: var(--pm-muted);
-	transition: all .3s;
+	transition: all 0.3s;
 }
 
 .stepActive .stepN {
@@ -755,7 +774,7 @@
 	font-weight: 500;
 	cursor: pointer;
 	white-space: nowrap;
-	transition: all .2s;
+	transition: all 0.2s;
 	color: var(--pm-ink-soft);
 }
 
@@ -795,7 +814,7 @@
 
 .fstepActive {
 	display: block;
-	animation: fadeIn .3s ease-out;
+	animation: fadeIn 0.3s ease-out;
 }
 
 .tpanel {
@@ -804,7 +823,7 @@
 
 .tpanelActive {
 	display: block;
-	animation: fadeIn .3s ease-out;
+	animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
@@ -822,7 +841,7 @@
 .loadingOv {
 	position: absolute;
 	inset: 0;
-	background: rgba(255, 255, 255, .9);
+	background: rgba(255, 255, 255, 0.9);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -837,7 +856,7 @@
 	border: 3px solid var(--pm-border);
 	border-top-color: var(--pm-primary);
 	border-radius: 50%;
-	animation: spin .8s linear infinite;
+	animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -885,11 +904,11 @@
 	height: 100%;
 	justify-content: flex-end;
 	cursor: pointer;
-	transition: opacity .2s;
+	transition: opacity 0.2s;
 }
 
 .chartBarWrapper:hover {
-	opacity: .8;
+	opacity: 0.8;
 }
 
 .chartBar {
@@ -924,15 +943,14 @@
 	padding: 32px 20px;
 	text-align: center;
 	cursor: pointer;
-	transition: all .2s;
+	transition: all 0.2s;
 	background: #fff;
 }
 
 .uploadZone:hover {
 	border-color: var(--pm-primary);
-	background: rgba(79, 70, 229, .02);
+	background: rgba(79, 70, 229, 0.02);
 }
-
 
 /* ---------- classes added for React/Missing in HTML style block ---------- */
 .agingBlock {

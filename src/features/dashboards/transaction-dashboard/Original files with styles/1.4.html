@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Payment Rails & Routing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #312e81, #4F46E5, #7C3AED);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .st {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ss {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-diagram-3"></i><span class="badge-dot"></span></button><button
+                    class="pm-nav-item"><i class="bi bi-gear"></i></button></nav><button class="pm-nav-item"
+                style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Payment Rails & Routing</h1>
+                            <p>Connected banks, smart routing, rail performance, configuration & nostro/vostro mapping
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search banks, rails, rules, accounts..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('railNotifModal')"><i class="bi bi-bell"></i><span
+                            class="counter">9</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Treasury Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Transactions Hub</a> / <strong>Payment
+                            Rails & Routing</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.4 — Payment Rails & Routing</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage connected financial institutions,
+                        configure smart routing rules, monitor rail performance, control rail settings and reconcile
+                        nostro/vostro accounts.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('healthCheckModal')"><i class="bi bi-heart-pulse"></i> Health
+                        Check</button><button class="btn-pm" onclick="openM('railConfigModal')"><i
+                            class="bi bi-gear"></i> Rail Config</button><button class="btn-pm btn-pm-p"
+                        onclick="openM('addBankModal')"><i class="bi bi-plus-lg"></i> Add Bank</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Payment infrastructure live
+                                <span style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">18 banks connected</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">All major Kenyan & regional
+                                banks linked with real-time API health monitoring across 7 payment rails.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('railConfigModal')">Rails</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('routingRulesModal')">Rules</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('nostroModal')">Nostro</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-accent)">AVG SUCCESS RATE</p>
+                            <div class="SV" style="margin:6px 0">98.7%</div><span class="B B-s"><i
+                                    class="bi bi-graph-up-arrow"></i> +1.2% MoM</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">PesaLink: 99.4%<br>RTGS:
+                                99.1%</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">AVG SETTLEMENT TIME</p>
+                            <div class="SV" style="margin:6px 0">14m 32s</div><span class="B B-i"><i
+                                    class="bi bi-clock"></i> -8% vs last month</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Instant rails: 4.2s<br>ACH
+                                rails: 2h 11m</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="SL" style="color:var(--pm-warning)">MONTHLY RAIL COST</p>
+                            <div class="SV" style="margin:6px 0">KES 184,200</div><span class="B B-w"><i
+                                    class="bi bi-currency-exchange"></i> 3 rails optimized</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">Potential savings: KES
+                                31,400</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-bank"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Equity Bank API health degraded
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Last sync: 47 min ago</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('bankHealthModal')">Investigate</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">RTGS cut-off in 42 minutes</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 12.4M queued for today
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('railConfigModal')">Manage</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-link-45deg"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">SWIFT credential expires in 5 days
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Certificate renewal required
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('railConfigModal')">Renew</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-lightning-charge"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Route KES 8.2M to PesaLink</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Save KES 4,100 vs RTGS today
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('routingRulesModal')">Apply</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">A/B test new ACH rule</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Projected 0.8% cost reduction
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('routingRulesModal')">Start
+                                    Test</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-currency-exchange"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Rebalance USD nostro position</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Current FX exposure: +$142K
+                                        </div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('nostroModal')">Rebalance</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent rail management workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('addBankModal')"><i
+                                        class="bi bi-bank text-primary me-1"></i> Add Bank</button><button
+                                    class="quick-btn" onclick="openM('routingRulesModal')"><i
+                                        class="bi bi-diagram-3 text-info me-1"></i> Create Rule</button><button
+                                    class="quick-btn" onclick="openM('railConfigModal')"><i
+                                        class="bi bi-gear text-warning me-1"></i> Rail Config</button><button
+                                    class="quick-btn" onclick="openM('nostroModal')"><i
+                                        class="bi bi-currency-exchange me-1" style="color:var(--pm-purple)"></i>
+                                    Nostro</button><button class="quick-btn" onclick="openM('railHealthModal')"><i
+                                        class="bi bi-heart-pulse text-success me-1"></i> Rail Health</button><button
+                                    class="quick-btn" onclick="openM('performanceModal')"><i
+                                        class="bi bi-bar-chart-line text-danger me-1"></i> Analytics</button><button
+                                    class="quick-btn" onclick="openM('reconcileModal')"><i
+                                        class="bi bi-list-check text-muted me-1"></i> Reconcile</button><button
+                                    class="quick-btn" onclick="openM('exportReportModal')"><i
+                                        class="bi bi-download me-1" style="color:var(--pm-accent)"></i> Export</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bank2" style="color:var(--pm-primary)"></i> 1.4.1 — Connected
+                                Banks Directory</h3>
+                            <p class="ss">All financial institutions connected to PayMo with real-time API health,
+                                supported rails, settlement windows and limits.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('addBankModal')"><i class="bi bi-plus-lg"></i> Add Bank</button><button
+                                class="btn-pm btn-sm" onclick="openM('bankHealthModal')"><i
+                                    class="bi bi-heart-pulse"></i> Health</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Status</th>
+                                    <th>API Health</th>
+                                    <th>Supported Rails</th>
+                                    <th>Settlement</th>
+                                    <th>Limits</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="banksTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-diagram-3" style="color:var(--pm-accent)"></i> 1.4.2 —
+                                Routing Rules Engine</h3>
+                            <p class="ss">Smart routing configuration based on amount, currency, destination, urgency
+                                and cost ceilings with A/B testing.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('routingRulesModal')"><i class="bi bi-plus-lg"></i> New
+                                Rule</button><button class="btn-pm btn-sm" onclick="openM('abTestModal')"><i
+                                    class="bi bi-flask"></i> A/B Test</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Routing Rules</h4>
+                                <div id="routingRulesList"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Smart Recommendation</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:12px;font-weight:700;color:#047857">TODAY'S BEST ROUTE</div>
+                                    <div style="font-size:18px;font-weight:700;color:var(--pm-accent)">PesaLink Instant
+                                    </div>
+                                    <div style="font-size:12px;color:#065F46">KES 8.2M transfer to Equity Bank — 4.2s
+                                        settlement, KES 82 fee</div>
+                                </div><button class="btn-pm btn-sm w-100" onclick="openM('routingRulesModal')">Apply
+                                    Recommendation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bar-chart-line" style="color:var(--pm-info)"></i> 1.4.3 —
+                                Rail Performance Analytics</h3>
+                            <p class="ss">Success rates, settlement times, cost per transaction and failure analysis
+                                across all payment rails.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('performanceModal')"><i class="bi bi-graph-up-arrow"></i> Full
+                                Analytics</button><button class="btn-pm btn-sm" onclick="openM('exportReportModal')"><i
+                                    class="bi bi-download"></i> Export</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Rail Performance (Last 30
+                                    Days)</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Rail</th>
+                                                <th>Success</th>
+                                                <th>Avg Time</th>
+                                                <th>Cost</th>
+                                                <th>Volume</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>PesaLink Instant</td>
+                                                <td><span class="B B-s">99.4%</span></td>
+                                                <td>4.2s</td>
+                                                <td>KES 82</td>
+                                                <td>KES 1.2B</td>
+                                            </tr>
+                                            <tr>
+                                                <td>RTGS</td>
+                                                <td><span class="B B-s">99.1%</span></td>
+                                                <td>2h 11m</td>
+                                                <td>KES 450</td>
+                                                <td>KES 8.4B</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ACH</td>
+                                                <td><span class="B B-i">98.2%</span></td>
+                                                <td>4h 33m</td>
+                                                <td>KES 35</td>
+                                                <td>KES 620M</td>
+                                            </tr>
+                                            <tr>
+                                                <td>SWIFT</td>
+                                                <td><span class="B B-w">96.8%</span></td>
+                                                <td>1d 4h</td>
+                                                <td>KES 2,800</td>
+                                                <td>KES 1.9B</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Card-to-Bank</td>
+                                                <td><span class="B B-s">98.9%</span></td>
+                                                <td>12s</td>
+                                                <td>KES 65</td>
+                                                <td>KES 340M</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Failure Analysis</h4>
+                                <div class="sr">
+                                    <div><strong>Insufficient funds</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">34% of failures</div>
+                                    </div><span class="B B-d">1,842</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Invalid account number</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">22% of failures</div>
+                                    </div><span class="B B-w">1,189</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Daily limit exceeded</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">18% of failures</div>
+                                    </div><span class="B B-w">974</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Bank system timeout</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">14% of failures</div>
+                                    </div><span class="B B-i">756</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Compliance hold</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">12% of failures</div>
+                                    </div><span class="B B-i">649</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-gear-fill" style="color:var(--pm-warning)"></i> 1.4.4 — Rail
+                                Configuration</h3>
+                            <p class="ss">Enable/disable rails, manage cut-off times, limits, credentials, certificates
+                                and webhook endpoints.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('railConfigModal')"><i class="bi bi-gear"></i> Manage Rails</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-12">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Rails & Configuration
+                                </h4>
+                                <div id="railConfigList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.5 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-currency-exchange" style="color:var(--pm-purple)"></i> 1.4.5
+                                — Nostro/Vostro Account Mapping</h3>
+                            <p class="ss">Multi-currency account balances, reconciliation status, auto-sweep rules and
+                                FX position management.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('nostroModal')"><i class="bi bi-plus-lg"></i> Add Account</button><button
+                                class="btn-pm btn-sm" onclick="openM('reconcileModal')"><i class="bi bi-list-check"></i>
+                                Reconcile</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Nostro/Vostro Accounts</h4>
+                                <div id="nostroList"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">FX Position Snapshot</h4>
+                                <div class="sr">
+                                    <div><strong>USD Position</strong></div><strong
+                                        style="color:var(--pm-accent)">+$142,800</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>EUR Position</strong></div><strong
+                                        style="color:var(--pm-danger)">-€87,400</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>GBP Position</strong></div><strong
+                                        style="color:var(--pm-info)">+£34,200</strong>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>UGX Position</strong></div><strong style="color:var(--pm-warning)">+UGX
+                                        1.2B</strong>
+                                </div><button class="btn-pm btn-sm w-100 mt-2"
+                                    onclick="openM('fxRebalanceModal')">Rebalance FX Positions</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.4.6 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> 1.4.6 —
+                                Rail Audit & Compliance Log</h3>
+                            <p class="ss">Complete audit trail of all rail configuration changes, credential updates,
+                                rule modifications and reconciliation events.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('auditLogModal')"><i class="bi bi-file-earmark-text"></i> Full
+                                Log</button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                    <th>Rail/Bank</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:32</td>
+                                    <td>Routing rule updated</td>
+                                    <td>PesaLink</td>
+                                    <td>James K.</td>
+                                    <td>Amount threshold raised to KES 5M</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:45</td>
+                                    <td>API credential rotated</td>
+                                    <td>Equity Bank</td>
+                                    <td>System</td>
+                                    <td>New certificate uploaded</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 09:12</td>
+                                    <td>Nostro auto-sweep executed</td>
+                                    <td>USD Account</td>
+                                    <td>System</td>
+                                    <td>$85,000 swept to KES at 129.45</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 16:40</td>
+                                    <td>RTGS cut-off extended</td>
+                                    <td>CBK RTGS</td>
+                                    <td>Admin</td>
+                                    <td>Extended to 17:30 for month-end</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 14:05</td>
+                                    <td>Bank connection paused</td>
+                                    <td>Family Bank</td>
+                                    <td>James K.</td>
+                                    <td>API health degraded — manual intervention</td>
+                                    <td><span class="B B-w">Paused</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- MODALS (23 total) -->
+
+    <!-- M1: Bank Health -->
+    <div class="modal fade R" id="bankHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Bank API Health Dashboard
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Bank</label><select class="FC">
+                            <option>Equity Bank</option>
+                            <option>KCB Bank</option>
+                            <option>Co-operative Bank</option>
+                            <option>Absa Bank</option>
+                        </select></div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#B45309">API LATENCY</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">847ms</div>
+                                <div style="font-size:11px;color:#92400E">↑ 312ms vs 24h ago</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#991B1B">ERROR RATE</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">4.2%</div>
+                                <div style="font-size:11px;color:#7F1D1D">↑ 2.8% vs yesterday</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div style="font-size:11px;font-weight:700;color:#047857">LAST SUCCESS</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">47m ago</div>
+                                <div style="font-size:11px;color:#065F46">47 min 12 sec</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3"><label class="FL">Recent Errors (Last 24h)</label>
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Error Code</th>
+                                        <th>Message</th>
+                                        <th>Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>14:12</td>
+                                        <td>ERR-429</td>
+                                        <td>Rate limit exceeded</td>
+                                        <td>142</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:45</td>
+                                        <td>ERR-503</td>
+                                        <td>Service temporarily unavailable</td>
+                                        <td>38</td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:20</td>
+                                        <td>ERR-401</td>
+                                        <td>Invalid credentials</td>
+                                        <td>7</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bankHealthModal','Support ticket created for Equity Bank API degradation. ETA: 2 hours.','TKT-20250627-8812')">Create
+                        Support Ticket</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Add Bank -->
+    <div class="modal fade R" id="addBankModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank text-primary me-2"></i>Add New Bank Connection</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="addBankStepper"></div>
+                    <div id="addBankS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Bank Selection</h6>
+                        <div class="mb-3"><label class="FL">Search Bank</label><input class="FC"
+                                placeholder="Enter bank name or SWIFT code" value="Stanbic Bank"></div>
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                            <div class="d-flex justify-content-between mb-1"><span>Bank Name</span><strong>Stanbic Bank
+                                    Kenya</strong></div>
+                            <div class="d-flex justify-content-between mb-1"><span>SWIFT</span><strong>SBICKENX</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1"><span>Country</span><strong>Kenya</strong>
+                            </div>
+                            <div class="d-flex justify-content-between"><span>API Status</span><span
+                                    class="B B-s">Available</span></div>
+                        </div>
+                    </div>
+                    <div id="addBankS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Rails & Credentials</h6>
+                        <div class="mb-3"><label class="FL">Supported Rails</label>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">PesaLink Instant</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                    class="form-check-label">RTGS</label></div>
+                            <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">ACH</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                    class="form-check-label">Card-to-Bank</label></div>
+                        </div>
+                        <div class="mb-3"><label class="FL">API Key</label><input class="FC" type="password"
+                                value="sk_live_4f8a9c2b1e7d6f3a"></div>
+                        <div class="mb-3"><label class="FL">Webhook URL</label><input class="FC"
+                                value="https://api.paymo.co.ke/webhooks/stanbic"></div>
+                    </div>
+                    <div id="addBankS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Limits & Settlement</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Per Transaction Limit</label><input class="FC"
+                                    value="50,000,000"></div>
+                            <div class="col-md-6"><label class="FL">Daily Limit</label><input class="FC"
+                                    value="500,000,000"></div>
+                            <div class="col-md-6"><label class="FL">Settlement Window</label><select class="FC">
+                                    <option>09:00 – 16:00 EAT</option>
+                                    <option>08:00 – 17:00 EAT</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Cut-off Time</label><input class="FC" type="time"
+                                    value="15:30"></div>
+                        </div>
+                    </div>
+                    <div id="addBankS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Bank Connection Established</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Stanbic Bank Kenya is now connected. API
+                                health monitoring is active.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Bank</span><strong>Stanbic Bank Kenya</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span class="text-muted">Connection
+                                        ID</span><strong>BNK-20250627-4418</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Status</span><span
+                                        class="B B-s">Active</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="addBankFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="addBankNext"
+                        onclick="nextFlow('addBank',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Routing Rules -->
+    <div class="modal fade R" id="routingRulesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-diagram-3 text-accent me-2"></i>Routing Rules Engine</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('rule','create',this)">Create
+                            Rule</button><button class="pill" onclick="sw('rule','existing',this)">Existing
+                            Rules</button><button class="pill" onclick="sw('rule','test',this)">A/B Test</button></div>
+                    <div id="rule-create" class="tpanel active">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Rule Name</label><input class="FC"
+                                    value="High-Value Instant Route"></div>
+                            <div class="col-md-6"><label class="FL">Priority</label><select class="FC">
+                                    <option>1 — Highest</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                </select></div>
+                            <div class="col-md-4"><label class="FL">Amount From</label><input class="FC"
+                                    value="1,000,000"></div>
+                            <div class="col-md-4"><label class="FL">Amount To</label><input class="FC"
+                                    value="50,000,000"></div>
+                            <div class="col-md-4"><label class="FL">Currency</label><select class="FC">
+                                    <option>KES</option>
+                                    <option>USD</option>
+                                    <option>EUR</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Destination Bank</label><select class="FC">
+                                    <option>Any</option>
+                                    <option>Equity Bank</option>
+                                    <option>KCB Bank</option>
+                                    <option>Co-operative Bank</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Urgency</label><select class="FC">
+                                    <option>Instant only</option>
+                                    <option>Standard or Instant</option>
+                                    <option>Any</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Primary Rail</label><select class="FC">
+                                    <option>PesaLink Instant</option>
+                                    <option>RTGS</option>
+                                    <option>Card-to-Bank</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Fallback Rail</label><select class="FC">
+                                    <option>RTGS</option>
+                                    <option>ACH</option>
+                                    <option>SWIFT</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Cost Ceiling (KES)</label><input class="FC"
+                                    value="500"></div>
+                            <div class="col-md-6"><label class="FL">Max Settlement Time</label><select class="FC">
+                                    <option>5 minutes</option>
+                                    <option>30 minutes</option>
+                                    <option>2 hours</option>
+                                    <option>24 hours</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="rule-existing" class="tpanel">
+                        <div class="sr">
+                            <div><strong>High-Value Instant Route</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 1M–50M → PesaLink Instant</div>
+                            </div><span class="B B-s">Active</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Salary Batch Route</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 500K+ → ACH (lowest cost)</div>
+                            </div><span class="B B-s">Active</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>International USD</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">USD 10K+ → SWIFT</div>
+                            </div><span class="B B-w">Paused</span>
+                        </div>
+                    </div>
+                    <div id="rule-test" class="tpanel">
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                            <div style="font-size:12px;font-weight:700;color:#1D4ED8">A/B TEST IN PROGRESS</div>
+                            <div style="font-size:14px;font-weight:700;color:var(--pm-info)">PesaLink vs Card-to-Bank
+                                (KES 50K–200K)</div>
+                            <div style="font-size:12px;color:#1E40AF">Started: 20 Jun 2025 · 12,847 transactions tested
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div style="font-size:11px;font-weight:700">VARIANT A (PesaLink)</div>
+                                    <div style="font-size:20px;font-weight:700">99.2% success</div>
+                                    <div style="font-size:12px;color:var(--pm-muted)">Avg cost: KES 82</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                    <div style="font-size:11px;font-weight:700">VARIANT B (Card-to-Bank)</div>
+                                    <div style="font-size:20px;font-weight:700">98.7% success</div>
+                                    <div style="font-size:12px;color:var(--pm-muted)">Avg cost: KES 65</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('routingRulesModal','Routing rule created and activated successfully.','RUL-20250627-9914')">Save
+                        Rule</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Rail Config -->
+    <div class="modal fade R" id="railConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear text-warning me-2"></i>Rail Configuration Center</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('rail','limits',this)">Limits &
+                            Cut-offs</button><button class="pill"
+                            onclick="sw('rail','cred',this)">Credentials</button><button class="pill"
+                            onclick="sw('rail','webhook',this)">Webhooks</button><button class="pill"
+                            onclick="sw('rail','enable',this)">Enable/Disable</button></div>
+                    <div id="rail-limits" class="tpanel active">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Rail</label><select class="FC">
+                                    <option>PesaLink Instant</option>
+                                    <option>RTGS</option>
+                                    <option>ACH</option>
+                                    <option>SWIFT</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">Cut-off Time</label><input type="time" class="FC"
+                                    value="16:00"></div>
+                            <div class="col-md-4"><label class="FL">Per Transaction Limit</label><input class="FC"
+                                    value="100,000,000"></div>
+                            <div class="col-md-4"><label class="FL">Daily Limit</label><input class="FC"
+                                    value="2,000,000,000"></div>
+                            <div class="col-md-4"><label class="FL">Monthly Limit</label><input class="FC"
+                                    value="50,000,000,000"></div>
+                        </div>
+                    </div>
+                    <div id="rail-cred" class="tpanel">
+                        <div class="mb-3"><label class="FL">Rail</label><select class="FC">
+                                <option>PesaLink Instant</option>
+                                <option>RTGS</option>
+                                <option>SWIFT</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">API Key / Certificate</label><input class="FC"
+                                type="password" value="pk_live_9f3a2b8c4d1e6f7a"></div>
+                        <div class="mb-3"><label class="FL">Encryption Certificate</label><input type="file" class="FC">
+                        </div>
+                        <div class="mb-3"><label class="FL">Last Rotated</label><input class="FC" value="2025-06-01"
+                                disabled></div>
+                    </div>
+                    <div id="rail-webhook" class="tpanel">
+                        <div class="mb-3"><label class="FL">Rail</label><select class="FC">
+                                <option>PesaLink Instant</option>
+                                <option>RTGS</option>
+                                <option>ACH</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Webhook URL</label><input class="FC"
+                                value="https://api.paymo.co.ke/webhooks/pesalink"></div>
+                        <div class="mb-3"><label class="FL">Secret Key</label><input class="FC" type="password"
+                                value="whsec_8f4a9b2c1d7e6f3a"></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label" style="font-size:13px">Enable retry on failure (max 5
+                                attempts)</label></div>
+                    </div>
+                    <div id="rail-enable" class="tpanel">
+                        <div class="sr">
+                            <div><strong>PesaLink Instant</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>RTGS</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>ACH</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>SWIFT</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Card-to-Bank</strong></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('railConfigModal','Rail configuration saved. Changes take effect immediately.','')">Save
+                        Configuration</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Nostro -->
+    <div class="modal fade R" id="nostroModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange text-purple me-2"></i>Nostro/Vostro
+                        Account Management</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('nost','bal',this)">Balances</button><button class="pill"
+                            onclick="sw('nost','recon',this)">Reconciliation</button><button class="pill"
+                            onclick="sw('nost','sweep',this)">Auto-Sweep</button><button class="pill"
+                            onclick="sw('nost','fx',this)">FX Positions</button></div>
+                    <div id="nost-bal" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Currency</th>
+                                        <th>Balance</th>
+                                        <th>Available</th>
+                                        <th>Bank</th>
+                                        <th>Last Updated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Nostro USD</td>
+                                        <td>USD</td>
+                                        <td><strong>$2,847,500</strong></td>
+                                        <td>$2,812,300</td>
+                                        <td>Standard Chartered NY</td>
+                                        <td>27 Jun 14:28</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nostro EUR</td>
+                                        <td>EUR</td>
+                                        <td><strong>€1,204,800</strong></td>
+                                        <td>€1,189,200</td>
+                                        <td>Deutsche Bank Frankfurt</td>
+                                        <td>27 Jun 14:28</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nostro GBP</td>
+                                        <td>GBP</td>
+                                        <td><strong>£892,400</strong></td>
+                                        <td>£881,700</td>
+                                        <td>Barclays London</td>
+                                        <td>27 Jun 14:28</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vostro KES</td>
+                                        <td>KES</td>
+                                        <td><strong>KES 184,200,000</strong></td>
+                                        <td>KES 179,450,000</td>
+                                        <td>PayMo Settlement</td>
+                                        <td>27 Jun 14:30</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="nost-recon" class="tpanel">
+                        <div class="sr">
+                            <div><strong>USD Nostro — Standard Chartered</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Last reconciled: 27 Jun 08:00</div>
+                            </div><span class="B B-s">Matched</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>EUR Nostro — Deutsche Bank</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Last reconciled: 26 Jun 23:45</div>
+                            </div><span class="B B-s">Matched</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>GBP Nostro — Barclays</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Discrepancy: £2,400</div>
+                            </div><span class="B B-w">Investigate</span>
+                        </div>
+                    </div>
+                    <div id="nost-sweep" class="tpanel">
+                        <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label">Enable auto-sweep for USD Nostro</label></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">Sweep Threshold</label><input class="FC"
+                                    value="500,000"></div>
+                            <div class="col-md-6"><label class="FL">Sweep Frequency</label><select class="FC">
+                                    <option>Daily at 17:00 EAT</option>
+                                    <option>Twice daily</option>
+                                    <option>Real-time</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="nost-fx" class="tpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-accent-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#047857">USD LONG</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-accent)">+$142,800</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded" style="background:var(--pm-danger-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#991B1B">EUR SHORT</div>
+                                    <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">-€87,400</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('nostroModal','Nostro/Vostro configuration updated successfully.','')">Save
+                        Changes</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Performance -->
+    <div class="modal fade R" id="performanceModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up-arrow text-info me-2"></i>Rail Performance
+                        Analytics</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('perf','success',this)">Success
+                            Rate</button><button class="pill" onclick="sw('perf','time',this)">Settlement
+                            Time</button><button class="pill" onclick="sw('perf','cost',this)">Cost
+                            Analysis</button><button class="pill" onclick="sw('perf','fail',this)">Failure
+                            Analysis</button></div>
+                    <div id="perf-success" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rail</th>
+                                        <th>Day 1</th>
+                                        <th>Day 7</th>
+                                        <th>Day 30</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PesaLink Instant</td>
+                                        <td>99.6%</td>
+                                        <td>99.4%</td>
+                                        <td>99.4%</td>
+                                        <td><span class="B B-s">Stable</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>RTGS</td>
+                                        <td>99.3%</td>
+                                        <td>99.2%</td>
+                                        <td>99.1%</td>
+                                        <td><span class="B B-s">Stable</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ACH</td>
+                                        <td>98.5%</td>
+                                        <td>98.3%</td>
+                                        <td>98.2%</td>
+                                        <td><span class="B B-w">Slight decline</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SWIFT</td>
+                                        <td>97.1%</td>
+                                        <td>96.9%</td>
+                                        <td>96.8%</td>
+                                        <td><span class="B B-w">Slight decline</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="perf-time" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rail</th>
+                                        <th>P50</th>
+                                        <th>P95</th>
+                                        <th>P99</th>
+                                        <th>Max</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PesaLink Instant</td>
+                                        <td>3.8s</td>
+                                        <td>8.2s</td>
+                                        <td>14.1s</td>
+                                        <td>47s</td>
+                                    </tr>
+                                    <tr>
+                                        <td>RTGS</td>
+                                        <td>1h 42m</td>
+                                        <td>2h 55m</td>
+                                        <td>4h 12m</td>
+                                        <td>6h 40m</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ACH</td>
+                                        <td>3h 20m</td>
+                                        <td>6h 45m</td>
+                                        <td>11h 30m</td>
+                                        <td>18h 20m</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SWIFT</td>
+                                        <td>18h</td>
+                                        <td>36h</td>
+                                        <td>52h</td>
+                                        <td>72h</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="perf-cost" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Rail</th>
+                                        <th>Min</th>
+                                        <th>Avg</th>
+                                        <th>Max</th>
+                                        <th>30d Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PesaLink Instant</td>
+                                        <td>KES 50</td>
+                                        <td>KES 82</td>
+                                        <td>KES 120</td>
+                                        <td>KES 8.4M</td>
+                                    </tr>
+                                    <tr>
+                                        <td>RTGS</td>
+                                        <td>KES 300</td>
+                                        <td>KES 450</td>
+                                        <td>KES 800</td>
+                                        <td>KES 42.1M</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ACH</td>
+                                        <td>KES 20</td>
+                                        <td>KES 35</td>
+                                        <td>KES 60</td>
+                                        <td>KES 1.9M</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SWIFT</td>
+                                        <td>KES 1,800</td>
+                                        <td>KES 2,800</td>
+                                        <td>KES 4,500</td>
+                                        <td>KES 18.7M</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="perf-fail" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Failure Reason</th>
+                                        <th>Count</th>
+                                        <th>% of Total</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Insufficient funds</td>
+                                        <td>1,842</td>
+                                        <td>34.1%</td>
+                                        <td><span class="B B-d">↑ 8%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invalid account</td>
+                                        <td>1,189</td>
+                                        <td>22.0%</td>
+                                        <td><span class="B B-w">↑ 3%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Daily limit exceeded</td>
+                                        <td>974</td>
+                                        <td>18.0%</td>
+                                        <td><span class="B B-s">Stable</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank timeout</td>
+                                        <td>756</td>
+                                        <td>14.0%</td>
+                                        <td><span class="B B-w">↑ 12%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Compliance hold</td>
+                                        <td>649</td>
+                                        <td>12.0%</td>
+                                        <td><span class="B B-s">Stable</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('exportReportModal')">Export Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Reconcile -->
+    <div class="modal fade R" id="reconcileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list-check text-success me-2"></i>Reconciliation Center</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Account / Rail</label><select class="FC">
+                            <option>USD Nostro — Standard Chartered</option>
+                            <option>EUR Nostro — Deutsche Bank</option>
+                            <option>GBP Nostro — Barclays</option>
+                            <option>Vostro KES — PayMo Settlement</option>
+                        </select></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Statement
+                                Balance</span><strong>$2,847,500.00</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Ledger
+                                Balance</span><strong>$2,847,500.00</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Discrepancy</span><span
+                                class="B B-s">KES 0.00 — Matched</span></div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Upload Bank Statement</label><input type="file" class="FC">
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Auto-match transactions within tolerance
+                            (KES 100)</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reconcileModal','Reconciliation completed successfully. 1,284 transactions matched.','REC-20250627-8812')">Run
+                        Reconciliation</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: FX Rebalance -->
+    <div class="modal fade R" id="fxRebalanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange text-purple me-2"></i>FX Position
+                        Rebalance</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">From Currency</label><select class="FC">
+                            <option>USD (+$142,800)</option>
+                            <option>EUR (-€87,400)</option>
+                            <option>GBP (+£34,200)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">To Currency</label><select class="FC">
+                            <option>KES</option>
+                            <option>USD</option>
+                            <option>EUR</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount</label><input class="FC" value="100,000"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-accent-soft);font-size:12px"><i
+                            class="bi bi-info-circle me-1"></i> Estimated FX rate: 1 USD = 129.45 KES. Total credit: KES
+                        12,945,000</div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('fxRebalanceModal','FX rebalance executed. $100,000 converted to KES 12,945,000.','FX-20250627-4418')">Execute
+                        Rebalance</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Audit Log -->
+    <div class="modal fade R" id="auditLogModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Full Audit & Compliance Log</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap mb-3" style="gap:8px"><select class="FC" style="width:auto">
+                            <option>All Actions</option>
+                            <option>Credential Update</option>
+                            <option>Rule Change</option>
+                            <option>Reconciliation</option>
+                        </select><input class="FC" style="width:220px" placeholder="Search user or reference"></div>
+                    <div class="table-responsive" style="max-height:400px;overflow-y:auto">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Target</th>
+                                    <th>Details</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:32</td>
+                                    <td>James K.</td>
+                                    <td>Routing rule updated</td>
+                                    <td>PesaLink</td>
+                                    <td>Amount threshold raised to KES 5M</td>
+                                    <td>102.68.45.12</td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:45</td>
+                                    <td>System</td>
+                                    <td>API credential rotated</td>
+                                    <td>Equity Bank</td>
+                                    <td>New certificate uploaded</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 09:12</td>
+                                    <td>System</td>
+                                    <td>Nostro auto-sweep executed</td>
+                                    <td>USD Account</td>
+                                    <td>$85,000 swept to KES at 129.45</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 16:40</td>
+                                    <td>Admin</td>
+                                    <td>RTGS cut-off extended</td>
+                                    <td>CBK RTGS</td>
+                                    <td>Extended to 17:30 for month-end</td>
+                                    <td>102.68.45.12</td>
+                                </tr>
+                                <tr>
+                                    <td>25 Jun 14:05</td>
+                                    <td>James K.</td>
+                                    <td>Bank connection paused</td>
+                                    <td>Family Bank</td>
+                                    <td>API health degraded</td>
+                                    <td>102.68.45.12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('exportReportModal')">Export Log</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Export Report -->
+    <div class="modal fade R" id="exportReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Rail Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Rail Performance Summary</option>
+                            <option>Bank Connection Health</option>
+                            <option>Routing Rules Audit</option>
+                            <option>Nostro Reconciliation Report</option>
+                            <option>Full Compliance Log</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-06-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('exportReportModal','Report generated and downloading...','')">Generate
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Rail Health -->
+    <div class="modal fade R" id="railHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-success me-2"></i>Rail Health Monitor</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    99.1</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">OVERALL HEALTH</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">7</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">ACTIVE RAILS</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">2</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">DEGRADED</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">1</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">PAUSED</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive mt-3">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Rail</th>
+                                    <th>Health</th>
+                                    <th>Latency</th>
+                                    <th>Error Rate</th>
+                                    <th>Last Incident</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>PesaLink Instant</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>4.2s</td>
+                                    <td>0.6%</td>
+                                    <td>12 Jun 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>RTGS</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>2h 11m</td>
+                                    <td>0.9%</td>
+                                    <td>20 Jun 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>ACH</td>
+                                    <td><span class="B B-w">Degraded</span></td>
+                                    <td>4h 33m</td>
+                                    <td>1.8%</td>
+                                    <td>26 Jun 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>SWIFT</td>
+                                    <td><span class="B B-w">Degraded</span></td>
+                                    <td>1d 4h</td>
+                                    <td>3.2%</td>
+                                    <td>25 Jun 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Card-to-Bank</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>12s</td>
+                                    <td>1.1%</td>
+                                    <td>15 Jun 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('railConfigModal')">Manage Degraded Rails</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Attention Full -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Items
+                        Requiring Attention</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Equity Bank API health degraded</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Last sync: 47 min ago</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('bankHealthModal')">Investigate</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>RTGS cut-off in 42 minutes</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 12.4M queued</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('railConfigModal')">Manage</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>SWIFT credential expires in 5 days</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Certificate renewal required</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('railConfigModal')">Renew</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>ACH success rate declining</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">1.8% error rate (↑0.6%)</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('performanceModal')">Review</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>GBP Nostro discrepancy</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">£2,400 unmatched</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('reconcileModal')">Reconcile</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Health Check -->
+    <div class="modal fade R" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Payment Infrastructure
+                        Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    94</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">OVERALL SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">18/18</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">BANKS ONLINE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">2</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">RAILS DEGRADED</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-purple-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-purple)">4</div>
+                                <div style="font-size:10px;font-weight:700;color:#6D28D9">OPEN ACTIONS</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Status</th>
+                                    <th>Score</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bank Connections</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>98</td>
+                                    <td>None</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Rails</td>
+                                    <td><span class="B B-w">Degraded</span></td>
+                                    <td>87</td>
+                                    <td>Review ACH & SWIFT</td>
+                                </tr>
+                                <tr>
+                                    <td>Routing Rules</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>96</td>
+                                    <td>None</td>
+                                </tr>
+                                <tr>
+                                    <td>Nostro Accounts</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>94</td>
+                                    <td>Reconcile GBP</td>
+                                </tr>
+                                <tr>
+                                    <td>Webhook Endpoints</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>99</td>
+                                    <td>None</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('railHealthModal')">View Rail Health</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Profile -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Treasury Manager</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Rails Managed</span><br><strong>7 active</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Member Since</span><br><strong>Mar 2023</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Health Score</span><br><strong
+                                    style="color:var(--pm-accent)">94/100</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Rail Notifications -->
+    <div class="modal fade R" id="railNotifModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Rail Notifications (9)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Equity
+                            Bank API degraded</strong>
+                        <div style="font-size:11px;color:#7F1D1D">Error rate 4.2% — support ticket created</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>RTGS
+                            cut-off in 42 minutes</strong>
+                        <div style="font-size:11px;color:#92400E">KES 12.4M queued for today</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>SWIFT
+                            credential expires in 5 days</strong>
+                        <div style="font-size:11px;color:#1E40AF">Renewal required before 02 Jul</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);font-size:13px"><strong>ACH
+                            success rate improved</strong>
+                        <div style="font-size:11px;color:#065F46">98.2% (+0.4% from last week)</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>GBP Nostro
+                            discrepancy detected</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">£2,400 unmatched — investigate</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Routing rule
+                            A/B test completed</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">PesaLink variant won — 0.5% cost saving</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" onclick="openM('railConfigModal')">Manage
+                        Alerts</button><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16-23: Additional supporting modals (abTest, railConfig quick, bank status, etc.) -->
+    <div class="modal fade R" id="abTestModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-flask me-2"></i>Start A/B Routing Test</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Test Name</label><input class="FC"
+                            value="PesaLink vs Card-to-Bank (KES 50K-200K)"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="FL">Variant A Rail</label><select class="FC">
+                                <option>PesaLink Instant</option>
+                                <option>RTGS</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Variant B Rail</label><select class="FC">
+                                <option>Card-to-Bank</option>
+                                <option>ACH</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Traffic Split</label><select class="FC">
+                                <option>50/50</option>
+                                <option>70/30</option>
+                                <option>80/20</option>
+                            </select></div>
+                        <div class="col-md-6"><label class="FL">Duration</label><select class="FC">
+                                <option>7 days</option>
+                                <option>14 days</option>
+                                <option>30 days</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('abTestModal','A/B test started. Results will be available in 7 days.','ABT-20250627-9914')">Start
+                        Test</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="fxRateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-currency-exchange me-2"></i>Real-Time FX Rate</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">USD/KES</span><strong>129.45</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Spread</span><strong>0.35%</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Last
+                                Updated</span><strong>27 Jun 14:32 EAT</strong></div>
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Lock rate for 30 minutes</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade R" id="bankStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-check-circle me-2"></i>Bank Connection Status</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Bank</span><strong>Equity Bank</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Connection
+                                ID</span><strong>BNK-20240115-8821</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Status</span><span
+                                class="B B-s">Active</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">API Health</span><span
+                                class="B B-w">Degraded</span></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Last Sync</span><strong>47
+                                min ago</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('bankHealthModal')">View Health Dashboard</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const banks = [
+            { name: 'Equity Bank', status: 'active', health: 'degraded', rails: 'PesaLink,RTGS,ACH', settle: '09:00-16:00', limit: 'KES 100M', color: '#EF4444' },
+            { name: 'KCB Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,ACH,Card', settle: '08:00-17:00', limit: 'KES 200M', color: '#10B981' },
+            { name: 'Co-operative Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,ACH', settle: '09:00-16:00', limit: 'KES 150M', color: '#10B981' },
+            { name: 'Absa Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,SWIFT', settle: '08:30-16:30', limit: 'KES 250M', color: '#10B981' },
+            { name: 'Stanbic Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,ACH,SWIFT', settle: '09:00-17:00', limit: 'KES 300M', color: '#10B981' },
+            { name: 'Family Bank', status: 'paused', health: 'paused', rails: 'PesaLink,ACH', settle: '09:00-15:00', limit: 'KES 50M', color: '#9CA3AF' },
+            { name: 'DTB Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,Card', settle: '08:00-16:00', limit: 'KES 120M', color: '#10B981' },
+            { name: 'I&M Bank', status: 'active', health: 'healthy', rails: 'PesaLink,RTGS,ACH', settle: '09:00-16:00', limit: 'KES 180M', color: '#10B981' }
+        ];
+        const routingRules = [
+            { name: 'High-Value Instant', amount: 'KES 1M–50M', rail: 'PesaLink', fallback: 'RTGS', priority: 1, status: 'Active' },
+            { name: 'Salary Batch', amount: 'KES 500K+', rail: 'ACH', fallback: 'PesaLink', priority: 2, status: 'Active' },
+            { name: 'International USD', amount: 'USD 10K+', rail: 'SWIFT', fallback: '—', priority: 3, status: 'Paused' },
+            { name: 'Low-Value Fast', amount: 'KES 1–100K', rail: 'Card-to-Bank', fallback: 'PesaLink', priority: 1, status: 'Active' }
+        ];
+        const railConfigs = [
+            { name: 'PesaLink Instant', enabled: true, cutoff: '16:00', perTx: 'KES 100M', daily: 'KES 2B', webhook: 'Active' },
+            { name: 'RTGS', enabled: true, cutoff: '15:30', perTx: 'KES 500M', daily: 'KES 10B', webhook: 'Active' },
+            { name: 'ACH', enabled: true, cutoff: '14:00', perTx: 'KES 50M', daily: 'KES 1B', webhook: 'Active' },
+            { name: 'SWIFT', enabled: false, cutoff: '12:00', perTx: 'USD 1M', daily: 'USD 50M', webhook: 'Inactive' },
+            { name: 'Card-to-Bank', enabled: true, cutoff: '23:59', perTx: 'KES 500K', daily: 'KES 5M', webhook: 'Active' }
+        ];
+        const nostroAccounts = [
+            { name: 'Nostro USD', currency: 'USD', balance: '$2,847,500', bank: 'Standard Chartered NY', status: 'Matched' },
+            { name: 'Nostro EUR', currency: 'EUR', balance: '€1,204,800', bank: 'Deutsche Bank Frankfurt', status: 'Matched' },
+            { name: 'Nostro GBP', currency: 'GBP', balance: '£892,400', bank: 'Barclays London', status: 'Investigate' },
+            { name: 'Vostro KES', currency: 'KES', balance: 'KES 184.2M', bank: 'PayMo Settlement', status: 'Matched' }
+        ];
+        function renderBanks() { document.getElementById('banksTableBody').innerHTML = banks.map(b => `<tr><td><strong>${b.name}</strong></td><td>${b.status === 'active' ? '<span class="B B-s">Active</span>' : '<span class="B B-w">Paused</span>'}</td><td>${b.health === 'healthy' ? '<span class="B B-s">Healthy</span>' : b.health === 'degraded' ? '<span class="B B-w">Degraded</span>' : '<span class="B B-w">Paused</span>'}</td><td><small>${b.rails}</small></td><td><small>${b.settle}</small></td><td><strong>${b.limit}</strong></td><td><div class="d-flex" style="gap:4px"><button class="btn-pm btn-sm" onclick="openM('bankHealthModal')"><i class="bi bi-heart-pulse"></i></button><button class="btn-pm btn-sm" onclick="openM('railConfigModal')"><i class="bi bi-gear"></i></button></div></td></tr>`).join(''); }
+        function renderRoutingRules() { document.getElementById('routingRulesList').innerHTML = routingRules.map(r => `<div class="sr"><div><strong>${r.name}</strong><div style="font-size:11px;color:var(--pm-muted)">${r.amount} → ${r.rail} (fallback: ${r.fallback})</div></div>${r.status === 'Active' ? '<span class="B B-s">Active</span>' : '<span class="B B-w">Paused</span>'}</div>`).join(''); }
+        function renderRailConfigs() { document.getElementById('railConfigList').innerHTML = railConfigs.map(r => `<div class="sr"><div><strong>${r.name}</strong><div style="font-size:11px;color:var(--pm-muted)">Cutoff: ${r.cutoff} · Per Tx: ${r.perTx}</div></div><div class="d-flex align-items-center gap-2">${r.enabled ? '<span class="B B-s">Enabled</span>' : '<span class="B B-w">Disabled</span>'}<button class="btn-pm btn-sm" onclick="openM('railConfigModal')"><i class="bi bi-gear"></i></button></div></div>`).join(''); }
+        function renderNostro() { document.getElementById('nostroList').innerHTML = nostroAccounts.map(n => `<div class="sr"><div><strong>${n.name}</strong><div style="font-size:11px;color:var(--pm-muted)">${n.bank}</div></div><div class="text-end"><strong>${n.balance}</strong><div style="font-size:11px">${n.status === 'Matched' ? '<span class="B B-s">Matched</span>' : '<span class="B B-w">Investigate</span>'}</div></div></div>`).join(''); }
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        const flows = { addBank: { current: 1, total: 4, labels: ['Bank', 'Rails', 'Limits', 'Done'] } };
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; if (f.current === total - 1) { const modalBody = document.querySelector('#addBankModal .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM('addBankModal'); return; } f.current++; renderStepper(key); showFlowStep(key); }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { renderBanks(); renderRoutingRules(); renderRailConfigs(); renderNostro(); Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

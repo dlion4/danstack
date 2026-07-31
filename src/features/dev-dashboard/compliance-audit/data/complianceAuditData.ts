@@ -121,7 +121,12 @@ export interface ComplianceAuditContent {
 		user: { name: string; role: string; initials: string; email: string };
 		actions: { icon: string; title: string; modal: string; counter?: number }[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean }[];
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+	}[];
 	heroCards: HeroCard[];
 	regTabs: RegTab[];
 	quickTools: QuickTool[];
@@ -156,7 +161,8 @@ export const initialMockData: ComplianceAuditContent = {
 		title: "Compliance & Regulatory APIs",
 		subtitle:
 			"Audit logging, CBK/KRA reporting, data privacy & ISO 20022/SWIFT standards",
-		searchPlaceholder: "Search compliance tools, audit endpoints, logs, ISO docs...",
+		searchPlaceholder:
+			"Search compliance tools, audit endpoints, logs, ISO docs...",
 		user: {
 			name: "Dev Admin",
 			role: "Prod Environment",
@@ -164,17 +170,39 @@ export const initialMockData: ComplianceAuditContent = {
 			email: "dev.admin@paymo.co.ke",
 		},
 		actions: [
-			{ icon: "bi-hdd-network", title: "Environment", modal: "envSwitcherModal" },
-			{ icon: "bi-bell", title: "Compliance Alerts", modal: "auditAlertsModal", counter: 3 },
+			{
+				icon: "bi-hdd-network",
+				title: "Environment",
+				modal: "envSwitcherModal",
+			},
+			{
+				icon: "bi-bell",
+				title: "Compliance Alerts",
+				modal: "auditAlertsModal",
+				counter: 3,
+			},
 			{ icon: "bi-file-pdf", title: "Audit Report", modal: "auditReportModal" },
 		],
 	},
 
 	pageActions: [
 		{ label: "ISO 20022 Tester", icon: "bi-globe", modal: "isoMessageModal" },
-		{ label: "DSAR API", icon: "bi-person-bounding-box", modal: "dsarRequestModal" },
-		{ label: "KRA e-TIMS Check", icon: "bi-receipt-cutoff", modal: "kraEtimModal" },
-		{ label: "Audit Access Token", icon: "bi-key", modal: "genAuditTokenModal", primary: true },
+		{
+			label: "DSAR API",
+			icon: "bi-person-bounding-box",
+			modal: "dsarRequestModal",
+		},
+		{
+			label: "KRA e-TIMS Check",
+			icon: "bi-receipt-cutoff",
+			modal: "kraEtimModal",
+		},
+		{
+			label: "Audit Access Token",
+			icon: "bi-key",
+			modal: "genAuditTokenModal",
+			primary: true,
+		},
 	],
 
 	heroCards: [
@@ -184,7 +212,11 @@ export const initialMockData: ComplianceAuditContent = {
 			labelColor: "var(--pm-accent)",
 			value: "100%",
 			accentBorder: "var(--pm-accent)",
-			badge: { text: "Fully Compliant", tone: "badgeS", icon: "bi-check-circle" },
+			badge: {
+				text: "Fully Compliant",
+				tone: "badgeS",
+				icon: "bi-check-circle",
+			},
 			note: "CBK, KRA, ODPC checks passed",
 		},
 		{
@@ -250,7 +282,8 @@ export const initialMockData: ComplianceAuditContent = {
 		{
 			key: "kra",
 			label: "KRA & Taxes",
-			blurb: "Tax compliance integrations for e-TIMS, PAYE, and automated VAT reporting.",
+			blurb:
+				"Tax compliance integrations for e-TIMS, PAYE, and automated VAT reporting.",
 			endpoints: [
 				{
 					id: "kraEtims",
@@ -314,12 +347,42 @@ export const initialMockData: ComplianceAuditContent = {
 	],
 
 	quickTools: [
-		{ label: "Audit Token", icon: "bi-key", color: "var(--pm-warning)", modal: "genAuditTokenModal" },
-		{ label: "MX Validator", icon: "bi-file-code", color: "var(--pm-info)", modal: "isoMessageModal" },
-		{ label: "SWIFT Route", icon: "bi-send", color: "var(--pm-primary)", modal: "swiftRouteModal" },
-		{ label: "OB Consent", icon: "bi-unlock", color: "var(--pm-accent)", modal: "openBankingModal" },
-		{ label: "Export Logs", icon: "bi-cloud-download", color: "var(--pm-danger)", modal: "auditReportModal" },
-		{ label: "Dashboard", icon: "bi-speedometer", color: "var(--pm-purple)", modal: "complianceDashModal" },
+		{
+			label: "Audit Token",
+			icon: "bi-key",
+			color: "var(--pm-warning)",
+			modal: "genAuditTokenModal",
+		},
+		{
+			label: "MX Validator",
+			icon: "bi-file-code",
+			color: "var(--pm-info)",
+			modal: "isoMessageModal",
+		},
+		{
+			label: "SWIFT Route",
+			icon: "bi-send",
+			color: "var(--pm-primary)",
+			modal: "swiftRouteModal",
+		},
+		{
+			label: "OB Consent",
+			icon: "bi-unlock",
+			color: "var(--pm-accent)",
+			modal: "openBankingModal",
+		},
+		{
+			label: "Export Logs",
+			icon: "bi-cloud-download",
+			color: "var(--pm-danger)",
+			modal: "auditReportModal",
+		},
+		{
+			label: "Dashboard",
+			icon: "bi-speedometer",
+			color: "var(--pm-purple)",
+			modal: "complianceDashModal",
+		},
 	],
 
 	docLinks: [
@@ -450,11 +513,27 @@ export const initialMockData: ComplianceAuditContent = {
 	],
 
 	isoRules: [
-		{ rule: "XML schema conforms to pain.001.001.09", status: "Pass", tone: "badgeS" },
-		{ rule: "Mandatory GrpHdr elements present", status: "Pass", tone: "badgeS" },
-		{ rule: "Debtor/Creditor IBAN checksum valid", status: "Pass", tone: "badgeS" },
+		{
+			rule: "XML schema conforms to pain.001.001.09",
+			status: "Pass",
+			tone: "badgeS",
+		},
+		{
+			rule: "Mandatory GrpHdr elements present",
+			status: "Pass",
+			tone: "badgeS",
+		},
+		{
+			rule: "Debtor/Creditor IBAN checksum valid",
+			status: "Pass",
+			tone: "badgeS",
+		},
 		{ rule: "Currency code is ISO 4217", status: "Pass", tone: "badgeS" },
-		{ rule: "Remittance info within 140 characters", status: "Warning", tone: "badgeW" },
+		{
+			rule: "Remittance info within 140 characters",
+			status: "Warning",
+			tone: "badgeW",
+		},
 		{ rule: "End-to-end ID is unique", status: "Pass", tone: "badgeS" },
 	],
 

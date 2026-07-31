@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Physical Debit Card Management</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PAYMO BaaS — Master Advanced Stylesheet
+   ============================================================ */
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-pin-input{display:flex;gap:8px;justify-content:center}.pm-pin-input input{width:48px;height:56px;text-align:center;font-size:24px;font-weight:700;border:2px solid var(--pm-border);border-radius:var(--pm-r-sm);font-family:var(--pm-font-display)}.pm-pin-input input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+
+/* Card Specific Styles */
+.pm-debit-card{width:100%;max-width:320px;aspect-ratio:1.586;border-radius:16px;padding:20px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--pm-shadow-md);display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.3s}
+.pm-debit-card:hover{transform:translateY(-4px);box-shadow:var(--pm-shadow-lg)}
+.pm-debit-card::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dots)"/></svg>');opacity:0.6}
+.pm-dc-standard{background:var(--pm-gradient-slate)}
+.pm-dc-premium{background:var(--pm-gradient-hero)}
+.pm-dc-business{background:linear-gradient(135deg,#0f766e 0%,#0369a1 100%)}
+.card-chip{width:40px;height:30px;background:linear-gradient(135deg,#e2e8f0 0%,#cbd5e1 100%);border-radius:6px;position:relative;overflow:hidden}
+.card-chip::after{content:'';position:absolute;inset:2px;border:1px solid rgba(0,0,0,0.1);border-radius:4px}
+.card-logo{font-family:var(--pm-font-display);font-weight:800;font-size:18px;letter-spacing:-1px}
+.card-number{font-family:monospace;font-size:18px;letter-spacing:2px;margin:16px 0 8px;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+.card-info{display:flex;justify-content:space-between;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:0.8}
+.card-name{font-size:14px;font-weight:600;letter-spacing:1px;margin-top:4px}
+.card-visa{position:absolute;bottom:20px;right:20px;font-style:italic;font-weight:800;font-size:20px}
+.card-status-badge{position:absolute;top:20px;right:20px;font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2)}
+.card-locked::after{content:'FROZEN';position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;letter-spacing:4px}
+
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-credit-card"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-arrow-left-right"></i></button>
+<button class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button>
+<button class="pm-nav-item"><i class="bi bi-shield-lock"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-gear"></i></button>
+</aside>
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">CA</div>
+<div>
+<h1>Card Command Center</h1>
+<p>Physical, Virtual, Prepaid & Corporate Card Management</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search cards, transactions, limits, requests...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('cardHealthModal')"><i class="bi bi-shield-check"></i></button>
+<button class="pm-header-btn" onclick="openModal('cardDeliveryModal')"><i class="bi bi-truck"></i><span class="counter">1</span></button>
+<button class="pm-header-btn" onclick="openModal('cardNotificationsModal')"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar">JK</div><div><div class="pm-name">James K.</div><div class="pm-role">Cardholder</div></div></div>
+</div>
+</header>
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Physical Debit Cards</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 5.2 — Physical Debit Card Management</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Order, activate, control limits, set geo-fencing, manage PINs, and handle replacements for physical debit cards.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('cardDeliveryModal')"><i class="bi bi-box-seam"></i> Track Delivery</button>
+<button class="pm-btn" onclick="openModal('activateCardModal')"><i class="bi bi-upc-scan"></i> Activate Card</button>
+<button class="pm-btn" onclick="openModal('freezeCardModal')"><i class="bi bi-snow"></i> Freeze All</button>
+<button class="pm-btn-primary pm-btn" onclick="openModal('orderCardModal')"><i class="bi bi-plus-lg"></i> Order New Card</button>
+</div>
+</div>
+<div class="pm-content">
+
+<!-- Top Stat Row -->
+<div class="row g-3">
+<div class="col-lg-5">
+<div class="pm-card pm-card-accent" style="min-height:170px;background:var(--pm-gradient-slate)">
+<div class="d-flex justify-content-between">
+<div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Primary Physical Card Active <span style="color:#86efac">●</span></p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">KES 145,200.00</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Linked to PayMo Main Wallet. Standard Debit tier.</p>
+</div>
+<div class="text-end">
+<div class="pm-debit-card pm-dc-standard" style="width:160px;padding:12px;border-radius:8px;aspect-ratio:1.586;box-shadow:none;border:1px solid rgba(255,255,255,0.2);transform:none">
+<div class="card-logo" style="font-size:12px">PayMo</div>
+<div class="card-number" style="font-size:10px;margin:8px 0 4px">**** **** **** 8422</div>
+<div class="card-name" style="font-size:10px;margin:0">JAMES KAMAU</div>
+<div class="card-visa" style="font-size:12px;bottom:10px;right:10px">VISA</div>
+</div>
+</div>
+</div>
+<div class="d-flex flex-wrap mt-3" style="gap:8px">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('viewCardDetailsModal')">View Details</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('cardLimitsModal')">Limits</button>
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('freezeCardModal')">Freeze</button>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-primary)">THIS MONTH SPEND</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 32k</div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-graph-up"></i> 14 transactions</span>
+<div class="mt-3" style="font-size:12px;color:var(--pm-muted)">
+<div class="d-flex justify-content-between mb-1"><span>POS Tap</span><span>65%</span></div>
+<div class="d-flex justify-content-between mb-1"><span>Online</span><span>25%</span></div>
+<div class="d-flex justify-content-between"><span>ATM</span><span>10%</span></div>
+</div>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6">
+<div class="pm-card" style="min-height:170px">
+<p class="pm-stat-label" style="color:var(--pm-warning)">DAILY LIMIT USAGE</p>
+<div class="pm-stat-value" style="margin:6px 0">42%</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-speedometer2"></i> KES 42k / 100k</span>
+<div class="pm-progress mt-3"><div class="pm-progress-bar" style="width:42%;background:var(--pm-warning)"></div></div>
+<button class="pm-btn pm-btn-sm mt-3 w-100" onclick="openModal('cardLimitsModal')">Adjust Limits</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-4">
+<div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+<p class="pm-stat-label" style="color:var(--pm-accent)">SECURITY POSTURE</p>
+<div class="pm-stat-value" style="margin:6px 0">94/100</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> Excellent</span>
+<div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)"><div>Geo-fencing: <strong>Active (Kenya Only)</strong></div><div>Contactless: <strong>Capped at KES 5k</strong></div></div>
+<button class="pm-btn pm-btn-sm mt-2" onclick="openModal('cardHealthModal')">Security Audit</button>
+</div>
+</div>
+</div>
+
+<!-- Main Action Sections -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Attention & Tracking</h3><button class="pm-btn pm-btn-sm" onclick="openModal('cardDeliveryModal')">Track All</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">ND</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Premium Card Dispatched</div><div style="font-size:11px;color:var(--pm-muted)">Arriving tomorrow via Fargo Courier</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('cardDeliveryModal')">Track</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">PA</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Business Card Needs PIN</div><div style="font-size:11px;color:var(--pm-muted)">Card **** 1102 activated, set PIN to use</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('pinManagementModal')">Set PIN</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">TX</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Declined POS Transaction</div><div style="font-size:11px;color:var(--pm-muted)">Naivas Supermarket · Exceeded daily tap limit</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('cardLimitsModal')">Fix</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">RN</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Card Expiring Soon</div><div style="font-size:11px;color:var(--pm-muted)">Card **** 9421 expires in 45 days</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('renewCardModal')">Renew</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="pm-section-title">Card Portfolio</h3><button class="pm-btn pm-btn-sm" onclick="openModal('portfolioModal')">Manage</button></div>
+<div class="feed-item"><div class="pm-debit-card pm-dc-standard" style="width:60px;height:40px;padding:4px;border-radius:4px;display:flex;align-items:flex-end;justify-content:flex-end"><span style="font-family:monospace;font-size:8px">8422</span></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Personal Standard Debit</div><div style="font-size:11px;color:var(--pm-muted)">Active · KES 145.2k available</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('viewCardDetailsModal')">View</button></div>
+<div class="feed-item"><div class="pm-debit-card pm-dc-business" style="width:60px;height:40px;padding:4px;border-radius:4px;display:flex;align-items:flex-end;justify-content:flex-end"><span style="font-family:monospace;font-size:8px">1102</span></div><div style="flex:1"><div style="font-weight:600;font-size:13px">SME Business Debit</div><div style="font-size:11px;color:var(--pm-muted)"><span class="text-warning">Needs PIN</span> · Linked to Biz Wallet</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('pinManagementModal')">PIN</button></div>
+<div class="feed-item"><div class="pm-debit-card pm-dc-premium" style="width:60px;height:40px;padding:4px;border-radius:4px;display:flex;align-items:flex-end;justify-content:flex-end"><span style="font-family:monospace;font-size:8px">5591</span></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Premium Travel Debit</div><div style="font-size:11px;color:var(--pm-muted)"><span class="text-info">In transit</span> · Ordered 26 Jun</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('cardDeliveryModal')">Track</button></div>
+<div class="feed-item"><div class="pm-debit-card pm-dc-standard" style="width:60px;height:40px;padding:4px;border-radius:4px;display:flex;align-items:flex-end;justify-content:flex-end;filter:grayscale(1)"><span style="font-family:monospace;font-size:8px">9421</span></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Legacy Debit Card</div><div style="font-size:11px;color:var(--pm-muted)"><span class="text-danger">Frozen</span> · Reported compromised</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('replaceCardModal')">Replace</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card">
+<div class="mb-3"><h3 class="pm-section-title">Card Controls & Actions</h3><p class="pm-section-sub">Section 5.2.2 & 5.2.3 operations</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('activateCardModal')"><i class="bi bi-upc-scan text-primary me-1"></i> Activate Card</button>
+<button class="quick-action-btn" onclick="openModal('pinManagementModal')"><i class="bi bi-asterisk text-warning me-1"></i> PIN Settings</button>
+<button class="quick-action-btn" onclick="openModal('cardLimitsModal')"><i class="bi bi-speedometer text-info me-1"></i> Card Limits</button>
+<button class="quick-action-btn" onclick="openModal('geoFencingModal')"><i class="bi bi-globe-americas text-success me-1"></i> Geo-Fencing</button>
+<button class="quick-action-btn" onclick="openModal('merchantControlsModal')"><i class="bi bi-shop text-purple me-1" style="color:var(--pm-purple)"></i> MCC Blocks</button>
+<button class="quick-action-btn" onclick="openModal('freezeCardModal')"><i class="bi bi-snow text-primary me-1"></i> Freeze/Thaw</button>
+<button class="quick-action-btn" onclick="openModal('reportLostModal')"><i class="bi bi-shield-exclamation text-danger me-1"></i> Report Lost</button>
+<button class="quick-action-btn" onclick="openModal('cancelCardModal')"><i class="bi bi-x-circle text-muted me-1"></i> Cancel Card</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.2.1 — Card Issuance & Ordering -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px"><div><h3 class="pm-section-title"><i class="bi bi-credit-card-2-front-fill" style="color:var(--pm-primary)"></i> 5.2.1 — Card Issuance, Ordering & Tracking</h3><p class="pm-section-sub">Order new personal or corporate debit cards, customize designs, and track courier delivery in real-time.</p></div><div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('bulkOrderModal')"><i class="bi bi-layers"></i> Bulk Order (Corporate)</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('orderCardModal')"><i class="bi bi-plus-lg"></i> Order New Card</button></div></div>
+<div class="row g-3">
+<div class="col-lg-7">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Deliveries</h4>
+<div class="p-3 border rounded mb-3" style="border-left:3px solid var(--pm-warning)!important">
+<div class="d-flex justify-content-between align-items-center mb-2">
+<div><span style="font-weight:600;font-size:14px">Premium Travel Debit</span> <span class="pm-badge pm-badge-warning ms-2">Dispatched</span></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('cardDeliveryModal')">View Tracker</button>
+</div>
+<div class="pm-stepper mb-2 mt-3" style="margin-bottom:12px!important">
+<div class="pm-step completed"><div class="pm-step-num"><i class="bi bi-check"></i></div><div class="pm-step-label">Approved</div></div><div class="pm-step-line" style="background:var(--pm-accent)"></div>
+<div class="pm-step completed"><div class="pm-step-num"><i class="bi bi-check"></i></div><div class="pm-step-label">Printed</div></div><div class="pm-step-line" style="background:var(--pm-accent)"></div>
+<div class="pm-step active"><div class="pm-step-num">3</div><div class="pm-step-label">Courier</div></div><div class="pm-step-line"></div>
+<div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Delivered</div></div>
+</div>
+<div style="font-size:12px;color:var(--pm-ink-soft)"><i class="bi bi-truck me-1"></i> Fargo Courier (TRK-9921448). Expected delivery: <strong>Tomorrow, 2:00 PM - 5:00 PM</strong> at Kilimani Office.</div>
+</div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Available Card Designs</h4>
+<div class="d-flex flex-wrap gap-2">
+<div class="border rounded p-2 text-center" style="width:120px;cursor:pointer" onclick="openModal('orderCardModal')">
+<div class="pm-debit-card pm-dc-standard mb-2" style="width:100%;padding:8px;border-radius:6px"><div class="card-logo" style="font-size:8px">PayMo</div></div>
+<div style="font-size:11px;font-weight:600">Standard</div><div style="font-size:10px;color:var(--pm-muted)">Free</div>
+</div>
+<div class="border rounded p-2 text-center" style="width:120px;cursor:pointer" onclick="openModal('orderCardModal')">
+<div class="pm-debit-card pm-dc-premium mb-2" style="width:100%;padding:8px;border-radius:6px"><div class="card-logo" style="font-size:8px">PayMo</div></div>
+<div style="font-size:11px;font-weight:600">Premium</div><div style="font-size:10px;color:var(--pm-muted)">KES 1,000</div>
+</div>
+<div class="border rounded p-2 text-center" style="width:120px;cursor:pointer" onclick="openModal('orderCardModal')">
+<div class="pm-debit-card pm-dc-business mb-2" style="width:100%;padding:8px;border-radius:6px"><div class="card-logo" style="font-size:8px">PayMo Biz</div></div>
+<div style="font-size:11px;font-weight:600">Business</div><div style="font-size:10px;color:var(--pm-muted)">Free for SMEs</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.2.2 & 5.2.3 — Card Controls & PIN Management -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px"><div><h3 class="pm-section-title"><i class="bi bi-sliders" style="color:var(--pm-info)"></i> 5.2.2 & 5.2.3 — Physical Card Controls & PIN Management</h3><p class="pm-section-sub">Configure daily limits, geographic scopes, MCC blocking, contactless caps, and manage card PINs.</p></div><div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="openModal('merchantControlsModal')"><i class="bi bi-shop"></i> Merchant Blocks</button><button class="pm-btn pm-btn-sm" onclick="openModal('cardLimitsModal')"><i class="bi bi-speedometer2"></i> Setup Limits</button></div></div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Transaction Toggles</h4>
+<div class="status-row"><div><strong>Online Transactions</strong><div style="font-size:11px;color:var(--pm-muted)">E-commerce & web</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked onchange="openModal('toggleConfirmModal')"></div></div>
+<div class="status-row"><div><strong>International Spend</strong><div style="font-size:11px;color:var(--pm-muted)">Outside Kenya</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="openModal('toggleConfirmModal')"></div></div>
+<div class="status-row"><div><strong>ATM Withdrawals</strong><div style="font-size:11px;color:var(--pm-muted)">Cash access</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked onchange="openModal('toggleConfirmModal')"></div></div>
+<div class="status-row"><div><strong>Contactless (Tap-to-pay)</strong><div style="font-size:11px;color:var(--pm-muted)">NFC payments</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked onchange="openModal('toggleConfirmModal')"></div></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Security & PIN</h4>
+<div class="status-row"><div><strong>Change Card PIN</strong><div style="font-size:11px;color:var(--pm-muted)">Requires old PIN</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('pinManagementModal')">Change</button></div>
+<div class="status-row"><div><strong>Reset Forgotten PIN</strong><div style="font-size:11px;color:var(--pm-muted)">Requires OTP + Auth</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('resetPinModal')">Reset</button></div>
+<div class="status-row"><div><strong>Geo-Fencing</strong><div style="font-size:11px;color:var(--pm-muted)">Restrict by location</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('geoFencingModal')">Manage</button></div>
+<div class="status-row"><div><strong>Travel Mode</strong><div style="font-size:11px;color:var(--pm-muted)">Pre-declare travel</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('travelModeModal')">Setup</button></div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Limits (Standard Debit)</h4>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Daily POS Limit</span><span>KES 42k / 100k</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:42%;background:var(--pm-primary)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Daily ATM Limit</span><span>KES 0 / 40k</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:0%;background:var(--pm-info)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Contactless Cap</span><span>Max KES 5,000/tap</span></div>
+</div>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('cardLimitsModal')">Adjust All Limits</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5.2.4 — Card Replacement & Cancellation -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px"><div><h3 class="pm-section-title"><i class="bi bi-shield-x" style="color:var(--pm-danger)"></i> 5.2.4 — Card Replacement, Freeze & Cancellation</h3><p class="pm-section-sub">Handle lost/stolen cards, temporary freezes, damaged card replacements, and permanent account closures securely.</p></div></div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Action Type</th><th>Description</th><th>Impact</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><strong>Temporary Freeze</strong></td><td>Misplaced card but not stolen.</td><td>Blocks new authorizations instantly. Can be unfrozen anytime.</td><td><button class="pm-btn pm-btn-sm pm-btn-warning" style="background:var(--pm-warning);color:#fff;border:none" onclick="openModal('freezeCardModal')">Freeze Card</button></td></tr>
+<tr><td><strong>Report Lost/Stolen</strong></td><td>Card is definitely lost or stolen.</td><td>Permanent block. Reissues a new PAN. Stops fraud.</td><td><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('reportLostModal')">Report Lost</button></td></tr>
+<tr><td><strong>Replace Damaged</strong></td><td>Chip/Magstripe broken. Same card number.</td><td>Old card works until new card is activated.</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('replaceCardModal')">Replace</button></td></tr>
+<tr><td><strong>Cancel Card</strong></td><td>Close debit card permanently.</td><td>Permanent closure. Balance returned to wallet.</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cancelCardModal')">Cancel</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODALS (20+ Modals for extensive BAAS coverage) -->
+<!-- ============================================================ -->
+
+<!-- 1. Order New Card (Multi-step) -->
+<div class="modal fade resettable" id="orderCardModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle text-primary me-2"></i>Order Physical Debit Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" id="orderCardBody">
+<div class="pm-stepper" id="orderStepper"></div>
+<div id="orderStep1" class="fade-step active">
+<h6 style="font-weight:700">Select Card Tier</h6>
+<div class="row g-3 mt-1">
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectCardTier(this)"><div class="pm-debit-card pm-dc-standard mx-auto mb-2" style="width:100px;padding:8px;min-height:60px"><div class="card-logo" style="font-size:8px">PayMo</div></div><strong>Standard Debit</strong><div style="font-size:11px;color:var(--pm-muted)">Free issuance</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)" onclick="selectCardTier(this)"><div class="pm-debit-card pm-dc-premium mx-auto mb-2" style="width:100px;padding:8px;min-height:60px"><div class="card-logo" style="font-size:8px">PayMo</div></div><strong>Premium Travel</strong><div style="font-size:11px;color:var(--pm-muted)">KES 1,000 fee</div></div></div>
+<div class="col-md-4"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectCardTier(this)"><div class="pm-debit-card pm-dc-business mx-auto mb-2" style="width:100px;padding:8px;min-height:60px"><div class="card-logo" style="font-size:8px">PayMo Biz</div></div><strong>SME Business</strong><div style="font-size:11px;color:var(--pm-muted)">Linked to Biz Wallet</div></div></div>
+</div>
+</div>
+<div id="orderStep2" class="fade-step">
+<h6 style="font-weight:700">Personalization</h6>
+<div class="mb-3"><label class="pm-form-label">Name on Card</label><input class="pm-form-control" value="JAMES KAMAU" maxlength="21"><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Max 21 characters</div></div>
+<div class="mb-3"><label class="pm-form-label">Linked Account</label><select class="pm-form-control"><option>Primary PayMo Wallet (KES 24,500)</option><option>Business Wallet (KES 105,000)</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Enable Contactless (NFC)</label></div>
+</div>
+<div id="orderStep3" class="fade-step">
+<h6 style="font-weight:700">Delivery Details</h6>
+<div class="mb-3"><label class="pm-form-label">Delivery Method</label><select class="pm-form-control"><option>Express Courier (1-2 days) - KES 300</option><option>Standard Mail (5-7 days) - Free</option><option>Branch Pickup (Same day) - Free</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Delivery Address</label><textarea class="pm-form-control" rows="2">Apt 4B, Kilimani Heights, Argwings Kodhek Rd, Nairobi</textarea></div>
+<div class="mb-3"><label class="pm-form-label">Contact Number</label><input class="pm-form-control" value="0712 345 890"></div>
+</div>
+<div id="orderStep4" class="fade-step">
+<h6 style="font-weight:700">Review & Payment</h6>
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-1"><span>Card Tier</span><strong>Premium Travel</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Issuance Fee</span><strong>KES 1,000</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Delivery Fee</span><strong>KES 300</strong></div>
+<hr class="pm-divider">
+<div class="d-flex justify-content-between"><span style="font-weight:700">Total to Pay</span><strong style="font-size:18px;color:var(--pm-primary)">KES 1,300</strong></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Pay From</label><select class="pm-form-control"><option>PayMo Wallet (KES 24,500)</option><option>M-Pesa STK</option></select></div>
+</div>
+</div>
+<div class="modal-footer" id="orderCardFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="orderNextBtn" onclick="nextOrderStep()">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- 2. Card Delivery Tracker -->
+<div class="modal fade resettable" id="cardDeliveryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-truck me-2"></i>Track Card Delivery</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-4" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-2"><span>Tracking ID</span><strong style="color:var(--pm-primary)">TRK-9921448</strong></div>
+<div class="d-flex justify-content-between mb-2"><span>Courier</span><strong>Fargo Courier Express</strong></div>
+<div class="d-flex justify-content-between"><span>Est. Delivery</span><strong>Tomorrow, 2:00 PM</strong></div>
+</div>
+<div class="pm-stepper flex-column align-items-start" style="gap:16px">
+<div class="d-flex gap-3 w-100"><div class="pm-icon-circle" style="background:var(--pm-accent);color:#fff;width:24px;height:24px;font-size:12px"><i class="bi bi-check"></i></div><div><div style="font-weight:600">Application Approved</div><div style="font-size:11px;color:var(--pm-muted)">25 Jun, 10:00 AM</div></div></div>
+<div class="d-flex gap-3 w-100"><div class="pm-icon-circle" style="background:var(--pm-accent);color:#fff;width:24px;height:24px;font-size:12px"><i class="bi bi-check"></i></div><div><div style="font-weight:600">Card Personalized & Printed</div><div style="font-size:11px;color:var(--pm-muted)">26 Jun, 09:15 AM</div></div></div>
+<div class="d-flex gap-3 w-100"><div class="pm-icon-circle" style="background:var(--pm-primary);color:#fff;width:24px;height:24px;font-size:12px">3</div><div><div style="font-weight:600;color:var(--pm-primary)">Dispatched to Courier</div><div style="font-size:11px;color:var(--pm-muted)">26 Jun, 14:30 PM — Hub Nairobi</div></div></div>
+<div class="d-flex gap-3 w-100" style="opacity:0.5"><div class="pm-icon-circle" style="background:var(--pm-border);color:var(--pm-muted);width:24px;height:24px;font-size:12px">4</div><div><div style="font-weight:600">Out for Delivery</div><div style="font-size:11px;color:var(--pm-muted)">Pending</div></div></div>
+<div class="d-flex gap-3 w-100" style="opacity:0.5"><div class="pm-icon-circle" style="background:var(--pm-border);color:var(--pm-muted);width:24px;height:24px;font-size:12px">5</div><div><div style="font-weight:600">Delivered</div><div style="font-size:11px;color:var(--pm-muted)">Pending signature</div></div></div>
+</div>
+<div class="p-3 rounded mt-4" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-shield-lock me-1"></i> You must provide the 4-digit Delivery OTP <strong>(8812)</strong> to the rider to receive your card.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('cardDeliveryModal','Delivery address update requested. Courier will be notified.','')">Update Address</button></div>
+</div></div></div>
+
+<!-- 3. Activate Card -->
+<div class="modal fade resettable" id="activateCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-upc-scan text-primary me-2"></i>Activate Physical Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Scan the QR code on the card carrier document or enter the details manually.</p>
+<div class="text-center p-4 border rounded mb-3 border-dashed" style="background:var(--pm-surface-2);cursor:pointer">
+<i class="bi bi-qr-code-scan" style="font-size:48px;color:var(--pm-primary)"></i>
+<div class="mt-2" style="font-weight:600">Tap to scan QR Code</div>
+</div>
+<div class="text-center mb-3 text-muted" style="font-size:12px">OR ENTER MANUALLY</div>
+<div class="mb-3"><label class="pm-form-label">Last 4 digits of Card</label><input class="pm-form-control" placeholder="e.g. 5591" maxlength="4"></div>
+<div class="mb-3"><label class="pm-form-label">CVV (3 digits on back)</label><input class="pm-form-control" type="password" maxlength="3"></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="openModal('pinManagementModal');closeModal('activateCardModal')">Activate & Set PIN</button></div>
+</div></div></div>
+
+<!-- 4. PIN Management -->
+<div class="modal fade resettable" id="pinManagementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-asterisk text-warning me-2"></i>Set / Change Card PIN</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Standard Debit (**** 8422)</option><option>Business Debit (**** 1102)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Current PIN (Leave blank if new activation)</label>
+<div class="pm-pin-input"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">New 4-Digit PIN</label>
+<div class="pm-pin-input"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+</div>
+<div class="mb-3"><label class="pm-form-label">Confirm New PIN</label>
+<div class="pm-pin-input"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-danger-soft);font-size:12px;color:#991B1B"><i class="bi bi-exclamation-circle me-1"></i> Do not use sequential numbers (1234) or repeated digits (1111).</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('pinManagementModal','Card PIN successfully updated. You can now use your card at any ATM/POS.','')">Save PIN</button></div>
+</div></div></div>
+
+<!-- 5. Reset Forgotten PIN -->
+<div class="modal fade resettable" id="resetPinModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-key text-info me-2"></i>Reset Forgotten PIN</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">To reset your PIN securely, we will send an OTP to your registered phone number, and you must verify your identity.</p>
+<div class="mb-3"><label class="pm-form-label">Card Number</label><select class="pm-form-control"><option>Standard Debit (**** 8422)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Enter National ID / Passport Number</label><input class="pm-form-control" type="text" placeholder="ID Number"></div>
+<button class="pm-btn pm-btn-primary w-100 mb-3" onclick="this.textContent='OTP Sent to 0712***890';this.classList.replace('pm-btn-primary','pm-btn-success');document.getElementById('otpBlock').style.display='block'">Send OTP Request</button>
+<div id="otpBlock" style="display:none">
+<div class="mb-3"><label class="pm-form-label">Enter 6-digit OTP</label><input class="pm-form-control" type="text" placeholder="------" maxlength="6" style="letter-spacing:4px;font-size:18px;text-align:center"></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="openModal('pinManagementModal');closeModal('resetPinModal')">Verify & Set New PIN</button></div>
+</div></div></div>
+
+<!-- 6. Card Limits -->
+<div class="modal fade resettable" id="cardLimitsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 text-primary me-2"></i>Adjust Card Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Standard Debit (**** 8422)</option><option>Business Debit (**** 1102)</option></select></div>
+<div class="mb-4">
+<label class="pm-form-label d-flex justify-content-between"><span>Daily POS/Online Limit</span><span>KES 100,000</span></label>
+<input type="range" class="form-range" min="1000" max="300000" step="1000" value="100000">
+<div class="d-flex justify-content-between" style="font-size:10px;color:var(--pm-muted)"><span>1k</span><span>300k (Max)</span></div>
+</div>
+<div class="mb-4">
+<label class="pm-form-label d-flex justify-content-between"><span>Daily ATM Limit</span><span>KES 40,000</span></label>
+<input type="range" class="form-range" min="0" max="100000" step="1000" value="40000">
+<div class="d-flex justify-content-between" style="font-size:10px;color:var(--pm-muted)"><span>0</span><span>100k (Max)</span></div>
+</div>
+<div class="mb-4">
+<label class="pm-form-label d-flex justify-content-between"><span>Contactless Tap Limit (No PIN)</span><span>KES 5,000</span></label>
+<input type="range" class="form-range" min="0" max="10000" step="500" value="5000">
+<div class="d-flex justify-content-between" style="font-size:10px;color:var(--pm-muted)"><span>0 (Disabled)</span><span>10k</span></div>
+</div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px;font-weight:600">Require App Approval for transactions > KES 50,000</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('cardLimitsModal','Card limits updated successfully. Changes are active immediately.','')">Save Limits</button></div>
+</div></div></div>
+
+<!-- 7. Geo-Fencing -->
+<div class="modal fade resettable" id="geoFencingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe-americas text-success me-2"></i>Geo-Fencing & Location Controls</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">Block transactions that occur outside your designated secure regions. Reduces skimming fraud risk by 80%.</div>
+<div class="mb-3"><label class="pm-form-label">Geographic Scope</label>
+<select class="pm-form-control mb-2"><option selected>Kenya Only (Highest Security)</option><option>East Africa (EAC)</option><option>Africa Region</option><option>Global (All enabled countries)</option></select>
+</div>
+<div class="mb-3"><label class="pm-form-label">Blocked Countries / Regions</label>
+<div class="p-2 border rounded d-flex flex-wrap gap-2 mb-2">
+<span class="pm-badge" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">Nigeria <i class="bi bi-x ms-1" style="cursor:pointer"></i></span>
+<span class="pm-badge" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">South Africa <i class="bi bi-x ms-1" style="cursor:pointer"></i></span>
+<span class="pm-badge" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">High-Risk Zone A <i class="bi bi-x ms-1" style="cursor:pointer"></i></span>
+</div>
+<select class="pm-form-control"><option>+ Add country to blocklist</option><option>United Kingdom</option><option>USA</option></select>
+</div>
+<hr class="pm-divider">
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px;font-weight:600">Location Binding</label><div style="font-size:11px;color:var(--pm-muted)">Block physical POS transactions if your phone's GPS is more than 50km away from the terminal.</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('geoFencingModal','Geo-fencing rules applied to all physical cards.','')">Save Rules</button></div>
+</div></div></div>
+
+<!-- 8. Travel Mode -->
+<div class="modal fade resettable" id="travelModeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-airplane text-info me-2"></i>Travel Mode</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Pre-declare your travel to prevent legitimate international transactions from being blocked by our fraud systems.</p>
+<div class="mb-3"><label class="pm-form-label">Destination Country/Countries</label><input class="pm-form-control" placeholder="e.g. UAE, United Kingdom"></div>
+<div class="row g-3 mb-3">
+<div class="col-6"><label class="pm-form-label">Departure Date</label><input type="date" class="pm-form-control"></div>
+<div class="col-6"><label class="pm-form-label">Return Date</label><input type="date" class="pm-form-control"></div>
+</div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Temporarily increase daily POS limit to KES 200k during travel</label></div>
+<div class="p-3 rounded mt-3" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> Card will automatically revert to domestic Geo-Fencing rules on the return date.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('travelModeModal','Travel itinerary logged. International transaction locks will be lifted during these dates.','')">Enable Travel Mode</button></div>
+</div></div></div>
+
+<!-- 9. Merchant Controls (MCC Blocks) -->
+<div class="modal fade resettable" id="merchantControlsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop text-purple me-2"></i>Merchant Category Controls</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('mccTab','categories',this)">Categories</button><button class="pm-tab-pill" onclick="switchTab('mccTab','specific',this)">Specific Merchants</button></div>
+<div id="mccTab-categories" class="tab-panel active">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Toggle which merchant categories (MCCs) are allowed to process payments.</p>
+<div class="row g-3">
+<div class="col-md-6"><div class="status-row"><div><strong>Gambling & Betting</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div>
+<div class="col-md-6"><div class="status-row"><div><strong>Alcohol & Bars</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div>
+<div class="col-md-6"><div class="status-row"><div><strong>Airlines & Travel</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div>
+<div class="col-md-6"><div class="status-row"><div><strong>Crypto Exchanges</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div>
+<div class="col-md-6"><div class="status-row"><div><strong>Digital Goods & Gaming</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div>
+<div class="col-md-6"><div class="status-row"><div><strong>Adult Entertainment</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div>
+</div>
+</div>
+<div id="mccTab-specific" class="tab-panel">
+<div class="mb-3"><label class="pm-form-label">Block specific merchant</label><div class="d-flex gap-2"><input class="pm-form-control" placeholder="Search recent merchants..."><button class="pm-btn pm-btn-danger">Block</button></div></div>
+<h6 style="font-size:12px;text-transform:uppercase;color:var(--pm-muted);margin-bottom:8px">Currently Blocked</h6>
+<div class="p-2 border rounded d-flex justify-content-between align-items-center mb-2"><span style="font-size:13px">Spotify Premium</span><button class="pm-btn pm-btn-sm">Unblock</button></div>
+<div class="p-2 border rounded d-flex justify-content-between align-items-center"><span style="font-size:13px">Betika.com</span><button class="pm-btn pm-btn-sm">Unblock</button></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('merchantControlsModal','Merchant controls updated. Blocks are effective immediately.','')">Save Settings</button></div>
+</div></div></div>
+
+<!-- 10. Freeze/Thaw Card -->
+<div class="modal fade resettable" id="freezeCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-snow text-primary me-2"></i>Freeze Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center p-4">
+<div class="pm-icon-circle mx-auto mb-3" style="width:64px;height:64px;font-size:28px;background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-snow"></i></div>
+<h5 style="font-weight:700">Temporarily Freeze Card?</h5>
+<p style="font-size:13px;color:var(--pm-ink-soft)">This will block all new purchases and ATM withdrawals. Recurring subscriptions may also fail. You can unfreeze it instantly at any time.</p>
+<div class="text-start mt-4 mb-3"><label class="pm-form-label">Select Card to Freeze</label><select class="pm-form-control"><option>Standard Debit (**** 8422)</option><option>Business Debit (**** 1102)</option></select></div>
+<div class="text-start mb-3"><label class="pm-form-label">Reason (Optional)</label><select class="pm-form-control"><option>I misplaced it</option><option>Suspicious activity</option><option>Not using it right now</option></select></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('freezeCardModal','Card **** 8422 has been frozen. No transactions will be processed.','')">Freeze Card</button></div>
+</div></div></div>
+
+<!-- 11. Report Lost/Stolen -->
+<div class="modal fade resettable" id="reportLostModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-2"></i>Report Lost or Stolen</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3 text-danger" style="background:var(--pm-danger-soft);font-size:13px;border:1px solid rgba(239,68,68,0.3)">
+<strong>WARNING:</strong> This action is permanent. Your current card will be irrevocably cancelled to prevent fraud, and a new card number will be issued.
+</div>
+<div class="mb-3"><label class="pm-form-label">Card</label><select class="pm-form-control"><option>Standard Debit (**** 8422)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">What Happened?</label><div class="p-2 border rounded mb-2 d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="lostR" checked> <span>Lost or misplaced permanently</span></div><div class="p-2 border rounded mb-2 d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="lostR"> <span>Stolen (suspect foul play)</span></div><div class="p-2 border rounded d-flex align-items-center gap-2" onclick="selectRadioCard(this)"><input type="radio" name="lostR"> <span>Card details compromised online</span></div></div>
+<div class="mb-3"><label class="pm-form-label">Date/Time Noticed</label><input type="datetime-local" class="pm-form-control"></div>
+<div class="form-check mt-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px;font-weight:600">Order replacement card immediately (KES 500 fee)</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('reportLostModal','Card permanently blocked. Replacement order initiated.','LST-20250627')">Block & Replace</button></div>
+</div></div></div>
+
+<!-- 12. Replace Damaged Card -->
+<div class="modal fade resettable" id="replaceCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-primary me-2"></i>Replace Damaged Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Use this if your physical card is cracked, the chip is unreadable, or contactless doesn't work. Your old card will remain active until you activate the new one.</p>
+<div class="mb-3"><label class="pm-form-label">Card to Replace</label><select class="pm-form-control"><option>Legacy Debit (**** 9421) - Frozen</option><option>Standard Debit (**** 8422)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Reason for replacement</label><select class="pm-form-control"><option>Chip damaged/unreadable</option><option>Magnetic stripe damaged</option><option>Contactless not working</option><option>Card physically broken</option><option>Name change</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Upload Photo of Damaged Card (Optional)</label><input type="file" class="pm-form-control"><div style="font-size:10px;color:var(--pm-muted);margin-top:4px">May waive replacement fee if manufacturing defect.</div></div>
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<div class="d-flex justify-content-between mb-1"><span>Replacement Fee</span><strong>KES 500</strong></div>
+<hr class="pm-divider">
+<div class="d-flex justify-content-between"><span style="font-weight:700">Total</span><strong style="font-size:18px;color:var(--pm-primary)">KES 500</strong></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="openModal('orderCardModal');closeModal('replaceCardModal')">Continue to Delivery</button></div>
+</div></div></div>
+
+<!-- 13. Cancel Card -->
+<div class="modal fade resettable" id="cancelCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-x-circle text-muted me-2"></i>Cancel Card Permanently</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3 text-danger" style="background:var(--pm-danger-soft);font-size:13px;border:1px solid rgba(239,68,68,0.3)">
+<strong>PERMANENT CLOSURE:</strong> This will delete the card from your profile. It cannot be undone or reactivated. Any pending refunds will be routed to your main wallet.
+</div>
+<div class="mb-3"><label class="pm-form-label">Select Card to Cancel</label><select class="pm-form-control"><option>Legacy Debit (**** 9421) - Frozen</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control"><option>No longer needed</option><option>Switching to competitor</option><option>Too many fees</option><option>Other</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Feedback (Optional)</label><textarea class="pm-form-control" rows="2"></textarea></div>
+<label class="pm-form-label">Type "CANCEL" to confirm</label><input type="text" class="pm-form-control mb-2" placeholder="CANCEL">
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Keep Card</button><button class="pm-btn pm-btn-danger" onclick="processAction('cancelCardModal','Card cancelled permanently. Account removed.','')">Confirm Cancellation</button></div>
+</div></div></div>
+
+<!-- 14. View Card Details (Requires Auth) -->
+<div class="modal fade resettable" id="viewCardDetailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card-fill text-primary me-2"></i>Secure Card Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<div id="authGate">
+<i class="bi bi-fingerprint d-block mb-3" style="font-size:48px;color:var(--pm-primary)"></i>
+<h6 style="font-weight:700">Authentication Required</h6>
+<p style="font-size:13px;color:var(--pm-muted)">Enter your PayMo PIN or use biometrics to reveal full card PAN and CVV.</p>
+<div class="pm-pin-input mb-3"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+<button class="pm-btn pm-btn-primary w-100" onclick="document.getElementById('authGate').style.display='none';document.getElementById('revealedCard').style.display='block'">Unlock Details</button>
+</div>
+<div id="revealedCard" style="display:none">
+<div class="pm-debit-card pm-dc-standard mx-auto mb-4" style="width:100%;max-width:320px;text-align:left">
+<div class="card-logo">PayMo</div>
+<div class="card-number" style="font-size:20px;letter-spacing:3px">4213 5592 1044 8422</div>
+<div class="d-flex justify-content-between align-items-end mt-2">
+<div><div style="font-size:10px;opacity:0.8">VALID THRU</div><div style="font-family:monospace;font-size:16px">12/28</div></div>
+<div><div style="font-size:10px;opacity:0.8">CVV</div><div style="font-family:monospace;font-size:16px">481</div></div>
+</div>
+<div class="card-name mt-3">JAMES KAMAU</div>
+</div>
+<div class="d-flex justify-content-center gap-2">
+<button class="pm-btn pm-btn-sm" onclick="this.innerHTML='<i class=\'bi bi-check\'></i> Copied'"><i class="bi bi-clipboard"></i> Copy Number</button>
+<button class="pm-btn pm-btn-sm" onclick="document.getElementById('revealedCard').style.display='none';document.getElementById('authGate').style.display='block'">Hide</button>
+</div>
+<p style="font-size:11px;color:var(--pm-muted);margin-top:16px">Details will auto-hide in 30 seconds.</p>
+</div>
+</div>
+</div></div></div>
+
+<!-- 15. Toggle Confirm -->
+<div class="modal fade resettable" id="toggleConfirmModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+<div class="modal-body text-center p-4">
+<i class="bi bi-shield-check mb-3 d-block" style="font-size:36px;color:var(--pm-accent)"></i>
+<h6 style="font-weight:700">Security Control Updated</h6>
+<p style="font-size:13px;color:var(--pm-muted) mb-0">The card setting has been instantly applied to the processing network.</p>
+</div>
+<div class="modal-footer p-2"><button class="pm-btn w-100 justify-content-center" data-bs-dismiss="modal">Got it</button></div>
+</div></div></div>
+
+<!-- 16. Bulk Order (Corporate) -->
+<div class="modal fade resettable" id="bulkOrderModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-layers text-primary me-2"></i>Bulk Corporate Card Order</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Corporate Program</label><select class="pm-form-control"><option>Employee Expense Cards</option><option>Department Purchasing</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Card Branding</label><select class="pm-form-control"><option>Company Logo + PayMo</option><option>Standard PayMo Biz</option></select></div>
+<div class="col-12"><label class="pm-form-label">Upload Employee List (CSV)</label>
+<div class="p-4 border border-dashed rounded text-center" style="background:var(--pm-surface-2);cursor:pointer">
+<i class="bi bi-cloud-arrow-up" style="font-size:32px;color:var(--pm-primary)"></i>
+<div class="mt-2" style="font-size:13px;font-weight:600">Drag & drop CSV file here</div>
+<div style="font-size:11px;color:var(--pm-muted)">Format: Name, ID, Department, Limit</div>
+</div>
+</div>
+<div class="col-md-6"><label class="pm-form-label">Delivery Strategy</label><select class="pm-form-control"><option>Centralized (Ship to HR HQ)</option><option>Direct to Employee Home</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Batch ID</label><input class="pm-form-control" value="BATCH-2025-06-A" disabled></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('bulkOrderModal','Bulk order received. 42 cards pending production.','BAT-20250627-991')">Submit Batch</button></div>
+</div></div></div>
+
+<!-- 17. Card Portfolio Manager -->
+<div class="modal fade resettable" id="portfolioModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-grid-3x3-gap me-2"></i>Card Portfolio Administration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Card</th><th>Type</th><th>Cardholder</th><th>Status</th><th>Limit</th><th>Actions</th></tr></thead><tbody>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-debit-card pm-dc-standard" style="width:40px;height:24px;border-radius:2px"></div> **** 8422</div></td><td>Standard</td><td>James Kamau</td><td><span class="pm-badge pm-badge-success">Active</span></td><td>100k</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cardLimitsModal')">Edit</button></td></tr>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-debit-card pm-dc-business" style="width:40px;height:24px;border-radius:2px"></div> **** 1102</div></td><td>Biz Debit</td><td>James Kamau</td><td><span class="pm-badge pm-badge-warning">No PIN</span></td><td>500k</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('pinManagementModal')">PIN</button></td></tr>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-debit-card pm-dc-premium" style="width:40px;height:24px;border-radius:2px"></div> **** 5591</div></td><td>Premium</td><td>James Kamau</td><td><span class="pm-badge pm-badge-info">Transit</span></td><td>250k</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cardDeliveryModal')">Track</button></td></tr>
+<tr><td><div class="d-flex align-items-center gap-2"><div class="pm-debit-card pm-dc-standard" style="width:40px;height:24px;border-radius:2px;filter:grayscale(1)"></div> **** 9421</div></td><td>Legacy</td><td>James Kamau</td><td><span class="pm-badge pm-badge-danger">Frozen</span></td><td>100k</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('cancelCardModal')">Drop</button></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 18. Card Health / Security Audit -->
+<div class="modal fade resettable" id="cardHealthModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Security Posture Audit</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3 mb-4">
+<div class="col-md-4 text-center"><div class="p-3 rounded" style="background:var(--pm-accent-soft)"><div style="font-size:32px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">94</div><div style="font-size:11px;font-weight:700;color:#047857">SECURITY SCORE</div></div></div>
+<div class="col-md-8">
+<h6 style="font-weight:700;margin-bottom:12px">Audit Checklist</h6>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span><i class="bi bi-check-circle-fill text-success me-2"></i> PIN Complexity</span><span>Strong (Changed 3 mo ago)</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span><i class="bi bi-check-circle-fill text-success me-2"></i> 3D Secure Enrollment</span><span>Active</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span><i class="bi bi-check-circle-fill text-success me-2"></i> Geo-Fencing</span><span>Active (Kenya)</span></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span><i class="bi bi-exclamation-circle-fill text-warning me-2"></i> Contactless Limit</span><span>High (KES 5,000)</span></div>
+<div class="d-flex justify-content-between" style="font-size:13px"><span><i class="bi bi-check-circle-fill text-success me-2"></i> Device Binding</span><span>Secured to iPhone 14</span></div>
+</div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-surface-2)">
+<h6 style="font-weight:700;font-size:13px"><i class="bi bi-lightbulb text-warning me-1"></i> Recommendations to reach 100/100</h6>
+<ul style="font-size:12px;color:var(--pm-ink-soft);margin-bottom:0;padding-left:16px">
+<li>Lower contactless threshold to KES 2,000 to reduce tap-fraud risk.</li>
+<li>Enable App Approval for transactions over KES 50,000.</li>
+<li>Update your PIN (last changed over 90 days ago).</li>
+</ul>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('cardLimitsModal')">Fix Recommendations</button></div>
+</div></div></div>
+
+<!-- 19. Card Notifications -->
+<div class="modal fade resettable" id="cardNotificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Card Notifications</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:400px;overflow-y:auto">
+<div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Declined: Naivas Supermarket</strong><div style="font-size:11px;color:#7F1D1D">KES 6,200 · Daily tap limit exceeded. <a href="#" onclick="openModal('cardLimitsModal')">Adjust</a></div><div style="font-size:10px;color:var(--pm-muted);margin-top:4px">1 hr ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Delivery Update</strong><div style="font-size:11px;color:#1E40AF">Premium card dispatched to courier. OTP 8812.</div><div style="font-size:10px;color:var(--pm-muted);margin-top:4px">3 hrs ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-purple-soft);font-size:13px"><strong>Expiry Warning</strong><div style="font-size:11px;color:#6D28D9">Card **** 9421 expires in 45 days.</div><div style="font-size:10px;color:var(--pm-muted);margin-top:4px">1 day ago</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);font-size:13px"><strong>Transaction Alert</strong><div style="font-size:11px;color:var(--pm-ink-soft)">KES 2,400 at Uber Kenya.</div><div style="font-size:10px;color:var(--pm-muted);margin-top:4px">2 days ago</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn pm-btn-sm" onclick="openModal('alertPrefsModal')"><i class="bi bi-gear"></i> Prefs</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 20. Renew Expiring Card -->
+<div class="modal fade resettable" id="renewCardModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat text-purple me-2" style="color:var(--pm-purple)"></i>Renew Expiring Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft)">
+<div style="font-weight:700;color:var(--pm-purple)">Legacy Debit (**** 9421)</div>
+<div style="font-size:12px;color:#6D28D9">Expires: 08/25 (in 45 days)</div>
+</div>
+<p style="font-size:13px;color:var(--pm-ink-soft)">Your new card will inherit the same PIN, settings, and linked accounts. The old card will deactivate automatically when the new one is activated.</p>
+<div class="mb-3"><label class="pm-form-label">Delivery Address Confirmation</label><textarea class="pm-form-control" rows="2">Apt 4B, Kilimani Heights, Argwings Kodhek Rd, Nairobi</textarea></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Auto-update my subscriptions (Netflix, Spotify) with the new expiry date using Visa Account Updater.</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('renewCardModal','Renewal initiated. Your new card will arrive in 3-5 days.','')">Confirm Renewal</button></div>
+</div></div></div>
+
+<!-- 21. Alert Preferences -->
+<div class="modal fade resettable" id="alertPrefsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-gear me-2"></i>Alert Preferences</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Transaction Alerts</label><select class="pm-form-control"><option>All transactions</option><option selected>Transactions over KES 1,000</option><option>International & Online only</option></select></div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Event</th><th>Push</th><th>SMS</th><th>Email</th></tr></thead><tbody>
+<tr><td>Declines</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox"></td></tr>
+<tr><td>Fraud Suspicions</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+<tr><td>Card Expiry</td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox" checked></td></tr>
+<tr><td>Settings Changed</td><td><input type="checkbox" checked></td><td><input type="checkbox"></td><td><input type="checkbox" checked></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('alertPrefsModal','Alert preferences saved successfully.','')">Save Prefs</button></div>
+</div></div></div>
+
+<!-- 22. Profile Summary -->
+<div class="modal fade resettable" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Cardholder Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center">
+<div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-blue)">CA</div>
+<h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+<p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com · +254 712 345 890</p>
+<div class="row g-2 text-start mt-3" style="font-size:13px">
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Total Cards</span><br><strong>4 Physical</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Global Limit</span><br><strong>KES 500k / day</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Security Score</span><br><strong style="color:var(--pm-accent)">94/100</strong></div></div>
+<div class="col-6"><div class="p-2 rounded" style="background:var(--pm-surface-2)"><span class="text-muted">Delivery Address</span><br><strong>Kilimani HQ</strong></div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+function moveFocus(el){if(el.value.length===1&&el.nextElementSibling)el.nextElementSibling.focus();}
+function selectRadioCard(card){card.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background='';const r=b.querySelector('input[type=radio]');if(r)r.checked=false});card.style.borderColor='var(--pm-primary)';card.style.background='rgba(79,70,229,.04)';const radio=card.querySelector('input[type=radio]');if(radio)radio.checked=true;}
+function selectCardTier(card){card.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background=''});card.style.borderColor='var(--pm-primary)';card.style.background='rgba(79,70,229,.04)';}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1500);}
+
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Success</h5><p style="font-size:13px;color:var(--pm-ink-soft)">${msg}</p>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-check2-all"></i> Done</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';});}
+
+let orderStep=1;
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+function nextOrderStep(){if(orderStep===3){document.getElementById('orderNextBtn').innerHTML='Pay & Order <i class="bi bi-lock"></i>';}if(orderStep===4){showLoading('#orderCardBody',()=>{orderStep=5;renderStepper('orderStepper',['Tier','Details','Delivery','Pay'],4);document.getElementById('orderStep4').innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Order Successful!</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Your new Premium Travel Debit card is in production. Track it via the dashboard.</p></div>`;document.getElementById('orderNextBtn').textContent='Done';});return;}if(orderStep>=5){closeModal('orderCardModal');return;}orderStep++;renderStepper('orderStepper',['Tier','Details','Delivery','Pay'],orderStep);showFlow('orderStep',orderStep,4);}
+
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;resetFlows();});});}
+function resetFlows(){orderStep=1;renderStepper('orderStepper',['Tier','Details','Delivery','Pay'],1);showFlow('orderStep',1,4);}
+
+document.addEventListener('DOMContentLoaded',()=>{cacheResettable();resetFlows();});
+</script>
+</body>
+</html>

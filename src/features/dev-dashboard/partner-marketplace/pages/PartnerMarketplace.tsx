@@ -67,7 +67,10 @@ export default function PartnerMarketplace() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{c.header.actions.map((a) => (
 							<button
 								key={a.modal}
@@ -93,7 +96,11 @@ export default function PartnerMarketplace() {
 								<i className={`bi ${a.icon}`} /> {a.label}
 							</button>
 						))}
-						<button type="button" className={s.btnPm} onClick={() => open("profileModal")}>
+						<button
+							type="button"
+							className={s.btnPm}
+							onClick={() => open("profileModal")}
+						>
 							<span
 								className={s.iconCircle}
 								style={{
@@ -116,17 +123,37 @@ export default function PartnerMarketplace() {
 					{/* ================= HERO STATS ================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
-							<div className={`${s.card} ${s.cardAccent}`} style={{ minHeight: 170 }}>
+							<div
+								className={`${s.card} ${s.cardAccent}`}
+								style={{ minHeight: 170 }}
+							>
 								<div className="d-flex justify-content-between align-items-start gap-2">
 									<div style={{ minWidth: 0 }}>
-										<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+										<p
+											style={{
+												margin: 0,
+												fontSize: 12,
+												color: "rgba(255,255,255,.78)",
+											}}
+										>
 											{c.hero.statusLabel}{" "}
-											<span style={{ color: "#86efac" }}>{c.hero.statusValue}</span>
+											<span style={{ color: "#86efac" }}>
+												{c.hero.statusValue}
+											</span>
 										</p>
-										<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
+										<div
+											className={s.sv}
+											style={{ margin: "8px 0", color: "#fff" }}
+										>
 											{c.hero.tierName}
 										</div>
-										<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+										<p
+											style={{
+												margin: 0,
+												fontSize: 12,
+												color: "rgba(255,255,255,.78)",
+											}}
+										>
 											{c.hero.benefits}
 										</p>
 									</div>
@@ -220,7 +247,10 @@ export default function PartnerMarketplace() {
 						<div className="col-lg-3 col-md-4">
 							<div
 								className={s.card}
-								style={{ minHeight: 170, borderLeft: "3px solid var(--pm-purple)" }}
+								style={{
+									minHeight: 170,
+									borderLeft: "3px solid var(--pm-purple)",
+								}}
 							>
 								<p className={s.sl} style={{ color: "var(--pm-purple)" }}>
 									{c.apps.label}
@@ -229,7 +259,10 @@ export default function PartnerMarketplace() {
 									{c.apps.value}
 								</div>
 								<span className={`${s.badge} ${s.badgeP}`}>
-									<i className="bi bi-star-fill" style={{ color: "var(--pm-warning)" }} />{" "}
+									<i
+										className="bi bi-star-fill"
+										style={{ color: "var(--pm-warning)" }}
+									/>{" "}
 									{c.apps.badge}
 								</span>
 								<div
@@ -240,7 +273,8 @@ export default function PartnerMarketplace() {
 										Active installs: <strong>{c.apps.installs}</strong>
 									</div>
 									<div>
-										Reviews pending reply: <strong>{c.apps.pendingReviews}</strong>
+										Reviews pending reply:{" "}
+										<strong>{c.apps.pendingReviews}</strong>
 									</div>
 								</div>
 							</div>
@@ -254,7 +288,10 @@ export default function PartnerMarketplace() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-diagram-3" style={{ color: "var(--pm-primary)" }} />{" "}
+										<i
+											className="bi bi-diagram-3"
+											style={{ color: "var(--pm-primary)" }}
+										/>{" "}
 										4.9.1 Partner Onboarding
 									</h3>
 									<button
@@ -266,14 +303,16 @@ export default function PartnerMarketplace() {
 									</button>
 								</div>
 								<p className={`${s.sectionSub} mb-3`}>
-									Manage your partner status, complete certifications, and access tier
-									benefits.
+									Manage your partner status, complete certifications, and
+									access tier benefits.
 								</p>
 								{c.onboarding.map((o) => (
 									<div key={o.title} className={s.statusRow}>
 										<div style={{ minWidth: 0 }}>
 											<strong>{o.title}</strong>
-											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{o.sub}</div>
+											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												{o.sub}
+											</div>
 										</div>
 										<button
 											type="button"
@@ -294,8 +333,11 @@ export default function PartnerMarketplace() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-shop" style={{ color: "var(--pm-warning)" }} /> 4.9.2
-										Marketplace Integration
+										<i
+											className="bi bi-shop"
+											style={{ color: "var(--pm-warning)" }}
+										/>{" "}
+										4.9.2 Marketplace Integration
 									</h3>
 									<button
 										type="button"
@@ -306,12 +348,16 @@ export default function PartnerMarketplace() {
 									</button>
 								</div>
 								<p className={`${s.sectionSub} mb-3`}>
-									List your apps, track referrals, and showcase industry solutions.
+									List your apps, track referrals, and showcase industry
+									solutions.
 								</p>
 								{c.marketplaceApps.map((a) => (
 									<div key={a.name} className={`${s.infoBlock} mb-3`}>
 										<div className="d-flex align-items-center justify-content-between mb-2 gap-2">
-											<div className="d-flex align-items-center gap-2" style={{ minWidth: 0 }}>
+											<div
+												className="d-flex align-items-center gap-2"
+												style={{ minWidth: 0 }}
+											>
 												<div
 													className={s.iconCircle}
 													style={{
@@ -339,7 +385,9 @@ export default function PartnerMarketplace() {
 											className="d-flex justify-content-between align-items-center gap-2"
 											style={{ fontSize: 12 }}
 										>
-											<span className={`${s.badge} ${s[a.statusTone]}`}>{a.status}</span>
+											<span className={`${s.badge} ${s[a.statusTone]}`}>
+												{a.status}
+											</span>
 											<span>{a.installs}</span>
 										</div>
 									</div>
@@ -368,8 +416,11 @@ export default function PartnerMarketplace() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-people" style={{ color: "var(--pm-accent)" }} /> 4.9.3
-										Community & Collab
+										<i
+											className="bi bi-people"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
+										4.9.3 Community & Collab
 									</h3>
 									<button
 										type="button"
@@ -400,7 +451,9 @@ export default function PartnerMarketplace() {
 									))}
 								</div>
 								<div className={s.infoBlock}>
-									<h4 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 8px" }}>
+									<h4
+										style={{ fontSize: 13, fontWeight: 700, margin: "0 0 8px" }}
+									>
 										Upcoming Events
 									</h4>
 									{c.events.map((e) => (
@@ -412,7 +465,9 @@ export default function PartnerMarketplace() {
 											<span style={{ minWidth: 0 }}>
 												<strong>{e.title}</strong>
 												<br />
-												<span style={{ color: "var(--pm-muted)" }}>{e.when}</span>
+												<span style={{ color: "var(--pm-muted)" }}>
+													{e.when}
+												</span>
 											</span>
 											<button
 												type="button"

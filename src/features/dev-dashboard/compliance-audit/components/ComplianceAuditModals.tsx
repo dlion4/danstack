@@ -23,7 +23,10 @@ import {
 	Sw,
 	useModals,
 } from "../../_shared/devModalKit";
-import type { ComplianceAuditContent, Endpoint } from "../data/complianceAuditData";
+import type {
+	ComplianceAuditContent,
+	Endpoint,
+} from "../data/complianceAuditData";
 import styles from "../styles/complianceAudit.module.css";
 
 const s = styles as Record<string, string>;
@@ -111,9 +114,17 @@ export default function ComplianceAuditModals({
 								</thead>
 								<tbody>
 									{[
-										["Authorization", "Yes", "Bearer sk_live_… (compliance scope)"],
+										[
+											"Authorization",
+											"Yes",
+											"Bearer sk_live_… (compliance scope)",
+										],
 										["X-Idempotency-Key", "Yes", "UUID v4 for all POST/PUT"],
-										["X-Audit-Reason", "Yes", "Free-text reason written to the audit log"],
+										[
+											"X-Audit-Reason",
+											"Yes",
+											"Free-text reason written to the audit log",
+										],
 									].map(([h, r, n]) => (
 										<tr key={h}>
 											<td data-label="Header">
@@ -127,8 +138,8 @@ export default function ComplianceAuditModals({
 							</table>
 						</div>
 						<div className={`${s.note} ${s.noteWarn} mt-3`}>
-							<i className="bi bi-shield-lock me-1" /> Every call to a compliance endpoint
-							is written to the immutable WORM audit trail.
+							<i className="bi bi-shield-lock me-1" /> Every call to a
+							compliance endpoint is written to the immutable WORM audit trail.
 						</div>
 					</>
 				)}
@@ -196,7 +207,10 @@ export default function ComplianceAuditModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-shield-exclamation" style={{ color: "var(--pm-danger)" }} />
+						<i
+							className="bi bi-shield-exclamation"
+							style={{ color: "var(--pm-danger)" }}
+						/>
 						Simulate CBK / AML Trigger
 					</>
 				}
@@ -222,7 +236,11 @@ export default function ComplianceAuditModals({
 							</button>
 						)}
 						{cbkStep >= 3 && (
-							<button type="button" className={`${s.btnPm} ${s.btnPmP}`} onClick={onClose}>
+							<button
+								type="button"
+								className={`${s.btnPm} ${s.btnPmP}`}
+								onClick={onClose}
+							>
 								Done
 							</button>
 						)}
@@ -233,7 +251,11 @@ export default function ComplianceAuditModals({
 					<Loading s={s} />
 				) : (
 					<>
-						<Stepper s={s} labels={["Params", "Payload", "Trigger"]} current={cbkStep} />
+						<Stepper
+							s={s}
+							labels={["Params", "Payload", "Trigger"]}
+							current={cbkStep}
+						/>
 						{cbkStep === 1 && (
 							<>
 								<div className="row g-3 mb-3">
@@ -262,7 +284,11 @@ export default function ComplianceAuditModals({
 									</div>
 									<div className="col-md-6">
 										<Lbl s={s}>Destination Country</Lbl>
-										<Fld s={s} as="select" options={["Kenya", "Uganda", "UAE", "Nigeria"]} />
+										<Fld
+											s={s}
+											as="select"
+											options={["Kenya", "Uganda", "UAE", "Nigeria"]}
+										/>
 									</div>
 								</div>
 							</>
@@ -282,11 +308,16 @@ export default function ComplianceAuditModals({
 								</CodeBox>
 								<div className="mb-3">
 									<Lbl s={s}>HMAC-SHA256 Signature (Auto-generated)</Lbl>
-									<Fld s={s} mono readOnly defaultValue="9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d" />
+									<Fld
+										s={s}
+										mono
+										readOnly
+										defaultValue="9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"
+									/>
 								</div>
 								<div className={`${s.note} ${s.noteWarn}`}>
-									<i className="bi bi-exclamation-triangle me-1" /> This is a sandbox
-									simulation. No report is filed with the FRC.
+									<i className="bi bi-exclamation-triangle me-1" /> This is a
+									sandbox simulation. No report is filed with the FRC.
 								</div>
 							</>
 						)}
@@ -299,7 +330,8 @@ export default function ComplianceAuditModals({
 									AML Alert Triggered
 								</h5>
 								<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
-									Sandbox STR accepted. Filing ref FRC-SIM-08812 · audit hash recorded.
+									Sandbox STR accepted. Filing ref FRC-SIM-08812 · audit hash
+									recorded.
 								</p>
 							</div>
 						)}
@@ -315,7 +347,10 @@ export default function ComplianceAuditModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-receipt-cutoff" style={{ color: "var(--pm-warning)" }} />
+						<i
+							className="bi bi-receipt-cutoff"
+							style={{ color: "var(--pm-warning)" }}
+						/>
 						KRA e-TIMS Validator
 					</>
 				}
@@ -356,8 +391,8 @@ export default function ComplianceAuditModals({
 							</div>
 						</div>
 						<div className={`${s.note} ${s.noteMuted}`}>
-							Net KES 100,000 · VAT KES 16,000 · Gross KES 116,000. A certified QR code
-							and control unit receipt number are returned on success.
+							Net KES 100,000 · VAT KES 16,000 · Gross KES 116,000. A certified
+							QR code and control unit receipt number are returned on success.
 						</div>
 					</>,
 				)}
@@ -371,7 +406,10 @@ export default function ComplianceAuditModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-person-bounding-box" style={{ color: "var(--pm-primary)" }} />
+						<i
+							className="bi bi-person-bounding-box"
+							style={{ color: "var(--pm-primary)" }}
+						/>
 						Initiate DSAR (ODPC)
 					</>
 				}
@@ -415,12 +453,17 @@ export default function ComplianceAuditModals({
 						</div>
 						<div className="mb-3">
 							<Lbl s={s}>Webhook URL for delivery</Lbl>
-							<Fld s={s} type="url" mono placeholder="https://api.yourdomain.com/dsar-ready" />
+							<Fld
+								s={s}
+								type="url"
+								mono
+								placeholder="https://api.yourdomain.com/dsar-ready"
+							/>
 						</div>
 						<div className={`${s.note} ${s.noteInfo}`}>
-							<i className="bi bi-info-circle me-1" /> The Data Protection Act 2019
-							requires a response within 30 days. Financial records under statutory
-							retention are excluded from erasure.
+							<i className="bi bi-info-circle me-1" /> The Data Protection Act
+							2019 requires a response within 30 days. Financial records under
+							statutory retention are excluded from erasure.
 						</div>
 					</>,
 				)}
@@ -520,7 +563,13 @@ export default function ComplianceAuditModals({
 					<Fld
 						s={s}
 						as="select"
-						options={["All event types", "auth.*", "api_key.*", "webhook.*", "dsar.*"]}
+						options={[
+							"All event types",
+							"auth.*",
+							"api_key.*",
+							"webhook.*",
+							"dsar.*",
+						]}
 						style={{ width: 190 }}
 					/>
 				</div>
@@ -549,7 +598,9 @@ export default function ComplianceAuditModals({
 									<td data-label="Actor">{l.actor}</td>
 									<td data-label="IP Address">{l.ip}</td>
 									<td data-label="Hash Valid">
-										<span className={`${s.badge} ${l.hashValid ? s.badgeS : s.badgeD}`}>
+										<span
+											className={`${s.badge} ${l.hashValid ? s.badgeS : s.badgeD}`}
+										>
 											{l.hashValid ? "Valid" : "Tampered"}
 										</span>
 									</td>
@@ -568,7 +619,10 @@ export default function ComplianceAuditModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-check-circle" style={{ color: "var(--pm-accent)" }} />
+						<i
+							className="bi bi-check-circle"
+							style={{ color: "var(--pm-accent)" }}
+						/>
 						Verify Tamper-Evident Hash
 					</>
 				}
@@ -594,8 +648,8 @@ export default function ComplianceAuditModals({
 					"verifyLogModal",
 					<>
 						<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
-							Each audit block is chained with SHA-256. Enter an event ID or block hash to
-							recompute and compare against the stored digest.
+							Each audit block is chained with SHA-256. Enter an event ID or
+							block hash to recompute and compare against the stored digest.
 						</p>
 						<div className="mb-3">
 							<Lbl s={s}>Event ID or Block Hash</Lbl>
@@ -618,7 +672,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-people" style={{ color: "var(--pm-primary)" }} />
+						<i
+							className="bi bi-people"
+							style={{ color: "var(--pm-primary)" }}
+						/>
 						Third-Party Auditor Management
 					</>
 				}
@@ -640,21 +697,38 @@ block_hash: c4d3e2f1a09b8c7d...`}
 					"thirdPartyAuditModal",
 					<>
 						{[
-							["KPMG East Africa", "Read-only · expires 04 Jul 2026", "Active", "badgeS"],
-							["Deloitte Kenya", "Read-only · expired 12 Mar 2026", "Expired", "badgeNeutral"],
+							[
+								"KPMG East Africa",
+								"Read-only · expires 04 Jul 2026",
+								"Active",
+								"badgeS",
+							],
+							[
+								"Deloitte Kenya",
+								"Read-only · expired 12 Mar 2026",
+								"Expired",
+								"badgeNeutral",
+							],
 						].map(([firm, meta, st, tone]) => (
 							<div key={firm} className={s.statusRow}>
 								<div style={{ minWidth: 0 }}>
 									<strong>{firm}</strong>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{meta}</div>
+									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+										{meta}
+									</div>
 								</div>
 								<div className="d-flex align-items-center gap-2">
-									<span className={`${s.badge} ${s[tone as string]}`}>{st}</span>
+									<span className={`${s.badge} ${s[tone as string]}`}>
+										{st}
+									</span>
 									<button
 										type="button"
 										className={`${s.btnPm} ${s.btnSm} ${s.btnPmD}`}
 										onClick={() =>
-											m.doAction("thirdPartyAuditModal", `${firm} access revoked.`)
+											m.doAction(
+												"thirdPartyAuditModal",
+												`${firm} access revoked.`,
+											)
 										}
 									>
 										Revoke
@@ -716,7 +790,11 @@ block_hash: c4d3e2f1a09b8c7d...`}
 					<Loading s={s} />
 				) : (
 					<>
-						<Stepper s={s} labels={["Type", "Payload", "Validate"]} current={isoStep} />
+						<Stepper
+							s={s}
+							labels={["Type", "Payload", "Validate"]}
+							current={isoStep}
+						/>
 						{isoStep === 1 && (
 							<div className="mb-3">
 								<Lbl s={s}>Message Type</Lbl>
@@ -751,8 +829,8 @@ block_hash: c4d3e2f1a09b8c7d...`}
 						{isoStep >= 3 && (
 							<>
 								<div className={`${s.note} ${s.noteSuccess} mb-3`}>
-									<i className="bi bi-check-circle-fill me-1" /> Message is schema-valid with
-									1 warning.
+									<i className="bi bi-check-circle-fill me-1" /> Message is
+									schema-valid with 1 warning.
 								</div>
 								<div className={s.tableWrap}>
 									<table className={s.table}>
@@ -767,7 +845,9 @@ block_hash: c4d3e2f1a09b8c7d...`}
 												<tr key={r.rule}>
 													<td data-label="Rule">{r.rule}</td>
 													<td data-label="Status">
-														<span className={`${s.badge} ${s[r.tone]}`}>{r.status}</span>
+														<span className={`${s.badge} ${s[r.tone]}`}>
+															{r.status}
+														</span>
 													</td>
 												</tr>
 											))}
@@ -822,8 +902,8 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							<Fld s={s} as="select" options={["USD", "EUR", "GBP", "KES"]} />
 						</div>
 						<div className={`${s.note} ${s.noteMuted}`}>
-							Validates the BIC against the SWIFT directory and returns the correspondent
-							chain plus estimated settlement time.
+							Validates the BIC against the SWIFT directory and returns the
+							correspondent chain plus estimated settlement time.
 						</div>
 					</>,
 				)}
@@ -848,7 +928,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							type="button"
 							className={`${s.btnPm} ${s.btnPmP}`}
 							onClick={() =>
-								m.doAction("gpiTrackerModal", "Payment located — credited to beneficiary.")
+								m.doAction(
+									"gpiTrackerModal",
+									"Payment located — credited to beneficiary.",
+								)
 							}
 						>
 							Track Payment
@@ -861,21 +944,36 @@ block_hash: c4d3e2f1a09b8c7d...`}
 					<>
 						<div className="mb-3">
 							<Lbl s={s}>Unique End-to-end Transaction Ref (UETR)</Lbl>
-							<Fld s={s} mono defaultValue="97ed4827-7b6f-4491-a06f-b548d5a7512d" />
+							<Fld
+								s={s}
+								mono
+								defaultValue="97ed4827-7b6f-4491-a06f-b548d5a7512d"
+							/>
 						</div>
 						{[
 							["Initiated", "KCB Bank Kenya", "27 Jun 10:41", "badgeS"],
-							["In transit", "Citibank N.A. (correspondent)", "27 Jun 12:08", "badgeS"],
+							[
+								"In transit",
+								"Citibank N.A. (correspondent)",
+								"27 Jun 12:08",
+								"badgeS",
+							],
 							["Credited", "Beneficiary bank", "28 Jun 09:15", "badgeS"],
 						].map(([stage, bank, when, tone]) => (
 							<div key={stage} className={s.statusRow}>
 								<div style={{ minWidth: 0 }}>
 									<strong>{stage}</strong>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{bank}</div>
+									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+										{bank}
+									</div>
 								</div>
 								<div className="d-flex align-items-center gap-2">
-									<span style={{ fontSize: 11, color: "var(--pm-muted)" }}>{when}</span>
-									<span className={`${s.badge} ${s[tone as string]}`}>Done</span>
+									<span style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+										{when}
+									</span>
+									<span className={`${s.badge} ${s[tone as string]}`}>
+										Done
+									</span>
 								</div>
 							</div>
 						))}
@@ -919,7 +1017,9 @@ block_hash: c4d3e2f1a09b8c7d...`}
 										</td>
 										<td data-label="Consent Type">{cn.consentType}</td>
 										<td data-label="Status">
-											<span className={`${s.badge} ${s[cn.tone]}`}>{cn.status}</span>
+											<span className={`${s.badge} ${s[cn.tone]}`}>
+												{cn.status}
+											</span>
 										</td>
 										<td data-label="Expires">{cn.expires}</td>
 										<td data-label="Action">
@@ -927,7 +1027,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 												type="button"
 												className={`${s.btnPm} ${s.btnSm} ${s.btnPmD}`}
 												onClick={() =>
-													m.doAction("openBankingModal", `Consent for ${cn.tpp} revoked.`)
+													m.doAction(
+														"openBankingModal",
+														`Consent for ${cn.tpp} revoked.`,
+													)
 												}
 											>
 												Revoke
@@ -949,7 +1052,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-fingerprint" style={{ color: "var(--pm-purple)" }} />
+						<i
+							className="bi bi-fingerprint"
+							style={{ color: "var(--pm-purple)" }}
+						/>
 						Strong Customer Auth (SCA) Rules
 					</>
 				}
@@ -959,7 +1065,9 @@ block_hash: c4d3e2f1a09b8c7d...`}
 						<button
 							type="button"
 							className={`${s.btnPm} ${s.btnPmP}`}
-							onClick={() => m.doAction("scaSettingsModal", "SCA Exemption rules updated!")}
+							onClick={() =>
+								m.doAction("scaSettingsModal", "SCA Exemption rules updated!")
+							}
 						>
 							Save Rules
 						</button>,
@@ -974,11 +1082,17 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							<Fld s={s} type="number" defaultValue="5000" />
 						</div>
 						<Sw label="Enable trusted beneficiary exemption" defaultChecked />
-						<Sw label="Enable transaction risk analysis (TRA) exemption" defaultChecked />
-						<Sw label="Require dynamic linking on all card payments" defaultChecked />
+						<Sw
+							label="Enable transaction risk analysis (TRA) exemption"
+							defaultChecked
+						/>
+						<Sw
+							label="Require dynamic linking on all card payments"
+							defaultChecked
+						/>
 						<div className={`${s.note} ${s.noteInfo} mt-3`}>
-							<i className="bi bi-info-circle me-1" /> Cumulative low-value exemptions are
-							capped at 5 consecutive transactions or KES 25,000.
+							<i className="bi bi-info-circle me-1" /> Cumulative low-value
+							exemptions are capped at 5 consecutive transactions or KES 25,000.
 						</div>
 					</>,
 				)}
@@ -992,7 +1106,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-file-pdf" style={{ color: "var(--pm-danger)" }} />
+						<i
+							className="bi bi-file-pdf"
+							style={{ color: "var(--pm-danger)" }}
+						/>
 						Export Compliance & Audit Report
 					</>
 				}
@@ -1003,7 +1120,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							type="button"
 							className={`${s.btnPm} ${s.btnPmP}`}
 							onClick={() =>
-								m.doAction("auditReportModal", "Report compiled and downloading securely...")
+								m.doAction(
+									"auditReportModal",
+									"Report compiled and downloading securely...",
+								)
 							}
 						>
 							Generate Report
@@ -1030,7 +1150,11 @@ block_hash: c4d3e2f1a09b8c7d...`}
 						</div>
 						<div className="mb-3">
 							<Lbl s={s}>Format</Lbl>
-							<Fld s={s} as="select" options={["PDF (signed)", "CSV", "JSON Lines"]} />
+							<Fld
+								s={s}
+								as="select"
+								options={["PDF (signed)", "CSV", "JSON Lines"]}
+							/>
 						</div>
 						<Chk label="Include cryptographic hash manifest" defaultChecked />
 					</>,
@@ -1046,7 +1170,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-speedometer" style={{ color: "var(--pm-purple)" }} />
+						<i
+							className="bi bi-speedometer"
+							style={{ color: "var(--pm-purple)" }}
+						/>
 						Compliance Command Center Overview
 					</>
 				}
@@ -1061,10 +1188,18 @@ block_hash: c4d3e2f1a09b8c7d...`}
 					].map(([l, v, col]) => (
 						<div className="col-md-3 col-6" key={l}>
 							<div className="p-3 rounded border text-center">
-								<div style={{ fontSize: 11, fontWeight: 600, color: "var(--pm-muted)" }}>
+								<div
+									style={{
+										fontSize: 11,
+										fontWeight: 600,
+										color: "var(--pm-muted)",
+									}}
+								>
 									{l}
 								</div>
-								<div style={{ fontSize: 22, fontWeight: 700, color: col }}>{v}</div>
+								<div style={{ fontSize: 22, fontWeight: 700, color: col }}>
+									{v}
+								</div>
 							</div>
 						</div>
 					))}
@@ -1089,7 +1224,9 @@ block_hash: c4d3e2f1a09b8c7d...`}
 									<td data-label="Filing Type">{f.filingType}</td>
 									<td data-label="Deadline">{f.deadline}</td>
 									<td data-label="Status">
-										<span className={`${s.badge} ${s[f.tone]}`}>{f.status}</span>
+										<span className={`${s.badge} ${s[f.tone]}`}>
+											{f.status}
+										</span>
 									</td>
 								</tr>
 							))}
@@ -1117,7 +1254,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							type="button"
 							className={`${s.btnPm} ${s.btnPmP}`}
 							onClick={() =>
-								m.doAction("envSwitcherModal", "Environment context switched successfully.")
+								m.doAction(
+									"envSwitcherModal",
+									"Environment context switched successfully.",
+								)
 							}
 						>
 							Switch
@@ -1139,8 +1279,8 @@ block_hash: c4d3e2f1a09b8c7d...`}
 							</m.PickBox>
 						))}
 						<div className={`${s.note} ${s.noteWarn} mt-2`}>
-							<i className="bi bi-exclamation-triangle me-1" /> Compliance filings made in
-							Production are submitted to live regulators.
+							<i className="bi bi-exclamation-triangle me-1" /> Compliance
+							filings made in Production are submitted to live regulators.
 						</div>
 					</>,
 				)}
@@ -1176,7 +1316,9 @@ block_hash: c4d3e2f1a09b8c7d...`}
 						>
 							<strong>{a.title}</strong>
 							<div style={{ fontSize: 12, marginTop: 2 }}>{a.text}</div>
-							<div style={{ fontSize: 11, color: "var(--pm-muted)", marginTop: 4 }}>
+							<div
+								style={{ fontSize: 11, color: "var(--pm-muted)", marginTop: 4 }}
+							>
 								{a.age}
 							</div>
 						</div>
@@ -1213,9 +1355,10 @@ block_hash: c4d3e2f1a09b8c7d...`}
 			>
 				<h6 style={{ fontWeight: 700 }}>KYC/AML Implementation Guide</h6>
 				<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
-					This guide covers customer due diligence tiers, PEP and sanctions screening,
-					transaction monitoring thresholds, and the STR submission workflow required by
-					the Central Bank of Kenya and the Financial Reporting Centre.
+					This guide covers customer due diligence tiers, PEP and sanctions
+					screening, transaction monitoring thresholds, and the STR submission
+					workflow required by the Central Bank of Kenya and the Financial
+					Reporting Centre.
 				</p>
 				<h6 style={{ fontWeight: 700, marginTop: 16 }}>Screening call</h6>
 				<CodeBox s={s}>
@@ -1224,8 +1367,8 @@ Authorization: Bearer sk_live_...
 X-Audit-Reason: onboarding_due_diligence`}
 				</CodeBox>
 				<div className={`${s.note} ${s.noteMuted}`}>
-					Retain screening evidence for 7 years. All screening calls are automatically
-					written to the WORM audit trail.
+					Retain screening evidence for 7 years. All screening calls are
+					automatically written to the WORM audit trail.
 				</div>
 			</MBox>
 
@@ -1246,11 +1389,19 @@ X-Audit-Reason: onboarding_due_diligence`}
 				<div className="text-center">
 					<div
 						className={`${s.iconCircle} mx-auto mb-3`}
-						style={{ width: 64, height: 64, fontSize: 24, background: "#1E293B", color: "#fff" }}
+						style={{
+							width: 64,
+							height: 64,
+							fontSize: 24,
+							background: "#1E293B",
+							color: "#fff",
+						}}
 					>
 						{data.header.user.initials}
 					</div>
-					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>{data.header.user.name}</h5>
+					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>
+						{data.header.user.name}
+					</h5>
 					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
 						{data.header.user.email}
 					</p>
@@ -1281,7 +1432,10 @@ X-Audit-Reason: onboarding_due_diligence`}
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-file-earmark-code" style={{ color: "var(--pm-info)" }} />
+						<i
+							className="bi bi-file-earmark-code"
+							style={{ color: "var(--pm-info)" }}
+						/>
 						Detailed ISO 20022 Schema Output
 					</>
 				}
@@ -1299,7 +1453,8 @@ X-Audit-Reason: onboarding_due_diligence`}
 				}
 			>
 				<div className={`${s.note} ${s.noteSuccess} mb-3`}>
-					<i className="bi bi-check-circle-fill me-1" /> pain.001.001.09 — schema valid
+					<i className="bi bi-check-circle-fill me-1" /> pain.001.001.09 —
+					schema valid
 				</div>
 				<CodeBox s={s}>
 					{`{

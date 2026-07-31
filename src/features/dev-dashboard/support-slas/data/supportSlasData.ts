@@ -7,7 +7,14 @@
  * maintenance windows, forum threads).
  * ========================================================================== */
 
-export type Tone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP" | "badgeNeutral" | "badgeDark";
+export type Tone =
+	| "badgeS"
+	| "badgeW"
+	| "badgeD"
+	| "badgeI"
+	| "badgeP"
+	| "badgeNeutral"
+	| "badgeDark";
 
 export interface Crumb {
 	label: string;
@@ -126,7 +133,13 @@ export interface SupportSlasContent {
 		user: { name: string; role: string; initials: string; email: string };
 		actions: { icon: string; title: string; modal: string; counter?: number }[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean; iconColor?: string }[];
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+		iconColor?: string;
+	}[];
 	heroCards: HeroCard[];
 	planRows: PlanRow[];
 	premiumBenefits: BenefitCard[];
@@ -167,7 +180,11 @@ export const initialMockData: SupportSlasContent = {
 			email: "john.doe@company.com",
 		},
 		actions: [
-			{ icon: "bi-activity", title: "System Status", modal: "statusPageSubscribeModal" },
+			{
+				icon: "bi-activity",
+				title: "System Status",
+				modal: "statusPageSubscribeModal",
+			},
 			{ icon: "bi-people", title: "Community", modal: "communityForumModal" },
 			{
 				icon: "bi-ticket-detailed",
@@ -179,14 +196,23 @@ export const initialMockData: SupportSlasContent = {
 	},
 
 	pageActions: [
-		{ label: "AI Troubleshooter", icon: "bi-magic", modal: "troubleshootingWizardModal" },
+		{
+			label: "AI Troubleshooter",
+			icon: "bi-magic",
+			modal: "troubleshootingWizardModal",
+		},
 		{
 			label: "Declare Incident",
 			icon: "bi-exclamation-triangle",
 			modal: "declareIncidentModal",
 			iconColor: "var(--pm-danger)",
 		},
-		{ label: "New Ticket", icon: "bi-plus-lg", modal: "submitTicketModal", primary: true },
+		{
+			label: "New Ticket",
+			icon: "bi-plus-lg",
+			modal: "submitTicketModal",
+			primary: true,
+		},
 	],
 
 	heroCards: [
@@ -338,7 +364,12 @@ export const initialMockData: SupportSlasContent = {
 			actual: "99.85% Actual",
 			tone: "badgeS",
 		},
-		{ metric: "API Response Time (p95)", target: "< 500ms", actual: "210ms", tone: "badgeS" },
+		{
+			metric: "API Response Time (p95)",
+			target: "< 500ms",
+			actual: "210ms",
+			tone: "badgeS",
+		},
 		{
 			metric: "Webhook Delivery Latency",
 			target: "< 2s (99%)",
@@ -393,7 +424,12 @@ export const initialMockData: SupportSlasContent = {
 			name: "Enterprise",
 			price: "Custom",
 			sla: "1hr critical SLA",
-			perks: ["24/7 shared Slack", "On-site support", "Monthly reviews", "Solutions engineer"],
+			perks: [
+				"24/7 shared Slack",
+				"On-site support",
+				"Monthly reviews",
+				"Solutions engineer",
+			],
 		},
 	],
 

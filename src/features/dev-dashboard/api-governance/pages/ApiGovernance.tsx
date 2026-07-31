@@ -65,7 +65,10 @@ export default function ApiGovernance() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{c.header.actions.map((a) => (
 							<button
 								key={a.modal}
@@ -91,7 +94,11 @@ export default function ApiGovernance() {
 								<i className={`bi ${a.icon}`} /> {a.label}
 							</button>
 						))}
-						<button type="button" className={s.btnPm} onClick={() => open("profileModal")}>
+						<button
+							type="button"
+							className={s.btnPm}
+							onClick={() => open("profileModal")}
+						>
 							<span
 								className={s.iconCircle}
 								style={{
@@ -114,14 +121,32 @@ export default function ApiGovernance() {
 					{/* ================= HERO STATS ================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
-							<div className={`${s.card} ${s.cardAccent}`} style={{ minHeight: 170 }}>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+							<div
+								className={`${s.card} ${s.cardAccent}`}
+								style={{ minHeight: 170 }}
+							>
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
+								>
 									{c.hero.status} <span style={{ color: "#86efac" }}>●</span>
 								</p>
-								<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
+								<div
+									className={s.sv}
+									style={{ margin: "8px 0", color: "#fff" }}
+								>
 									{c.hero.value}
 								</div>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
+								>
 									{c.hero.detail}
 								</p>
 								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
@@ -151,7 +176,10 @@ export default function ApiGovernance() {
 								<span className={`${s.badge} ${s.badgeI}`}>
 									<i className="bi bi-diagram-2" /> {c.versionsCard.badge}
 								</span>
-								<div className="mt-3" style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								<div
+									className="mt-3"
+									style={{ fontSize: 11, color: "var(--pm-muted)" }}
+								>
 									{c.versionsCard.bars.map((b) => (
 										<div key={b.label} className="mb-2">
 											<div className="d-flex justify-content-between mb-1">
@@ -182,9 +210,15 @@ export default function ApiGovernance() {
 								<span className={`${s.badge} ${s.badgeS}`}>
 									<i className="bi bi-shield-check" /> {c.governanceCard.badge}
 								</span>
-								<div className="mt-2" style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
+								<div
+									className="mt-2"
+									style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+								>
 									{c.governanceCard.facts.map((f) => (
-										<div key={f.label} className="d-flex justify-content-between mb-1 gap-2">
+										<div
+											key={f.label}
+											className="d-flex justify-content-between mb-1 gap-2"
+										>
 											<span>{f.label}</span>
 											<strong style={{ color: f.color }}>{f.value}</strong>
 										</div>
@@ -204,7 +238,10 @@ export default function ApiGovernance() {
 						<div className="col-lg-3 col-md-4">
 							<div
 								className={s.card}
-								style={{ minHeight: 170, borderLeft: "3px solid var(--pm-purple)" }}
+								style={{
+									minHeight: 170,
+									borderLeft: "3px solid var(--pm-purple)",
+								}}
 							>
 								<p className={s.sl} style={{ color: "var(--pm-purple)" }}>
 									{c.feedbackCard.label}
@@ -215,7 +252,10 @@ export default function ApiGovernance() {
 								<span className={`${s.badge} ${s.badgeP}`}>
 									<i className="bi bi-chat-text" /> {c.feedbackCard.badge}
 								</span>
-								<div className="mt-2" style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
+								<div
+									className="mt-2"
+									style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+								>
 									<div>
 										Highest voted: <strong>{c.feedbackCard.topVoted}</strong>
 									</div>
@@ -239,12 +279,15 @@ export default function ApiGovernance() {
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<div>
 										<h3 className={s.sectionTitle}>
-											<i className="bi bi-arrow-repeat" style={{ color: "var(--pm-primary)" }} />{" "}
+											<i
+												className="bi bi-arrow-repeat"
+												style={{ color: "var(--pm-primary)" }}
+											/>{" "}
 											4.10.1 — API Lifecycle & Versions
 										</h3>
 										<p className={s.sectionSub}>
-											Manage version rollouts, deprecation policies, and backward
-											compatibility.
+											Manage version rollouts, deprecation policies, and
+											backward compatibility.
 										</p>
 									</div>
 									<button
@@ -270,13 +313,19 @@ export default function ApiGovernance() {
 											{c.versions.map((v) => (
 												<tr key={v.version}>
 													<td data-label="Version">
-														<strong style={{ fontSize: 14 }}>{v.version}</strong>
-														<div style={{ fontSize: 10, color: "var(--pm-muted)" }}>
+														<strong style={{ fontSize: 14 }}>
+															{v.version}
+														</strong>
+														<div
+															style={{ fontSize: 10, color: "var(--pm-muted)" }}
+														>
 															{v.sub}
 														</div>
 													</td>
 													<td data-label="Status">
-														<span className={`${s.badge} ${s[v.tone]}`}>{v.status}</span>
+														<span className={`${s.badge} ${s[v.tone]}`}>
+															{v.status}
+														</span>
 													</td>
 													<td data-label="Adoption">
 														<div
@@ -295,7 +344,12 @@ export default function ApiGovernance() {
 													</td>
 													<td data-label="Sunset Date">
 														{v.sunsetDanger ? (
-															<strong style={{ color: "var(--pm-danger)", fontSize: 12 }}>
+															<strong
+																style={{
+																	color: "var(--pm-danger)",
+																	fontSize: 12,
+																}}
+															>
 																{v.sunset}
 															</strong>
 														) : (
@@ -340,11 +394,15 @@ export default function ApiGovernance() {
 							<div className={`${s.card} h-100`}>
 								<div className="mb-3">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-shield-check" style={{ color: "var(--pm-accent)" }} />{" "}
+										<i
+											className="bi bi-shield-check"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
 										4.10.2 — API Governance & Standards
 									</h3>
 									<p className={s.sectionSub}>
-										Enforce REST principles, documentation quality, and performance targets.
+										Enforce REST principles, documentation quality, and
+										performance targets.
 									</p>
 								</div>
 								<div className="row g-2 mb-3">
@@ -366,8 +424,15 @@ export default function ApiGovernance() {
 													>
 														{t.label}
 													</div>
-													<div style={{ fontSize: 20, fontWeight: 700, color: t.color }}>
-														{t.icon && <i className={`bi ${t.icon}`} />} {t.value}
+													<div
+														style={{
+															fontSize: 20,
+															fontWeight: 700,
+															color: t.color,
+														}}
+													>
+														{t.icon && <i className={`bi ${t.icon}`} />}{" "}
+														{t.value}
 													</div>
 												</button>
 											</div>
@@ -386,8 +451,15 @@ export default function ApiGovernance() {
 													>
 														{t.label}
 													</div>
-													<div style={{ fontSize: 20, fontWeight: 700, color: t.color }}>
-														{t.icon && <i className={`bi ${t.icon}`} />} {t.value}
+													<div
+														style={{
+															fontSize: 20,
+															fontWeight: 700,
+															color: t.color,
+														}}
+													>
+														{t.icon && <i className={`bi ${t.icon}`} />}{" "}
+														{t.value}
 													</div>
 												</div>
 											</div>
@@ -426,12 +498,15 @@ export default function ApiGovernance() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-map" style={{ color: "var(--pm-warning)" }} /> 4.10.3 —
-									Product Roadmap & Developer Feedback
+									<i
+										className="bi bi-map"
+										style={{ color: "var(--pm-warning)" }}
+									/>{" "}
+									4.10.3 — Product Roadmap & Developer Feedback
 								</h3>
 								<p className={s.sectionSub}>
-									Public tracking of planned API features, beta programs, and community
-									voting.
+									Public tracking of planned API features, beta programs, and
+									community voting.
 								</p>
 							</div>
 							<div className="d-flex gap-2 flex-wrap">
@@ -472,10 +547,14 @@ export default function ApiGovernance() {
 													<strong>{card.title}</strong>
 													<span
 														className={`${s.badge} ${
-															card.badgeTone ? s[card.badgeTone] : s.badgeNeutral
+															card.badgeTone
+																? s[card.badgeTone]
+																: s.badgeNeutral
 														}`}
 													>
-														{card.votes !== undefined && <i className="bi bi-arrow-up" />}{" "}
+														{card.votes !== undefined && (
+															<i className="bi bi-arrow-up" />
+														)}{" "}
 														{card.badge}
 													</span>
 												</div>

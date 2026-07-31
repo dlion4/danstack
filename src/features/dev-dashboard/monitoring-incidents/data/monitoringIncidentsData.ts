@@ -6,7 +6,13 @@
  * rules, on-call board, live log tail and the observability tool tiles.
  * ========================================================================== */
 
-export type Tone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP" | "badgeNeutral";
+export type Tone =
+	| "badgeS"
+	| "badgeW"
+	| "badgeD"
+	| "badgeI"
+	| "badgeP"
+	| "badgeNeutral";
 
 export interface Crumb {
 	label: string;
@@ -125,10 +131,27 @@ export interface MonitoringIncidentsContent {
 		subtitle: string;
 		projects: string[];
 		user: { name: string; role: string; initials: string; email: string };
-		actions: { icon: string; title: string; modal: string; counter?: number; counterColor?: string }[];
+		actions: {
+			icon: string;
+			title: string;
+			modal: string;
+			counter?: number;
+			counterColor?: string;
+		}[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean; iconColor?: string }[];
-	hero: { status: string; value: string; detail: string; actions: { label: string; modal: string }[] };
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+		iconColor?: string;
+	}[];
+	hero: {
+		status: string;
+		value: string;
+		detail: string;
+		actions: { label: string; modal: string }[];
+	};
 	heroStats: HeroStat[];
 	activeAlerts: FeedRow[];
 	recentIncidents: FeedRow[];
@@ -143,7 +166,12 @@ export interface MonitoringIncidentsContent {
 	spans: SpanRow[];
 	dlqRows: DlqRow[];
 	channels: ChannelRow[];
-	statusServices: { name: string; status: string; tone: Tone; uptime: string }[];
+	statusServices: {
+		name: string;
+		status: string;
+		tone: Tone;
+		uptime: string;
+	}[];
 	alertHistory: { title: string; text: string; bg: string; age: string }[];
 }
 
@@ -176,7 +204,11 @@ export const initialMockData: MonitoringIncidentsContent = {
 			email: "john.d@paymo.dev",
 		},
 		actions: [
-			{ icon: "bi-envelope-paper", title: "Status Updates", modal: "statusSubscriptionModal" },
+			{
+				icon: "bi-envelope-paper",
+				title: "Status Updates",
+				modal: "statusSubscriptionModal",
+			},
 			{
 				icon: "bi-exclamation-triangle",
 				title: "Active Incidents",
@@ -184,7 +216,12 @@ export const initialMockData: MonitoringIncidentsContent = {
 				counter: 1,
 				counterColor: "var(--pm-warning)",
 			},
-			{ icon: "bi-bell", title: "Alerts", modal: "developerAlertsModal", counter: 3 },
+			{
+				icon: "bi-bell",
+				title: "Alerts",
+				modal: "developerAlertsModal",
+				counter: 3,
+			},
 		],
 	},
 
@@ -195,14 +232,23 @@ export const initialMockData: MonitoringIncidentsContent = {
 			modal: "systemStatusModal",
 			iconColor: "var(--pm-accent)",
 		},
-		{ label: "Live Logs", icon: "bi-journal-code", modal: "centralizedLogModal" },
+		{
+			label: "Live Logs",
+			icon: "bi-journal-code",
+			modal: "centralizedLogModal",
+		},
 		{
 			label: "Tracing",
 			icon: "bi-diagram-3",
 			modal: "traceVisualizationModal",
 			iconColor: "var(--pm-purple)",
 		},
-		{ label: "New Alert Rule", icon: "bi-plus-lg", modal: "addAlertRuleModal", primary: true },
+		{
+			label: "New Alert Rule",
+			icon: "bi-plus-lg",
+			modal: "addAlertRuleModal",
+			primary: true,
+		},
 	],
 
 	hero: {
@@ -225,7 +271,11 @@ export const initialMockData: MonitoringIncidentsContent = {
 			labelColor: "var(--pm-info)",
 			value: "184",
 			unit: "ms",
-			badge: { tone: "badgeS", icon: "bi-graph-down-arrow", text: "-12ms vs yesterday" },
+			badge: {
+				tone: "badgeS",
+				icon: "bi-graph-down-arrow",
+				text: "-12ms vs yesterday",
+			},
 			miniBars: [
 				{ height: "60%", color: "var(--pm-primary)" },
 				{ height: "65%", color: "var(--pm-primary)" },
@@ -334,14 +384,54 @@ export const initialMockData: MonitoringIncidentsContent = {
 	],
 
 	quickActions: [
-		{ label: "Search Logs", icon: "bi-journal-text", color: "var(--pm-primary)", modal: "centralizedLogModal" },
-		{ label: "Traces", icon: "bi-diagram-3", color: "var(--pm-purple)", modal: "traceVisualizationModal" },
-		{ label: "Grafana", icon: "bi-bar-chart", color: "var(--pm-warning)", modal: "grafanaDashboardModal" },
-		{ label: "On-Call (PD)", icon: "bi-telephone-outbound", color: "var(--pm-danger)", modal: "pagerDutySetupModal" },
-		{ label: "New Alert", icon: "bi-bell", color: "var(--pm-info)", modal: "addAlertRuleModal" },
-		{ label: "Escalation", icon: "bi-arrow-up-right-square", color: "var(--pm-accent)", modal: "escalationPolicyModal" },
-		{ label: "Maintenance", icon: "bi-calendar-event", color: "var(--pm-muted)", modal: "scheduleMaintenanceModal" },
-		{ label: "Biz Metrics", icon: "bi-graph-up", color: "var(--pm-primary)", modal: "businessMetricModal" },
+		{
+			label: "Search Logs",
+			icon: "bi-journal-text",
+			color: "var(--pm-primary)",
+			modal: "centralizedLogModal",
+		},
+		{
+			label: "Traces",
+			icon: "bi-diagram-3",
+			color: "var(--pm-purple)",
+			modal: "traceVisualizationModal",
+		},
+		{
+			label: "Grafana",
+			icon: "bi-bar-chart",
+			color: "var(--pm-warning)",
+			modal: "grafanaDashboardModal",
+		},
+		{
+			label: "On-Call (PD)",
+			icon: "bi-telephone-outbound",
+			color: "var(--pm-danger)",
+			modal: "pagerDutySetupModal",
+		},
+		{
+			label: "New Alert",
+			icon: "bi-bell",
+			color: "var(--pm-info)",
+			modal: "addAlertRuleModal",
+		},
+		{
+			label: "Escalation",
+			icon: "bi-arrow-up-right-square",
+			color: "var(--pm-accent)",
+			modal: "escalationPolicyModal",
+		},
+		{
+			label: "Maintenance",
+			icon: "bi-calendar-event",
+			color: "var(--pm-muted)",
+			modal: "scheduleMaintenanceModal",
+		},
+		{
+			label: "Biz Metrics",
+			icon: "bi-graph-up",
+			color: "var(--pm-primary)",
+			modal: "businessMetricModal",
+		},
 	],
 
 	subsystems: [
@@ -614,11 +704,36 @@ export const initialMockData: MonitoringIncidentsContent = {
 	],
 
 	statusServices: [
-		{ name: "Collections API", status: "Operational", tone: "badgeS", uptime: "99.99%" },
-		{ name: "Disbursements API", status: "Operational", tone: "badgeS", uptime: "99.98%" },
-		{ name: "Identity & KYC API", status: "Operational", tone: "badgeS", uptime: "99.99%" },
-		{ name: "Card Gateway", status: "Operational", tone: "badgeS", uptime: "99.95%" },
-		{ name: "Webhook Delivery", status: "Degraded", tone: "badgeW", uptime: "99.90%" },
+		{
+			name: "Collections API",
+			status: "Operational",
+			tone: "badgeS",
+			uptime: "99.99%",
+		},
+		{
+			name: "Disbursements API",
+			status: "Operational",
+			tone: "badgeS",
+			uptime: "99.98%",
+		},
+		{
+			name: "Identity & KYC API",
+			status: "Operational",
+			tone: "badgeS",
+			uptime: "99.99%",
+		},
+		{
+			name: "Card Gateway",
+			status: "Operational",
+			tone: "badgeS",
+			uptime: "99.95%",
+		},
+		{
+			name: "Webhook Delivery",
+			status: "Degraded",
+			tone: "badgeW",
+			uptime: "99.90%",
+		},
 	],
 
 	alertHistory: [

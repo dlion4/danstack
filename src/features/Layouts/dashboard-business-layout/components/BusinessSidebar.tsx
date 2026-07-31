@@ -2,9 +2,9 @@
  * BusinessSidebar.tsx — collapsible left navigation for the Business Layout.
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: Angular dashboard-business-sidebar.*
-* LEGACY BRIDGE: every nav-link is now a real router <Link>. The "dashboard"
-  * item points at the layout index (/business-dashboard); all others resolve to the
-  * /business-dashboard/$module route. The brand mark renders an icon (per the design).
+ * LEGACY BRIDGE: every nav-link is now a real router <Link>. The "dashboard"
+ * item points at the layout index (/business-dashboard); all others resolve to the
+ * /business-dashboard/$module route. The brand mark renders an icon (per the design).
  * ========================================================================== */
 import { Link } from "@tanstack/react-router";
 import type {

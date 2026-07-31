@@ -6,7 +6,13 @@
  * every option list used by the 25 modals.
  * ========================================================================== */
 
-export type Tone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP" | "badgeNeutral";
+export type Tone =
+	| "badgeS"
+	| "badgeW"
+	| "badgeD"
+	| "badgeI"
+	| "badgeP"
+	| "badgeNeutral";
 
 export interface Crumb {
 	label: string;
@@ -74,7 +80,13 @@ export interface IntegrationArchitectureContent {
 		user: { name: string; role: string; initials: string };
 		actions: { icon: string; title: string; modal: string }[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean; iconColor?: string }[];
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+		iconColor?: string;
+	}[];
 	kpis: KpiCard[];
 	patterns: PatternCard[];
 	topology: TopologyPanel[];
@@ -110,8 +122,16 @@ export const initialMockData: IntegrationArchitectureContent = {
 		searchPlaceholder: "Search architecture patterns, caching, mesh...",
 		user: { name: "Dev Lead", role: "System Architect", initials: "DL" },
 		actions: [
-			{ icon: "bi-heart-pulse", title: "API Status", modal: "healthCheckModal" },
-			{ icon: "bi-shield-exclamation", title: "DR Monitor", modal: "drMonitorModal" },
+			{
+				icon: "bi-heart-pulse",
+				title: "API Status",
+				modal: "healthCheckModal",
+			},
+			{
+				icon: "bi-shield-exclamation",
+				title: "DR Monitor",
+				modal: "drMonitorModal",
+			},
 		],
 	},
 
@@ -128,7 +148,12 @@ export const initialMockData: IntegrationArchitectureContent = {
 			modal: "testIntegrationModal",
 			iconColor: "var(--pm-warning)",
 		},
-		{ label: "Gen Boilerplate", icon: "bi-code-slash", modal: "boilerplateModal", primary: true },
+		{
+			label: "Gen Boilerplate",
+			icon: "bi-code-slash",
+			modal: "boilerplateModal",
+			primary: true,
+		},
 	],
 
 	kpis: [
@@ -190,7 +215,9 @@ export const initialMockData: IntegrationArchitectureContent = {
 			iconBg: "var(--pm-info)",
 			title: "Embedded Checkout",
 			desc: "iFrame, Popups, or Redirects. Reduces PCI scope while maintaining UX.",
-			actions: [{ label: "Customize Checkout", modal: "embeddedCheckoutModal" }],
+			actions: [
+				{ label: "Customize Checkout", modal: "embeddedCheckoutModal" },
+			],
 		},
 		{
 			key: "whitelabel",
@@ -240,7 +267,11 @@ export const initialMockData: IntegrationArchitectureContent = {
 			actions: [
 				{ label: "SOAP Translator", modal: "soapTranslatorModal" },
 				{ label: "SFTP Config", modal: "fileIntegrationModal" },
-				{ label: "Database Sync Rules", modal: "legacyDbSyncModal", full: true },
+				{
+					label: "Database Sync Rules",
+					modal: "legacyDbSyncModal",
+					full: true,
+				},
 			],
 		},
 		{
@@ -254,8 +285,16 @@ export const initialMockData: IntegrationArchitectureContent = {
 				{ label: "Active Tenants", value: "142", strong: true },
 			],
 			actions: [
-				{ label: "Tenant Data Policies", modal: "tenantIsolationModal", full: true },
-				{ label: "Cert Pinning Security", modal: "certPinningModal", full: true },
+				{
+					label: "Tenant Data Policies",
+					modal: "tenantIsolationModal",
+					full: true,
+				},
+				{
+					label: "Cert Pinning Security",
+					modal: "certPinningModal",
+					full: true,
+				},
 			],
 		},
 	],
@@ -318,9 +357,24 @@ export const initialMockData: IntegrationArchitectureContent = {
 	],
 
 	stacks: [
-		{ key: "node", label: "Node.js", icon: "bi-filetype-js", color: "var(--pm-accent)" },
-		{ key: "python", label: "Python", icon: "bi-filetype-py", color: "var(--pm-warning)" },
-		{ key: "java", label: "Java/Spring", icon: "bi-filetype-java", color: "var(--pm-danger)" },
+		{
+			key: "node",
+			label: "Node.js",
+			icon: "bi-filetype-js",
+			color: "var(--pm-accent)",
+		},
+		{
+			key: "python",
+			label: "Python",
+			icon: "bi-filetype-py",
+			color: "var(--pm-warning)",
+		},
+		{
+			key: "java",
+			label: "Java/Spring",
+			icon: "bi-filetype-java",
+			color: "var(--pm-danger)",
+		},
 	],
 
 	boilerplateOptions: {
@@ -339,10 +393,30 @@ export const initialMockData: IntegrationArchitectureContent = {
 	},
 
 	statusServices: [
-		{ name: "Core API Gateway", sub: "Uptime 99.99%", status: "Operational", tone: "badgeS" },
-		{ name: "Webhook Delivery", sub: "Latency < 2s", status: "Operational", tone: "badgeS" },
-		{ name: "Edge Cache (Redis)", sub: "Hit rate 84.2%", status: "Operational", tone: "badgeS" },
-		{ name: "Service Mesh", sub: "12 nodes healthy", status: "Operational", tone: "badgeS" },
+		{
+			name: "Core API Gateway",
+			sub: "Uptime 99.99%",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Webhook Delivery",
+			sub: "Latency < 2s",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Edge Cache (Redis)",
+			sub: "Hit rate 84.2%",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Service Mesh",
+			sub: "12 nodes healthy",
+			status: "Operational",
+			tone: "badgeS",
+		},
 	],
 };
 

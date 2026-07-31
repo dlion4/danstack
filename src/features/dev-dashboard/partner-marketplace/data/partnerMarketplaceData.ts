@@ -7,7 +7,13 @@
  * roadmap items, revenue-share table).
  * ========================================================================== */
 
-export type Tone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP" | "badgeNeutral";
+export type Tone =
+	| "badgeS"
+	| "badgeW"
+	| "badgeD"
+	| "badgeI"
+	| "badgeP"
+	| "badgeNeutral";
 
 export interface Crumb {
 	label: string;
@@ -105,7 +111,12 @@ export interface PartnerMarketplaceContent {
 		user: { name: string; role: string; initials: string; email: string };
 		actions: { icon: string; title: string; modal: string; counter?: number }[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean }[];
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+	}[];
 	hero: {
 		statusLabel: string;
 		statusValue: string;
@@ -114,9 +125,27 @@ export interface PartnerMarketplaceContent {
 		icon: string;
 		actions: { label: string; modal: string }[];
 	};
-	referrals: { label: string; value: string; badge: string; target: string; pct: number };
-	commissions: { label: string; value: string; badge: string; actionLabel: string; modal: string };
-	apps: { label: string; value: string; badge: string; installs: string; pendingReviews: string };
+	referrals: {
+		label: string;
+		value: string;
+		badge: string;
+		target: string;
+		pct: number;
+	};
+	commissions: {
+		label: string;
+		value: string;
+		badge: string;
+		actionLabel: string;
+		modal: string;
+	};
+	apps: {
+		label: string;
+		value: string;
+		badge: string;
+		installs: string;
+		pendingReviews: string;
+	};
 	onboarding: OnboardingRow[];
 	marketplaceApps: MarketplaceApp[];
 	communityTiles: CommunityTile[];
@@ -157,15 +186,33 @@ export const initialMockData: PartnerMarketplaceContent = {
 			email: "partners@techcorp.co.ke",
 		},
 		actions: [
-			{ icon: "bi-heart-pulse", title: "API Status", modal: "healthCheckModal" },
-			{ icon: "bi-bell", title: "Alerts", modal: "notificationModal", counter: 4 },
+			{
+				icon: "bi-heart-pulse",
+				title: "API Status",
+				modal: "healthCheckModal",
+			},
+			{
+				icon: "bi-bell",
+				title: "Alerts",
+				modal: "notificationModal",
+				counter: 4,
+			},
 		],
 	},
 
 	pageActions: [
-		{ label: "Referral Link", icon: "bi-link-45deg", modal: "referralLinkModal" },
+		{
+			label: "Referral Link",
+			icon: "bi-link-45deg",
+			modal: "referralLinkModal",
+		},
 		{ label: "Publish App", icon: "bi-cloud-upload", modal: "submitAppModal" },
-		{ label: "Upgrade Tier", icon: "bi-stars", modal: "applyPartnerModal", primary: true },
+		{
+			label: "Upgrade Tier",
+			icon: "bi-stars",
+			modal: "applyPartnerModal",
+			primary: true,
+		},
 	],
 
 	hero: {
@@ -260,9 +307,24 @@ export const initialMockData: PartnerMarketplaceContent = {
 	],
 
 	communityTiles: [
-		{ label: "Roadmap Votes", icon: "bi-map", color: "var(--pm-primary)", modal: "roadmapVoteModal" },
-		{ label: "Beta Programs", icon: "bi-bug", color: "var(--pm-warning)", modal: "betaEnrollModal" },
-		{ label: "Hackathons", icon: "bi-laptop", color: "var(--pm-accent)", modal: "hackathonModal" },
+		{
+			label: "Roadmap Votes",
+			icon: "bi-map",
+			color: "var(--pm-primary)",
+			modal: "roadmapVoteModal",
+		},
+		{
+			label: "Beta Programs",
+			icon: "bi-bug",
+			color: "var(--pm-warning)",
+			modal: "betaEnrollModal",
+		},
+		{
+			label: "Hackathons",
+			icon: "bi-laptop",
+			color: "var(--pm-accent)",
+			modal: "hackathonModal",
+		},
 		{
 			label: "Tech Blog",
 			icon: "bi-envelope",

@@ -68,7 +68,10 @@ export default function IntegrationArchitecture() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{c.header.actions.map((a) => (
 							<button
 								key={a.modal}
@@ -88,10 +91,15 @@ export default function IntegrationArchitecture() {
 								className={`${s.btnPm} ${a.primary ? s.btnPmP : ""}`}
 								onClick={() => open(a.modal)}
 							>
-								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} /> {a.label}
+								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} />{" "}
+								{a.label}
 							</button>
 						))}
-						<button type="button" className={s.btnPm} onClick={() => open("profileModal")}>
+						<button
+							type="button"
+							className={s.btnPm}
+							onClick={() => open("profileModal")}
+						>
 							<span
 								className={s.iconCircle}
 								style={{
@@ -139,7 +147,10 @@ export default function IntegrationArchitecture() {
 										<div className={`${s.progress} mt-2`}>
 											<div
 												className={s.progressBar}
-												style={{ width: `${k.meter.pct}%`, background: k.meter.color }}
+												style={{
+													width: `${k.meter.pct}%`,
+													background: k.meter.color,
+												}}
 											/>
 										</div>
 									)}
@@ -147,7 +158,9 @@ export default function IntegrationArchitecture() {
 										<div
 											style={{
 												fontSize: 11,
-												color: k.accent ? "rgba(255,255,255,.75)" : "var(--pm-muted)",
+												color: k.accent
+													? "rgba(255,255,255,.75)"
+													: "var(--pm-muted)",
 												marginTop: 8,
 											}}
 										>
@@ -164,12 +177,15 @@ export default function IntegrationArchitecture() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-puzzle" style={{ color: "var(--pm-primary)" }} />{" "}
+									<i
+										className="bi bi-puzzle"
+										style={{ color: "var(--pm-primary)" }}
+									/>{" "}
 									4.7.1 — Integration Patterns
 								</h3>
 								<p className={s.sectionSub}>
-									Select and configure how your application frontend and backend interface
-									with PayMo.
+									Select and configure how your application frontend and backend
+									interface with PayMo.
 								</p>
 							</div>
 						</div>
@@ -216,12 +232,15 @@ export default function IntegrationArchitecture() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-building" style={{ color: "var(--pm-warning)" }} />{" "}
+									<i
+										className="bi bi-building"
+										style={{ color: "var(--pm-warning)" }}
+									/>{" "}
 									4.7.2 — Enterprise Architecture
 								</h3>
 								<p className={s.sectionSub}>
-									Topology mapping for complex infrastructures including legacy cores and
-									multi-tenant SaaS.
+									Topology mapping for complex infrastructures including legacy
+									cores and multi-tenant SaaS.
 								</p>
 							</div>
 							<button
@@ -229,7 +248,10 @@ export default function IntegrationArchitecture() {
 								className={`${s.btnPm} ${s.btnSm}`}
 								onClick={() => open("idempotencyModal")}
 							>
-								<i className="bi bi-key" style={{ color: "var(--pm-warning)" }} />{" "}
+								<i
+									className="bi bi-key"
+									style={{ color: "var(--pm-warning)" }}
+								/>{" "}
 								Idempotency Keys
 							</button>
 						</div>
@@ -253,13 +275,18 @@ export default function IntegrationArchitecture() {
 											<div
 												key={r.label}
 												className="d-flex justify-content-between align-items-center pb-2 mb-2"
-												style={{ borderBottom: "1px solid var(--pm-border)", gap: 8 }}
+												style={{
+													borderBottom: "1px solid var(--pm-border)",
+													gap: 8,
+												}}
 											>
 												<span style={{ fontSize: 12 }}>{r.label}</span>
 												{r.strong ? (
 													<strong style={{ fontSize: 14 }}>{r.value}</strong>
 												) : (
-													<span className={`${s.badge} ${s[r.tone ?? "badgeNeutral"]}`}>
+													<span
+														className={`${s.badge} ${s[r.tone ?? "badgeNeutral"]}`}
+													>
 														{r.value}
 													</span>
 												)}
@@ -302,12 +329,15 @@ export default function IntegrationArchitecture() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-speedometer" style={{ color: "var(--pm-accent)" }} />{" "}
+									<i
+										className="bi bi-speedometer"
+										style={{ color: "var(--pm-accent)" }}
+									/>{" "}
 									4.7.3 — Performance & Scalability
 								</h3>
 								<p className={s.sectionSub}>
-									Manage rate limits, setup edge caching, and configure failovers for
-									high-traffic environments.
+									Manage rate limits, setup edge caching, and configure
+									failovers for high-traffic environments.
 								</p>
 							</div>
 							<button
@@ -341,7 +371,9 @@ export default function IntegrationArchitecture() {
 											</td>
 											<td data-label="Strategy">{r.strategy}</td>
 											<td data-label="Status">
-												<span className={`${s.badge} ${s[r.statusTone]}`}>{r.status}</span>
+												<span className={`${s.badge} ${s[r.statusTone]}`}>
+													{r.status}
+												</span>
 											</td>
 											<td data-label="Throughput">{r.throughput}</td>
 											<td data-label="Action">

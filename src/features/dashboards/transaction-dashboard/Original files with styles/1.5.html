@@ -1,0 +1,2852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo — Liquidity & Float Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, .04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, .06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, .08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, .12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, .15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, .08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, .06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, .06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            background: 0 0;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .C {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .C:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .C-dark {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none
+        }
+
+        .C-accent {
+            background: linear-gradient(135deg, #0f766e, #0369a1, #4F46E5);
+            color: #fff;
+            border: none
+        }
+
+        .SV {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em
+        }
+
+        .SL {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .B {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .B-s {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .B-w {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .B-d {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .B-i {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .B-p {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .btn-pm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink)
+        }
+
+        .btn-pm:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .btn-pm-p {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .btn-pm-p:hover {
+            background: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .btn-pm-a {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .btn-pm-d {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .T {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .T th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .T td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .T tr:last-child td {
+            border-bottom: none
+        }
+
+        .T tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .FL {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .FC {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .FC:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 80px
+        }
+
+        .step-n {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .step.active .step-n {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .step.done .step-n {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .step-l {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .step.active .step-l {
+            color: var(--pm-primary)
+        }
+
+        .step.done .step-l {
+            color: var(--pm-accent)
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pin-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pin-row input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pin-row input:focus {
+            outline: 0;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .receipt .ri {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .fstep {
+            display: none
+        }
+
+        .fstep.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        .tpanel {
+            display: none
+        }
+
+        .tpanel.active {
+            display: block;
+            animation: fi .3s
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .loading-ov {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: sp .8s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .sr:last-child {
+            border-bottom: none
+        }
+
+        .UB {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .SV {
+                font-size: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav"><button class="pm-nav-item"><i class="bi bi-house"></i></button><button
+                    class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-lightning-charge"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-wallet2"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-credit-card-2-front"></i></button><button class="pm-nav-item"><i
+                        class="bi bi-bar-chart-line"></i></button><button class="pm-nav-item active"><i
+                        class="bi bi-droplet"></i><span class="badge-dot"></span></button></nav><button
+                class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+                        <div>
+                            <h1>Liquidity & Float Management</h1>
+                            <p>Bank float accounts, agent liquidity, rebalancing, forecasting and emergency controls</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search"><i class="bi bi-search"></i><input type="text"
+                        placeholder="Search float accounts, agents, settlements, alerts..."></div>
+                <div class="pm-header-actions"><button class="pm-header-btn" onclick="openM('liquidityHealthModal')"><i
+                            class="bi bi-heart-pulse"></i></button><button class="pm-header-btn"
+                        onclick="openM('floatAlertModal')"><i class="bi bi-bell"></i><span
+                            class="counter">14</span></button>
+                    <div class="pm-profile-btn" onclick="openM('profileModal')">
+                        <div class="pm-avatar">JK</div>
+                        <div>
+                            <div class="pm-name">James K.</div>
+                            <div class="pm-role">Liquidity Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Transactions Hub</a> /
+                        <strong>Liquidity & Float</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        1.5 — Liquidity & Float Management</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Monitor and manage float across banks,
+                        agents, and partners. Execute rebalancing, forecast shortfalls, and trigger emergency liquidity
+                        with full audit trails.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px"><button class="btn-pm"
+                        onclick="openM('liquidityHealthModal')"><i class="bi bi-heart-pulse"></i> Health
+                        Check</button><button class="btn-pm" onclick="openM('floatAlertModal')"><i
+                            class="bi bi-exclamation-triangle"></i> Alerts</button><button class="btn-pm btn-pm-p"
+                        onclick="openM('rebalanceModal')"><i class="bi bi-arrow-left-right"></i>
+                        Rebalance</button><button class="btn-pm btn-pm-a" onclick="openM('emergencyLiquidityModal')"><i
+                            class="bi bi-lightning-charge"></i> Emergency</button></div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C C-accent" style="min-height:170px">
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Liquidity command center is
+                                live <span style="color:#86efac">●</span></p>
+                            <div class="SV" style="margin:8px 0;color:#fff">KES 1.84B Total Float</div>
+                            <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Across 12 partner banks, 847
+                                agents and 31 settlement accounts — all monitored in real time.</p>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px"><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('rebalanceModal')">Rebalance</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('forecastModal')">Forecast</button><button class="btn-pm btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openM('emergencyLiquidityModal')">Emergency</button></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-warning)">CRITICAL FLOAT</p>
+                            <div class="SV" style="margin:6px 0">KES 42.8M</div><span class="B B-w"><i
+                                    class="bi bi-exclamation-triangle"></i> 7 accounts below threshold</span>
+                            <div class="pm-mini-bars mt-3">
+                                <div class="pm-mini-bar" style="height:85%;background:var(--pm-danger)"></div>
+                                <div class="pm-mini-bar" style="height:60%;background:var(--pm-warning)"></div>
+                                <div class="pm-mini-bar" style="height:40%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:75%;background:var(--pm-danger)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="C" style="min-height:170px">
+                            <p class="SL" style="color:var(--pm-info)">SETTLEMENTS TODAY</p>
+                            <div class="SV" style="margin:6px 0">KES 318.4M</div><span class="B B-s"><i
+                                    class="bi bi-check-circle"></i> 94% completed</span>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Pending</span><span>KES
+                                        19.2M</span></div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:94%;background:var(--pm-accent)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="C" style="min-height:170px;border-left:3px solid var(--pm-accent)">
+                            <p class="SL" style="color:var(--pm-accent)">FORECASTED SHORTFALL (48H)</p>
+                            <div class="SV" style="margin:6px 0">KES 87.5M</div><span class="B B-i"><i
+                                    class="bi bi-graph-down-arrow"></i> 3 banks at risk</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Recommended top-up: <strong>KES 120M</strong></div>
+                                <div>Auto-rebalance scheduled: <strong>Tomorrow 06:00</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Attention Required</h3><button class="btn-pm btn-sm"
+                                    onclick="openM('attentionModal')">View all</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-danger-soft);color:var(--pm-danger);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-bank"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">KCB Float critically low</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 8.2M remaining (threshold
+                                            KES 15M)</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm btn-pm-d"
+                                    onclick="openM('rebalanceModal')">Top-up</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-people"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">47 agents below minimum float</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Auto-replenishment failed for
+                                            12</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('agentFloatModal')">Review</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-clock-history"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Settlement mismatch detected</div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Equity Bank batch #SB-44291 —
+                                            KES 1.8M variance</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('reconciliationModal')">Investigate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="st">Smart Suggestions</h3><span class="B B-p"><i class="bi bi-stars"></i>
+                                    AI</span>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-accent-soft);color:var(--pm-accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-arrow-repeat"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Rebalance 5 low-float banks tonight
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Projected savings: KES 340K in
+                                            overnight fees</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('rebalanceModal')">Schedule</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-info-soft);color:var(--pm-info);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-graph-up"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Increase Co-op float buffer by 18%
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Based on weekend transaction
+                                            patterns</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm" onclick="openM('forecastModal')">Apply</button>
+                            </div>
+                            <div class="sr">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:50%;background:var(--pm-warning-soft);color:var(--pm-warning);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">
+                                        <i class="bi bi-shield-check"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px">Activate emergency liquidity line
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 200M standby facility
+                                            ready</div>
+                                    </div>
+                                </div><button class="btn-pm btn-sm"
+                                    onclick="openM('emergencyLiquidityModal')">Activate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="C">
+                            <div class="mb-3">
+                                <h3 class="st">Quick Actions</h3>
+                                <p class="ss">Frequent liquidity workflows</p>
+                            </div>
+                            <div class="quick-grid"><button class="quick-btn" onclick="openM('rebalanceModal')"><i
+                                        class="bi bi-arrow-left-right text-primary me-1"></i> Rebalance
+                                    Float</button><button class="quick-btn" onclick="openM('topupBankModal')"><i
+                                        class="bi bi-bank text-info me-1"></i> Top-up Bank</button><button
+                                    class="quick-btn" onclick="openM('agentFloatModal')"><i
+                                        class="bi bi-people text-success me-1"></i> Agent Float</button><button
+                                    class="quick-btn" onclick="openM('settlementModal')"><i
+                                        class="bi bi-clock-history me-1" style="color:var(--pm-purple)"></i>
+                                    Settlements</button><button class="quick-btn" onclick="openM('forecastModal')"><i
+                                        class="bi bi-graph-up-arrow text-warning me-1"></i> Forecast</button><button
+                                    class="quick-btn" onclick="openM('emergencyLiquidityModal')"><i
+                                        class="bi bi-lightning-charge text-danger me-1"></i> Emergency</button><button
+                                    class="quick-btn" onclick="openM('reconciliationModal')"><i
+                                        class="bi bi-search text-muted me-1"></i> Reconcile</button><button
+                                    class="quick-btn" onclick="openM('liquidityReportModal')"><i
+                                        class="bi bi-download me-1" style="color:var(--pm-accent)"></i> Reports</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.1 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-bank2" style="color:var(--pm-primary)"></i> 1.5.1 — Float
+                                Portfolio Overview</h3>
+                            <p class="ss">Real-time view of all float accounts across banks, agents, and internal
+                                settlement pools with health indicators.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('liquidityHealthModal')"><i class="bi bi-heart-pulse"></i>
+                                Health</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('rebalanceModal')"><i class="bi bi-arrow-left-right"></i>
+                                Rebalance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Bank Float Accounts</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Bank</th>
+                                                <th>Account</th>
+                                                <th>Current Float</th>
+                                                <th>Threshold</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>KCB Bank</strong></td>
+                                                <td>KCB-447291</td>
+                                                <td><strong>KES 142.8M</strong></td>
+                                                <td>KES 80M</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('rebalanceModal')">Manage</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Equity Bank</strong></td>
+                                                <td>EQB-991023</td>
+                                                <td><strong>KES 98.4M</strong></td>
+                                                <td>KES 60M</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('rebalanceModal')">Manage</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Co-op Bank</strong></td>
+                                                <td>COOP-334871</td>
+                                                <td><strong>KES 41.2M</strong></td>
+                                                <td>KES 45M</td>
+                                                <td><span class="B B-w">Warning</span></td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('topupBankModal')">Top-up</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Absa Bank</strong></td>
+                                                <td>ABSA-772910</td>
+                                                <td><strong>KES 67.9M</strong></td>
+                                                <td>KES 40M</td>
+                                                <td><span class="B B-s">Healthy</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('rebalanceModal')">Manage</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Stanbic Bank</strong></td>
+                                                <td>STB-556102</td>
+                                                <td><strong>KES 12.4M</strong></td>
+                                                <td>KES 25M</td>
+                                                <td><span class="B B-d">Critical</span></td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('emergencyLiquidityModal')">Emergency</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px">Internal Settlement Pools
+                                </h4>
+                                <div class="sr">
+                                    <div><strong>PayMo Main Pool</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 284.6M</div>
+                                    </div><span class="B B-s">Optimal</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent Float Pool</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 119.3M</div>
+                                    </div><span class="B B-w">Warning</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Partner Settlement</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 67.8M</div>
+                                    </div><span class="B B-s">Healthy</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Emergency Reserve</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 200.0M</div>
+                                    </div><span class="B B-s">Ready</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.2 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-people-fill" style="color:var(--pm-accent)"></i> 1.5.2 —
+                                Agent & Partner Float Management</h3>
+                            <p class="ss">Monitor and replenish float for 847 agents and 31 partner organizations with
+                                automated rules and manual overrides.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('agentFloatModal')"><i class="bi bi-people"></i> Manage
+                                Agents</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('bulkTopupModal')"><i class="bi bi-upload"></i> Bulk Top-up</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Critical Agent Float (Below
+                                    Threshold)</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Agent</th>
+                                                <th>Location</th>
+                                                <th>Current</th>
+                                                <th>Min</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>John's M-Pesa</strong></td>
+                                                <td>Kawangware</td>
+                                                <td>KES 18,400</td>
+                                                <td>KES 50,000</td>
+                                                <td><span class="B B-d">Critical</span></td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('agentTopupModal')">Top-up</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Grace Kiosk</strong></td>
+                                                <td>Kayole</td>
+                                                <td>KES 29,100</td>
+                                                <td>KES 40,000</td>
+                                                <td><span class="B B-w">Low</span></td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('agentTopupModal')">Top-up</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Peter Agent</strong></td>
+                                                <td>Embakasi</td>
+                                                <td>KES 12,800</td>
+                                                <td>KES 35,000</td>
+                                                <td><span class="B B-d">Critical</span></td>
+                                                <td><button class="btn-pm btn-sm btn-pm-d"
+                                                        onclick="openM('agentTopupModal')">Top-up</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Partner Float Summary</h4>
+                                <div class="sr">
+                                    <div><strong>Safaricom M-Pesa</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 1.24B</div>
+                                    </div><span class="B B-s">Healthy</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Airtel Money</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 312M</div>
+                                    </div><span class="B B-s">Healthy</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Telkom T-Kash</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 87M</div>
+                                    </div><span class="B B-w">Warning</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Equity Pay</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 156M</div>
+                                    </div><span class="B B-s">Healthy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.3 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-graph-up-arrow" style="color:var(--pm-info)"></i> 1.5.3 —
+                                Liquidity Monitoring & Real-time Alerts</h3>
+                            <p class="ss">Live monitoring of float levels with configurable thresholds, automated
+                                alerts, and escalation workflows.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('floatAlertModal')"><i class="bi bi-bell"></i> Alerts</button><button
+                                class="btn-pm btn-sm" onclick="openM('thresholdModal')"><i class="bi bi-sliders"></i>
+                                Thresholds</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Alerts (14)</h4>
+                                <div class="sr">
+                                    <div><strong>Stanbic Bank float critical</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">12.4M / 25M threshold</div>
+                                    </div><span class="B B-d">Critical</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Co-op Bank warning</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">41.2M / 45M threshold</div>
+                                    </div><span class="B B-w">Warning</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>12 agents below minimum</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Auto-replenishment failed
+                                        </div>
+                                    </div><span class="B B-w">Warning</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Equity settlement variance</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">KES 1.8M mismatch</div>
+                                    </div><span class="B B-i">Investigate</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Alert Configuration</h4>
+                                <div class="sr">
+                                    <div><strong>Bank float threshold</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Alert when below 80% of
+                                            minimum</div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Agent float threshold</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Alert when below KES 30,000
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Settlement mismatch</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Alert on >KES 500K variance
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Forecast shortfall</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Alert 48 hours before
+                                            predicted low</div>
+                                    </div>
+                                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox"
+                                            checked></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.4 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-arrow-left-right" style="color:var(--pm-primary)"></i> 1.5.4
+                                — Float Top-up, Rebalancing & Transfers</h3>
+                            <p class="ss">Execute manual and automated float movements between banks, agents, and
+                                internal pools with full approval workflows.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('rebalanceModal')"><i class="bi bi-arrow-left-right"></i>
+                                Rebalance</button><button class="btn-pm btn-sm btn-pm-p"
+                                onclick="openM('bulkTopupModal')"><i class="bi bi-upload"></i> Bulk</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Quick Top-up</h4>
+                                <div class="quick-grid"><button class="quick-btn" onclick="openM('topupBankModal')">Bank
+                                        Float</button><button class="quick-btn" onclick="openM('agentTopupModal')">Agent
+                                        Float</button><button class="quick-btn"
+                                        onclick="openM('partnerTopupModal')">Partner Float</button><button
+                                        class="quick-btn" onclick="openM('internalTransferModal')">Internal
+                                        Transfer</button></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Rebalancing Activity
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Ref</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>27 Jun 14:22</td>
+                                                <td>PayMo Main</td>
+                                                <td>Stanbic Bank</td>
+                                                <td>KES 25.0M</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td>RB-44291</td>
+                                            </tr>
+                                            <tr>
+                                                <td>27 Jun 11:45</td>
+                                                <td>Equity Bank</td>
+                                                <td>Co-op Bank</td>
+                                                <td>KES 12.5M</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td>RB-44288</td>
+                                            </tr>
+                                            <tr>
+                                                <td>27 Jun 09:10</td>
+                                                <td>PayMo Main</td>
+                                                <td>Agent Pool</td>
+                                                <td>KES 8.0M</td>
+                                                <td><span class="B B-s">Completed</span></td>
+                                                <td>RB-44285</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.5 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-purple)"></i> 1.5.5 —
+                                Settlement & Reconciliation</h3>
+                            <p class="ss">Track daily settlements, investigate mismatches, and reconcile float movements
+                                across all counterparties.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('settlementModal')"><i class="bi bi-clock-history"></i>
+                                Settlements</button><button class="btn-pm btn-sm"
+                                onclick="openM('reconciliationModal')"><i class="bi bi-search"></i> Reconcile</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Today's Settlements</h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Batch</th>
+                                                <th>Counterparty</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Variance</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>SB-44291</td>
+                                                <td>Equity Bank</td>
+                                                <td>KES 87.4M</td>
+                                                <td><span class="B B-w">Variance</span></td>
+                                                <td>KES 1.8M</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('reconciliationModal')">Investigate</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>SB-44290</td>
+                                                <td>KCB Bank</td>
+                                                <td>KES 112.6M</td>
+                                                <td><span class="B B-s">Matched</span></td>
+                                                <td>KES 0</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementModal')">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>SB-44289</td>
+                                                <td>Co-op Bank</td>
+                                                <td>KES 54.2M</td>
+                                                <td><span class="B B-s">Matched</span></td>
+                                                <td>KES 0</td>
+                                                <td><button class="btn-pm btn-sm"
+                                                        onclick="openM('settlementModal')">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Reconciliation Queue</h4>
+                                <div class="sr">
+                                    <div><strong>Pending batches</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">3 batches</div>
+                                    </div><span class="B B-i">3</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Mismatches to resolve</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">1 variance</div>
+                                    </div><span class="B B-w">1</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Auto-matched today</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">94%</div>
+                                    </div><span class="B B-s">28</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.6 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-graph-up" style="color:var(--pm-warning)"></i> 1.5.6 —
+                                Liquidity Forecasting & Analytics</h3>
+                            <p class="ss">AI-powered forecasting of float requirements, seasonal patterns, and risk
+                                scenarios with recommended actions.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm"
+                                onclick="openM('forecastModal')"><i class="bi bi-graph-up"></i> Forecast</button><button
+                                class="btn-pm btn-sm" onclick="openM('scenarioModal')"><i class="bi bi-sliders"></i>
+                                Scenarios</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">48-Hour Float Forecast</h4>
+                                <div class="chart-bars">
+                                    <div class="chart-bar" style="height:75%;background:var(--pm-primary)"><span
+                                            class="bar-label">Now</span></div>
+                                    <div class="chart-bar" style="height:68%;background:var(--pm-primary)"><span
+                                            class="bar-label">+6h</span></div>
+                                    <div class="chart-bar" style="height:55%;background:var(--pm-warning)"><span
+                                            class="bar-label">+12h</span></div>
+                                    <div class="chart-bar" style="height:42%;background:var(--pm-danger)"><span
+                                            class="bar-label">+24h</span></div>
+                                    <div class="chart-bar" style="height:38%;background:var(--pm-danger)"><span
+                                            class="bar-label">+36h</span></div>
+                                    <div class="chart-bar" style="height:52%;background:var(--pm-warning)"><span
+                                            class="bar-label">+48h</span></div>
+                                </div>
+                                <div class="mt-3 p-3 rounded" style="background:var(--pm-danger-soft);font-size:12px"><i
+                                        class="bi bi-exclamation-triangle me-1"></i> <strong>Critical shortfall
+                                        predicted at +36h</strong> — Recommend KES 120M top-up before 06:00 tomorrow.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Risk Scenarios</h4>
+                                <div class="sr">
+                                    <div><strong>Weekend surge (+40%)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Probability: 68%</div>
+                                    </div><span class="B B-w">Medium</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Salary run (end of month)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Probability: 92%</div>
+                                    </div><span class="B B-d">High</span>
+                                </div>
+                                <div class="sr">
+                                    <div><strong>Partner outage</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Probability: 12%</div>
+                                    </div><span class="B B-i">Low</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5.7 -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="st"><i class="bi bi-shield-lock" style="color:var(--pm-danger)"></i> 1.5.7 —
+                                Emergency Liquidity & Governance</h3>
+                            <p class="ss">Pre-approved emergency facilities, governance controls, audit logs, and
+                                executive override capabilities.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="btn-pm btn-sm btn-pm-d"
+                                onclick="openM('emergencyLiquidityModal')"><i class="bi bi-lightning-charge"></i>
+                                Emergency</button><button class="btn-pm btn-sm" onclick="openM('governanceModal')"><i
+                                    class="bi bi-file-earmark-check"></i> Governance</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-5">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Emergency Facilities</h4>
+                                <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#991B1B">STANDBY LINE</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-danger)">KES 200M</div>
+                                    <div style="font-size:12px;color:#7F1D1D">Available 24/7 • Pre-approved</div><button
+                                        class="btn-pm btn-sm btn-pm-d mt-2"
+                                        onclick="openM('emergencyLiquidityModal')">Activate Now</button>
+                                </div>
+                                <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                    <div style="font-size:11px;font-weight:700;color:#B45309">PARTNER CREDIT LINE</div>
+                                    <div style="font-size:22px;font-weight:700;color:var(--pm-warning)">KES 150M</div>
+                                    <div style="font-size:12px;color:#92400E">Equity Bank facility • 2-hour activation
+                                    </div><button class="btn-pm btn-sm mt-2"
+                                        onclick="openM('emergencyLiquidityModal')">Request</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="UB">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Governance Actions
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="T">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Action</th>
+                                                <th>Initiator</th>
+                                                <th>Approver</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>26 Jun 22:14</td>
+                                                <td>Emergency top-up</td>
+                                                <td>System</td>
+                                                <td>CFO (auto)</td>
+                                                <td>KES 80M</td>
+                                                <td><span class="B B-s">Executed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>25 Jun 14:02</td>
+                                                <td>Float rebalance override</td>
+                                                <td>Liquidity Mgr</td>
+                                                <td>Treasurer</td>
+                                                <td>KES 45M</td>
+                                                <td><span class="B B-s">Executed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>24 Jun 09:30</td>
+                                                <td>Threshold change</td>
+                                                <td>Ops Lead</td>
+                                                <td>Risk Committee</td>
+                                                <td>—</td>
+                                                <td><span class="B B-s">Approved</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="C">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="st"><i class="bi bi-clock-history" style="color:var(--pm-muted)"></i> Recent
+                            Liquidity Activity</h3><button class="btn-pm btn-sm"
+                            onclick="openM('liquidityReportModal')">Full Audit Log</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Ref</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Jun 14:22</td>
+                                    <td>Rebalance</td>
+                                    <td>PayMo Main</td>
+                                    <td>Stanbic</td>
+                                    <td>KES 25.0M</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>RB-44291</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('reconciliationModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 11:45</td>
+                                    <td>Top-up</td>
+                                    <td>KCB</td>
+                                    <td>Co-op</td>
+                                    <td>KES 12.5M</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>TP-44288</td>
+                                    <td><button class="btn-pm btn-sm"
+                                            onclick="openM('reconciliationModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>27 Jun 09:10</td>
+                                    <td>Agent top-up</td>
+                                    <td>Agent Pool</td>
+                                    <td>John's M-Pesa</td>
+                                    <td>KES 50,000</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>AG-44285</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('agentFloatModal')">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>26 Jun 22:14</td>
+                                    <td>Emergency</td>
+                                    <td>Reserve</td>
+                                    <td>Equity</td>
+                                    <td>KES 80.0M</td>
+                                    <td><span class="B B-s">Success</span></td>
+                                    <td>EM-44279</td>
+                                    <td><button class="btn-pm btn-sm" onclick="openM('governanceModal')">Audit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- pm-content -->
+        </div><!-- pm-main -->
+    </div><!-- pm-app -->
+
+    <!-- ==================== 25+ MODALS ==================== -->
+
+    <!-- M1: Rebalance Modal (Multi-step) -->
+    <div class="modal fade R" id="rebalanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-primary me-2"></i>Float Rebalance</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="rebalStepper"></div>
+                    <div id="rebalS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Source & Destination</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="FL">From (Source)</label><select class="FC">
+                                    <option>PayMo Main Pool (KES 284.6M)</option>
+                                    <option>KCB Bank (KES 142.8M)</option>
+                                    <option>Equity Bank (KES 98.4M)</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="FL">To (Destination)</label><select class="FC">
+                                    <option>Stanbic Bank (KES 12.4M)</option>
+                                    <option>Co-op Bank (KES 41.2M)</option>
+                                    <option>Agent Float Pool (KES 119.3M)</option>
+                                </select></div>
+                        </div>
+                    </div>
+                    <div id="rebalS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Reason</h6>
+                        <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="25000000">
+                        </div>
+                        <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                                <option>Critical float replenishment</option>
+                                <option>Weekend surge preparation</option>
+                                <option>Partner settlement requirement</option>
+                                <option>Scheduled rebalancing</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Notes</label><textarea class="FC"
+                                rows="2">Emergency top-up for Stanbic due to unexpected salary run volume.</textarea>
+                        </div>
+                    </div>
+                    <div id="rebalS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Approval & Execution</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-2"><span>Amount</span><strong>KES
+                                    25,000,000</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Fee</span><strong>KES 0
+                                    (internal)</strong></div>
+                            <div class="d-flex justify-content-between"><span style="font-weight:700">Total
+                                    Movement</span><strong style="font-size:18px;color:var(--pm-primary)">KES
+                                    25,000,000</strong></div>
+                        </div><label class="FL">Enter Approval PIN</label>
+                        <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                    </div>
+                    <div id="rebalS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Rebalance Executed Successfully</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 25M transferred from PayMo Main Pool
+                                to Stanbic Bank. New balance: KES 37.4M.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Reference</span><strong>RB-44291</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Executed</span><strong>27 Jun 2025, 14:22</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Approved
+                                        by</span><strong>System (Auto)</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="rebalFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-p" id="rebalNext"
+                        onclick="nextFlow('rebal',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M2: Top-up Bank Modal -->
+    <div class="modal fade R" id="topupBankModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank text-info me-2"></i>Top-up Bank Float</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Bank</label><select class="FC">
+                            <option>Stanbic Bank (KES 12.4M)</option>
+                            <option>Co-op Bank (KES 41.2M)</option>
+                            <option>Equity Bank (KES 98.4M)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="25000000"></div>
+                    <div class="mb-3"><label class="FL">Source</label><select class="FC">
+                            <option>PayMo Main Pool</option>
+                            <option>Emergency Reserve</option>
+                            <option>KCB Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Critical float replenishment</option>
+                            <option>Scheduled top-up</option>
+                            <option>Partner request</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('topupBankModal','Bank float topped up successfully!','TP-44292')">Execute
+                        Top-up</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3: Agent Float Modal -->
+    <div class="modal fade R" id="agentFloatModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-success me-2"></i>Agent Float Management</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active" onclick="sw('agent','low',this)">Low
+                            Float</button><button class="pill" onclick="sw('agent','rules',this)">Auto
+                            Rules</button><button class="pill" onclick="sw('agent','history',this)">History</button>
+                    </div>
+                    <div id="agent-low" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Agent</th>
+                                        <th>Location</th>
+                                        <th>Current</th>
+                                        <th>Min</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>John's M-Pesa</td>
+                                        <td>Kawangware</td>
+                                        <td>KES 18,400</td>
+                                        <td>KES 50,000</td>
+                                        <td><span class="B B-d">Critical</span></td>
+                                        <td><button class="btn-pm btn-sm btn-pm-d"
+                                                onclick="openM('agentTopupModal')">Top-up</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Peter Agent</td>
+                                        <td>Embakasi</td>
+                                        <td>KES 12,800</td>
+                                        <td>KES 35,000</td>
+                                        <td><span class="B B-d">Critical</span></td>
+                                        <td><button class="btn-pm btn-sm btn-pm-d"
+                                                onclick="openM('agentTopupModal')">Top-up</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Grace Kiosk</td>
+                                        <td>Kayole</td>
+                                        <td>KES 29,100</td>
+                                        <td>KES 40,000</td>
+                                        <td><span class="B B-w">Low</span></td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('agentTopupModal')">Top-up</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="agent-rules" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Auto top-up when below</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 30,000</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Top-up amount</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 50,000</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Max daily top-ups per agent</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">3</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agent-history" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Agent</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>27 Jun 09:10</td>
+                                        <td>John's M-Pesa</td>
+                                        <td>KES 50,000</td>
+                                        <td>Auto</td>
+                                        <td><span class="B B-s">Success</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>26 Jun 18:45</td>
+                                        <td>Peter Agent</td>
+                                        <td>KES 35,000</td>
+                                        <td>Manual</td>
+                                        <td><span class="B B-s">Success</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M4: Agent Top-up Modal -->
+    <div class="modal fade R" id="agentTopupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-success me-2"></i>Top-up Agent Float</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Agent</label><select class="FC">
+                            <option>John's M-Pesa (KES 18,400)</option>
+                            <option>Peter Agent (KES 12,800)</option>
+                            <option>Grace Kiosk (KES 29,100)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="50000"></div>
+                    <div class="mb-3"><label class="FL">Method</label><select class="FC">
+                            <option>Auto (from Agent Pool)</option>
+                            <option>Manual from PayMo Main</option>
+                            <option>From Partner Float</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('agentTopupModal','Agent float topped up successfully!','AG-44293')">Top-up
+                        Agent</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M5: Bulk Top-up Modal -->
+    <div class="modal fade R" id="bulkTopupModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload text-primary me-2"></i>Bulk Float Top-up</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Upload CSV (Agent ID, Amount)</label><input type="file"
+                            class="FC"></div>
+                    <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><strong>Preview
+                            (first 5
+                            rows):</strong><br>AG-001,50000<br>AG-007,35000<br>AG-012,50000<br>AG-019,25000<br>AG-023,50000
+                    </div>
+                    <div class="mt-3"><label class="FL">Total Agents: 47 | Total Amount: KES 1,875,000</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('bulkTopupModal','Bulk top-up of 47 agents completed successfully!','BLK-44294')">Execute
+                        Bulk Top-up</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M6: Emergency Liquidity Modal (Multi-step) -->
+    <div class="modal fade R" id="emergencyLiquidityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background:var(--pm-danger);color:#fff;border:none">
+                    <h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i>Emergency Liquidity Activation
+                    </h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="stepper" id="emergStepper"></div>
+                    <div id="emergS1" class="fstep active">
+                        <h6 style="font-weight:700">Step 1: Select Facility</h6>
+                        <div class="p-3 border rounded mb-2"
+                            style="border-color:var(--pm-danger)!important;background:var(--pm-danger-soft)"><input
+                                type="radio" name="emerg" checked> <strong>Standby Line — KES 200M</strong>
+                            <div style="font-size:11px;color:#7F1D1D">Pre-approved • Instant activation • 0% fee</div>
+                        </div>
+                        <div class="p-3 border rounded mb-2" style="cursor:pointer"><input type="radio" name="emerg">
+                            <strong>Partner Credit Line — KES 150M</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Equity Bank • 2-hour activation • 2% fee
+                            </div>
+                        </div>
+                    </div>
+                    <div id="emergS2" class="fstep">
+                        <h6 style="font-weight:700">Step 2: Amount & Destination</h6>
+                        <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="120000000">
+                        </div>
+                        <div class="mb-3"><label class="FL">Destination</label><select class="FC">
+                                <option>Stanbic Bank Float</option>
+                                <option>Co-op Bank Float</option>
+                                <option>Agent Float Pool</option>
+                            </select></div>
+                        <div class="mb-3"><label class="FL">Justification</label><textarea class="FC"
+                                rows="2">Critical shortfall predicted at +36h due to weekend salary run. Immediate action required to prevent agent outages.</textarea>
+                        </div>
+                    </div>
+                    <div id="emergS3" class="fstep">
+                        <h6 style="font-weight:700">Step 3: Executive Approval</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:12px"><i
+                                class="bi bi-exclamation-triangle me-1"></i> <strong>Emergency activation requires CFO +
+                                CEO dual approval.</strong> System will notify both executives immediately.</div><label
+                            class="FL">Enter Executive PIN</label>
+                        <div class="pin-row"><input type="password" maxlength="1" oninput="nf(this)"><input
+                                type="password" maxlength="1" oninput="nf(this)"><input type="password" maxlength="1"
+                                oninput="nf(this)"><input type="password" maxlength="1" oninput="nf(this)"></div>
+                    </div>
+                    <div id="emergS4" class="fstep">
+                        <div class="receipt">
+                            <div class="ri"><i class="bi bi-shield-check"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Emergency Liquidity Activated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 120M credited to Stanbic Bank from
+                                Standby Line. Full audit trail recorded.</p>
+                            <div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Reference</span><strong>EM-44279</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span
+                                        class="text-muted">Activated</span><strong>27 Jun 2025, 14:45</strong></div>
+                                <div class="d-flex justify-content-between"><span class="text-muted">Approved
+                                        by</span><strong>CFO + CEO (Dual)</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="emergFoot"><button class="btn-pm"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn-pm btn-pm-d" id="emergNext"
+                        onclick="nextFlow('emerg',4)">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M7: Forecast Modal -->
+    <div class="modal fade R" id="forecastModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up text-warning me-2"></i>Liquidity Forecast &
+                        Recommendations</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('fore','48h',this)">48-Hour</button><button class="pill"
+                            onclick="sw('fore','7d',this)">7-Day</button><button class="pill"
+                            onclick="sw('fore','30d',this)">30-Day</button></div>
+                    <div id="fore-48h" class="tpanel active">
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height:75%;background:var(--pm-primary)"><span
+                                    class="bar-label">Now</span></div>
+                            <div class="chart-bar" style="height:68%;background:var(--pm-primary)"><span
+                                    class="bar-label">+6h</span></div>
+                            <div class="chart-bar" style="height:55%;background:var(--pm-warning)"><span
+                                    class="bar-label">+12h</span></div>
+                            <div class="chart-bar" style="height:42%;background:var(--pm-danger)"><span
+                                    class="bar-label">+24h</span></div>
+                            <div class="chart-bar" style="height:38%;background:var(--pm-danger)"><span
+                                    class="bar-label">+36h</span></div>
+                            <div class="chart-bar" style="height:52%;background:var(--pm-warning)"><span
+                                    class="bar-label">+48h</span></div>
+                        </div>
+                        <div class="mt-3"><strong>Key Insight:</strong> Critical shortfall of KES 87.5M predicted at
+                            +36h. Recommended action: Top-up KES 120M before 06:00 tomorrow.</div>
+                    </div>
+                    <div id="fore-7d" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Projected Float</th>
+                                        <th>Risk Level</th>
+                                        <th>Recommended Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Day 1</td>
+                                        <td>KES 1.72B</td>
+                                        <td><span class="B B-s">Low</span></td>
+                                        <td>Monitor</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Day 3</td>
+                                        <td>KES 1.45B</td>
+                                        <td><span class="B B-w">Medium</span></td>
+                                        <td>Rebalance</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Day 5</td>
+                                        <td>KES 1.12B</td>
+                                        <td><span class="B B-d">High</span></td>
+                                        <td>Emergency top-up</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="fore-30d" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:13px">Monthly forecast
+                            shows recurring pattern of low float every 3rd weekend. Recommendation: Increase minimum
+                            float buffer by 25% during salary run periods.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('forecastModal','Recommended actions added to your liquidity task list.','')">Apply
+                        Recommendations</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M8: Settlement Modal -->
+    <div class="modal fade R" id="settlementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history text-purple me-2"></i>Settlement Management
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('sett','today',this)">Today</button><button class="pill"
+                            onclick="sw('sett','pending',this)">Pending</button><button class="pill"
+                            onclick="sw('sett','history',this)">History</button></div>
+                    <div id="sett-today" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Batch</th>
+                                        <th>Counterparty</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>SB-44291</td>
+                                        <td>Equity Bank</td>
+                                        <td>KES 87.4M</td>
+                                        <td><span class="B B-w">Variance</span></td>
+                                        <td>14:22</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('reconciliationModal')">Investigate</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SB-44290</td>
+                                        <td>KCB Bank</td>
+                                        <td>KES 112.6M</td>
+                                        <td><span class="B B-s">Matched</span></td>
+                                        <td>11:45</td>
+                                        <td><button class="btn-pm btn-sm"
+                                                onclick="openM('settlementModal')">View</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="sett-pending" class="tpanel">
+                        <div class="sr">
+                            <div><strong>SB-44292 — Co-op Bank</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 54.2M • Scheduled 16:00</div>
+                            </div><span class="B B-i">Queued</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>SB-44293 — Absa Bank</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">KES 67.9M • Scheduled 18:00</div>
+                            </div><span class="B B-i">Queued</span>
+                        </div>
+                    </div>
+                    <div id="sett-history" class="tpanel">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Batch</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>26 Jun</td>
+                                        <td>SB-44280</td>
+                                        <td>KES 94.2M</td>
+                                        <td><span class="B B-s">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>25 Jun</td>
+                                        <td>SB-44271</td>
+                                        <td>KES 118.9M</td>
+                                        <td><span class="B B-s">Completed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M9: Reconciliation Modal -->
+    <div class="modal fade R" id="reconciliationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-search text-muted me-2"></i>Reconciliation Investigation
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Batch</label><select class="FC">
+                            <option>SB-44291 — Equity Bank (KES 87.4M)</option>
+                            <option>SB-44292 — Co-op Bank (KES 54.2M)</option>
+                        </select></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#B45309">Variance Detected: KES 1,820,000</div>
+                        <div style="font-size:12px;color:#92400E">Expected: KES 87,420,000 | Received: KES 85,600,000
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Investigation Notes</label><textarea class="FC"
+                            rows="3">Discrepancy likely due to failed transaction reversal on 26 Jun. Awaiting confirmation from Equity Bank operations team.</textarea>
+                    </div>
+                    <div class="mb-3"><label class="FL">Resolution</label><select class="FC">
+                            <option>Accept variance and adjust float</option>
+                            <option>Request manual adjustment from bank</option>
+                            <option>Raise dispute with network</option>
+                            <option>Schedule full reconciliation meeting</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('reconciliationModal','Reconciliation case updated. Variance resolution logged.','REC-44291')">Save
+                        Resolution</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M10: Threshold Modal -->
+    <div class="modal fade R" id="thresholdModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Float Threshold Configuration</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Bank Float Minimum</label><input class="FC" value="25000000">
+                    </div>
+                    <div class="mb-3"><label class="FL">Agent Float Minimum</label><input class="FC" value="30000">
+                    </div>
+                    <div class="mb-3"><label class="FL">Partner Float Minimum</label><input class="FC" value="50000000">
+                    </div>
+                    <div class="mb-3"><label class="FL">Alert when below % of minimum</label><select class="FC">
+                            <option>80%</option>
+                            <option>70%</option>
+                            <option>60%</option>
+                        </select></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Auto-notify on threshold breach</label>
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:13px">Auto-replenish when possible</label></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('thresholdModal','Thresholds updated successfully!','')">Save
+                        Thresholds</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M11: Scenario Modal -->
+    <div class="modal fade R" id="scenarioModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-sliders text-warning me-2"></i>Scenario Planning</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Scenario</label><select class="FC">
+                            <option>Weekend salary run (+40% volume)</option>
+                            <option>Partner outage (Safaricom)</option>
+                            <option>Bank holiday (all banks closed)</option>
+                            <option>Black Friday surge (+80% volume)</option>
+                        </select></div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#1D4ED8">Impact Analysis</div>
+                        <div style="font-size:12px;color:#1E40AF">Float requirement increases to KES 2.45B. Recommended
+                            buffer: KES 450M.</div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Pre-emptive Action</label><select class="FC">
+                            <option>Increase all bank float by 25%</option>
+                            <option>Activate emergency line</option>
+                            <option>Notify all agents of possible delays</option>
+                            <option>Schedule manual rebalancing</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('scenarioModal','Scenario plan saved and added to calendar.','')">Save
+                        Scenario</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: Governance Modal -->
+    <div class="modal fade R" id="governanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-check me-2"></i>Governance & Audit</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pills mb-3"><button class="pill active"
+                            onclick="sw('gov','actions',this)">Actions</button><button class="pill"
+                            onclick="sw('gov','approvals',this)">Approvals</button><button class="pill"
+                            onclick="sw('gov','audit',this)">Audit Log</button></div>
+                    <div id="gov-actions" class="tpanel active">
+                        <div class="table-responsive">
+                            <table class="T">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Amount</th>
+                                        <th>Initiator</th>
+                                        <th>Approver</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Emergency top-up</td>
+                                        <td>KES 80M</td>
+                                        <td>System</td>
+                                        <td>CFO (auto)</td>
+                                        <td>26 Jun 22:14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Float rebalance override</td>
+                                        <td>KES 45M</td>
+                                        <td>Liquidity Mgr</td>
+                                        <td>Treasurer</td>
+                                        <td>25 Jun 14:02</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="gov-approvals" class="tpanel">
+                        <div class="sr">
+                            <div><strong>Threshold change request</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Ops Lead → Risk Committee</div>
+                            </div><span class="B B-s">Approved</span>
+                        </div>
+                        <div class="sr">
+                            <div><strong>Emergency line activation</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">CFO + CEO (Dual)</div>
+                            </div><span class="B B-s">Approved</span>
+                        </div>
+                    </div>
+                    <div id="gov-audit" class="tpanel">
+                        <div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">Full audit trail
+                            available for download. All actions are immutable and timestamped with digital signatures.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('governanceModal','Governance report exported.','')">Export Audit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M13: Liquidity Health Modal -->
+    <div class="modal fade R" id="liquidityHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Liquidity Health Check
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)">
+                                <div
+                                    style="font-size:28px;font-weight:800;color:var(--pm-accent);font-family:var(--pm-font-display)">
+                                    87</div>
+                                <div style="font-size:10px;font-weight:700;color:#047857">HEALTH SCORE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-info-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">9/12</div>
+                                <div style="font-size:10px;font-weight:700;color:#1D4ED8">BANKS OK</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">3</div>
+                                <div style="font-size:10px;font-weight:700;color:#B45309">WARNING</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 rounded text-center" style="background:var(--pm-danger-soft)">
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-danger)">1</div>
+                                <div style="font-size:10px;font-weight:700;color:#DC2626">CRITICAL</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="T">
+                            <thead>
+                                <tr>
+                                    <th>Entity</th>
+                                    <th>Float</th>
+                                    <th>Health</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Stanbic Bank</td>
+                                    <td>KES 12.4M</td>
+                                    <td><span class="B B-d">Critical</span></td>
+                                    <td>High</td>
+                                </tr>
+                                <tr>
+                                    <td>Co-op Bank</td>
+                                    <td>KES 41.2M</td>
+                                    <td><span class="B B-w">Warning</span></td>
+                                    <td>Medium</td>
+                                </tr>
+                                <tr>
+                                    <td>Agent Pool</td>
+                                    <td>KES 119.3M</td>
+                                    <td><span class="B B-w">Warning</span></td>
+                                    <td>Medium</td>
+                                </tr>
+                                <tr>
+                                    <td>KCB Bank</td>
+                                    <td>KES 142.8M</td>
+                                    <td><span class="B B-s">Healthy</span></td>
+                                    <td>Low</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('rebalanceModal')">Fix Issues</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M14: Float Alert Modal -->
+    <div class="modal fade R" id="floatAlertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Float Alerts (14)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:500px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Stanbic Bank critical</strong>
+                        <div style="font-size:11px;color:#7F1D1D">12.4M / 25M threshold • 2h ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Co-op
+                            Bank warning</strong>
+                        <div style="font-size:11px;color:#92400E">41.2M / 45M threshold • 4h ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>12
+                            agents below minimum</strong>
+                        <div style="font-size:11px;color:#1E40AF">Auto-replenishment failed • 6h ago</div>
+                    </div>
+                    <div class="p-3 rounded mb-2"
+                        style="background:#fff;border:1px solid var(--pm-border);font-size:13px"><strong>Settlement
+                            variance detected</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">Equity Bank batch • 8h ago</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm"
+                        onclick="openM('thresholdModal')">Configure</button><button class="btn-pm"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M15: Internal Transfer Modal -->
+    <div class="modal fade R" id="internalTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-primary me-2"></i>Internal Float
+                        Transfer</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">From Pool</label><select class="FC">
+                            <option>PayMo Main Pool (KES 284.6M)</option>
+                            <option>Emergency Reserve (KES 200M)</option>
+                            <option>Agent Float Pool (KES 119.3M)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">To Pool</label><select class="FC">
+                            <option>Agent Float Pool (KES 119.3M)</option>
+                            <option>Partner Settlement (KES 67.8M)</option>
+                            <option>PayMo Main Pool (KES 284.6M)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="50000000"></div>
+                    <div class="mb-3"><label class="FL">Reason</label><select class="FC">
+                            <option>Agent replenishment</option>
+                            <option>Partner settlement</option>
+                            <option>Internal rebalancing</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('internalTransferModal','Internal transfer completed successfully!','IT-44295')">Execute
+                        Transfer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M16: Partner Top-up Modal -->
+    <div class="modal fade R" id="partnerTopupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building text-info me-2"></i>Partner Float Top-up</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Partner</label><select class="FC">
+                            <option>Safaricom M-Pesa (KES 1.24B)</option>
+                            <option>Airtel Money (KES 312M)</option>
+                            <option>Telkom T-Kash (KES 87M)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="100000000"></div>
+                    <div class="mb-3"><label class="FL">Source</label><select class="FC">
+                            <option>PayMo Main Pool</option>
+                            <option>Emergency Reserve</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('partnerTopupModal','Partner float topped up successfully!','PT-44296')">Top-up
+                        Partner</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M17: Liquidity Report Modal -->
+    <div class="modal fade R" id="liquidityReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Liquidity Report</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Report Type</label><select class="FC">
+                            <option>Full liquidity snapshot</option>
+                            <option>Float movement history</option>
+                            <option>Agent float report</option>
+                            <option>Settlement reconciliation</option>
+                            <option>Emergency activation log</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="FL">From</label><input type="date" class="FC"
+                                value="2025-06-01"></div>
+                        <div class="col-6"><label class="FL">To</label><input type="date" class="FC" value="2025-06-27">
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="FL">Format</label><select class="FC">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('liquidityReportModal','Report generated and downloading...','')">Generate
+                        Report</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M18: Attention Modal -->
+    <div class="modal fade R" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>All Attention
+                        Items</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="sr">
+                        <div><strong>Stanbic Bank critical</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 12.4M remaining</div>
+                        </div><button class="btn-pm btn-sm btn-pm-d"
+                            onclick="openM('emergencyLiquidityModal')">Emergency</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Co-op Bank warning</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 41.2M remaining</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('topupBankModal')">Top-up</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>47 agents below minimum</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Auto-replenishment failed</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('agentFloatModal')">Review</button>
+                    </div>
+                    <div class="sr">
+                        <div><strong>Settlement variance</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 1.8M mismatch</div>
+                        </div><button class="btn-pm btn-sm" onclick="openM('reconciliationModal')">Investigate</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M19: Profile Modal -->
+    <div class="modal fade R" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">James Kamau</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com · +254 712 345 890</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Float Managed</span><br><strong>KES 1.84B</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Health Score</span><br><strong
+                                    style="color:var(--pm-accent)">87/100</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Alerts Today</span><br><strong>14</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Rebalances</span><br><strong>23 this week</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M20: Agent Top-up Quick -->
+    <div class="modal fade R" id="agentTopupQuickModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-success me-2"></i>Quick Agent Top-up</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">Agent</label><select class="FC">
+                            <option>John's M-Pesa (KES 18,400)</option>
+                            <option>Peter Agent (KES 12,800)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="50000"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('agentTopupQuickModal','Agent topped up successfully!','AG-44297')">Top-up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M21: Forecast Apply -->
+    <div class="modal fade R" id="forecastApplyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up text-warning me-2"></i>Apply Forecast
+                        Recommendations</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft)">
+                        <div style="font-size:13px;font-weight:700;color:#1D4ED8">Recommended Actions:</div>
+                        <ul style="font-size:12px;color:#1E40AF;margin:8px 0 0;padding-left:18px">
+                            <li>Top-up Stanbic Bank by KES 50M before 18:00</li>
+                            <li>Increase Agent Pool buffer by KES 30M</li>
+                            <li>Schedule weekend rebalance for Saturday 06:00</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('forecastApplyModal','Recommendations applied to your task list!','')">Apply
+                        All</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M22: Settlement Detail -->
+    <div class="modal fade R" id="settlementDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Settlement Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Batch</span><strong>SB-44291</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Counterparty</span><strong>Equity Bank</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Amount</span><strong>KES 87,420,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Received</span><strong>KES 85,600,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Variance</span><strong
+                                style="color:var(--pm-danger)">KES 1,820,000</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('reconciliationModal')">Investigate Variance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M23: Quick Rebalance -->
+    <div class="modal fade R" id="quickRebalanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-left-right text-primary me-2"></i>Quick Rebalance</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="FL">From</label><select class="FC">
+                            <option>PayMo Main Pool</option>
+                            <option>KCB Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">To</label><select class="FC">
+                            <option>Stanbic Bank</option>
+                            <option>Co-op Bank</option>
+                        </select></div>
+                    <div class="mb-3"><label class="FL">Amount (KES)</label><input class="FC" value="25000000"></div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Cancel</button><button
+                        class="btn-pm btn-pm-p"
+                        onclick="doAction('quickRebalanceModal','Quick rebalance completed!','QR-44298')">Execute</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M24: Agent Detail -->
+    <div class="modal fade R" id="agentDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>Agent Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Agent</span><strong>John's M-Pesa</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Location</span><strong>Kawangware</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Current
+                                Float</span><strong>KES 18,400</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Minimum</span><strong>KES 50,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Last
+                                Top-up</span><strong>26 Jun 2025</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('agentTopupModal')">Top-up Now</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M25: Internal Pool Detail -->
+    <div class="modal fade R" id="internalPoolModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-droplet me-2"></i>Internal Pool Detail</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Pool</span><strong>PayMo Main Pool</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Current
+                                Balance</span><strong>KES 284,600,000</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Reserved</span><strong>KES 45,000,000</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">Available</span><strong>KES
+                                239,600,000</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn-pm" data-bs-dismiss="modal">Close</button><button
+                        class="btn-pm btn-pm-p" onclick="openM('internalTransferModal')">Transfer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const flows = { rebal: { current: 1, total: 4, labels: ['Source', 'Amount', 'Approve', 'Done'] }, emerg: { current: 1, total: 4, labels: ['Facility', 'Amount', 'Approve', 'Done'] } };
+        function openM(id) { const el = document.getElementById(id); if (el) new bootstrap.Modal(el).show(); }
+        function closeM(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function nf(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+        function sw(prefix, key, btn) { btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'loading-ov'; ov.innerHTML = '<div class="spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function doAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="receipt"><div class="ri"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-download"></i> Save</button><button class="btn-pm btn-sm" onclick="location.reload()"><i class="bi bi-share"></i> Continue</button></div></div>`; footer.innerHTML = '<button class="btn-pm btn-pm-p" data-bs-dismiss="modal">Done</button>'; }); }
+        function renderStepper(key) { const f = flows[key]; const wrap = document.getElementById(key + 'Stepper'); if (!wrap) return; wrap.innerHTML = f.labels.map((l, i) => `<div class="step ${(i + 1) < f.current ? 'done' : (i + 1) === f.current ? 'active' : ''}"><div class="step-n">${(i + 1) < f.current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="step-l">${l}</div></div>${i < f.labels.length - 1 ? '<div class="step-line"></div>' : ''}`).join(''); }
+        function showFlowStep(key) { const f = flows[key]; for (let i = 1; i <= f.total; i++) { const el = document.getElementById(key + 'S' + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(key + 'S' + f.current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+        function nextFlow(key, total) { const f = flows[key]; const modalMap = { rebal: 'rebalanceModal', emerg: 'emergencyLiquidityModal' }; if (f.current === total - 1) { const modalBody = document.querySelector('#' + modalMap[key] + ' .modal-body'); showLoading(modalBody, () => { f.current = total; renderStepper(key); showFlowStep(key); document.getElementById(key + 'Next').textContent = 'Done'; }); return; } if (f.current >= total) { closeM(modalMap[key]); return; } f.current++; renderStepper(key); showFlowStep(key); if (f.current === total - 1) { const btn = document.getElementById(key + 'Next'); if (key === 'emerg') btn.innerHTML = 'Activate Emergency <i class="bi bi-lightning-charge"></i>'; else btn.innerHTML = 'Execute <i class="bi bi-arrow-right"></i>'; } }
+        function cacheAndReset() { document.querySelectorAll('.R').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.ob = b.innerHTML; if (f) m.dataset.of = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.ob) m.querySelector('.modal-body').innerHTML = m.dataset.ob; if (m.dataset.of) m.querySelector('.modal-footer').innerHTML = m.dataset.of; Object.keys(flows).forEach(k => { flows[k].current = 1; renderStepper(k); showFlowStep(k); }); }); }); }
+        document.addEventListener('DOMContentLoaded', () => { Object.keys(flows).forEach(k => { renderStepper(k); showFlowStep(k); }); cacheAndReset(); });
+    </script>
+</body>
+
+</html>

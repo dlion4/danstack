@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AccountsPayable from "@/features/business-dashboard/accounts-payable/pages/AccountsPayable";
+// import AccountsPayable from "@/features/business-dashboard/accounts-payable/pages/AccountsPayable";
+import AccountsPayable from "@/features/dashboards/business-dashboard/accounts-payable/pages/AccountsPayable";
 
 /**
  * business-dashboard/accounts-payable.tsx — Accounts Payable & Supplier Management (Page 3.6).

@@ -7,7 +7,13 @@
  * benchmarks, feature requests, SDK targets).
  * ========================================================================== */
 
-export type Tone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP" | "badgeNeutral";
+export type Tone =
+	| "badgeS"
+	| "badgeW"
+	| "badgeD"
+	| "badgeI"
+	| "badgeP"
+	| "badgeNeutral";
 
 export interface Crumb {
 	label: string;
@@ -105,7 +111,12 @@ export interface ApiGovernanceContent {
 		user: { name: string; role: string; initials: string; email: string };
 		actions: { icon: string; title: string; modal: string; counter?: number }[];
 	};
-	pageActions: { label: string; icon: string; modal: string; primary?: boolean }[];
+	pageActions: {
+		label: string;
+		icon: string;
+		modal: string;
+		primary?: boolean;
+	}[];
 	hero: {
 		status: string;
 		value: string;
@@ -164,7 +175,8 @@ export const initialMockData: ApiGovernanceContent = {
 
 	header: {
 		title: "API Governance & Roadmap",
-		subtitle: "Manage API lifecycle, standards, versions, and product evolution",
+		subtitle:
+			"Manage API lifecycle, standards, versions, and product evolution",
 		searchPlaceholder: "Search API endpoints, version docs, RFCs...",
 		user: {
 			name: "Sarah D.",
@@ -173,14 +185,27 @@ export const initialMockData: ApiGovernanceContent = {
 			email: "sarah.d@paymo.dev",
 		},
 		actions: [
-			{ icon: "bi-activity", title: "System Status", modal: "healthCheckModal" },
-			{ icon: "bi-bell", title: "Alerts", modal: "developerAlertsModal", counter: 3 },
+			{
+				icon: "bi-activity",
+				title: "System Status",
+				modal: "healthCheckModal",
+			},
+			{
+				icon: "bi-bell",
+				title: "Alerts",
+				modal: "developerAlertsModal",
+				counter: 3,
+			},
 		],
 	},
 
 	pageActions: [
 		{ label: "Export Spec", icon: "bi-download", modal: "exportSpecModal" },
-		{ label: "Audit Report", icon: "bi-shield-check", modal: "apiGovernanceAuditModal" },
+		{
+			label: "Audit Report",
+			icon: "bi-shield-check",
+			modal: "apiGovernanceAuditModal",
+		},
 		{
 			label: "Publish Release",
 			icon: "bi-rocket-takeoff",
@@ -365,8 +390,16 @@ export const initialMockData: ApiGovernanceContent = {
 	],
 
 	changelog: [
-		{ type: "Added", tone: "badgeS", text: "New `/v2/disbursements/bulk` endpoint for batch payouts." },
-		{ type: "Added", tone: "badgeS", text: "`X-Request-Id` echoed on every response for tracing." },
+		{
+			type: "Added",
+			tone: "badgeS",
+			text: "New `/v2/disbursements/bulk` endpoint for batch payouts.",
+		},
+		{
+			type: "Added",
+			tone: "badgeS",
+			text: "`X-Request-Id` echoed on every response for tracing.",
+		},
 		{
 			type: "Fixed",
 			tone: "badgeI",
@@ -558,13 +591,38 @@ export const initialMockData: ApiGovernanceContent = {
 	],
 
 	statusServices: [
-		{ name: "API Gateway", sub: "Routing optimal", status: "Operational", tone: "badgeS" },
-		{ name: "Spec Registry", sub: "OAS 3.0 store", status: "Operational", tone: "badgeS" },
-		{ name: "Linter Service", sub: "12 open warnings", status: "Operational", tone: "badgeS" },
-		{ name: "Docs Portal", sub: "100% coverage", status: "Operational", tone: "badgeS" },
+		{
+			name: "API Gateway",
+			sub: "Routing optimal",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Spec Registry",
+			sub: "OAS 3.0 store",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Linter Service",
+			sub: "12 open warnings",
+			status: "Operational",
+			tone: "badgeS",
+		},
+		{
+			name: "Docs Portal",
+			sub: "100% coverage",
+			status: "Operational",
+			tone: "badgeS",
+		},
 	],
 
-	specFormats: ["OpenAPI 3.0 (YAML)", "OpenAPI 3.0 (JSON)", "Postman Collection", "AsyncAPI 2.6"],
+	specFormats: [
+		"OpenAPI 3.0 (YAML)",
+		"OpenAPI 3.0 (JSON)",
+		"Postman Collection",
+		"AsyncAPI 2.6",
+	],
 
 	versionOptions: ["v3.0.0-beta", "v2.4.1 (Current)", "v1.8.4 (Deprecated)"],
 };

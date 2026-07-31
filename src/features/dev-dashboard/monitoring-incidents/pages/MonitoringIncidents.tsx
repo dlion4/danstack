@@ -75,7 +75,10 @@ export default function MonitoringIncidents() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{/* project switcher (legacy header <select onchange=openModal>) */}
 						<select
 							className={s.projectSelect}
@@ -121,7 +124,8 @@ export default function MonitoringIncidents() {
 								className={`${s.btnPm} ${a.primary ? s.btnPmP : ""}`}
 								onClick={() => open(a.modal)}
 							>
-								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} /> {a.label}
+								<i className={`bi ${a.icon}`} style={{ color: a.iconColor }} />{" "}
+								{a.label}
 							</button>
 						))}
 						<button
@@ -151,14 +155,32 @@ export default function MonitoringIncidents() {
 					{/* ================= HERO KPIs ================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
-							<div className={`${s.card} ${s.cardAccent}`} style={{ minHeight: 170 }}>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+							<div
+								className={`${s.card} ${s.cardAccent}`}
+								style={{ minHeight: 170 }}
+							>
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
+								>
 									{c.hero.status}
 								</p>
-								<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
+								<div
+									className={s.sv}
+									style={{ margin: "8px 0", color: "#fff" }}
+								>
 									{c.hero.value}
 								</div>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
+								>
 									{c.hero.detail}
 								</p>
 								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
@@ -225,7 +247,10 @@ export default function MonitoringIncidents() {
 											<div className={`${s.progress} mt-1`}>
 												<div
 													className={s.progressBar}
-													style={{ width: `${st.meter.pct}%`, background: st.meter.color }}
+													style={{
+														width: `${st.meter.pct}%`,
+														background: st.meter.color,
+													}}
 												/>
 											</div>
 										</div>
@@ -270,8 +295,12 @@ export default function MonitoringIncidents() {
 											{a.tag}
 										</div>
 										<div style={{ flex: 1, minWidth: 0 }}>
-											<div style={{ fontWeight: 600, fontSize: 13 }}>{a.title}</div>
-											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{a.sub}</div>
+											<div style={{ fontWeight: 600, fontSize: 13 }}>
+												{a.title}
+											</div>
+											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												{a.sub}
+											</div>
 										</div>
 										<button
 											type="button"
@@ -306,8 +335,12 @@ export default function MonitoringIncidents() {
 											<i className={`bi ${i.icon}`} />
 										</div>
 										<div style={{ flex: 1, minWidth: 0 }}>
-											<div style={{ fontWeight: 600, fontSize: 13 }}>{i.title}</div>
-											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{i.sub}</div>
+											<div style={{ fontWeight: 600, fontSize: 13 }}>
+												{i.title}
+											</div>
+											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												{i.sub}
+											</div>
 										</div>
 										<button
 											type="button"
@@ -325,7 +358,9 @@ export default function MonitoringIncidents() {
 							<div className={`${s.card} h-100`}>
 								<div className="mb-3">
 									<h3 className={s.sectionTitle}>Quick Actions</h3>
-									<p className={s.sectionSub}>Observability & Incident commands</p>
+									<p className={s.sectionSub}>
+										Observability & Incident commands
+									</p>
 								</div>
 								<div className={s.quickActionGrid}>
 									{c.quickActions.map((q) => (
@@ -335,7 +370,11 @@ export default function MonitoringIncidents() {
 											className={s.quickActionBtn}
 											onClick={() => open(q.modal)}
 										>
-											<i className={`bi ${q.icon}`} style={{ color: q.color }} /> {q.label}
+											<i
+												className={`bi ${q.icon}`}
+												style={{ color: q.color }}
+											/>{" "}
+											{q.label}
 										</button>
 									))}
 								</div>
@@ -348,12 +387,15 @@ export default function MonitoringIncidents() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-heart-pulse-fill" style={{ color: "var(--pm-accent)" }} />{" "}
+									<i
+										className="bi bi-heart-pulse-fill"
+										style={{ color: "var(--pm-accent)" }}
+									/>{" "}
 									4.8.1 — System Health & Status
 								</h3>
 								<p className={s.sectionSub}>
-									Real-time status of APIs, uptime SLAs, external dependencies, and
-									maintenance windows.
+									Real-time status of APIs, uptime SLAs, external dependencies,
+									and maintenance windows.
 								</p>
 							</div>
 							<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -376,7 +418,13 @@ export default function MonitoringIncidents() {
 						<div className="row g-3">
 							<div className="col-lg-7">
 								<div className={s.utilityBlock}>
-									<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 12px" }}>
+									<h4
+										style={{
+											fontSize: 14,
+											fontWeight: 700,
+											margin: "0 0 12px",
+										}}
+									>
 										Core API Subsystems
 									</h4>
 									<div className={s.tableWrap}>
@@ -397,7 +445,9 @@ export default function MonitoringIncidents() {
 															<strong>{r.name}</strong>
 														</td>
 														<td data-label="Status">
-															<span className={`${s.badge} ${s[r.tone]}`}>{r.status}</span>
+															<span className={`${s.badge} ${s[r.tone]}`}>
+																{r.status}
+															</span>
 														</td>
 														<td data-label="Uptime">{r.uptime}</td>
 														<td data-label="Avg Latency">{r.latency}</td>
@@ -436,7 +486,9 @@ export default function MonitoringIncidents() {
 													{d.sub}
 												</div>
 											</div>
-											<span className={`${s.badge} ${s[d.tone]}`}>{d.status}</span>
+											<span className={`${s.badge} ${s[d.tone]}`}>
+												{d.status}
+											</span>
 										</div>
 									))}
 								</div>
@@ -449,12 +501,15 @@ export default function MonitoringIncidents() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-bell-fill" style={{ color: "var(--pm-warning)" }} />{" "}
+									<i
+										className="bi bi-bell-fill"
+										style={{ color: "var(--pm-warning)" }}
+									/>{" "}
 									4.8.2 — Developer Alerting & On-Call
 								</h3>
 								<p className={s.sectionSub}>
-									Manage custom alert rules, escalation policies, PagerDuty/Slack routing,
-									and incident war rooms.
+									Manage custom alert rules, escalation policies,
+									PagerDuty/Slack routing, and incident war rooms.
 								</p>
 							</div>
 							<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -477,7 +532,13 @@ export default function MonitoringIncidents() {
 						<div className="row g-3">
 							<div className="col-lg-8">
 								<div className={s.utilityBlock}>
-									<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 12px" }}>
+									<h4
+										style={{
+											fontSize: 14,
+											fontWeight: 700,
+											margin: "0 0 12px",
+										}}
+									>
 										Configured Alert Rules
 									</h4>
 									<div className={s.tableWrap}>
@@ -498,7 +559,9 @@ export default function MonitoringIncidents() {
 														<td data-label="Rule Name">{r.name}</td>
 														<td data-label="Condition">{r.condition}</td>
 														<td data-label="Severity">
-															<span className={`${s.badge} ${s[r.severityTone]}`}>
+															<span
+																className={`${s.badge} ${s[r.severityTone]}`}
+															>
 																{r.severity}
 															</span>
 														</td>
@@ -531,7 +594,13 @@ export default function MonitoringIncidents() {
 							</div>
 							<div className="col-lg-4">
 								<div className={s.utilityBlock}>
-									<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 12px" }}>
+									<h4
+										style={{
+											fontSize: 14,
+											fontWeight: 700,
+											margin: "0 0 12px",
+										}}
+									>
 										On-Call & Escalation
 									</h4>
 									<div
@@ -539,16 +608,24 @@ export default function MonitoringIncidents() {
 										style={{ background: "var(--pm-surface)" }}
 									>
 										<div className="d-flex justify-content-between mb-2 gap-2">
-											<span style={{ color: "var(--pm-muted)" }}>Current On-Call (L1)</span>
+											<span style={{ color: "var(--pm-muted)" }}>
+												Current On-Call (L1)
+											</span>
 											<strong>{c.onCall.l1}</strong>
 										</div>
 										<div className="d-flex justify-content-between mb-2 gap-2">
-											<span style={{ color: "var(--pm-muted)" }}>Secondary (L2)</span>
+											<span style={{ color: "var(--pm-muted)" }}>
+												Secondary (L2)
+											</span>
 											<strong>{c.onCall.l2}</strong>
 										</div>
 										<div className="d-flex justify-content-between gap-2">
-											<span style={{ color: "var(--pm-muted)" }}>PagerDuty Sync</span>
-											<span className={`${s.badge} ${s.badgeS}`}>{c.onCall.pagerDuty}</span>
+											<span style={{ color: "var(--pm-muted)" }}>
+												PagerDuty Sync
+											</span>
+											<span className={`${s.badge} ${s.badgeS}`}>
+												{c.onCall.pagerDuty}
+											</span>
 										</div>
 									</div>
 									<div className="d-flex flex-column gap-2">
@@ -579,7 +656,8 @@ export default function MonitoringIncidents() {
 											className={`${s.btnPm} ${s.btnSm} ${s.btnPmD}`}
 											onClick={() => open("incidentWarRoomModal")}
 										>
-											<i className="bi bi-exclamation-triangle" /> Activate War Room
+											<i className="bi bi-exclamation-triangle" /> Activate War
+											Room
 										</button>
 									</div>
 								</div>
@@ -592,12 +670,15 @@ export default function MonitoringIncidents() {
 						<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 							<div>
 								<h3 className={s.sectionTitle}>
-									<i className="bi bi-diagram-3-fill" style={{ color: "var(--pm-primary)" }} />{" "}
+									<i
+										className="bi bi-diagram-3-fill"
+										style={{ color: "var(--pm-primary)" }}
+									/>{" "}
 									4.8.3 — Log Management & Observability
 								</h3>
 								<p className={s.sectionSub}>
-									Centralized logging (ELK), OpenTelemetry distributed tracing, and
-									Prometheus/Grafana metric exports.
+									Centralized logging (ELK), OpenTelemetry distributed tracing,
+									and Prometheus/Grafana metric exports.
 								</p>
 							</div>
 							<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -662,7 +743,13 @@ export default function MonitoringIncidents() {
 							</div>
 							<div className="col-lg-6">
 								<div className={s.utilityBlock}>
-									<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 12px" }}>
+									<h4
+										style={{
+											fontSize: 14,
+											fontWeight: 700,
+											margin: "0 0 12px",
+										}}
+									>
 										Observability Tools
 									</h4>
 									<div className="row g-2">
@@ -678,7 +765,9 @@ export default function MonitoringIncidents() {
 														style={{ fontSize: 24, color: t.color }}
 													/>
 													<strong style={{ fontSize: 13 }}>{t.title}</strong>
-													<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+													<div
+														style={{ fontSize: 11, color: "var(--pm-muted)" }}
+													>
 														{t.sub}
 													</div>
 												</button>

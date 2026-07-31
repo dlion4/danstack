@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo — Card Security & Fraud Prevention</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.08),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.06),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.06),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.security-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.mini-card{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;}
+.mini-card:hover{border-color:var(--pm-primary);transform:translateY(-2px);box-shadow:var(--pm-shadow-md)}
+.card-viz{width:40px;height:26px;border-radius:4px;background:var(--pm-gradient-hero);position:relative;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">P</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item"><i class="bi bi-house"></i></button>
+<button class="pm-nav-item"><i class="bi bi-grid-3x3-gap"></i></button>
+<button class="pm-nav-item"><i class="bi bi-wallet2"></i></button>
+<button class="pm-nav-item active"><i class="bi bi-credit-card"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item"><i class="bi bi-shield-check"></i></button>
+<button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+</aside>
+<div class="pm-main">
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:13px">MN</div>
+<div>
+<h1>Card Security & Fraud Prevention</h1>
+<p>AI monitoring, device binding, 3D Secure, & incident recovery</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search rules, incidents, blocked merchants, or devices...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i class="bi bi-heart-pulse"></i></button>
+<button class="pm-header-btn" onclick="openModal('securityAlertsModal')"><i class="bi bi-shield-exclamation"></i><span class="counter">3</span></button>
+<div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar">JK</div><div><div class="pm-name">James K.</div><div class="pm-role">Security Manager</div></div></div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Card Center</a> / <strong>Security & Fraud</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 5.7 — Card Security & Fraud Prevention</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage risk posture across all physical and virtual cards. Configure velocity rules, geo-fencing, 3DS, and manage compromise recovery workflows.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn pm-btn-danger" onclick="openModal('reportCompromiseModal')"><i class="bi bi-exclamation-triangle"></i> Report Compromise</button>
+<button class="pm-btn" onclick="openModal('fraudRuleBuilderModal')"><i class="bi bi-plus-lg"></i> Custom Rule</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-md-6">
+<div class="pm-card pm-card-accent" style="min-height:160px">
+<p style="margin:0;font-size:11px;color:rgba(255,255,255,.78);text-transform:uppercase;font-weight:600">OVERALL SECURITY SCORE</p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff">92<span style="font-size:14px;color:rgba(255,255,255,.7)">/100</span></div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Excellent posture. <span style="color:#86efac">Protected by AI.</span></p>
+<div class="mt-3">
+<button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff" onclick="openModal('securityScoreDetailsModal')">View breakdown</button>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px;border-top:3px solid var(--pm-primary)">
+<p class="pm-stat-label" style="color:var(--pm-primary)">ACTIVE SECURITY POLICIES</p>
+<div class="pm-stat-value" style="margin:6px 0">14 <span style="font-size:14px;color:var(--pm-muted);font-weight:500">rules running</span></div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-shield-check"></i> 100% card coverage</span>
+<div class="mt-3"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('fraudRuleBuilderModal')">Manage policies</button></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px;border-top:3px solid var(--pm-warning)">
+<p class="pm-stat-label" style="color:var(--pm-warning)">THREATS BLOCKED (30D)</p>
+<div class="pm-stat-value" style="margin:6px 0">KES 42.5K</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-cone-striped"></i> 7 flagged attempts</span>
+<div class="mt-3"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('securityAlertsModal')">Review threats</button></div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px;border-top:3px solid var(--pm-info)">
+<p class="pm-stat-label" style="color:var(--pm-info)">DEVICE & REGION SCOPE</p>
+<div class="pm-stat-value" style="margin:6px 0">2 <span style="font-size:14px;color:var(--pm-muted);font-weight:500">devices</span></div>
+<span class="pm-badge pm-badge-info"><i class="bi bi-geo-alt"></i> EA Region Only</span>
+<div class="mt-3"><button class="pm-btn pm-btn-sm w-100" onclick="openModal('deviceBindingModal')">Access controls</button></div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.7.1 — Fraud Monitoring & Alerts Engine -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-eye-fill" style="color:var(--pm-primary)"></i> 5.7.1 — Fraud Monitoring & Alerts Engine</h3>
+<p class="pm-section-sub">AI-driven real-time transaction monitoring, merchant blocking, and configurable velocity limits.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('mccBlockerModal')"><i class="bi bi-tags"></i> MCC Blocks</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('velocityLimitsModal')"><i class="bi bi-speedometer2"></i> Velocity Limits</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('fraudRuleBuilderModal')"><i class="bi bi-plus-lg"></i> Rule</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-8">
+<div class="security-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Suspicious Activity Log</h4>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Date & Time</th><th>Merchant / Context</th><th>Card</th><th>Amount</th><th>Status / Reason</th><th>Action</th></tr></thead>
+<tbody>
+<tr style="background:var(--pm-danger-soft)">
+<td>Today, 04:12 AM</td><td><strong>AliExpress</strong> <span class="text-muted">(CN)</span></td><td>Virtual · 4412</td><td>KES 12,500</td><td><span class="pm-badge pm-badge-danger">Blocked</span> <span>Geo-mismatch</span></td>
+<td><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('reviewSuspiciousTxModal')">Review</button></td>
+</tr>
+<tr>
+<td>Yesterday, 21:40</td><td><strong>Binance Crypto</strong> <span class="text-muted">(MT)</span></td><td>Physical · 9921</td><td>KES 45,000</td><td><span class="pm-badge pm-badge-danger">Blocked</span> <span>MCC blocked</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('reviewSuspiciousTxModal')">View</button></td>
+</tr>
+<tr>
+<td>24 Jun, 15:30</td><td><strong>Jumia</strong> <span class="text-muted">(KE)</span></td><td>Virtual · 1011</td><td>KES 8,200</td><td><span class="pm-badge pm-badge-warning">Flagged</span> <span>High velocity</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('reviewSuspiciousTxModal')">Review</button></td>
+</tr>
+<tr>
+<td>22 Jun, 09:15</td><td><strong>Netflix</strong> <span class="text-muted">(US)</span></td><td>Virtual · 4412</td><td>KES 1,200</td><td><span class="pm-badge pm-badge-success">Cleared</span> <span>Verified 3DS</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('reviewSuspiciousTxModal')">View</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="security-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Rules & Blocks</h4>
+<div class="status-row"><div><strong>Velocity Limit</strong><div style="font-size:11px;color:var(--pm-muted)">Max 5 Tx / hr per card</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('velocityLimitsModal')">Edit</button></div>
+<div class="status-row"><div><strong>High-Risk MCCs</strong><div style="font-size:11px;color:var(--pm-muted)">Gambling, Crypto blocked</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('mccBlockerModal')">Edit</button></div>
+<div class="status-row"><div><strong>VPN / Proxy Block</strong><div style="font-size:11px;color:var(--pm-muted)">Reject if IP is hidden</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('vpnProxyBlockerModal')">Edit</button></div>
+<div class="status-row"><div><strong>Trusted Merchants</strong><div style="font-size:11px;color:var(--pm-muted)">12 auto-allowlisted</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('merchantWhitelistModal')">Edit</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.7.2 — Access Controls & Device Security -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-shield-lock-fill" style="color:var(--pm-accent)"></i> 5.7.2 — Access Controls & Device Security</h3>
+<p class="pm-section-sub">Manage device binding, 3D Secure verification preferences, travel modes, and geofencing for physical/virtual cards.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('travelModeModal')"><i class="bi bi-airplane"></i> Travel Mode</button>
+<button class="pm-btn pm-btn-sm" onclick="openModal('geoFencingModal')"><i class="bi bi-geo-alt"></i> Geo-Fencing</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="security-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">Device Binding</h4><button class="pm-btn pm-btn-sm" onclick="openModal('deviceBindingModal')">Manage</button></div>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3">
+<i class="bi bi-phone" style="font-size:24px;color:var(--pm-primary)"></i>
+<div><strong>iPhone 14 Pro</strong> <span class="pm-badge pm-badge-success" style="font-size:9px">Current</span><div style="font-size:11px;color:var(--pm-muted)">Biometric active · Nairobi, KE</div></div>
+</div>
+<div class="p-3 border rounded d-flex align-items-center gap-3">
+<i class="bi bi-laptop" style="font-size:24px;color:var(--pm-muted)"></i>
+<div><strong>MacBook Air M2</strong><div style="font-size:11px;color:var(--pm-muted)">Web access · Nairobi, KE</div></div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-4">
+<div class="security-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">3D Secure (Verified by Visa/MC)</h4><button class="pm-btn pm-btn-sm" onclick="openModal('manage3DSModal')">Config</button></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-accent-soft);color:#047857;font-size:13px"><i class="bi bi-check-circle me-1"></i> Biometric push approval active for transactions > KES 5,000</div>
+<div class="status-row pb-0"><div><strong>Fallback Method</strong><div style="font-size:11px;color:var(--pm-muted)">SMS OTP to +254 712***890</div></div></div>
+<div class="status-row pb-0 border-0"><div><strong>Whitelist</strong><div style="font-size:11px;color:var(--pm-muted)">Skip 3DS for recurring subs</div></div><span class="pm-badge pm-badge-success">On</span></div>
+</div>
+</div>
+
+<div class="col-lg-4">
+<div class="security-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">Geography & POS Controls</h4></div>
+<div class="status-row pt-0"><div><strong>Contactless (Tap-to-pay)</strong><div style="font-size:11px;color:var(--pm-muted)">Limit: KES 2,500/tap</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('contactlessLimitModal')">Edit</button></div>
+<div class="status-row"><div><strong>Geo-Fencing</strong><div style="font-size:11px;color:var(--pm-muted)">Blocked > 100km from phone</div></div><span class="pm-badge pm-badge-success">Active</span></div>
+<div class="status-row pb-0 border-0"><div><strong>Travel Mode</strong><div style="font-size:11px;color:var(--pm-muted)">No active trips scheduled</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('travelModeModal')">Set</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5.7.3 — Incident Response & Compromise Management -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div>
+<h3 class="pm-section-title"><i class="bi bi-life-preserver" style="color:var(--pm-danger)"></i> 5.7.3 — Incident Response & Compromise Management</h3>
+<p class="pm-section-sub">Instantly freeze cards, report compromises, manage chargeback disputes, and auto-issue replacement cards.</p>
+</div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('freezeCardModal')"><i class="bi bi-snow"></i> Freeze Card</button>
+<button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('reportCompromiseModal')"><i class="bi bi-exclamation-triangle"></i> Compromised</button>
+</div>
+</div>
+
+<div class="row g-3">
+<div class="col-lg-8">
+<div class="security-block">
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 style="font-size:14px;font-weight:700;margin:0">Disputes & Incidents</h4><button class="pm-btn pm-btn-sm" onclick="openModal('disputeCenterModal')">New Dispute</button></div>
+<div class="table-responsive">
+<table class="pm-table">
+<thead><tr><th>Case ID</th><th>Type</th><th>Card</th><th>Amount</th><th>Status</th><th>Next Action</th></tr></thead>
+<tbody>
+<tr>
+<td>CB-11920</td><td>Chargeback</td><td>Physical · 9921</td><td>KES 12,400</td><td><span class="pm-badge pm-badge-warning">Awaiting Evidence</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('evidenceVaultModal')">Upload</button></td>
+</tr>
+<tr>
+<td>FR-88211</td><td>Card Compromise</td><td>Virtual · 1011</td><td>KES 0</td><td><span class="pm-badge pm-badge-success">Resolved</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('cardReplacementTrackerModal')">Track Card</button></td>
+</tr>
+<tr>
+<td>DP-44912</td><td>Duplicate Charge</td><td>Physical · 9921</td><td>KES 3,200</td><td><span class="pm-badge pm-badge-info">In Review</span></td>
+<td><button class="pm-btn pm-btn-sm" onclick="openModal('disputeCenterModal')">Details</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="col-lg-4">
+<div class="security-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Evidence Vault</h4>
+<p style="font-size:12px;color:var(--pm-ink-soft)">Securely store police abstracts, communication with merchants, and receipts to support chargebacks.</p>
+<div class="p-3 border border-dashed rounded text-center mb-3" style="cursor:pointer;background:var(--pm-surface)" onclick="openModal('evidenceVaultModal')">
+<i class="bi bi-cloud-arrow-up text-primary" style="font-size:24px"></i>
+<div style="font-size:12px;font-weight:600;margin-top:8px">Upload Evidence</div>
+<div style="font-size:10px;color:var(--pm-muted)">PDF, JPG, PNG up to 5MB</div>
+</div>
+<button class="pm-btn pm-btn-sm w-100" onclick="openModal('exportSecurityReportModal')"><i class="bi bi-file-earmark-pdf"></i> Download Incident Report</button>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('auditLogModal')"><i class="bi bi-journal-text"></i> View Audit Log</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODALS (20+) -->
+<!-- ========================================================= -->
+
+<!-- 1. Health Check -->
+<div class="modal fade resettable" id="healthCheckModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>Security Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-3"><div class="pm-stat-value" style="color:var(--pm-accent)">92/100</div><div style="font-size:12px;color:var(--pm-muted);font-weight:600">OVERALL POSTURE</div></div><div class="status-row"><div><strong>Biometric Authentication</strong></div><span class="pm-badge pm-badge-success">Enabled</span></div><div class="status-row"><div><strong>3D Secure Setup</strong></div><span class="pm-badge pm-badge-success">Strict</span></div><div class="status-row"><div><strong>VPN/Proxy Block</strong></div><span class="pm-badge pm-badge-warning">Disabled</span></div><div class="mt-3"><button class="pm-btn pm-btn-primary w-100" onclick="openModal('vpnProxyBlockerModal');closeModal('healthCheckModal')">Fix: Enable VPN Blocker</button></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 2. Security Alerts -->
+<div class="modal fade resettable" id="securityAlertsModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-exclamation text-warning me-2"></i>Security Alerts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft)"><div class="d-flex justify-content-between"><strong style="color:var(--pm-danger);font-size:13px">Blocked Transaction</strong><span style="font-size:10px;color:var(--pm-muted)">04:12 AM</span></div><div style="font-size:12px;margin-top:4px">KES 12,500 at AliExpress (CN). Reason: Geo-mismatch.</div><button class="pm-btn pm-btn-sm mt-2 pm-btn-danger" onclick="openModal('reviewSuspiciousTxModal');closeModal('securityAlertsModal')">Review</button></div><div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft)"><div class="d-flex justify-content-between"><strong style="color:var(--pm-warning);font-size:13px">Velocity Warning</strong><span style="font-size:10px;color:var(--pm-muted)">Yesterday</span></div><div style="font-size:12px;margin-top:4px">Virtual Card 1011 had 4 transactions in 10 minutes.</div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 3. Profile -->
+<div class="modal fade resettable" id="profileModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Security Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px">JK</div><h5 style="font-weight:700">James Kamau</h5><p style="font-size:13px;color:var(--pm-muted)">james.kamau@email.com<br>Device: iPhone 14 Pro (Verified)</p></div><div class="modal-footer"><button class="pm-btn pm-btn-sm" onclick="openModal('deviceBindingModal');closeModal('profileModal')">Manage Devices</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 4. Review Suspicious Transaction (Multi-step) -->
+<div class="modal fade resettable" id="reviewSuspiciousTxModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-x text-danger me-2"></i>Review Suspicious Activity</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="rsBody"><div class="pm-stepper" id="rsStepper"></div><div id="rsStep1" class="fade-step active"><div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)"><div class="d-flex justify-content-between mb-2"><span class="text-muted">Merchant</span><strong>AliExpress (CN)</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong style="color:var(--pm-danger)">KES 12,500</strong></div><div class="d-flex justify-content-between mb-2"><span class="text-muted">Time</span><strong>Today, 04:12 AM</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Risk Flag</span><strong>Device in KE, Tx in CN</strong></div></div><h6 style="font-weight:600;font-size:13px">Did you authorize this transaction?</h6><div class="d-flex gap-2 mt-3"><button class="pm-btn pm-btn-danger w-100" onclick="nextRsStep(2, 'no')">No, it wasn't me</button><button class="pm-btn pm-btn-success w-100 text-white" style="background:var(--pm-accent);border-color:var(--pm-accent)" onclick="nextRsStep(2, 'yes')">Yes, I authorized it</button></div></div><div id="rsStep2" class="fade-step"><div id="rsContentNo" style="display:none"><h6 style="font-weight:700">Fraud Confirmed</h6><p style="font-size:13px;color:var(--pm-ink-soft)">We will immediately freeze Virtual Card 4412 and block this merchant.</p></div><div id="rsContentYes" style="display:none"><h6 style="font-weight:700">False Alarm</h6><p style="font-size:13px;color:var(--pm-ink-soft)">We will clear the block. The transaction can be retried.</p></div></div><div id="rsStep3" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-shield-check"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Security Action Applied</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Your card security profile has been updated accordingly.</p></div></div></div><div class="modal-footer" id="rsFooter"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" id="rsNextBtn" style="display:none" onclick="nextRsStep(3)">Confirm Action</button></div></div></div></div>
+
+<!-- 5. Fraud Rule Builder (Multi-step) -->
+<div class="modal fade resettable" id="fraudRuleBuilderModal"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-magic text-primary me-2"></i>Custom Fraud Rule Builder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="pm-stepper" id="frStepper"></div><div id="frStep1" class="fade-step active"><div class="mb-3"><label class="pm-form-label">Rule Name</label><input class="pm-form-control" value="Block Late Night International"></div><div class="mb-3"><label class="pm-form-label">Apply to Cards</label><select class="pm-form-control"><option>All Cards</option><option>Virtual Cards Only</option><option>Physical Debit 9921</option></select></div></div><div id="frStep2" class="fade-step"><h6 style="font-weight:700">If transaction matches:</h6><div class="row g-2 mb-3"><div class="col-4"><select class="pm-form-control"><option>Time of Day</option><option>Amount</option><option>Country</option></select></div><div class="col-4"><select class="pm-form-control"><option>Is Between</option></select></div><div class="col-4"><input class="pm-form-control" value="00:00 - 05:00"></div></div><div class="row g-2 mb-3"><div class="col-4"><select class="pm-form-control"><option>Country</option></select></div><div class="col-4"><select class="pm-form-control"><option>Is Not</option></select></div><div class="col-4"><input class="pm-form-control" value="Kenya"></div></div><button class="pm-btn pm-btn-sm"><i class="bi bi-plus"></i> Add Condition</button></div><div id="frStep3" class="fade-step"><h6 style="font-weight:700">Then Action:</h6><div class="mb-3"><select class="pm-form-control"><option>Block Transaction & Notify</option><option>Require Biometric Approval</option><option>Flag for Review</option></select></div><div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-info-circle me-1"></i> Rule Summary: If Time is 00:00-05:00 AND Country is not Kenya, Block Transaction.</div></div><div id="frStep4" class="fade-step"><div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">Rule Activated</h5><p style="font-size:13px;color:var(--pm-ink-soft)">The custom fraud rule is now monitoring your portfolio.</p></div></div></div><div class="modal-footer" id="frFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="frNextBtn" onclick="nextFrStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 6. MCC Blocker -->
+<div class="modal fade resettable" id="mccBlockerModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tags text-primary me-2"></i>Merchant Category Controls</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Block spending at specific types of merchants globally.</p><div class="status-row"><div><strong>Gambling & Betting</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="status-row"><div><strong>Cryptocurrency Exchanges</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="status-row"><div><strong>Adult Content</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="status-row"><div><strong>Bars & Liquor Stores</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('mccBlockerModal', 'MCC rules updated successfully')">Save</button></div></div></div></div>
+
+<!-- 7. Velocity Limits -->
+<div class="modal fade resettable" id="velocityLimitsModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-speedometer2 text-info me-2"></i>Velocity Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Max Transactions per Hour</label><input type="number" class="pm-form-control" value="5"></div><div class="mb-3"><label class="pm-form-label">Max Transactions per Day</label><input type="number" class="pm-form-control" value="20"></div><div class="mb-3"><label class="pm-form-label">Max Spend per Day (KES)</label><input type="number" class="pm-form-control" value="100000"></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Block transactions exceeding limits (otherwise just flag)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('velocityLimitsModal', 'Velocity limits saved')">Save</button></div></div></div></div>
+
+<!-- 8. VPN / Proxy Blocker -->
+<div class="modal fade resettable" id="vpnProxyBlockerModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-shaded text-danger me-2"></i>VPN & Proxy Blocker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;color:var(--pm-ink-soft)">Automatically reject online transactions if the buyer's IP address belongs to a known VPN, Tor node, or anonymous proxy.</p><div class="status-row"><div><strong>Block Anonymous IPs</strong></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div><div class="status-row border-0 pb-0"><div><strong>Block Cloud Provider IPs</strong><br><span style="font-size:11px;color:var(--pm-muted)">AWS, DigitalOcean, etc.</span></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('vpnProxyBlockerModal', 'VPN rules updated')">Save</button></div></div></div></div>
+
+<!-- 9. Device Binding -->
+<div class="modal fade resettable" id="deviceBindingModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-phone text-primary me-2"></i>Device Binding</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="status-row"><div><strong>iPhone 14 Pro</strong> (Current)<div style="font-size:11px;color:var(--pm-muted)">Biometric 3DS Push Enabled</div></div><span class="pm-badge pm-badge-success">Verified</span></div><div class="status-row"><div><strong>MacBook Air M2</strong><div style="font-size:11px;color:var(--pm-muted)">Web access · Last used yesterday</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Unbind</button></div><button class="pm-btn pm-btn-sm w-100 mt-3"><i class="bi bi-plus"></i> Add New Trusted Device</button></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 10. Manage 3DS -->
+<div class="modal fade resettable" id="manage3DSModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-accent me-2" style="color:var(--pm-accent)"></i>3D Secure Preferences</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Primary Challenge Method</label><select class="pm-form-control"><option>Biometric App Push (Recommended)</option><option>SMS OTP</option><option>Email OTP</option></select></div><div class="mb-3"><label class="pm-form-label">Challenge Threshold</label><select class="pm-form-control"><option>Challenge all online txns</option><option selected>Challenge over KES 5,000</option><option>Only high-risk merchants</option></select></div><div class="form-check"><input type="checkbox" class="form-check-input" checked><label class="form-check-label" style="font-size:13px">Skip 3DS for saved subscriptions (Netflix, Spotify)</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('manage3DSModal', '3DS Preferences Saved')">Save</button></div></div></div></div>
+
+<!-- 11. Geo-Fencing -->
+<div class="modal fade resettable" id="geoFencingModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-geo-alt text-info me-2"></i>Geo-Fencing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">Enable Phone Location Enforcement</label></div><p style="font-size:12px;color:var(--pm-ink-soft)">Blocks physical POS/ATM transactions if your physical card is used more than X kilometers away from your phone's GPS location.</p><div class="mb-3"><label class="pm-form-label">Maximum Radius</label><select class="pm-form-control"><option>10 km</option><option>50 km</option><option selected>100 km</option><option>250 km</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('geoFencingModal', 'Geo-Fencing Updated')">Save</button></div></div></div></div>
+
+<!-- 12. Travel Mode -->
+<div class="modal fade resettable" id="travelModeModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-airplane text-purple me-2" style="color:var(--pm-purple)"></i>Travel Mode</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:12px;color:var(--pm-ink-soft)">Pre-declare travel destinations to ensure your card is not blocked for suspicious foreign activity.</p><div class="mb-3"><label class="pm-form-label">Destination Country(ies)</label><input type="text" class="pm-form-control" placeholder="e.g. UAE, South Africa"></div><div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Start Date</label><input type="date" class="pm-form-control"></div><div class="col-6"><label class="pm-form-label">End Date</label><input type="date" class="pm-form-control"></div></div><div class="mb-3"><label class="pm-form-label">Apply to Cards</label><select class="pm-form-control"><option>All Cards</option><option>Physical Debit 9921</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('travelModeModal', 'Travel itinerary logged. Cards will work smoothly abroad.')">Set Travel Mode</button></div></div></div></div>
+
+<!-- 13. Contactless Limit -->
+<div class="modal fade resettable" id="contactlessLimitModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-wifi text-accent me-2" style="color:var(--pm-accent)"></i>Contactless Limits</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Max amount per tap without PIN (KES)</label><input type="number" class="pm-form-control" value="2500"></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked><label class="form-check-label fw-bold">Enable Tap-to-Pay</label></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('contactlessLimitModal', 'Contactless settings saved')">Save</button></div></div></div></div>
+
+<!-- 14. Freeze Card -->
+<div class="modal fade resettable" id="freezeCardModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-snow text-info me-2"></i>Freeze Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Select Card</label><select class="pm-form-control"><option>Physical Debit · 9921</option><option>Virtual Debit · 4412</option></select></div><div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control"><option>Misplaced temporarily</option><option>Not using it right now</option><option>Suspect unauthorized use</option></select></div><div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Freezing is reversible. You can unfreeze it instantly from the app later. Subscriptions may fail while frozen.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('freezeCardModal', 'Card frozen successfully')">Freeze</button></div></div></div></div>
+
+<!-- 15. Report Compromise (Multi-step) -->
+<div class="modal fade resettable" id="reportCompromiseModal"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Report Compromised Card</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="rcBody"><div class="pm-stepper" id="rcStepper"></div><div id="rcStep1" class="fade-step active"><div class="mb-3"><label class="pm-form-label">Which card is compromised?</label><select class="pm-form-control"><option>Physical Debit · 9921</option><option>Virtual Debit · 4412</option></select></div><div class="mb-3"><label class="pm-form-label">What happened?</label><select class="pm-form-control"><option>I see unauthorized transactions</option><option>Card was stolen</option><option>Card was lost</option><option>Phishing/Scam suspected</option></select></div></div><div id="rcStep2" class="fade-step"><h6 style="font-weight:700">Flag Unauthorized Transactions</h6><p style="font-size:12px;color:var(--pm-muted)">Select any transactions you did not make. They will be pushed to disputes.</p><div class="form-check p-2 border rounded mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label ms-2 d-flex justify-content-between w-100"><span>AliExpress (CN)</span><span>KES 12,500</span></label></div><div class="form-check p-2 border rounded mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label ms-2 d-flex justify-content-between w-100"><span>Jumia (KE)</span><span>KES 8,200</span></label></div></div><div id="rcStep3" class="fade-step"><h6 style="font-weight:700">Action Summary</h6><div class="status-row"><div><strong>Permanent Card Block</strong></div><span class="pm-badge pm-badge-danger">Will apply</span></div><div class="status-row"><div><strong>Disputes Created</strong></div><span class="pm-badge pm-badge-warning">0 items</span></div><div class="status-row border-0"><div><strong>Issue Replacement</strong><div style="font-size:11px;color:var(--pm-muted)">Virtual replacement available instantly</div></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div></div><div id="rcStep4" class="fade-step"><div class="pm-receipt"><div class="receipt-icon" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-shield-lock"></i></div><h5 style="font-weight:700;color:var(--pm-danger)">Card Blocked & Secured</h5><p style="font-size:13px;color:var(--pm-ink-soft)">Old card cancelled. New virtual card issued.</p></div></div></div><div class="modal-footer" id="rcFooter"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" id="rcNextBtn" onclick="nextRcStep()">Continue <i class="bi bi-arrow-right"></i></button></div></div></div></div>
+
+<!-- 16. Dispute Center -->
+<div class="modal fade resettable" id="disputeCenterModal"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-life-preserver text-warning me-2"></i>Dispute Transaction (Chargeback)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Transaction to Dispute</label><select class="pm-form-control"><option>KES 12,400 - Merchant XYZ</option><option>KES 3,200 - Jumia KE</option></select></div><div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control"><option>Fraudulent / Did not authorize</option><option>Goods not received</option><option>Duplicate charge</option><option>Amount is incorrect</option><option>Subscription cancelled previously</option></select></div><div class="mb-3"><label class="pm-form-label">Explanation</label><textarea class="pm-form-control" rows="3"></textarea></div><div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">Chargebacks may take 7-45 days to resolve via the Visa/Mastercard network. Please upload any evidence in the vault next.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('disputeCenterModal', 'Dispute logged. CB-11921 created.', 'CB-11921')">Submit Dispute</button></div></div></div></div>
+
+<!-- 17. Evidence Vault -->
+<div class="modal fade resettable" id="evidenceVaultModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cloud-arrow-up text-primary me-2"></i>Upload Evidence</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Link to Case</label><select class="pm-form-control"><option>CB-11920 (Chargeback - KES 12,400)</option><option>DP-44912 (Duplicate - KES 3,200)</option></select></div><div class="mb-3"><label class="pm-form-label">Document Type</label><select class="pm-form-control"><option>Receipt / Invoice</option><option>Email correspondence with merchant</option><option>Police abstract</option><option>Other</option></select></div><div class="mb-3"><label class="pm-form-label">Select File</label><input type="file" class="pm-form-control"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('evidenceVaultModal', 'Evidence securely uploaded and attached to case.')">Upload</button></div></div></div></div>
+
+<!-- 18. Security Score Details -->
+<div class="modal fade resettable" id="securityScoreDetailsModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bar-chart-steps text-accent me-2" style="color:var(--pm-accent)"></i>Security Score Breakdown</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center mb-4"><div class="pm-stat-value" style="color:var(--pm-accent)">92/100</div></div><div class="status-row"><div><strong>PIN Strength</strong><div style="font-size:11px;color:var(--pm-muted)">Changed < 90 days ago</div></div><span class="text-success fw-bold">+20</span></div><div class="status-row"><div><strong>3DS Enrollment</strong><div style="font-size:11px;color:var(--pm-muted)">Biometric push enabled</div></div><span class="text-success fw-bold">+30</span></div><div class="status-row"><div><strong>Device Binding</strong><div style="font-size:11px;color:var(--pm-muted)">1 active trusted device</div></div><span class="text-success fw-bold">+25</span></div><div class="status-row"><div><strong>Geo-Fencing</strong><div style="font-size:11px;color:var(--pm-muted)">Active</div></div><span class="text-success fw-bold">+17</span></div><div class="status-row border-0"><div><strong>VPN Protection</strong><div style="font-size:11px;color:var(--pm-muted)">Disabled</div></div><span class="text-warning fw-bold">0</span></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary w-100" onclick="openModal('vpnProxyBlockerModal');closeModal('securityScoreDetailsModal')">Improve Score</button></div></div></div></div>
+
+<!-- 19. Export Security Report -->
+<div class="modal fade resettable" id="exportSecurityReportModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-pdf text-info me-2"></i>Export Security Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="pm-form-label">Content</label><select class="pm-form-control"><option>All Security Incidents</option><option>Blocked Transactions Log</option><option>Audit Log (Settings changes)</option></select></div><div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control" value="2025-05-27"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control" value="2025-06-27"></div></div><div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control"><option>PDF</option><option>CSV</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportSecurityReportModal', 'Report generated and downloading...')">Download</button></div></div></div></div>
+
+<!-- 20. Merchant Whitelist -->
+<div class="modal fade resettable" id="merchantWhitelistModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-card-checklist text-success me-2"></i>Trusted Merchants</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:12px;color:var(--pm-ink-soft)">These merchants bypass standard velocity and geo-fencing checks based on your history.</p><div class="status-row"><div><strong>Netflix (US)</strong><div style="font-size:11px;color:var(--pm-muted)">Recurring Sub</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Remove</button></div><div class="status-row"><div><strong>Spotify</strong><div style="font-size:11px;color:var(--pm-muted)">Recurring Sub</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Remove</button></div><div class="status-row border-0 pb-0"><div><strong>Safaricom PLC</strong><div style="font-size:11px;color:var(--pm-muted)">Utility</div></div><button class="pm-btn pm-btn-sm pm-btn-danger">Remove</button></div><div class="mt-3"><input type="text" class="pm-form-control" placeholder="Search to add merchant manually"></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 21. Card Replacement Tracker -->
+<div class="modal fade resettable" id="cardReplacementTrackerModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-truck text-info me-2"></i>Replacement Tracker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-4" style="background:var(--pm-surface-2)"><div class="d-flex justify-content-between mb-1"><span class="text-muted">Order ID</span><strong>ORD-99120</strong></div><div class="d-flex justify-content-between"><span class="text-muted">Status</span><span class="pm-badge pm-badge-info">In Transit</span></div></div><div class="pm-stepper" style="flex-direction:column;align-items:flex-start;gap:16px"><div class="d-flex align-items-center gap-3"><div class="pm-step-num" style="background:var(--pm-accent);color:#fff"><i class="bi bi-check"></i></div><div><div style="font-weight:600;font-size:13px">Ordered</div><div style="font-size:11px;color:var(--pm-muted)">25 Jun, 10:00</div></div></div><div class="d-flex align-items-center gap-3"><div class="pm-step-num" style="background:var(--pm-accent);color:#fff"><i class="bi bi-check"></i></div><div><div style="font-weight:600;font-size:13px">Personalization</div><div style="font-size:11px;color:var(--pm-muted)">26 Jun, 14:00</div></div></div><div class="d-flex align-items-center gap-3"><div class="pm-step-num" style="background:var(--pm-primary);color:#fff">3</div><div><div style="font-weight:600;font-size:13px">Dispatched via Fargo</div><div style="font-size:11px;color:var(--pm-muted)">Tracking: FGO-1120</div></div></div><div class="d-flex align-items-center gap-3"><div class="pm-step-num">4</div><div><div style="font-weight:600;font-size:13px;color:var(--pm-muted)">Delivery</div><div style="font-size:11px;color:var(--pm-muted)">Est. Tomorrow</div></div></div></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- 22. Audit Log -->
+<div class="modal fade resettable" id="auditLogModal"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text me-2"></i>Security Audit Log</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:400px;overflow-y:auto"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Time</th><th>Action</th><th>User / System</th><th>IP / Device</th></tr></thead><tbody><tr><td>Today, 04:12</td><td>Transaction Blocked (Geo)</td><td>System AI</td><td>N/A</td></tr><tr><td>25 Jun, 14:00</td><td>Geo-Fencing Enabled</td><td>James K.</td><td>10.0.x.x (iPhone 14)</td></tr><tr><td>25 Jun, 13:50</td><td>3DS Preference Changed</td><td>James K.</td><td>10.0.x.x (iPhone 14)</td></tr><tr><td>22 Jun, 09:15</td><td>3DS Biometric Auth Success</td><td>James K.</td><td>10.0.x.x (iPhone 14)</td></tr></tbody></table></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportSecurityReportModal');closeModal('auditLogModal')">Export</button></div></div></div></div>
+
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el){new bootstrap.Modal(el).show();}}
+function closeModal(id){const el=document.getElementById(id);if(!el)return;const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}
+
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el){cb();return;}const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+
+function processAction(modalId,msg,ref){const modal=document.getElementById(modalId);const body=modal.querySelector('.modal-body');const footer=modal.querySelector('.modal-footer');showLoading(body,()=>{body.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Reference: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3" style="gap:8px"><button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-arrow-repeat"></i> Reload</button></div></div>`;footer.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>';});}
+
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.originalBody=b.innerHTML;if(f)m.dataset.originalFooter=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.originalBody)m.querySelector('.modal-body').innerHTML=m.dataset.originalBody;if(m.dataset.originalFooter)m.querySelector('.modal-footer').innerHTML=m.dataset.originalFooter;resetFlows();});});}
+
+let rsStep=1, frStep=1, rcStep=1;
+
+function renderStepper(elId,labels,current){const wrap=document.getElementById(elId);if(!wrap)return;wrap.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const el=document.getElementById(prefix+i);if(el){el.classList.remove('active');el.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+
+function nextRsStep(step, decision){
+  if(step===2){
+    rsStep=2;
+    renderStepper('rsStepper',['Review','Action','Done'],rsStep);
+    showFlow('rsStep',rsStep,3);
+    document.getElementById('rsContentNo').style.display = decision==='no' ? 'block' : 'none';
+    document.getElementById('rsContentYes').style.display = decision==='yes' ? 'block' : 'none';
+    const btn = document.getElementById('rsNextBtn');
+    btn.style.display = 'block';
+    btn.className = decision==='no' ? 'pm-btn pm-btn-danger' : 'pm-btn pm-btn-success text-white';
+    btn.style.backgroundColor = decision==='no' ? 'var(--pm-danger)' : 'var(--pm-accent)';
+    btn.style.borderColor = decision==='no' ? 'var(--pm-danger)' : 'var(--pm-accent)';
+  } else if(step===3){
+    showLoading('#rsBody',()=>{
+      rsStep=3;
+      renderStepper('rsStepper',['Review','Action','Done'],rsStep);
+      showFlow('rsStep',rsStep,3);
+      document.getElementById('rsNextBtn').style.display='none';
+      document.getElementById('rsFooter').innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';
+    });
+  }
+}
+
+function nextFrStep(){
+  if(frStep===3){
+    showLoading('#fraudRuleBuilderModal .modal-body',()=>{
+      frStep=4; renderStepper('frStepper',['Name','Criteria','Action','Done'],frStep); showFlow('frStep',frStep,4);
+      document.getElementById('frNextBtn').textContent='Done';
+    }); return;
+  }
+  if(frStep>=4){ closeModal('fraudRuleBuilderModal'); return; }
+  frStep++; renderStepper('frStepper',['Name','Criteria','Action','Done'],frStep); showFlow('frStep',frStep,4);
+  if(frStep===3) document.getElementById('frNextBtn').innerHTML='Activate Rule <i class="bi bi-check"></i>';
+}
+
+function nextRcStep(){
+  if(rcStep===3){
+    showLoading('#rcBody',()=>{
+      rcStep=4; renderStepper('rcStepper',['Identify','Review','Confirm','Done'],rcStep); showFlow('rcStep',rcStep,4);
+      document.getElementById('rcNextBtn').textContent='Done';
+      document.getElementById('rcNextBtn').className='pm-btn pm-btn-primary';
+    }); return;
+  }
+  if(rcStep>=4){ closeModal('reportCompromiseModal'); return; }
+  rcStep++; renderStepper('rcStepper',['Identify','Review','Confirm','Done'],rcStep); showFlow('rcStep',rcStep,4);
+  if(rcStep===3) document.getElementById('rcNextBtn').innerHTML='Freeze & Issue New <i class="bi bi-shield-lock"></i>';
+}
+
+function resetFlows(){
+  rsStep=1; frStep=1; rcStep=1;
+  renderStepper('rsStepper',['Review','Action','Done'],1);
+  renderStepper('frStepper',['Name','Criteria','Action','Done'],1);
+  renderStepper('rcStepper',['Identify','Review','Confirm','Done'],1);
+  showFlow('rsStep',1,3); showFlow('frStep',1,4); showFlow('rcStep',1,4);
+  const rsBtn = document.getElementById('rsNextBtn'); if(rsBtn) rsBtn.style.display='none';
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  cacheResettable();
+  resetFlows();
+});
+</script>
+</body>
+</html>

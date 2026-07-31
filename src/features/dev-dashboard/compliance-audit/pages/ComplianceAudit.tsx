@@ -22,7 +22,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ComplianceAuditModals from "../components/ComplianceAuditModals";
 import type { Endpoint } from "../data/complianceAuditData";
-import { fetchComplianceAudit, initialMockData } from "../data/complianceAuditData";
+import {
+	fetchComplianceAudit,
+	initialMockData,
+} from "../data/complianceAuditData";
 import styles from "../styles/complianceAudit.module.css";
 
 const s = styles as Record<string, string>;
@@ -88,7 +91,10 @@ export default function ComplianceAudit() {
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
-					<div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
+					<div
+						className="d-flex flex-wrap align-items-center"
+						style={{ gap: 8 }}
+					>
 						{c.header.actions.map((a) => (
 							<button
 								key={a.modal}
@@ -114,7 +120,11 @@ export default function ComplianceAudit() {
 								<i className={`bi ${a.icon}`} /> {a.label}
 							</button>
 						))}
-						<button type="button" className={s.btnPm} onClick={() => open("devProfileModal")}>
+						<button
+							type="button"
+							className={s.btnPm}
+							onClick={() => open("devProfileModal")}
+						>
 							<span
 								className={s.iconCircle}
 								style={{
@@ -159,7 +169,9 @@ export default function ComplianceAudit() {
 										className={s.sv}
 										style={{
 											margin: "6px 0",
-											color: h.dark ? "#fff" : h.valueColor ?? "var(--pm-ink)",
+											color: h.dark
+												? "#fff"
+												: (h.valueColor ?? "var(--pm-ink)"),
 										}}
 									>
 										{h.value}
@@ -169,7 +181,11 @@ export default function ComplianceAudit() {
 									</span>
 									{h.note && (
 										<div
-											style={{ fontSize: 11, color: "var(--pm-muted)", marginTop: 8 }}
+											style={{
+												fontSize: 11,
+												color: "var(--pm-muted)",
+												marginTop: 8,
+											}}
 										>
 											{h.note}
 										</div>
@@ -178,7 +194,10 @@ export default function ComplianceAudit() {
 										<div className={`${s.progress} mt-2`}>
 											<div
 												className={s.progressBar}
-												style={{ width: `${h.meter.pct}%`, background: h.meter.color }}
+												style={{
+													width: `${h.meter.pct}%`,
+													background: h.meter.color,
+												}}
 											/>
 										</div>
 									)}
@@ -193,8 +212,11 @@ export default function ComplianceAudit() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-bank" style={{ color: "var(--pm-primary)" }} /> 4.12.1
-										— Regulatory Reporting APIs
+										<i
+											className="bi bi-bank"
+											style={{ color: "var(--pm-primary)" }}
+										/>{" "}
+										4.12.1 — Regulatory Reporting APIs
 									</h3>
 									<div className={s.tabPills}>
 										{c.regTabs.map((t) => (
@@ -210,7 +232,9 @@ export default function ComplianceAudit() {
 									</div>
 								</div>
 
-								<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>{tab?.blurb}</p>
+								<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
+									{tab?.blurb}
+								</p>
 
 								{tab?.endpoints.map((e) => (
 									<button
@@ -222,7 +246,9 @@ export default function ComplianceAudit() {
 										<div className="d-flex justify-content-between align-items-start gap-2 flex-wrap">
 											<div style={{ minWidth: 0 }}>
 												<div className="d-flex align-items-center mb-1 flex-wrap">
-													<span className={`${s.apiMethod} ${s[METHOD_CLASS[e.method]]}`}>
+													<span
+														className={`${s.apiMethod} ${s[METHOD_CLASS[e.method]]}`}
+													>
 														{e.method}
 													</span>
 													<strong
@@ -238,7 +264,9 @@ export default function ComplianceAudit() {
 													{e.desc}
 												</div>
 											</div>
-											<span className={`${s.badge} ${s[e.tone]}`}>{e.status}</span>
+											<span className={`${s.badge} ${s[e.tone]}`}>
+												{e.status}
+											</span>
 										</div>
 									</button>
 								))}
@@ -269,12 +297,22 @@ export default function ComplianceAudit() {
 											className={s.quickActionBtn}
 											onClick={() => open(q.modal)}
 										>
-											<i className={`bi ${q.icon}`} style={{ color: q.color }} /> {q.label}
+											<i
+												className={`bi ${q.icon}`}
+												style={{ color: q.color }}
+											/>{" "}
+											{q.label}
 										</button>
 									))}
 								</div>
 								<div className={s.utilityBlock}>
-									<h4 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 10px" }}>
+									<h4
+										style={{
+											fontSize: 13,
+											fontWeight: 700,
+											margin: "0 0 10px",
+										}}
+									>
 										Documentation Hub
 									</h4>
 									{c.docLinks.map((d) => (
@@ -313,7 +351,10 @@ export default function ComplianceAudit() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-shield-check" style={{ color: "var(--pm-accent)" }} />{" "}
+										<i
+											className="bi bi-shield-check"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
 										4.12.2 — Audit & Compliance Tools
 									</h3>
 									<button
@@ -341,9 +382,9 @@ export default function ComplianceAudit() {
 											marginBottom: 12,
 										}}
 									>
-										All transaction states, configuration changes, and access logs are
-										written to a Write-Once-Read-Many datastore. Tamper-evident
-										verification is available via API.
+										All transaction states, configuration changes, and access
+										logs are written to a Write-Once-Read-Many datastore.
+										Tamper-evident verification is available via API.
 									</p>
 									<div className="d-flex gap-2 flex-wrap">
 										<button
@@ -362,7 +403,9 @@ export default function ComplianceAudit() {
 										</button>
 									</div>
 								</div>
-								<h4 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 10px" }}>
+								<h4
+									style={{ fontSize: 13, fontWeight: 700, margin: "0 0 10px" }}
+								>
 									Recent System Audit Events
 								</h4>
 								{c.auditEvents.map((ev) => (
@@ -380,7 +423,9 @@ export default function ComplianceAudit() {
 											<i className={`bi ${ev.icon}`} style={{ fontSize: 14 }} />
 										</div>
 										<div style={{ flex: 1, minWidth: 0 }}>
-											<div style={{ fontWeight: 600, fontSize: 12 }}>{ev.title}</div>
+											<div style={{ fontWeight: 600, fontSize: 12 }}>
+												{ev.title}
+											</div>
 											<div
 												style={{
 													fontSize: 11,
@@ -392,7 +437,11 @@ export default function ComplianceAudit() {
 											</div>
 										</div>
 										<div
-											style={{ fontSize: 11, color: "var(--pm-muted)", flexShrink: 0 }}
+											style={{
+												fontSize: 11,
+												color: "var(--pm-muted)",
+												flexShrink: 0,
+											}}
 										>
 											{ev.age}
 										</div>
@@ -406,8 +455,11 @@ export default function ComplianceAudit() {
 							<div className={`${s.card} h-100`}>
 								<div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h3 className={s.sectionTitle}>
-										<i className="bi bi-globe2" style={{ color: "var(--pm-info)" }} /> 4.12.3
-										— International Standards
+										<i
+											className="bi bi-globe2"
+											style={{ color: "var(--pm-info)" }}
+										/>{" "}
+										4.12.3 — International Standards
 									</h3>
 									<button
 										type="button"
@@ -421,10 +473,14 @@ export default function ComplianceAudit() {
 									<div key={st.name} className={s.statusRow}>
 										<div style={{ minWidth: 0 }}>
 											<strong>{st.name}</strong>
-											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{st.sub}</div>
+											<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												{st.sub}
+											</div>
 										</div>
 										<div className="d-flex align-items-center gap-2 flex-shrink-0">
-											<span className={`${s.badge} ${s[st.tone]}`}>{st.status}</span>
+											<span className={`${s.badge} ${s[st.tone]}`}>
+												{st.status}
+											</span>
 											<button
 												type="button"
 												className={`${s.btnPm} ${s.btnSm}`}
