@@ -1,65 +1,83 @@
-import { useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
-import styles from '../styles/virtual-debit-cards.module.css'
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
+import styles from "../styles/virtual-debit-cards.module.css";
 
 interface ModalsProps {
-  active: string | null
-  onClose: () => void
-  onOpen: (id: string) => void
-  config: any
+	active: string | null;
+	onClose: () => void;
+	onOpen: (id: string) => void;
+	config: any;
 }
 
-type Size = 'md' | 'lg' | 'xl'
+type Size = "md" | "lg" | "xl";
 
 interface MBoxProps {
-  id: string
-  active: string | null
-  title: ReactNode
-  size?: Size
-  onClose: () => void
-  children: ReactNode
-  footer?: ReactNode
+	id: string;
+	active: string | null;
+	title: ReactNode;
+	size?: Size;
+	onClose: () => void;
+	children: ReactNode;
+	footer?: ReactNode;
 }
 
-function downloadFile(name: string, content: string, type = 'text/plain') {
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(new Blob([content], { type }))
-  a.download = name
-  a.click()
-  URL.revokeObjectURL(a.href)
+function downloadFile(name: string, content: string, type = "text/plain") {
+	const a = document.createElement("a");
+	a.href = URL.createObjectURL(new Blob([content], { type }));
+	a.download = name;
+	a.click();
+	URL.revokeObjectURL(a.href);
 }
 
-function MBox({ id, active, title, size = 'md', onClose, children, footer }: MBoxProps) {
-  if (active !== id) return null
-  return (
-    <>
-      <div className={styles.backdrop} onClick={onClose} />
-      <div className={styles.modalWrap} role="dialog" aria-modal="true" aria-label={id}>
-        <div
-          className={`${styles.modalContent} ${size === 'lg' ? styles.modalBoxLg : ''} ${size === 'xl' ? styles.modalBoxXl : ''}`}
-        >
-          <div className={styles.modalHeader}>
-            <h5 className={styles.modalTitle}>{title}</h5>
-            <button type="button" className="btn-close" aria-label="Close" onClick={onClose} />
-          </div>
-          <div className={styles.modalBody}>{children}</div>
-          {footer && <div className={styles.modalFooter}>{footer}</div>}
-        </div>
-      </div>
-    </>
-  )
+function MBox({
+	id,
+	active,
+	title,
+	size = "md",
+	onClose,
+	children,
+	footer,
+}: MBoxProps) {
+	if (active !== id) return null;
+	return (
+		<>
+			<div className={styles.backdrop} onClick={onClose} />
+			<div
+				className={styles.modalWrap}
+				role="dialog"
+				aria-modal="true"
+				aria-label={id}
+			>
+				<div
+					className={`${styles.modalContent} ${size === "lg" ? styles.modalBoxLg : ""} ${size === "xl" ? styles.modalBoxXl : ""}`}
+				>
+					<div className={styles.modalHeader}>
+						<h5 className={styles.modalTitle}>{title}</h5>
+						<button
+							type="button"
+							className="btn-close"
+							aria-label="Close"
+							onClick={onClose}
+						/>
+					</div>
+					<div className={styles.modalBody}>{children}</div>
+					{footer && <div className={styles.modalFooter}>{footer}</div>}
+				</div>
+			</div>
+		</>
+	);
 }
 
 function BusyOverlay() {
-  return (
-    <div className={styles.loadingOv}>
-      <div className={styles.spinner} />
-      <p className={styles.loadingLabel}>Processing...</p>
-    </div>
-  )
+	return (
+		<div className={styles.loadingOv}>
+			<div className={styles.spinner} />
+			<p className={styles.loadingLabel}>Processing...</p>
+		</div>
+	);
 }
 
-const PIN_LENGTH = 4
+const PIN_LENGTH = 4;
 
 export default function VirtualDebitCardsModals({ active, onClose, onOpen, config }: ModalsProps) {
   const [results, setResults] = useState<Record<string, { msg: string; ref?: string }>>({})

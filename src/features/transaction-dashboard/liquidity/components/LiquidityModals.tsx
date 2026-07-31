@@ -65,7 +65,12 @@ function Field({
 	return (
 		<div className="mb-3">
 			<label className={s.fieldLabel}>{label}</label>
-			<input type={type} className={s.field} defaultValue={defaultValue} placeholder={placeholder} />
+			<input
+				type={type}
+				className={s.field}
+				defaultValue={defaultValue}
+				placeholder={placeholder}
+			/>
 		</div>
 	);
 }
@@ -91,7 +96,15 @@ function SelectField({
 	);
 }
 
-function SwitchRow({ label, sub, defaultChecked = true }: { label: string; sub: string; defaultChecked?: boolean }) {
+function SwitchRow({
+	label,
+	sub,
+	defaultChecked = true,
+}: {
+	label: string;
+	sub: string;
+	defaultChecked?: boolean;
+}) {
 	return (
 		<div className={s.switchRow}>
 			<div style={{ minWidth: 0 }}>
@@ -99,7 +112,12 @@ function SwitchRow({ label, sub, defaultChecked = true }: { label: string; sub: 
 				<div className={s.rowSub}>{sub}</div>
 			</div>
 			<div className="form-check form-switch">
-				<input className="form-check-input" type="checkbox" defaultChecked={defaultChecked} aria-label={label} />
+				<input
+					className="form-check-input"
+					type="checkbox"
+					defaultChecked={defaultChecked}
+					aria-label={label}
+				/>
 			</div>
 		</div>
 	);
@@ -170,7 +188,10 @@ function DangerFlowModal({
 			}}
 			onClick={onClose}
 		>
-			<div style={{ width: "100%", maxWidth: 800, margin: "auto", flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+			<div
+				style={{ width: "100%", maxWidth: 800, margin: "auto", flexShrink: 0 }}
+				onClick={(e) => e.stopPropagation()}
+			>
 				<div
 					style={{
 						background: "var(--surface-elev)",
@@ -197,8 +218,18 @@ function DangerFlowModal({
 							gap: 12,
 						}}
 					>
-						<h5 style={{ fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 10, fontSize: 18, margin: 0 }}>
-							<i className="bi bi-lightning-charge" /> Emergency Liquidity Activation
+						<h5
+							style={{
+								fontWeight: 700,
+								display: "inline-flex",
+								alignItems: "center",
+								gap: 10,
+								fontSize: 18,
+								margin: 0,
+							}}
+						>
+							<i className="bi bi-lightning-charge" /> Emergency Liquidity
+							Activation
 						</h5>
 						<button
 							type="button"
@@ -220,18 +251,31 @@ function DangerFlowModal({
 							<i className="bi bi-x-lg" />
 						</button>
 					</div>
-					<div style={{ padding: 24, overflowY: "auto", flex: 1, minHeight: 0, position: "relative" }}>
+					<div
+						style={{
+							padding: 24,
+							overflowY: "auto",
+							flex: 1,
+							minHeight: 0,
+							position: "relative",
+						}}
+					>
 						{!done && (
 							<>
 								<div className={s.stepper}>
 									{labels.map((label, i) => {
 										const n = i + 1;
-										const state = n < step ? "stepDone" : n === step ? "stepActive" : "";
+										const state =
+											n < step ? "stepDone" : n === step ? "stepActive" : "";
 										return (
 											<div className={cx(s.step, s[state])} key={label}>
-												<div className={s.stepNum}>{n < step ? <i className="bi bi-check" /> : n}</div>
+												<div className={s.stepNum}>
+													{n < step ? <i className="bi bi-check" /> : n}
+												</div>
 												<div className={s.stepLabel}>{label}</div>
-												{i < labels.length - 1 && <div className={s.stepLine} />}
+												{i < labels.length - 1 && (
+													<div className={s.stepLine} />
+												)}
 											</div>
 										);
 									})}
@@ -244,9 +288,12 @@ function DangerFlowModal({
 								<div className={s.receiptIcon}>
 									<i className="bi bi-shield-check" />
 								</div>
-								<h5 className={s.receiptTitle}>Emergency Liquidity Activated</h5>
+								<h5 className={s.receiptTitle}>
+									Emergency Liquidity Activated
+								</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									KES 120M credited to Stanbic Bank from Standby Line. Full audit trail recorded.
+									KES 120M credited to Stanbic Bank from Standby Line. Full
+									audit trail recorded.
 								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
 									<ReviewRow label="Reference" value="EM-44279" />
@@ -257,8 +304,21 @@ function DangerFlowModal({
 						)}
 						{loading && (
 							<div className={s.loadingOverlay}>
-								<div className="spinner-border" role="status" style={{ width: "3rem", height: "3rem" }} />
-								<p style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: "var(--pri)" }}>Processing…</p>
+								<div
+									className="spinner-border"
+									role="status"
+									style={{ width: "3rem", height: "3rem" }}
+								/>
+								<p
+									style={{
+										marginTop: 16,
+										fontSize: 14,
+										fontWeight: 600,
+										color: "var(--pri)",
+									}}
+								>
+									Processing…
+								</p>
 							</div>
 						)}
 					</div>
@@ -273,12 +333,32 @@ function DangerFlowModal({
 							flexWrap: "wrap",
 						}}
 					>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={onClose}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={onClose}
+						>
 							Cancel
 						</button>
-						<button type="button" className={cx(s.btn, s.btnDanger)} onClick={next}>
-							{isLast ? "Done" : step === total - 1 ? "Activate Emergency" : "Continue"}{" "}
-							{!isLast && <i className={step === total - 1 ? "bi bi-lightning-charge" : "bi bi-arrow-right"} />}
+						<button
+							type="button"
+							className={cx(s.btn, s.btnDanger)}
+							onClick={next}
+						>
+							{isLast
+								? "Done"
+								: step === total - 1
+									? "Activate Emergency"
+									: "Continue"}{" "}
+							{!isLast && (
+								<i
+									className={
+										step === total - 1
+											? "bi bi-lightning-charge"
+											: "bi bi-arrow-right"
+									}
+								/>
+							)}
 						</button>
 					</div>
 				</div>
@@ -295,15 +375,33 @@ function FacilityPicker() {
 	return (
 		<>
 			<h6 style={{ fontWeight: 700 }}>Step 1: Select Facility</h6>
-			<label className={cx(s.radioCard, choice === "standby" && s.radioCardChecked)}>
-				<input type="radio" name="emerg" checked={choice === "standby"} onChange={() => setChoice("standby")} />
+			<label
+				className={cx(s.radioCard, choice === "standby" && s.radioCardChecked)}
+			>
+				<input
+					type="radio"
+					name="emerg"
+					checked={choice === "standby"}
+					onChange={() => setChoice("standby")}
+				/>
 				<strong>Standby Line — KES 200M</strong>
-				<div className={s.radioCardSub}>Pre-approved • Instant activation • 0% fee</div>
+				<div className={s.radioCardSub}>
+					Pre-approved • Instant activation • 0% fee
+				</div>
 			</label>
-			<label className={cx(s.radioCard, choice === "partner" && s.radioCardChecked)}>
-				<input type="radio" name="emerg" checked={choice === "partner"} onChange={() => setChoice("partner")} />
+			<label
+				className={cx(s.radioCard, choice === "partner" && s.radioCardChecked)}
+			>
+				<input
+					type="radio"
+					name="emerg"
+					checked={choice === "partner"}
+					onChange={() => setChoice("partner")}
+				/>
 				<strong>Partner Credit Line — KES 150M</strong>
-				<div className={s.radioCardSub}>Equity Bank • 2-hour activation • 2% fee</div>
+				<div className={s.radioCardSub}>
+					Equity Bank • 2-hour activation • 2% fee
+				</div>
 			</label>
 		</>
 	);
@@ -312,7 +410,12 @@ function FacilityPicker() {
 /* ==========================================================================
  * Public component — renders every modal driven by the page's modalState map.
  * ======================================================================== */
-export function LiquidityModals({ modalState, openModal, closeModal, data }: LiquidityModalsProps) {
+export function LiquidityModals({
+	modalState,
+	openModal,
+	closeModal,
+	data,
+}: LiquidityModalsProps) {
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
 	/** close current modal then open the next (legacy stacked instances) */
@@ -336,13 +439,25 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 					<>
 						{step === 1 && (
 							<>
-								<h6 style={{ fontWeight: 700 }}>Step 1: Select Source &amp; Destination</h6>
+								<h6 style={{ fontWeight: 700 }}>
+									Step 1: Select Source &amp; Destination
+								</h6>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField label="From (Source)" options={[...data.pools, ...data.banks]} />
+										<SelectField
+											label="From (Source)"
+											options={[...data.pools, ...data.banks]}
+										/>
 									</div>
 									<div className="col-md-6">
-										<SelectField label="To (Destination)" options={["Stanbic Bank (KES 12.4M)", "Co-op Bank (KES 41.2M)", "Agent Float Pool (KES 119.3M)"]} />
+										<SelectField
+											label="To (Destination)"
+											options={[
+												"Stanbic Bank (KES 12.4M)",
+												"Co-op Bank (KES 41.2M)",
+												"Agent Float Pool (KES 119.3M)",
+											]}
+										/>
 									</div>
 								</div>
 							</>
@@ -353,7 +468,12 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 								<Field label="Amount (KES)" defaultValue="25000000" />
 								<SelectField
 									label="Reason"
-									options={["Critical float replenishment", "Weekend surge preparation", "Partner settlement requirement", "Scheduled rebalancing"]}
+									options={[
+										"Critical float replenishment",
+										"Weekend surge preparation",
+										"Partner settlement requirement",
+										"Scheduled rebalancing",
+									]}
 								/>
 								<div className="mb-3">
 									<label className={s.fieldLabel}>Notes</label>
@@ -367,16 +487,22 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 						)}
 						{step === 3 && (
 							<>
-								<h6 style={{ fontWeight: 700 }}>Step 3: Approval &amp; Execution</h6>
+								<h6 style={{ fontWeight: 700 }}>
+									Step 3: Approval &amp; Execution
+								</h6>
 								<div className={cx(s.reviewBox, "mb-3")}>
 									<ReviewRow label="Amount" value="KES 25,000,000" />
 									<ReviewRow label="Fee" value="KES 0 (internal)" />
 									<div className="d-flex justify-content-between">
 										<span style={{ fontWeight: 700 }}>Total Movement</span>
-										<strong style={{ fontSize: 18, color: "var(--pri)" }}>KES 25,000,000</strong>
+										<strong style={{ fontSize: 18, color: "var(--pri)" }}>
+											KES 25,000,000
+										</strong>
 									</div>
 								</div>
-								<label className={cx(s.fieldLabel, "d-block text-center")}>Enter Approval PIN</label>
+								<label className={cx(s.fieldLabel, "d-block text-center")}>
+									Enter Approval PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -385,9 +511,12 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 								<div className={s.receiptIcon}>
 									<i className="bi bi-check-lg" />
 								</div>
-								<h5 className={s.receiptTitle}>Rebalance Executed Successfully</h5>
+								<h5 className={s.receiptTitle}>
+									Rebalance Executed Successfully
+								</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									KES 25M transferred from PayMo Main Pool to Stanbic Bank. New balance: KES 37.4M.
+									KES 25M transferred from PayMo Main Pool to Stanbic Bank. New
+									balance: KES 37.4M.
 								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
 									<ReviewRow label="Reference" value="RB-44291" />
@@ -409,10 +538,27 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				submitLabel="Execute Top-up"
 				successMsg="Bank float topped up successfully! Reference: TP-44292"
 			>
-				<SelectField label="Bank" options={["Stanbic Bank (KES 12.4M)", "Co-op Bank (KES 41.2M)", "Equity Bank (KES 98.4M)"]} />
+				<SelectField
+					label="Bank"
+					options={[
+						"Stanbic Bank (KES 12.4M)",
+						"Co-op Bank (KES 41.2M)",
+						"Equity Bank (KES 98.4M)",
+					]}
+				/>
 				<Field label="Amount (KES)" defaultValue="25000000" />
-				<SelectField label="Source" options={["PayMo Main Pool", "Emergency Reserve", "KCB Bank"]} />
-				<SelectField label="Reason" options={["Critical float replenishment", "Scheduled top-up", "Partner request"]} />
+				<SelectField
+					label="Source"
+					options={["PayMo Main Pool", "Emergency Reserve", "KCB Bank"]}
+				/>
+				<SelectField
+					label="Reason"
+					options={[
+						"Critical float replenishment",
+						"Scheduled top-up",
+						"Partner request",
+					]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M3: Agent Float (tabbed) ============ */}
@@ -441,7 +587,13 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 									<tbody>
 										<tr>
 											<td>
-												<button type="button" className={s.btnLink} onClick={() => swap("agentFloatModal", "agentDetailModal")}>
+												<button
+													type="button"
+													className={s.btnLink}
+													onClick={() =>
+														swap("agentFloatModal", "agentDetailModal")
+													}
+												>
 													John's M-Pesa
 												</button>
 											</td>
@@ -449,17 +601,31 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>KES 18,400</td>
 											<td>KES 50,000</td>
 											<td>
-												<span className={cx(s.badge, s.badgeDanger)}>Critical</span>
+												<span className={cx(s.badge, s.badgeDanger)}>
+													Critical
+												</span>
 											</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm, s.btnDangerGhost)} onClick={() => swap("agentFloatModal", "agentTopupModal")}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
+													onClick={() =>
+														swap("agentFloatModal", "agentTopupModal")
+													}
+												>
 													Top-up
 												</button>
 											</td>
 										</tr>
 										<tr>
 											<td>
-												<button type="button" className={s.btnLink} onClick={() => swap("agentFloatModal", "agentDetailModal")}>
+												<button
+													type="button"
+													className={s.btnLink}
+													onClick={() =>
+														swap("agentFloatModal", "agentDetailModal")
+													}
+												>
 													Peter Agent
 												</button>
 											</td>
@@ -467,17 +633,31 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>KES 12,800</td>
 											<td>KES 35,000</td>
 											<td>
-												<span className={cx(s.badge, s.badgeDanger)}>Critical</span>
+												<span className={cx(s.badge, s.badgeDanger)}>
+													Critical
+												</span>
 											</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm, s.btnDangerGhost)} onClick={() => swap("agentFloatModal", "agentTopupModal")}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
+													onClick={() =>
+														swap("agentFloatModal", "agentTopupModal")
+													}
+												>
 													Top-up
 												</button>
 											</td>
 										</tr>
 										<tr>
 											<td>
-												<button type="button" className={s.btnLink} onClick={() => swap("agentFloatModal", "agentDetailModal")}>
+												<button
+													type="button"
+													className={s.btnLink}
+													onClick={() =>
+														swap("agentFloatModal", "agentDetailModal")
+													}
+												>
 													Grace Kiosk
 												</button>
 											</td>
@@ -488,7 +668,13 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 												<span className={cx(s.badge, s.badgeWarn)}>Low</span>
 											</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("agentFloatModal", "agentTopupModal")}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() =>
+														swap("agentFloatModal", "agentTopupModal")
+													}
+												>
 													Top-up
 												</button>
 											</td>
@@ -531,7 +717,9 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>KES 50,000</td>
 											<td>Auto</td>
 											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>Success</span>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Success
+												</span>
 											</td>
 										</tr>
 										<tr>
@@ -540,7 +728,9 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>KES 35,000</td>
 											<td>Manual</td>
 											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>Success</span>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Success
+												</span>
 											</td>
 										</tr>
 									</tbody>
@@ -562,7 +752,14 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 			>
 				<SelectField label="Agent" options={data.agents} />
 				<Field label="Amount (KES)" defaultValue="50000" />
-				<SelectField label="Method" options={["Auto (from Agent Pool)", "Manual from PayMo Main", "From Partner Float"]} />
+				<SelectField
+					label="Method"
+					options={[
+						"Auto (from Agent Pool)",
+						"Manual from PayMo Main",
+						"From Partner Float",
+					]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M5: Bulk Top-up ============ */}
@@ -593,20 +790,34 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 					AG-023,50000
 				</div>
 				<div className="mt-3">
-					<label className={s.fieldLabel}>Total Agents: 47 | Total Amount: KES 1,875,000</label>
+					<label className={s.fieldLabel}>
+						Total Agents: 47 | Total Amount: KES 1,875,000
+					</label>
 				</div>
 			</SimpleModal>
 
 			{/* ============ M6: Emergency Liquidity (danger multi-step) ============ */}
-			<DangerFlowModal show={isOpen("emergencyLiquidityModal")} onClose={() => close("emergencyLiquidityModal")}>
+			<DangerFlowModal
+				show={isOpen("emergencyLiquidityModal")}
+				onClose={() => close("emergencyLiquidityModal")}
+			>
 				{(step) => (
 					<>
 						{step === 1 && <FacilityPicker />}
 						{step === 2 && (
 							<>
-								<h6 style={{ fontWeight: 700 }}>Step 2: Amount &amp; Destination</h6>
+								<h6 style={{ fontWeight: 700 }}>
+									Step 2: Amount &amp; Destination
+								</h6>
 								<Field label="Amount (KES)" defaultValue="120000000" />
-								<SelectField label="Destination" options={["Stanbic Bank Float", "Co-op Bank Float", "Agent Float Pool"]} />
+								<SelectField
+									label="Destination"
+									options={[
+										"Stanbic Bank Float",
+										"Co-op Bank Float",
+										"Agent Float Pool",
+									]}
+								/>
 								<div className="mb-3">
 									<label className={s.fieldLabel}>Justification</label>
 									<textarea
@@ -623,10 +834,15 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 								<div className={cx(s.hintBox, s.hintBoxDanger, "mb-3")}>
 									<i className="bi bi-exclamation-triangle" />
 									<span>
-										<strong>Emergency activation requires CFO + CEO dual approval.</strong> System will notify both executives immediately.
+										<strong>
+											Emergency activation requires CFO + CEO dual approval.
+										</strong>{" "}
+										System will notify both executives immediately.
 									</span>
 								</div>
-								<label className={cx(s.fieldLabel, "d-block text-center")}>Enter Executive PIN</label>
+								<label className={cx(s.fieldLabel, "d-block text-center")}>
+									Enter Executive PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -643,10 +859,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Liquidity Forecast & Recommendations"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("forecastModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("forecastModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("forecastModal", "forecastApplyModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => swap("forecastModal", "forecastApplyModal")}
+						>
 							Apply Recommendations
 						</button>
 					</>
@@ -684,11 +908,19 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>Equity Bank</td>
 											<td>KES 87.4M</td>
 											<td>
-												<span className={cx(s.badge, s.badgeWarn)}>Variance</span>
+												<span className={cx(s.badge, s.badgeWarn)}>
+													Variance
+												</span>
 											</td>
 											<td>14:22</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("settlementModal", "reconciliationModal")}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() =>
+														swap("settlementModal", "reconciliationModal")
+													}
+												>
 													Investigate
 												</button>
 											</td>
@@ -698,11 +930,19 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>KCB Bank</td>
 											<td>KES 112.6M</td>
 											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>Matched</span>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Matched
+												</span>
 											</td>
 											<td>11:45</td>
 											<td>
-												<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("settlementModal", "settlementDetailModal")}>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() =>
+														swap("settlementModal", "settlementDetailModal")
+													}
+												>
 													View
 												</button>
 											</td>
@@ -754,7 +994,9 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>SB-44280</td>
 											<td>KES 94.2M</td>
 											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>Completed</span>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Completed
+												</span>
 											</td>
 										</tr>
 										<tr>
@@ -762,7 +1004,9 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 											<td>SB-44271</td>
 											<td>KES 118.9M</td>
 											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>Completed</span>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Completed
+												</span>
 											</td>
 										</tr>
 									</tbody>
@@ -783,10 +1027,26 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				submitLabel="Save Resolution"
 				successMsg="Reconciliation case updated. Variance resolution logged. Reference: REC-44291"
 			>
-				<SelectField label="Batch" options={["SB-44291 — Equity Bank (KES 87.4M)", "SB-44292 — Co-op Bank (KES 54.2M)"]} />
+				<SelectField
+					label="Batch"
+					options={[
+						"SB-44291 — Equity Bank (KES 87.4M)",
+						"SB-44292 — Co-op Bank (KES 54.2M)",
+					]}
+				/>
 				<div className={cx(s.tile, s.tileWarn, "mb-3")}>
-					<div style={{ fontSize: 13, fontWeight: 700, color: "var(--warning-mid)" }}>Variance Detected: KES 1,820,000</div>
-					<div style={{ fontSize: 12 }}>Expected: KES 87,420,000 | Received: KES 85,600,000</div>
+					<div
+						style={{
+							fontSize: 13,
+							fontWeight: 700,
+							color: "var(--warning-mid)",
+						}}
+					>
+						Variance Detected: KES 1,820,000
+					</div>
+					<div style={{ fontSize: 12 }}>
+						Expected: KES 87,420,000 | Received: KES 85,600,000
+					</div>
 				</div>
 				<div className="mb-3">
 					<label className={s.fieldLabel}>Investigation Notes</label>
@@ -798,7 +1058,12 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				</div>
 				<SelectField
 					label="Resolution"
-					options={["Accept variance and adjust float", "Request manual adjustment from bank", "Raise dispute with network", "Schedule full reconciliation meeting"]}
+					options={[
+						"Accept variance and adjust float",
+						"Request manual adjustment from bank",
+						"Raise dispute with network",
+						"Schedule full reconciliation meeting",
+					]}
 				/>
 			</SimpleModal>
 
@@ -814,16 +1079,37 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				<Field label="Bank Float Minimum" defaultValue="25000000" />
 				<Field label="Agent Float Minimum" defaultValue="30000" />
 				<Field label="Partner Float Minimum" defaultValue="50000000" />
-				<SelectField label="Alert when below % of minimum" options={["80%", "70%", "60%"]} />
+				<SelectField
+					label="Alert when below % of minimum"
+					options={["80%", "70%", "60%"]}
+				/>
 				<div className="form-check mb-2">
-					<input className="form-check-input" type="checkbox" defaultChecked id="liqNotify" />
-					<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="liqNotify">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="liqNotify"
+					/>
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="liqNotify"
+					>
 						Auto-notify on threshold breach
 					</label>
 				</div>
 				<div className="form-check">
-					<input className="form-check-input" type="checkbox" defaultChecked id="liqReplenish" />
-					<label className="form-check-label" style={{ fontSize: 13 }} htmlFor="liqReplenish">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="liqReplenish"
+					/>
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="liqReplenish"
+					>
 						Auto-replenish when possible
 					</label>
 				</div>
@@ -841,15 +1127,32 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 			>
 				<SelectField
 					label="Scenario"
-					options={["Weekend salary run (+40% volume)", "Partner outage (Safaricom)", "Bank holiday (all banks closed)", "Black Friday surge (+80% volume)"]}
+					options={[
+						"Weekend salary run (+40% volume)",
+						"Partner outage (Safaricom)",
+						"Bank holiday (all banks closed)",
+						"Black Friday surge (+80% volume)",
+					]}
 				/>
 				<div className={cx(s.tile, s.tileInfo, "mb-3")}>
-					<div style={{ fontSize: 13, fontWeight: 700, color: "var(--info-mid)" }}>Impact Analysis</div>
-					<div style={{ fontSize: 12 }}>Float requirement increases to KES 2.45B. Recommended buffer: KES 450M.</div>
+					<div
+						style={{ fontSize: 13, fontWeight: 700, color: "var(--info-mid)" }}
+					>
+						Impact Analysis
+					</div>
+					<div style={{ fontSize: 12 }}>
+						Float requirement increases to KES 2.45B. Recommended buffer: KES
+						450M.
+					</div>
 				</div>
 				<SelectField
 					label="Pre-emptive Action"
-					options={["Increase all bank float by 25%", "Activate emergency line", "Notify all agents of possible delays", "Schedule manual rebalancing"]}
+					options={[
+						"Increase all bank float by 25%",
+						"Activate emergency line",
+						"Notify all agents of possible delays",
+						"Schedule manual rebalancing",
+					]}
 				/>
 			</SimpleModal>
 
@@ -862,10 +1165,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Governance & Audit"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("governanceModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("governanceModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => close("governanceModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => close("governanceModal")}
+						>
 							Export Audit
 						</button>
 					</>
@@ -883,10 +1194,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Liquidity Health Check"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("liquidityHealthModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("liquidityHealthModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("liquidityHealthModal", "rebalanceModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => swap("liquidityHealthModal", "rebalanceModal")}
+						>
 							Fix Issues
 						</button>
 					</>
@@ -974,10 +1293,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Float Alerts (14)"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => swap("floatAlertModal", "thresholdModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => swap("floatAlertModal", "thresholdModal")}
+						>
 							Configure
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => close("floatAlertModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => close("floatAlertModal")}
+						>
 							Close
 						</button>
 					</>
@@ -1013,9 +1340,23 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				successMsg="Internal transfer completed successfully! Reference: IT-44295"
 			>
 				<SelectField label="From Pool" options={data.pools} />
-				<SelectField label="To Pool" options={["Agent Float Pool (KES 119.3M)", "Partner Settlement (KES 67.8M)", "PayMo Main Pool (KES 284.6M)"]} />
+				<SelectField
+					label="To Pool"
+					options={[
+						"Agent Float Pool (KES 119.3M)",
+						"Partner Settlement (KES 67.8M)",
+						"PayMo Main Pool (KES 284.6M)",
+					]}
+				/>
 				<Field label="Amount (KES)" defaultValue="50000000" />
-				<SelectField label="Reason" options={["Agent replenishment", "Partner settlement", "Internal rebalancing"]} />
+				<SelectField
+					label="Reason"
+					options={[
+						"Agent replenishment",
+						"Partner settlement",
+						"Internal rebalancing",
+					]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M16: Partner Top-up ============ */}
@@ -1029,7 +1370,10 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 			>
 				<SelectField label="Partner" options={data.partners} />
 				<Field label="Amount (KES)" defaultValue="100000000" />
-				<SelectField label="Source" options={["PayMo Main Pool", "Emergency Reserve"]} />
+				<SelectField
+					label="Source"
+					options={["PayMo Main Pool", "Emergency Reserve"]}
+				/>
 			</SimpleModal>
 
 			{/* ============ M17: Liquidity Report ============ */}
@@ -1043,7 +1387,13 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 			>
 				<SelectField
 					label="Report Type"
-					options={["Full liquidity snapshot", "Float movement history", "Agent float report", "Settlement reconciliation", "Emergency activation log"]}
+					options={[
+						"Full liquidity snapshot",
+						"Float movement history",
+						"Agent float report",
+						"Settlement reconciliation",
+						"Emergency activation log",
+					]}
 				/>
 				<div className="row g-3 mb-3">
 					<div className="col-6">
@@ -1065,7 +1415,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				iconCls="bi bi-exclamation-circle"
 				title="All Attention Items"
 				footer={
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("attentionModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={() => close("attentionModal")}
+					>
 						Close
 					</button>
 				}
@@ -1075,7 +1429,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 						<div className={s.rowTitle}>Stanbic Bank critical</div>
 						<div className={s.rowSub}>KES 12.4M remaining</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm, s.btnDangerGhost)} onClick={() => swap("attentionModal", "emergencyLiquidityModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
+						onClick={() => swap("attentionModal", "emergencyLiquidityModal")}
+					>
 						Emergency
 					</button>
 				</div>
@@ -1084,7 +1442,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 						<div className={s.rowTitle}>Co-op Bank warning</div>
 						<div className={s.rowSub}>KES 41.2M remaining</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionModal", "topupBankModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionModal", "topupBankModal")}
+					>
 						Top-up
 					</button>
 				</div>
@@ -1093,7 +1455,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 						<div className={s.rowTitle}>47 agents below minimum</div>
 						<div className={s.rowSub}>Auto-replenishment failed</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionModal", "agentFloatModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionModal", "agentFloatModal")}
+					>
 						Review
 					</button>
 				</div>
@@ -1102,7 +1468,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 						<div className={s.rowTitle}>Settlement variance</div>
 						<div className={s.rowSub}>KES 1.8M mismatch</div>
 					</div>
-					<button type="button" className={cx(s.btn, s.btnSm)} onClick={() => swap("attentionModal", "reconciliationModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => swap("attentionModal", "reconciliationModal")}
+					>
 						Investigate
 					</button>
 				</div>
@@ -1115,7 +1485,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				iconCls="bi bi-person-circle"
 				title="Profile"
 				footer={
-					<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("profileModal")}>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSecondary)}
+						onClick={() => close("profileModal")}
+					>
 						Close
 					</button>
 				}
@@ -1123,32 +1497,42 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				<div className="text-center">
 					<div className={cx(s.avatar, s.avatarLg)}>JK</div>
 					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
-					<p style={{ fontSize: 13, color: "var(--ink-500)" }}>james.kamau@email.com · +254 712 345 890</p>
+					<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
+						james.kamau@email.com · +254 712 345 890
+					</p>
 					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Float Managed</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Float Managed
+								</span>
 								<br />
 								<strong>KES 1.84B</strong>
 							</div>
 						</div>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Health Score</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Health Score
+								</span>
 								<br />
 								<strong style={{ color: "var(--pri)" }}>87/100</strong>
 							</div>
 						</div>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Alerts Today</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Alerts Today
+								</span>
 								<br />
 								<strong>14</strong>
 							</div>
 						</div>
 						<div className="col-6">
 							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>Rebalances</span>
+								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
+									Rebalances
+								</span>
 								<br />
 								<strong>23 this week</strong>
 							</div>
@@ -1166,7 +1550,10 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				submitLabel="Top-up"
 				successMsg="Agent topped up successfully! Reference: AG-44297"
 			>
-				<SelectField label="Agent" options={["John's M-Pesa (KES 18,400)", "Peter Agent (KES 12,800)"]} />
+				<SelectField
+					label="Agent"
+					options={["John's M-Pesa (KES 18,400)", "Peter Agent (KES 12,800)"]}
+				/>
 				<Field label="Amount (KES)" defaultValue="50000" />
 			</SimpleModal>
 
@@ -1180,7 +1567,11 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				successMsg="Recommendations applied to your task list!"
 			>
 				<div className={cx(s.tile, s.tileInfo, "mb-3")}>
-					<div style={{ fontSize: 13, fontWeight: 700, color: "var(--info-mid)" }}>Recommended Actions:</div>
+					<div
+						style={{ fontSize: 13, fontWeight: 700, color: "var(--info-mid)" }}
+					>
+						Recommended Actions:
+					</div>
 					<ul style={{ fontSize: 12, margin: "8px 0 0", paddingLeft: 18 }}>
 						<li>Top-up Stanbic Bank by KES 50M before 18:00</li>
 						<li>Increase Agent Pool buffer by KES 30M</li>
@@ -1197,10 +1588,20 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Settlement Details"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("settlementDetailModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("settlementDetailModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("settlementDetailModal", "reconciliationModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() =>
+								swap("settlementDetailModal", "reconciliationModal")
+							}
+						>
 							Investigate Variance
 						</button>
 					</>
@@ -1240,10 +1641,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Agent Detail"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("agentDetailModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("agentDetailModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("agentDetailModal", "agentTopupModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => swap("agentDetailModal", "agentTopupModal")}
+						>
 							Top-up Now
 						</button>
 					</>
@@ -1266,10 +1675,18 @@ export function LiquidityModals({ modalState, openModal, closeModal, data }: Liq
 				title="Internal Pool Detail"
 				footer={
 					<>
-						<button type="button" className={cx(s.btn, s.btnSecondary)} onClick={() => close("internalPoolModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnSecondary)}
+							onClick={() => close("internalPoolModal")}
+						>
 							Close
 						</button>
-						<button type="button" className={cx(s.btn, s.btnPrimary)} onClick={() => swap("internalPoolModal", "internalTransferModal")}>
+						<button
+							type="button"
+							className={cx(s.btn, s.btnPrimary)}
+							onClick={() => swap("internalPoolModal", "internalTransferModal")}
+						>
 							Transfer
 						</button>
 					</>
@@ -1301,7 +1718,12 @@ function ForecastTabs() {
 						{ key: "30d", label: "30-Day" },
 					] as const
 				).map((t) => (
-					<button key={t.key} type="button" className={cx(s.pill, tab === t.key && s.pillActive)} onClick={() => setTab(t.key)}>
+					<button
+						key={t.key}
+						type="button"
+						className={cx(s.pill, tab === t.key && s.pillActive)}
+						onClick={() => setTab(t.key)}
+					>
 						{t.label}
 					</button>
 				))}
@@ -1317,13 +1739,18 @@ function ForecastTabs() {
 							{ h: 38, c: "var(--danger)", l: "+36h" },
 							{ h: 52, c: "var(--warning)", l: "+48h" },
 						].map((b) => (
-							<div key={b.l} className={s.chartBar} style={{ height: `${b.h}%`, background: b.c }}>
+							<div
+								key={b.l}
+								className={s.chartBar}
+								style={{ height: `${b.h}%`, background: b.c }}
+							>
 								<span className={s.barLabel}>{b.l}</span>
 							</div>
 						))}
 					</div>
 					<div className="mt-4 pt-2" style={{ fontSize: 13 }}>
-						<strong>Key Insight:</strong> Critical shortfall of KES 87.5M predicted at +36h. Recommended action: Top-up KES 120M before 06:00
+						<strong>Key Insight:</strong> Critical shortfall of KES 87.5M
+						predicted at +36h. Recommended action: Top-up KES 120M before 06:00
 						tomorrow.
 					</div>
 				</>
@@ -1370,7 +1797,8 @@ function ForecastTabs() {
 			)}
 			{tab === "30d" && (
 				<div className={cx(s.tile, s.tileInfo)}>
-					Monthly forecast shows recurring pattern of low float every 3rd weekend. Recommendation: Increase minimum float buffer by 25% during
+					Monthly forecast shows recurring pattern of low float every 3rd
+					weekend. Recommendation: Increase minimum float buffer by 25% during
 					salary run periods.
 				</div>
 			)}
@@ -1393,7 +1821,12 @@ function GovernanceTabs() {
 						{ key: "audit", label: "Audit Log" },
 					] as const
 				).map((t) => (
-					<button key={t.key} type="button" className={cx(s.pill, tab === t.key && s.pillActive)} onClick={() => setTab(t.key)}>
+					<button
+						key={t.key}
+						type="button"
+						className={cx(s.pill, tab === t.key && s.pillActive)}
+						onClick={() => setTab(t.key)}
+					>
 						{t.label}
 					</button>
 				))}
@@ -1449,7 +1882,8 @@ function GovernanceTabs() {
 			)}
 			{tab === "audit" && (
 				<div className={s.reviewBox} style={{ fontSize: 12 }}>
-					Full audit trail available for download. All actions are immutable and timestamped with digital signatures.
+					Full audit trail available for download. All actions are immutable and
+					timestamped with digital signatures.
 				</div>
 			)}
 		</>

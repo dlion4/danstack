@@ -1,234 +1,423 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import CorporateBusinessCardsModals from '../components/CorporateBusinessCardsModals';
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import CorporateBusinessCardsModals from "../components/CorporateBusinessCardsModals";
 
-interface NavItem { icon: string; active?: boolean; dot?: boolean; }
-interface StatCard { key: string; col: string; label: string; labelColor: string; value: string; warnBorder?: boolean; rawCard?: { bg: string; number: string; name: string }; lines?: string[]; badge?: { icon: string; text: string; tone: string }; progress?: { width: string; color: string } }
-interface AttentionItem { icon: string; iconBg: string; iconColor: string; iconText?: string; title: string; sub: string; actionLabel: string; actionClass?: string; modal: string }
-interface CardDesign { bg: string; label: string; price: string }
-interface ControlToggle { label: string; sub: string; on?: boolean }
-interface ControlSecurity { label: string; sub: string; actionLabel: string; modal: string }
-interface LimitsItem { label: string; value: string; width: string; color: string }
-interface ReplacementItem { type: string; desc: string; impact: string; actionLabel: string; actionClass?: string; modal: string }
+interface NavItem {
+	icon: string;
+	active?: boolean;
+	dot?: boolean;
+}
+interface StatCard {
+	key: string;
+	col: string;
+	label: string;
+	labelColor: string;
+	value: string;
+	warnBorder?: boolean;
+	rawCard?: { bg: string; number: string; name: string };
+	lines?: string[];
+	badge?: { icon: string; text: string; tone: string };
+	progress?: { width: string; color: string };
+}
+interface AttentionItem {
+	icon: string;
+	iconBg: string;
+	iconColor: string;
+	iconText?: string;
+	title: string;
+	sub: string;
+	actionLabel: string;
+	actionClass?: string;
+	modal: string;
+}
+interface CardDesign {
+	bg: string;
+	label: string;
+	price: string;
+}
+interface ControlToggle {
+	label: string;
+	sub: string;
+	on?: boolean;
+}
+interface ControlSecurity {
+	label: string;
+	sub: string;
+	actionLabel: string;
+	modal: string;
+}
+interface LimitsItem {
+	label: string;
+	value: string;
+	width: string;
+	color: string;
+}
+interface ReplacementItem {
+	type: string;
+	desc: string;
+	impact: string;
+	actionLabel: string;
+	actionClass?: string;
+	modal: string;
+}
 
 interface CorporateConfig {
-  nav: NavItem[];
-  headerTitle: string;
-  headerSub: string;
-  searchPlaceholder: string;
-  user: { initials: string; name: string; role: string };
-  breadcrumb: { parents: { label: string; to: string }[]; current: string };
-  pageCode: string;
-  pageTitle: string;
-  pageSub: string;
-  heroActions: { label: string; modal: string }[];
-  statCards: StatCard[];
-  attention: AttentionItem[];
-  portfolio: { bg: string; number: string; title: string; sub: string; subTone?: string; actionLabel: string; modal: string }[];
-  quickActions: { icon: string; iconColor: string; label: string; modal: string }[];
-  issuance: {
-    delivery: { title: string; badge: string; stepTitle: string; tracker: string; steps: any[]; note: string };
-    designs: CardDesign[];
-  };
-  controls: {
-    toggles: ControlToggle[];
-    security: ControlSecurity[];
-    limits: LimitsItem[];
-    limitsActionLabel: string;
-    limitsModal: string;
-  };
-  replacements: ReplacementItem[];
+	nav: NavItem[];
+	headerTitle: string;
+	headerSub: string;
+	searchPlaceholder: string;
+	user: { initials: string; name: string; role: string };
+	breadcrumb: { parents: { label: string; to: string }[]; current: string };
+	pageCode: string;
+	pageTitle: string;
+	pageSub: string;
+	heroActions: { label: string; modal: string }[];
+	statCards: StatCard[];
+	attention: AttentionItem[];
+	portfolio: {
+		bg: string;
+		number: string;
+		title: string;
+		sub: string;
+		subTone?: string;
+		actionLabel: string;
+		modal: string;
+	}[];
+	quickActions: {
+		icon: string;
+		iconColor: string;
+		label: string;
+		modal: string;
+	}[];
+	issuance: {
+		delivery: {
+			title: string;
+			badge: string;
+			stepTitle: string;
+			tracker: string;
+			steps: any[];
+			note: string;
+		};
+		designs: CardDesign[];
+	};
+	controls: {
+		toggles: ControlToggle[];
+		security: ControlSecurity[];
+		limits: LimitsItem[];
+		limitsActionLabel: string;
+		limitsModal: string;
+	};
+	replacements: ReplacementItem[];
 }
 
 const initialMockData: CorporateConfig = {
-  nav: [
-    { icon: 'bi-house' },
-    { icon: 'bi-grid-3x3-gap' },
-    { icon: 'bi-wallet2' },
-    { icon: 'bi-credit-card', active: true },
-    { icon: 'bi-shield-lock' },
-    { icon: 'bi-bar-chart-line' },
-  ],
-  headerTitle: 'Card Center',
-  headerSub: 'Physical, Virtual, Prepaid & Corporate Card Management',
-  searchPlaceholder: 'Search cards, transactions, limits, requests...',
-  user: { initials: 'CA', name: 'James K.', role: 'Cardholder' },
-  breadcrumb: {
-    parents: [{ label: 'Home', to: '/' }, { label: 'Card Center', to: '/card-center' }],
-    current: 'Corporate & Business Card Programs',
-  },
-  pageCode: '5.6',
-  pageTitle: 'Corporate & Business Card Programs',
-  pageSub: 'Manage employee expense cards, setup policies, enforce approvals, automate reconciliation, and control corporate billing.',
-  heroActions: [
-    { label: 'Issue New Card', modal: 'issueCardModal' },
-    { label: 'Bulk Upload', modal: 'bulkIssueModal' },
-    { label: 'Policy Rules', modal: 'policyRulesModal' },
-    { label: 'View Approvals', modal: 'approvalQueueModal' },
-    { label: 'Generate Report', modal: 'reportsModal' },
-  ],
-  statCards: [
-    {
-      key: 'active',
-      col: 'col-lg-4',
-      label: 'ACTIVE CARDS',
-      labelColor: 'var(--pm-primary)',
-      value: '42',
-      badge: { icon: 'bi-check-circle-fill', text: 'Active', tone: 'success' },
-    },
-    {
-      key: 'pending',
-      col: 'col-lg-4',
-      label: 'PENDING APPROVALS',
-      labelColor: 'var(--pm-warning)',
-      value: 'KES 485K',
-      badge: { icon: 'bi-clock-history', text: '8 transactions', tone: 'warning' },
-    },
-    {
-      key: 'spend',
-      col: 'col-lg-4',
-      label: 'TOTAL SPEND (MTD)',
-      labelColor: 'var(--pm-info)',
-      value: 'KES 2.4M',
-      progress: { width: '86%', color: 'var(--pm-info)' },
-    },
-  ],
-  attention: [
-    {
-      icon: 'bi-exclamation-triangle',
-      iconBg: 'var(--pm-danger-soft)',
-      iconColor: 'var(--pm-danger)',
-      title: 'Large Transaction Pending',
-      sub: 'AWS EMEA · KES 145,000 · Exceeds KES 100K limit',
-      actionLabel: 'Review',
-      modal: 'reviewTransactionModal',
-    },
-    {
-      icon: 'bi-envelope',
-      iconBg: 'var(--pm-warning-soft)',
-      iconColor: 'var(--pm-warning)',
-      title: 'Missing Receipt',
-      sub: 'J. Wanjiku · Java House · KES 8,500',
-      actionLabel: 'Upload',
-      modal: 'uploadReceiptModal',
-    },
-  ],
-  portfolio: [
-    {
-      bg: 'debitStandard',
-      number: '8422',
-      title: 'Standard Debit Card',
-      sub: 'Active · KES 145.2k available',
-      actionLabel: 'View',
-      modal: 'viewCardDetailsModal',
-    },
-    {
-      bg: 'debitBusiness',
-      number: '1102',
-      title: 'SME Business Debit',
-      sub: 'Needs PIN',
-      actionLabel: 'PIN',
-      modal: 'pinManagementModal',
-    },
-    {
-      bg: 'debitPremium',
-      number: '5591',
-      title: 'Premium Travel Debit',
-      sub: 'In transit',
-      actionLabel: 'Track',
-      modal: 'cardDeliveryModal',
-    },
-    {
-      bg: 'debitStandard',
-      number: '9421',
-      title: 'Legacy Debit Card',
-      sub: 'Frozen',
-      actionLabel: 'Replace',
-      modal: 'replaceCardModal',
-    },
-  ],
-  quickActions: [
-    { icon: 'bi-plus-circle', iconColor: 'var(--pm-primary)', label: 'Issue Card', modal: 'issueCardModal' },
-    { icon: 'bi-people', iconColor: 'var(--pm-warning)', label: 'Bulk Upload', modal: 'bulkIssueModal' },
-    { icon: 'bi-shield-lock', iconColor: 'var(--pm-warning)', label: 'Policy Rules', modal: 'policyRulesModal' },
-    { icon: 'bi-check-circle', iconColor: 'var(--pm-purple)', label: 'Approvals', modal: 'approvalQueueModal' },
-    { icon: 'bi-bar-chart', iconColor: 'var(--pm-danger)', label: 'Reporting', modal: 'reportsModal' },
-  ],
-  issuance: {
-    delivery: {
-      title: 'Premium Travel Debit',
-      badge: 'Dispatched',
-      stepTitle: 'Courier',
-      tracker: 'TRK-9921448',
-      steps: [
-        { icon: 'bi-check', title: 'Approved', sub: '25 Jun, 10:00 AM', done: true, active: false },
-        { icon: 'bi-check', title: 'Printed', sub: '26 Jun, 09:15 AM', done: true, active: false },
-        { icon: '3', title: 'Courier', sub: '26 Jun, 14:30 PM — Hub Nairobi', done: false, active: true },
-        { icon: '4', title: 'Out for Delivery', sub: 'Pending', done: false, active: false },
-        { icon: '5', title: 'Delivered', sub: 'Pending signature', done: false, active: false },
-      ],
-      note: 'You must provide the 4-digit Delivery OTP (8812) to the rider to receive your card.',
-    },
-    designs: [
-      { bg: 'debitStandard', label: 'Standard', price: 'Free' },
-      { bg: 'debitPremium', label: 'Premium', price: 'KES 1,000' },
-      { bg: 'debitBusiness', label: 'Business', price: 'Free for SMEs' },
-    ],
-  },
-  controls: {
-    toggles: [
-      { label: 'Online Transactions', sub: 'E‑commerce & web', on: true },
-      { label: 'International Spend', sub: 'Outside Kenya', on: false },
-      { label: 'ATM Withdrawals', sub: 'Cash access', on: true },
-      { label: 'Contactless (Tap‑to‑pay)', sub: 'NFC payments', on: true },
-    ],
-    security: [
-      { label: 'Change Card PIN', sub: 'Requires old PIN', actionLabel: 'Change', modal: 'pinManagementModal' },
-      { label: 'Reset Forgotten PIN', sub: 'Requires OTP + Auth', actionLabel: 'Reset', modal: 'resetPinModal' },
-      { label: 'Geo‑Fencing', sub: 'Restrict by location', actionLabel: 'Manage', modal: 'geoFencingModal' },
-      { label: 'Travel Mode', sub: 'Pre‑declare travel', actionLabel: 'Setup', modal: 'travelModeModal' },
-    ],
-    limits: [
-      { label: 'Daily POS Limit', value: 'KES 42k / 100k', width: '42%', color: 'var(--pm-primary)' },
-      { label: 'Daily ATM Limit', value: 'KES 0 / 40k', width: '0%', color: 'var(--pm-info)' },
-    ],
-    limitsActionLabel: 'Adjust All Limits',
-    limitsModal: 'cardLimitsModal',
-  },
-  replacements: [
-    { type: 'Temporary Freeze', desc: 'Misplaced card but not stolen.', impact: 'Blocks new authorizations instantly.', actionLabel: 'Freeze Card', modal: 'freezeCardModal' },
-    { type: 'Report Lost/Stolen', desc: 'Card is definitely lost or stolen.', impact: 'Permanent block. Reissues a new PAN.', actionLabel: 'Report Lost', modal: 'reportLostModal' },
-    { type: 'Replace Damaged', desc: 'Chip/Magstripe broken. Same card number.', impact: 'Old card works until new card is activated.', actionLabel: 'Replace', modal: 'replaceCardModal' },
-    { type: 'Cancel Card', desc: 'Close debit card permanently.', impact: 'Permanent closure. Balance returned to wallet.', actionLabel: 'Cancel', modal: 'cancelCardModal' },
-  ],
+	nav: [
+		{ icon: "bi-house" },
+		{ icon: "bi-grid-3x3-gap" },
+		{ icon: "bi-wallet2" },
+		{ icon: "bi-credit-card", active: true },
+		{ icon: "bi-shield-lock" },
+		{ icon: "bi-bar-chart-line" },
+	],
+	headerTitle: "Card Center",
+	headerSub: "Physical, Virtual, Prepaid & Corporate Card Management",
+	searchPlaceholder: "Search cards, transactions, limits, requests...",
+	user: { initials: "CA", name: "James K.", role: "Cardholder" },
+	breadcrumb: {
+		parents: [
+			{ label: "Home", to: "/" },
+			{ label: "Card Center", to: "/card-center" },
+		],
+		current: "Corporate & Business Card Programs",
+	},
+	pageCode: "5.6",
+	pageTitle: "Corporate & Business Card Programs",
+	pageSub:
+		"Manage employee expense cards, setup policies, enforce approvals, automate reconciliation, and control corporate billing.",
+	heroActions: [
+		{ label: "Issue New Card", modal: "issueCardModal" },
+		{ label: "Bulk Upload", modal: "bulkIssueModal" },
+		{ label: "Policy Rules", modal: "policyRulesModal" },
+		{ label: "View Approvals", modal: "approvalQueueModal" },
+		{ label: "Generate Report", modal: "reportsModal" },
+	],
+	statCards: [
+		{
+			key: "active",
+			col: "col-lg-4",
+			label: "ACTIVE CARDS",
+			labelColor: "var(--pm-primary)",
+			value: "42",
+			badge: { icon: "bi-check-circle-fill", text: "Active", tone: "success" },
+		},
+		{
+			key: "pending",
+			col: "col-lg-4",
+			label: "PENDING APPROVALS",
+			labelColor: "var(--pm-warning)",
+			value: "KES 485K",
+			badge: {
+				icon: "bi-clock-history",
+				text: "8 transactions",
+				tone: "warning",
+			},
+		},
+		{
+			key: "spend",
+			col: "col-lg-4",
+			label: "TOTAL SPEND (MTD)",
+			labelColor: "var(--pm-info)",
+			value: "KES 2.4M",
+			progress: { width: "86%", color: "var(--pm-info)" },
+		},
+	],
+	attention: [
+		{
+			icon: "bi-exclamation-triangle",
+			iconBg: "var(--pm-danger-soft)",
+			iconColor: "var(--pm-danger)",
+			title: "Large Transaction Pending",
+			sub: "AWS EMEA · KES 145,000 · Exceeds KES 100K limit",
+			actionLabel: "Review",
+			modal: "reviewTransactionModal",
+		},
+		{
+			icon: "bi-envelope",
+			iconBg: "var(--pm-warning-soft)",
+			iconColor: "var(--pm-warning)",
+			title: "Missing Receipt",
+			sub: "J. Wanjiku · Java House · KES 8,500",
+			actionLabel: "Upload",
+			modal: "uploadReceiptModal",
+		},
+	],
+	portfolio: [
+		{
+			bg: "debitStandard",
+			number: "8422",
+			title: "Standard Debit Card",
+			sub: "Active · KES 145.2k available",
+			actionLabel: "View",
+			modal: "viewCardDetailsModal",
+		},
+		{
+			bg: "debitBusiness",
+			number: "1102",
+			title: "SME Business Debit",
+			sub: "Needs PIN",
+			actionLabel: "PIN",
+			modal: "pinManagementModal",
+		},
+		{
+			bg: "debitPremium",
+			number: "5591",
+			title: "Premium Travel Debit",
+			sub: "In transit",
+			actionLabel: "Track",
+			modal: "cardDeliveryModal",
+		},
+		{
+			bg: "debitStandard",
+			number: "9421",
+			title: "Legacy Debit Card",
+			sub: "Frozen",
+			actionLabel: "Replace",
+			modal: "replaceCardModal",
+		},
+	],
+	quickActions: [
+		{
+			icon: "bi-plus-circle",
+			iconColor: "var(--pm-primary)",
+			label: "Issue Card",
+			modal: "issueCardModal",
+		},
+		{
+			icon: "bi-people",
+			iconColor: "var(--pm-warning)",
+			label: "Bulk Upload",
+			modal: "bulkIssueModal",
+		},
+		{
+			icon: "bi-shield-lock",
+			iconColor: "var(--pm-warning)",
+			label: "Policy Rules",
+			modal: "policyRulesModal",
+		},
+		{
+			icon: "bi-check-circle",
+			iconColor: "var(--pm-purple)",
+			label: "Approvals",
+			modal: "approvalQueueModal",
+		},
+		{
+			icon: "bi-bar-chart",
+			iconColor: "var(--pm-danger)",
+			label: "Reporting",
+			modal: "reportsModal",
+		},
+	],
+	issuance: {
+		delivery: {
+			title: "Premium Travel Debit",
+			badge: "Dispatched",
+			stepTitle: "Courier",
+			tracker: "TRK-9921448",
+			steps: [
+				{
+					icon: "bi-check",
+					title: "Approved",
+					sub: "25 Jun, 10:00 AM",
+					done: true,
+					active: false,
+				},
+				{
+					icon: "bi-check",
+					title: "Printed",
+					sub: "26 Jun, 09:15 AM",
+					done: true,
+					active: false,
+				},
+				{
+					icon: "3",
+					title: "Courier",
+					sub: "26 Jun, 14:30 PM — Hub Nairobi",
+					done: false,
+					active: true,
+				},
+				{
+					icon: "4",
+					title: "Out for Delivery",
+					sub: "Pending",
+					done: false,
+					active: false,
+				},
+				{
+					icon: "5",
+					title: "Delivered",
+					sub: "Pending signature",
+					done: false,
+					active: false,
+				},
+			],
+			note: "You must provide the 4-digit Delivery OTP (8812) to the rider to receive your card.",
+		},
+		designs: [
+			{ bg: "debitStandard", label: "Standard", price: "Free" },
+			{ bg: "debitPremium", label: "Premium", price: "KES 1,000" },
+			{ bg: "debitBusiness", label: "Business", price: "Free for SMEs" },
+		],
+	},
+	controls: {
+		toggles: [
+			{ label: "Online Transactions", sub: "E‑commerce & web", on: true },
+			{ label: "International Spend", sub: "Outside Kenya", on: false },
+			{ label: "ATM Withdrawals", sub: "Cash access", on: true },
+			{ label: "Contactless (Tap‑to‑pay)", sub: "NFC payments", on: true },
+		],
+		security: [
+			{
+				label: "Change Card PIN",
+				sub: "Requires old PIN",
+				actionLabel: "Change",
+				modal: "pinManagementModal",
+			},
+			{
+				label: "Reset Forgotten PIN",
+				sub: "Requires OTP + Auth",
+				actionLabel: "Reset",
+				modal: "resetPinModal",
+			},
+			{
+				label: "Geo‑Fencing",
+				sub: "Restrict by location",
+				actionLabel: "Manage",
+				modal: "geoFencingModal",
+			},
+			{
+				label: "Travel Mode",
+				sub: "Pre‑declare travel",
+				actionLabel: "Setup",
+				modal: "travelModeModal",
+			},
+		],
+		limits: [
+			{
+				label: "Daily POS Limit",
+				value: "KES 42k / 100k",
+				width: "42%",
+				color: "var(--pm-primary)",
+			},
+			{
+				label: "Daily ATM Limit",
+				value: "KES 0 / 40k",
+				width: "0%",
+				color: "var(--pm-info)",
+			},
+		],
+		limitsActionLabel: "Adjust All Limits",
+		limitsModal: "cardLimitsModal",
+	},
+	replacements: [
+		{
+			type: "Temporary Freeze",
+			desc: "Misplaced card but not stolen.",
+			impact: "Blocks new authorizations instantly.",
+			actionLabel: "Freeze Card",
+			modal: "freezeCardModal",
+		},
+		{
+			type: "Report Lost/Stolen",
+			desc: "Card is definitely lost or stolen.",
+			impact: "Permanent block. Reissues a new PAN.",
+			actionLabel: "Report Lost",
+			modal: "reportLostModal",
+		},
+		{
+			type: "Replace Damaged",
+			desc: "Chip/Magstripe broken. Same card number.",
+			impact: "Old card works until new card is activated.",
+			actionLabel: "Replace",
+			modal: "replaceCardModal",
+		},
+		{
+			type: "Cancel Card",
+			desc: "Close debit card permanently.",
+			impact: "Permanent closure. Balance returned to wallet.",
+			actionLabel: "Cancel",
+			modal: "cancelCardModal",
+		},
+	],
 };
 
 async function fetchCorporateConfig(): Promise<CorporateConfig> {
-  // Frontend-only demo: no backend for this endpoint yet. Fall back to bundled
-  // mock data on any failure so SSR doesn't throw on the origin-less relative
-  // fetch and the page renders content instead of only an error banner.
-  try {
-    const res = await fetch('/api/corporate-cards', { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    return (await res.json()) as CorporateConfig;
-  } catch {
-    return initialMockData;
-  }
+	// Frontend-only demo: no backend for this endpoint yet. Fall back to bundled
+	// mock data on any failure so SSR doesn't throw on the origin-less relative
+	// fetch and the page renders content instead of only an error banner.
+	try {
+		const res = await fetch("/api/corporate-cards", {
+			headers: { Accept: "application/json" },
+		});
+		if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+		return (await res.json()) as CorporateConfig;
+	} catch {
+		return initialMockData;
+	}
 }
 
 export default function CorporateBusinessCards() {
-  const { data } = useQuery({
-    queryKey: ['paymo-corporate-cards'],
-    queryFn: fetchCorporateConfig,
-    retry: 1,
-    staleTime: 60_000,
-  });
-  const config = data ?? initialMockData;
-  const [activeModal, setActiveModal] = useState<string | null>(0);
+	const { data } = useQuery({
+		queryKey: ["paymo-corporate-cards"],
+		queryFn: fetchCorporateConfig,
+		retry: 1,
+		staleTime: 60_000,
+	});
+	const config = data ?? initialMockData;
+	const [activeModal, setActiveModal] = useState<string | null>(0);
 
-  return (
-    <div className="pm-app">
+	return (
+		<div className="pm-app">
       {/* Sidebar */}
       <aside className="pm-sidebar">
         <div className="pm-sidebar-logo">P</div>
@@ -681,5 +870,5 @@ export default function CorporateBusinessCards() {
         onOpen={setActiveModal} 
       />
     </div>
-  );
+	);
 }

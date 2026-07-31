@@ -20,7 +20,10 @@ import type { PaymentRailsContent } from "../pages/PaymentRails";
 
 const s = shared as Record<string, string>;
 
-export type PaymentRailsData = Pick<PaymentRailsContent, "banks" | "routingRules">;
+export type PaymentRailsData = Pick<
+	PaymentRailsContent,
+	"banks" | "routingRules"
+>;
 
 export interface PaymentRailsModalsProps {
 	modalState: Record<string, boolean>;
@@ -55,10 +58,18 @@ export function PaymentRailsModals({
 						{step === 1 && (
 							<>
 								<Field label="Bank Name" defaultValue="NCBA Bank Kenya" />
-								<Field label="API Endpoint" defaultValue="https://api.ncba.co.ke/v2" />
+								<Field
+									label="API Endpoint"
+									defaultValue="https://api.ncba.co.ke/v2"
+								/>
 								<SelectField
 									label="Integration Type"
-									options={["REST API (real-time)", "SFTP batch", "ISO 20022", "Host-to-Host"]}
+									options={[
+										"REST API (real-time)",
+										"SFTP batch",
+										"ISO 20022",
+										"Host-to-Host",
+									]}
 								/>
 							</>
 						)}
@@ -66,19 +77,25 @@ export function PaymentRailsModals({
 							<>
 								<div className="mb-3">
 									<label className={s.fieldLabel}>Enabled Rails</label>
-									{["PesaLink", "RTGS", "ACH", "SWIFT", "Card-to-Bank"].map((r) => (
-										<div className="form-check" key={r}>
-											<input
-												className="form-check-input"
-												type="checkbox"
-												defaultChecked={r === "PesaLink" || r === "RTGS"}
-												id={`rail-${r}`}
-											/>
-											<label className="form-check-label" htmlFor={`rail-${r}`} style={{ fontSize: 13 }}>
-												{r}
-											</label>
-										</div>
-									))}
+									{["PesaLink", "RTGS", "ACH", "SWIFT", "Card-to-Bank"].map(
+										(r) => (
+											<div className="form-check" key={r}>
+												<input
+													className="form-check-input"
+													type="checkbox"
+													defaultChecked={r === "PesaLink" || r === "RTGS"}
+													id={`rail-${r}`}
+												/>
+												<label
+													className="form-check-label"
+													htmlFor={`rail-${r}`}
+													style={{ fontSize: 13 }}
+												>
+													{r}
+												</label>
+											</div>
+										),
+									)}
 								</div>
 								<Field label="Settlement Window" defaultValue="09:00 – 16:00" />
 							</>
@@ -92,7 +109,9 @@ export function PaymentRailsModals({
 									<i className="bi bi-shield-check" />
 									<span>API credentials validated • Sandbox test passed.</span>
 								</div>
-								<label className={`${s.fieldLabel} mt-3 d-block`}>Authorisation PIN</label>
+								<label className={`${s.fieldLabel} mt-3 d-block`}>
+									Authorisation PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -138,10 +157,19 @@ export function PaymentRailsModals({
 											<tr key={r.name}>
 												<td>{r.name}</td>
 												<td>{r.amount}</td>
-												<td><strong>{r.rail}</strong></td>
+												<td>
+													<strong>{r.rail}</strong>
+												</td>
 												<td>{r.fallback}</td>
 												<td>
-													<span className={cx(s.badge, r.status === "Active" ? s.badgeSuccess : s.badgeWarn)}>
+													<span
+														className={cx(
+															s.badge,
+															r.status === "Active"
+																? s.badgeSuccess
+																: s.badgeWarn,
+														)}
+													>
 														{r.status}
 													</span>
 												</td>
@@ -157,7 +185,10 @@ export function PaymentRailsModals({
 						label: "New Rule",
 						render: () => (
 							<>
-								<Field label="Rule Name" defaultValue="High-Value International" />
+								<Field
+									label="Rule Name"
+									defaultValue="High-Value International"
+								/>
 								<div className="row g-3">
 									<div className="col-md-6">
 										<Field label="Min Amount (KES)" defaultValue="500000" />
@@ -166,8 +197,14 @@ export function PaymentRailsModals({
 										<Field label="Max Amount (KES)" defaultValue="5000000" />
 									</div>
 								</div>
-								<SelectField label="Primary Rail" options={["PesaLink", "RTGS", "SWIFT", "ACH"]} />
-								<SelectField label="Fallback Rail" options={["None", "RTGS", "PesaLink", "ACH"]} />
+								<SelectField
+									label="Primary Rail"
+									options={["PesaLink", "RTGS", "SWIFT", "ACH"]}
+								/>
+								<SelectField
+									label="Fallback Rail"
+									options={["None", "RTGS", "PesaLink", "ACH"]}
+								/>
 							</>
 						),
 					},
@@ -197,25 +234,35 @@ export function PaymentRailsModals({
 						<tbody>
 							<tr>
 								<td>PesaLink Instant</td>
-								<td><span className={cx(s.badge, s.badgeSuccess)}>Enabled</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
+								</td>
 								<td>16:00</td>
 								<td>KES 100M</td>
 							</tr>
 							<tr>
 								<td>RTGS</td>
-								<td><span className={cx(s.badge, s.badgeSuccess)}>Enabled</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
+								</td>
 								<td>15:30</td>
 								<td>KES 500M</td>
 							</tr>
 							<tr>
 								<td>ACH</td>
-								<td><span className={cx(s.badge, s.badgeSuccess)}>Enabled</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
+								</td>
 								<td>14:00</td>
 								<td>KES 50M</td>
 							</tr>
 							<tr>
 								<td>SWIFT</td>
-								<td><span className={cx(s.badge, s.badgeWarn)}>Credential expires in 5d</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeWarn)}>
+										Credential expires in 5d
+									</span>
+								</td>
 								<td>12:00</td>
 								<td>USD 1M</td>
 							</tr>
@@ -247,7 +294,9 @@ export function PaymentRailsModals({
 								<tr key={b.name}>
 									<td>NOSTRO-{b.name.slice(0, 3).toUpperCase()}-001</td>
 									<td>{b.name}</td>
-									<td><strong>USD {(Math.random() * 2 + 0.5).toFixed(2)}M</strong></td>
+									<td>
+										<strong>USD {(Math.random() * 2 + 0.5).toFixed(2)}M</strong>
+									</td>
 									<td>
 										<span className={cx(s.badge, s.badgeSuccess)}>Matched</span>
 									</td>
@@ -273,15 +322,24 @@ export function PaymentRailsModals({
 							<>
 								<div className={`${s.hintBox} ${s.hintBoxWarn} mb-3`}>
 									<i className="bi bi-exclamation-triangle" />
-									<span>USD exposure +$142K above target band. Recommend selling USD 100K.</span>
+									<span>
+										USD exposure +$142K above target band. Recommend selling USD
+										100K.
+									</span>
 								</div>
-								<SelectField label="Source Nostro" options={["Equity USD", "KCB USD", "Stanbic USD"]} />
+								<SelectField
+									label="Source Nostro"
+									options={["Equity USD", "KCB USD", "Stanbic USD"]}
+								/>
 								<Field label="Amount (USD)" defaultValue="100000" />
 							</>
 						)}
 						{step === 2 && (
 							<>
-								<SelectField label="Counterparty" options={["Interbank Spot", "CBK Window", "Equity Treasury"]} />
+								<SelectField
+									label="Counterparty"
+									options={["Interbank Spot", "CBK Window", "Equity Treasury"]}
+								/>
 								<Field label="Rate (KES/USD)" defaultValue="129.45" />
 								<div className="mt-3">
 									<ReviewRow label="Sell USD" value="100,000" />
@@ -295,7 +353,9 @@ export function PaymentRailsModals({
 								<ReviewRow label="Trade" value="Sell USD 100K @ 129.45" />
 								<ReviewRow label="Settlement" value="T+0 (instant)" />
 								<ReviewRow label="Total" value="KES 12,945,000" highlight />
-								<label className={`${s.fieldLabel} mt-3 d-block`}>Authorisation PIN</label>
+								<label className={`${s.fieldLabel} mt-3 d-block`}>
+									Authorisation PIN
+								</label>
 								<PinRow />
 							</>
 						)}
@@ -435,28 +495,36 @@ export function PaymentRailsModals({
 							<tr>
 								<td>PesaLink</td>
 								<td>KES 1.24B</td>
-								<td><span className={cx(s.badge, s.badgeSuccess)}>99.4%</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeSuccess)}>99.4%</span>
+								</td>
 								<td>4.2s</td>
 								<td>KES 55K</td>
 							</tr>
 							<tr>
 								<td>RTGS</td>
 								<td>KES 892M</td>
-								<td><span className={cx(s.badge, s.badgeSuccess)}>99.1%</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeSuccess)}>99.1%</span>
+								</td>
 								<td>42min</td>
 								<td>KES 28K</td>
 							</tr>
 							<tr>
 								<td>ACH</td>
 								<td>KES 412M</td>
-								<td><span className={cx(s.badge, s.badgeWarn)}>96.8%</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeWarn)}>96.8%</span>
+								</td>
 								<td>2h 11m</td>
 								<td>KES 18K</td>
 							</tr>
 							<tr>
 								<td>SWIFT</td>
 								<td>KES 296M</td>
-								<td><span className={cx(s.badge, s.badgeWarn)}>94.1%</span></td>
+								<td>
+									<span className={cx(s.badge, s.badgeWarn)}>94.1%</span>
+								</td>
 								<td>4h 12m</td>
 								<td>KES 83K</td>
 							</tr>
@@ -483,7 +551,10 @@ export function PaymentRailsModals({
 						<Field label="To" type="date" defaultValue="2025-06-27" />
 					</div>
 				</div>
-				<SelectField label="Rail" options={["All Rails", "PesaLink", "RTGS", "ACH", "SWIFT"]} />
+				<SelectField
+					label="Rail"
+					options={["All Rails", "PesaLink", "RTGS", "ACH", "SWIFT"]}
+				/>
 			</SimpleModal>
 
 			{/* export */}
@@ -497,7 +568,12 @@ export function PaymentRailsModals({
 			>
 				<SelectField
 					label="Report Type"
-					options={["Rail performance summary", "Bank connectivity log", "Routing rule audit", "Cost analysis"]}
+					options={[
+						"Rail performance summary",
+						"Bank connectivity log",
+						"Routing rule audit",
+						"Cost analysis",
+					]}
 				/>
 				<div className="row g-3">
 					<div className="col-md-6">
@@ -523,7 +599,10 @@ export function PaymentRailsModals({
 					<i className="bi bi-lightning-charge" />
 					<span>Projected 0.8% cost reduction over 7-day test window.</span>
 				</div>
-				<SelectField label="Traffic Split" options={["50 / 50", "70 / 30 (control first)", "20 / 80"]} />
+				<SelectField
+					label="Traffic Split"
+					options={["50 / 50", "70 / 30 (control first)", "20 / 80"]}
+				/>
 				<Field label="Duration (days)" defaultValue="7" />
 			</SimpleModal>
 
@@ -535,16 +614,37 @@ export function PaymentRailsModals({
 				title="All Attention Items"
 			>
 				<div className={s.rowItem}>
-					<div><strong>Equity Bank API health degraded</strong></div>
-					<button className={cx(s.btn, s.btnSm)} onClick={() => open("bankHealthModal")}>Investigate</button>
+					<div>
+						<strong>Equity Bank API health degraded</strong>
+					</div>
+					<button
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => open("bankHealthModal")}
+					>
+						Investigate
+					</button>
 				</div>
 				<div className={s.rowItem}>
-					<div><strong>RTGS cut-off in 42 minutes</strong></div>
-					<button className={cx(s.btn, s.btnSm)} onClick={() => open("railConfigModal")}>Manage</button>
+					<div>
+						<strong>RTGS cut-off in 42 minutes</strong>
+					</div>
+					<button
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => open("railConfigModal")}
+					>
+						Manage
+					</button>
 				</div>
 				<div className={s.rowItem}>
-					<div><strong>SWIFT credential expires in 5 days</strong></div>
-					<button className={cx(s.btn, s.btnSm)} onClick={() => open("railConfigModal")}>Renew</button>
+					<div>
+						<strong>SWIFT credential expires in 5 days</strong>
+					</div>
+					<button
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => open("railConfigModal")}
+					>
+						Renew
+					</button>
 				</div>
 			</SimpleModal>
 		</>
