@@ -14,7 +14,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import s from "../../../../src/shared/styles/appPage.module.css";
+import s from "@/src/shared/styles/appPage.module.css";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	type TransferManagementData,

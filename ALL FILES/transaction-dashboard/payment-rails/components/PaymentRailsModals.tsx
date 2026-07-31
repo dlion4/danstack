@@ -14,7 +14,7 @@ import {
 	SimpleModal,
 	TabbedModal,
 } from "../../../../src/shared/components/modals";
-import shared from "../../../../src/shared/styles/appPage.module.css";
+import shared from "@/src/shared/styles/appPage.module.css";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import type { PaymentRailsContent } from "../pages/PaymentRails";
 

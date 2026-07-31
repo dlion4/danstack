@@ -17,7 +17,8 @@ import {
 	// } from "../../../../../src/shared/components/modals";
 } from "../../../../src/shared/components/modals";
 // } from "../../../../src/shared/components/modals";
-import shared from "../../../../src/shared/styles/appPage.module.css";
+// import shared from "@/src/shared/styles/appPage.module.css";
+import shared from "@/src/shared/styles/appPage.module.css";
 
 const s = shared as Record<string, string>;
 
