@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import BusinessOnboarding from "@/features/business-dashboard/business-onboarding/pages/BusinessOnboarding";
+import BusinessOnboarding from "@/features/dashboards/business-dashboard/business-onboarding/pages/BusinessOnboarding";
 
 /**
  * business-dashboard/business-onboarding.tsx — Business Onboarding & KYB/KYC (Page 3.12).

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PaymentRails from "@/features/transaction-dashboard/payment-rails/pages/PaymentRails";
+import PaymentRails from "@/features/dashboards/transaction-dashboard/payment-rails/pages/PaymentRails";
 
 /**
  * app.payment-rails.tsx — Payment Rails & Routing (Page 1.4).

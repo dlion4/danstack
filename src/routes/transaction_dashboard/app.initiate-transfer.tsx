@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { InitiateTransfer } from "@/features/transaction-dashboard/initiate-transfer/pages/InitiateTransfer";
+import { InitiateTransfer } from "@/features/dashboards/transaction-dashboard/initiate-transfer/pages/InitiateTransfer";
 
 /**
  * app.initiate-transfer.tsx — Initiate Transfer (Page 1.2).

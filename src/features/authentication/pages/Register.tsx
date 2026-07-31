@@ -27,7 +27,6 @@
  *   fireConfetti() body.appendChild . confettiHostRef DOM sandbox in useEffect
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import type { CSSProperties, FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -43,6 +42,7 @@ import styles from "../styles/register.module.css";
  * ------------------------------------------------------------------------ */
 type AccountType = "personal" | "business" | "developer";
 type Tone = "toneMint" | "toneBlue" | "toneGold";
+type ToastType = "info" | "ok" | "warn" | "err";
 
 interface AccountTypeCard {
 	id: AccountType;
@@ -282,21 +282,7 @@ const initialMockData: RegistrationConfig = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchRegistrationConfig(): Promise<RegistrationConfig> {
-	const response = await fetch("/api/registration-config", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(
-			`Registration config API responded HTTP ${response.status}`,
-		);
-	return response.json() as Promise<RegistrationConfig>;
-}
-
-/* --------------------------------------------------------------------------
- * Helpers
+ * 2. Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
 const cx = (...parts: Array<string | false | null | undefined>) =>
@@ -335,21 +321,8 @@ const PANEL_COPY: Record<AccountType, { title: string; sub: string }> = {
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Register() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-registration-config"],
-		queryFn: fetchRegistrationConfig,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- wizard state (legacy `state` object) ---------- */
 	const [step, setStep] = useState(0); // 0 type · 1 basic · 2 kyc · 3 security · 4 success
@@ -397,7 +370,6 @@ export default function Register() {
 	/* success */
 	const [apiKeyCopied, setApiKeyCopied] = useState(false);
 	const [dashLoading, setDashLoading] = useState(false);
-	const [dashNote, setDashNote] = useState(false);
 
 	/* ---------- refs (legacy DOM bridges) ---------- */
 	const panelRef = useRef<HTMLDivElement | null>(null);
@@ -409,6 +381,24 @@ export default function Register() {
 	const verifyIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
 		undefined,
 	);
+	const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	);
+
+	/* ---------- toast (footer/legal links with no dedicated route) ---------- */
+	const [toast, setToast] = useState<{
+		msg: string;
+		type: ToastType;
+		visible: boolean;
+	}>({ msg: "", type: "info", visible: false });
+
+	const showToast = useCallback((msg: string, type: ToastType = "info") => {
+		setToast({ msg, type, visible: true });
+		if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+		toastTimerRef.current = setTimeout(() => {
+			setToast((t) => ({ ...t, visible: false }));
+		}, 3200);
+	}, []);
 
 	const later = useCallback((fn: () => void, ms: number) => {
 		const id = setTimeout(fn, ms);
@@ -419,6 +409,7 @@ export default function Register() {
 		() => () => {
 			timersRef.current.forEach(clearTimeout);
 			if (verifyIntervalRef.current) clearInterval(verifyIntervalRef.current);
+			if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
 		},
 		[],
 	);
@@ -599,7 +590,7 @@ export default function Register() {
 		setDashLoading(true);
 		later(() => {
 			setDashLoading(false);
-			setDashNote(true); // legacy alert() replaced with an inline notice
+			window.location.assign("/auth/hub");
 		}, 800);
 	};
 
@@ -616,43 +607,6 @@ export default function Register() {
 	 * ------------------------------------------------------------------------ */
 	return (
 		<div className={s.authPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading registration configuration…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Registration config unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/registration-config</code> — {error.message}. Using
-						bundled configuration.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			<div className={s.authWrap}>
 				{/* ================= LEFT BRAND PANEL ================= */}
 				<div className={s.authBrand}>
@@ -761,7 +715,7 @@ export default function Register() {
 								</p>
 							</div>
 							<a
-								href="/login"
+								href="/auth/login"
 								className={cx(
 									s.btnOutline,
 									"btn btn-sm d-none d-sm-inline-flex",
@@ -926,7 +880,7 @@ export default function Register() {
 								className="text-center mt-3"
 								style={{ fontSize: "0.84rem", color: "#7fa694" }}
 							>
-								Already have an account? <a href="/login">Sign in</a>
+								Already have an account? <a href="/auth/login">Sign in</a>
 							</p>
 						</div>
 
@@ -1630,8 +1584,33 @@ export default function Register() {
 											className={s.mutedText}
 											style={{ fontSize: "0.84rem" }}
 										>
-											I agree to the <a href="#">Terms of Use</a> and{" "}
-											<a href="#">Privacy Policy</a>.
+											I agree to the{" "}
+											<a
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													showToast(
+														"Terms of Use — more details coming soon.",
+														"info",
+													);
+												}}
+											>
+												Terms of Use
+											</a>{" "}
+											and{" "}
+											<a
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													showToast(
+														"Privacy Policy — more details coming soon.",
+														"info",
+													);
+												}}
+											>
+												Privacy Policy
+											</a>
+											.
 										</label>
 									</div>
 									<div className={s.checkRow}>
@@ -1825,15 +1804,6 @@ export default function Register() {
 									</>
 								)}
 							</button>
-							{dashNote && (
-								<p
-									className="text-center mt-2"
-									style={{ fontSize: "0.8rem", color: "#86efac" }}
-								>
-									→ Redirecting to /auth/account-type (wire this to your router
-									when ready)
-								</p>
-							)}
 							<p
 								className={cx(s.dimText, "text-center mt-3")}
 								style={{ fontSize: "0.78rem" }}
@@ -1846,7 +1816,14 @@ export default function Register() {
 						{/* footer mini */}
 						<div className={s.footRow}>
 							{content.footLinks.map((link) => (
-								<a href="#" key={link}>
+								<a
+									href="#"
+									key={link}
+									onClick={(e) => {
+										e.preventDefault();
+										showToast(`${link} — more details coming soon.`, "info");
+									}}
+								>
 									{link}
 								</a>
 							))}
@@ -1862,6 +1839,35 @@ export default function Register() {
 				className={s.confettiHost}
 				aria-hidden="true"
 			/>
+
+			{/* ===== Toast (footer/legal links with no dedicated route) ===== */}
+			<div
+				className={cx(s.toastPaymo, s.glass, toast.visible && s.toastShow)}
+				role="status"
+			>
+				<i
+					className={`bi ${
+						toast.type === "ok"
+							? "bi-check-circle-fill"
+							: toast.type === "err"
+								? "bi-x-circle-fill"
+								: toast.type === "warn"
+									? "bi-exclamation-triangle-fill"
+									: "bi-info-circle"
+					}`}
+					style={{
+						color:
+							toast.type === "ok"
+								? "#86efac"
+								: toast.type === "err"
+									? "#fca5a5"
+									: toast.type === "warn"
+										? "#fcd34d"
+										: "#a5f3fc",
+					}}
+				/>
+				<span>{toast.msg}</span>
+			</div>
 		</div>
 	);
 }

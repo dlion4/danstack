@@ -22,7 +22,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { cx } from "../../../shell/data/shellData";
+import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	type ReconciliationData,
 	ReconciliationModals,

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AccountSettings from "@/features/card-dashboard/account-settings/pages/account-settings";
+import AccountSettings from "@/features/dashboards/card-dashboard/account-settings/pages/account-settings";
 
 /**
  * app.account-settings.tsx — Card Account & Settings (Page 5.10 Part 1)

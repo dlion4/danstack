@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import MultiCurrencyTreasury from "@/features/business-dashboard/multi-currency-treasury/pages/MultiCurrencyTreasury";
+import MultiCurrencyTreasury from "@/features/dashboards/business-dashboard/multi-currency-treasury/pages/MultiCurrencyTreasury";
 
 /**
  * business-dashboard/multi-currency-treasury.tsx — Multi-Currency Treasury & Forex (Page 3.11).

@@ -28,7 +28,6 @@
  *   downloadTemplate() Blob+a.click() .... kept verbatim (browser API bridge)
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -195,19 +194,7 @@ const initialMockData: MfaConfig = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchMfaConfig(): Promise<MfaConfig> {
-	const response = await fetch("/api/mfa-config", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`MFA config API responded HTTP ${response.status}`);
-	return response.json() as Promise<MfaConfig>;
-}
-
-/* --------------------------------------------------------------------------
- * Helpers
+ * 2. Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
 const cx = (...parts: Array<string | false | null | undefined>) =>
@@ -242,21 +229,8 @@ function getBrowserLabel(): string {
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Mfa() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-mfa-config"],
-		queryFn: fetchMfaConfig,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- state (legacy `state` object) ---------- */
 	const [method, setMethod] = useState<MfaMethod>("totp");
@@ -469,13 +443,13 @@ export default function Mfa() {
 
 	const useDifferentAccount = () => {
 		localStorage.removeItem("paymo_remembered_user");
-		window.location.hash = "different-account-cleared";
 		setAccountCleared(true);
+		window.location.assign("/auth/login");
 	};
 
 	const continueToAccountType = () => {
-		window.location.hash = "account-type";
 		setRouteReady(true);
+		window.location.assign("/auth/hub");
 	};
 
 	/* ---------- derived display values ---------- */
@@ -511,43 +485,6 @@ export default function Mfa() {
 	 * ---------------------------------------------------------------------- */
 	return (
 		<div className={s.mfaPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading MFA configuration…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						MFA config unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/mfa-config</code> — {error.message}. Using bundled
-						configuration.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			{/* legacy fixed grid overlay + blobs */}
 			<div
 				className={s.gridOverlay}
@@ -1470,12 +1407,11 @@ export default function Mfa() {
 										>
 											{routeReady ? (
 												<>
-													<i className="bi bi-check-lg me-1" /> Account type
-													route ready
+													<i className="bi bi-check-lg me-1" /> Hub route ready
 												</>
 											) : (
 												<>
-													Continue to account type{" "}
+													Continue to hub{" "}
 													<i className="bi bi-arrow-right ms-1" />
 												</>
 											)}

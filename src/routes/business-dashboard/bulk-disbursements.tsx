@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import BulkDisbursements from "@/features/business-dashboard/bulk-disbursements/pages/BulkDisbursements";
+import BulkDisbursements from "@/features/dashboards/business-dashboard/bulk-disbursements/pages/BulkDisbursements";
 
 /**
  * business-dashboard/bulk-disbursements.tsx — Bulk Disbursements (Page 3.3).

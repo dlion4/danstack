@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AppShell from "@/features/shell/components/AppShell";
+import AppShell from "@/features/Layouts/shell/components/AppShell";
 
 /**
  * app.tsx — LAYOUT route for the authenticated app shell.

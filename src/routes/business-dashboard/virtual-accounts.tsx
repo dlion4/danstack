@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import VirtualAccounts from "@/features/business-dashboard/virtual-accounts/pages/VirtualAccounts";
+import VirtualAccounts from "@/features/dashboards/business-dashboard/virtual-accounts/pages/VirtualAccounts";
 
 /**
  * business-dashboard/virtual-accounts.tsx — Virtual Accounts & Sub-Accounts (Page 3.9).

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PayrollHr from "@/features/business-dashboard/payroll-hr/pages/PayrollHr";
+import PayrollHr from "@/features/dashboards/business-dashboard/payroll-hr/pages/PayrollHr";
 
 /**
  * business-dashboard/payroll-hr.tsx — Payroll & HR (Page 3.5).

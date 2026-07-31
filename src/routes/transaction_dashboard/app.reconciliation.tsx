@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Reconciliation from "@/features/transaction-dashboard/reconciliation/pages/Reconciliation";
+import Reconciliation from "@/features/dashboards/transaction-dashboard/reconciliation/pages/Reconciliation";
 
 /**
  * app.reconciliation.tsx — Reconciliation Center (Page 1.6).

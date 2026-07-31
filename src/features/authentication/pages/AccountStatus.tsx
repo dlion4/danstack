@@ -21,7 +21,6 @@
  *     rendered through typed .map() loops (backend-ready shape)
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import { Gavel, Handshake } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -358,18 +357,6 @@ const initialMockData: StatusConfig = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchAccountStatus(): Promise<StatusConfig> {
-	const response = await fetch("/api/account-status", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`Account status API responded HTTP ${response.status}`);
-	return response.json() as Promise<StatusConfig>;
-}
-
-/* --------------------------------------------------------------------------
  * Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
@@ -397,65 +384,14 @@ function Glyph({
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function AccountStatus() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-account-status"],
-		queryFn: fetchAccountStatus,
-		staleTime: 60_000,
-		refetchInterval: 60_000, // restriction state can change while the user works
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ------------------------------------------------------------------------
 	 * 4. TEMPLATE (JSX)
 	 * ---------------------------------------------------------------------- */
 	return (
 		<div className={s.statusPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Checking your account status…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Account status unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/account-status</code> — {error.message}. Showing the most
-						recent bundled snapshot.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			<div className={s.bgGrid} />
 
 			{/* ================= page top bar ================= */}

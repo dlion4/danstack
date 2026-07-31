@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -231,24 +230,9 @@ const initialMockData: KycConfig = {
 	],
 };
 
-/* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
-async function fetchKycConfig(): Promise<KycConfig> {
-	const res = await fetch("/api/kyc-config");
-	if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-	const json = (await res.json()) as Partial<KycConfig>;
-	return { ...initialMockData, ...json };
-}
-
 export default function IdentityVerification() {
-	const { data, isLoading, error } = useQuery({
-		queryKey: ["paymo-kyc-config"],
-		queryFn: fetchKycConfig,
-		retry: 1,
-		staleTime: 60_000,
-	});
-	const config = data ?? initialMockData;
-
-	const [errorDismissed, setErrorDismissed] = useState(false);
+	/* ---------- bundled page configuration ---------- */
+	const config = initialMockData;
 
 	/* ---------- method & stage state machine ---------- */
 	const [selected, setSelected] = useState<MethodId>("basic");
@@ -396,40 +380,6 @@ export default function IdentityVerification() {
 					animationDelay: "-6s",
 				}}
 			/>
-
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load verification config.</strong> Showing the
-					built-in defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading verification config…
-					</div>
-				</div>
-			)}
 
 			<div className={`container ${styles.contentWrap}`}>
 				<div className="row g-4 align-items-stretch">

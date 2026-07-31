@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Compliance from "@/features/transaction-dashboard/compliance/pages/Compliance";
+import Compliance from "@/features/dashboards/transaction-dashboard/compliance/pages/Compliance";
 
 /**
  * app.compliance.tsx — Compliance & AML.

@@ -28,7 +28,6 @@
  *   score circle strokeDashoffset ........ derived from score()
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -397,18 +396,6 @@ const initialMockData: SecurityConfig = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchSecurityCenter(): Promise<SecurityConfig> {
-	const response = await fetch("/api/security-center", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`Security center API responded HTTP ${response.status}`);
-	return response.json() as Promise<SecurityConfig>;
-}
-
-/* --------------------------------------------------------------------------
  * Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
@@ -447,21 +434,8 @@ const TABS: Array<{ id: PanelId; icon: string; label: string }> = [
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function SecurityCenter() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-security-center"],
-		queryFn: fetchSecurityCenter,
-		staleTime: 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- state (legacy `state` object) ---------- */
 	const [panel, setPanel] = useState<PanelId>("sessions");
@@ -622,43 +596,6 @@ export default function SecurityCenter() {
 	 * ---------------------------------------------------------------------- */
 	return (
 		<div className={s.securityPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading security center…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Security data unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/security-center</code> — {error.message}. Showing bundled
-						snapshot.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			<div
 				className={cx(
 					s.gridOverlay,

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import MobileMoney from "@/features/transaction-dashboard/mobile-money/pages/MobileMoney";
+import MobileMoney from "@/features/dashboards/transaction-dashboard/mobile-money/pages/MobileMoney";
 
 /**
  * app.mobile-money.tsx — Mobile Money & PSP.

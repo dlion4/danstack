@@ -9,7 +9,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
-import d from "@/features/shell/styles/dashboard.module.css";
+import d from "@/features/Layouts/shell/styles/dashboard.module.css";
 import { useDevShell } from "../data/devLayoutContext";
 import {
 	cx,

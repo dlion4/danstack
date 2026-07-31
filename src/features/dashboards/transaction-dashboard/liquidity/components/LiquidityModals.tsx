@@ -17,6 +17,7 @@
  * ========================================================================== */
 "use client";
 import { useEffect, useState } from "react";
+import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	FlowModal,
 	ModalShell,
@@ -25,8 +26,7 @@ import {
 	SimpleModal,
 	TabbedModal,
 	useReactModal,
-} from "../../../../shared/components/modals";
-import { cx } from "../../../shell/data/shellData";
+} from "../../../../src/shared/components/modals";
 import styles from "../styles/liquidity.module.css";
 
 const s = styles as Record<string, string>;

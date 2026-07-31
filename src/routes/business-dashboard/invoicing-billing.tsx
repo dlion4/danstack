@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import InvoicingBilling from "@/features/business-dashboard/invoicing-billing/pages/InvoicingBilling";
+import InvoicingBilling from "@/features/dashboards/business-dashboard/invoicing-billing/pages/InvoicingBilling";
 
 /**
  * business-dashboard/invoicing-billing.tsx — Invoicing & Billing (Page 3.4).

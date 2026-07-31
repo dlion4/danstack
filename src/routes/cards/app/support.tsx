@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Support from "@/features/card-dashboard/support/pages/support";
+import Support from "@/features/dashboards/card-dashboard/support/pages/support";
 
 /**
  * app.support.tsx — Card Support (Page 5.10 Part 2)

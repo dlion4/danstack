@@ -12,7 +12,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { cx } from "../../../shell/data/shellData";
+import { cx } from "@/features/Layouts/shell/data/shellData";
 import OpsSystemModals, {
 	initialModalsState,
 	type ModalKey,

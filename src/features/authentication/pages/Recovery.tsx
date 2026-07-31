@@ -27,7 +27,6 @@
  *   strength innerHTML updates ......... derived data render (.map())
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -129,23 +128,11 @@ const initialMockData: RecoveryConfig = {
 		"We'll send a secure link to reset your password. Link expires in 15 minutes.",
 	resendSeconds: 60,
 	magicRedirectMs: 3000,
-	loginRoute: "/login",
+	loginRoute: "/auth/login",
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchRecoveryConfig(): Promise<RecoveryConfig> {
-	const response = await fetch("/api/recovery-config", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`Recovery config API responded HTTP ${response.status}`);
-	return response.json() as Promise<RecoveryConfig>;
-}
-
-/* --------------------------------------------------------------------------
- * Helpers
+ * 2. Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
 const cx = (...parts: Array<string | false | null | undefined>) =>
@@ -166,21 +153,8 @@ function strengthOf(password: string): boolean[] {
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Recovery() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-recovery-config"],
-		queryFn: fetchRecoveryConfig,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- wizard state (legacy currentStep / selectedMethod) ---------- */
 	const [step, setStep] = useState(1); // 1 method · 2 verify · 3 reset · 0 success
@@ -359,43 +333,6 @@ export default function Recovery() {
 	 * ---------------------------------------------------------------------- */
 	return (
 		<div className={s.recoveryPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading recovery configuration…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Recovery config unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/recovery-config</code> — {error.message}. Using bundled
-						configuration.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			{/* background blobs (legacy fixed blobs) */}
 			<div
 				className={s.blob}

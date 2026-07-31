@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import OpenBanking from "@/features/business-dashboard/open-banking/pages/OpenBanking";
+import OpenBanking from "@/features/dashboards/business-dashboard/open-banking/pages/OpenBanking";
 
 /**
  * business-dashboard/open-banking.tsx — Open Banking & Account Aggregation (Page 3.10).

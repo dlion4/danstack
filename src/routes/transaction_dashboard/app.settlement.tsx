@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Settlement from "@/features/transaction-dashboard/settlement/pages/Settlement";
+import Settlement from "@/features/dashboards/transaction-dashboard/settlement/pages/Settlement";
 
 /**
  * app.settlement.tsx — Settlement & Clearing.

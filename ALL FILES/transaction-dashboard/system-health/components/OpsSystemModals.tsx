@@ -8,7 +8,7 @@
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
-import { cx } from "../../../shell/data/shellData";
+import { cx } from "@/features/Layouts/shell/data/shellData";
 import styles from "../styles/systemHealth.module.css";
 
 const s = styles as Record<string, string>;

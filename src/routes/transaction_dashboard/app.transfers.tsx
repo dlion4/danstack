@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import TransferManagement from "@/features/transaction-dashboard/transfer-management/pages/TransferManagement";
+import TransferManagement from "@/features/dashboards/transaction-dashboard/transfer-management/pages/TransferManagement";
 
 /**
  * app.transfers.tsx — alias route for Transfer Management.

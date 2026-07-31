@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import CardSecurityFraudPrevention from "@/features/card-dashboard/CardSecurityFraudPrevention/pages/CardSecurityFraudPrevention";
+import CardSecurityFraudPrevention from "@/features/dashboards/card-dashboard/CardSecurityFraudPrevention/pages/CardSecurityFraudPrevention";
 
 /**
  * app.card-security-fraud-prevention.tsx — Card Security & Fraud Prevention (Page 5.7)

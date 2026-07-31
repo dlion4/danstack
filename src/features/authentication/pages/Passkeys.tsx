@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -306,29 +305,14 @@ function detectDeviceName() {
 	return "This device passkey";
 }
 
-/* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
-async function fetchPasskeyConfig(): Promise<PasskeyConfig> {
-	const res = await fetch("/api/passkey-config");
-	if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-	const json = (await res.json()) as Partial<PasskeyConfig>;
-	return { ...initialMockData, ...json };
-}
-
 export default function Passkeys() {
-	const { data, isLoading, error } = useQuery({
-		queryKey: ["paymo-passkey-config"],
-		queryFn: fetchPasskeyConfig,
-		retry: 1,
-		staleTime: 60_000,
-	});
-	const config = data ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const config = initialMockData;
 
 	const rootRef = useRef<HTMLDivElement | null>(null);
 	const wizardSectionRef = useRef<HTMLElement | null>(null);
 	const manageSectionRef = useRef<HTMLElement | null>(null);
 	const nameInputRef = useRef<HTMLInputElement | null>(null);
-
-	const [errorDismissed, setErrorDismissed] = useState(false);
 
 	/* ---------- passkeys persisted in localStorage (legacy behavior) ---------- */
 	const [passkeys, setPasskeys] = useState<Passkey[]>(() => {
@@ -623,40 +607,6 @@ export default function Passkeys() {
 					animationDelay: "-6s",
 				}}
 			/>
-
-			{/* ---------- query error banner (non-breaking fallback) ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load passkey configuration.</strong> Showing the
-					built-in defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading passkey configuration…
-					</div>
-				</div>
-			)}
 
 			<div className={`container ${styles.authPanel}`}>
 				{/* ================= HERO ================= */}

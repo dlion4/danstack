@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Liquidity from "@/features/transaction-dashboard/liquidity/pages/Liquidity";
+import Liquidity from "@/features/dashboards/transaction-dashboard/liquidity/pages/Liquidity";
 
 /**
  * app.liquidity.tsx — Liquidity & Float Management (Page 1.5).

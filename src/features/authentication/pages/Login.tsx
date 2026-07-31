@@ -24,7 +24,6 @@
  *   social-btn innerHTML ............ socialStatus record keyed by provider
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -200,19 +199,7 @@ const initialMockData = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — swap URL when the backend is ready.
- * ------------------------------------------------------------------------ */
-async function fetchAuthConfig() {
-	const response = await fetch("/api/auth-config", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`Auth config API responded HTTP ${response.status}`);
-	return response.json() as Promise<typeof initialMockData>;
-}
-
-/* --------------------------------------------------------------------------
- * Helpers
+ * 2. Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
 const cx = (...parts: Array<string | false | null | undefined>) =>
@@ -228,21 +215,8 @@ function validIdentifier(value: string): boolean {
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Login() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-auth-config"],
-		queryFn: fetchAuthConfig,
-		staleTime: 5 * 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable so the page
-	// never breaks; the error banner below surfaces the failure state.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- state (replaces legacy globals/getElementById) ---------- */
 	const [toast, setToast] = useState<{
@@ -396,9 +370,8 @@ export default function Login() {
 			}
 			setWelcomeName("Amara");
 			later(() => {
-				showToast("Welcome back, Amara 👋", "ok");
-				setPasskeyStatus("idle");
-			}, 1800);
+				window.location.assign("/auth/hub");
+			}, 600);
 		}, 2200);
 	}, [passkeyStatus, showToast, later]);
 
@@ -415,14 +388,14 @@ export default function Login() {
 		setPwSubmitStatus("verifying");
 		later(() => {
 			setPwSubmitStatus("mfa");
-			showToast("Password verified. Redirecting to MFA challenge…", "ok");
+			showToast("Password verified. Redirecting to hub…", "ok");
 			try {
 				localStorage.setItem("paymo_user_name", pwEmail.split("@")[0]);
 			} catch {
 				/* noop */
 			}
 			setWelcomeName(pwEmail.split("@")[0]);
-			later(() => setPwSubmitStatus("idle"), 2000);
+			window.location.assign("/auth/hub");
 		}, 1600);
 	};
 
@@ -449,7 +422,7 @@ export default function Login() {
 						/* noop */
 					}
 					setWelcomeName("Amara");
-					later(resetPin, 1400);
+					window.location.assign("/auth/hub");
 				}
 			}, 300);
 		},
@@ -550,21 +523,24 @@ export default function Login() {
 		later(() => {
 			showToast(`${provider.id} account verified! Signing in…`, "ok");
 			setSocialStatus((prev) => ({ ...prev, [provider.id]: "connected" }));
-			later(() => {
-				setSocialStatus((prev) => ({ ...prev, [provider.id]: "idle" }));
-			}, 2000);
+			window.location.assign("/auth/hub");
 		}, 1800);
 	};
 
 	/* ==========================================================================
 	 * AUXILIARY links — recovery/register, help, switch account, cookies, lang.
 	 * ======================================================================= */
-	const handleGoto = (dest: "register" | "recovery") => {
+	const handleGoto = (
+		dest: "register" | "recovery" | "passkeys" | "account-status",
+	) => {
 		const map = {
-			register: "Create Account",
-			recovery: "Password / PIN Recovery",
-		};
-		showToast(`Redirecting to ${map[dest]} page…`, "info");
+			register: "/auth/register",
+			recovery: "/auth/recovery",
+			passkeys: "/auth/passkeys",
+			"account-status": "/auth/account-status",
+		} as const;
+		showToast("Redirecting…", "info");
+		window.location.assign(map[dest]);
 	};
 
 	const handleSwitchAccount = () => {
@@ -654,43 +630,6 @@ export default function Login() {
 	 * ------------------------------------------------------------------------ */
 	return (
 		<div className={s.authPage}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading auth configuration…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner (falls back to mock config) ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Auth config unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/auth-config</code> — {error.message}. Using bundled
-						sign-in configuration.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			<div className={s.authWrap}>
 				{/* ================= LEFT BRAND PANEL ================= */}
 				<div className={s.authLeft}>
@@ -888,10 +827,7 @@ export default function Login() {
 											href="#"
 											onClick={(e) => {
 												e.preventDefault();
-												showToast(
-													"Passkey setup opens after your first sign-in.",
-													"info",
-												);
+												handleGoto("passkeys");
 											}}
 										>
 											Set one up after login
@@ -1279,7 +1215,7 @@ export default function Login() {
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										showToast("Opening support assistant…", "info");
+										handleGoto("account-status");
 									}}
 								>
 									Need help?
@@ -1306,8 +1242,12 @@ export default function Login() {
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										if (link.action === "cookie")
-											showToast("Cookie settings opened.", "info");
+										showToast(
+											link.action === "cookie"
+												? "Cookie settings opened."
+												: `${link.label} — more details coming soon.`,
+											"info",
+										);
 									}}
 								>
 									{link.label}

@@ -1012,3 +1012,26 @@
 		transition: none !important;
 	}
 }
+
+/* ---------- toast ---------- */
+.toastPaymo {
+	position: fixed;
+	bottom: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%) translateY(140%);
+	z-index: 1080;
+	padding: 0.9rem 1.4rem;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	font-size: 0.88rem;
+	font-weight: 500;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	max-width: 90vw;
+	color: var(--rm-ink-1);
+}
+
+.toastShow {
+	transform: translateX(-50%) translateY(0);
+}

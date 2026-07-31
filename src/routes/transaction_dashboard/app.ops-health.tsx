@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import OpsSystem from "@/features/transaction-dashboard/system-health/pages/OpsSystem";
+import OpsSystem from "@/features/dashboards/transaction-dashboard/system-health/pages/OpsSystem";
 
 /**
  * app.mobile-money.tsx — Mobile Money & PSP.

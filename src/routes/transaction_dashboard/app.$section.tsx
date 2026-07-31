@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ModulePage from "@/features/shell/pages/ModulePage";
+// import ModulePage from "@/features/Layouts/shell/pages/ModulePage";
+import ModulePage from "@/features/Layouts/shell/pages/ModulePage";
 
 /**
  * app.$section.tsx — generic /app/<section> destination.

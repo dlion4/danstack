@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Analytics from "@/features/transaction-dashboard/analytics/pages/Analytics";
+import Analytics from "@/features/dashboards/transaction-dashboard/analytics/pages/Analytics";
+// import Analytics from "@/features/dashboards/transaction-dashboard/analytics/pages/Analytics";
 
 /**
  * app.analytics.tsx — Transaction Analytics.

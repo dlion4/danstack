@@ -29,7 +29,6 @@
  *   hexToRgba() inline helper ............ kept verbatim per card render
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -147,7 +146,7 @@ const initialMockData: HubConfig = {
 				"Reconciliation exports by market",
 			],
 			actions: ["View transactions", "Export CSV", "Resolve alerts"],
-			url: "#transactions-dashboard",
+			url: "/transaction_dashboard/app/",
 		},
 		{
 			id: "wallet",
@@ -173,7 +172,7 @@ const initialMockData: HubConfig = {
 				"Card controls and spend limits",
 			],
 			actions: ["Send money", "Freeze card", "Pay bill"],
-			url: "#wallet-dashboard",
+			url: "/cards/app/",
 		},
 		{
 			id: "business",
@@ -199,7 +198,7 @@ const initialMockData: HubConfig = {
 				"Role-based staff permissions",
 			],
 			actions: ["Create invoice", "Approve payroll", "Invite staff"],
-			url: "#business-dashboard",
+			url: "/business-dashboard/",
 		},
 		{
 			id: "developer",
@@ -225,7 +224,7 @@ const initialMockData: HubConfig = {
 				"Production access requests",
 			],
 			actions: ["Rotate key", "Replay webhook", "Open docs"],
-			url: "#developer-console",
+			url: "/dev-dashboard/",
 		},
 		{
 			id: "treasury",
@@ -251,7 +250,7 @@ const initialMockData: HubConfig = {
 				"ERP-ready treasury reports",
 			],
 			actions: ["Lock FX", "Move funds", "Export report"],
-			url: "#treasury-dashboard",
+			url: "/business-dashboard/multi-currency-treasury",
 		},
 		{
 			id: "admin",
@@ -277,7 +276,7 @@ const initialMockData: HubConfig = {
 				"Spending and transaction limits",
 			],
 			actions: ["Invite user", "Review logs", "Set limits"],
-			url: "#admin-dashboard",
+			url: "/business-dashboard/settings-administration",
 		},
 		{
 			id: "compliance",
@@ -303,7 +302,7 @@ const initialMockData: HubConfig = {
 				"Regulatory report exports",
 			],
 			actions: ["Review case", "Export STR", "Update policy"],
-			url: "#compliance-center",
+			url: "/transaction_dashboard/app/compliance",
 		},
 		{
 			id: "apps",
@@ -329,7 +328,7 @@ const initialMockData: HubConfig = {
 				"Marketplace listing management",
 			],
 			actions: ["Register app", "Request prod", "View analytics"],
-			url: "#app-management",
+			url: "/dev-dashboard/developer-dashboard",
 		},
 		{
 			id: "loans",
@@ -355,7 +354,7 @@ const initialMockData: HubConfig = {
 				"Credit score monitoring where available",
 			],
 			actions: ["Apply", "Make payment", "View score"],
-			url: "#loans-credit",
+			url: "/business/",
 		},
 	],
 
@@ -408,19 +407,7 @@ const initialMockData: HubConfig = {
 };
 
 /* --------------------------------------------------------------------------
- * 2. API LAYER — point at the real backend when ready.
- * ------------------------------------------------------------------------ */
-async function fetchHubContent(): Promise<HubConfig> {
-	const response = await fetch("/api/hub-content", {
-		headers: { Accept: "application/json" },
-	});
-	if (!response.ok)
-		throw new Error(`Hub content API responded HTTP ${response.status}`);
-	return response.json() as Promise<HubConfig>;
-}
-
-/* --------------------------------------------------------------------------
- * Helpers
+ * 2. Helpers
  * ------------------------------------------------------------------------ */
 const s = styles as Record<string, string>;
 const cx = (...parts: Array<string | false | null | undefined>) =>
@@ -448,21 +435,8 @@ function hexToRgba(hex: string, alpha: number): string {
  * 3. COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Hub() {
-	/* ---------- TanStack Query ---------- */
-	const {
-		data: apiData,
-		error,
-		isLoading,
-	} = useQuery({
-		queryKey: ["paymo-hub-content"],
-		queryFn: fetchHubContent,
-		staleTime: 2 * 60_000,
-		retry: 1,
-	});
-
-	// Falls back to initialMockData while the API is unreachable; the error
-	// banner below surfaces that failure state to the user.
-	const content = apiData ?? initialMockData;
+	/* ---------- bundled page configuration ---------- */
+	const content = initialMockData;
 
 	/* ---------- state (legacy module-level lets) ---------- */
 	const [selectedId, setSelectedId] = useState<string>(() => {
@@ -605,7 +579,7 @@ export default function Hub() {
 
 	const handleOpenSelected = () => {
 		showToast("Opening dashboard", `Routing securely to ${selected.title}.`);
-		window.location.hash = selected.url.replace("#", "");
+		window.location.assign(selected.url);
 	};
 
 	const handleTour = () => {
@@ -654,43 +628,6 @@ export default function Hub() {
 	 * ---------------------------------------------------------------------- */
 	return (
 		<div className={s.hubPage} ref={revealRef}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading your dashboards…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div
-					className={cx(
-						"alert alert-danger alert-dismissible fade show",
-						s.errorBanner,
-					)}
-					role="alert"
-				>
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Hub content unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/hub-content</code> — {error.message}. Using bundled
-						configuration.
-					</div>
-					<button
-						type="button"
-						className="btn-close"
-						data-bs-dismiss="alert"
-						aria-label="Close"
-					/>
-				</div>
-			)}
-
 			{/* legacy grid overlay + blobs (absolute inside shell) */}
 			<div
 				className={s.gridOverlay}

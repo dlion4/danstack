@@ -5,6 +5,7 @@
  * Each modal is state-driven via the shared modal primitives.
  * ========================================================================== */
 "use client";
+import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	Field,
 	FlowModal,
@@ -13,9 +14,8 @@ import {
 	SelectField,
 	SimpleModal,
 	TabbedModal,
-} from "../../../../shared/components/modals";
-import shared from "../../../../shared/styles/appPage.module.css";
-import { cx } from "../../../shell/data/shellData";
+} from "../../../../src/shared/components/modals";
+import shared from "../../../../src/shared/styles/appPage.module.css";
 import type { PaymentRailsContent } from "../pages/PaymentRails";
 
 const s = shared as Record<string, string>;

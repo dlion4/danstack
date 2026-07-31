@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import TransferOverview from "@/features/transaction-dashboard/transfer-overview/pages/TransferOverview";
+import TransferOverview from "@/features/dashboards/transaction-dashboard/transfer-overview/pages/TransferOverview";
 
 /**
  * app.transfer-overview.tsx — Transfer Overview Command Center (Page 1.1).

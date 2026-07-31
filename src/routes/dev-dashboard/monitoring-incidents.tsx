@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import MonitoringIncidents from "@/features/dev-dashboard/monitoring-incidents/pages/MonitoringIncidents";
+import MonitoringIncidents from "@/features/dashboards/dev-dashboard/monitoring-incidents/pages/MonitoringIncidents";
 
 // 4.8 — Monitoring, Alerting & Incident Management.
 export const Route = createFileRoute("/dev-dashboard/monitoring-incidents")({

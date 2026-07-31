@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import CommandCenter from "@/features/business-dashboard/command-center/pages/CommandCenter";
+import CommandCenter from "@/features/dashboards/business-dashboard/command-center/pages/CommandCenter";
 
 /**
  * business-dashboard/command-center.tsx — Business Command Center (Page 3.1).
