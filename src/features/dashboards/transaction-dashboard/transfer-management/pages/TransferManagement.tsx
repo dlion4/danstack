@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
-import s from "@/src/shared/styles/appPage.module.css";
+import s from "../../shared/styles/appPage.module.css";
 import {
 	type TransferManagementData,
 	TransferManagementModals,
@@ -610,7 +610,7 @@ export default function TransferManagement() {
 
 				{/* hero + stats */}
 				<div className="row g-3">
-					<div className="col-lg-4">
+					<div className="col-lg-3">
 						<div
 							className={cx(s.card, s.cardAccent)}
 							style={{ minHeight: 180 }}
@@ -648,7 +648,7 @@ export default function TransferManagement() {
 						</div>
 					</div>
 					{c.stats.map((stat) => (
-						<div className="col-lg-4 col-md-6" key={stat.label}>
+						<div className="col-lg-3 col-md-6" key={stat.label}>
 							<div
 								className={cx(
 									s.card,
@@ -707,7 +707,7 @@ export default function TransferManagement() {
 							))}
 						</div>
 					</div>
-					<div className="col-lg-4">
+					<div className="col-lg-3">
 						<div className={s.card}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
@@ -737,7 +737,7 @@ export default function TransferManagement() {
 							))}
 						</div>
 					</div>
-					<div className="col-lg-4">
+					<div className="col-lg-5">
 						<div className={s.card}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>

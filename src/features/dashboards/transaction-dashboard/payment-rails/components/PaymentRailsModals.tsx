@@ -6,6 +6,7 @@
  * ========================================================================== */
 "use client";
 import { cx } from "@/features/Layouts/shell/data/shellData";
+import shared from "../../shared/styles/appPage.module.css";
 import {
 	Field,
 	FlowModal,
@@ -14,8 +15,7 @@ import {
 	SelectField,
 	SimpleModal,
 	TabbedModal,
-} from "../../../../src/shared/components/modals";
-import shared from "@/src/shared/styles/appPage.module.css";
+} from "../../shared/components/modals.tsx";
 import type { PaymentRailsContent } from "../pages/PaymentRails";
 
 const s = shared as Record<string, string>;

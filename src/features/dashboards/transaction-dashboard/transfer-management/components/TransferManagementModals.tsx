@@ -5,6 +5,7 @@
  * Each modal is state-driven via the shared modal primitives.
  * ========================================================================== */
 "use client";
+import shared from "../../shared/styles/appPage.module.css";
 import {
 	FlowModal,
 	PinRow,
@@ -12,8 +13,7 @@ import {
 	SelectField,
 	SimpleModal,
 	TabbedModal,
-} from "../../../../src/shared/components/modals";
-import shared from "@/src/shared/styles/appPage.module.css";
+} from "../../shared/components/modals.tsx";
 
 const s = shared as Record<string, string>;
 

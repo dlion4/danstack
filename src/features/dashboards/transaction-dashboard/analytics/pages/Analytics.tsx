@@ -119,36 +119,8 @@ interface AnalyticsConfig {
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: AnalyticsConfig = {
-	nav: [
-		{ icon: "bi-house", to: "/dashboard", label: "Dashboard" },
-		{ icon: "bi-grid-3x3-gap", to: "/select-dashboard", label: "Hubs" },
-		{
-			icon: "bi-lightning-charge",
-			to: "/initiate-transfer",
-			label: "Transfers",
-		},
-		{ icon: "bi-wallet2", to: "/wallets", label: "Wallets" },
-		{ icon: "bi-credit-card-2-front", to: "/cards", label: "Cards" },
-		{
-			icon: "bi-bar-chart-line",
-			to: "/analytics",
-			label: "Analytics",
-			active: true,
-			dot: true,
-		},
-		{ icon: "bi-gear", to: "/settings", label: "Settings" },
-	],
-	headerTitle: "Transaction Analytics & Reporting",
-	headerSub:
-		"Comprehensive insights, trends, custom reports and scheduled exports for all bank-to-bank activity",
-	searchPlaceholder:
-		"Search reports, merchants, failed transactions, categories...",
-	user: {
-		initials: "JK",
-		name: "James K.",
-		role: "Analytics Lead",
-		headerInitials: "MN",
-	},
+
+
 	pageCode: "",
 	pageTitle: "Transaction Analytics & Reporting",
 	pageSub:
@@ -676,7 +648,7 @@ export default function Analytics() {
 			)}
 
 			{/* ======================= SIDEBAR ======================= */}
-			<aside className={styles.sidebar}>
+			{/* <aside className={styles.sidebar}>
 				<div className={styles.sidebarLogo}>P</div>
 				<nav className={styles.sidebarNav}>
 					{config.nav.map((item) => (
@@ -701,11 +673,11 @@ export default function Analytics() {
 				>
 					<i className="bi bi-question-circle" />
 				</Link>
-			</aside>
+			</aside> */}
 
 			<div className={styles.main}>
 				{/* ======================= HEADER ======================= */}
-				<header className={styles.header}>
+				{/* <header className={styles.header}>
 					<div className={styles.headerTitle} style={{ flexShrink: 0 }}>
 						<div className="d-flex align-items-center gap-2">
 							<div
@@ -766,7 +738,7 @@ export default function Analytics() {
 							</div>
 						</button>
 					</div>
-				</header>
+				</header> */}
 
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>

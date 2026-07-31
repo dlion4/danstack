@@ -24,7 +24,7 @@ import {
 	ModalShell,
 	ReviewRow,
 	SimpleModal,
-} from "../../../../src/shared/components/modals";
+} from "../../shared/components/modals.tsx";
 import styles from "../styles/reconciliation.module.css";
 
 const s = styles as Record<string, string>;

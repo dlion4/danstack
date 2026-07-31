@@ -26,7 +26,8 @@ import {
 	SimpleModal,
 	TabbedModal,
 	useReactModal,
-} from "../../../../src/shared/components/modals";
+	// } from "../../shared/components/modals.tsx";
+} from "../../shared/components/modals";
 import styles from "../styles/liquidity.module.css";
 
 const s = styles as Record<string, string>;
