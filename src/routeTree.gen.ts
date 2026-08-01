@@ -70,6 +70,7 @@ import { Route as AuthHubRouteImport } from './routes/auth/hub'
 import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 import { Route as Transaction_dashboardAppIndexRouteImport } from './routes/transaction_dashboard/app.index'
+import { Route as Transaction_dashboardAppWalletActivationRouteImport } from './routes/transaction_dashboard/app.wallet-activation'
 import { Route as Transaction_dashboardAppTransfersRouteImport } from './routes/transaction_dashboard/app.transfers'
 import { Route as Transaction_dashboardAppTransferOverviewRouteImport } from './routes/transaction_dashboard/app.transfer-overview'
 import { Route as Transaction_dashboardAppTransferManagementRouteImport } from './routes/transaction_dashboard/app.transfer-management'
@@ -102,6 +103,7 @@ import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/
 import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
 import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
 import { Route as CardsAppAccountSettingsRouteImport } from './routes/cards/app/account-settings'
+import { Route as Activate_dashboardAppActivateRouteImport } from './routes/activate_dashboard/app.activate'
 
 const UtilityRoute = UtilityRouteImport.update({
   id: '/utility',
@@ -431,6 +433,12 @@ const Transaction_dashboardAppIndexRoute =
     path: '/',
     getParentRoute: () => Transaction_dashboardAppRoute,
   } as any)
+const Transaction_dashboardAppWalletActivationRoute =
+  Transaction_dashboardAppWalletActivationRouteImport.update({
+    id: '/wallet-activation',
+    path: '/wallet-activation',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
 const Transaction_dashboardAppTransfersRoute =
   Transaction_dashboardAppTransfersRouteImport.update({
     id: '/transfers',
@@ -621,6 +629,12 @@ const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
   path: '/account-settings',
   getParentRoute: () => CardsAppRoute,
 } as any)
+const Activate_dashboardAppActivateRoute =
+  Activate_dashboardAppActivateRouteImport.update({
+    id: '/activate_dashboard/app/activate',
+    path: '/activate_dashboard/app/activate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
@@ -681,6 +695,7 @@ export interface FileRoutesByFullPath {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
+  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -713,6 +728,7 @@ export interface FileRoutesByFullPath {
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
   '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app/wallet-activation': typeof Transaction_dashboardAppWalletActivationRoute
   '/transaction_dashboard/app/': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -768,6 +784,7 @@ export interface FileRoutesByTo {
   '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
+  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -800,6 +817,7 @@ export interface FileRoutesByTo {
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
   '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app/wallet-activation': typeof Transaction_dashboardAppWalletActivationRoute
   '/transaction_dashboard/app': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRoutesById {
@@ -864,6 +882,7 @@ export interface FileRoutesById {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
+  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -896,6 +915,7 @@ export interface FileRoutesById {
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
   '/transaction_dashboard/app/transfers': typeof Transaction_dashboardAppTransfersRoute
+  '/transaction_dashboard/app/wallet-activation': typeof Transaction_dashboardAppWalletActivationRoute
   '/transaction_dashboard/app/': typeof Transaction_dashboardAppIndexRoute
 }
 export interface FileRouteTypes {
@@ -959,6 +979,7 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
+    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -991,6 +1012,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
     | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app/wallet-activation'
     | '/transaction_dashboard/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1046,6 +1068,7 @@ export interface FileRouteTypes {
     | '/dev-dashboard'
     | '/dev'
     | '/utility'
+    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -1078,6 +1101,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
     | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app/wallet-activation'
     | '/transaction_dashboard/app'
   id:
     | '__root__'
@@ -1141,6 +1165,7 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
+    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -1173,6 +1198,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
     | '/transaction_dashboard/app/transfers'
+    | '/transaction_dashboard/app/wallet-activation'
     | '/transaction_dashboard/app/'
   fileRoutesById: FileRoutesById
 }
@@ -1195,6 +1221,7 @@ export interface RootRouteChildren {
   AuthSecurityRoute: typeof AuthSecurityRoute
   CardsAppRoute: typeof CardsAppRouteWithChildren
   Transaction_dashboardAppRoute: typeof Transaction_dashboardAppRouteWithChildren
+  Activate_dashboardAppActivateRoute: typeof Activate_dashboardAppActivateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1626,6 +1653,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Transaction_dashboardAppIndexRouteImport
       parentRoute: typeof Transaction_dashboardAppRoute
     }
+    '/transaction_dashboard/app/wallet-activation': {
+      id: '/transaction_dashboard/app/wallet-activation'
+      path: '/wallet-activation'
+      fullPath: '/transaction_dashboard/app/wallet-activation'
+      preLoaderRoute: typeof Transaction_dashboardAppWalletActivationRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
     '/transaction_dashboard/app/transfers': {
       id: '/transaction_dashboard/app/transfers'
       path: '/transfers'
@@ -1850,6 +1884,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardsAppAccountSettingsRouteImport
       parentRoute: typeof CardsAppRoute
     }
+    '/activate_dashboard/app/activate': {
+      id: '/activate_dashboard/app/activate'
+      path: '/activate_dashboard/app/activate'
+      fullPath: '/activate_dashboard/app/activate'
+      preLoaderRoute: typeof Activate_dashboardAppActivateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -2056,6 +2097,7 @@ interface Transaction_dashboardAppRouteChildren {
   Transaction_dashboardAppTransferManagementRoute: typeof Transaction_dashboardAppTransferManagementRoute
   Transaction_dashboardAppTransferOverviewRoute: typeof Transaction_dashboardAppTransferOverviewRoute
   Transaction_dashboardAppTransfersRoute: typeof Transaction_dashboardAppTransfersRoute
+  Transaction_dashboardAppWalletActivationRoute: typeof Transaction_dashboardAppWalletActivationRoute
   Transaction_dashboardAppIndexRoute: typeof Transaction_dashboardAppIndexRoute
 }
 
@@ -2097,6 +2139,8 @@ const Transaction_dashboardAppRouteChildren: Transaction_dashboardAppRouteChildr
       Transaction_dashboardAppTransferOverviewRoute,
     Transaction_dashboardAppTransfersRoute:
       Transaction_dashboardAppTransfersRoute,
+    Transaction_dashboardAppWalletActivationRoute:
+      Transaction_dashboardAppWalletActivationRoute,
     Transaction_dashboardAppIndexRoute: Transaction_dashboardAppIndexRoute,
   }
 
@@ -2124,6 +2168,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSecurityRoute: AuthSecurityRoute,
   CardsAppRoute: CardsAppRouteWithChildren,
   Transaction_dashboardAppRoute: Transaction_dashboardAppRouteWithChildren,
+  Activate_dashboardAppActivateRoute: Activate_dashboardAppActivateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

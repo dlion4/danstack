@@ -109,7 +109,7 @@ export default function DeveloperDashboard() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
@@ -128,9 +128,8 @@ export default function DeveloperDashboard() {
 							</button>
 							<button
 								type="button"
-								className={`${s.envBtn} ${s.envBtnLive} ${
-									env === "live" ? s.envBtnActive : ""
-								}`}
+								className={`${s.envBtn} ${s.envBtnLive} ${env === "live" ? s.envBtnActive : ""
+									}`}
 								onClick={() => setEnv("live")}
 							>
 								LIVE
@@ -406,9 +405,8 @@ export default function DeveloperDashboard() {
 										<button
 											key={sn.key}
 											type="button"
-											className={`${s.tabPill} ${
-												snippetTab === sn.key ? s.tabPillActive : ""
-											}`}
+											className={`${s.tabPill} ${snippetTab === sn.key ? s.tabPillActive : ""
+												}`}
 											onClick={() => setSnippetTab(sn.key)}
 										>
 											{sn.label}

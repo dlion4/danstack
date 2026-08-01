@@ -74,7 +74,7 @@ export default function ApiReference() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>

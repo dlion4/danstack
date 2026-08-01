@@ -85,7 +85,7 @@ export default function WebhooksEvents() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
@@ -160,12 +160,12 @@ export default function WebhooksEvents() {
 										style={
 											st.variant === "code"
 												? {
-														margin: 0,
-														fontSize: 11,
-														color: "var(--pm-muted)",
-														textTransform: "uppercase",
-														letterSpacing: "0.05em",
-													}
+													margin: 0,
+													fontSize: 11,
+													color: "var(--pm-muted)",
+													textTransform: "uppercase",
+													letterSpacing: "0.05em",
+												}
 												: { color: st.labelColor }
 										}
 									>
@@ -183,9 +183,8 @@ export default function WebhooksEvents() {
 
 									{st.badge && (
 										<span
-											className={`${s.badge} ${
-												st.badge.tone !== "custom" ? s[st.badge.tone] : ""
-											}`}
+											className={`${s.badge} ${st.badge.tone !== "custom" ? s[st.badge.tone] : ""
+												}`}
 											style={
 												st.badge.tone === "custom"
 													? { background: st.badge.bg, color: st.badge.color }
@@ -560,9 +559,8 @@ export default function WebhooksEvents() {
 									>
 										{logoFailed[st.kind] ? (
 											<i
-												className={`bi ${
-													st.kind === "kafka" ? "bi-diagram-3" : "bi-cloud"
-												} d-block mb-3`}
+												className={`bi ${st.kind === "kafka" ? "bi-diagram-3" : "bi-cloud"
+													} d-block mb-3`}
 												style={{ fontSize: 34, color: "var(--pm-primary)" }}
 											/>
 										) : (
@@ -588,9 +586,8 @@ export default function WebhooksEvents() {
 											</span>
 											<button
 												type="button"
-												className={`${s.btnPm} ${s.btnSm} ${
-													st.actionPrimary ? s.btnPmP : ""
-												}`}
+												className={`${s.btnPm} ${s.btnSm} ${st.actionPrimary ? s.btnPmP : ""
+													}`}
 												onClick={() => open(st.modal)}
 											>
 												{st.actionLabel}
@@ -742,9 +739,8 @@ export default function WebhooksEvents() {
 												className="d-inline-flex align-items-center gap-1"
 											>
 												<span
-													className={`${s.retryChip} ${
-														i === c.retryChain.length - 1 ? s.retryChipEnd : ""
-													}`}
+													className={`${s.retryChip} ${i === c.retryChain.length - 1 ? s.retryChipEnd : ""
+														}`}
 												>
 													{step}
 												</span>

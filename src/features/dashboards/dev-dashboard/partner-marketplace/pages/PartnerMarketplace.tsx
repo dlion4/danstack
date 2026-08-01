@@ -63,7 +63,7 @@ export default function PartnerMarketplace() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
@@ -316,9 +316,8 @@ export default function PartnerMarketplace() {
 										</div>
 										<button
 											type="button"
-											className={`${s.btnPm} ${s.btnSm} ${
-												o.primary ? s.btnPmP : s.btnOutline
-											}`}
+											className={`${s.btnPm} ${s.btnSm} ${o.primary ? s.btnPmP : s.btnOutline
+												}`}
 											onClick={() => open(o.modal)}
 										>
 											{o.actionLabel}

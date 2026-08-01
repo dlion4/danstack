@@ -22,6 +22,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
+// import { cx } from "../../../../Layouts/shell/data/shellData";
 import { cx } from "../../../../Layouts/shell/data/shellData";
 import s from "../styles/appPage.module.css";
 
@@ -628,4 +629,63 @@ export function Field({
 			/>
 		</div>
 	);
+}
+
+/* --------------------------------------------------------------------------
+ * Toggle — accessible switch
+ * ------------------------------------------------------------------------ */
+
+export interface ToggleProps {
+	checked: boolean;
+	onChange: (next: boolean) => void;
+	disabled?: boolean;
+	label?: string;
+	description?: string;
+	danger?: boolean;
+}
+
+export function Toggle({ checked, onChange, disabled, label, description, danger }: ToggleProps) {
+	return (
+		<div className={styles.switchRow}>
+			{(label || description) && (
+				<div>
+					{label && <div className={styles.switchLabel}>{label}</div>}
+					{description && <div className={styles.switchDescription}>{description}</div>}
+				</div>
+			)}
+			<button
+				type="button"
+				role="switch"
+				aria-checked={checked}
+				disabled={disabled}
+				className={`${styles.toggle} ${checked ? (danger ? styles.toggleOnDanger : styles.toggleOn) : ""}`}
+				onClick={() => onChange(!checked)}
+				style={{ opacity: disabled ? 0.5 : 1 }}
+			>
+				<span className={styles.toggleKnob} />
+			</button>
+		</div>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * InfoBox — contextual hint boxes
+ * ------------------------------------------------------------------------ */
+
+export function InfoBox({
+	variant = "info",
+	children,
+}: {
+	variant?: "info" | "success" | "warning" | "danger";
+	children: ReactNode;
+}) {
+	const cls =
+		variant === "success"
+			? `${styles.hintBox} ${styles.hintBoxSuccess}`
+			: variant === "warning"
+				? `${styles.hintBox} ${styles.hintBoxWarning}`
+				: variant === "danger"
+					? `${styles.hintBox} ${styles.hintBoxDanger}`
+					: `${styles.hintBox} ${styles.hintBoxInfo}`;
+	return <div className={cls}>{children}</div>;
 }

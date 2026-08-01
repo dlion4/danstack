@@ -273,7 +273,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-shield-lock" style={{ color: 'var(--danger)' }}></i>
-								18.3 — Security & Authentication
+								Security & Authentication
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Password, 2FA, PIN, security questions, login history and trusted devices.
@@ -324,7 +324,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-bell" style={{ color: 'var(--warning)' }}></i>
-								18.4 — Notification Preferences
+								Notification Preferences
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Control how and when you receive alerts across email, SMS, push and WhatsApp.
@@ -378,7 +378,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-laptop" style={{ color: 'var(--purple)' }}></i>
-								18.5 — Linked Devices & Active Sessions
+								Linked Devices & Active Sessions
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								View and manage all devices currently logged into your account.
@@ -458,7 +458,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-file-earmark-check" style={{ color: 'var(--success)' }}></i>
-								18.6 — KYC & Document Vault
+								KYC & Document Vault
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Upload, view and manage all identity and address verification documents.
@@ -704,7 +704,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-lock" style={{ color: 'var(--purple)' }}></i>
-								18.7 — Privacy & Data Controls
+								Privacy & Data Controls
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Manage data sharing, marketing preferences, data export and deletion requests.
@@ -800,7 +800,7 @@ export default function AccountSettings() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-gear-wide-connected" style={{ color: 'var(--danger)' }}></i>
-								18.8 — Account Administration
+								Account Administration
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Account status, closure requests, reactivation and full lifecycle management.

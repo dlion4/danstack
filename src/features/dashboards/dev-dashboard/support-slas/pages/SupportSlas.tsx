@@ -63,7 +63,7 @@ export default function SupportSlas() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
@@ -284,11 +284,10 @@ export default function SupportSlas() {
 												key={b.title}
 											>
 												<div
-													className={`p-3 border rounded h-100 ${
-														b.full
+													className={`p-3 border rounded h-100 ${b.full
 															? "d-flex justify-content-between align-items-center flex-wrap gap-2"
 															: ""
-													}`}
+														}`}
 													style={{ background: "var(--pm-surface-2)" }}
 												>
 													<div>

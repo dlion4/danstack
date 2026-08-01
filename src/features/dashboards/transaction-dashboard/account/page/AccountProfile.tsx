@@ -566,7 +566,7 @@ export default function AccountProfile() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-person-circle" style={{ color: 'var(--pri)' }}></i>
-								18.1 — Profile Overview
+								Profile Overview
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Your core identity, verification status, membership tier and quick snapshot.
@@ -876,7 +876,7 @@ export default function AccountProfile() {
 						<div>
 							<h3 className={styles.sectionTitle}>
 								<i className="bi bi-person-lines-fill" style={{ color: 'var(--info)' }}></i>
-								18.2 — Personal & Contact Details
+								Personal & Contact Details
 							</h3>
 							<p className={styles.sectionSubtitle}>
 								Update names, addresses, phone numbers, emails and emergency contacts.

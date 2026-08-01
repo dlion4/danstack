@@ -71,7 +71,7 @@ export default function MonitoringIncidents() {
 							<strong>{c.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{c.pageCode} — {c.pageTitle}
+							{c.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{c.pageSub}</p>
 					</div>
@@ -728,13 +728,12 @@ export default function MonitoringIncidents() {
 									{c.logLines.map((l) => (
 										<div
 											key={l.text}
-											className={`${s.logLine} ${
-												l.level === "warn"
+											className={`${s.logLine} ${l.level === "warn"
 													? s.logWarn
 													: l.level === "error"
 														? s.logError
 														: ""
-											}`}
+												}`}
 										>
 											{l.text}
 										</div>
