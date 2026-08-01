@@ -441,7 +441,7 @@ export default function CardSettingsSupport() {
 								<strong>{config.breadcrumb.current}</strong>
 							</div>
 							<h2 className={styles.pageH2}>
-								{config.pageCode} — {config.pageTitle}
+								{config.pageTitle}
 							</h2>
 							<p className={styles.pageSub}>{config.pageSub}</p>
 						</div>
@@ -1717,7 +1717,7 @@ export default function CardSettingsSupport() {
 																: c.nextStep === "OTP verification pending"
 																	? "changePinModal"
 																	: c.nextStep ===
-																			"Card re-frozen by cardholder"
+																		"Card re-frozen by cardholder"
 																		? "freezeCardModal"
 																		: "renewCardModal",
 														)

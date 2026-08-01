@@ -539,7 +539,7 @@ export default function PrepaidCardManagement() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

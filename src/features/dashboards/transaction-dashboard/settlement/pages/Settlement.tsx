@@ -159,8 +159,6 @@ const initialMockData: SettlementConfig = {
 	},
 	pageCode: "",
 	pageTitle: "Settlement & Clearing",
-	pageSub:
-		"Manage real-time and batch settlements, PesaLink/RTGS clearing, reconciliation, disputes, and regulatory reporting across all bank-to-bank flows.",
 	hero: {
 		live: "Settlement engine live",
 		value: "KES 2.84B settled today",
@@ -697,7 +695,7 @@ export default function Settlement() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

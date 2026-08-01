@@ -527,7 +527,7 @@ export default function PhysicalDebitCards() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>
@@ -1204,10 +1204,10 @@ export default function PhysicalDebitCards() {
 													style={
 														r.actionClass === "btnDanger"
 															? {
-																	background: "var(--pm-warning)",
-																	color: "#fff",
-																	border: "none",
-																}
+																background: "var(--pm-warning)",
+																color: "#fff",
+																border: "none",
+															}
 															: {}
 													}
 													onClick={() => setActiveModal(r.modal)}

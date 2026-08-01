@@ -37,7 +37,7 @@ export default function MobileAirtimeHub() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={s.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={s.pageSub}>{config.pageSub}</p>
 					</div>

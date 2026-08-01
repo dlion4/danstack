@@ -74,6 +74,7 @@ import { Route as Transaction_dashboardAppTransfersRouteImport } from './routes/
 import { Route as Transaction_dashboardAppTransferOverviewRouteImport } from './routes/transaction_dashboard/app.transfer-overview'
 import { Route as Transaction_dashboardAppTransferManagementRouteImport } from './routes/transaction_dashboard/app.transfer-management'
 import { Route as Transaction_dashboardAppSettlementRouteImport } from './routes/transaction_dashboard/app.settlement'
+import { Route as Transaction_dashboardAppSettingsRouteImport } from './routes/transaction_dashboard/app.settings'
 import { Route as Transaction_dashboardAppReconciliationRouteImport } from './routes/transaction_dashboard/app.reconciliation'
 import { Route as Transaction_dashboardAppPaymentRailsRouteImport } from './routes/transaction_dashboard/app.payment-rails'
 import { Route as Transaction_dashboardAppOpsHealthRouteImport } from './routes/transaction_dashboard/app.ops-health'
@@ -87,6 +88,7 @@ import { Route as Transaction_dashboardAppDisputesRouteImport } from './routes/t
 import { Route as Transaction_dashboardAppCustomersRouteImport } from './routes/transaction_dashboard/app.customers'
 import { Route as Transaction_dashboardAppComplianceRouteImport } from './routes/transaction_dashboard/app.compliance'
 import { Route as Transaction_dashboardAppAnalyticsRouteImport } from './routes/transaction_dashboard/app.analytics'
+import { Route as Transaction_dashboardAppAccountRouteImport } from './routes/transaction_dashboard/app.account'
 import { Route as Transaction_dashboardAppSectionRouteImport } from './routes/transaction_dashboard/app.$section'
 import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
 import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
@@ -453,6 +455,12 @@ const Transaction_dashboardAppSettlementRoute =
     path: '/settlement',
     getParentRoute: () => Transaction_dashboardAppRoute,
   } as any)
+const Transaction_dashboardAppSettingsRoute =
+  Transaction_dashboardAppSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
 const Transaction_dashboardAppReconciliationRoute =
   Transaction_dashboardAppReconciliationRouteImport.update({
     id: '/reconciliation',
@@ -529,6 +537,12 @@ const Transaction_dashboardAppAnalyticsRoute =
   Transaction_dashboardAppAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
+    getParentRoute: () => Transaction_dashboardAppRoute,
+  } as any)
+const Transaction_dashboardAppAccountRoute =
+  Transaction_dashboardAppAccountRouteImport.update({
+    id: '/account',
+    path: '/account',
     getParentRoute: () => Transaction_dashboardAppRoute,
   } as any)
 const Transaction_dashboardAppSectionRoute =
@@ -680,6 +694,7 @@ export interface FileRoutesByFullPath {
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/account': typeof Transaction_dashboardAppAccountRoute
   '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
   '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
   '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
@@ -693,6 +708,7 @@ export interface FileRoutesByFullPath {
   '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
   '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
   '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settings': typeof Transaction_dashboardAppSettingsRoute
   '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
@@ -765,6 +781,7 @@ export interface FileRoutesByTo {
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/account': typeof Transaction_dashboardAppAccountRoute
   '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
   '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
   '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
@@ -778,6 +795,7 @@ export interface FileRoutesByTo {
   '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
   '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
   '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settings': typeof Transaction_dashboardAppSettingsRoute
   '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
@@ -859,6 +877,7 @@ export interface FileRoutesById {
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/transaction_dashboard/app/$section': typeof Transaction_dashboardAppSectionRoute
+  '/transaction_dashboard/app/account': typeof Transaction_dashboardAppAccountRoute
   '/transaction_dashboard/app/analytics': typeof Transaction_dashboardAppAnalyticsRoute
   '/transaction_dashboard/app/compliance': typeof Transaction_dashboardAppComplianceRoute
   '/transaction_dashboard/app/customers': typeof Transaction_dashboardAppCustomersRoute
@@ -872,6 +891,7 @@ export interface FileRoutesById {
   '/transaction_dashboard/app/ops-health': typeof Transaction_dashboardAppOpsHealthRoute
   '/transaction_dashboard/app/payment-rails': typeof Transaction_dashboardAppPaymentRailsRoute
   '/transaction_dashboard/app/reconciliation': typeof Transaction_dashboardAppReconciliationRoute
+  '/transaction_dashboard/app/settings': typeof Transaction_dashboardAppSettingsRoute
   '/transaction_dashboard/app/settlement': typeof Transaction_dashboardAppSettlementRoute
   '/transaction_dashboard/app/transfer-management': typeof Transaction_dashboardAppTransferManagementRoute
   '/transaction_dashboard/app/transfer-overview': typeof Transaction_dashboardAppTransferOverviewRoute
@@ -952,6 +972,7 @@ export interface FileRouteTypes {
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/account'
     | '/transaction_dashboard/app/analytics'
     | '/transaction_dashboard/app/compliance'
     | '/transaction_dashboard/app/customers'
@@ -965,6 +986,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/ops-health'
     | '/transaction_dashboard/app/payment-rails'
     | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settings'
     | '/transaction_dashboard/app/settlement'
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
@@ -1037,6 +1059,7 @@ export interface FileRouteTypes {
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/account'
     | '/transaction_dashboard/app/analytics'
     | '/transaction_dashboard/app/compliance'
     | '/transaction_dashboard/app/customers'
@@ -1050,6 +1073,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/ops-health'
     | '/transaction_dashboard/app/payment-rails'
     | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settings'
     | '/transaction_dashboard/app/settlement'
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
@@ -1130,6 +1154,7 @@ export interface FileRouteTypes {
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/transaction_dashboard/app/$section'
+    | '/transaction_dashboard/app/account'
     | '/transaction_dashboard/app/analytics'
     | '/transaction_dashboard/app/compliance'
     | '/transaction_dashboard/app/customers'
@@ -1143,6 +1168,7 @@ export interface FileRouteTypes {
     | '/transaction_dashboard/app/ops-health'
     | '/transaction_dashboard/app/payment-rails'
     | '/transaction_dashboard/app/reconciliation'
+    | '/transaction_dashboard/app/settings'
     | '/transaction_dashboard/app/settlement'
     | '/transaction_dashboard/app/transfer-management'
     | '/transaction_dashboard/app/transfer-overview'
@@ -1628,6 +1654,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Transaction_dashboardAppSettlementRouteImport
       parentRoute: typeof Transaction_dashboardAppRoute
     }
+    '/transaction_dashboard/app/settings': {
+      id: '/transaction_dashboard/app/settings'
+      path: '/settings'
+      fullPath: '/transaction_dashboard/app/settings'
+      preLoaderRoute: typeof Transaction_dashboardAppSettingsRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
     '/transaction_dashboard/app/reconciliation': {
       id: '/transaction_dashboard/app/reconciliation'
       path: '/reconciliation'
@@ -1717,6 +1750,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/transaction_dashboard/app/analytics'
       preLoaderRoute: typeof Transaction_dashboardAppAnalyticsRouteImport
+      parentRoute: typeof Transaction_dashboardAppRoute
+    }
+    '/transaction_dashboard/app/account': {
+      id: '/transaction_dashboard/app/account'
+      path: '/account'
+      fullPath: '/transaction_dashboard/app/account'
+      preLoaderRoute: typeof Transaction_dashboardAppAccountRouteImport
       parentRoute: typeof Transaction_dashboardAppRoute
     }
     '/transaction_dashboard/app/$section': {
@@ -1997,6 +2037,7 @@ const CardsAppRouteWithChildren = CardsAppRoute._addFileChildren(
 
 interface Transaction_dashboardAppRouteChildren {
   Transaction_dashboardAppSectionRoute: typeof Transaction_dashboardAppSectionRoute
+  Transaction_dashboardAppAccountRoute: typeof Transaction_dashboardAppAccountRoute
   Transaction_dashboardAppAnalyticsRoute: typeof Transaction_dashboardAppAnalyticsRoute
   Transaction_dashboardAppComplianceRoute: typeof Transaction_dashboardAppComplianceRoute
   Transaction_dashboardAppCustomersRoute: typeof Transaction_dashboardAppCustomersRoute
@@ -2010,6 +2051,7 @@ interface Transaction_dashboardAppRouteChildren {
   Transaction_dashboardAppOpsHealthRoute: typeof Transaction_dashboardAppOpsHealthRoute
   Transaction_dashboardAppPaymentRailsRoute: typeof Transaction_dashboardAppPaymentRailsRoute
   Transaction_dashboardAppReconciliationRoute: typeof Transaction_dashboardAppReconciliationRoute
+  Transaction_dashboardAppSettingsRoute: typeof Transaction_dashboardAppSettingsRoute
   Transaction_dashboardAppSettlementRoute: typeof Transaction_dashboardAppSettlementRoute
   Transaction_dashboardAppTransferManagementRoute: typeof Transaction_dashboardAppTransferManagementRoute
   Transaction_dashboardAppTransferOverviewRoute: typeof Transaction_dashboardAppTransferOverviewRoute
@@ -2020,6 +2062,7 @@ interface Transaction_dashboardAppRouteChildren {
 const Transaction_dashboardAppRouteChildren: Transaction_dashboardAppRouteChildren =
   {
     Transaction_dashboardAppSectionRoute: Transaction_dashboardAppSectionRoute,
+    Transaction_dashboardAppAccountRoute: Transaction_dashboardAppAccountRoute,
     Transaction_dashboardAppAnalyticsRoute:
       Transaction_dashboardAppAnalyticsRoute,
     Transaction_dashboardAppComplianceRoute:
@@ -2044,6 +2087,8 @@ const Transaction_dashboardAppRouteChildren: Transaction_dashboardAppRouteChildr
       Transaction_dashboardAppPaymentRailsRoute,
     Transaction_dashboardAppReconciliationRoute:
       Transaction_dashboardAppReconciliationRoute,
+    Transaction_dashboardAppSettingsRoute:
+      Transaction_dashboardAppSettingsRoute,
     Transaction_dashboardAppSettlementRoute:
       Transaction_dashboardAppSettlementRoute,
     Transaction_dashboardAppTransferManagementRoute:

@@ -11,10 +11,10 @@ import styles from "../styles/compliance.module.css";
    React + TypeScript + TanStack Query, emerald-glass dashboard theme.
 
    LEGACY BRIDGE NOTES (broken references in the original 1.9.html):
-     openM('railConfigModal')  → modal never existed in legacy HTML; routed
-                                  to 'monitorSettingsModal' (same intent).
-     openM('riskModelModal')   → modal never existed in legacy HTML; routed
-                                  to 'riskScoringModal' (has the AI Model tab).
+	 openM('railConfigModal')  → modal never existed in legacy HTML; routed
+								  to 'monitorSettingsModal' (same intent).
+	 openM('riskModelModal')   → modal never existed in legacy HTML; routed
+								  to 'riskScoringModal' (has the AI Model tab).
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -804,7 +804,7 @@ function SectionHead({
 		>
 			<div>
 				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} /> {code} —{" "}
+					<i className={`bi ${icon}`} style={{ color: iconColor }} />
 					{title}
 				</h3>
 				<p className={styles.ss}>{sub}</p>
@@ -889,7 +889,7 @@ export default function Compliance() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

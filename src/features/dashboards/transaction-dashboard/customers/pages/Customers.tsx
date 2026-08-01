@@ -264,7 +264,7 @@ const initialMockData: CustomersConfig = {
 			sub: "Balance settlement required",
 			actionLabel: "Process",
 			/* LEGACY DEFECT: legacy pointed at non-existent #accountClosureModal (dead
-         button) — mapped to the real closeAccountModal. */
+		 button) — mapped to the real closeAccountModal. */
 			modal: "closeAccountModal",
 		},
 		{
@@ -680,7 +680,7 @@ export default function Customers() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

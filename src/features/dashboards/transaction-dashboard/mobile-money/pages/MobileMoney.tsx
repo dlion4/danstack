@@ -111,35 +111,8 @@ interface MobileMoneyConfig {
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: MobileMoneyConfig = {
-	nav: [
-		{ icon: "bi-house", to: "/dashboard", label: "Dashboard" },
-		{ icon: "bi-grid-3x3-gap", to: "/select-dashboard", label: "Hubs" },
-		{
-			icon: "bi-lightning-charge",
-			to: "/initiate-transfer",
-			label: "Transfers",
-		},
-		{
-			icon: "bi-phone",
-			to: "/mobile-money",
-			label: "Mobile Money & PSP Hub",
-			active: true,
-			dot: true,
-		},
-		{ icon: "bi-credit-card-2-front", to: "/cards", label: "Cards" },
-		{ icon: "bi-bar-chart-line", to: "/analytics", label: "Analytics" },
-		{ icon: "bi-gear", to: "/settings", label: "Settings" },
-	],
-	headerTitle: "Mobile Money & PSP Hub",
-	headerSub:
-		"M-Pesa, Airtel Money, T-Kash, PSP integrations, transfers, reconciliation & compliance",
-	searchPlaceholder: "Search wallets, transactions, PSPs, disputes...",
-	user: {
-		initials: "JK",
-		name: "James K.",
-		role: "Treasury Manager",
-		headerInitials: "MN",
-	},
+
+
 	breadcrumb: {
 		parents: [
 			{ label: "Home", to: "/" },
@@ -147,7 +120,7 @@ const initialMockData: MobileMoneyConfig = {
 		],
 		current: "Mobile Money & PSP Hub",
 	},
-	pageCode: "",
+
 	pageTitle: "Mobile Money & PSP Integration Hub",
 	pageSub:
 		"Manage M-Pesa, Airtel Money, T-Kash, Pesalink, and 20+ PSP integrations. Execute transfers, reconcile wallets, handle disputes, and maintain full compliance from one command center.",
@@ -676,7 +649,7 @@ function SectionHead({
 		>
 			<div>
 				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} /> {code} —{" "}
+					<i className={`bi ${icon}`} style={{ color: iconColor }} />
 					{title}
 				</h3>
 				<p className={styles.ss}>{sub}</p>
@@ -749,7 +722,7 @@ export default function MobileMoney() {
 			)}
 
 			{/* ======================= SIDEBAR ======================= */}
-			<aside className={styles.sidebar}>
+			{/* <aside className={styles.sidebar}>
 				<div className={styles.sidebarLogo}>P</div>
 				<nav className={styles.sidebarNav}>
 					{config.nav.map((item) => (
@@ -774,11 +747,11 @@ export default function MobileMoney() {
 				>
 					<i className="bi bi-question-circle" />
 				</Link>
-			</aside>
+			</aside> */}
 
 			<div className={styles.main}>
 				{/* ======================= HEADER ======================= */}
-				<header className={styles.header}>
+				{/* <header className={styles.header}>
 					<div className={styles.headerTitle} style={{ flexShrink: 0 }}>
 						<div className="d-flex align-items-center gap-2">
 							<div
@@ -830,7 +803,7 @@ export default function MobileMoney() {
 							</div>
 						</button>
 					</div>
-				</header>
+				</header> */}
 
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -844,7 +817,7 @@ export default function MobileMoney() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

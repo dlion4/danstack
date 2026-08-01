@@ -297,7 +297,7 @@ export default function TopNav({
 								<div className="d-flex flex-column">
 									<Link
 										to="/transaction_dashboard/app/$section"
-										params={{ section: "settings" }}
+										params={{ section: "account" }}
 										className={s.menuItem}
 										onClick={() => onToggleDropdown("user")}
 									>

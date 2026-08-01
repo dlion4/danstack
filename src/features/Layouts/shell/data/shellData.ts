@@ -207,7 +207,7 @@ export const initialMockData: ShellContent = {
 			items: [
 				{ key: "customers", label: "Customer Management", icon: "bi-people" },
 				{ key: "mobile-money", label: "Mobile Money & PSP", icon: "bi-phone" },
-				{ key: "ops", label: "System Health & Ops", icon: "bi-cpu" },
+				{ key: "ops-health", label: "System Health & Ops", icon: "bi-cpu" },
 			],
 		},
 	],

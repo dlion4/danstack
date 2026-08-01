@@ -46,11 +46,11 @@ interface TxnRow {
 
 interface MiniBox {
 	box:
-		| "summaryBoxDanger"
-		| "summaryBoxWarn"
-		| "summaryBoxAccent"
-		| "summaryBoxInfo"
-		| "summaryBox";
+	| "summaryBoxDanger"
+	| "summaryBoxWarn"
+	| "summaryBoxAccent"
+	| "summaryBoxInfo"
+	| "summaryBox";
 	label: string;
 	labelColor: string;
 	value: string;
@@ -693,7 +693,7 @@ export default function Disputes() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

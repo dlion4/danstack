@@ -687,7 +687,7 @@ function SectionHead({
 		>
 			<div>
 				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} /> {code} —{" "}
+					<i className={`bi ${icon}`} style={{ color: iconColor }} />
 					{title}
 				</h3>
 				<p className={styles.ss}>{sub}</p>
@@ -800,7 +800,7 @@ export default function KraGovernment() {
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
 						<h2 className={styles.pageH2}>
-							{config.pageCode} — {config.pageTitle}
+							{config.pageTitle}
 						</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>

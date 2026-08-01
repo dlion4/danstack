@@ -153,11 +153,11 @@ export default function Sidebar({
 					if (!isDesktop) onCloseMobile();
 				}}
 			>
-				<div className={s.avatar}>{content.user.initials}</div>
+				{/* <div className={s.avatar}>{content.user.initials}</div>
 				<div className={s.accountDetails}>
 					<div className={s.accountName}>{content.user.name}</div>
 					<div className={s.accountRole}>{content.user.role}</div>
-				</div>
+				</div> */}
 			</Link>
 		</aside>
 	);

@@ -1,0 +1,746 @@
+/* ============================================================================
+ * shared/styles/appPage.module.css
+ * ----------------------------------------------------------------------------
+ * Emerald theme design system shared across every PayMo page (initiate
+ * transfer, account profile, settings, etc.). These classes are used by the
+ * shared modal primitives and by every page's modal components.
+ *
+ * The colour tokens (--pri, --surface, ...) are intentionally resolved from
+ * the page root so each page can theme the shared chrome consistently.
+ * ========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(26, 31, 46, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: pmFadeIn 0.18s ease;
+}
+
+@keyframes pmFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog {
+  width: 100%;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(26, 31, 46, 0.18);
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: pmSlideUp 0.22s ease;
+  border: 1px solid var(--border, #e5e2dc);
+}
+
+@keyframes pmSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalSm {
+  max-width: 420px;
+}
+.modalMd {
+  max-width: 560px;
+}
+.modalLg {
+  max-width: 820px;
+}
+.modalXl {
+  max-width: 1080px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border, #e5e2dc);
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-900, #1a1f2e);
+}
+
+.modalIcon {
+  color: var(--pri, #10b981);
+  font-size: 18px;
+}
+
+.modalClose {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #e5e2dc);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink-500, #9ca3af);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.modalClose:hover {
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border, #e5e2dc);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.modalProcessing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  gap: 14px;
+}
+
+.processingText {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pri, #10b981);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border, #e5e2dc);
+  border-top-color: var(--pri, #10b981);
+  border-radius: 50%;
+  animation: pmSpin 0.8s linear infinite;
+}
+
+@keyframes pmSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------- stepper (flow modal) ---------------- */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 60px;
+}
+
+.stepNum {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--border, #e5e2dc);
+  color: var(--ink-500, #9ca3af);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.stepActive .stepNum {
+  background: var(--pri, #10b981);
+  color: #fff;
+}
+
+.stepDone .stepNum {
+  background: var(--success, #10b981);
+  color: #fff;
+}
+
+.stepLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500, #9ca3af);
+  white-space: nowrap;
+}
+
+.stepActive .stepLabel {
+  color: var(--pri, #10b981);
+}
+
+.stepDone .stepLabel {
+  color: var(--success, #10b981);
+}
+
+.stepLine {
+  flex: 1;
+  height: 2px;
+  background: var(--border, #e5e2dc);
+  margin: 0 8px;
+  min-width: 12px;
+}
+
+/* ---------------- pills ---------------- */
+
+.pills {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-2, #faf7f3);
+  border-radius: 10px;
+  overflow-x: auto;
+  border: 1px solid var(--border, #e5e2dc);
+}
+
+.pill {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  color: var(--ink-700, #4b5563);
+}
+
+.pill:hover {
+  color: var(--pri, #10b981);
+}
+
+.pillActive {
+  background: #fff;
+  color: var(--pri, #10b981);
+  box-shadow: 0 1px 2px rgba(26, 31, 46, 0.06);
+  font-weight: 600;
+}
+
+/* ---------------- form controls ---------------- */
+
+.fieldLabel,
+.formLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-700, #4b5563);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: block;
+}
+
+.field,
+.formControl {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #e5e2dc);
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: #fff;
+  color: var(--ink-900, #1a1f2e);
+  font-family: inherit;
+}
+
+.field:focus,
+.formControl:focus {
+  outline: 0;
+  border-color: var(--pri, #10b981);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.field::placeholder,
+.formControl::placeholder {
+  color: var(--ink-300, #d1d5db);
+}
+
+/* ---------------- pin row ---------------- */
+
+.pinRow {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.pinInput {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  border: 2px solid var(--border, #e5e2dc);
+  border-radius: 10px;
+  background: #fff;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  color: var(--ink-900, #1a1f2e);
+  transition: all 0.2s;
+}
+
+.pinInput:focus {
+  outline: 0;
+  border-color: var(--pri, #10b981);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+/* ---------------- receipt ---------------- */
+
+.receipt {
+  background: var(--surface-2, #faf7f3);
+  border: 1px dashed var(--border-2, #d4d0c8);
+  border-radius: 14px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.receiptIcon {
+  width: 56px;
+  height: 56px;
+  background: var(--success-bg, #d1fae5);
+  color: var(--success, #10b981);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin: 0 auto 12px;
+}
+
+.receiptTitle {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-weight: 700;
+  color: var(--ink-900, #1a1f2e);
+  margin: 0 0 6px;
+}
+
+.receiptMsg {
+  font-size: 13px;
+  color: var(--ink-700, #4b5563);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.receiptRef {
+  font-size: 12px;
+  color: var(--ink-500, #9ca3af);
+  margin: 8px 0 0;
+}
+
+.receiptRef strong {
+  color: var(--ink-700, #4b5563);
+}
+
+/* ---------------- review rows ---------------- */
+
+.reviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border, #e5e2dc);
+}
+
+.reviewRow:last-child {
+  border-bottom: none;
+}
+
+.reviewLabel {
+  font-size: 13px;
+  color: var(--ink-700, #4b5563);
+}
+
+.reviewMuted {
+  color: var(--ink-500, #9ca3af);
+}
+
+.reviewValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-900, #1a1f2e);
+  text-align: right;
+}
+
+.reviewValueHighlight {
+  color: var(--pri, #10b981);
+  font-weight: 700;
+}
+
+/* ---------------- buttons ---------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border, #e5e2dc);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--ink-900, #1a1f2e);
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: var(--surface-2, #faf7f3);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(26, 31, 46, 0.05);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.buttonPrimary {
+  background: var(--pri, #10b981);
+  color: #fff;
+  border-color: var(--pri, #10b981);
+}
+
+.buttonPrimary:hover {
+  background: var(--pri-600, #059669);
+  color: #fff;
+}
+
+.buttonAccent {
+  background: var(--acc, #f59e0b);
+  color: #fff;
+  border-color: var(--acc, #f59e0b);
+}
+
+.buttonAccent:hover {
+  background: var(--acc-light, #fbbf24);
+  color: #fff;
+}
+
+.buttonDanger {
+  background: var(--danger, #ef4444);
+  color: #fff;
+  border-color: var(--danger, #ef4444);
+}
+
+.buttonDanger:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+.buttonSmall {
+  padding: 5px 12px;
+  font-size: 12px;
+}
+
+/* ---------------- badges ---------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeSuccess {
+  background: var(--success-bg, #d1fae5);
+  color: #047857;
+}
+
+.badgeWarning {
+  background: var(--warning-bg, #fef3c7);
+  color: #b45309;
+}
+
+.badgeDanger {
+  background: var(--danger-bg, #fee2e2);
+  color: #dc2626;
+}
+
+.badgeInfo {
+  background: var(--info-bg, #dbeafe);
+  color: #1d4ed8;
+}
+
+.badgePurple {
+  background: var(--purple-bg, #ede9fe);
+  color: #6d28d9;
+}
+
+.badgeOutline {
+  background: transparent;
+  border: 1px solid var(--border-2, #d4d0c8);
+  color: var(--ink-700, #4b5563);
+}
+
+/* ---------------- summary rows ---------------- */
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border, #e5e2dc);
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+/* ---------------- switch / toggle ---------------- */
+
+.switchRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border, #e5e2dc);
+}
+
+.switchRow:last-child {
+  border-bottom: none;
+}
+
+.switchLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900, #1a1f2e);
+}
+
+.switchDescription {
+  font-size: 12px;
+  color: var(--ink-500, #9ca3af);
+  margin-top: 2px;
+}
+
+.toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 26px;
+  border: none;
+  cursor: pointer;
+  background: #d1d5db;
+  position: relative;
+  transition: background 0.3s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.toggleOn {
+  background: var(--pri, #10b981);
+}
+
+.toggleOnDanger {
+  background: var(--danger, #ef4444);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.toggleOn .toggleKnob,
+.toggleOnDanger .toggleKnob {
+  left: 25px;
+}
+
+/* ---------------- tables ---------------- */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-500, #9ca3af);
+  border-bottom: 1px solid var(--border, #e5e2dc);
+  background: var(--surface-2, #faf7f3);
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border, #e5e2dc);
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: var(--surface-2, #faf7f3);
+}
+
+/* ---------------- hint / info boxes ---------------- */
+
+.hintBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.hintBox i {
+  margin-top: 2px;
+}
+
+.hintBoxInfo {
+  background: var(--info-bg, #dbeafe);
+  color: #1d4ed8;
+}
+
+.hintBoxSuccess {
+  background: var(--success-bg, #d1fae5);
+  color: #047857;
+}
+
+.hintBoxWarning {
+  background: var(--warning-bg, #fef3c7);
+  color: #92400e;
+}
+
+.hintBoxDanger {
+  background: var(--danger-bg, #fee2e2);
+  color: #b91c1c;
+}
+
+.softBox {
+  background: var(--surface-2, #faf7f3);
+  border: 1px solid var(--border, #e5e2dc);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+/* ---------------- misc ---------------- */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border, #e5e2dc);
+  margin: 16px 0;
+}
+
+.iconChip {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formRowFull {
+  grid-column: 1 / -1;
+}
+
+.progressTrack {
+  height: 8px;
+  background: var(--border, #e5e2dc);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--pri, #10b981);
+  transition: width 0.5s ease;
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .modalFooter {
+    justify-content: stretch;
+  }
+
+  .modalFooter .button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .dialog {
+    max-height: calc(100vh - 20px);
+  }
+}

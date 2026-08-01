@@ -29,7 +29,7 @@
 	--pm-border-2: #d4d0c8;
 	--pm-gradient-hero: linear-gradient(135deg, #10b981 0%, #059669 100%);
 	--pm-gradient-slate: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-	--pm-gradient-accent-card: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+	--pm-gradient-accent-card: linear-gradient(135deg, #0f766e, #10b981, #059669);
 	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
 	--pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
 	--pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
@@ -141,11 +141,13 @@
 }
 
 @keyframes pmPulse {
+
 	0%,
 	100% {
 		opacity: 1;
 		transform: scale(1);
 	}
+
 	50% {
 		opacity: 0.6;
 		transform: scale(1.2);
@@ -443,21 +445,25 @@
 	color: #047857;
 	border: 1px solid rgba(16, 185, 129, 0.3);
 }
+
 .badgeW {
 	background: var(--pm-warning-soft);
 	color: #b45309;
 	border: 1px solid rgba(245, 158, 11, 0.3);
 }
+
 .badgeD {
 	background: var(--pm-danger-soft);
 	color: #dc2626;
 	border: 1px solid rgba(239, 68, 68, 0.32);
 }
+
 .badgeI {
 	background: var(--pm-info-soft);
 	color: #1d4ed8;
 	border: 1px solid rgba(59, 130, 246, 0.3);
 }
+
 .badgeP {
 	background: var(--pm-purple-soft);
 	color: #6d28d9;
@@ -537,15 +543,19 @@
 }
 
 .btnGhost {
-	background: transparent;
-	border-color: var(--pm-border);
-	color: var(--pm-ink);
+	background: rgba(255, 255, 255, 0.18);
+	border-color: rgba(255, 255, 255, 0.3);
+	/* color: var(--pm-ink-soft); */
+	color: #fff;
+	backdrop-filter: blur(4px);
 }
 
+
+
 .btnGhost:hover {
-	background: var(--pm-surface-2);
-	color: var(--pm-ink);
-	border-color: var(--pm-border-2);
+	background: #f3f4f6;
+	color: #1f1f1f;
+	border-color: #d1d5db;
 }
 
 /* ======================= TABLES ======================= */
@@ -745,6 +755,7 @@ input[type="date"].fc {
 .stepActive .stepL {
 	color: var(--pm-primary-light);
 }
+
 .stepDone .stepL {
 	color: #6ee7b7;
 }
@@ -1027,6 +1038,7 @@ input[type="date"].fc {
 	from {
 		opacity: 0;
 	}
+
 	to {
 		opacity: 1;
 	}
@@ -1037,6 +1049,7 @@ input[type="date"].fc {
 		opacity: 0;
 		transform: translateY(-16px) scale(0.985);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0) scale(1);
@@ -1060,6 +1073,7 @@ input[type="date"].fc {
 .modalBoxLg {
 	max-width: 820px;
 }
+
 .modalBoxXl {
 	max-width: 1060px;
 }
@@ -1153,6 +1167,7 @@ input[type="date"].fc {
 		opacity: 0;
 		transform: translateY(8px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -1211,29 +1226,37 @@ input[type="date"].fc {
 	font-size: 11px;
 	color: var(--pm-muted);
 }
+
 .inkSmall {
 	font-size: 12px;
 	color: var(--pm-ink-soft);
 }
+
 .fwBold13 {
 	font-weight: 600;
 	font-size: 13px;
 }
+
 .monoVal {
 	font-variant-numeric: tabular-nums;
 }
+
 .textAccent {
 	color: var(--pm-primary);
 }
+
 .textWarn {
 	color: #b45309;
 }
+
 .textDanger {
 	color: #dc2626;
 }
+
 .textInfo {
 	color: #1d4ed8;
 }
+
 .textPurple {
 	color: #6d28d9;
 }
@@ -1470,6 +1493,7 @@ input[type="date"].fc {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
 	.badgeDot,
 	.spinner {
 		animation: none !important;
