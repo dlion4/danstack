@@ -54,16 +54,12 @@
   --shadow-glow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: radial-gradient(
-      1200px 600px at -10% -20%,
+  background: radial-gradient(1200px 600px at -10% -20%,
       rgba(16, 185, 129, 0.07),
-      transparent 60%
-    ),
-    radial-gradient(
-      1000px 500px at 110% 10%,
+      transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%,
       rgba(236, 72, 153, 0.05),
-      transparent 60%
-    ),
+      transparent 60%),
     var(--surface);
   color: var(--ink-900);
   min-height: 100vh;
@@ -1672,9 +1668,11 @@
   0% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35);
   }
+
   70% {
     box-shadow: 0 0 0 14px rgba(16, 185, 129, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
@@ -1877,14 +1875,16 @@
   color: #fff;
   z-index: 3;
   box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.12), 0 12px 30px rgba(0, 0, 0, 0.35);
-  animation: pmWalletPulse 3.2s infinite;
+  animation: pmWalletPulse 13.2s infinite;
 }
 
 @keyframes pmWalletPulse {
+
   0%,
   100% {
     box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.12), 0 12px 30px rgba(0, 0, 0, 0.35);
   }
+
   50% {
     box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.05), 0 12px 30px rgba(0, 0, 0, 0.35);
   }
@@ -1953,7 +1953,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  left: 224px;
+  left: 524px;
   z-index: 2;
 }
 
@@ -2085,6 +2085,7 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -2145,15 +2146,280 @@
 
 @keyframes pmDashMove {
   0% {
-    transform: translateX(-8px);
+    background-position: 0 0;
   }
+
   100% {
-    transform: translateX(26px);
+    background-position: 22px 0;
   }
 }
 
 .flowLineAnimated {
   transition: stroke 0.4s, opacity 0.4s;
+}
+
+/* ---- narrow / mobile stage: wallet on top + scrollable lane strip ---- */
+.flowChartStageNarrow {
+  overflow: hidden;
+  min-height: 0;
+  padding: 18px 16px 6px;
+}
+
+.flowWalletNodeTop {
+  position: relative;
+  background: linear-gradient(160deg, rgba(6, 78, 59, 0.95), rgba(10, 40, 34, 0.95));
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: 16px;
+  padding: 16px;
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.12), 0 12px 30px rgba(0, 0, 0, 0.35);
+  animation: pmWalletPulse 3.2s infinite;
+  z-index: 3;
+}
+
+.flowWalletTopBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.flowWalletTopBrand .flowWalletIcon {
+  margin-bottom: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+}
+
+.flowMobileConnector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  position: relative;
+}
+
+.flowMobileConnectorLine {
+  width: 2px;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.15), #10b981);
+  position: relative;
+  overflow: hidden;
+}
+
+.flowMobileConnectorLine i {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -2px;
+  font-size: 12px;
+  color: #10b981;
+  animation: pmDashMoveV 100s linear infinite;
+}
+
+@keyframes pmDashMoveV {
+  0% {
+    bottom: -2px;
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    bottom: 34px;
+    opacity: 0;
+  }
+}
+
+.flowLanesStrip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 6px 2px 14px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+
+.flowLanesStrip::-webkit-scrollbar {
+  height: 8px;
+}
+
+.flowLanesStrip::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.35);
+  border-radius: 999px;
+}
+
+.flowLaneStripItem {
+  flex: 0 0 252px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px;
+  color: #e2e8f0;
+  transition: all 0.25s;
+}
+
+.flowLaneStripItem:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+}
+
+.flowLaneStripHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.flowLaneStripHead .flowLanePerm {
+  flex-shrink: 0;
+}
+
+.flowLaneStripChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 999px;
+  padding: 5px 10px;
+  width: fit-content;
+  animation: pmChipIn 100.3s ease;
+}
+
+.flowLaneStripCtl {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.flowLaneStripCtl .button {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ---- Management Hub (compact launcher grid) ---- */
+.hubCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.hubHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.hubGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.hubGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hubGroupTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-500);
+}
+
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.hubTile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 0;
+}
+
+.hubTile:hover {
+  border-color: var(--pri);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.hubTileIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.hubTileBody {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.hubTileLabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hubTileDesc {
+  font-size: 10.5px;
+  color: var(--ink-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hubTileArrow {
+  font-size: 11px;
+  color: var(--ink-300);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.hubTile:hover .hubTileArrow {
+  transform: translateX(2px);
+  color: var(--pri);
 }
 
 /* ---------- responsive ---------- */
@@ -2173,6 +2439,10 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .hubGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .walletHero {
     grid-template-columns: 1fr;
   }
@@ -2187,6 +2457,10 @@
 
   .flowChartStage {
     overflow-x: auto;
+  }
+
+  .flowChartStageNarrow {
+    overflow: hidden;
   }
 
   .dashboardGrid {
@@ -2206,6 +2480,10 @@
   .linkableGrid,
   .activeLinkGrid {
     grid-template-columns: 1fr;
+  }
+
+  .hubGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .dashboardGrid {
@@ -2233,6 +2511,14 @@
 @media (max-width: 560px) {
   .statsRow {
     grid-template-columns: 1fr;
+  }
+
+  .hubGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hubCard {
+    padding: 16px;
   }
 
   .pageActions {
