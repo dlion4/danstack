@@ -194,7 +194,7 @@ export const initialMockData: ElectricityConfig = {
 		current: "Deep Dive",
 	},
 	pageCode: "",
-	pageTitle: "Electricity Management (Deep Dive)",
+	// pageTitle: "Electricity Management (Deep Dive)",
 	pageSub:
 		"Manage prepaid and postpaid electricity accounts, multiple meters, energy spend, bill forecasts, outages, disputes and automation in one extensive command center.",
 	hero: {

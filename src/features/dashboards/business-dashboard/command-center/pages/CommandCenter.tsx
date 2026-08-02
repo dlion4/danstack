@@ -156,9 +156,9 @@ const initialMockData: CommandCenterConfig = {
 		avatarBg: "var(--pm-primary)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Command Center" },
-	pageTitle: "Business Command Center",
-	pageSub:
-		"Consolidated overview of collections, payroll, invoices, and business health.",
+	// // pageTitle: "Business Command Center",
+	// pageSub:
+	// 	"Consolidated overview of collections, payroll, invoices, and business health.",
 	statCards: [
 		{
 			key: "cash",
@@ -1064,9 +1064,9 @@ export default function CommandCenter() {
 												style={{
 													...(tr.roleBadge.customBg
 														? {
-																background: tr.roleBadge.customBg,
-																color: tr.roleBadge.customColor,
-															}
+															background: tr.roleBadge.customBg,
+															color: tr.roleBadge.customColor,
+														}
 														: {}),
 												}}
 											>

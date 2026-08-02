@@ -103,7 +103,6 @@ import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/
 import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
 import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
 import { Route as CardsAppAccountSettingsRouteImport } from './routes/cards/app/account-settings'
-import { Route as Activate_dashboardAppActivateRouteImport } from './routes/activate_dashboard/app.activate'
 
 const UtilityRoute = UtilityRouteImport.update({
   id: '/utility',
@@ -629,12 +628,6 @@ const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
   path: '/account-settings',
   getParentRoute: () => CardsAppRoute,
 } as any)
-const Activate_dashboardAppActivateRoute =
-  Activate_dashboardAppActivateRouteImport.update({
-    id: '/activate_dashboard/app/activate',
-    path: '/activate_dashboard/app/activate',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
@@ -695,7 +688,6 @@ export interface FileRoutesByFullPath {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
-  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -784,7 +776,6 @@ export interface FileRoutesByTo {
   '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
-  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -882,7 +873,6 @@ export interface FileRoutesById {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
-  '/activate_dashboard/app/activate': typeof Activate_dashboardAppActivateRoute
   '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
@@ -979,7 +969,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
-    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -1068,7 +1057,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard'
     | '/dev'
     | '/utility'
-    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -1165,7 +1153,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
-    | '/activate_dashboard/app/activate'
     | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
@@ -1221,7 +1208,6 @@ export interface RootRouteChildren {
   AuthSecurityRoute: typeof AuthSecurityRoute
   CardsAppRoute: typeof CardsAppRouteWithChildren
   Transaction_dashboardAppRoute: typeof Transaction_dashboardAppRouteWithChildren
-  Activate_dashboardAppActivateRoute: typeof Activate_dashboardAppActivateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1884,13 +1870,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardsAppAccountSettingsRouteImport
       parentRoute: typeof CardsAppRoute
     }
-    '/activate_dashboard/app/activate': {
-      id: '/activate_dashboard/app/activate'
-      path: '/activate_dashboard/app/activate'
-      fullPath: '/activate_dashboard/app/activate'
-      preLoaderRoute: typeof Activate_dashboardAppActivateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -2168,7 +2147,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSecurityRoute: AuthSecurityRoute,
   CardsAppRoute: CardsAppRouteWithChildren,
   Transaction_dashboardAppRoute: Transaction_dashboardAppRouteWithChildren,
-  Activate_dashboardAppActivateRoute: Activate_dashboardAppActivateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

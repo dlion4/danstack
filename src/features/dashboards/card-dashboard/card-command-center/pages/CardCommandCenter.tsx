@@ -152,7 +152,7 @@ const initialMockData: CardCommandCenterConfig = {
 		current: "Card Command Center",
 	},
 	pageCode: "",
-	pageTitle: "Card Command Center",
+	// pageTitle: "Card Command Center",
 	pageSub:
 		"Full visibility and control over all active cards, spending analytics, budget limits, security, and transactions.",
 	quickActions: [

@@ -164,7 +164,7 @@ export interface PartnerMarketplaceContent {
 
 export const initialMockData: PartnerMarketplaceContent = {
 	pageCode: "",
-	pageTitle: "Partner Program & Marketplace",
+	// pageTitle: "Partner Program & Marketplace",
 	pageSub:
 		"Manage partner tiers, marketplace apps, referrals, revenue share, and collaborate with the community.",
 	breadcrumb: {

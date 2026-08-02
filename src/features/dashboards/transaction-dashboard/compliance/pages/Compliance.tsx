@@ -174,71 +174,70 @@ const initialMockData: ComplianceConfig = {
 		current: "Compliance & AML",
 	},
 	pageCode: "",
-	pageTitle: "Compliance & AML (Transactions)",
-	pageSub:
-		"Real-time transaction monitoring, AML rules engine, sanctions & PEP screening, risk scoring, investigation case management, and automated regulatory reporting.",
-	hero: {
-		live: "AML engine is live",
+	// pageTitle: "Compliance & AML (Transactions)",
+	Real- time transaction monitoring, AML rules engine, sanctions & PEP screening, risk scoring, investigation case management, and automated regulatory reporting.",
+hero: {
+	live: "AML engine is live",
 		value: "47,291 transactions monitored today",
-		detail:
-			"Real-time screening across 12 payment rails. 17 alerts generated. 4 cases under active investigation.",
+			detail:
+	"Real-time screening across 12 payment rails. 17 alerts generated. 4 cases under active investigation.",
 		buttons: [
 			{ label: "Rules", modal: "amlRulesModal" },
 			{ label: "Sanctions", modal: "sanctionsSearchModal" },
 			{ label: "Risk Engine", modal: "riskScoringModal" },
 		],
 	},
-	statCards: [
-		{
-			key: "alerts",
-			colClass: "col-lg-2 col-md-4 col-6",
-			label: "HIGH RISK ALERTS",
-			labelColor: "var(--pm-danger)",
-			value: "17",
-			badge: {
-				icon: "bi-exclamation-triangle",
-				text: "4 require immediate action",
-				tone: "badgeD",
-			},
-			lines: [
-				{ label: "STRs filed today:", value: "2" },
-				{ label: "CTR threshold breaches:", value: "9" },
-			],
+statCards: [
+	{
+		key: "alerts",
+		colClass: "col-lg-2 col-md-4 col-6",
+		label: "HIGH RISK ALERTS",
+		labelColor: "var(--pm-danger)",
+		value: "17",
+		badge: {
+			icon: "bi-exclamation-triangle",
+			text: "4 require immediate action",
+			tone: "badgeD",
 		},
-		{
-			key: "detection",
-			colClass: "col-lg-3 col-md-4 col-6",
-			label: "AML DETECTION RATE",
-			labelColor: "var(--pm-warning)",
-			value: "98.7%",
-			badge: {
-				icon: "bi-graph-up-arrow",
-				text: "+1.2% vs last month",
-				tone: "badgeS",
-			},
-			lines: [
-				{ label: "False positive rate:", value: "4.1%" },
-				{ label: "Avg investigation time:", value: "2.4 hrs" },
-			],
+		lines: [
+			{ label: "STRs filed today:", value: "2" },
+			{ label: "CTR threshold breaches:", value: "9" },
+		],
+	},
+	{
+		key: "detection",
+		colClass: "col-lg-3 col-md-4 col-6",
+		label: "AML DETECTION RATE",
+		labelColor: "var(--pm-warning)",
+		value: "98.7%",
+		badge: {
+			icon: "bi-graph-up-arrow",
+			text: "+1.2% vs last month",
+			tone: "badgeS",
 		},
-		{
-			key: "filings",
-			colClass: "col-lg-3 col-md-4",
-			label: "REGULATORY FILINGS",
-			labelColor: "var(--pm-accent)",
-			value: "142",
-			badge: {
-				icon: "bi-file-earmark-check",
-				text: "This month",
-				tone: "badgeI",
-			},
-			lines: [
-				{ label: "STRs: 31 | CTRs: 89 | SARs: 22", value: "" },
-				{ label: "Next CBK report due:", value: "30 Jun" },
-			],
-			bordered: true,
+		lines: [
+			{ label: "False positive rate:", value: "4.1%" },
+			{ label: "Avg investigation time:", value: "2.4 hrs" },
+		],
+	},
+	{
+		key: "filings",
+		colClass: "col-lg-3 col-md-4",
+		label: "REGULATORY FILINGS",
+		labelColor: "var(--pm-accent)",
+		value: "142",
+		badge: {
+			icon: "bi-file-earmark-check",
+			text: "This month",
+			tone: "badgeI",
 		},
-	],
+		lines: [
+			{ label: "STRs: 31 | CTRs: 89 | SARs: 22", value: "" },
+			{ label: "Next CBK report due:", value: "30 Jun" },
+		],
+		bordered: true,
+	},
+],
 	attention: [
 		{
 			icon: "bi-exclamation-triangle",
@@ -269,98 +268,98 @@ const initialMockData: ComplianceConfig = {
 			modal: "sanctionsSearchModal",
 		},
 	],
-	suggestions: [
-		{
-			icon: "bi-robot",
-			iconBg: "var(--pm-accent-soft)",
-			iconColor: "var(--pm-accent)",
-			title: "Tighten velocity rule for cross-border",
-			sub: "Reduce false positives by 18%",
-			actionLabel: "Tune Rule",
-			modal: "amlRulesModal",
-		},
-		{
-			icon: "bi-graph-up",
-			iconBg: "var(--pm-warning-soft)",
-			iconColor: "var(--pm-warning)",
-			title: "Increase risk score weight for crypto exchanges",
-			sub: "Current weight: 25% → Suggested: 40%",
-			actionLabel: "Adjust",
-			modal: "riskScoringModal",
-		},
-		{
-			icon: "bi-link-45deg",
-			iconBg: "var(--pm-info-soft)",
-			iconColor: "var(--pm-info)",
-			title: "Enable real-time sanctions screening on PesaLink",
-			sub: "Currently batch (every 15 min)",
-			actionLabel: "Enable",
-			// LEGACY BRIDGE: legacy called openM('railConfigModal') — that modal id
-			// does not exist in 1.9.html; mapped to the monitoring settings modal.
-			modal: "monitorSettingsModal",
-		},
-	],
-	quickActions: [
-		{
-			icon: "bi-folder-plus",
-			label: "New Investigation",
-			color: "var(--pm-danger)",
-			modal: "newCaseModal",
-		},
-		{
-			icon: "bi-globe",
-			label: "Sanctions Search",
-			color: "var(--pm-warning)",
-			modal: "sanctionsSearchModal",
-		},
-		{
-			icon: "bi-sliders",
-			label: "Edit Rules",
-			color: "var(--pm-primary-light)",
-			modal: "amlRulesModal",
-		},
-		{
-			icon: "bi-file-earmark-text",
-			label: "File STR/CTR",
-			color: "var(--pm-purple)",
-			modal: "regReportModal",
-		},
-		{
-			icon: "bi-speedometer2",
-			label: "Risk Engine",
-			color: "var(--pm-info)",
-			modal: "riskScoringModal",
-		},
-		{
-			icon: "bi-clock-history",
-			label: "Audit Log",
-			color: "var(--pm-accent)",
-			modal: "auditTrailModal",
-		},
-		{
-			icon: "bi-people",
-			label: "Bulk Screen",
-			color: "var(--pm-warning)",
-			modal: "bulkScreeningModal",
-		},
-		{
-			icon: "bi-archive",
-			label: "Evidence Locker",
-			color: "var(--pm-muted)",
-			modal: "evidenceLockerModal",
-		},
-	],
-	liveFeed: {
-		cols: [
-			{ key: "time", label: "Time" },
-			{ key: "ref", label: "Reference" },
-			{ key: "route", label: "From → To" },
-			{ key: "amount", label: "Amount" },
-			{ key: "rail", label: "Rail" },
-			{ key: "risk", label: "Risk" },
-			{ key: "status", label: "Status" },
-			{ key: "actions", label: "Actions" },
+		suggestions: [
+			{
+				icon: "bi-robot",
+				iconBg: "var(--pm-accent-soft)",
+				iconColor: "var(--pm-accent)",
+				title: "Tighten velocity rule for cross-border",
+				sub: "Reduce false positives by 18%",
+				actionLabel: "Tune Rule",
+				modal: "amlRulesModal",
+			},
+			{
+				icon: "bi-graph-up",
+				iconBg: "var(--pm-warning-soft)",
+				iconColor: "var(--pm-warning)",
+				title: "Increase risk score weight for crypto exchanges",
+				sub: "Current weight: 25% → Suggested: 40%",
+				actionLabel: "Adjust",
+				modal: "riskScoringModal",
+			},
+			{
+				icon: "bi-link-45deg",
+				iconBg: "var(--pm-info-soft)",
+				iconColor: "var(--pm-info)",
+				title: "Enable real-time sanctions screening on PesaLink",
+				sub: "Currently batch (every 15 min)",
+				actionLabel: "Enable",
+				// LEGACY BRIDGE: legacy called openM('railConfigModal') — that modal id
+				// does not exist in 1.9.html; mapped to the monitoring settings modal.
+				modal: "monitorSettingsModal",
+			},
 		],
+			quickActions: [
+				{
+					icon: "bi-folder-plus",
+					label: "New Investigation",
+					color: "var(--pm-danger)",
+					modal: "newCaseModal",
+				},
+				{
+					icon: "bi-globe",
+					label: "Sanctions Search",
+					color: "var(--pm-warning)",
+					modal: "sanctionsSearchModal",
+				},
+				{
+					icon: "bi-sliders",
+					label: "Edit Rules",
+					color: "var(--pm-primary-light)",
+					modal: "amlRulesModal",
+				},
+				{
+					icon: "bi-file-earmark-text",
+					label: "File STR/CTR",
+					color: "var(--pm-purple)",
+					modal: "regReportModal",
+				},
+				{
+					icon: "bi-speedometer2",
+					label: "Risk Engine",
+					color: "var(--pm-info)",
+					modal: "riskScoringModal",
+				},
+				{
+					icon: "bi-clock-history",
+					label: "Audit Log",
+					color: "var(--pm-accent)",
+					modal: "auditTrailModal",
+				},
+				{
+					icon: "bi-people",
+					label: "Bulk Screen",
+					color: "var(--pm-warning)",
+					modal: "bulkScreeningModal",
+				},
+				{
+					icon: "bi-archive",
+					label: "Evidence Locker",
+					color: "var(--pm-muted)",
+					modal: "evidenceLockerModal",
+				},
+			],
+				liveFeed: {
+	cols: [
+		{ key: "time", label: "Time" },
+		{ key: "ref", label: "Reference" },
+		{ key: "route", label: "From → To" },
+		{ key: "amount", label: "Amount" },
+		{ key: "rail", label: "Rail" },
+		{ key: "risk", label: "Risk" },
+		{ key: "status", label: "Status" },
+		{ key: "actions", label: "Actions" },
+	],
 		rows: [
 			[
 				"14:32",
@@ -414,76 +413,76 @@ const initialMockData: ComplianceConfig = {
 			],
 		],
 	},
-	riskDistribution: [
-		{
-			label: "Low Risk (0-30)",
-			value: "41,882 (88.5%)",
-			width: "88.5%",
-			color: "var(--pm-accent)",
-		},
-		{
-			label: "Medium Risk (31-60)",
-			value: "4,392 (9.3%)",
-			width: "9.3%",
-			color: "var(--pm-warning)",
-		},
-		{
-			label: "High Risk (61-100)",
-			value: "1,017 (2.2%)",
-			width: "2.2%",
-			color: "var(--pm-danger)",
-		},
-	],
-	riskFlagged: {
-		title: "4 transactions",
-		body: "currently flagged for immediate review. Average risk score:",
-		scoreLabel: "",
-		score: "47.2",
+riskDistribution: [
+	{
+		label: "Low Risk (0-30)",
+		value: "41,882 (88.5%)",
+		width: "88.5%",
+		color: "var(--pm-accent)",
 	},
-	rules: [
-		{
-			title: "Structuring Detection",
-			sub: "Multiple transactions just below threshold in 48h",
-			status: "Active",
-			statusTone: "badgeS",
-			precision: "98.4%",
-		},
-		{
-			title: "Velocity Rule — Cross-border",
-			sub: ">3 international txns in 24h from same originator",
-			status: "Active",
-			statusTone: "badgeS",
-			precision: "94.1%",
-		},
-		{
-			title: "Round-Tripping Detection",
-			sub: "Funds returning to originator within 7 days",
-			status: "Active",
-			statusTone: "badgeS",
-			precision: "87.6%",
-		},
-		{
-			title: "PEP Transaction Spike",
-			sub: "PEP-linked account >300% avg volume",
-			status: "Active",
-			statusTone: "badgeS",
-			precision: "91.2%",
-		},
-		{
-			title: "Crypto Exchange Concentration",
-			sub: ">40% monthly volume to crypto exchanges",
-			status: "Paused",
-			statusTone: "badgeW",
-			precision: "—",
-		},
-	],
+	{
+		label: "Medium Risk (31-60)",
+		value: "4,392 (9.3%)",
+		width: "9.3%",
+		color: "var(--pm-warning)",
+	},
+	{
+		label: "High Risk (61-100)",
+		value: "1,017 (2.2%)",
+		width: "2.2%",
+		color: "var(--pm-danger)",
+	},
+],
+	riskFlagged: {
+	title: "4 transactions",
+		body: "currently flagged for immediate review. Average risk score:",
+			scoreLabel: "",
+				score: "47.2",
+	},
+rules: [
+	{
+		title: "Structuring Detection",
+		sub: "Multiple transactions just below threshold in 48h",
+		status: "Active",
+		statusTone: "badgeS",
+		precision: "98.4%",
+	},
+	{
+		title: "Velocity Rule — Cross-border",
+		sub: ">3 international txns in 24h from same originator",
+		status: "Active",
+		statusTone: "badgeS",
+		precision: "94.1%",
+	},
+	{
+		title: "Round-Tripping Detection",
+		sub: "Funds returning to originator within 7 days",
+		status: "Active",
+		statusTone: "badgeS",
+		precision: "87.6%",
+	},
+	{
+		title: "PEP Transaction Spike",
+		sub: "PEP-linked account >300% avg volume",
+		status: "Active",
+		statusTone: "badgeS",
+		precision: "91.2%",
+	},
+	{
+		title: "Crypto Exchange Concentration",
+		sub: ">40% monthly volume to crypto exchanges",
+		status: "Paused",
+		statusTone: "badgeW",
+		precision: "—",
+	},
+],
 	rulePerformance: {
-		cols: [
-			{ key: "rule", label: "Rule" },
-			{ key: "alerts", label: "Alerts" },
-			{ key: "confirmed", label: "Confirmed" },
-			{ key: "precision", label: "Precision" },
-		],
+	cols: [
+		{ key: "rule", label: "Rule" },
+		{ key: "alerts", label: "Alerts" },
+		{ key: "confirmed", label: "Confirmed" },
+		{ key: "precision", label: "Precision" },
+	],
 		rows: [
 			["Structuring", "412", "89", "STR:21.6%"],
 			["Velocity (Intl)", "187", "61", "STR:32.6%"],
@@ -491,21 +490,21 @@ const initialMockData: ComplianceConfig = {
 			["PEP Spike", "31", "19", "STR:61.3%"],
 		],
 	},
-	screeningSummary: [
-		{ label: "Total Screened", value: "47,291" },
-		{ label: "Matches Found", value: "47" },
-		{ label: "False Positives", value: "38" },
-		{ label: "True Matches (Confirmed)", value: "9" },
-		{ label: "PEP Hits", value: "12" },
-	],
+screeningSummary: [
+	{ label: "Total Screened", value: "47,291" },
+	{ label: "Matches Found", value: "47" },
+	{ label: "False Positives", value: "38" },
+	{ label: "True Matches (Confirmed)", value: "9" },
+	{ label: "PEP Hits", value: "12" },
+],
 	screeningRefresh: "27 Jun 2025, 06:00 EAT",
-	recentMatches: {
-		cols: [
-			{ key: "entity", label: "Entity" },
-			{ key: "list", label: "List" },
-			{ key: "score", label: "Match Score" },
-			{ key: "action", label: "Action" },
-		],
+		recentMatches: {
+	cols: [
+		{ key: "entity", label: "Entity" },
+		{ key: "list", label: "List" },
+		{ key: "score", label: "Match Score" },
+		{ key: "action", label: "Action" },
+	],
 		rows: [
 			[
 				"John Kamau (Beneficiary)",
@@ -527,38 +526,38 @@ const initialMockData: ComplianceConfig = {
 			],
 		],
 	},
-	riskScoreBands: [
-		{
-			label: "0-20 (Very Low)",
-			value: "18,442 (39%)",
-			width: "39%",
-			color: "var(--pm-accent)",
-		},
-		{
-			label: "21-40 (Low)",
-			value: "14,188 (30%)",
-			width: "30%",
-			color: "#34D399",
-		},
-		{
-			label: "41-60 (Medium)",
-			value: "9,458 (20%)",
-			width: "20%",
-			color: "var(--pm-warning)",
-		},
-		{
-			label: "61-80 (High)",
-			value: "3,776 (8%)",
-			width: "8%",
-			color: "var(--pm-danger)",
-		},
-		{
-			label: "81-100 (Critical)",
-			value: "1,427 (3%)",
-			width: "3%",
-			color: "#DC2626",
-		},
-	],
+riskScoreBands: [
+	{
+		label: "0-20 (Very Low)",
+		value: "18,442 (39%)",
+		width: "39%",
+		color: "var(--pm-accent)",
+	},
+	{
+		label: "21-40 (Low)",
+		value: "14,188 (30%)",
+		width: "30%",
+		color: "#34D399",
+	},
+	{
+		label: "41-60 (Medium)",
+		value: "9,458 (20%)",
+		width: "20%",
+		color: "var(--pm-warning)",
+	},
+	{
+		label: "61-80 (High)",
+		value: "3,776 (8%)",
+		width: "8%",
+		color: "var(--pm-danger)",
+	},
+	{
+		label: "81-100 (Critical)",
+		value: "1,427 (3%)",
+		width: "3%",
+		color: "#DC2626",
+	},
+],
 	riskFactors: [
 		{ label: "High-risk jurisdiction", value: "2,841 txns" },
 		{ label: "PEP relationship", value: "1,992 txns" },
@@ -566,17 +565,17 @@ const initialMockData: ComplianceConfig = {
 		{ label: "Structuring pattern", value: "892 txns" },
 		{ label: "Adverse media hit", value: "611 txns" },
 	],
-	cases: {
-		cols: [
-			{ key: "id", label: "Case ID" },
-			{ key: "type", label: "Type" },
-			{ key: "subject", label: "Subject" },
-			{ key: "risk", label: "Risk" },
-			{ key: "status", label: "Status" },
-			{ key: "opened", label: "Opened" },
-			{ key: "owner", label: "Owner" },
-			{ key: "actions", label: "Actions" },
-		],
+		cases: {
+	cols: [
+		{ key: "id", label: "Case ID" },
+		{ key: "type", label: "Type" },
+		{ key: "subject", label: "Subject" },
+		{ key: "risk", label: "Risk" },
+		{ key: "status", label: "Status" },
+		{ key: "opened", label: "Opened" },
+		{ key: "owner", label: "Owner" },
+		{ key: "actions", label: "Actions" },
+	],
 		rows: [
 			[
 				"C:AML-44892",
@@ -620,15 +619,15 @@ const initialMockData: ComplianceConfig = {
 			],
 		],
 	},
-	filings: {
-		cols: [
-			{ key: "id", label: "Report ID" },
-			{ key: "type", label: "Type" },
-			{ key: "subject", label: "Subject" },
-			{ key: "filed", label: "Filed" },
-			{ key: "status", label: "Status" },
-			{ key: "actions", label: "Actions" },
-		],
+filings: {
+	cols: [
+		{ key: "id", label: "Report ID" },
+		{ key: "type", label: "Type" },
+		{ key: "subject", label: "Subject" },
+		{ key: "filed", label: "Filed" },
+		{ key: "status", label: "Status" },
+		{ key: "actions", label: "Actions" },
+	],
 		rows: [
 			[
 				"C:STR-2025-0612",
@@ -656,36 +655,36 @@ const initialMockData: ComplianceConfig = {
 			],
 		],
 	},
-	deadlines: [
-		{
-			title: "STR Draft #AML-44892",
-			sub: "Due in 18 hours",
-			actionLabel: "Complete",
-			actionTone: "btnPmD",
-			modal: "caseDetailModal",
-		},
-		{
-			title: "Monthly CBK Summary",
-			sub: "Due 30 Jun 2025",
-			actionLabel: "Prepare",
-			modal: "regReportModal",
-		},
-		{
-			title: "Quarterly AML Report",
-			sub: "Due 15 Jul 2025",
-			actionLabel: "Start",
-			modal: "regReportModal",
-		},
-	],
+deadlines: [
+	{
+		title: "STR Draft #AML-44892",
+		sub: "Due in 18 hours",
+		actionLabel: "Complete",
+		actionTone: "btnPmD",
+		modal: "caseDetailModal",
+	},
+	{
+		title: "Monthly CBK Summary",
+		sub: "Due 30 Jun 2025",
+		actionLabel: "Prepare",
+		modal: "regReportModal",
+	},
+	{
+		title: "Quarterly AML Report",
+		sub: "Due 15 Jul 2025",
+		actionLabel: "Start",
+		modal: "regReportModal",
+	},
+],
 	audit: {
-		cols: [
-			{ key: "ts", label: "Timestamp" },
-			{ key: "user", label: "User" },
-			{ key: "action", label: "Action" },
-			{ key: "entity", label: "Entity" },
-			{ key: "evidence", label: "Evidence" },
-			{ key: "ip", label: "IP / Device" },
-		],
+	cols: [
+		{ key: "ts", label: "Timestamp" },
+		{ key: "user", label: "User" },
+		{ key: "action", label: "Action" },
+		{ key: "entity", label: "Entity" },
+		{ key: "evidence", label: "Evidence" },
+		{ key: "ip", label: "IP / Device" },
+	],
 		rows: [
 			[
 				"27 Jun 14:28",

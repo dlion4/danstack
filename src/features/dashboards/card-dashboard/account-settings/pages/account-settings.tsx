@@ -100,9 +100,9 @@ const initialMockData: AccountSettingsConfig = {
 		current: "Account & Settings",
 	},
 	pageCode: "",
-	pageTitle: "Card Account & Settings",
-	pageSub:
-		"Configure default payment cards, personalize alert preferences, and manage your card portfolio settings.",
+	// // pageTitle: "Card Account & Settings",
+	// pageSub:
+	// 	"Configure default payment cards, personalize alert preferences, and manage your card portfolio settings.",
 	hero: {
 		score: "91/100",
 		detail: "Excellent posture. Protected by AI.",

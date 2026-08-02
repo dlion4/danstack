@@ -151,9 +151,9 @@ const initialMockData: CollectionsConfig = {
 		mid: "Commerce",
 		current: "Collections",
 	},
-	pageTitle: "Collections & Merchant Services",
-	pageSub:
-		"Manage your PayBill, Till, Card, and PesaLink collections. Track real-time settlements, handle refunds, and manage customer payment data.",
+	// // pageTitle: "Collections & Merchant Services",
+	// pageSub:
+	// 	"Manage your PayBill, Till, Card, and PesaLink collections. Track real-time settlements, handle refunds, and manage customer payment data.",
 	heroStats: [
 		{
 			key: "collected",

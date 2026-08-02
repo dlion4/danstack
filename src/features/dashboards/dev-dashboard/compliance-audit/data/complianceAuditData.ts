@@ -146,7 +146,7 @@ export interface ComplianceAuditContent {
 
 export const initialMockData: ComplianceAuditContent = {
 	pageCode: "",
-	pageTitle: "Compliance, Audit & Regulatory Integration",
+	// pageTitle: "Compliance, Audit & Regulatory Integration",
 	pageSub:
 		"Integrate real-time regulatory reporting, manage immutable audit trails, and ensure strict compliance with KRA, CBK, and global standards (ISO 20022/SWIFT).",
 	breadcrumb: {

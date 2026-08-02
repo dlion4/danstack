@@ -127,7 +127,7 @@ const initialMockData: APConfig = {
 		avatarBg: "linear-gradient(135deg, #FECDD3 0%, #FB7185 100%)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Accounts Payable" },
-	pageTitle: "Accounts Payable & Supplier Management",
+	// pageTitle: "Accounts Payable & Supplier Management",
 	pageSub:
 		"Manage supplier invoices, approval workflows, payment execution, and discount tracking.",
 	heroStats: [

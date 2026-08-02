@@ -154,9 +154,9 @@ const initialMockData: VAConfig = {
 		mid: "Treasury",
 		current: "Virtual Accounts",
 	},
-	pageTitle: "Virtual Accounts & Sub-Accounts",
-	pageSub:
-		"Create, manage and reconcile business virtual accounts and sub-accounts with full funding controls, hierarchy, automation rules and audit trails.",
+	// // pageTitle: "Virtual Accounts & Sub-Accounts",
+	// pageSub:
+	// 	"Create, manage and reconcile business virtual accounts and sub-accounts with full funding controls, hierarchy, automation rules and audit trails.",
 	attentionItems: [
 		{
 			icon: "bi-exclamation-triangle",

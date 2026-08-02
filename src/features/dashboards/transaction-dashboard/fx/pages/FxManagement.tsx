@@ -181,7 +181,7 @@ const initialMockData: FxConfig = {
 		current: "Multi-Currency & FX",
 	},
 	pageCode: "",
-	pageTitle: "Multi-Currency & FX Management",
+	// pageTitle: "Multi-Currency & FX Management",
 	pageSub:
 		"Manage multi-currency wallets, execute instant FX conversions, set up forward contracts, monitor live rates, and optimise cross-border cash flow across 20+ currencies.",
 	hero: {

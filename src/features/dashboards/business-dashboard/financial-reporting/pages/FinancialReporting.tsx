@@ -123,9 +123,9 @@ const initialMockData: FRConfig = {
 		parent: "Business Portal",
 		current: "Financial Reporting, Audit & Analytics",
 	},
-	pageTitle: "Financial Reporting, Audit & Analytics",
-	pageSub:
-		"Generate compliance-ready financial statements, drill down into BI metrics, review immutable audit trails, and prepare statutory KRA/NSSF tax extracts.",
+	// // pageTitle: "Financial Reporting, Audit & Analytics",
+	// pageSub:
+	// 	"Generate compliance-ready financial statements, drill down into BI metrics, review immutable audit trails, and prepare statutory KRA/NSSF tax extracts.",
 	heroStats: [
 		{
 			key: "liquidity",

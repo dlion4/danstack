@@ -161,7 +161,7 @@ export interface SupportSlasContent {
 
 export const initialMockData: SupportSlasContent = {
 	pageCode: "",
-	pageTitle: "Support, Escalation & SLAs",
+	// pageTitle: "Support, Escalation & SLAs",
 	pageSub:
 		"Manage technical support tickets, track SLA compliance, declare incidents, and access escalation matrices.",
 	breadcrumb: {

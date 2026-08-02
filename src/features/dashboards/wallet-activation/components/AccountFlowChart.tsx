@@ -157,7 +157,7 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 					</h3>
 					<p className={styles.flowChartSub}>
 						Primary Wallet is far left. Every linked dashboard draws a live money path from it — hover a
-						link to see what flows through it, unlink to break the path.
+						link to see what flows through it, unlink to break the connection.
 					</p>
 				</div>
 				<div className={styles.flowChartCtl}>
@@ -190,7 +190,7 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 							</div>
 							<div>
 								<div className={styles.flowWalletLabel}>Primary PayMo Wallet</div>
-								<div className={styles.flowWalletName}>Amina Grace Kamau</div>
+								<div className={styles.flowWalletName}>Oscar Kasongo</div>
 							</div>
 						</div>
 						<div className={styles.flowWalletNum}>PM-4521-8830-1024</div>
@@ -199,7 +199,7 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 							<span className={styles.flowWalletChip}>
 								<i className="bi bi-check-circle"></i> Active
 							</span>
-							<span className={styles.flowWalletChip}>Premium KYC</span>
+							<span className={styles.flowWalletChip}>Verified KYC</span>
 						</div>
 					</div>
 
@@ -369,7 +369,7 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 										className={active ? styles.flowLineAnimated : ''}
 									>
 										{active && (
-											<animate attributeName="stroke-dashoffset" from="200" to="0" dur="1.2s" repeatCount="indefinite" />
+											<animate attributeName="stroke-dashoffset" from="200" to="0" dur="11.2s" repeatCount="indefinite" />
 										)}
 									</path>
 
@@ -377,7 +377,7 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 									{active && (
 										<g>
 											<circle r={3.4} fill="#fff" filter={`url(#flowGlow-${hex})`}>
-												<animateMotion dur="2.4s" repeatCount="indefinite" path={p.path} begin={`${i * 0.4}s`} />
+												<animateMotion dur="12.4s" repeatCount="indefinite" path={p.path} begin={`${i * 0.4}s`} />
 											</circle>
 											<circle r={2.2} fill={meta.color}>
 												<animateMotion dur="2.4s" repeatCount="indefinite" path={p.path} begin={`${i * 0.4 + 0.35}s`} />

@@ -122,9 +122,9 @@ const initialMockData: AnalyticsConfig = {
 
 
 	pageCode: "",
-	pageTitle: "Transaction Analytics & Reporting",
-	pageSub:
-		"Deep-dive analytics on volumes, success rates, failure patterns, merchant insights, custom report builder and automated delivery.",
+	// // pageTitle: "Transaction Analytics & Reporting",
+	// pageSub:
+	// 	"Deep-dive analytics on volumes, success rates, failure patterns, merchant insights, custom report builder and automated delivery.",
 	breadcrumb: {
 		parents: [
 			{ label: "Home", to: "/" },

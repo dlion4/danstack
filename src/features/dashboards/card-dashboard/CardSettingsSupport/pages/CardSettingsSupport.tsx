@@ -124,7 +124,7 @@ const initialMockData: SettingsConfig = {
 		current: "Settings & Support",
 	},
 	pageCode: "",
-	pageTitle: "Card Settings & Support",
+	// pageTitle: "Card Settings & Support",
 	pageSub:
 		"Configure card defaults, personalize alert preferences, access self-service help, troubleshoot declined transactions and reach emergency support.",
 	hero: {

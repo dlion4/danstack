@@ -128,9 +128,9 @@ const initialMockData: OBConfig = {
 		mid: "Treasury",
 		current: "Open Banking",
 	},
-	pageTitle: "Open Banking & Account Aggregation",
-	pageSub:
-		"Connect bank accounts via PesaLink, view consolidated cash positions, execute instant transfers, reconcile transactions, and analyse multi-bank cash flow — all within a single secure dashboard.",
+	// // pageTitle: "Open Banking & Account Aggregation",
+	// pageSub:
+	// 	"Connect bank accounts via PesaLink, view consolidated cash positions, execute instant transfers, reconcile transactions, and analyse multi-bank cash flow — all within a single secure dashboard.",
 	bankAccounts: [
 		{
 			bank: "Equity Bank",

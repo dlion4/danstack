@@ -183,7 +183,7 @@ const initialMockData: FeesConfig = {
 		current: "Fee & Commission Management",
 	},
 	pageCode: "",
-	pageTitle: "Fee & Commission Management",
+	// pageTitle: "Fee & Commission Management",
 	pageSub:
 		"Manage all transaction fees, commission structures, tiered pricing, waivers, settlements and regulatory compliance in one centralised command center.",
 	notifCounter: 7,

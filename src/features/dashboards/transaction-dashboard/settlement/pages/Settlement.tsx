@@ -158,7 +158,7 @@ const initialMockData: SettlementConfig = {
 		current: "Settlement & Clearing",
 	},
 	pageCode: "",
-	pageTitle: "Settlement & Clearing",
+	// pageTitle: "Settlement & Clearing",
 	hero: {
 		live: "Settlement engine live",
 		value: "KES 2.84B settled today",

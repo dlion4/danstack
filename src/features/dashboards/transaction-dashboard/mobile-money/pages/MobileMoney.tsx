@@ -121,7 +121,7 @@ const initialMockData: MobileMoneyConfig = {
 		current: "Mobile Money & PSP Hub",
 	},
 
-	pageTitle: "Mobile Money & PSP Integration Hub",
+	// pageTitle: "Mobile Money & PSP Integration Hub",
 	pageSub:
 		"Manage M-Pesa, Airtel Money, T-Kash, Pesalink, and 20+ PSP integrations. Execute transfers, reconcile wallets, handle disputes, and maintain full compliance from one command center.",
 	hero: {

@@ -136,9 +136,9 @@ const initialMockData: PayrollConfig = {
 		avatarBg: "linear-gradient(135deg, #A7F3D0 0%, #34D399 100%)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Payroll & HR" },
-	pageTitle: "Payroll & Salary Disbursement",
-	pageSub:
-		"Manage employees, run payroll, generate payslips, and ensure statutory compliance.",
+	// // pageTitle: "Payroll & Salary Disbursement",
+	// pageSub:
+	// 	"Manage employees, run payroll, generate payslips, and ensure statutory compliance.",
 	heroStats: [
 		{
 			key: "nextPayroll",

@@ -155,7 +155,7 @@ const initialMockData: KraConfig = {
 		current: "KRA & Government",
 	},
 	pageCode: "",
-	pageTitle: "KRA & Government Integration",
+	// pageTitle: "KRA & Government Integration",
 	pageSub:
 		"Manage iTax obligations, file returns, pay national & county government fees, handle land services via Ardhisasa, and maintain full compliance from a single hub.",
 	hero: {

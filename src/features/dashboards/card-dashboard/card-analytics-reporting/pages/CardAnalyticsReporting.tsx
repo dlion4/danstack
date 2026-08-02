@@ -104,7 +104,7 @@ const initialMockData: CardAnalyticsReportingConfig = {
 		current: "Card Analytics",
 	},
 	pageCode: "",
-	pageTitle: "Card Analytics & Reporting",
+	// pageTitle: "Card Analytics & Reporting",
 	pageSub:
 		"Analyze issuance, usage, merchant concentration, churn risk, and corporate compliance.",
 	heroActions: [

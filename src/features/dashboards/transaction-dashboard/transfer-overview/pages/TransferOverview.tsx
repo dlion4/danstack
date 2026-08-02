@@ -150,7 +150,7 @@ const initialMockData: TransferConfig = {
 		current: "Command Center",
 	},
 	pageCode: "",
-	pageTitle: "Transfer Overview Command Center",
+	// pageTitle: "Transfer Overview Command Center",
 	pageSub:
 		"Initiate instant transfers, schedule recurring payments, manage beneficiaries, and monitor all money movement across M-Pesa, banks, and internal wallets.",
 	hero: {

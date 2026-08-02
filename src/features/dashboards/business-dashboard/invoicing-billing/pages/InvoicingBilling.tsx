@@ -138,9 +138,9 @@ const initialMockData: InvoicingConfig = {
 		avatarBg: "linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Invoicing & Billing" },
-	pageTitle: "Invoicing & Billing",
-	pageSub:
-		"Manage invoices, payment links, collections tracking, and recurring subscriptions.",
+	// // pageTitle: "Invoicing & Billing",
+	// pageSub:
+	// 	"Manage invoices, payment links, collections tracking, and recurring subscriptions.",
 	heroStats: [
 		{
 			key: "outstanding",

@@ -170,9 +170,9 @@ const initialMockData: OnboardConfig = {
 		mid: "Compliance",
 		current: "Onboarding & KYB/KYC",
 	},
-	pageTitle: "Business Onboarding & KYB/KYC Center",
-	pageSub:
-		"Onboard sole proprietors, partnerships, LLCs, SACCOs and NGOs. Manage KYB/KYC intake, beneficial ownership declarations, director verification, compliance scoring and full audit trails.",
+	// // pageTitle: "Business Onboarding & KYB/KYC Center",
+	// pageSub:
+	// 	"Onboard sole proprietors, partnerships, LLCs, SACCOs and NGOs. Manage KYB/KYC intake, beneficial ownership declarations, director verification, compliance scoring and full audit trails.",
 	pipeline: [
 		{
 			name: "Greenfield Logistics Ltd",

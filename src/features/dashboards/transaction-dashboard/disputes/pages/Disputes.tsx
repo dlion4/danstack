@@ -176,7 +176,7 @@ const initialMockData: DisputesConfig = {
 		current: "Dispute & Chargeback",
 	},
 	pageCode: "",
-	pageTitle: "Dispute & Chargeback Management",
+	// pageTitle: "Dispute & Chargeback Management",
 	pageSub:
 		"Initiate disputes, manage evidence, track chargeback workflows, resolve cases and analyse resolution performance across all payment rails.",
 	notifCounter: 14,

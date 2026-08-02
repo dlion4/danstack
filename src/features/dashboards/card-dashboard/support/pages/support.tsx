@@ -116,7 +116,7 @@ const initialMockData: SupportConfig = {
 		current: "Support",
 	},
 	pageCode: "",
-	pageTitle: "Card Support",
+	// pageTitle: "Card Support",
 	pageSub:
 		"Access self-service help, troubleshoot declined transactions, file disputes, and reach emergency support services.",
 	hero: {

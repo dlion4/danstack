@@ -189,7 +189,7 @@ export interface ApiReferenceContent {
 
 export const initialMockData: ApiReferenceContent = {
 	pageCode: "",
-	pageTitle: "API Reference & Documentation",
+	// pageTitle: "API Reference & Documentation",
 	pageSub:
 		"Extensive RESTful endpoints for Collections, Disbursements, KYC, Account Management, Webhooks, and Real-time Analytics.",
 	breadcrumb: {

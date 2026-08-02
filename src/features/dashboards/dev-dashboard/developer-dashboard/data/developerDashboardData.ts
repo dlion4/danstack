@@ -227,7 +227,7 @@ export interface DeveloperDashboardContent {
  * ----------------------------------------------------------------------- */
 export const initialMockData: DeveloperDashboardContent = {
 	pageCode: "",
-	pageTitle: "Developer Dashboard",
+	// pageTitle: "Developer Dashboard",
 	pageSub:
 		"Manage your PayMo integration, track API requests, handle webhook events, and manage project access.",
 	breadcrumb: {

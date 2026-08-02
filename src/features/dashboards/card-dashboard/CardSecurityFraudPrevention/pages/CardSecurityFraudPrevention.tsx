@@ -117,7 +117,7 @@ const initialMockData: CardSecurityFraudPreventionConfig = {
 		current: "Fraud Prevention",
 	},
 	pageCode: "",
-	pageTitle: "Fraud Prevention & Security",
+	// pageTitle: "Fraud Prevention & Security",
 	pageSub:
 		"Configure comprehensive AI threat detection and prevention systems for all card types. Manage real-time fraud alerts, configure fraud rules, and monitor transaction security across all payment networks.",
 	hero: {

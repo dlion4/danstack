@@ -133,7 +133,7 @@ const initialMockData: VirtualDebitCardsConfig = {
 		current: "Virtual Cards",
 	},
 	pageCode: "",
-	pageTitle: "Virtual Debit Card Center",
+	// pageTitle: "Virtual Debit Card Center",
 	pageSub:
 		"Create and manage multiple virtual debit cards for safer online shopping, compartmentalized subscriptions, and single-use e-commerce transactions.",
 	hero: {

@@ -163,9 +163,9 @@ const initialMockData: SettingsConfig = {
 		mid: "Administration",
 		current: "Settings",
 	},
-	pageTitle: "Settings, Account Details & Administration",
-	pageSub:
-		"Manage business identity, KYC/KYB documents, multi-business switching, user roles & permissions, security policies, integrations, compliance calendar and support tickets.",
+	// // pageTitle: "Settings, Account Details & Administration",
+	// pageSub:
+	// 	"Manage business identity, KYC/KYB documents, multi-business switching, user roles & permissions, security policies, integrations, compliance calendar and support tickets.",
 	kycItems: [
 		{
 			label: "Certificate of Incorporation",

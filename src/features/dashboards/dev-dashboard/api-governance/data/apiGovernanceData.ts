@@ -162,7 +162,7 @@ export interface ApiGovernanceContent {
 
 export const initialMockData: ApiGovernanceContent = {
 	pageCode: "",
-	pageTitle: "API Governance, Versioning & Roadmap",
+	// pageTitle: "API Governance, Versioning & Roadmap",
 	pageSub:
 		"Control API lifecycles, enforce design standards (OpenAPI 3.0), publish release notes, and track the developer roadmap.",
 	breadcrumb: {

@@ -194,7 +194,7 @@ const initialMockData: CustomersConfig = {
 		current: "Customer & Account Management",
 	},
 	pageCode: "",
-	pageTitle: "Customer & Account Management",
+	// pageTitle: "Customer & Account Management",
 	pageSub:
 		"Comprehensive customer lifecycle management including onboarding, KYC/AML, account opening/closure, permissions, statements and support tickets.",
 	ticketCounter: 14,

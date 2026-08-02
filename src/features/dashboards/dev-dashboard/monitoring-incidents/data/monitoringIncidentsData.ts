@@ -177,7 +177,7 @@ export interface MonitoringIncidentsContent {
 
 export const initialMockData: MonitoringIncidentsContent = {
 	pageCode: "",
-	pageTitle: "Monitoring, Alerting & Incident Management",
+	// pageTitle: "Monitoring, Alerting & Incident Management",
 	pageSub:
 		"Real-time API health, distributed tracing, developer alerts, ELK log aggregation, and PagerDuty integration.",
 	breadcrumb: {

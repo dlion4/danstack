@@ -122,9 +122,9 @@ const initialMockData: TreasuryConfig = {
 		avatarBg: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Treasury & Cash" },
-	pageTitle: "Treasury, Cash Management & Forex",
-	pageSub:
-		"Manage cash positions, inter-account transfers, FX, and investment portfolio.",
+	// // pageTitle: "Treasury, Cash Management & Forex",
+	// pageSub:
+	// 	"Manage cash positions, inter-account transfers, FX, and investment portfolio.",
 	heroStats: [
 		{
 			key: "cash",

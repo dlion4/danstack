@@ -96,7 +96,7 @@ export const initialMockData: SettingsConfig = {
 		current: "Settings & Automation",
 	},
 	pageCode: "",
-	pageTitle: "Utility Settings & Automation",
+	// pageTitle: "Utility Settings & Automation",
 	pageSub:
 		"Configure robust auto-pay frameworks, optimize monthly utility budgets, tune alert preferences, and manage multi-user household access.",
 	heroCards: [

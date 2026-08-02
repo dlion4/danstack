@@ -147,7 +147,7 @@ export const initialMockData: CommandCenterConfig = {
 		current: "Utilities Command Center",
 	},
 	pageCode: "",
-	pageTitle: "Utilities Command Center",
+	// pageTitle: "Utilities Command Center",
 	pageSub:
 		"Manage all utility accounts, track spending, pay bills, set auto-pay & monitor service health from one central hub.",
 	hero: {

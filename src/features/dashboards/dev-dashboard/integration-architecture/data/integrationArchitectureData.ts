@@ -104,7 +104,7 @@ export interface IntegrationArchitectureContent {
 
 export const initialMockData: IntegrationArchitectureContent = {
 	pageCode: "",
-	pageTitle: "Integration Architecture & Patterns",
+	// pageTitle: "Integration Architecture & Patterns",
 	pageSub:
 		"Define how your systems connect to PayMo via direct APIs, embedded checkouts, microservices, or legacy translators.",
 	breadcrumb: {

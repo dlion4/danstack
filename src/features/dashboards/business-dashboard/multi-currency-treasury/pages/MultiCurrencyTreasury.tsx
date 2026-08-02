@@ -143,9 +143,9 @@ const initialMockData: FXConfig = {
 		mid: "Treasury",
 		current: "Multi-Currency",
 	},
-	pageTitle: "Multi-Currency Treasury & Forex Operations",
-	pageSub:
-		"Manage multi-currency accounts, execute live FX trades, set hedging contracts, monitor exposure, ensure regulatory compliance and reconcile treasury positions.",
+	// // pageTitle: "Multi-Currency Treasury & Forex Operations",
+	// pageSub:
+	// 	"Manage multi-currency accounts, execute live FX trades, set hedging contracts, monitor exposure, ensure regulatory compliance and reconcile treasury positions.",
 	currencies: [
 		{
 			code: "KES",

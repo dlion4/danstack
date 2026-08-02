@@ -159,7 +159,7 @@ export interface WebhooksEventsContent {
 
 export const initialMockData: WebhooksEventsContent = {
 	pageCode: "",
-	pageTitle: "Webhooks, Events & Real-Time Integration",
+	// pageTitle: "Webhooks, Events & Real-Time Integration",
 	pageSub:
 		"Manage endpoint configurations, stream enterprise events via Kafka/SQS, and handle payload idempotency, reliability, and dead letters.",
 	breadcrumb: {

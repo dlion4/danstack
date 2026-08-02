@@ -115,9 +115,9 @@ const initialMockData: DisbursementsConfig = {
 		avatarBg: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
 	},
 	breadcrumb: { parent: "Business Portal", current: "Bulk Disbursements" },
-	pageTitle: "Bulk Disbursements",
-	pageSub:
-		"Manage bulk payments, batch processing, float management, and disbursement analytics.",
+	// // pageTitle: "Bulk Disbursements",
+	// pageSub:
+	// 	"Manage bulk payments, batch processing, float management, and disbursement analytics.",
 	heroStats: [
 		{
 			key: "engine",

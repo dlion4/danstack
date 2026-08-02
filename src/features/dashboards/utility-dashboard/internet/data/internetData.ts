@@ -101,7 +101,7 @@ export const initialMockData: InternetConfig = {
 		current: "Management",
 	},
 	pageCode: "",
-	pageTitle: "Internet & Connectivity Management",
+	// pageTitle: "Internet & Connectivity Management",
 	pageSub:
 		"Manage home broadband, mobile data SIMs, bundle subscriptions, network outages and auto-renewals.",
 	hero: {

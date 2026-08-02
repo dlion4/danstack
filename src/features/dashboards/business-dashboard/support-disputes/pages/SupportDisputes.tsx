@@ -155,9 +155,9 @@ const initialMockData: SupportConfig = {
 		mid: "Support",
 		current: "Disputes & Refunds",
 	},
-	pageTitle: "Support, Disputes & Refunds Center",
-	pageSub:
-		"Manage customer tickets, merchant disputes, chargebacks, refunds, evidence uploads, SLA performance and resolution workflows in one comprehensive hub.",
+	// // pageTitle: "Support, Disputes & Refunds Center",
+	// pageSub:
+	// 	"Manage customer tickets, merchant disputes, chargebacks, refunds, evidence uploads, SLA performance and resolution workflows in one comprehensive hub.",
 	tickets: [
 		{
 			id: "T-8821",

@@ -108,7 +108,7 @@ export const initialMockData: MobileAirtimeConfig = {
 		current: "Mobile Money & Airtime",
 	},
 	pageCode: "",
-	pageTitle: "Mobile Money & Airtime Hub",
+	// pageTitle: "Mobile Money & Airtime Hub",
 	pageSub:
 		"Unified management for your Safaricom, Airtel, and Telkom lines. Deep integration with M-Pesa ecosystem, interoperability transfers, and smart data bundles.",
 	hero: { balance: "KES 48,250", received: "KES 12,400", sent: "KES 3,200" },
