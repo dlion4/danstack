@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import BackgroundCanvas from "../components/homeLayout/BackgroundCanvas";
-import homeLayoutCss from "../components/LayoutStyles/HomeLayout.css?url";
 import appCss from "../styles.css?url";
 
 const queryClient = new QueryClient({
@@ -30,10 +29,6 @@ export const Route = createRootRoute({
 			{
 				rel: "stylesheet",
 				href: appCss,
-			},
-			{
-				rel: "stylesheet",
-				href: homeLayoutCss,
 			},
 			{
 				rel: "preconnect",

@@ -1,20 +1,6 @@
 "use client";
 
-/**
- * Header.tsx — Paymo BaaS navbar (refactored from HTML prototype)
- * --------------------------------------------------------------------------
- * Source: Pasted Content_1785710877941.txt (vanilla HTML + JS navbar).
- * Replaces the old `Header.jsx` (lucide-react + Tailwind mega-dropdown) with
- * a 1:1 TSX port of the new HTML navbar, keeping all responsive behaviour
- * (desktop mega-dropdowns, mobile slide-in drawer with accordions, login
- * modal, FX ticker, toast) intact.
- *
- * Conventions:
- *   - Lucide icons instead of Font Awesome (matches the rest of the app).
- *   - CSS module (`Header.module.css`) for visual styles, no global pollution.
- *   - All vanilla JS DOM listeners replaced by React hooks + handlers.
- *   - Fully typed; no `any`.
- */
+
 
 import {
   ArrowRight,

@@ -14,9 +14,9 @@
  * footer has been stripped — replaced by the themed <Footer /> below.
  */
 
-import Footer from "@/components/homeLayout/Footer";
-import Header from "@/components/homeLayout/Header";
-import Home from "@/components/Home";
+import Footer from "@/features/home/components/homeLayout/Footer";
+import Header from "@/features/home/components/homeLayout/Header";
+import Home from "@/features/home/components/Home";
 
 export default function Page() {
   return (

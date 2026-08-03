@@ -172,6 +172,32 @@
   }
 }
 
+/* Ambient aurora gradient — used by BackgroundCanvas (was in the deleted
+ * components/LayoutStyles/HomeLayout.css). Kept here so the global glow
+ * behind the home layout chrome still renders. */
+.aurora-bg {
+	position: fixed;
+	inset: 0;
+	background:
+		radial-gradient(
+			ellipse 70% 40% at 20% 20%,
+			rgba(16, 185, 129, 0.12) 0%,
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 50% 35% at 80% 70%,
+			rgba(14, 165, 233, 0.08) 0%,
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 60% 40% at 50% 100%,
+			rgba(139, 92, 246, 0.05) 0%,
+			transparent 60%
+		);
+	pointer-events: none;
+	z-index: -1;
+}
+
 /* PayMo custom scrollbar */
 .paymo-scroll::-webkit-scrollbar { width: 5px; }
 .paymo-scroll::-webkit-scrollbar-track { background: transparent; }

@@ -638,8 +638,8 @@
 
 /* ---------- hero ---------- */
 .heroSection {
-        padding-top: 146px;
-        padding-bottom: 46px;
+        /* padding-top: 146px; */
+        padding-bottom: 26px;
         position: relative;
 }
 
@@ -2203,7 +2203,7 @@
                 padding: 80px 0;
         }
         .heroSection {
-                padding-top: 126px;
+                /* padding-top: 16px; */
         }
         .heroVisual {
                 min-height: 560px;

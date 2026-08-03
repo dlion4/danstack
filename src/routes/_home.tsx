@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import Footer from "../components/homeLayout/Footer";
-import Header from "../components/homeLayout/Header";
+import Footer from "../features/home/components/homeLayout/Footer";
+import Header from "../features/home/components/homeLayout/Header";
 
 /**
  * _home — Pathless LAYOUT route.
