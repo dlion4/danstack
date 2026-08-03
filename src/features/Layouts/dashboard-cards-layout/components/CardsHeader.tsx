@@ -8,12 +8,12 @@
  * ========================================================================== */
 import { Link } from "@tanstack/react-router";
 import type { AsideKind, CardsLayoutContent } from "../data/cardsLayoutData";
-import { cx } from "../data/cardsLayoutData";
+import { cx, linkedAccounts } from "../data/cardsLayoutData";
 import styles from "../styles/cardsLayout.module.css";
 
 const s = styles as Record<string, string>;
 
-export type DropdownName = "notifications" | "user";
+export type DropdownName = "accounts" | "notifications" | "user";
 
 interface CardsHeaderProps {
 	content: CardsLayoutContent;
@@ -73,7 +73,64 @@ export default function CardsHeader({
 
 			{/* ---------- right: actions ---------- */}
 			<div className={s.headerActions}>
-				{/* Card Program */}
+									{/* ===== Accounts dropdown ===== */}
+					<div className={cx(s.dropdownWrap, "position-relative")} data-dropdown="accounts">
+						<button
+							type="button"
+							className={s.accountChip}
+							aria-expanded={isDropdownOpen("accounts")}
+							aria-haspopup="menu"
+							aria-label="Linked accounts"
+							onClick={() => onToggleDropdown("accounts")}
+						>
+							<i className="bi bi-layers" />
+							<span>Accounts</span>
+							<i className={cx("bi bi-chevron-down", s.chev)} style={{ fontSize: "0.7rem" }} />
+						</button>
+						{isDropdownOpen("accounts") && (
+							<div className={cx(s.dropdownPanel, s.show)} role="menu">
+								<div className={s.panelHeader}>
+									<span className={s.panelTitle}>Linked Accounts</span>
+									<span className={cx(s.badgeMini, s.badgeOk)}>
+										{linkedAccounts.filter((a) => a.linked).length} / {linkedAccounts.length} linked
+									</span>
+								</div>
+								<div className={s.panelBody}>
+									{linkedAccounts.map((acc) => (
+										<div className={s.accountRowLinked} key={acc.key}>
+											<div className={s.accountRowLinkedLeft}>
+												<span className={s.accountRowLinkedIcon}>
+													<i className={`bi ${acc.icon}`} />
+												</span>
+												<div>
+													<div className={s.accountRowLinkedLabel}>{acc.label}</div>
+													{acc.linked && acc.id && (
+														<div className={s.accountRowLinkedId}>{acc.id}</div>
+													)}
+												</div>
+											</div>
+											<span className={cx(s.badgeLinked, acc.linked ? s.linked : s.notLinked)}>
+												<span className={s.badgeDot} />
+												{acc.linked ? "Linked" : "Not linked"}
+											</span>
+										</div>
+									))}
+								</div>
+								<div className={cx(s.panelFooter, "d-flex justify-content-between")}>
+									<div className={s.accountActions}>
+										<button type="button" className={s.btnLinkAccount} onClick={() => onToggleDropdown("accounts")}>
+											<i className="bi bi-link-45deg" /> Link Account
+										</button>
+										<button type="button" className={s.btnUnlinkAccount} onClick={() => onToggleDropdown("accounts")}>
+											<i className="bi bi-link-break" /> Unlink Account
+										</button>
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+
+{/* Card Program */}
 				<button
 					type="button"
 					className={s.headerAction}
@@ -82,6 +139,26 @@ export default function CardsHeader({
 					title="Card Program"
 				>
 					<i className={cx("bi bi-gear", s.actionIcon)} />
+				</button>
+
+				{/* API Keys — opens left drawer */}
+				<button
+					type="button"
+					className={s.headerAction}
+					onClick={() => onOpenAside("apiKeysTab")}
+					title="API Keys"
+				>
+					<i className={cx("bi bi-key", s.actionIcon)} />
+				</button>
+
+				{/* Security Center — opens left drawer */}
+				<button
+					type="button"
+					className={s.headerAction}
+					onClick={() => onOpenAside("securityTab")}
+					title="Security Center"
+				>
+					<i className={cx("bi bi-shield-lock", s.actionIcon)} />
 				</button>
 
 				<div className={cx(s.vr, "d-none d-lg-block")} />

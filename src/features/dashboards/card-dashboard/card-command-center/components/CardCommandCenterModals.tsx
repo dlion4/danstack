@@ -1556,6 +1556,421 @@ function NotificationsModal() {
 	);
 }
 
+function IssueCardModal() {
+	return (
+		<div>
+			<div className={styles.stepper} id="issueCardStepper">
+				<div className="pm-step active">
+					<div className="pm-step-num">1</div>
+					<div className="pm-step-label">Type</div>
+				</div>
+				<div className="pm-step-line"></div>
+				<div className="pm-step">
+					<div className="pm-step-num">2</div>
+					<div className="pm-step-label">Limits</div>
+				</div>
+				<div className="pm-step-line"></div>
+				<div className="pm-step">
+					<div className="pm-step-num">3</div>
+					<div className="pm-step-label">Review</div>
+				</div>
+			</div>
+			<div id="issueCardStep1" className="fade-step active">
+				<div className="row g-3">
+					<div className="col-md-6">
+						<div
+							className="p-3 border rounded"
+							style={{ cursor: "pointer" }}
+							onClick={(e) => selectBox(e.currentTarget as HTMLElement)}
+						>
+							<i className="bi bi-globe fs-2 d-block mb-2 text-primary"></i>
+							<strong>Virtual Card</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Instant issue for online spend
+							</div>
+						</div>
+					</div>
+					<div className="col-md-6">
+						<div
+							className="p-3 border rounded"
+							style={{ cursor: "pointer" }}
+							onClick={(e) => selectBox(e.currentTarget as HTMLElement)}
+						>
+							<i className="bi bi-credit-card fs-2 d-block mb-2 text-info"></i>
+							<strong>Physical Card</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Standard EMV card via mail
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="issueCardStep2" className="fade-step">
+				<div className="mb-3">
+					<label className={styles.formLabel}>Daily Spend Limit (KES)</label>
+					<input type="number" className={styles.formControl} defaultValue="50000" />
+				</div>
+				<div className="mb-3">
+					<label className={styles.formLabel}>Monthly Spend Limit (KES)</label>
+					<input type="number" className={styles.formControl} defaultValue="200000" />
+				</div>
+				<div className="form-check form-switch mb-2">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+					<label className="form-check-label">Allow international transactions</label>
+				</div>
+				<div className="form-check form-switch">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+					<label className="form-check-label">Enable contactless payments</label>
+				</div>
+			</div>
+			<div id="issueCardStep3" className="fade-step">
+				<div
+					className="p-3 rounded mb-3"
+					style={{ background: "var(--pm-surface-2)" }}
+				>
+					<div className="d-flex justify-content-between mb-1">
+						<span className="text-muted">Card Type</span>
+						<strong>Virtual Debit</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-1">
+						<span className="text-muted">Daily Limit</span>
+						<strong>KES 50,000</strong>
+					</div>
+					<div className="d-flex justify-content-between">
+						<span className="text-muted">Issue Fee</span>
+						<strong className="text-success">FREE</strong>
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnPmP} w-100`}
+					onClick={() => showLoading(document.body, () => {})}
+				>
+					<i className="bi bi-check2-circle" /> Confirm Issue
+				</button>
+			</div>
+		</div>
+	);
+}
+
+function SubscriptionManageModal() {
+	return (
+		<div style={{ maxHeight: 420, overflowY: "auto" }}>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<div className="d-flex justify-content-between mb-1">
+					<span className="text-muted">MONTHLY OBLIGATION</span>
+					<strong>KES 14,500</strong>
+				</div>
+				<div className="d-flex justify-content-between">
+					<span className="text-muted">ACTIVE SUBS</span>
+					<strong>7</strong>
+				</div>
+			</div>
+			{[
+				["Netflix", "KES 1,400", "**9021"],
+				["Spotify", "KES 800", "**3841"],
+				["AWS Hosting", "KES 4,500", "**4418"],
+				["Disney+", "KES 1,100", "**1145"],
+			].map(([name, amt, card]) => (
+				<div key={name} className="p-3 border rounded mb-2">
+					<div className="d-flex justify-content-between align-items-center">
+						<div>
+							<strong style={{ fontSize: 13 }}>{name}</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								{card} · next billing in 12 days
+							</div>
+						</div>
+						<span style={{ fontSize: 12, fontWeight: 700 }}>{amt}</span>
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
+function ViewCardDetailsModal() {
+	return (
+		<div className="text-center">
+			<div
+				className={`${styles.bankCard} ${styles.bankCardBg2} mx-auto mb-3`}
+				style={{ maxWidth: 320, textAlign: "left" }}
+			>
+				<div className="d-flex justify-content-between align-items-start">
+					<div className={styles.bankCardType}>Virtual Debit</div>
+					<div className={styles.bankCardLogo}>Mastercard</div>
+				</div>
+				<div
+					className={`${styles.bankCardChip} mb-2`}
+					style={{ opacity: 0.5, background: "transparent", border: "1px solid rgba(255,255,255,0.3)" }}
+				/>
+				<div className={styles.bankCardNumber} style={{ margin: "16px 0" }}>
+					<span>5412</span>
+					<span>7512</span>
+					<span>3412</span>
+					<span>8810</span>
+				</div>
+				<div className={styles.bankCardBottom}>
+					<div>
+						<div className={styles.bankCardName}>ONLINE SPEND</div>
+					</div>
+					<div className={styles.bankCardExp}>04/27</div>
+				</div>
+			</div>
+			<p style={{ fontSize: 12, color: "var(--pm-danger)" }}>
+				Details will auto-hide in 60 seconds. Do not share your full PAN or CVV.
+			</p>
+		</div>
+	);
+}
+
+function PinManagementModal() {
+	return (
+		<div>
+			<div className={styles.pinRow} style={{ justifyContent: "center", marginBottom: 20 }}>
+				{[1, 2, 3, 4].map((i) => (
+					<input
+						key={i}
+						type="password"
+						maxLength={1}
+						className={styles.pinInput}
+						onInput={(e) => moveFocus(e.currentTarget)}
+					/>
+				))}
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Reason for change</label>
+				<select className={styles.formControl}>
+					<option>Routine security update</option>
+					<option>Possible compromise</option>
+					<option>Forgot PIN</option>
+				</select>
+			</div>
+			<div
+				className="p-3 rounded"
+				style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
+			>
+				Your new PIN will be active immediately. If you suspect compromise, also
+				consider freezing the card.
+			</div>
+		</div>
+	);
+}
+
+function CardDeliveryModal() {
+	return (
+		<div>
+			<div
+				className="p-3 rounded mb-4"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<div className="d-flex justify-content-between mb-1">
+					<span className="text-muted">Order ID</span>
+					<strong>ORD-99120</strong>
+				</div>
+				<div className="d-flex justify-content-between">
+					<span className="text-muted">Status</span>
+					<span className={`${styles.badge} ${styles.badgeI}`}>In Transit</span>
+				</div>
+			</div>
+			<div className={styles.stepper} style={{ flexDirection: "column", alignItems: "flex-start", gap: 16 }}>
+				{[{ n: 1, l: "Order Placed", t: "Yesterday, 2:30 PM", d: true }, { n: 2, l: "Card Printed", t: "Today, 9:00 AM", d: true }, { n: 3, l: "Dispatched", t: "Today, 1:15 PM", d: false, a: true }, { n: 4, l: "Delivered", t: "Expected Fri", d: false }].map(
+					(s) => (
+						<div key={s.n} className="d-flex align-items-center gap-3">
+							<div
+								className={styles.stepN}
+								style={{
+									background: s.d
+										? "var(--pm-accent)"
+										: s.a
+											? "var(--pm-primary)"
+											: "var(--pm-border)",
+									color: "#fff",
+								}}
+							>
+								{s.d ? <i className="bi bi-check" /> : s.n}
+							</div>
+							<div>
+								<div style={{ fontWeight: 600, fontSize: 13 }}>{s.l}</div>
+								<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>{s.t}</div>
+							</div>
+						</div>
+					),
+				)}
+			</div>
+		</div>
+	);
+}
+
+function RetryTransferModal() {
+	return (
+		<div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Failed Transfer</label>
+				<select className={styles.formControl}>
+					<option>KES 45,000 → Prepaid **8890 — Declined (Limit)</option>
+					<option>KES 12,000 → PayMo Wallet — Failed (Network)</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Retry Mode</label>
+				<select className={styles.formControl}>
+					<option>Retry same amount now</option>
+					<option>Split into smaller amounts</option>
+				</select>
+			</div>
+			<div
+				className="p-3 rounded"
+				style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-info-circle me-1" /> If the failure was caused by an
+				insufficient balance, top up the source card first.
+			</div>
+		</div>
+	);
+}
+
+function ManageBeneficiariesModal() {
+	return (
+		<div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Add Beneficiary</label>
+				<div className="d-flex gap-2">
+					<input className={styles.formControl} placeholder="Name" />
+					<input className={styles.formControl} placeholder="Account / Phone" />
+				</div>
+			</div>
+			{["Grace Wanjiru · 0712***890", "Brian Otieno · 0733***412", "TechCorp Ltd · 110***5521"].map(
+				(b) => (
+					<div key={b} className="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+						<div style={{ fontSize: 13, fontWeight: 600 }}>{b}</div>
+						<button className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}>Remove</button>
+					</div>
+				),
+			)}
+		</div>
+	);
+}
+
+function InitiateTransferModal() {
+	return (
+		<div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>From</label>
+				<select className={styles.formControl}>
+					<option>Physical Debit ****4521</option>
+					<option>Virtual Credit ****1190</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>To</label>
+				<select className={styles.formControl}>
+					<option>Prepaid ****8890</option>
+					<option>PayMo Wallet</option>
+					<option>M-Pesa</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Amount (KES)</label>
+				<input type="number" className={styles.formControl} defaultValue="10000" />
+			</div>
+			<div className="d-flex gap-2 mb-3">
+				<span className="pm-amount-chip active" onClick={(e) => pickChip(e.currentTarget, "tfAmt", "5000")}>5,000</span>
+				<span className="pm-amount-chip" onClick={(e) => pickChip(e.currentTarget, "tfAmt", "10000")}>10,000</span>
+				<span className="pm-amount-chip" onClick={(e) => pickChip(e.currentTarget, "tfAmt", "25000")}>25,000</span>
+			</div>
+		</div>
+	);
+}
+
+function CancelSubModal() {
+	return (
+		<div>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-exclamation-triangle me-1" /> Cancelling this
+				subscription will affect all linked cards. Prepaid amounts are refunded
+				to the main wallet.
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Subscription</label>
+				<select className={styles.formControl}>
+					<option>Netflix — **9021</option>
+					<option>Spotify — **3841</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Cancellation Reason</label>
+				<select className={styles.formControl}>
+					<option>Unused for 60 days</option>
+					<option>Too expensive</option>
+					<option>Content issues</option>
+				</select>
+			</div>
+		</div>
+	);
+}
+
+function ManageSingleSubModal() {
+	return (
+		<div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Subscription</label>
+				<select className={styles.formControl}>
+					<option>Netflix — **9021</option>
+					<option>Spotify — **3841</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Change Billing Date</label>
+				<input type="date" className={styles.formControl} />
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Change Amount (KES)</label>
+				<input type="number" className={styles.formControl} placeholder="1,400" />
+			</div>
+			<div className="form-check form-switch">
+				<input className="form-check-input" type="checkbox" defaultChecked />
+				<label className="form-check-label">Enable auto-renewal</label>
+			</div>
+		</div>
+	);
+}
+
+function TopUpCardModal() {
+	return (
+		<div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Select Card</label>
+				<select className={styles.formControl}>
+					<option>Prepaid ****8890</option>
+					<option>Virtual Debit ****3841</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Top-up Amount (KES)</label>
+				<div className="d-flex gap-2 mb-2">
+					<span className="pm-amount-chip" onClick={(e) => pickChip(e.currentTarget, "topAmt", "1000")}>1,000</span>
+					<span className="pm-amount-chip" onClick={(e) => pickChip(e.currentTarget, "topAmt", "3000")}>3,000</span>
+					<span className="pm-amount-chip active" onClick={(e) => pickChip(e.currentTarget, "topAmt", "5000")}>5,000</span>
+					<span className="pm-amount-chip" onClick={(e) => pickChip(e.currentTarget, "topAmt", "10000")}>10,000</span>
+				</div>
+				<input id="topAmt" type="number" className={styles.formControl} defaultValue="5000" />
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>From</label>
+				<select className={styles.formControl}>
+					<option>M-Pesa (0712***890)</option>
+					<option>Main Wallet</option>
+				</select>
+			</div>
+		</div>
+	);
+}
+
 const modalContent: Record<string, React.ReactNode> = {
 	cardDetailsModal: <CardDetailsModal />,
 	freezeCardModal: <FreezeCardModal />,
@@ -1584,6 +1999,17 @@ const modalContent: Record<string, React.ReactNode> = {
 	statementExportModal: <StatementExportModal />,
 	profileModal: <ProfileModal />,
 	notificationsModal: <NotificationsModal />,
+	issueCardModal: <IssueCardModal />,
+	subscriptionManageModal: <SubscriptionManageModal />,
+	viewCardDetailsModal: <ViewCardDetailsModal />,
+	pinManagementModal: <PinManagementModal />,
+	cardDeliveryModal: <CardDeliveryModal />,
+	retryTransferModal: <RetryTransferModal />,
+	manageBeneficiariesModal: <ManageBeneficiariesModal />,
+	initiateTransferModal: <InitiateTransferModal />,
+	cancelSubModal: <CancelSubModal />,
+	manageSingleSubModal: <ManageSingleSubModal />,
+	topUpCardModal: <TopUpCardModal />,
 };
 
 const modalTitles: Record<string, string> = {
@@ -1614,6 +2040,17 @@ const modalTitles: Record<string, string> = {
 	statementExportModal: "Download Statement",
 	profileModal: "Profile",
 	notificationsModal: "Notifications",
+	issueCardModal: "Issue New Card",
+	subscriptionManageModal: "Manage Subscriptions",
+	viewCardDetailsModal: "View Card Details",
+	pinManagementModal: "PIN Management",
+	cardDeliveryModal: "Track Card Delivery",
+	retryTransferModal: "Retry Transfer",
+	manageBeneficiariesModal: "Manage Beneficiaries",
+	initiateTransferModal: "Initiate Transfer",
+	cancelSubModal: "Cancel Subscription",
+	manageSingleSubModal: "Manage Subscription",
+	topUpCardModal: "Top Up Card",
 };
 
 function CardCommandCenterModals({

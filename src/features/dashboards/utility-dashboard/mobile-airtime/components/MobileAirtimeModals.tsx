@@ -1426,7 +1426,7 @@ export default function MobileAirtimeModals({
 							className="p-3 rounded mb-3 text-center"
 							style={{ background: "var(--pm-purple-soft)" }}
 						>
-							<div style={{ fontSize: 11, color: "#6D28D9", fontWeight: 700 }}>
+							<div style={{ fontSize: 11, color: "#D97706", fontWeight: 700 }}>
 								AVAILABLE POINTS
 							</div>
 							<div

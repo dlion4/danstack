@@ -688,7 +688,7 @@ button {
 .quick-grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 8px;
+	gap: 16px;
 	width: 100%;
 	box-sizing: border-box;
 }
@@ -696,7 +696,7 @@ button {
 @media (max-width: 576px) {
 	.quick-grid {
 		grid-template-columns: 1fr;
-		gap: 8px;
+		gap: 16px;
 	}
 }
 

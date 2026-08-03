@@ -117,8 +117,8 @@ const initialMockData: SupportConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Card Support",
-	pageSub:
-		"Access self-service help, troubleshoot declined transactions, file disputes, and reach emergency support services.",
+	// pageSub:
+//		"Access self-service help, troubleshoot declined transactions, file disputes, and reach emergency support services.",
 	hero: {
 		score: "91/100",
 		detail: "Excellent posture. Protected by AI.",

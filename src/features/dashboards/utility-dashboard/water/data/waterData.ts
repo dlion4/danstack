@@ -1,4 +1,4 @@
-/* 3.3 Water Management Deep Dive — backend-ready mock content. */
+/* 3.3 Water Management Explore — backend-ready mock content. */
 export type BadgeTone =
 	| "badgeS"
 	| "badgeW"
@@ -101,10 +101,10 @@ export const initialMockData: WaterConfig = {
 			{ label: "Utilities Hub", to: "/utility" },
 			{ label: "Water", to: "/utility/water" },
 		],
-		current: "Deep Dive",
+		current: "Explore",
 	},
 	pageCode: "",
-	// pageTitle: "Water Management (Deep Dive)",
+	// pageTitle: "Water Management (Explore)",
 	pageSub:
 		"Manage county water accounts, track m³ consumption, report bursts/leaks, and source emergency bulk water via verified bowsers.",
 	hero: {

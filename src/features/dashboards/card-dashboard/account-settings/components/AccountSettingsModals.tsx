@@ -709,6 +709,111 @@ export default function AccountSettingsModals({
 		</MBox>
 	);
 
+	const renderDispute = () => (
+		<MBox
+			id="disputeModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-shield-exclamation text-warning me-2" />
+					File a Dispute
+				</>
+			}
+			footer={
+				<>
+					<button className={styles.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={`${styles.btnPm} ${styles.btnPmP}`}
+						onClick={() =>
+							doAction(
+								"disputeModal",
+								"Dispute filed successfully!",
+								"DSP-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+							)
+						}
+					>
+						Submit Dispute
+					</button>
+				</>
+			}
+		>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Select Transaction</label>
+				<select className={styles.formControl}>
+					<option>Amazon — KES 12,500 — 15 Jun 2025</option>
+					<option>Uber — KES 3,200 — 18 Jun 2025</option>
+					<option>Restaurant — KES 8,900 — 20 Jun 2025</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Dispute Reason</label>
+				<select className={styles.formControl}>
+					<option>Unauthorized transaction</option>
+					<option>Duplicate charge</option>
+					<option>Product not received</option>
+					<option>Product defective</option>
+					<option>Amount incorrect</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Additional Details</label>
+				<textarea
+					className={styles.formControl}
+					rows={4}
+					placeholder="Describe the issue..."
+				/>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Attach Evidence (optional)</label>
+				<input className={styles.formControl} type="file" />
+			</div>
+		</MBox>
+	);
+
+	const renderCaseExport = () => (
+		<MBox
+			id="caseExportModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-download text-primary me-2" />
+					Export Cases
+				</>
+			}
+			footer={
+				<>
+					<button className={styles.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={`${styles.btnPm} ${styles.btnPmP}`}
+						onClick={() =>
+							doAction("caseExportModal", "Cases exported successfully!")
+						}
+					>
+						Export CSV
+					</button>
+				</>
+			}
+		>
+			<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
+				Export all open cases and dispute tracker data.
+			</p>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Format</label>
+				<select className={styles.formControl}>
+					<option>CSV</option>
+					<option>PDF</option>
+				</select>
+			</div>
+		</MBox>
+	);
+
 	const modalContent: Record<string, ReactNode> = {
 		changePinModal: renderChangePin(),
 		freezeCardModal: renderFreezeCard(),
@@ -718,6 +823,8 @@ export default function AccountSettingsModals({
 		notifSettingsModal: renderNotifSettings(),
 		revealPanModal: renderRevealPan(),
 		cardControlsModal: renderCardControls(),
+		disputeModal: renderDispute(),
+		caseExportModal: renderCaseExport(),
 	};
 
 	if (!active) return null;

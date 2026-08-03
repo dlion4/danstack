@@ -154,19 +154,17 @@ export default function CardsSidebar({
 				))}
 			</div>
 
-			<Link
-				to="/cards/cards"
-				className={s.sidebarAccount}
-				onClick={() => {
-					if (!isDesktop) onCloseMobile();
-				}}
-			>
-				<div className={s.avatar}>{content.user.initials}</div>
-				<div className={s.accountDetails}>
-					<div className={s.accountName}>{content.user.name}</div>
-					<div className={s.accountRole}>{content.user.role}</div>
-				</div>
-			</Link>
+							{/* Switch Account button */}
+				<button
+					type="button"
+					className={s.switchAccountEmerald}
+					title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
+				>
+					<i className="bi bi-arrow-left-right" />
+					<span>Switch Account</span>
+					
+				</button>
+		
 		</aside>
 	);
 }

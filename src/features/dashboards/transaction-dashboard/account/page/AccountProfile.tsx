@@ -259,11 +259,11 @@ export default function AccountProfile() {
 						<a href="#">Home</a> / <a href="#">Account</a> /{' '}
 						<strong>Profile & Digital Bank</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Account Profile & Digital Bank</h1>
+					{/* // <h1 className={styles.pageTitle}>Account Profile & Digital Bank</h1>
 					<p className={styles.pageDescription}>
 						Your identity, digital bank accounts, cards, verification status and account
 						activity — all managed from one modern hub.
-					</p>
+					</p> */}
 				</div>
 				<div className={styles.pageActions}>
 					<button

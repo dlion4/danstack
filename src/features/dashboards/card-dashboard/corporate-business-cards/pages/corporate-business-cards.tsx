@@ -128,9 +128,9 @@ const initialMockData: CorporateBusinessCardsConfig = {
 		current: "Corporate Programs",
 	},
 	pageCode: "",
-	// pageTitle: "Corporate & Business Card Programs",
-	pageSub:
-		"Manage employee expense cards, setup policies, enforce approvals, automate reconciliation, and control corporate billing.",
+	pageTitle: "Corporate & Business Card Programs",
+	// pageSub:
+//		"Manage employee expense cards, setup policies, enforce approvals, automate reconciliation, and control corporate billing.",
 	hero: {
 		activeCards: "42 Active Cards",
 		activeSub:

@@ -2430,6 +2430,86 @@ export default function VirtualCreditCardsModals({
 		</MBox>
 	);
 
+	const renderCardSecurity = () => (
+		<MBox
+			id="cardSecurityModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-shield-check text-success me-2" />
+					Global Card Security Hub
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			{renderActionBody(
+				"cardSecurityModal",
+				<>
+					<div className="text-center mb-4">
+						<div className={styles.sv} style={{ color: "var(--pm-accent)" }}>
+							92/100
+						</div>
+						<div
+							style={{ fontSize: 12, color: "var(--pm-muted)", fontWeight: 600 }}
+						>
+							SECURITY SCORE
+						</div>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>3DS Enabled</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								All online cards
+							</div>
+						</div>
+						<span className={`${styles.badge} ${styles.badgeS}`}>On</span>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>Dynamic CVV</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Rotates every 24 hours
+							</div>
+						</div>
+						<span className={`${styles.badge} ${styles.badgeS}`}>On</span>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>Geo-Fencing</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Kenya only
+							</div>
+						</div>
+						<span className={`${styles.badge} ${styles.badgeS}`}>Active</span>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>Merchant Lock</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Netflix, Spotify
+							</div>
+						</div>
+						<button
+							className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+							onClick={() => {
+								onOpen("manageCardModal");
+								onClose();
+							}}
+						>
+							Manage
+						</button>
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
 	return (
 		<>
 			{renderCreateCard()}
@@ -2454,6 +2534,7 @@ export default function VirtualCreditCardsModals({
 			{renderNotifications()}
 			{renderProfile()}
 			{renderCardExpiry()}
+			{renderCardSecurity()}
 		</>
 	);
 }

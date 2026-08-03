@@ -238,9 +238,11 @@ function RowSubTableBody({
 				</td>
 				<td data-label="Limit">KES {row.limit}</td>
 				<td data-label="Status">
-					{row.status === "active"
-						? '<span class="B B-s">Active</span>'
-						: '<span class="B B-w">Warning</span>'}
+					<span
+						className={cx(s.badge, row.status === "active" ? s.badgeS : s.badgeW)}
+					>
+						{row.status === "active" ? "Active" : "Warning"}
+					</span>
 				</td>
 				<td data-label="Actions">
 					<div className="d-flex" style={{ gap: 4 }}>

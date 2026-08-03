@@ -107,7 +107,7 @@ export default function WalletActivation() {
 						<a href="#">Home</a> / <a href="#">Account</a> /{' '}
 						<strong>Wallet Activation & Cross-Dashboard Hub</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Wallet Activation & Cross-Dashboard Hub</h1>
+					{/* // <h1 className={styles.pageTitle}>Wallet Activation & Cross-Dashboard Hub</h1> */}
 
 				</div>
 				<div className={styles.pageActions}>

@@ -1485,7 +1485,7 @@ export default function InternetModals({ active, onClose, onOpen }: Props) {
 							<tr>
 								<th>Feature</th>
 								<th>Safaricom Gold</th>
-								<th style={{ background: "rgba(79,70,229,.06)" }}>
+								<th style={{ background: "rgba(245,158,11,.06)" }}>
 									Faiba 40Mbps
 								</th>
 								<th>Zuku 50Mbps</th>
@@ -1495,13 +1495,13 @@ export default function InternetModals({ active, onClose, onOpen }: Props) {
 							<tr>
 								<td>Speed</td>
 								<td>40 Mbps</td>
-								<td style={{ background: "rgba(79,70,229,.03)" }}>40 Mbps</td>
+								<td style={{ background: "rgba(245,158,11,.03)" }}>40 Mbps</td>
 								<td>50 Mbps</td>
 							</tr>
 							<tr>
 								<td>Cost</td>
 								<td>KES 5,999</td>
-								<td style={{ background: "rgba(79,70,229,.03)" }}>
+								<td style={{ background: "rgba(245,158,11,.03)" }}>
 									<strong>KES 3,850</strong>
 								</td>
 								<td>KES 5,500</td>
@@ -1509,7 +1509,7 @@ export default function InternetModals({ active, onClose, onOpen }: Props) {
 							<tr>
 								<td>Reliability</td>
 								<td>99%</td>
-								<td style={{ background: "rgba(79,70,229,.03)" }}>98%</td>
+								<td style={{ background: "rgba(245,158,11,.03)" }}>98%</td>
 								<td>95%</td>
 							</tr>
 						</tbody>

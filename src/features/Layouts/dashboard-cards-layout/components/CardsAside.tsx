@@ -54,6 +54,25 @@ export default function CardsAside({
 					</button>
 				</div>
 				<div className={s.asideBody}>
+							<div className={s.asideCard}>
+								<h6>Active Sessions</h6>
+								{content.security.sessions.map((ses, idx) => (
+								<div className={s.sessionItem} key={idx}>
+									<div className="d-flex align-items-center justify-content-between">
+										<div className="d-flex align-items-center gap-2">
+											<i className="bi bi-laptop" style={{ fontSize: "0.9rem", color: "var(--cl-muted)" }} />
+											<span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--cl-text)" }}>{ses.device}</span>
+										</div>
+										<span className={cx(s.statusDot, ses.status === "active" ? s.active : s.warning)} />
+									</div>
+									<div className="d-flex align-items-center gap-2 mt-1 ms-4">
+										<span style={{ fontSize: "0.75rem", color: "var(--cl-muted)" }}>{ses.meta}</span>
+										<span style={{ fontSize: "0.72rem", fontWeight: 600, color: ses.status === "active" ? "var(--cl-accent)" : "var(--cl-warning)" }}>{ses.statusText}</span>
+									</div>
+								</div>
+								))}
+							</div>
+
 					<div className={s.asideCard}>
 						<h6>Transaction Alerts</h6>
 						<div className="d-flex justify-content-between align-items-center mb-2">
@@ -281,6 +300,19 @@ export default function CardsAside({
 					</button>
 				</div>
 				<div className={s.asideBody}>
+							<div className={s.asideCard}>
+								<h6>API Health</h6>
+								{content.developers.health.map((h) => (
+								<div className={s.statusRow} key={h.service}>
+									<span className="d-flex align-items-center gap-2" style={{ fontSize: "0.82rem", color: "var(--cl-text-secondary)" }}>
+										<span className={cx(s.statusDot, h.status === "active" ? s.active : s.warning)} />
+										{h.service}
+									</span>
+									<span style={{ fontSize: "0.78rem", fontWeight: 600, color: h.status === "active" ? "var(--cl-accent)" : "var(--cl-warning)" }}>{h.statusText}</span>
+								</div>
+								))}
+							</div>
+
 					<div className={s.asideCard}>
 						<h6>Program Info</h6>
 						<div className={s.statusRow}>

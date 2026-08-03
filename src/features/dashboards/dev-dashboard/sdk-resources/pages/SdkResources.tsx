@@ -344,11 +344,11 @@ export default function SdkResources() {
 						</Link>{" "}
 						/ Integration / <strong>SDKs & Plugins</strong>
 					</div>
-					<h1 className={styles.pageTitle}>SDKs, Plugins & Code Resources</h1>
+					{/* // <h1 className={styles.pageTitle}>SDKs, Plugins & Code Resources</h1>
 					<p className={styles.pageSub}>
 						Official libraries, e-commerce extensions, sample applications, and
 						interactive tools for integrating PayMo into your stack.
-					</p>
+					</p> */}
 				</div>
 				<div className={styles.pageActions}>
 					<button

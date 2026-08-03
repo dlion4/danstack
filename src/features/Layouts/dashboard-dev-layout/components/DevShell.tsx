@@ -38,6 +38,7 @@ import {
 } from "../data/devLayoutData";
 import styles from "../styles/devLayout.module.css";
 import DevAside from "./DevAside";
+import DevLeftDrawer from "./DevLeftDrawer";
 import type { DropdownName } from "./DevHeader";
 import DevHeader from "./DevHeader";
 import DevSidebar from "./DevSidebar";
@@ -67,6 +68,8 @@ export default function DevShell() {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [openDropdown, setOpenDropdown] = useState<DropdownName | null>(null);
 	const [activePanel, setActivePanel] = useState<AsideKind | null>(null);
+	const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+	const [leftDrawerTab, setLeftDrawerTab] = useState<"security" | "env">("security");
 
 	/* ---------- toasts ---------- */
 	const [toasts, setToasts] = useState<DevToastRecord[]>([]);
@@ -151,12 +154,18 @@ export default function DevShell() {
 	 * ==================================================================== */
 	const openAside = useCallback(
 		(kind: AsideKind) => {
-			setActivePanel(kind);
+			if (kind === "securityTab" || kind === "envTab") {
+				setLeftDrawerTab(kind === "securityTab" ? "security" : "env");
+				setLeftDrawerOpen(true);
+			} else {
+				setActivePanel(kind);
+			}
 			closeAllDropdowns();
 		},
 		[closeAllDropdowns],
-	);
+		);
 	const closeAside = useCallback(() => setActivePanel(null), []);
+	const closeLeftDrawer = useCallback(() => setLeftDrawerOpen(false), []);
 
 	/* ======================================================================
 	 * ACTIONS
@@ -164,8 +173,9 @@ export default function DevShell() {
 	const handleLogout = useCallback(() => {
 		closeAllDropdowns();
 		closeAside();
+				closeLeftDrawer();
 		showToast("Logged out successfully", "success");
-	}, [closeAllDropdowns, closeAside, showToast]);
+	}, [closeAllDropdowns, closeAside, closeLeftDrawer, showToast]);
 
 	const handleSearchSubmit = useCallback(
 		(query: string) => {
@@ -205,14 +215,14 @@ export default function DevShell() {
 				return;
 			}
 			if (e.key === "Escape") {
-				closeAllDropdowns();
+			closeAllDropdowns();
 				closeAside();
 				if (!isDesktop) closeMobile();
 			}
 		};
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [closeAllDropdowns, closeAside, closeMobile, isDesktop, toggleSidebar]);
+	}, [closeAllDropdowns, closeAside, closeLeftDrawer, closeMobile, isDesktop, toggleSidebar]);
 
 	/* ======================================================================
 	 * LEGACY BRIDGE: click-outside closes any open dropdown. The header marks
@@ -223,7 +233,7 @@ export default function DevShell() {
 		const onDocClick = (e: MouseEvent) => {
 			const target = e.target as HTMLElement | null;
 			if (target && !target.closest("[data-dropdown]")) {
-				closeAllDropdowns();
+			closeAllDropdowns();
 			}
 		};
 		const id = setTimeout(
@@ -238,12 +248,12 @@ export default function DevShell() {
 
 	/* ---------- body scroll lock when mobile drawer or aside is open ---------- */
 	useEffect(() => {
-		const lock = (!isDesktop && mobileOpen) || activePanel !== null;
+		const lock = (!isDesktop && mobileOpen) || activePanel !== null || leftDrawerOpen;
 		document.body.style.overflow = lock ? "hidden" : "";
 		return () => {
 			document.body.style.overflow = "";
 		};
-	}, [isDesktop, mobileOpen, activePanel]);
+	}, [isDesktop, mobileOpen, activePanel, leftDrawerOpen]);
 
 	/* ---------- context value for child pages ---------- */
 	const ctxValue: DevShellContextValue = useMemo(
@@ -317,11 +327,19 @@ export default function DevShell() {
 					)}
 				</main>
 
+				{/* ============ LEFT DRAWER (Security & Environments) ============ */}
+				<DevLeftDrawer
+					open={leftDrawerOpen}
+					activeTab={leftDrawerTab}
+					onClose={closeLeftDrawer}
+					onToast={showToast}
+		/>
+
 				{/* ============ RIGHT ASIDE (owns its own backdrop) ============ */}
 				<DevAside
 					activePanel={activePanel}
 					onClose={closeAside}
-					onToast={showToast}
+							onToast={showToast}
 				/>
 
 				{/* ============ TOASTS ============ */}

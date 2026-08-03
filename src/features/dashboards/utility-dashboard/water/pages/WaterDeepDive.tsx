@@ -486,7 +486,7 @@ export default function WaterDeepDive() {
 									className={`${s.btnPm} ${s.btnSm}`}
 									onClick={() => open("waterAnalyticsModal")}
 								>
-									<i className="bi bi-bar-chart" /> Deep Dive
+									<i className="bi bi-bar-chart" /> Explore
 								</button>
 								<button
 									className={`${s.btnPm} ${s.btnSm}`}

@@ -86,7 +86,7 @@ export default function BusinessSidebar({
 				)}
 			</div>
 
-			<div className="flex-grow-1">
+			<div className={cx("flex-grow-1", s.navScroll)}>
 				{content.navGroups.map((group) => (
 					<div className="mb-2" key={group.title}>
 						<span className={s["nav-group-label"]}>{group.title}</span>
@@ -148,34 +148,16 @@ export default function BusinessSidebar({
 				))}
 			</div>
 
-			<Link
-				to="/business-dashboard"
-				className={s["sidebar-account"]}
-				onClick={() => {
-					if (!isDesktop) onCloseMobile();
-				}}
-			>
-				<div
-					className={s.avatar}
-					style={{ background: "linear-gradient(135deg,#10b981,#059669)" }}
+{/* Switch Account button */}
+				<button
+					type="button"
+					className={s.switchAccountBtn}
+					title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
 				>
-					{content.user.initials}
-				</div>
-				<div className={s.details}>
-					<div
-						className="fw-bold text-truncate"
-						style={{ fontSize: "0.82rem", color: "var(--text)" }}
-					>
-						{content.user.name}
-					</div>
-					<div
-						className="text-truncate"
-						style={{ fontSize: "0.7rem", color: "var(--muted)" }}
-					>
-						{content.user.role}
-					</div>
-				</div>
-			</Link>
+					<i className="bi bi-arrow-left-right" />
+					<span>Switch Account</span>
+					
+				</button>
 		</aside>
 	);
 }

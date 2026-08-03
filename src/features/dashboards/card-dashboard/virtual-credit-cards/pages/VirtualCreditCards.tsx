@@ -47,8 +47,8 @@ interface VirtualCreditCardsConfig {
 
 const initialMockData: VirtualCreditCardsConfig = {
 	// pageTitle: "Virtual Credit Card Center",
-	pageSub:
-		"Create instant virtual cards for secure online purchases. Allocate credit limits, set expiry rules, and isolate subscription billing.",
+	// pageSub:
+//		"Create instant virtual cards for secure online purchases. Allocate credit limits, set expiry rules, and isolate subscription billing.",
 	creditLimit: "KES 150,000",
 	outstandingBalance: "KES 42,300",
 	dueDate: "12 Jul 2025",

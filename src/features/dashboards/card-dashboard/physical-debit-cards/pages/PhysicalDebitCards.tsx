@@ -138,8 +138,8 @@ const initialMockData: PhysicalDebitCardsConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Physical Debit Card Management",
-	pageSub:
-		"Order, activate, control limits, set geo-fencing, manage PINs, and handle replacements for physical debit cards.",
+	// pageSub:
+//		"Order, activate, control limits, set geo-fencing, manage PINs, and handle replacements for physical debit cards.",
 	heroActions: [
 		{ label: "Track Delivery", modal: "cardDeliveryModal" },
 		{ label: "Activate Card", modal: "activateCardModal" },

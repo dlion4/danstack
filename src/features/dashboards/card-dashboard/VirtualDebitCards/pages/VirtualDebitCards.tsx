@@ -134,8 +134,8 @@ const initialMockData: VirtualDebitCardsConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Virtual Debit Card Center",
-	pageSub:
-		"Create and manage multiple virtual debit cards for safer online shopping, compartmentalized subscriptions, and single-use e-commerce transactions.",
+	// pageSub:
+//		"Create and manage multiple virtual debit cards for safer online shopping, compartmentalized subscriptions, and single-use e-commerce transactions.",
 	hero: {
 		score: "91/100",
 		detail: "Protected by AI.",

@@ -182,11 +182,11 @@ export const InitiateTransfer: React.FC = () => {
 						<a href="#">Home</a> / <a href="#">Transactions</a> /{" "}
 						<strong>Initiate Transfer</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Initiate Transfer</h1>
+					{/* // <h1 className={styles.pageTitle}>Initiate Transfer</h1>
 					<p className={styles.pageDescription}>
 						Create single, bulk, recurring or instant transfers with smart
 						routing, compliance checks and full authorization workflow.
-					</p>
+					</p> */}
 				</div>
 				<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 					<button

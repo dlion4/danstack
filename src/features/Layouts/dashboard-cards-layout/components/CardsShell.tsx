@@ -38,6 +38,7 @@ import {
 } from "../data/cardsLayoutData";
 import styles from "../styles/cardsLayout.module.css";
 import CardsAside from "./CardsAside";
+import CardsRightDrawer from "./CardsRightDrawer";
 import type { DropdownName } from "./CardsHeader";
 import CardsHeader from "./CardsHeader";
 import CardsSidebar from "./CardsSidebar";
@@ -297,6 +298,13 @@ export default function CardsShell() {
 				>
 					<Outlet />
 				</main>
+
+						{/* ============ RIGHT DRAWER (Security & API Keys) ============ */}
+						<CardsRightDrawer
+							activePanel={activePanel}
+							onClose={closeAside}
+							onToast={showToast}
+						/>
 
 				{/* ============ RIGHT ASIDE ============ */}
 				<div

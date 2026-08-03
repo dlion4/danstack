@@ -8,6 +8,7 @@
  *   only renders below the lg breakpoint.
  * ========================================================================== */
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import type { DevLayoutContent, NavItem } from "../data/devLayoutData";
 import { cx } from "../data/devLayoutData";
 import styles from "../styles/devLayout.module.css";
@@ -40,6 +41,8 @@ export default function DevSidebar({
 		!isDesktop && mobileOpen && s["mobile-open"],
 		!isDesktop && !mobileOpen && s["mobile-closed"],
 	);
+
+		const [wsOpen, setWsOpen] = useState(false);
 
 	const handleItemClick = (item: NavItem) => {
 		if (item.opensAside) return;
@@ -142,34 +145,45 @@ export default function DevSidebar({
 				))}
 			</div>
 
-			<Link
-				to="/dev"
-				className={s["sidebar-account"]}
-				onClick={() => {
-					if (!isDesktop) onCloseMobile();
-				}}
-			>
+		<div className={s.accountSwitcher}>
+			<button
+				type="button"
+				className={cx(s.accountSwitcherBtn, wsOpen && s.chevRotated)}
+				onClick={() => setWsOpen((v) => !v)}
+				aria-label="Switch workspace">
 				<div
 					className={s.avatar}
-					style={{ background: "linear-gradient(135deg,#6366f1,#4338ca)" }}
-				>
+					style={{ background: "linear-gradient(135deg,#6366f1,#4338ca)" }}>
 					{content.user.initials}
 				</div>
 				<div className={s.details}>
-					<div
-						className="fw-bold text-truncate"
-						style={{ fontSize: "0.82rem", color: "var(--text)" }}
-					>
-						{content.user.name}
-					</div>
-					<div
-						className="text-truncate"
-						style={{ fontSize: "0.7rem", color: "var(--muted)" }}
-					>
-						{content.user.role}
-					</div>
+					<div className="fw-bold text-truncate" style={{ fontSize: "0.82rem", color: "var(--text)" }}>{content.user.name}</div>
+					<div className="text-truncate" style={{ fontSize: "0.7rem", color: "var(--muted)" }}>{content.user.role}</div>
 				</div>
-			</Link>
+				<i className={cx("bi bi-chevron-up", s.accountChev)} />
+			</button>
+
+			<div className={cx(s.accountDropdown, wsOpen && s.show)}>
+				{[
+					{ key: "sandbox", name: "Sandbox Workspace", meta: "Active • 3 keys", active: true },
+					{ key: "staging", name: "Staging Workspace", meta: "2 keys • Ready", active: false },
+					{ key: "production", name: "Production API", meta: "4 keys • Restricted", active: false },
+					{ key: "personal", name: "Personal Lab", meta: "1 key • Offline", active: false },
+				].map((ws) => (
+					<div
+						className={cx(s.accountOption, ws.active && s.accountOptionActive)}
+						key={ws.key}
+						onClick={() => { setWsOpen(false); }}>
+						<span className={cx(s.accountDot, ws.active ? s.dotGreen : s.dotRed)} />
+						<div className={s.accountOptionInfo}>
+							<div className={s.accountOptionName}>{ws.name}</div>
+							<div className={s.accountOptionMeta}>{ws.meta}</div>
+						</div>
+						{ws.active && <span className={s.accountActiveChip}>Current</span>}
+					</div>
+				))}
+			</div>
+		</div>
 		</aside>
 	);
 }

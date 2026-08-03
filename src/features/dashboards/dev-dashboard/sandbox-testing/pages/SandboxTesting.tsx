@@ -193,12 +193,12 @@ export default function SandboxTesting() {
 						</Link>{" "}
 						/ Integration / <strong>Sandbox & Simulation</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Sandbox, Testing & Simulation</h1>
-					<p className={styles.pageSub}>
+					{/* // <h1 className={styles.pageTitle}>Sandbox, Testing & Simulation</h1> */}
+					{/* <p className={styles.pageSub}>
 						Safely test integrations without moving real money. Generate dummy
 						data, simulate PSP responses, run automated scenarios, and debug
 						payloads.
-					</p>
+					</p> */}
 				</div>
 				<div className={styles.pageActions}>
 					<button

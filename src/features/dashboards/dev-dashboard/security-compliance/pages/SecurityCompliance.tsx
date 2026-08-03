@@ -186,13 +186,13 @@ export default function SecurityCompliance() {
 						</Link>{" "}
 						/ Operations / <strong>Security & Compliance</strong>
 					</div>
-					<h1 className={styles.pageTitle}>
+					{/* // <h1 className={styles.pageTitle}>
 						Security, Authentication & Compliance
 					</h1>
 					<p className={styles.pageSub}>
 						Manage OAuth apps, API security keys, data-protection compliance,
 						and advanced fraud and risk controls.
-					</p>
+					</p> */}
 				</div>
 				<div className={styles.pageActions}>
 					<button

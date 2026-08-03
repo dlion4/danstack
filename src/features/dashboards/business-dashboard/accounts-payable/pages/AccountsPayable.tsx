@@ -128,8 +128,8 @@ const initialMockData: APConfig = {
 	},
 	breadcrumb: { parent: "Business Portal", current: "Accounts Payable" },
 	// pageTitle: "Accounts Payable & Supplier Management",
-	pageSub:
-		"Manage supplier invoices, approval workflows, payment execution, and discount tracking.",
+	// pageSub:
+	// 	"Manage supplier invoices, approval workflows, payment execution, and discount tracking.",
 	heroStats: [
 		{
 			key: "payables",

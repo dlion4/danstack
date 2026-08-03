@@ -857,7 +857,7 @@ export default function AnalyticsModals({
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => onOpen("categoryModal")}
 						>
-							Category Deep Dive
+							Category Explore
 						</button>
 					</>
 				}

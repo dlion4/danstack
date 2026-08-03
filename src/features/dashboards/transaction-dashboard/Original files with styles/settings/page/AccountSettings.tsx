@@ -51,10 +51,10 @@ export default function AccountSettings() {
 					<div className={styles.breadcrumb}>
 						<a href="#">Home</a> / <a href="#">Account</a> / <strong>Settings &amp; Administration</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Account Settings</h1>
+					{/* // <h1 className={styles.pageTitle}>Account Settings</h1>
 					<p className={styles.pageDescription}>
 						Security posture, KYC documents, active sessions, notification preferences and account administration.
-					</p>
+					</p> */}
 				</div>
 				<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 					<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('editProfileModal')}>

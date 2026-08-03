@@ -92,7 +92,7 @@ const initialMockData: CardAnalyticsReportingConfig = {
 	],
 	headerTitle: "Card Analytics & Reporting",
 	headerSub:
-		"Deep-dive insights, portfolio performance, compliance & predictive modeling",
+		"Explore insights, portfolio performance, compliance & predictive modeling",
 	searchPlaceholder: "Search reports, metrics, accounts, or card insights...",
 	user: { initials: "CA", name: "David A.", role: "BAAS Admin" },
 	breadcrumb: {
@@ -105,8 +105,8 @@ const initialMockData: CardAnalyticsReportingConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Card Analytics & Reporting",
-	pageSub:
-		"Analyze issuance, usage, merchant concentration, churn risk, and corporate compliance.",
+	// pageSub:
+		// "Analyze issuance, usage, merchant concentration, churn risk, and corporate compliance.",
 	heroActions: [
 		{ label: "AI Predict", modal: "predictiveEngineModal" },
 		{ label: "Schedule", modal: "scheduleReportModal" },

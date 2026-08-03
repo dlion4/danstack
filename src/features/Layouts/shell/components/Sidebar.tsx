@@ -145,20 +145,18 @@ export default function Sidebar({
 				))}
 			</div>
 
-			<Link
-				to="/transaction_dashboard/app/$section"
-				params={{ section: "settings" }}
-				className={s.sidebarAccount}
-				onClick={() => {
-					if (!isDesktop) onCloseMobile();
-				}}
+			{/* Switch Account button */}
+			<button
+				type="button"
+				className={s.switchAccountBtn}
+				onClick={() => onOpenAside("securityTab")}
+				title="Switch Account — easily switch between Utility, Business, Developer, and Savings accounts"
 			>
-				{/* <div className={s.avatar}>{content.user.initials}</div>
-				<div className={s.accountDetails}>
-					<div className={s.accountName}>{content.user.name}</div>
-					<div className={s.accountRole}>{content.user.role}</div>
-				</div> */}
-			</Link>
+				<i className="bi bi-arrow-left-right" />
+				<span>Switch Account</span>
+				
+			</button>
+
 		</aside>
 	);
 }

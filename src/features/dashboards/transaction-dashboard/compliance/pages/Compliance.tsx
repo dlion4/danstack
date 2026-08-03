@@ -175,7 +175,7 @@ const initialMockData: ComplianceConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Compliance & AML (Transactions)",
-	Real- time transaction monitoring, AML rules engine, sanctions & PEP screening, risk scoring, investigation case management, and automated regulatory reporting.",
+	pageSub: "Real-time transaction monitoring, AML rules engine, sanctions & PEP screening, risk scoring, investigation case management, and automated regulatory reporting.",
 hero: {
 	live: "AML engine is live",
 		value: "47,291 transactions monitored today",

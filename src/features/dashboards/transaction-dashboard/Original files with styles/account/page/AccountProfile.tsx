@@ -53,10 +53,10 @@ export default function AccountProfile() {
 					<div className={styles.breadcrumb}>
 						<a href="#">Home</a> / <a href="#">Account</a> / <strong>Profile</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Account Profile</h1>
+					{/* // <h1 className={styles.pageTitle}>Account Profile</h1>
 					<p className={styles.pageDescription}>
 						Your core identity, verification status, membership tier and quick profile snapshot.
-					</p>
+					</p> */}
 				</div>
 				<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 					<button

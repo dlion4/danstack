@@ -1016,7 +1016,290 @@ export default function SupportModals({ active, onClose }: ModalsProps) {
 		</MBox>
 	);
 
+	const renderAttentionFull = () => (
+		<MBox
+			id="attentionFullModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-exclamation-circle text-warning me-2" />
+					All Items Requiring Attention
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className={styles.sr}>
+				<div>
+					<strong>Visa ****4521 expiring in 28 days</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Renew to avoid service disruption
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+					onClick={() => onOpen("renewCardModal")}
+				>
+					Renew
+				</button>
+			</div>
+			<div className={styles.sr}>
+				<div>
+					<strong>Prepaid ****8890 frozen</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Unfreeze to resume transactions
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+					onClick={() => onOpen("freezeCardModal")}
+				>
+					Unfreeze
+				</button>
+			</div>
+			<div className={styles.sr}>
+				<div>
+					<strong>Corporate ****6677 PIN overdue</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						90+ days since last change
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+					onClick={() => onOpen("changePinModal")}
+				>
+					Change
+				</button>
+			</div>
+			<div className={styles.sr}>
+				<div>
+					<strong>Dispute CDP-44892 awaiting evidence</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Upload merchant receipt before 30 Jun deadline
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}
+					onClick={() => onOpen("disputeModal")}
+				>
+					Upload
+				</button>
+			</div>
+		</MBox>
+	);
+
+	const renderCardControls = () => (
+		<MBox
+			id="cardControlsModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-sliders text-info me-2" />
+					Card Controls
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Save
+				</button>
+			}
+		>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Select Card</label>
+				<select className={styles.formControl}>
+					<option>Primary Debit ****4521</option>
+					<option>Tap-Pay Card ****3392</option>
+				</select>
+			</div>
+			<div className={styles.ub}>
+				<div className="form-check form-switch mb-3">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+					<label className="form-check-label fw-bold">
+						Online Transactions
+					</label>
+				</div>
+				<div className="form-check form-switch mb-3">
+					<input className="form-check-input" type="checkbox" />
+					<label className="form-check-label fw-bold">
+						International Spend
+					</label>
+				</div>
+				<div className="form-check form-switch mb-3">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+					<label className="form-check-label fw-bold">
+						Contactless (Tap-to-Pay)
+					</label>
+				</div>
+				<div className="form-check form-switch">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+					<label className="form-check-label fw-bold">ATM Withdrawals</label>
+				</div>
+			</div>
+		</MBox>
+	);
+
+	const renderDefaultCards = () => (
+		<MBox
+			id="defaultCardsModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-check2-circle text-success me-2" />
+					Default Card Assignments
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Done
+				</button>
+			}
+		>
+			<p style={{ fontSize: 13, color: "var(--pm-ink-soft)", marginBottom: 16 }}>
+				Set which card is used by default for each payment scenario.
+			</p>
+			<div className={styles.sr}>
+				<div>
+					<strong>Online Payments</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Virtual Credit ****1190
+					</div>
+				</div>
+				<div className="form-check form-switch">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+				</div>
+			</div>
+			<div className={styles.sr}>
+				<div>
+					<strong>ATM Withdrawals</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Prepaid ****8890
+					</div>
+				</div>
+				<div className="form-check form-switch">
+					<input className="form-check-input" type="checkbox" />
+				</div>
+			</div>
+			<div className={styles.sr}>
+				<div>
+					<strong>Contactless Tap</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Primary Debit ****4521
+					</div>
+				</div>
+				<div className="form-check form-switch">
+					<input className="form-check-input" type="checkbox" defaultChecked />
+				</div>
+			</div>
+		</MBox>
+	);
+
+	const renderNotifSettings = () => (
+		<MBox
+			id="notifSettingsModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-bell text-warning me-2" />
+					Notification Settings
+				</>
+			}
+			footer={
+				<>
+					<button className={styles.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={`${styles.btnPm} ${styles.btnPmP}`}
+						onClick={() =>
+							doAction("notifSettingsModal", "Notification preferences saved!")
+						}
+					>
+						Save Preferences
+					</button>
+				</>
+			}
+		>
+			<div className="row g-3">
+				<div className="col-md-6">
+					<div className={styles.ub}>
+						<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
+							Transaction Alerts
+						</h4>
+						<div className={styles.sr}>
+							<div>
+								<strong>Large transaction</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" defaultChecked />
+							</div>
+						</div>
+						<div className={styles.sr}>
+							<div>
+								<strong>International spend</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" defaultChecked />
+							</div>
+						</div>
+						<div className={styles.sr}>
+							<div>
+								<strong>Failed attempts</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-6">
+					<div className={styles.ub}>
+						<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
+							Security & Billing
+						</h4>
+						<div className={styles.sr}>
+							<div>
+								<strong>New device login</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" defaultChecked />
+							</div>
+						</div>
+						<div className={styles.sr}>
+							<div>
+								<strong>Card freeze / unfreeze</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" defaultChecked />
+							</div>
+						</div>
+						<div className={styles.sr}>
+							<div>
+								<strong>Statement ready</strong>
+							</div>
+							<div className="form-check form-switch">
+								<input className="form-check-input" type="checkbox" defaultChecked />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</MBox>
+	);
+
 	const modalContent: Record<string, ReactNode> = {
+		attentionFullModal: renderAttentionFull(),
+		cardControlsModal: renderCardControls(),
+		defaultCardsModal: renderDefaultCards(),
+		notifSettingsModal: renderNotifSettings(),
 		changePinModal: renderChangePin(),
 		freezeCardModal: renderFreezeCard(),
 		troubleshootModal: renderTroubleshoot(),

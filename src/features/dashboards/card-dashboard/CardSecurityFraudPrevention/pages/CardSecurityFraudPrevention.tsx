@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import CardSecurityModals from "../components/CardSecurityModals";
+import AccountSettingsModals from "../../account-settings/components/AccountSettingsModals";
 import styles from "../styles/card-security-fraud-prevention.module.css";
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -118,8 +118,8 @@ const initialMockData: CardSecurityFraudPreventionConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Fraud Prevention & Security",
-	pageSub:
-		"Configure comprehensive AI threat detection and prevention systems for all card types. Manage real-time fraud alerts, configure fraud rules, and monitor transaction security across all payment networks.",
+	// pageSub:
+//		"Configure comprehensive AI threat detection and prevention systems for all card types. Manage real-time fraud alerts, configure fraud rules, and monitor transaction security across all payment networks.",
 	hero: {
 		score: "91/100",
 		detail: "Excellent posture. Protected by AI.",
@@ -1082,7 +1082,7 @@ export default function CardSecurityFraudPrevention() {
 				</div>
 			</div>
 
-			<CardSecurityModals
+			<AccountSettingsModals
 				active={activeModal}
 				onClose={() => setActiveModal(null)}
 				onOpen={setActiveModal}

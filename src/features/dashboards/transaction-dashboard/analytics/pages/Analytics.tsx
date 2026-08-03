@@ -1170,7 +1170,7 @@ export default function Analytics() {
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => openM("failureDrillModal")}
 								>
-									Deep Dive
+									Explore
 								</button>
 							</div>
 						</div>

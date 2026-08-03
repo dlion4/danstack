@@ -125,8 +125,8 @@ const initialMockData: SettingsConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Card Settings & Support",
-	pageSub:
-		"Configure card defaults, personalize alert preferences, access self-service help, troubleshoot declined transactions and reach emergency support.",
+	// pageSub:
+//		"Configure card defaults, personalize alert preferences, access self-service help, troubleshoot declined transactions and reach emergency support.",
 	hero: {
 		score: "91/100",
 		detail: "Excellent posture. Protected by AI.",

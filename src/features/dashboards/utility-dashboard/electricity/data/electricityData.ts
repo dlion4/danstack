@@ -1,4 +1,4 @@
-/* 3.2 Electricity Management Deep Dive — backend-ready mock content. */
+/* 3.2 Electricity Management Explore — backend-ready mock content. */
 export type BadgeTone =
 	| "badgeS"
 	| "badgeW"
@@ -191,10 +191,10 @@ export const initialMockData: ElectricityConfig = {
 			{ label: "Utilities Hub", to: "/utility" },
 			{ label: "Electricity", to: "/utility/electricity" },
 		],
-		current: "Deep Dive",
+		current: "Explore",
 	},
 	pageCode: "",
-	// pageTitle: "Electricity Management (Deep Dive)",
+	// pageTitle: "Electricity Management (Explore)",
 	pageSub:
 		"Manage prepaid and postpaid electricity accounts, multiple meters, energy spend, bill forecasts, outages, disputes and automation in one extensive command center.",
 	hero: {
@@ -440,8 +440,8 @@ export const initialMockData: ElectricityConfig = {
 			status: "watch",
 			provider: "KPLC",
 			modal: "manageMeterModal",
-			color: "#8B5CF6",
-			bg: "#EDE9FE",
+			color: "#F59E0B",
+			bg: "#FEF3C7",
 			icon: "bi-house",
 		},
 		{

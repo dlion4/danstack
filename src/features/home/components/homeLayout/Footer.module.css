@@ -1,0 +1,503 @@
+/* ============================================================================
+ * Footer.module.css — Paymo BaaS footer (matches the Header navbar theme)
+ * ----------------------------------------------------------------------------
+ * Mirrors the dark-green emerald palette, button styling, glass-card pattern,
+ * and typography of Header.module.css so the page reads as one design system.
+ * ========================================================================== */
+
+.footer {
+  --brand-50: #eafaf3;
+  --brand-100: #d0f5e0;
+  --brand-200: #a3eac3;
+  --brand-300: #6dda9f;
+  --brand-400: #38c27a;
+  --brand-500: #16a861;
+  --brand-600: #0a8a4e;
+  --brand-700: #086e40;
+  --brand-800: #095835;
+  --brand-900: #08482c;
+  --brand-950: #032918;
+
+  --surface-900: #0a1a12;
+  --surface-800: #0f2419;
+  --surface-700: #142f22;
+  --surface-600: #1a3b2b;
+  --surface-500: #1f4733;
+
+  background: var(--surface-900);
+  border-top: 1px solid rgba(22, 168, 97, 0.1);
+  color: #e8f5ee;
+  font-family: var(--font-dm-sans, 'DM Sans'), system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft top glow that mirrors the ticker bar feel of the header */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(22, 168, 97, 0.5) 30%,
+    rgba(56, 194, 122, 0.7) 50%,
+    rgba(22, 168, 97, 0.5) 70%,
+    transparent 100%
+  );
+}
+
+.footer::after {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 240px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(22, 168, 97, 0.18) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 64px 24px 32px;
+}
+
+.fontDisplay {
+  font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+}
+
+/* ============ Top CTA band ============ */
+.ctaBand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-bottom: 40px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid rgba(22, 168, 97, 0.08);
+}
+
+.ctaText h3 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.ctaText p {
+  font-size: 14px;
+  color: var(--brand-300);
+  opacity: 0.75;
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.ctaActions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* ============ Buttons (mirror Header) ============ */
+.btnPrimary {
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  text-decoration: none;
+}
+.btnPrimary:hover {
+  background: linear-gradient(135deg, #1fc06e, var(--brand-500));
+  box-shadow: 0 4px 20px rgba(22, 168, 97, 0.3);
+  transform: translateY(-1px);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--brand-200);
+  font-weight: 500;
+  font-size: 13.5px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(22, 168, 97, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  text-decoration: none;
+}
+.btnGhost:hover {
+  background: rgba(22, 168, 97, 0.1);
+  border-color: rgba(22, 168, 97, 0.45);
+  color: #e8f5ee;
+}
+
+/* ============ Main grid ============ */
+.grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+/* ============ Brand column ============ */
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandMark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: 17px;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.brandTag {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--brand-300);
+  letter-spacing: 0.08em;
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+.brandDesc {
+  font-size: 13px;
+  color: var(--brand-200);
+  opacity: 0.7;
+  line-height: 1.65;
+  max-width: 320px;
+}
+
+/* ============ Status badge (mirrors header ticker badge) ============ */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: rgba(22, 168, 97, 0.12);
+  color: var(--brand-400);
+  border: 1px solid rgba(22, 168, 97, 0.2);
+  width: fit-content;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-400);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(56, 194, 122, 0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(56, 194, 122, 0); }
+}
+
+/* ============ Social icons (mirrors header icon-box style) ============ */
+.socialRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.socialIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(22, 168, 97, 0.08);
+  color: var(--brand-300);
+  border: 1px solid rgba(22, 168, 97, 0.12);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.socialIcon:hover {
+  background: rgba(22, 168, 97, 0.15);
+  color: #ffffff;
+  border-color: rgba(22, 168, 97, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ============ Link columns ============ */
+.linkCol h5 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--brand-400);
+  margin-bottom: 18px;
+}
+
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.linkList a {
+  font-size: 13px;
+  color: var(--brand-200);
+  opacity: 0.75;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.linkList a:hover {
+  color: #ffffff;
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.linkList a .linkArrow {
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  font-size: 11px;
+}
+.linkList a:hover .linkArrow {
+  opacity: 1;
+}
+
+/* ============ Newsletter ============ */
+.newsletter {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  max-width: 320px;
+}
+
+.newsletterInput {
+  flex: 1;
+  background: rgba(22, 168, 97, 0.06);
+  border: 1px solid rgba(22, 168, 97, 0.15);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #e8f5ee;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+  min-width: 0;
+}
+.newsletterInput::placeholder {
+  color: var(--brand-300);
+  opacity: 0.5;
+}
+.newsletterInput:focus {
+  border-color: rgba(22, 168, 97, 0.4);
+  background: rgba(22, 168, 97, 0.1);
+  box-shadow: 0 0 0 3px rgba(22, 168, 97, 0.08);
+}
+
+.newsletterBtn {
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.newsletterBtn:hover {
+  background: linear-gradient(135deg, #1fc06e, var(--brand-500));
+  box-shadow: 0 4px 14px rgba(22, 168, 97, 0.3);
+}
+
+/* ============ Bottom bar ============ */
+.bottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 28px;
+  border-top: 1px solid rgba(22, 168, 97, 0.08);
+}
+
+.copyright {
+  font-size: 12.5px;
+  color: var(--brand-300);
+  opacity: 0.6;
+}
+
+.legalRow {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.legalRow a {
+  font-size: 12.5px;
+  color: var(--brand-300);
+  opacity: 0.7;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+.legalRow a:hover {
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* ============ Region chip ============ */
+.regionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--brand-200);
+  background: rgba(22, 168, 97, 0.06);
+  border: 1px solid rgba(22, 168, 97, 0.12);
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .brandCol {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 720px) {
+  .inner {
+    padding: 48px 20px 28px;
+  }
+  .ctaBand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding-bottom: 32px;
+    margin-bottom: 36px;
+  }
+  .ctaText h3 {
+    font-size: 22px;
+  }
+  .ctaActions {
+    width: 100%;
+  }
+  .ctaActions .btnPrimary,
+  .ctaActions .btnGhost {
+    flex: 1;
+    justify-content: center;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+  .bottomBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .brandTag {
+    display: none;
+  }
+  .ctaActions {
+    flex-direction: column;
+  }
+  .ctaActions .btnPrimary,
+  .ctaActions .btnGhost {
+    width: 100%;
+    justify-content: center;
+  }
+  .newsletter {
+    flex-direction: column;
+    max-width: none;
+  }
+  .newsletterBtn {
+    padding: 10px 14px;
+    justify-content: center;
+  }
+  .legalRow {
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusDot { animation: none; }
+  .btnPrimary:hover,
+  .btnGhost:hover,
+  .socialIcon:hover,
+  .linkList a:hover {
+    transform: none;
+  }
+}

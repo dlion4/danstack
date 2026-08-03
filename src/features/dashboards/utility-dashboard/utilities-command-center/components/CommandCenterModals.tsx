@@ -2163,7 +2163,7 @@ export default function CommandCenterModals({
 								"AUTO-PAY",
 								"var(--pm-purple-soft)",
 								"var(--pm-purple)",
-								"#6D28D9",
+								"#D97706",
 								24,
 							],
 						] as const
@@ -2991,7 +2991,7 @@ export default function CommandCenterModals({
 								<thead>
 									<tr>
 										<th>Feature</th>
-										<th style={{ background: "rgba(79,70,229,.06)" }}>
+										<th style={{ background: "rgba(245,158,11,.06)" }}>
 											Safaricom Gold (Current)
 										</th>
 										<th>Faiba 40Mbps</th>
@@ -3012,7 +3012,7 @@ export default function CommandCenterModals({
 									).map((r, i) => (
 										<tr key={i}>
 											<td>{r[0]}</td>
-											<td style={{ background: "rgba(79,70,229,.03)" }}>
+											<td style={{ background: "rgba(245,158,11,.03)" }}>
 												<strong>{r[1]}</strong>
 											</td>
 											<td>

@@ -1134,7 +1134,7 @@ export default function OpsSystem() {
 								className={`${s.btnPm} ${s.btnSm} w-100 mt-3`}
 								onClick={() => openModal("failureAnalysis")}
 							>
-								Deep Dive into Failures
+								Explore Failures
 							</button>
 						</div>
 					</div>

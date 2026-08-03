@@ -1122,6 +1122,560 @@ export default function VirtualDebitCardsModals({
 		</MBox>
 	);
 
+	const renderAttention = () => (
+		<MBox
+			id="attentionModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-exclamation-circle text-warning me-2" />
+					Attention Center
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			{renderActionBody(
+				"attentionModal",
+				<>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>Single-use card compromised</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Unauthorized merchant blocked
+							</div>
+						</div>
+						<button
+							className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}
+							onClick={() => {
+								onOpen("cardSecurityModal");
+								onClose();
+							}}
+						>
+							Review
+						</button>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>Approaching limit</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								'Global Shopping' card at 92% of limit
+							</div>
+						</div>
+						<button
+							className={styles.btnPm}
+							onClick={() => {
+								onOpen("editLimitsModal");
+								onClose();
+							}}
+						>
+							Adjust
+						</button>
+					</div>
+					<div className={styles.statusRow}>
+						<div>
+							<strong>AWS Hosting expiring</strong>
+							<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Expires in 5 days
+							</div>
+						</div>
+						<button
+							className={styles.btnPm}
+							onClick={() => {
+								onOpen("topUpCardModal");
+								onClose();
+							}}
+						>
+							Renew
+						</button>
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
+	const renderNotifications = () => (
+		<MBox
+			id="notificationsModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-bell me-2" /> Card Notifications
+				</>
+			}
+			footer={
+				<>
+					<button className={`${styles.btnPm} ${styles.btnSm}`}>
+						Mark All Read
+					</button>
+					<button className={styles.btnPm} onClick={onClose}>
+						Close
+					</button>
+				</>
+			}
+		>
+			{renderActionBody(
+				"notificationsModal",
+				<>
+					<div
+						className="p-3 rounded mb-2"
+						style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+					>
+						<i className="bi bi-check-circle text-success me-1" />{" "}
+						<strong>Payment Cleared</strong> — KES 12,400 to Facebook Ads via
+						Global Shopping card.
+					</div>
+					<div
+						className="p-3 rounded mb-2"
+						style={{ background: "var(--pm-danger-soft)", fontSize: 13 }}
+					>
+						<i className="bi bi-shield-x text-danger me-1" />{" "}
+						<strong>Declined Transaction</strong> — KES 3,000 to LinkedIn Ads.
+						Insufficient allocated limit.
+					</div>
+					<div
+						className="p-3 rounded mb-2"
+						style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
+					>
+						<i className="bi bi-exclamation-triangle text-warning me-1" />{" "}
+						<strong>Limit Warning</strong> — AWS card is at 90% of its monthly
+						limit.
+					</div>
+					<div
+						className="p-3 rounded mb-2"
+						style={{ background: "var(--pm-purple-soft)", fontSize: 13 }}
+					>
+						<i
+							className="bi bi-stars text-purple me-1"
+							style={{ color: "var(--pm-purple)" }}
+						/>{" "}
+						<strong>Statement Ready</strong> — Your June 2025 virtual card
+						statement is available.
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
+	const renderProfile = () => (
+		<MBox
+			id="profileModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-person-circle me-2" /> Profile & Card Settings
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			{renderActionBody(
+				"profileModal",
+				<>
+					<div className="text-center">
+						<div
+							className={`${styles.avatar} mx-auto mb-3`}
+							style={{ width: 64, height: 64, fontSize: 24 }}
+						>
+							JK
+						</div>
+						<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
+						<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
+							Card Account ID: PM-991204
+						</p>
+						<div className="text-start mt-4">
+							<h6 style={{ fontWeight: 700, fontSize: 13 }}>Global Controls</h6>
+							<div className="form-check form-switch mb-2">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									defaultChecked
+								/>
+								<label className="form-check-label" style={{ fontSize: 13 }}>
+									Allow international transactions
+								</label>
+							</div>
+							<div className="form-check form-switch mb-2">
+								<input className="form-check-input" type="checkbox" />
+								<label className="form-check-label" style={{ fontSize: 13 }}>
+									Strict IP Geofencing (Kenya only)
+								</label>
+							</div>
+							<div className="form-check form-switch">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									defaultChecked
+								/>
+								<label className="form-check-label" style={{ fontSize: 13 }}>
+									Push notifications for all spends
+								</label>
+							</div>
+						</div>
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
+	const renderBulkCreate = () => (
+		<MBox
+			id="bulkCreateModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-collection text-primary me-2" />
+					Bulk Issue Virtual Cards
+				</>
+			}
+			footer={
+				<button
+					className={`${styles.btnPm} ${styles.btnPmP}`}
+					onClick={() =>
+						doAction(
+							"bulkCreateModal",
+							"5 virtual cards issued successfully!",
+							"BULK-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+						)
+					}
+				>
+					Issue Cards
+				</button>
+			}
+		>
+			<p style={{ fontSize: 13, color: "var(--pm-ink-soft)" }}>
+				Issue multiple cards at once for ad campaigns, employee allowances, or
+				batch purchasing.
+			</p>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Number of Cards to Issue (Max 50)</label>
+				<input type="number" className={styles.formControl} defaultValue="5" />
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Card Type</label>
+				<select className={styles.formControl}>
+					<option>Single-Use Burner</option>
+					<option>Multi-use (Ad Spend)</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Limit per Card (KES)</label>
+				<input type="number" className={styles.formControl} defaultValue="10000" />
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Naming Prefix</label>
+				<input
+					type="text"
+					className={styles.formControl}
+					defaultValue="Ad Campaign #"
+				/>
+			</div>
+		</MBox>
+	);
+
+	const renderCardAnalytics = () => (
+		<MBox
+			id="cardAnalyticsModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-bar-chart text-primary me-2" />
+					Card Spend Analytics
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className="mb-3">
+				<label className={styles.formLabel}>View By</label>
+				<select className={styles.formControl}>
+					<option>By Category</option>
+					<option>By Merchant</option>
+					<option>By Card</option>
+				</select>
+			</div>
+			<div className="table-responsive">
+				<table className={styles.table}>
+					<thead>
+						<tr>
+							<th>Category</th>
+							<th>Amount</th>
+							<th>Share</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Software & Cloud</td>
+							<td>KES 16,500</td>
+							<td>48%</td>
+						</tr>
+						<tr>
+							<td>Online Shopping</td>
+							<td>KES 12,240</td>
+							<td>36%</td>
+						</tr>
+						<tr>
+							<td>Entertainment</td>
+							<td>KES 3,800</td>
+							<td>11%</td>
+						</tr>
+						<tr>
+							<td>Transport</td>
+							<td>KES 2,400</td>
+							<td>5%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	const renderCardSecurity = () => (
+		<MBox
+			id="cardSecurityModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-shield-check text-success me-2" />
+					Global Card Security Hub
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className="text-center mb-4">
+				<div className={styles.sv} style={{ color: "var(--pm-accent)" }}>
+					92/100
+				</div>
+				<div style={{ fontSize: 12, color: "var(--pm-muted)", fontWeight: 600 }}>
+					SECURITY SCORE
+				</div>
+			</div>
+			<div className={styles.statusRow}>
+				<div>
+					<strong>3DS Enabled</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						All online cards
+					</div>
+				</div>
+				<span className={`${styles.badge} ${styles.badgeS}`}>On</span>
+			</div>
+			<div className={styles.statusRow}>
+				<div>
+					<strong>Dynamic CVV</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Rotates every 24 hours
+					</div>
+				</div>
+				<span className={`${styles.badge} ${styles.badgeS}`}>On</span>
+			</div>
+			<div className={styles.statusRow}>
+				<div>
+					<strong>Merchant Lock</strong>
+					<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+						Netflix, Spotify
+					</div>
+				</div>
+				<button
+					className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+					onClick={() => {
+						onOpen("merchantLockModal");
+						onClose();
+					}}
+				>
+					Manage
+				</button>
+			</div>
+		</MBox>
+	);
+
+	const renderEditAlias = () => (
+		<MBox
+			id="editAliasModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-pencil text-primary me-2" />
+					Edit Card Alias
+				</>
+			}
+			footer={
+				<button
+					className={`${styles.btnPm} ${styles.btnPmP}`}
+					onClick={() =>
+						doAction("editAliasModal", "Card alias updated successfully!", "")
+					}
+				>
+					Save Alias
+				</button>
+			}
+		>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Select Card</label>
+				<select className={styles.formControl}>
+					<option>Global Web Shopping — **3841</option>
+					<option>Subscription Master — **9021</option>
+					<option>AWS & Hosting — **4418</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Current Nickname</label>
+				<input
+					type="text"
+					className={styles.formControl}
+					defaultValue="Global Web Shopping"
+				/>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Card Color</label>
+				<select className={styles.formControl}>
+					<option>Indigo</option>
+					<option>Emerald</option>
+					<option>Amber</option>
+					<option>Rose</option>
+				</select>
+			</div>
+		</MBox>
+	);
+
+	const renderSubManager = () => (
+		<MBox
+			id="subManagerModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-arrow-repeat text-info me-2" />
+					Subscription Hub
+				</>
+			}
+			footer={
+				<button className={styles.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-surface-2)" }}
+			>
+				<div className="d-flex justify-content-between mb-1">
+					<span className="text-muted">MONTHLY OBLIGATION</span>
+					<strong>KES 14,500</strong>
+				</div>
+				<div className="d-flex justify-content-between">
+					<span className="text-muted">ACTIVE SUBS</span>
+					<strong>7</strong>
+				</div>
+			</div>
+			{[
+				["Netflix", "KES 1,400"],
+				["Spotify", "KES 800"],
+				["AWS Hosting", "KES 4,500"],
+				["Disney+", "KES 1,100"],
+			].map(([name, amt]) => (
+				<div key={name} className={styles.statusRow}>
+					<div>
+						<strong>{name}</strong>
+						<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+							Next billing in 12 days
+						</div>
+					</div>
+					<div className="d-flex align-items-center gap-2">
+						<span style={{ fontSize: 12, fontWeight: 600 }}>{amt}</span>
+						<button
+							className={`${styles.btnPm} ${styles.btnSm}`}
+							onClick={() => {
+								onOpen("manageSingleSubModal");
+								onClose();
+							}}
+						>
+							Manage
+						</button>
+					</div>
+				</div>
+			))}
+		</MBox>
+	);
+
+	const renderCancelSub = () => (
+		<MBox
+			id="cancelSubModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-x-circle text-danger me-2" />
+					Cancel Subscription
+				</>
+			}
+			footer={
+				<button
+					className={`${styles.btnPm} ${styles.btnPmD}`}
+					onClick={() =>
+						doAction(
+							"cancelSubModal",
+							"Subscription cancelled successfully!",
+							"CANCEL-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+						)
+					}
+				>
+					Cancel Subscription
+				</button>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-exclamation-triangle me-1" /> Cancelling this
+				subscription will affect all linked cards. Any prepaid amounts will be
+				returned to the main wallet.
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Subscription</label>
+				<select className={styles.formControl}>
+					<option>Spotify — **3841</option>
+					<option>Disney+ — **1145</option>
+				</select>
+			</div>
+			<div className="mb-3">
+				<label className={styles.formLabel}>Cancellation Reason</label>
+				<select className={styles.formControl}>
+					<option>Unused for 60 days</option>
+					<option>Too expensive</option>
+					<option>Content issues</option>
+					<option>Other</option>
+				</select>
+			</div>
+		</MBox>
+	);
+
 	const modalContent: Record<string, ReactNode> = {
 		createCardModal: renderCreateCard(),
 		viewCardDetailsModal: renderViewCardDetails(),
@@ -1137,6 +1691,15 @@ export default function VirtualDebitCardsModals({
 		deleteSubModal: renderDeleteSubscription(),
 		addSubscriptionModal: renderAddSubscription(),
 		manageSingleSubModal: renderManageSingleSub(),
+		attentionModal: renderAttention(),
+		notificationsModal: renderNotifications(),
+		profileModal: renderProfile(),
+		bulkCreateModal: renderBulkCreate(),
+		cardAnalyticsModal: renderCardAnalytics(),
+		cardSecurityModal: renderCardSecurity(),
+		editAliasModal: renderEditAlias(),
+		subManagerModal: renderSubManager(),
+		cancelSubModal: renderCancelSub(),
 	};
 
 	const modalTitles: Record<string, string> = {
@@ -1154,6 +1717,15 @@ export default function VirtualDebitCardsModals({
 		deleteSubModal: "Cancel Subscription",
 		addSubscriptionModal: "Add Subscription",
 		manageSingleSubModal: "Manage Subscription",
+		attentionModal: "Attention Center",
+		notificationsModal: "Card Notifications",
+		profileModal: "Profile & Card Settings",
+		bulkCreateModal: "Bulk Issue Virtual Cards",
+		cardAnalyticsModal: "Card Spend Analytics",
+		cardSecurityModal: "Global Card Security Hub",
+		editAliasModal: "Edit Card Alias",
+		subManagerModal: "Subscription Hub",
+		cancelSubModal: "Cancel Subscription",
 	};
 
 	if (!active) return null;

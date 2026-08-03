@@ -120,8 +120,8 @@ const initialMockData: CardProgramAdministrationConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Card Program Admin (Issuer/BaaS)",
-	pageSub:
-		"Manage BIN sponsorships, cardholder lifecycles, global limits, compliance rules, and fee schedules for your enterprise card programs.",
+	// pageSub:
+//		"Manage BIN sponsorships, cardholder lifecycles, global limits, compliance rules, and fee schedules for your enterprise card programs.",
 	heroActions: [
 		{ label: "Compliance Check", modal: "healthCheckModal", tone: "badgeS" },
 		{ label: "Reports", modal: "exportReportModal", tone: "badgeI" },

@@ -133,8 +133,8 @@ const initialMockData: PrepaidCardManagementConfig = {
 	},
 	pageCode: "",
 	// pageTitle: "Prepaid Card Management",
-	pageSub:
-		"Issue physical/virtual prepaid cards for family, staff, or fleet. Manage balances, limits, and restrictions in real-time.",
+	// pageSub:
+//		"Issue physical/virtual prepaid cards for family, staff, or fleet. Manage balances, limits, and restrictions in real-time.",
 	heroActions: [
 		{ label: "Bulk Issue", modal: "bulkIssueModal" },
 		{ label: "Bulk Top-up", modal: "bulkTopupModal" },

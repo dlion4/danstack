@@ -96,6 +96,28 @@ export default function DevHeader({
 					style={{ height: 28, opacity: 0.15 }}
 				/>
 
+				{/* Security Center — opens left drawer */}
+				<button
+					type="button"
+					className={s["header-action"]}
+					onClick={() => onOpenAside("securityTab")}
+					title="Security Center"
+					aria-label="Security Center"
+				>
+					<i className={cx("bi bi-shield-lock", s["action-icon"])} />
+				</button>
+
+				{/* Environments — opens left drawer */}
+				<button
+					type="button"
+					className={s["header-action"]}
+					onClick={() => onOpenAside("envTab")}
+					title="Environments"
+					aria-label="Environments"
+				>
+					<i className={cx("bi bi-globe2", s["action-icon"])} />
+				</button>
+
 				{/* API Explorer aside */}
 				<button
 					type="button"

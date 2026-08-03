@@ -13,7 +13,7 @@
  * Types
  * ------------------------------------------------------------------------ */
 export type ToastTone = "success" | "danger" | "warning" | "info";
-export type AsideKind = "security" | "limits" | "cardProgram";
+export type AsideKind = "security" | "limits" | "cardProgram" | "securityTab" | "apiKeysTab";
 
 export interface NavItem {
 	key: string;
@@ -552,6 +552,77 @@ export const initialMockData: CardsLayoutContent = {
 	//     ],
 	//   },
 	// ],
+};
+
+/* --------------------------------------------------------------------------
+ * Left drawer data — session info, auth items, policy links.
+ * ------------------------------------------------------------------------ */
+export interface SessionInfo {
+	ip: string;
+	location: string;
+	device: string;
+	lastLogin: string;
+}
+
+export interface AuthItem {
+	key: string;
+	label: string;
+	icon: string;
+	status: "set" | "not-set";
+	action: string;
+	statusLabel: string;
+}
+
+export interface PolicyLink {
+	key: string;
+	label: string;
+	icon: string;
+}
+
+
+export interface LinkedAccount {
+	key: string;
+	label: string;
+	icon: string;
+	linked: boolean;
+	id?: string;
+}
+export interface LeftDrawerData {
+	session: SessionInfo;
+	authItems: AuthItem[];
+	policies: PolicyLink[];
+}
+
+
+/* --------------------------------------------------------------------------
+ * Linked Accounts — for the header Accounts dropdown.
+ * ------------------------------------------------------------------------ */
+export const linkedAccounts: LinkedAccount[] = [
+	{ key: "primary", label: "Primary Account", icon: "bi-person-circle", linked: true, id: "ACC-2942-019" },
+	{ key: "business", label: "Business Account", icon: "bi-briefcase", linked: false },
+	{ key: "utility", label: "Utility Account", icon: "bi-lightning-charge", linked: false },
+	{ key: "developer", label: "Developer Account", icon: "bi-code-slash", linked: true, id: "DEV-8818-042" },
+	{ key: "savings", label: "Savings Account", icon: "bi-piggy-bank", linked: false },
+];
+export const leftDrawerData: LeftDrawerData = {
+	session: {
+		ip: "192.168.1.42",
+		location: "Nairobi, Kenya",
+		device: "Chrome on macOS",
+		lastLogin: "2 Aug 2026, 09:14 EAT",
+	},
+	authItems: [
+		{ key: "2fa", label: "Two-Factor Authentication", icon: "bi-shield-lock", status: "not-set", action: "Set Now", statusLabel: "Not set" },
+		{ key: "password", label: "Password", icon: "bi-key", status: "set", action: "Change", statusLabel: "Last changed 14d ago" },
+		{ key: "pin", label: "Transaction PIN", icon: "bi-pin-angle", status: "set", action: "Manage", statusLabel: "Active" },
+		{ key: "passkeys", label: "Passkeys", icon: "bi-fingerprint", status: "not-set", action: "Add", statusLabel: "Not set" },
+	],
+	policies: [
+		{ key: "privacy", label: "Privacy Policy", icon: "bi-shield-check" },
+		{ key: "aml", label: "AML Policy", icon: "bi-file-earmark-text" },
+		{ key: "terms", label: "Terms of Service", icon: "bi-journal-text" },
+		{ key: "cookies", label: "Cookie Policy", icon: "bi-cookie" },
+	],
 };
 
 /* --------------------------------------------------------------------------

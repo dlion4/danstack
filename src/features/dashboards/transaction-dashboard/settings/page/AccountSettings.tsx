@@ -143,11 +143,11 @@ export default function AccountSettings() {
 						<a href="#">Home</a> / <a href="#">Account</a> /{' '}
 						<strong>Settings & Administration</strong>
 					</div>
-					<h1 className={styles.pageTitle}>Account Settings & Administration</h1>
+					{/* // <h1 className={styles.pageTitle}>Account Settings & Administration</h1>
 					<p className={styles.pageDescription}>
 						Security posture, authentication, devices, KYC documents, notifications, privacy
 						controls, developer tools and account lifecycle — one comprehensive hub.
-					</p>
+					</p> */}
 				</div>
 				<div className={styles.pageActions}>
 					<button

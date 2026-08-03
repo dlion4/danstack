@@ -13,7 +13,7 @@
  * Types
  * ------------------------------------------------------------------------ */
 export type ToastTone = "success" | "danger" | "warning" | "info";
-export type AsideKind = "apiExplorer" | "systemStatus" | "apiKeys";
+export type AsideKind = "apiExplorer" | "systemStatus" | "apiKeys" | "securityTab" | "envTab";
 
 export interface NavItem {
 	key: string;

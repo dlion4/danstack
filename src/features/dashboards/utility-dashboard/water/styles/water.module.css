@@ -4,9 +4,9 @@
  * cards on mobile, and icon/step min-width guards (no squeeze / contrast loss).
  * ========================================================================== */
 .utilPage {
-	--pm-primary: #4f46e5;
-	--pm-primary-dark: #3730a3;
-	--pm-primary-light: #818cf8;
+	--pm-primary: #f59e0b;
+	--pm-primary-dark: #d97706;
+	--pm-primary-light: #fbbf24;
 	--pm-accent: #10b981;
 	--pm-accent-soft: #d1fae5;
 	--pm-warning: #f59e0b;
@@ -15,8 +15,8 @@
 	--pm-danger-soft: #fee2e2;
 	--pm-info: #3b82f6;
 	--pm-info-soft: #dbeafe;
-	--pm-purple: #8b5cf6;
-	--pm-purple-soft: #ede9fe;
+	--pm-purple: #f59e0b;
+	--pm-purple-soft: #fef3c7;
 	--pm-bg: #f5f1ec;
 	--pm-bg-2: #eee8df;
 	--pm-surface: #ffffff;
@@ -26,18 +26,13 @@
 	--pm-muted: #9ca3af;
 	--pm-border: #e5e2dc;
 	--pm-border-2: #d4d0c8;
-	--pm-gradient-hero: linear-gradient(
-		135deg,
-		#4f46e5 0%,
-		#7c3aed 50%,
-		#ec4899 100%
-	);
+	--pm-gradient-hero: linear-gradient(135deg, #f59e0b, #d97706);
 	--pm-gradient-slate: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
 	--pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
 	--pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
 	--pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
-	--pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+	--pm-shadow-glow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 	--pm-r-sm: 8px;
 	--pm-r-md: 14px;
 	--pm-r-lg: 20px;
@@ -54,12 +49,12 @@
 	background:
 		radial-gradient(
 			1200px 600px at -10% -20%,
-			rgba(79, 70, 229, 0.08),
+			rgba(245, 158, 11, 0.08),
 			transparent 60%
 		),
 		radial-gradient(
 			1000px 500px at 110% 10%,
-			rgba(236, 72, 153, 0.06),
+			rgba(245, 158, 11, 0.06),
 			transparent 60%
 		),
 		radial-gradient(
@@ -125,7 +120,7 @@
 	box-shadow: var(--pm-shadow-md);
 }
 .cardAccent {
-	background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #4f46e5 100%);
+	background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #f59e0b 100%);
 	color: #fff;
 	border: none;
 }
@@ -195,7 +190,7 @@
 }
 .badgeP {
 	background: var(--pm-purple-soft);
-	color: #6d28d9;
+	color: #b45309;
 }
 .badgeNeutral {
 	background: var(--pm-surface);
@@ -354,7 +349,7 @@
 }
 .quickActionBtn:hover {
 	border-color: var(--pm-primary);
-	background: rgba(79, 70, 229, 0.04);
+	background: rgba(245, 158, 11, 0.04);
 	transform: translateY(-1px);
 }
 .quickActionBtn i {
@@ -982,7 +977,7 @@
 .amountChip:hover,
 .amountChipActive {
 	border-color: var(--pm-primary);
-	background: rgba(79, 70, 229, 0.06);
+	background: rgba(245, 158, 11, 0.06);
 	color: var(--pm-primary);
 }
 .pinInput {
@@ -1012,7 +1007,7 @@
 }
 .selectableActive {
 	border-color: var(--pm-primary) !important;
-	background: rgba(79, 70, 229, 0.04);
+	background: rgba(245, 158, 11, 0.04);
 }
 .btnPmI {
 	background: var(--pm-info);

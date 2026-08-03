@@ -61,6 +61,22 @@ export default function UtilityAside({
 						</button>
 					</div>
 					<div className={s["aside-body"]}>
+					<div className={s["aside-card"]}>
+						<h6>Wallet Summary</h6>
+						<div className={s["status-row"]}>
+							<span style={{ fontSize: "0.82rem", color: "var(--muted)" }}>Available Balance</span>
+							<span style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--paymo-accent)" }}>KES 124,500</span>
+						</div>
+						<div className={s["status-row"]}>
+							<span style={{ fontSize: "0.82rem", color: "var(--muted)" }}>Monthly Spend</span>
+							<span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)" }}>KES 18,400</span>
+						</div>
+						<div className={s["status-row"]}>
+							<span style={{ fontSize: "0.82rem", color: "var(--muted)" }}>Auto-Pay Active</span>
+							<span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--paymo-warning)" }}>3 bills</span>
+						</div>
+					</div>
+
 						<div className={s["aside-card"]}>
 							<h6>Active Auto-Pay</h6>
 							<div className="d-flex justify-content-between align-items-center mb-2">
@@ -223,7 +239,21 @@ export default function UtilityAside({
 									Enable auto-pay for this bill
 								</label>
 							</div>
-						</div>
+							<div style={{ marginBottom: "0.75rem" }}>
+								<label className="form-label fw-semibold" style={{ fontSize: "0.82rem" }}>Quick Amount</label>
+								<div className="d-flex gap-2 flex-wrap">
+									{["100", "200", "500", "1000", "2000", "5000"].map((amt) => (
+									<button
+										type="button"
+										key={amt}
+										className={s["quick-amount-btn"]}
+										onClick={() => onToast(`Selected KES ${amt}`, "info")}
+									>
+										{amt}
+									</button>
+									))}
+								</div>
+							</div>
 						<button
 							type="button"
 							className="btn btn-primary w-100"
@@ -231,6 +261,7 @@ export default function UtilityAside({
 						>
 							<i className="bi bi-lightning me-2" /> Pay Now
 						</button>
+					</div>
 					</div>
 				</div>
 
@@ -271,6 +302,9 @@ export default function UtilityAside({
 										<div className="text-muted" style={{ fontSize: "0.72rem" }}>
 											{acc.provider}: {acc.number}
 										</div>
+							<div className="text-muted" style={{ fontSize: "0.68rem", marginTop: 2 }}>
+								Last paid: 28 Jul 2026
+							</div>
 									</div>
 									<i className="bi bi-chevron-right text-muted" />
 								</div>
