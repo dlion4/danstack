@@ -13,15 +13,10 @@ import {
   CircleHelp,
   CircleCheck,
   Code2,
-  Coins,
   type LucideIcon,
   RotateCw,
-  Eye,
-  EyeOff,
   HandCoins,
   Landmark,
-  Lock,
-  Mail,
   Menu,
   MessageSquare,
   Newspaper,
@@ -37,7 +32,6 @@ import {
 import {
   useCallback,
   useEffect,
-  useId,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -270,13 +264,6 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<MenuSection["id"] | null>(null);
 
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [showPw, setShowPw] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
   const [toast, setToast] = useState<{ show: boolean; msg: string }>({
     show: false,
     msg: "",
@@ -284,10 +271,7 @@ export default function Header() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const emailInputRef = useRef<HTMLInputElement | null>(null);
   const navItemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-
-  const loginAriaId = useId();
 
   /* ----- toast ----- */
   const showToast = useCallback((msg: string) => {
@@ -342,55 +326,12 @@ export default function Header() {
     setOpenSubmenu((prev) => (prev === id ? null : id));
   };
 
-  /* ----- login modal ----- */
-  const openLogin = useCallback(() => {
-    setMobileOpen(false);
-    setLoginOpen(true);
-    setTimeout(() => emailInputRef.current?.focus(), 300);
+  /* ----- sign in navigation ----- */
+  const goToLogin = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.location.assign("/auth/login");
+    }
   }, []);
-
-  const closeLogin = useCallback(() => {
-    setLoginOpen(false);
-    setEmailError("");
-    setPasswordError("");
-  }, []);
-
-  const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let valid = true;
-    const trimmedEmail = email.trim();
-
-    if (!trimmedEmail) {
-      setEmailError("Email address is required");
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setEmailError("Please enter a valid email address");
-      valid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (!password) {
-      setPasswordError("Password is required");
-      valid = false;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      valid = false;
-    } else {
-      setPasswordError("");
-    }
-
-    if (valid) {
-      if (typeof window !== "undefined") {
-        const newUrl = window.location.pathname + "#/dashboard";
-        window.history.pushState({}, "", newUrl);
-      }
-      closeLogin();
-      showToast("Signed in successfully — redirecting to dashboard");
-      setEmail("");
-      setPassword("");
-    }
-  };
 
   /* ----- global listeners ----- */
   useEffect(() => {
@@ -405,7 +346,6 @@ export default function Header() {
       if (e.key === "Escape") {
         setActiveDropdown(null);
         setMobileOpen(false);
-        setLoginOpen(false);
       }
       // "/" focuses search box (when not typing in an input)
       if (e.key === "/" && !e.ctrlKey && !e.metaKey) {
@@ -437,13 +377,12 @@ export default function Header() {
 
   /* ----- body scroll lock when mobile drawer or login open ----- */
   useEffect(() => {
-    const lock = mobileOpen || loginOpen;
     if (typeof document === "undefined") return;
-    document.body.style.overflow = lock ? "hidden" : "";
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [mobileOpen, loginOpen]);
+  }, [mobileOpen]);
 
   /* ----- card click toast ----- */
   const handleCardClick = (title: string) => {
@@ -456,20 +395,6 @@ export default function Header() {
     showToast(
       "Opening sales conversation — a representative will be with you shortly",
     );
-  };
-
-  const handleForgotPw = () => {
-    closeLogin();
-    showToast("Password reset link sent to your email");
-  };
-
-  const handleSignup = () => {
-    closeLogin();
-    if (typeof window !== "undefined") {
-      const newUrl = window.location.pathname + "#/signup";
-      window.history.pushState({}, "", newUrl);
-    }
-    showToast("Redirecting to sign up page...");
   };
 
   /* ----- render ----- */
@@ -579,7 +504,7 @@ export default function Header() {
               type="button"
               className={styles.btnText}
               aria-label="Sign in"
-              onClick={openLogin}
+              onClick={goToLogin}
             >
               <LogIn size={13} color="#6dda9f" />
               Sign In
@@ -740,7 +665,7 @@ export default function Header() {
           <button
             type="button"
             className={styles.btnGhost}
-            onClick={openLogin}
+            onClick={goToLogin}
           >
             <LogIn size={13} color="#6dda9f" />
             Sign In
@@ -758,155 +683,7 @@ export default function Header() {
           </button>
         </div>
       </aside>
-
-      {/* Login modal */}
-      <div
-        className={[
-          styles.loginOverlay,
-          loginOpen ? styles.loginOverlayActive : "",
-        ]
-          .filter(Boolean)
-          .join(" ")}
-        role="dialog"
-        aria-label="Sign in"
-        aria-modal="true"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) closeLogin();
-        }}
-      >
-        <div className={styles.loginModal}>
-          <div className={styles.loginHeader}>
-            <div>
-              <h2
-                className={`${styles.fontDisplay} ${styles.loginTitle}`}
-              >
-                Welcome back
-              </h2>
-              <p className={styles.loginSubtitle}>
-                Sign in to your Paymo account
-              </p>
-            </div>
-            <button
-              type="button"
-              className={styles.loginCloseBtn}
-              aria-label="Close sign in"
-              onClick={closeLogin}
-            >
-              <X size={14} />
-            </button>
-          </div>
-
-          <form onSubmit={handleLoginSubmit} noValidate>
-            <div className={styles.loginField}>
-              <label className={styles.loginLabel} htmlFor={`${loginAriaId}-email`}>
-                Email Address
-              </label>
-              <div className={styles.loginInputWrap}>
-                <Mail size={13} className={styles.loginInputIcon} />
-                <input
-                  ref={emailInputRef}
-                  id={`${loginAriaId}-email`}
-                  type="email"
-                  placeholder="you@company.com"
-                  required
-                  autoComplete="email"
-                  className={styles.loginInput}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              {emailError ? (
-                <p
-                  className={[
-                    styles.fieldError,
-                    styles.fieldErrorVisible,
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                >
-                  {emailError}
-                </p>
-              ) : null}
-            </div>
-
-            <div className={styles.loginField} style={{ marginBottom: 20 }}>
-              <label
-                className={styles.loginLabel}
-                htmlFor={`${loginAriaId}-password`}
-              >
-                Password
-              </label>
-              <div className={styles.loginInputWrap}>
-                <Lock size={13} className={styles.loginInputIcon} />
-                <input
-                  id={`${loginAriaId}-password`}
-                  type={showPw ? "text" : "password"}
-                  placeholder="Enter your password"
-                  required
-                  autoComplete="current-password"
-                  className={styles.loginInput}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className={styles.loginPasswordToggle}
-                  aria-label="Toggle password visibility"
-                  onClick={() => setShowPw((v) => !v)}
-                >
-                  {showPw ? <EyeOff size={13} /> : <Eye size={13} />}
-                </button>
-              </div>
-              {passwordError ? (
-                <p
-                  className={[
-                    styles.fieldError,
-                    styles.fieldErrorVisible,
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                >
-                  {passwordError}
-                </p>
-              ) : null}
-            </div>
-
-            <div className={styles.loginRow}>
-              <label className={styles.loginRemember}>
-                <input type="checkbox" />
-                Remember me
-              </label>
-              <button
-                type="button"
-                className={styles.loginForgot}
-                onClick={handleForgotPw}
-              >
-                Forgot password?
-              </button>
-            </div>
-
-            <button
-              type="submit"
-              className={`${styles.btnPrimary} ${styles.loginSubmit}`}
-            >
-              Sign In
-            </button>
-          </form>
-
-          <div className={styles.loginFooter}>
-            <span className={styles.loginFooterText}>
-              Don&apos;t have an account?
-            </span>
-            <button
-              type="button"
-              className={styles.loginFooterLink}
-              onClick={handleSignup}
-            >
-              Create account
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
+

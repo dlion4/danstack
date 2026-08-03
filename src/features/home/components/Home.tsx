@@ -1602,8 +1602,7 @@ export default function Home() {
                                                                                         data-bs-target="#sandboxPanel"
                                                                                         type="button"
                                                                                 >
-                                                                                        <i className="bi bi-code-slash" />
-                                                                                        Start Building — Free Sandbox
+                                                                                        Free Sandbox
                                                                                 </button>
                                                                                 <button
                                                                                         className={cx(
@@ -1615,7 +1614,7 @@ export default function Home() {
                                                                                         type="button"
                                                                                 >
                                                                                         <i className="bi bi-briefcase" />
-                                                                                        Talk to Treasury
+                                                                                        Book a Session
                                                                                 </button>
                                                                                 <a
                                                                                         href="#coverage"
@@ -1625,7 +1624,7 @@ export default function Home() {
                                                                                         )}
                                                                                 >
                                                                                         <i className="bi bi-globe2" />
-                                                                                        Explore Network
+                                                                                        Explore #MO
                                                                                 </a>
                                                                         </div>
                                                                         <div className={s.trustBand}>
@@ -1991,9 +1990,7 @@ export default function Home() {
                                                                         <div className={s.orbitCenter}>
                                                                                 <span className={s.brandMark}>P</span>
                                                                                 <h3 className={cx(s.heading, "mb-1 fs-5")}>Paymo BAAS</h3>
-                                                                                <p className={cx(s.textMutedPaymo, "mb-0 px-4 small")}>
-                                                                                        Every use case orbiting one financial core.
-                                                                                </p>
+
                                                                         </div>
                                                                         {content.useCases.map((item) => (
                                                                                 <button
@@ -2197,8 +2194,8 @@ export default function Home() {
                                                                                                                 s.glassCard,
                                                                                                                 s.coverageCard,
                                                                                                                 activeRegion !== "all" &&
-                                                                                                                        activeRegion !== card.region &&
-                                                                                                                        s.hiddenRegion,
+                                                                                                                activeRegion !== card.region &&
+                                                                                                                s.hiddenRegion,
                                                                                                         )}
                                                                                                 >
                                                                                                         <div className="d-flex justify-content-between align-items-start gap-3">
