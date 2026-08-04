@@ -1,22 +1,23 @@
 import { defineConfig } from "vite";
-import viteReact from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { tanstackRouter } from "@tanstack/router-plugin";
 
 export default defineConfig({
   plugins: [
-    viteReact(),
+    tanstackRouter(),   // must come first
+    react(),            // JSX transform after router
     tailwindcss(),
     devtools(),
     tanstackStart(),
-    tsconfigPaths(),
   ],
+  resolve: {
+    tsconfigPaths: true, // Vite 8 supports this natively
+  },
   build: {
-    // raise the warning threshold (default is 500 kB)
     chunkSizeWarningLimit: 1000,
-    // explicitly enable code splitting
     rollupOptions: {
       output: {
         manualChunks: {
