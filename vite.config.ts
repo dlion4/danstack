@@ -1,19 +1,29 @@
+import { defineConfig } from "vite";
+import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths"; // <-- add this
+import tsconfigPaths from "vite-tsconfig-paths";
 
-import { defineConfig } from "vite";
-
-const config = defineConfig({
+export default defineConfig({
   plugins: [
-    devtools(),
-    tailwindcss(),
-    tanstackStart(),
     viteReact(),
-    tsconfigPaths(), // <-- use as plugin
+    tailwindcss(),
+    devtools(),
+    tanstackStart(),
+    tsconfigPaths(),
   ],
+  build: {
+    // raise the warning threshold (default is 500 kB)
+    chunkSizeWarningLimit: 1000,
+    // explicitly enable code splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          tanstack: ["@tanstack/react-router", "@tanstack/react-query"],
+        },
+      },
+    },
+  },
 });
-
-export default config;
