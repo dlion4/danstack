@@ -3,15 +3,20 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { tanstackRouter } from "@tanstack/router-plugin";
+import { unpluginRouterGeneratorFactory } from "@tanstack/router-plugin";
+
+const tanstackRouter = Object.assign(
+	unpluginRouterGeneratorFactory({}).vite,
+	{ name: "@tanstack/router-plugin" },
+);
 
 export default defineConfig({
   plugins: [
-    tanstackRouter(),   // must come first
-    react(),            // JSX transform after router
+    tanstackRouter,   // must come first
+    tanstackStart(),
+    react(),
     tailwindcss(),
     devtools(),
-    tanstackStart(),
   ],
   resolve: {
     tsconfigPaths: true, // Vite 8 supports this natively

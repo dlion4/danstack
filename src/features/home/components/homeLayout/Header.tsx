@@ -444,7 +444,7 @@ export default function Header() {
           {/* Logo */}
           <a href="#" className={styles.logo} aria-label="Paymo BaaS Home">
             <img
-              src="/assets/pm-p-logo.svg"
+              src="/assets/pm-p-logo.png"
               alt="Paymo"
               className={styles.logoImg}
             />
@@ -601,7 +601,7 @@ export default function Header() {
               src="/assets/pm-p-logo.svg"
               alt="Paymo"
               className={styles.logoImg}
-              style={{ width: 30, height: 30, borderRadius: 7 }}
+              style={{ width: 28, height: 28, borderRadius: 7 }}
             />
             <span
               className={`${styles.fontDisplay} ${styles.logoTextPrimary}`}
