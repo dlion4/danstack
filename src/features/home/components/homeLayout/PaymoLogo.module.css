@@ -1,0 +1,268 @@
+/* ============================================================================
+ * PaymoLogo.module.css — "PayMO" wordmark matching pm-l-logo.png
+ * ----------------------------------------------------------------------------
+ * Reference lockup (pm-l-logo.png): green-gradient rounded-square "PM" badge
+ * + bold rounded-geometric wordmark. Two variants (classic / gradient), each
+ * theme-aware: the reference PNG is a light-theme lockup, so the classic dark
+ * variant mirrors it exactly, and a matching dark-theme lockup is provided.
+ * ========================================================================== */
+
+.fontDisplay {
+  font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ---- size scale ---- */
+.sm .badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-size: 10px;
+}
+.sm .wordmark {
+  font-size: 15px;
+}
+.sm .tagline {
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+}
+
+.md .badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+.md .wordmark {
+  font-size: 18px;
+}
+.md .tagline {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.lg .badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  font-size: 17px;
+}
+.lg .wordmark {
+  font-size: 26px;
+}
+.lg .tagline {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+}
+
+/* ---- PM badge (mirrors pm-p-logo.svg + pm-l-logo.png mark) ---- */
+.badge {
+  background: linear-gradient(135deg, #16a861, #0a8a4e);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 16px rgba(22, 168, 97, 0.35);
+  color: #ffffff;
+  font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+/* ---- wordmark lockup ---- */
+.textWrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 0;
+}
+
+.wordmark {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+.tagline {
+  font-weight: 500;
+  color: var(--brand-300);
+  letter-spacing: 0.14em;
+  opacity: 0.72;
+  white-space: nowrap;
+}
+
+/* ============================================================================
+ * VARIANT 1 — CLASSIC  (solid lockup; exactly matches the reference PNG on
+ * light theme — dark warm-black wordmark — and flips to a light wordmark on
+ * dark theme)
+ * ========================================================================== */
+.classicVariant .wordmark {
+  color: #201c20; /* warm dark from pm-l-logo.png (≈ rgb 32,28,32) */
+}
+.classicVariant .accent {
+  color: #16a861;
+}
+
+/* ---- dark theme: reference PNG flips to a light lockup ---- */
+:global(html[data-theme="dark"]) .classicVariant .wordmark {
+  color: #eafaf3;
+}
+:global(html[data-theme="dark"]) .classicVariant .accent {
+  color: #38c27a;
+}
+:global(html[data-theme="dark"]) .classicVariant .tagline {
+  color: var(--brand-300);
+  opacity: 0.8;
+}
+
+/* ============================================================================
+ * VARIANT 2 — GRADIENT  (wordmark filled with the emerald brand ramp; the
+ * accent "MO" pops brighter so the name reads as "PayMO" like the reference)
+ * ========================================================================== */
+.gradientVariant .wordmark {
+  background: linear-gradient(120deg, #0a8a4e 0%, #16a861 45%, #1fc06e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #16a861;
+}
+.gradientVariant .accent {
+  background: linear-gradient(120deg, #38c27a 0%, #6dda9f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #6dda9f;
+}
+
+/* ---- dark theme: brighter emerald ramp so the gradient stays legible ---- */
+:global(html[data-theme="dark"]) .gradientVariant .wordmark {
+  background: linear-gradient(120deg, #16a861 0%, #38c27a 45%, #6dda9f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #38c27a;
+}
+:global(html[data-theme="dark"]) .gradientVariant .accent {
+  background: linear-gradient(120deg, #6dda9f 0%, #a3eac3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #a3eac3;
+}
+:global(html[data-theme="dark"]) .gradientVariant .tagline {
+  color: var(--brand-300);
+  opacity: 0.8;
+}
+
+/* ============================================================================
+ * SHOWCASE HELPERS — force a light/dark lockup regardless of the page theme,
+ * so both variations can be demonstrated side-by-side in both themes.
+ * ========================================================================== */
+.onLight.onLight.classicVariant .wordmark {
+  color: #201c20;
+}
+.onLight.onLight.classicVariant .accent {
+  color: #16a861;
+}
+.onLight.onLight.classicVariant .tagline {
+  color: #0a8a4e;
+  opacity: 0.9;
+}
+.onLight.onLight.gradientVariant .wordmark {
+  background: linear-gradient(120deg, #0a8a4e 0%, #16a861 45%, #1fc06e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #16a861;
+}
+.onLight.onLight.gradientVariant .accent {
+  background: linear-gradient(120deg, #38c27a 0%, #6dda9f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #6dda9f;
+}
+.onLight.onLight.gradientVariant .tagline {
+  color: #0a8a4e;
+  opacity: 0.9;
+}
+
+.onDark.onDark.classicVariant .wordmark {
+  color: #eafaf3;
+}
+.onDark.onDark.classicVariant .accent {
+  color: #38c27a;
+}
+.onDark.onDark.classicVariant .tagline {
+  color: #6dda9f;
+  opacity: 0.8;
+}
+.onDark.onDark.gradientVariant .wordmark {
+  background: linear-gradient(120deg, #16a861 0%, #38c27a 45%, #6dda9f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #38c27a;
+}
+.onDark.onDark.gradientVariant .accent {
+  background: linear-gradient(120deg, #6dda9f 0%, #a3eac3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #a3eac3;
+}
+.onDark.onDark.gradientVariant .tagline {
+  color: #6dda9f;
+  opacity: 0.8;
+}
+
+/* ============================================================================
+ * SHOWCASE PANELS — surfaces + cards used by the homepage brand showcase
+ * ========================================================================== */
+.showcaseCard {
+  border-radius: 18px;
+  padding: 18px 18px 22px;
+  border: 1px solid rgba(22, 168, 97, 0.18);
+  box-shadow: 0 18px 40px rgba(9, 88, 53, 0.14);
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.showcaseCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 50px rgba(9, 88, 53, 0.2);
+}
+
+.showcaseLight {
+  background: linear-gradient(160deg, #ffffff 0%, #eef6f1 100%);
+}
+
+.showcaseDark {
+  background: linear-gradient(160deg, #0a1a12 0%, #061a10 100%);
+}
+
+.showcaseLabel {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #16a861;
+  margin-bottom: 18px;
+}
+
+.showcaseBody {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
