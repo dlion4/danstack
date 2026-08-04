@@ -362,6 +362,7 @@ export default function Hub() {
 
 	/* ---------- state (legacy module-level lets) ---------- */
 	const [selectedId, setSelectedId] = useState<string>(() => {
+		if (typeof window === "undefined") return "transactions";
 		const remembered = localStorage.getItem("paymo_selected_dashboard");
 		return remembered && content.dashboards.some((d) => d.id === remembered)
 			? remembered

@@ -290,7 +290,7 @@
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: url("/assets/emerald-network.jpg") center / cover no-repeat;
+	background: url("@/assets/emerald-network.jpg") center / cover no-repeat;
 	opacity: 0.24;
 	mix-blend-mode: screen;
 }
