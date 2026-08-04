@@ -182,6 +182,14 @@
   gap: 10px;
 }
 
+.brandImg {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .brandMark {
   width: 34px;
   height: 34px;

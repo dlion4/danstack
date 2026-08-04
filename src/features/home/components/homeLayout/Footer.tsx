@@ -149,7 +149,7 @@ export default function Footer() {
           <div className={styles.brandCol}>
             <div className={styles.brandRow}>
               <img
-                src="/assets/pm-p-logo.png"
+                src="/assets/pm-p-logo.svg"
                 alt="Paymo"
                 className={styles.brandImg}
               />

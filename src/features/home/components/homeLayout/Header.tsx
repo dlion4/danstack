@@ -444,7 +444,7 @@ export default function Header() {
           {/* Logo */}
           <a href="#" className={styles.logo} aria-label="Paymo BaaS Home">
             <img
-              src="/assets/pm-p-logo.png"
+              src="/assets/pm-p-logo.svg"
               alt="Paymo"
               className={styles.logoImg}
             />
@@ -598,7 +598,7 @@ export default function Header() {
         <div className={styles.mobileDrawerHeader}>
           <a href="#" className={styles.logo}>
             <img
-              src="/assets/pm-p-logo.png"
+              src="/assets/pm-p-logo.svg"
               alt="Paymo"
               className={styles.logoImg}
               style={{ width: 30, height: 30, borderRadius: 7 }}

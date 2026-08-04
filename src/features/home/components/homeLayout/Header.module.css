@@ -164,6 +164,14 @@
   flex-shrink: 0;
 }
 
+.logoImg {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .logoMark {
   width: 34px;
   height: 34px;
