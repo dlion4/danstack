@@ -2374,3 +2374,553 @@
                 scroll-behavior: auto !important;
         }
 }
+
+/* ==========================================================================
+   LIGHT THEME — cream & emerald
+   Activated when <html data-theme="light"> (navbar toggle). Every override is
+   scoped to the light theme; the dark emerald theme is untouched.
+   ========================================================================== */
+
+:global(html[data-theme="light"]) :global(body) {
+        background:
+                radial-gradient(circle at 8% 6%, rgba(22, 168, 97, 0.14), transparent 30%),
+                radial-gradient(circle at 92% 10%, rgba(46, 230, 160, 0.1), transparent 24%),
+                radial-gradient(circle at 55% 88%, rgba(20, 122, 84, 0.12), transparent 30%),
+                linear-gradient(180deg, #fafdf9 0%, #f2f8f3 42%, #f7fbf8 100%);
+        color: #0c2e1e;
+}
+
+:global(html[data-theme="light"]) :global(::selection) {
+        background: rgba(22, 168, 97, 0.25);
+        color: #0c2e1e;
+}
+
+:global(html[data-theme="light"]) :global(::-webkit-scrollbar-track) {
+        background: #eaf3ec;
+}
+:global(html[data-theme="light"]) :global(::-webkit-scrollbar-thumb) {
+        background: #bcd9c8;
+}
+:global(html[data-theme="light"]) :global(::-webkit-scrollbar-thumb:hover) {
+        background: #16a861;
+}
+
+/* ---- ambient layers ---- */
+:global(html[data-theme="light"]) .bgGrid {
+        background-image:
+                linear-gradient(rgba(22, 168, 97, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(22, 168, 97, 0.07) 1px, transparent 1px);
+}
+:global(html[data-theme="light"]) .ambientOrb {
+        background: rgba(22, 168, 97, 0.22);
+}
+:global(html[data-theme="light"]) .ambientOrb2 {
+        background: rgba(22, 168, 97, 0.25);
+}
+:global(html[data-theme="light"]) .ambientOrb3 {
+        background: rgba(46, 230, 160, 0.3);
+}
+:global(html[data-theme="light"]) .cursorGlow {
+        background: radial-gradient(circle, rgba(22, 168, 97, 0.14), transparent 62%);
+}
+
+/* ---- section kicker ---- */
+:global(html[data-theme="light"]) .sectionKicker {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        color: #0a6d44;
+        box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.95),
+                0 0 26px rgba(22, 168, 97, 0.12);
+}
+
+/* ---- typography ---- */
+:global(html[data-theme="light"]) .headlineGradient {
+        background: linear-gradient(180deg, #0c2e1e 0%, #123c2a 38%, #16a861 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+}
+:global(html[data-theme="light"]) .textMint {
+        color: #0a8a4e !important;
+}
+:global(html[data-theme="light"]) .textMutedPaymo {
+        color: #3d6b57;
+}
+
+/* ---- hero ---- */
+:global(html[data-theme="light"]) .heroBadge {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        color: #123c2a;
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.1),
+                0 0 55px rgba(22, 168, 97, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .heroBadge strong {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .heroTitle .mintStroke {
+        background: linear-gradient(90deg, #16a861, #0a8a4e 50%, #086e40);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+}
+:global(html[data-theme="light"]) .heroCopy {
+        color: #3d6b57;
+}
+
+/* ---- trust band ---- */
+:global(html[data-theme="light"]) .trustBand {
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(22, 168, 97, 0.14);
+}
+:global(html[data-theme="light"]) .trustPill {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.18);
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .trustPill i {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .trustPill strong {
+        color: #0a8a4e;
+}
+
+/* ---- glass cards / fx ---- */
+:global(html[data-theme="light"]) .glassCard {
+        background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.94),
+                rgba(243, 250, 246, 0.92)
+        );
+        border: 1px solid rgba(22, 168, 97, 0.16);
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.09),
+                0 0 55px rgba(22, 168, 97, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .fxCard::before {
+        background: linear-gradient(
+                135deg,
+                rgba(22, 168, 97, 0.1),
+                transparent 42%,
+                rgba(20, 122, 84, 0.08)
+        );
+}
+:global(html[data-theme="light"]) .fxLabel {
+        color: #4a7a63;
+}
+:global(html[data-theme="light"]) .fxValue {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .fxDelta.up {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .fxDelta.down {
+        color: #d14b3a;
+}
+
+/* ---- hero visual ---- */
+:global(html[data-theme="light"]) .visualFrame {
+        border: 1px solid rgba(22, 168, 97, 0.28);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow:
+                0 30px 70px rgba(9, 88, 53, 0.14),
+                0 0 60px rgba(22, 168, 97, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .visualBadge {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        color: #123c2a;
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.1),
+                0 0 55px rgba(22, 168, 97, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .visualBadge strong {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .heroRing,
+:global(html[data-theme="light"]) .heroRing2 {
+        border-color: rgba(22, 168, 97, 0.3);
+}
+
+/* ---- metrics ---- */
+:global(html[data-theme="light"]) .metricNumber {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .metricNumber .suffix {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .metricLabel {
+        color: #4a7a63;
+}
+
+/* ---- rail marquee ---- */
+:global(html[data-theme="light"]) .railMarquee {
+        border-block-color: rgba(22, 168, 97, 0.14);
+}
+:global(html[data-theme="light"]) .railMarquee::before {
+        background: linear-gradient(90deg, #fafdf9, transparent);
+}
+:global(html[data-theme="light"]) .railMarquee::after {
+        background: linear-gradient(-90deg, #fafdf9, transparent);
+}
+:global(html[data-theme="light"]) .railChip {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.16);
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .railChip i {
+        color: #0a8a4e;
+}
+
+/* ---- compare / problem ---- */
+:global(html[data-theme="light"]) .compareBoard::before {
+        background: radial-gradient(
+                circle at 82% 18%,
+                rgba(22, 168, 97, 0.12),
+                transparent 30%
+        );
+}
+:global(html[data-theme="light"]) .compareList li,
+:global(html[data-theme="light"]) .bulletList li {
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .iconBadge {
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        background: rgba(22, 168, 97, 0.1);
+        color: #0a8a4e;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+:global(html[data-theme="light"]) .miniStat {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.16);
+}
+:global(html[data-theme="light"]) .miniStat strong {
+        color: #0a8a4e;
+}
+
+/* ---- platform stack ---- */
+:global(html[data-theme="light"]) .stackLayer {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.16);
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .stackLayer:hover,
+:global(html[data-theme="light"]) .stackLayer.active {
+        border-color: rgba(22, 168, 97, 0.45);
+        background: linear-gradient(
+                135deg,
+                rgba(22, 168, 97, 0.12),
+                rgba(255, 255, 255, 0.95)
+        );
+}
+:global(html[data-theme="light"]) .stackLayer small {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .dataChip {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.16);
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .overlayMetrics .metricCard {
+        background: rgba(255, 255, 255, 0.92);
+}
+
+/* ---- use cases orbit ---- */
+:global(html[data-theme="light"]) .orbitCenter {
+        background: radial-gradient(
+                circle at 30% 28%,
+                rgba(22, 168, 97, 0.25),
+                rgba(255, 255, 255, 0.97)
+        );
+        border: 1px solid rgba(22, 168, 97, 0.35);
+        box-shadow:
+                0 0 70px rgba(22, 168, 97, 0.16),
+                inset 0 0 44px rgba(22, 168, 97, 0.07);
+}
+:global(html[data-theme="light"]) .orbitPath {
+        border-color: rgba(22, 168, 97, 0.25);
+}
+:global(html[data-theme="light"]) .orbitNode {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(22, 168, 97, 0.2);
+        color: #123c2a;
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.1),
+                0 0 55px rgba(22, 168, 97, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .orbitNode small {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .orbitNode:hover,
+:global(html[data-theme="light"]) .orbitNode.active {
+        border-color: rgba(22, 168, 97, 0.5);
+        box-shadow: 0 20px 48px rgba(9, 88, 53, 0.18);
+}
+
+/* ---- flow engine ---- */
+:global(html[data-theme="light"]) .flowCard .thumb::after {
+        background: linear-gradient(180deg, transparent 55%, rgba(255, 255, 255, 0.6));
+}
+:global(html[data-theme="light"]) .thumbTag {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .stepIndex {
+        background: rgba(22, 168, 97, 0.12);
+        border: 1px solid rgba(22, 168, 97, 0.3);
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .connector {
+        color: rgba(22, 168, 97, 0.6);
+}
+
+/* ---- coverage ---- */
+:global(html[data-theme="light"]) .networkShell::before {
+        background:
+                radial-gradient(
+                        circle at 20% 30%,
+                        rgba(22, 168, 97, 0.1),
+                        transparent 26%
+                ),
+                radial-gradient(
+                        circle at 70% 24%,
+                        rgba(46, 230, 160, 0.08),
+                        transparent 24%
+                ),
+                radial-gradient(circle at 74% 70%, rgba(22, 168, 97, 0.12), transparent 24%);
+}
+:global(html[data-theme="light"]) .hubNode {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(22, 168, 97, 0.22);
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.1),
+                0 0 55px rgba(22, 168, 97, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+:global(html[data-theme="light"]) .hubNode strong {
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .hubNode span {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .networkLine {
+        border-top-color: rgba(22, 168, 97, 0.4);
+}
+
+/* ---- modules ---- */
+:global(html[data-theme="light"]) .moduleCard::before {
+        background: linear-gradient(90deg, transparent, #16a861, transparent);
+}
+:global(html[data-theme="light"]) .tilt:hover {
+        box-shadow:
+                0 30px 60px rgba(9, 88, 53, 0.14),
+                0 0 45px rgba(22, 168, 97, 0.08);
+}
+
+/* ---- colored tiles (deeper accents on cream) ---- */
+:global(html[data-theme="light"]) .tileGreen {
+        background: rgba(22, 168, 97, 0.12);
+        color: #0a8a4e;
+        border-color: rgba(22, 168, 97, 0.3);
+}
+:global(html[data-theme="light"]) .tileBlue {
+        background: rgba(78, 161, 255, 0.12);
+        color: #2563eb;
+        border-color: rgba(78, 161, 255, 0.32);
+}
+:global(html[data-theme="light"]) .tilePurple {
+        background: rgba(167, 139, 250, 0.13);
+        color: #7c3aed;
+        border-color: rgba(167, 139, 250, 0.32);
+}
+:global(html[data-theme="light"]) .tilePink {
+        background: rgba(244, 114, 182, 0.13);
+        color: #db2777;
+        border-color: rgba(244, 114, 182, 0.3);
+}
+:global(html[data-theme="light"]) .tileGold {
+        background: rgba(245, 182, 77, 0.13);
+        color: #b45309;
+        border-color: rgba(245, 182, 77, 0.32);
+}
+:global(html[data-theme="light"]) .iconBtn {
+        border: 1px solid rgba(22, 168, 97, 0.25);
+        background: #ffffff;
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .iconBtn:hover {
+        border-color: #16a861;
+        color: #0a8a4e;
+        box-shadow: 0 0 22px rgba(22, 168, 97, 0.2);
+}
+
+/* ---- buttons ---- */
+:global(html[data-theme="light"]) .btnPaymoOutline {
+        background: rgba(255, 255, 255, 0.75);
+        border-color: rgba(22, 168, 97, 0.3);
+        color: #0a6d44;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+:global(html[data-theme="light"]) .btnPaymoOutline:hover,
+:global(html[data-theme="light"]) .btnChip.active,
+:global(html[data-theme="light"]) .btnChip:hover {
+        color: #ffffff;
+        background: #16a861;
+        border-color: #16a861;
+        box-shadow: 0 12px 30px rgba(22, 168, 97, 0.28);
+}
+:global(html[data-theme="light"]) .btnChip {
+        background: #ffffff;
+        color: #0a6d44;
+        border-color: rgba(22, 168, 97, 0.2);
+}
+
+/* ---- developers / code ---- */
+:global(html[data-theme="light"]) .codeScreen {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.18);
+        box-shadow: inset 0 0 40px rgba(22, 168, 97, 0.05);
+}
+:global(html[data-theme="light"]) .codeTopbar {
+        border-bottom: 1px solid rgba(22, 168, 97, 0.12);
+        background: rgba(22, 168, 97, 0.05);
+}
+:global(html[data-theme="light"]) .codePre {
+        color: #0a2e1d;
+}
+:global(html[data-theme="light"]) .caret {
+        background: #16a861;
+        box-shadow: 0 0 10px rgba(22, 168, 97, 0.5);
+}
+
+/* ---- accordions ---- */
+:global(html[data-theme="light"]) .accordionPaymo :global(.accordion-item) {
+        background: #ffffff;
+        border: 1px solid rgba(22, 168, 97, 0.16);
+}
+:global(html[data-theme="light"]) .accordionPaymo :global(.accordion-button),
+:global(html[data-theme="light"]) .accordionPaymo :global(.accordion-body) {
+        background: #ffffff;
+        color: #123c2a;
+}
+:global(html[data-theme="light"]) .accordionPaymo :global(.accordion-button):not(.collapsed) {
+        color: #0a8a4e;
+        background: linear-gradient(
+                135deg,
+                rgba(22, 168, 97, 0.1),
+                rgba(255, 255, 255, 0.98)
+        );
+        box-shadow: inset 0 -1px 0 rgba(22, 168, 97, 0.15);
+}
+:global(html[data-theme="light"]) .accordionPaymo :global(.accordion-button)::after {
+        filter: none;
+}
+
+/* ---- results ---- */
+:global(html[data-theme="light"]) .resultNumber {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .resultNumber em {
+        color: #0a8a4e;
+}
+
+/* ---- cta / footer shell ---- */
+:global(html[data-theme="light"]) .ctaShell::before {
+        background:
+                radial-gradient(
+                        60% 90% at 82% 15%,
+                        rgba(22, 168, 97, 0.1),
+                        transparent 55%
+                ),
+                radial-gradient(
+                        50% 80% at 12% 90%,
+                        rgba(22, 168, 97, 0.14),
+                        transparent 55%
+                );
+}
+:global(html[data-theme="light"]) .footerShell {
+        border-top: 1px solid rgba(22, 168, 97, 0.14);
+}
+:global(html[data-theme="light"]) .footerLinks a {
+        color: #3d6b57;
+}
+:global(html[data-theme="light"]) .footerLinks a:hover {
+        color: #0c2e1e;
+}
+
+/* ---- brand mark (orbit center chip) ---- */
+:global(html[data-theme="light"]) .brandSub {
+        color: #0a8a4e;
+}
+
+/* ---- states ---- */
+:global(html[data-theme="light"]) .loadingOverlay {
+        background: rgba(250, 253, 249, 0.85);
+        color: #0a8a4e;
+}
+:global(html[data-theme="light"]) .paymoToast {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(22, 168, 97, 0.3);
+        color: #123c2a;
+        box-shadow:
+                0 24px 60px rgba(9, 88, 53, 0.12),
+                0 0 55px rgba(22, 168, 97, 0.08);
+}
+:global(html[data-theme="light"]) .paymoToast i {
+        color: #0a8a4e;
+}
+
+/* ---- bootstrap global overrides (light) ---- */
+:global(html[data-theme="light"] .modal-content),
+:global(html[data-theme="light"] .offcanvas) {
+        background: linear-gradient(
+                180deg,
+                #ffffff,
+                #f2f8f3
+        );
+        border: 1px solid rgba(22, 168, 97, 0.18);
+        color: #123c2a;
+        box-shadow: 0 24px 60px rgba(9, 88, 53, 0.14);
+}
+:global(html[data-theme="light"] .form-control),
+:global(html[data-theme="light"] .form-select),
+:global(html[data-theme="light"] .form-control:focus),
+:global(html[data-theme="light"] .form-select:focus) {
+        background: #ffffff;
+        color: #123c2a;
+        border-color: rgba(22, 168, 97, 0.25);
+}
+:global(html[data-theme="light"] .form-control::placeholder) {
+        color: #6b8f7d;
+}
+:global(html[data-theme="light"] .form-select option) {
+        background: #ffffff;
+        color: #123c2a;
+}
+:global(html[data-theme="light"] .modal-header),
+:global(html[data-theme="light"] .modal-footer),
+:global(html[data-theme="light"] .offcanvas-header) {
+        border-color: rgba(22, 168, 97, 0.12);
+}
+:global(html[data-theme="light"] .btn-close) {
+        filter: none;
+}
+:global(html[data-theme="light"] .navbar .nav-link) {
+        color: #123c2a;
+}
+:global(html[data-theme="light"] .navbar .nav-link:hover),
+:global(html[data-theme="light"] .navbar .nav-link.active) {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"] .spinner-border) {
+        color: #16a861;
+}
+

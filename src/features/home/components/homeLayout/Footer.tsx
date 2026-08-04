@@ -30,7 +30,6 @@ import {
   MessageSquare,
   Send,
   Twitter,
-  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import styles from "./Footer.module.css";
@@ -149,9 +148,11 @@ export default function Footer() {
           {/* Brand column */}
           <div className={styles.brandCol}>
             <div className={styles.brandRow}>
-              <span className={styles.brandMark}>
-                <Zap size={15} color="#ffffff" fill="#ffffff" />
-              </span>
+              <img
+                src="/assets/pm-p-logo.png"
+                alt="Paymo"
+                className={styles.brandImg}
+              />
               <span>
                 <span
                   className={`${styles.fontDisplay} ${styles.brandName}`}

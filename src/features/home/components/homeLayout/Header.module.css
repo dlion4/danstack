@@ -370,6 +370,28 @@
   flex-shrink: 0;
 }
 
+/* ============ Theme toggle ============ */
+.themeToggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(22, 168, 97, 0.1);
+  border: 1px solid rgba(22, 168, 97, 0.18);
+  cursor: pointer;
+  color: var(--brand-200);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+.themeToggle:hover {
+  color: #fff;
+  border-color: rgba(22, 168, 97, 0.45);
+  background: rgba(22, 168, 97, 0.16);
+  box-shadow: 0 0 18px rgba(22, 168, 97, 0.22);
+}
+
 .searchBox {
   background: rgba(22, 168, 97, 0.08);
   border: 1px solid rgba(22, 168, 97, 0.15);
@@ -922,4 +944,217 @@
   .dropdownPanel { transition: opacity 0.15s ease; }
   .mobileDrawer { transition: none; }
   .statusDot { animation: none; }
+}
+
+/* ============================================================================
+ * LIGHT THEME — cream & emerald
+ * Activated when <html data-theme="light"> (toggled from the navbar).
+ * Every override is scoped to the light theme so the dark theme is untouched.
+ * ========================================================================== */
+
+:global(html[data-theme="light"]) .root {
+  --surface-900: #fafcf8;
+  --surface-800: #ffffff;
+  --surface-700: #f1f7f2;
+  --surface-600: #e6f1ea;
+  --surface-500: #d8e9df;
+  color: #123c2a;
+}
+
+:global(html[data-theme="light"]) .root ::-webkit-scrollbar-track {
+  background: #eef5ef;
+}
+:global(html[data-theme="light"]) .root ::-webkit-scrollbar-thumb {
+  background: #c3dccd;
+}
+
+/* ---- ticker ---- */
+:global(html[data-theme="light"]) .tickerBar {
+  background: #f3faf5;
+  border-bottom: 1px solid rgba(22, 168, 97, 0.18);
+}
+:global(html[data-theme="light"]) .tickerLabel {
+  color: var(--brand-600);
+  opacity: 0.7;
+}
+:global(html[data-theme="light"]) .tickerValue {
+  color: var(--brand-800);
+}
+:global(html[data-theme="light"]) .tickerUp {
+  color: var(--brand-600);
+}
+
+/* ---- header bar ---- */
+:global(html[data-theme="light"]) .header {
+  background: var(--surface-900);
+  border-bottom: 1px solid rgba(22, 168, 97, 0.16);
+}
+
+/* ---- logo ---- */
+:global(html[data-theme="light"]) .logoTextPrimary {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .logoTextSecondary {
+  color: var(--brand-600);
+  opacity: 0.9;
+}
+
+/* ---- desktop nav ---- */
+:global(html[data-theme="light"]) .navLink {
+  color: var(--brand-800);
+}
+:global(html[data-theme="light"]) .navLink:hover,
+:global(html[data-theme="light"]) .navLinkOpen {
+  color: var(--brand-950);
+  background: rgba(22, 168, 97, 0.1);
+}
+
+/* ---- dropdown panel ---- */
+:global(html[data-theme="light"]) .dropdownInner {
+  background: var(--surface-800);
+  border: 1px solid rgba(22, 168, 97, 0.18);
+  box-shadow: 0 20px 50px rgba(9, 88, 53, 0.14);
+}
+:global(html[data-theme="light"]) .dropdownCard:hover {
+  background: rgba(22, 168, 97, 0.07);
+}
+:global(html[data-theme="light"]) .cardTitle {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .cardDesc {
+  color: var(--brand-700);
+  opacity: 0.85;
+}
+:global(html[data-theme="light"]) .dropdownFooter {
+  border-top-color: rgba(22, 168, 97, 0.14);
+}
+
+/* ---- icon boxes (deeper emerald on cream) ---- */
+:global(html[data-theme="light"]) .iconBoxGreen {
+  background: rgba(22, 168, 97, 0.12);
+  color: var(--brand-600);
+}
+:global(html[data-theme="light"]) .iconBoxTeal {
+  background: rgba(22, 168, 97, 0.1);
+  color: var(--brand-600);
+}
+:global(html[data-theme="light"]) .iconBoxEmerald {
+  background: rgba(22, 168, 97, 0.08);
+  color: var(--brand-700);
+}
+:global(html[data-theme="light"]) .iconBoxMint {
+  background: rgba(22, 168, 97, 0.06);
+  color: var(--brand-700);
+}
+
+/* ---- search ---- */
+:global(html[data-theme="light"]) .searchBox {
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.22);
+}
+:global(html[data-theme="light"]) .searchBox:focus-within {
+  border-color: rgba(22, 168, 97, 0.5);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(22, 168, 97, 0.1);
+}
+:global(html[data-theme="light"]) .searchInput {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .searchInput::placeholder {
+  color: var(--brand-600);
+  opacity: 0.55;
+}
+:global(html[data-theme="light"]) .searchIcon {
+  color: var(--brand-600);
+  opacity: 0.8;
+}
+:global(html[data-theme="light"]) .searchKbd {
+  background: rgba(22, 168, 97, 0.08);
+  border: 1px solid rgba(22, 168, 97, 0.18);
+  color: var(--brand-700);
+  opacity: 0.85;
+}
+
+/* ---- divider + buttons ---- */
+:global(html[data-theme="light"]) .dividerV {
+  background: rgba(22, 168, 97, 0.25);
+}
+:global(html[data-theme="light"]) .btnGhost {
+  color: var(--brand-700);
+  border-color: rgba(22, 168, 97, 0.35);
+}
+:global(html[data-theme="light"]) .btnGhost:hover {
+  background: rgba(22, 168, 97, 0.1);
+  border-color: rgba(22, 168, 97, 0.55);
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .btnText {
+  color: var(--brand-700);
+}
+:global(html[data-theme="light"]) .btnText:hover {
+  background: rgba(22, 168, 97, 0.1);
+  color: var(--brand-950);
+}
+
+/* ---- theme toggle ---- */
+:global(html[data-theme="light"]) .themeToggle {
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.28);
+  color: var(--brand-600);
+}
+:global(html[data-theme="light"]) .themeToggle:hover {
+  color: var(--brand-950);
+  border-color: rgba(22, 168, 97, 0.5);
+  background: rgba(22, 168, 97, 0.1);
+}
+
+/* ---- mobile drawer ---- */
+:global(html[data-theme="light"]) .mobileToggle {
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.25);
+  color: var(--brand-700);
+}
+:global(html[data-theme="light"]) .mobileOverlay {
+  background: rgba(243, 250, 245, 0.8);
+}
+:global(html[data-theme="light"]) .mobileDrawer {
+  background: var(--surface-900);
+  border-left: 1px solid rgba(22, 168, 97, 0.15);
+}
+:global(html[data-theme="light"]) .mobileDrawerHeader {
+  border-bottom: 1px solid rgba(22, 168, 97, 0.12);
+}
+:global(html[data-theme="light"]) .mobileCloseBtn {
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.2);
+  color: var(--brand-700);
+}
+:global(html[data-theme="light"]) .mobileNavItem {
+  color: var(--brand-800);
+  border-bottom: 1px solid rgba(22, 168, 97, 0.08);
+}
+:global(html[data-theme="light"]) .mobileNavItem:hover,
+:global(html[data-theme="light"]) .mobileNavItemOpen {
+  background: rgba(22, 168, 97, 0.06);
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .mobileCard:hover {
+  background: rgba(22, 168, 97, 0.06);
+}
+:global(html[data-theme="light"]) .mobileCard .cardTitle {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .mobileCard .cardDesc {
+  color: var(--brand-700);
+  opacity: 0.8;
+}
+
+/* ---- toast ---- */
+:global(html[data-theme="light"]) .toast {
+  background: var(--surface-800);
+  border: 1px solid rgba(22, 168, 97, 0.25);
+  box-shadow: 0 8px 30px rgba(9, 88, 53, 0.14);
+}
+:global(html[data-theme="light"]) .toastMsg {
+  color: var(--brand-950);
 }

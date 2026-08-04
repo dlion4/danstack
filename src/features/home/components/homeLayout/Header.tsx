@@ -26,8 +26,9 @@ import {
   Users,
   Wallet,
   X,
-  Zap,
   LogIn,
+  Moon,
+  Sun,
 } from "lucide-react";
 import {
   useCallback,
@@ -273,6 +274,29 @@ export default function Header() {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const navItemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
+  /* ----- theme ----- */
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const saved =
+      typeof localStorage !== "undefined"
+        ? localStorage.getItem("paymo-theme")
+        : null;
+    const initial = saved === "light" ? "light" : "dark";
+    setTheme(initial);
+    document.documentElement.setAttribute("data-theme", initial);
+    return () => {
+      document.documentElement.removeAttribute("data-theme");
+    };
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("paymo-theme", next);
+  }, [theme]);
+
   /* ----- toast ----- */
   const showToast = useCallback((msg: string) => {
     setToast({ show: true, msg });
@@ -419,9 +443,11 @@ export default function Header() {
         <div className={styles.headerInner}>
           {/* Logo */}
           <a href="#" className={styles.logo} aria-label="Paymo BaaS Home">
-            <span className={styles.logoMark}>
-              <Zap size={15} color="#ffffff" fill="#ffffff" />
-            </span>
+            <img
+              src="/assets/pm-p-logo.png"
+              alt="Paymo"
+              className={styles.logoImg}
+            />
             <span>
               <span className={`${styles.fontDisplay} ${styles.logoTextPrimary}`}>
                 Paymo
@@ -499,6 +525,19 @@ export default function Header() {
               />
               <kbd className={styles.searchKbd}>/</kbd>
             </div>
+            <button
+              type="button"
+              className={styles.themeToggle}
+              aria-label={
+                theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+              }
+              title={
+                theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+              }
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
             <div className={styles.dividerV} />
             <button
               type="button"
@@ -506,7 +545,7 @@ export default function Header() {
               aria-label="Sign in"
               onClick={goToLogin}
             >
-              <LogIn size={13} color="#6dda9f" />
+              <LogIn size={13} color="#16a861" />
               Sign In
             </button>
             <button
@@ -558,19 +597,32 @@ export default function Header() {
       >
         <div className={styles.mobileDrawerHeader}>
           <a href="#" className={styles.logo}>
-            <span
-              className={styles.logoMark}
+            <img
+              src="/assets/pm-p-logo.png"
+              alt="Paymo"
+              className={styles.logoImg}
               style={{ width: 30, height: 30, borderRadius: 7 }}
-            >
-              <Zap size={13} color="#ffffff" fill="#ffffff" />
-            </span>
+            />
             <span
-              className={`${styles.fontDisplay}`}
-              style={{ fontWeight: 700, fontSize: 15, color: "#ffffff" }}
+              className={`${styles.fontDisplay} ${styles.logoTextPrimary}`}
+              style={{ fontWeight: 700, fontSize: 15 }}
             >
               Paymo
             </span>
           </a>
+          <button
+            type="button"
+            className={styles.themeToggle}
+            aria-label={
+              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+            }
+            title={
+              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+            }
+            onClick={toggleTheme}
+          >
+            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
           <button
             type="button"
             className={styles.mobileCloseBtn}
@@ -667,7 +719,7 @@ export default function Header() {
             className={styles.btnGhost}
             onClick={goToLogin}
           >
-            <LogIn size={13} color="#6dda9f" />
+            <LogIn size={13} color="#16a861" />
             Sign In
           </button>
           <button

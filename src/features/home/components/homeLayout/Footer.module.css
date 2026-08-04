@@ -501,3 +501,138 @@
     transform: none;
   }
 }
+
+/* ============================================================================
+ * LIGHT THEME — cream & emerald footer
+ * Activated when <html data-theme="light">. Scoped so dark stays untouched.
+ * ========================================================================== */
+
+:global(html[data-theme="light"]) .footer {
+  --surface-900: #fafcf8;
+  --surface-800: #ffffff;
+  --surface-700: #f1f7f2;
+  background: var(--surface-900);
+  border-top: 1px solid rgba(22, 168, 97, 0.16);
+  color: #123c2a;
+}
+
+:global(html[data-theme="light"]) .footer::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(22, 168, 97, 0.35) 30%,
+    rgba(22, 168, 97, 0.55) 50%,
+    rgba(22, 168, 97, 0.35) 70%,
+    transparent 100%
+  );
+}
+
+:global(html[data-theme="light"]) .footer::after {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(22, 168, 97, 0.12) 0%,
+    transparent 70%
+  );
+}
+
+/* ---- CTA band ---- */
+:global(html[data-theme="light"]) .ctaText h3 {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .ctaText p {
+  color: var(--brand-700);
+  opacity: 0.85;
+}
+
+/* ---- ghost button ---- */
+:global(html[data-theme="light"]) .btnGhost {
+  color: var(--brand-700);
+  border-color: rgba(22, 168, 97, 0.35);
+}
+:global(html[data-theme="light"]) .btnGhost:hover {
+  background: rgba(22, 168, 97, 0.1);
+  border-color: rgba(22, 168, 97, 0.55);
+  color: var(--brand-950);
+}
+
+/* ---- brand column ---- */
+:global(html[data-theme="light"]) .brandName {
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .brandTag {
+  color: var(--brand-600);
+  opacity: 0.9;
+}
+:global(html[data-theme="light"]) .brandDesc {
+  color: var(--brand-700);
+  opacity: 0.9;
+}
+
+/* ---- status badge ---- */
+:global(html[data-theme="light"]) .statusBadge {
+  background: rgba(22, 168, 97, 0.1);
+  color: var(--brand-600);
+  border: 1px solid rgba(22, 168, 97, 0.28);
+}
+
+/* ---- social icons ---- */
+:global(html[data-theme="light"]) .socialIcon {
+  background: #ffffff;
+  color: var(--brand-600);
+  border: 1px solid rgba(22, 168, 97, 0.22);
+}
+:global(html[data-theme="light"]) .socialIcon:hover {
+  background: rgba(22, 168, 97, 0.12);
+  color: var(--brand-950);
+  border-color: rgba(22, 168, 97, 0.45);
+}
+
+/* ---- link columns ---- */
+:global(html[data-theme="light"]) .linkCol h5 {
+  color: var(--brand-600);
+}
+:global(html[data-theme="light"]) .linkList a {
+  color: var(--brand-800);
+  opacity: 0.8;
+}
+:global(html[data-theme="light"]) .linkList a:hover {
+  color: var(--brand-950);
+  opacity: 1;
+}
+
+/* ---- newsletter ---- */
+:global(html[data-theme="light"]) .newsletterInput {
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.22);
+  color: var(--brand-950);
+}
+:global(html[data-theme="light"]) .newsletterInput::placeholder {
+  color: var(--brand-600);
+  opacity: 0.55;
+}
+:global(html[data-theme="light"]) .newsletterInput:focus {
+  border-color: rgba(22, 168, 97, 0.5);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(22, 168, 97, 0.1);
+}
+
+/* ---- bottom bar ---- */
+:global(html[data-theme="light"]) .copyright {
+  color: var(--brand-700);
+  opacity: 0.8;
+}
+:global(html[data-theme="light"]) .legalRow a {
+  color: var(--brand-700);
+  opacity: 0.85;
+}
+:global(html[data-theme="light"]) .legalRow a:hover {
+  color: var(--brand-950);
+  opacity: 1;
+}
+
+/* ---- region chip ---- */
+:global(html[data-theme="light"]) .regionChip {
+  color: var(--brand-700);
+  background: #ffffff;
+  border: 1px solid rgba(22, 168, 97, 0.22);
+}
