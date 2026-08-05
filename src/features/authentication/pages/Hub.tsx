@@ -146,7 +146,7 @@ const initialMockData: HubConfig = {
 				"Reconciliation exports by market",
 			],
 			actions: ["View transactions", "Export CSV", "Resolve alerts"],
-			url: "/transaction_dashboard/app/transfer-overview",
+			url: "/pm/app/transfer-overview",
 		},
 		{
 			id: "business",

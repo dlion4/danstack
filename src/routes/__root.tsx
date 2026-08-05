@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import BackgroundCanvas from "../components/homeLayout/BackgroundCanvas";
 import appCss from "../styles.css?url";
 
@@ -47,14 +47,17 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	const pathname = useRouterState({ select: (st) => st.location.pathname });
+	const isWalletActivation = pathname === "/wallet-activation";
+
 	return (
 		<html lang="en" className="dark">
 			<head>
 				<HeadContent />
 			</head>
 			<body className="relative min-h-screen bg-[#07090e] text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950">
-				{/* Ambient Particle Background (global) */}
-				<BackgroundCanvas />
+				{/* Ambient Particle Background (global) - hidden for wallet-activation */}
+				{!isWalletActivation && <BackgroundCanvas />}
 
 				{/* Main Route Body Outlet (Displays active page content) */}
 				{/* NOTE: Header/Footer live in the _home layout route, NOT here,

@@ -13,6 +13,7 @@ import type {
 } from "../data/businessLayoutData";
 import { cx } from "../data/businessLayoutData";
 import styles from "../styles/businessLayout.module.css";
+import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -60,19 +61,7 @@ export default function BusinessSidebar({
 					className={s.brand}
 					aria-label="Go to business dashboard"
 				>
-					<div
-						className={s["brand-icon"]}
-						style={{ background: "linear-gradient(135deg,#10b981,#059669)" }}
-					>
-						<i className={`bi ${content.brand.icon}`} />
-					</div>
-					<span className={s["brand-text"]}>{content.brand.name}</span>
-					<span
-						className={s["brand-tag"]}
-						style={{ color: "#10b981", background: "rgba(16,185,129,0.08)" }}
-					>
-						{content.brand.tag}
-					</span>
+					<PaymoLogo expanded={expanded || !isDesktop} />
 				</Link>
 				{!isDesktop && (
 					<button
@@ -155,8 +144,7 @@ export default function BusinessSidebar({
 					title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
 				>
 					<i className="bi bi-arrow-left-right" />
-					<span>Switch Account</span>
-					
+					{(expanded || !isDesktop) && <span>Switch Account</span>}
 				</button>
 		</aside>
 	);

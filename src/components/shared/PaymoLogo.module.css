@@ -1,0 +1,78 @@
+/* ============================================================================
+ * PaymoLogo.module.css — Styles for the Paymo BAAS logo component
+ * ----------------------------------------------------------------------------
+ * Based on the logo styles from Header.module.css
+ * ========================================================================== */
+
+.paymoLogo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.paymoLogoImg {
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	object-fit: cover;
+	flex-shrink: 0;
+	max-width: 32px;
+	max-height: 32px;
+}
+
+.paymoLogoText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.paymoLogoPrimary {
+	font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+	font-weight: 700;
+	font-size: 17px;
+	letter-spacing: -0.02em;
+	line-height: 1;
+}
+
+.pay {
+	color: #10b981;
+	font-weight: 600;
+}
+
+.mo {
+	color: #1d1a2e;
+	font-weight: 900;
+}
+
+.paymoLogoSecondary {
+	font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+	font-weight: 400;
+	font-size: 11px;
+	color: var(--brand-300, #6dda9f);
+	letter-spacing: 0.08em;
+	opacity: 0.7;
+	line-height: 1;
+}
+
+/* Light theme support */
+:global(html[data-theme="light"]) .paymoLogoPrimary {
+	color: var(--brand-950, #032918);
+}
+
+:global(html[data-theme="light"]) .pay {
+	color: #10b981;
+}
+
+:global(html[data-theme="light"]) .mo {
+	color: #1d1a2e;
+	/* font-size: large; */
+	font-weight:bolder;
+	font-weight: 900;
+	/* font-weight: 900; */
+}
+
+:global(html[data-theme="light"]) .paymoLogoSecondary {
+	color: var(--brand-600, #ffee00);
+	/* opacity: 0.9; */
+}

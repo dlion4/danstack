@@ -240,7 +240,7 @@ function LinkToSettings({
 }) {
 	return (
 		<a
-			href="/transaction_dashboard/app/apikeys"
+			href="/pm/app/apikeys"
 			className={s.btnGhost}
 			style={{ textDecoration: "none" }}
 			onClick={(e) => {

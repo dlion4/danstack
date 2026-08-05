@@ -14,6 +14,7 @@ import type {
 } from "../data/cardsLayoutData";
 import { cx } from "../data/cardsLayoutData";
 import styles from "../styles/cardsLayout.module.css";
+import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -61,13 +62,7 @@ export default function CardsSidebar({
 					className={s.brandLink}
 					aria-label="Go to card overview"
 				>
-					<div className={s.brand}>
-						<div className={s.brandIcon}>
-							<i className={`bi ${content.brand.icon}`} />
-						</div>
-						<span className={s.brandText}>{content.brand.name}</span>
-						<span className={s.brandTag}>{content.brand.tag}</span>
-					</div>
+					<PaymoLogo expanded={expanded || !isDesktop} />
 				</Link>
 				{!isDesktop && (
 					<button
@@ -161,8 +156,7 @@ export default function CardsSidebar({
 					title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
 				>
 					<i className="bi bi-arrow-left-right" />
-					<span>Switch Account</span>
-					
+					{(expanded || !isDesktop) && <span>Switch Account</span>}
 				</button>
 		
 		</aside>

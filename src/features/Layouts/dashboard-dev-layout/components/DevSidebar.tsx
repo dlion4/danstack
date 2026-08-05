@@ -12,6 +12,7 @@ import { useState } from "react";
 import type { DevLayoutContent, NavItem } from "../data/devLayoutData";
 import { cx } from "../data/devLayoutData";
 import styles from "../styles/devLayout.module.css";
+import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -61,19 +62,7 @@ export default function DevSidebar({
 					className={s.brand}
 					aria-label="Go to developer dashboard"
 				>
-					<div
-						className={s["brand-icon"]}
-						style={{ background: "linear-gradient(135deg,#6366f1,#4338ca)" }}
-					>
-						{content.brand.initials}
-					</div>
-					<span className={s["brand-text"]}>{content.brand.name}</span>
-					<span
-						className={s["brand-tag"]}
-						style={{ color: "#6366f1", background: "rgba(99,102,241,0.08)" }}
-					>
-						{content.brand.tag}
-					</span>
+					<PaymoLogo expanded={expanded || !isDesktop} />
 				</Link>
 				{!isDesktop && (
 					<button

@@ -199,7 +199,7 @@ export default function TopNav({
                                                         </div>
                                                         <div className={cx(s.panelFooter, "text-center")}>
                                                                 <Link
-                                                                        to="/transaction_dashboard/app/$section"
+                                                                        to="/pm/app/$section"
                                                                         params={{ section: "support" }}
                                                                         className={cx(s.btnLink, s.btnLinkPrimary)}
                                                                 >
@@ -255,7 +255,7 @@ export default function TopNav({
                                                         <div className={s.panelBody}>
                                                                 <div className="d-flex flex-column">
                                                                         <Link
-                                                                                to="/transaction_dashboard/app/$section"
+                                                                                to="/pm/app/$section"
                                                                                 params={{ section: "account" }}
                                                                                 className={s.menuItem}
                                                                                 onClick={() => onToggleDropdown("user")}
@@ -263,7 +263,7 @@ export default function TopNav({
                                                                                 <i className="bi bi-person" /> Profile
                                                                         </Link>
                                                                         <Link
-                                                                                to="/transaction_dashboard/app/$section"
+                                                                                to="/pm/app/$section"
                                                                                 params={{ section: "settings" }}
                                                                                 className={s.menuItem}
                                                                                 onClick={() => onToggleDropdown("user")}
@@ -271,7 +271,7 @@ export default function TopNav({
                                                                                 <i className="bi bi-gear" /> Settings
                                                                         </Link>
                                                                         <Link
-                                                                                to="/transaction_dashboard/app/$section"
+                                                                                to="/pm/app/$section"
                                                                                 params={{ section: "support" }}
                                                                                 className={s.menuItem}
                                                                                 onClick={() => onToggleDropdown("user")}
@@ -282,7 +282,7 @@ export default function TopNav({
                                                                                 </span>
                                                                         </Link>
                                                                         <Link
-                                                                                to="/transaction_dashboard/app/$section"
+                                                                                to="/pm/app/$section"
                                                                                 params={{ section: "support" }}
                                                                                 className={s.menuItem}
                                                                                 onClick={() => onToggleDropdown("user")}

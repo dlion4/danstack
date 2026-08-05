@@ -151,8 +151,7 @@ export default function DevSidebar({
                                         title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
                                 >
                                         <i className="bi bi-arrow-left-right" />
-                                        <span>Switch Account</span>
-                                        
+                                        {(expanded || !isDesktop) && <span>Switch Account</span>}
                                 </button>
 
                                 {/* User footer */}

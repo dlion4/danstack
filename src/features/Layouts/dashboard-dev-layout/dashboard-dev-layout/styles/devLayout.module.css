@@ -1519,7 +1519,7 @@
                 0 1px 3px rgba(16, 185, 129, 0.15);
         position: relative;
         overflow: hidden;
-        margin-top: auto;
+        margin: 0.5rem 0.75rem;
 }
 
 .switchAccountBtn::before {

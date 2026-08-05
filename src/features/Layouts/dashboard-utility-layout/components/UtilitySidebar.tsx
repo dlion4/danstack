@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import type { NavItem, UtilityLayoutContent } from "../data/utilityLayoutData";
 import { cx } from "../data/utilityLayoutData";
 import styles from "../styles/utilityLayout.module.css";
+import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -58,19 +59,7 @@ export default function UtilitySidebar({
                                         className={s.brand}
                                         aria-label="Go to utility overview"
                                 >
-                                        <div
-                                                className={s["brand-icon"]}
-                                                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
-                                        >
-                                                <i className={`bi ${content.brand.icon}`} />
-                                        </div>
-                                        <span className={s["brand-text"]}>{content.brand.name}</span>
-                                        <span
-                                                className={s["brand-tag"]}
-                                                style={{ color: "#f59e0b", background: "rgba(245,158,11,0.08)" }}
-                                        >
-                                                {content.brand.tag}
-                                        </span>
+                                        <PaymoLogo expanded={expanded || !isDesktop} />
                                 </Link>
                                 {!isDesktop && (
                                         <button
@@ -145,8 +134,7 @@ export default function UtilitySidebar({
                                         title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
                                 >
                                         <i className="bi bi-arrow-left-right" />
-                                        <span>Switch Account</span>
-                                        
+                                        {(expanded || !isDesktop) && <span>Switch Account</span>}
                                 </button>
 
                                 {/* User footer */}

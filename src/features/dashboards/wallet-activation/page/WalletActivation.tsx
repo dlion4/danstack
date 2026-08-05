@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { WalletActivationModals } from '../modals/WalletActivationModals';
 import AccountFlowChart from '../components/AccountFlowChart';
 import HowItWorks from '../components/HowItWorks';
@@ -104,7 +105,7 @@ export default function WalletActivation() {
 			<div className={styles.pageBar}>
 				<div>
 					<div className={styles.breadcrumb}>
-						<a href="#">Home</a> / <a href="#">Account</a> /{' '}
+						<a href="#">Transactions</a> / <a href="#">Account</a> /{' '}
 						<strong>Wallet Activation & Cross-Dashboard Hub</strong>
 					</div>
 					{/* // <h1 className={styles.pageTitle}>Wallet Activation & Cross-Dashboard Hub</h1> */}
@@ -123,18 +124,18 @@ export default function WalletActivation() {
 					>
 						<i className="bi bi-link-45deg"></i> Link Account
 					</button> */}
-					<button
+					<Link
+						to="/pm/app/transfer-overview"
 						className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
-						onClick={() => openModal('activateDashboardModal')}
 					>
-						<i className="bi bi-stars"></i> Activate Dashboard
-					</button>
-					<button
+						<i className="bi bi-stars"></i> Go to Dashboard
+					</Link>
+					<Link
+						to="/auth/hub"
 						className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`}
-						onClick={() => openModal('revokeAllAccessModal')}
 					>
-						<i className="bi bi-shield-exclamation"></i> Revoke All
-					</button>
+						<i className="bi bi-shield-exclamation"></i> Switch Account
+					</Link>
 				</div>
 			</div>
 

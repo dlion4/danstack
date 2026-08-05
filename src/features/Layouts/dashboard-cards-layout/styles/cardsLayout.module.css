@@ -433,7 +433,7 @@
 }
 
 .sidebarAccount {
-        margin-top: auto;
+        margin: 0.5rem 0.75rem;
         padding: 0.85rem;
         border-radius: var(--cl-radius-sm);
         background: var(--cl-surface-2);
@@ -1854,7 +1854,7 @@ input:focus+.slider {
                 0 1px 3px rgba(16, 185, 129, 0.15);
         position: relative;
         overflow: hidden;
-        margin-top: auto;
+        margin: 0.5rem 0.75rem;
         flex-shrink: 0;
 }
 
