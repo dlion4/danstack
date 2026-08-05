@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Security Review — Paymo</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --em700:#047857; --emGhost:#ECFDF5; --info:#0EA5E9; --infoSoft:#F0F9FF; --infoBd:#BAE6FD; --amber:#F59E0B; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:28px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(900px 500px at 10% 0%,#E0F2FE,transparent 60%), radial-gradient(700px 400px at 90% 0%,#D1FAE5,transparent 55%),var(--cream); min-height:100dvh; margin:0; display:flex; flex-direction:column}
+.topbar{padding:20px 24px; max-width:1200px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--info),#0284C7); display:grid; place-items:center; color:white; box-shadow:0 6px 16px rgba(14,165,233,.28)}
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); max-width:600px; width:100%; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)} @keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.top-line{height:5px; background:linear-gradient(90deg,var(--info),var(--emerald))}
+.head{padding:26px 28px 18px; text-align:center}
+.icon{width:96px; height:96px; margin:0 auto 14px; border-radius:28px; background:var(--infoSoft); border:1px solid var(--infoBd); display:grid; place-items:center; font-size:42px; color:var(--info); position:relative}
+.icon i{animation:shieldFloat 3s ease-in-out infinite} @keyframes shieldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.badge{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; background:var(--infoSoft); border:1px solid var(--infoBd); color:#0369A1; font-weight:700; font-size:11px; text-transform:uppercase}
+.title{font-family:Space Grotesk,sans-serif; font-size:26px; font-weight:700; margin:12px 0 8px}
+.sub{color:var(--ink2); font-size:14px; line-height:1.6}
+.amt{font-size:20px; font-weight:800; background:var(--cream); border:1px solid var(--bd); border-radius:999px; padding:6px 14px; display:inline-flex; align-items:center; gap:6px; margin-top:8px}
+.stepper{display:flex; align-items:center; justify-content:space-between; position:relative; margin:20px 6px 0; padding:0 4px}
+.stepper::before{content:''; position:absolute; top:16px; left:16px; right:16px; height:3px; background:#E5E7EB; border-radius:3px}
+.progress{position:absolute; top:16px; left:16px; height:3px; background:linear-gradient(90deg,var(--emerald),var(--info)); border-radius:3px; width:55%; animation:grow 1.4s ease}
+@keyframes grow{from{width:10%}to{width:55%}}
+.node{width:34px; height:34px; border-radius:50%; background:white; border:2px solid #E5E7EB; display:grid; place-items:center; font-weight:700; font-size:14px; position:relative; z-index:1}
+.node.done{background:var(--emerald); border-color:var(--emerald); color:white}
+.node.active{background:var(--infoSoft); border-color:var(--info); color:var(--info); box-shadow:0 0 0 6px rgba(14,165,233,.15); animation:pulseInfo 1.8s infinite}
+@keyframes pulseInfo{70%{box-shadow:0 0 0 12px rgba(14,165,233,0)}100%{box-shadow:0 0 0 6px rgba(14,165,233,.15)}}
+.labels{display:flex; justify-content:space-between; margin-top:8px; font-size:10px; font-weight:700; color:var(--ink2)}
+.info-box{background:var(--infoSoft); border:1px solid var(--infoBd); border-radius:14px; padding:12px 14px; text-align:left; margin-top:18px}
+.timer-box{background:var(--cream); border:1px solid var(--bd); border-radius:14px; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-top:12px}
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--bd); display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.btn-info{background:var(--info); color:white; border:none; border-radius:12px; padding:11px 18px; font-weight:700; transition:.2s}
+.btn-info:hover{background:#0284C7; transform:translateY(-1px); color:white}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px}
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px}
+.toast{background:white; border:1px solid var(--bd); border-left:4px solid var(--info); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); min-width:300px; animation:slide .35s ease} @keyframes slide{from{transform:translateX(16px); opacity:0}to{transform:translateX(0); opacity:1}}
+@media(max-width:640px){.head{padding:20px 18px} .actions{padding:16px 18px} .btn-em,.btn-info,.btn-ghost{flex:1; justify-content:center}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-shield-shaded"></i></div> Paymo BaaS</div><button class="btn-ghost" style="padding:8px 14px"><i class="bi bi-clock-history me-1"></i>Review queue</button></div>
+<div class="wrap"><div class="cardx"><div class="top-line"></div>
+<div class="head">
+<div class="icon"><i class="bi bi-shield-shaded"></i></div>
+<div class="badge"><span class="spinner-border spinner-border-sm" style="width:12px; height:12px"></span> Security Review • Step 2/3</div>
+<div class="title">KES transfer flagged for routine check</div>
+<div class="sub">Your transfer is safe in vault — not lost. Compliance verifying source of funds per CBK.</div>
+<div class="amt"><i class="bi bi-currency-exchange text-success"></i> KES 120,000.00 → M-Pesa ••••• 1230</div>
+
+<div class="stepper"><div class="progress"></div><div class="node done"><i class="bi bi-check"></i></div><div class="node active"><span class="spinner-border spinner-border-sm" style="width:14px; height:14px"></span></div><div class="node" style="color:#9CA3AF">3</div></div>
+<div class="labels"><span style="color:var(--em600)">Initiated</span><span style="color:var(--info)">Verifying • 6 min</span><span>Complete</span></div>
+
+<div class="info-box"><b style="font-size:13px"><i class="bi bi-info-circle me-1"></i>What happens next?</b><div style="font-size:12px; color:var(--ink2); line-height:1.6; margin-top:4px">• Human verifies ID + transaction pattern (large amount + night) • Usually 1-4 hrs business • You'll get SMS + push when done • No action needed unless we ask for receipt</div></div>
+
+<div class="timer-box">
+<div><b style="font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2)">In review for</b><div style="font-weight:800; font-size:16px"><i class="bi bi-hourglass-split me-1"></i><span id="elapsed">00:06:12</span></div></div>
+<div style="text-align:right"><div style="font-size:11px; color:var(--ink2)">Avg ETA</div><div style="font-weight:800; color:var(--em600)">1h 22m • <span style="font-weight:600; color:var(--ink2)">noon today</span></div></div>
+<div><span style="padding:6px 10px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em700); font-weight:700; font-size:11px"><i class="bi bi-vault"></i> Vault safe</span></div>
+</div>
+
+<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:14px"><span style="padding:6px 12px; border-radius:999px; background:white; border:1px solid var(--bd); font-weight:700; font-size:11px"><i class="bi bi-shield-check"></i> CBK compliant</span><span style="padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em700); font-weight:700; font-size:11px"><i class="bi bi-bell"></i> Notify when done</span></div>
+</div>
+<div class="actions">
+<button class="btn-em" onclick="toast('Noted','We will notify via SMS + Push')"><i class="bi bi-check2-circle"></i> Got it, back to home</button>
+<a href="/transactions/txn_hold_120k" class="btn-info text-decoration-none"><i class="bi bi-receipt me-1"></i> View Transaction</a>
+<button class="btn-ghost" onclick="toast('Compliance chat opened','Ask about hold — avg reply 3 min')"><i class="bi bi-chat-dots"></i> Chat Compliance</button>
+</div>
+</div></div>
+<div class="toast-wrap" id="toasts"></div>
+<script>
+let sec=372; const el=document.getElementById('elapsed'); setInterval(()=>{sec++; const h=String(Math.floor(sec/3600)).padStart(2,'0'), m=String(Math.floor((sec%3600)/60)).padStart(2,'0'), s=String(sec%60).padStart(2,'0'); el.textContent=`${h}:${m}:${s}`},1000);
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast'; e.innerHTML=`<div style="font-weight:700; font-size:13px"><i class='bi bi-shield-check text-info me-1'></i>${t}</div><div style='font-size:12px; color:#4B5563'>${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3500)}
+</script>
+</body>
+</html>

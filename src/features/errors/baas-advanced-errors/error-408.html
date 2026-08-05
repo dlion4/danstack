@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>408 • Timeout — Paymo BaaS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --amber:#F59E0B; --amberSoft:#FFFBEB; --amberBd:#FDE68A; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:28px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(900px 500px at 10% 0%,#FEF3C7,transparent 60%), radial-gradient(700px 400px at 90% 0%,#D1FAE5,transparent 55%),var(--cream); min-height:100dvh; margin:0; display:flex; flex-direction:column}
+.topbar{padding:20px 24px; max-width:1200px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,#F59E0B,#D97706); display:grid; place-items:center; color:white}
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); max-width:560px; width:100%; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)} @keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.head{padding:26px 28px 18px; text-align:center}
+.icon{width:96px; height:96px; margin:0 auto 16px; border-radius:28px; background:var(--amberSoft); border:1px solid var(--amberBd); display:grid; place-items:center; font-size:44px; color:var(--amber); position:relative}
+.hourglass{display:inline-block; animation:flip 2.2s ease-in-out infinite} @keyframes flip{0%{transform:rotate(0)}45%{transform:rotate(180deg)}100%{transform:rotate(180deg)}}
+.badge{padding:6px 12px; border-radius:999px; background:#FFFBEB; border:1px solid var(--amberBd); color:#92400E; font-weight:700; font-size:11px; text-transform:uppercase}
+.title{font-family:Space Grotesk,sans-serif; font-size:26px; font-weight:700; margin:12px 0 8px}
+.sub{color:var(--ink2); font-size:14px; line-height:1.6}
+.timeline{margin:18px 0; display:flex; justify-content:space-between; position:relative; padding:0 8px}
+.timeline::before{content:''; position:absolute; top:14px; left:20px; right:20px; height:3px; background:#F3F4F6; border-radius:3px}
+.timeline .fill{position:absolute; top:14px; left:20px; height:3px; background:linear-gradient(90deg,var(--emerald),var(--amber)); border-radius:3px; width:64%; animation:prog 2s ease}
+@keyframes prog{from{width:0}to{width:64%}}
+.step{width:32px; height:32px; border-radius:50%; background:white; border:2px solid #E5E7EB; display:grid; place-items:center; font-size:14px; position:relative; z-index:1}
+.step.done{background:var(--emerald); border-color:var(--emerald); color:white}
+.step.active{background:var(--amberSoft); border-color:var(--amber); color:var(--amber); box-shadow:0 0 0 4px rgba(245,158,11,.18); animation:pulseAm 1.6s infinite}
+@keyframes pulseAm{70%{box-shadow:0 0 0 9px rgba(245,158,11,0)}100%{box-shadow:0 0 0 4px rgba(245,158,11,.18)}}
+.warn{background:#FFFBEB; border-left:4px solid var(--amber); border-radius:0 14px 14px 0; padding:14px; text-align:left; margin-top:16px; display:flex; gap:10px}
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--bd); display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.btn-amber{background:var(--amber); color:white; border:none; border-radius:12px; padding:11px 18px; font-weight:700; box-shadow:0 8px 20px rgba(245,158,11,.22); transition:.2s}
+.btn-amber:hover{transform:translateY(-1px); background:#D97706; color:white}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px}
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px}
+.toast{background:white; border:1px solid var(--bd); border-left:4px solid var(--amber); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); min-width:300px; animation:slide .35s ease} @keyframes slide{from{transform:translateX(16px); opacity:0}to{transform:translateX(0); opacity:1}}
+@media(max-width:640px){.head{padding:20px 18px} .actions{padding:16px 18px} .btn-em,.btn-amber,.btn-ghost{flex:1; justify-content:center}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-hourglass-split"></i></div> Paymo BaaS</div><button class="btn-ghost" style="padding:8px 14px" onclick="location.reload()"><i class="bi bi-arrow-clockwise me-1"></i> Check</button></div>
+<div class="wrap"><div class="cardx">
+<div class="head">
+<div class="icon"><span class="hourglass"><i class="bi bi-hourglass-split"></i></span></div>
+<div class="badge"><i class="bi bi-stopwatch me-1"></i> 408 • Request Timeout</div>
+<div class="title">Bank took too long to answer</div>
+<div class="sub">3D-Secure or M-Pesa prompt timed out. No shame — networks lag. Verify before retry to avoid double charge.</div>
+
+<div class="timeline">
+<div class="fill"></div>
+<div class="text-center"><div class="step done"><i class="bi bi-check"></i></div><div style="font-size:10px; font-weight:700; margin-top:6px">SENT</div></div>
+<div class="text-center"><div class="step done"><i class="bi bi-shield-check"></i></div><div style="font-size:10px; font-weight:700; margin-top:6px">VAULT OK</div></div>
+<div class="text-center"><div class="step active"><i class="bi bi-hourglass"></i></div><div style="font-size:10px; font-weight:700; margin-top:6px; color:var(--amber)">BANK WAIT</div></div>
+<div class="text-center"><div class="step"><i class="bi bi-x"></i></div><div style="font-size:10px; font-weight:700; margin-top:6px; color:#9CA3AF">TIMEOUT</div></div>
+</div>
+
+<div class="warn"><i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:18px; margin-top:1px"></i><div><b style="font-size:13px">Safety check — mandatory</b><div style="font-size:12px; color:var(--ink2); line-height:1.5; margin-top:2px">Open your bank app / M-Pesa statement. If you see <b>KES pending</b>, don't retry yet. Wait 2 min.</div></div></div>
+
+<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:14px"><span style="padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em600); font-weight:700; font-size:11px"><i class="bi bi-shield-check"></i> No double-charge guard</span><span style="padding:6px 12px; border-radius:999px; background:white; border:1px solid var(--bd); font-weight:700; font-size:11px"><i class="bi bi-clock-history"></i> 28s elapsed</span></div>
+</div>
+<div class="actions">
+<button class="btn-amber" onclick="verifiedRetry()"><i class="bi bi-check2-circle"></i> I've checked, retry</button>
+<button class="btn-em" onclick="checkStatus()"><i class="bi bi-search"></i> Check Status</button>
+<a href="/support?topic=timeout" class="btn-ghost text-decoration-none"><i class="bi bi-life-preserver me-1"></i> Help</a>
+</div>
+</div></div>
+<div class="toast-wrap" id="toasts"></div>
+<script>
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast'; e.innerHTML=`<div style="font-weight:700; font-size:13px"><i class='bi bi-info-circle-fill text-warning me-1'></i>${t}</div><div style='font-size:12px; color:#4B5563'>${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),4000)}
+function verifiedRetry(){toast('Retrying safely','Using same idempotency key to prevent double charge...'); setTimeout(()=>location.reload(),900)}
+function checkStatus(){toast('Checking ledger','Querying PSP for final status...');}
+</script>
+</body>
+</html>

@@ -91,6 +91,106 @@ import { Route as PmAppComplianceRouteImport } from './routes/pm/app.compliance'
 import { Route as PmAppAnalyticsRouteImport } from './routes/pm/app.analytics'
 import { Route as PmAppAccountRouteImport } from './routes/pm/app.account'
 import { Route as PmAppSectionRouteImport } from './routes/pm/app.$section'
+import { Route as ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport } from './routes/error/utility-errors/util-500-01-token-gen-failed'
+import { Route as ErrorUtilityErrorsUtil42901RateLimitedRouteImport } from './routes/error/utility-errors/util-429-01-rate-limited'
+import { Route as ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport } from './routes/error/utility-errors/util-410-01-provider-maintenance'
+import { Route as ErrorUtilityErrorsUtil40902AutomationConflictRouteImport } from './routes/error/utility-errors/util-409-02-automation-conflict'
+import { Route as ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport } from './routes/error/utility-errors/util-409-01-bill-already-paid'
+import { Route as ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport } from './routes/error/utility-errors/util-408-01-pending-confirmation'
+import { Route as ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport } from './routes/error/utility-errors/util-404-03-airtime-unreachable'
+import { Route as ErrorUtilityErrorsUtil40402InternetInvalidRouteImport } from './routes/error/utility-errors/util-404-02-internet-invalid'
+import { Route as ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport } from './routes/error/utility-errors/util-404-01-meter-not-found'
+import { Route as ErrorUtilityErrorsUtil40301AutomationFailedRouteImport } from './routes/error/utility-errors/util-403-01-automation-failed'
+import { Route as ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport } from './routes/error/utility-errors/util-402-03-provider-not-supported'
+import { Route as ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport } from './routes/error/utility-errors/util-402-02-insufficient-balance-utility'
+import { Route as ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport } from './routes/error/utility-errors/util-402-01-amount-below-min'
+import { Route as ErrorUtilityErrorsUtil40001NameMismatchRouteImport } from './routes/error/utility-errors/util-400-01-name-mismatch'
+import { Route as ErrorTransactionErrorsTx50002LiquidityFailedRouteImport } from './routes/error/transaction-errors/tx-500-02-liquidity-failed'
+import { Route as ErrorTransactionErrorsTx50001SettlementDelayedRouteImport } from './routes/error/transaction-errors/tx-500-01-settlement-delayed'
+import { Route as ErrorTransactionErrorsTx42901ThrottledRouteImport } from './routes/error/transaction-errors/tx-429-01-throttled'
+import { Route as ErrorTransactionErrorsTx42301RtgsCutoffRouteImport } from './routes/error/transaction-errors/tx-423-01-rtgs-cutoff'
+import { Route as ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport } from './routes/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+import { Route as ErrorTransactionErrorsTx42201NameMismatchRouteImport } from './routes/error/transaction-errors/tx-422-01-name-mismatch'
+import { Route as ErrorTransactionErrorsTx41001TxnExpiredRouteImport } from './routes/error/transaction-errors/tx-410-01-txn-expired'
+import { Route as ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport } from './routes/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+import { Route as ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport } from './routes/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+import { Route as ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport } from './routes/error/transaction-errors/tx-409-01-duplicate-transaction'
+import { Route as ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport } from './routes/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+import { Route as ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport } from './routes/error/transaction-errors/tx-404-02-purpose-code-missing'
+import { Route as ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport } from './routes/error/transaction-errors/tx-404-01-mpesa-not-registered'
+import { Route as ErrorTransactionErrorsTx40303AccountFrozenRouteImport } from './routes/error/transaction-errors/tx-403-03-account-frozen'
+import { Route as ErrorTransactionErrorsTx40302KraTaxFailedRouteImport } from './routes/error/transaction-errors/tx-403-02-kra-tax-failed'
+import { Route as ErrorTransactionErrorsTx40301AmlHoldRouteImport } from './routes/error/transaction-errors/tx-403-01-aml-hold'
+import { Route as ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport } from './routes/error/transaction-errors/tx-402-05-fee-calculation-failed'
+import { Route as ErrorTransactionErrorsTx40204PerTxnLimitRouteImport } from './routes/error/transaction-errors/tx-402-04-per-txn-limit'
+import { Route as ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport } from './routes/error/transaction-errors/tx-402-03-daily-limit-reached'
+import { Route as ErrorTransactionErrorsTx40202AmountMinMaxRouteImport } from './routes/error/transaction-errors/tx-402-02-amount-min-max'
+import { Route as ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport } from './routes/error/transaction-errors/tx-402-01-insufficient-balance'
+import { Route as ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport } from './routes/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+import { Route as ErrorTransactionErrorsTx40101Pin3xLockedRouteImport } from './routes/error/transaction-errors/tx-401-01-pin-3x-locked'
+import { Route as ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport } from './routes/error/transaction-errors/tx-400-05-currency-not-allowed'
+import { Route as ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport } from './routes/error/transaction-errors/tx-400-04-invalid-mobile-network'
+import { Route as ErrorTransactionErrorsTx40003BankOfflineRouteImport } from './routes/error/transaction-errors/tx-400-03-bank-offline'
+import { Route as ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport } from './routes/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+import { Route as ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport } from './routes/error/transaction-errors/tx-400-01-recipient-not-found'
+import { Route as ErrorCardCard50001ProcessorDownRouteImport } from './routes/error/card/card-500-01-processor-down'
+import { Route as ErrorCardCard41001ExpiredRouteImport } from './routes/error/card/card-410-01-expired'
+import { Route as ErrorCardCard40901AlreadyExistsEmployeeRouteImport } from './routes/error/card/card-409-01-already-exists-employee'
+import { Route as ErrorCardCard40801PersonalizationFailedRouteImport } from './routes/error/card/card-408-01-personalization-failed'
+import { Route as ErrorCardCard40402EmployeeNotWhitelistedRouteImport } from './routes/error/card/card-404-02-employee-not-whitelisted'
+import { Route as ErrorCardCard40401DeliveryAddressInvalidRouteImport } from './routes/error/card/card-404-01-delivery-address-invalid'
+import { Route as ErrorCardCard40307SettingsConflictRouteImport } from './routes/error/card/card-403-07-settings-conflict'
+import { Route as ErrorCardCard40306NotActivatedRouteImport } from './routes/error/card/card-403-06-not-activated'
+import { Route as ErrorCardCard40305ProgramInactiveRouteImport } from './routes/error/card/card-403-05-program-inactive'
+import { Route as ErrorCardCard40304FrozenFraudRouteImport } from './routes/error/card/card-403-04-frozen-fraud'
+import { Route as ErrorCardCard40303InternationalBlockedRouteImport } from './routes/error/card/card-403-03-international-blocked'
+import { Route as ErrorCardCard40302MerchantBlockedRouteImport } from './routes/error/card/card-403-02-merchant-blocked'
+import { Route as ErrorCardCard40301KycTierInsufficientRouteImport } from './routes/error/card/card-403-01-kyc-tier-insufficient'
+import { Route as ErrorCardCard40204MinTopupFailedRouteImport } from './routes/error/card/card-402-04-min-topup-failed'
+import { Route as ErrorCardCard40203ChargebackDisputedRouteImport } from './routes/error/card/card-402-03-chargeback-disputed'
+import { Route as ErrorCardCard40202LimitExceededRouteImport } from './routes/error/card/card-402-02-limit-exceeded'
+import { Route as ErrorCardCard40201FundingFailedRouteImport } from './routes/error/card/card-402-01-funding-failed'
+import { Route as ErrorCardCard40103CvvAttemptsExceededRouteImport } from './routes/error/card/card-401-03-cvv-attempts-exceeded'
+import { Route as ErrorCardCard40102Pin3xBlockedRouteImport } from './routes/error/card/card-401-02-pin-3x-blocked'
+import { Route as ErrorCardCard401013dsFailedRouteImport } from './routes/error/card/card-401-01-3ds-failed'
+import { Route as ErrorCardCard40002ProgramLimitHighRouteImport } from './routes/error/card/card-400-02-program-limit-high'
+import { Route as ErrorCardCard40001VirtualLimitReachedRouteImport } from './routes/error/card/card-400-01-virtual-limit-reached'
+import { Route as ErrorAdvancedErrorsErrorSessionExpiredRouteImport } from './routes/error/advanced-errors/error-session-expired'
+import { Route as ErrorAdvancedErrorsErrorProcessingHoldRouteImport } from './routes/error/advanced-errors/error-processing-hold'
+import { Route as ErrorAdvancedErrorsErrorPaymentFailedRouteImport } from './routes/error/advanced-errors/error-payment-failed'
+import { Route as ErrorAdvancedErrorsErrorMaintenanceRouteImport } from './routes/error/advanced-errors/error-maintenance'
+import { Route as ErrorAdvancedErrorsErrorKycFailedRouteImport } from './routes/error/advanced-errors/error-kyc-failed'
+import { Route as ErrorAdvancedErrorsErrorAccountSuspendedRouteImport } from './routes/error/advanced-errors/error-account-suspended'
+import { Route as ErrorAdvancedErrorsError500RouteImport } from './routes/error/advanced-errors/error-500'
+import { Route as ErrorAdvancedErrorsError429RouteImport } from './routes/error/advanced-errors/error-429'
+import { Route as ErrorAdvancedErrorsError410RouteImport } from './routes/error/advanced-errors/error-410'
+import { Route as ErrorAdvancedErrorsError409RouteImport } from './routes/error/advanced-errors/error-409'
+import { Route as ErrorAdvancedErrorsError408RouteImport } from './routes/error/advanced-errors/error-408'
+import { Route as ErrorAdvancedErrorsError404RouteImport } from './routes/error/advanced-errors/error-404'
+import { Route as ErrorAdvancedErrorsError403RouteImport } from './routes/error/advanced-errors/error-403'
+import { Route as ErrorAdvancedErrorsError402RouteImport } from './routes/error/advanced-errors/error-402'
+import { Route as ErrorAdvancedErrorsError401RouteImport } from './routes/error/advanced-errors/error-401'
+import { Route as ErrorAdvancedErrorsError400RouteImport } from './routes/error/advanced-errors/error-400'
+import { Route as ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport } from './routes/error/advanced-errors/dev-500-03-elevated-error-rate'
+import { Route as ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport } from './routes/error/advanced-errors/dev-500-02-test-suite-failed'
+import { Route as ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport } from './routes/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+import { Route as ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport } from './routes/error/advanced-errors/dev-429-02-webhook-queue-full'
+import { Route as ErrorAdvancedErrorsDev42901RateLimit100RouteImport } from './routes/error/advanced-errors/dev-429-01-rate-limit-100'
+import { Route as ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport } from './routes/error/advanced-errors/dev-410-01-version-deprecated'
+import { Route as ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport } from './routes/error/advanced-errors/dev-409-01-duplicate-idempotency'
+import { Route as ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport } from './routes/error/advanced-errors/dev-408-01-webhook-timeout'
+import { Route as ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport } from './routes/error/advanced-errors/dev-404-01-endpoint-not-found'
+import { Route as ErrorAdvancedErrorsDev40304MissingWebhookRouteImport } from './routes/error/advanced-errors/dev-403-04-missing-webhook'
+import { Route as ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport } from './routes/error/advanced-errors/dev-403-03-partner-approval-pending'
+import { Route as ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport } from './routes/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+import { Route as ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport } from './routes/error/advanced-errors/dev-403-01-scope-forbidden'
+import { Route as ErrorAdvancedErrorsDev40201OverageBillingRouteImport } from './routes/error/advanced-errors/dev-402-01-overage-billing'
+import { Route as ErrorAdvancedErrorsDev40102OauthRevokedRouteImport } from './routes/error/advanced-errors/dev-401-02-oauth-revoked'
+import { Route as ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport } from './routes/error/advanced-errors/dev-401-01-api-key-invalid'
+import { Route as ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport } from './routes/error/advanced-errors/dev-400-04-sdk-outdated'
+import { Route as ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport } from './routes/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+import { Route as ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport } from './routes/error/advanced-errors/dev-400-02-signature-verification-failed'
+import { Route as ErrorAdvancedErrorsDev40001PayloadValidationRouteImport } from './routes/error/advanced-errors/dev-400-01-payload-validation'
 import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
 import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
 import { Route as CardsAppSupportRouteImport } from './routes/cards/app/support'
@@ -535,6 +635,606 @@ const PmAppSectionRoute = PmAppSectionRouteImport.update({
   path: '/$section',
   getParentRoute: () => PmAppRoute,
 } as any)
+const ErrorUtilityErrorsUtil50001TokenGenFailedRoute =
+  ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport.update({
+    id: '/error/utility-errors/util-500-01-token-gen-failed',
+    path: '/error/utility-errors/util-500-01-token-gen-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil42901RateLimitedRoute =
+  ErrorUtilityErrorsUtil42901RateLimitedRouteImport.update({
+    id: '/error/utility-errors/util-429-01-rate-limited',
+    path: '/error/utility-errors/util-429-01-rate-limited',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute =
+  ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport.update({
+    id: '/error/utility-errors/util-410-01-provider-maintenance',
+    path: '/error/utility-errors/util-410-01-provider-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40902AutomationConflictRoute =
+  ErrorUtilityErrorsUtil40902AutomationConflictRouteImport.update({
+    id: '/error/utility-errors/util-409-02-automation-conflict',
+    path: '/error/utility-errors/util-409-02-automation-conflict',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute =
+  ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport.update({
+    id: '/error/utility-errors/util-409-01-bill-already-paid',
+    path: '/error/utility-errors/util-409-01-bill-already-paid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40801PendingConfirmationRoute =
+  ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport.update({
+    id: '/error/utility-errors/util-408-01-pending-confirmation',
+    path: '/error/utility-errors/util-408-01-pending-confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute =
+  ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport.update({
+    id: '/error/utility-errors/util-404-03-airtime-unreachable',
+    path: '/error/utility-errors/util-404-03-airtime-unreachable',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40402InternetInvalidRoute =
+  ErrorUtilityErrorsUtil40402InternetInvalidRouteImport.update({
+    id: '/error/utility-errors/util-404-02-internet-invalid',
+    path: '/error/utility-errors/util-404-02-internet-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40401MeterNotFoundRoute =
+  ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport.update({
+    id: '/error/utility-errors/util-404-01-meter-not-found',
+    path: '/error/utility-errors/util-404-01-meter-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40301AutomationFailedRoute =
+  ErrorUtilityErrorsUtil40301AutomationFailedRouteImport.update({
+    id: '/error/utility-errors/util-403-01-automation-failed',
+    path: '/error/utility-errors/util-403-01-automation-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute =
+  ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport.update({
+    id: '/error/utility-errors/util-402-03-provider-not-supported',
+    path: '/error/utility-errors/util-402-03-provider-not-supported',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute =
+  ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport.update({
+    id: '/error/utility-errors/util-402-02-insufficient-balance-utility',
+    path: '/error/utility-errors/util-402-02-insufficient-balance-utility',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40201AmountBelowMinRoute =
+  ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport.update({
+    id: '/error/utility-errors/util-402-01-amount-below-min',
+    path: '/error/utility-errors/util-402-01-amount-below-min',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40001NameMismatchRoute =
+  ErrorUtilityErrorsUtil40001NameMismatchRouteImport.update({
+    id: '/error/utility-errors/util-400-01-name-mismatch',
+    path: '/error/utility-errors/util-400-01-name-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx50002LiquidityFailedRoute =
+  ErrorTransactionErrorsTx50002LiquidityFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-500-02-liquidity-failed',
+    path: '/error/transaction-errors/tx-500-02-liquidity-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx50001SettlementDelayedRoute =
+  ErrorTransactionErrorsTx50001SettlementDelayedRouteImport.update({
+    id: '/error/transaction-errors/tx-500-01-settlement-delayed',
+    path: '/error/transaction-errors/tx-500-01-settlement-delayed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42901ThrottledRoute =
+  ErrorTransactionErrorsTx42901ThrottledRouteImport.update({
+    id: '/error/transaction-errors/tx-429-01-throttled',
+    path: '/error/transaction-errors/tx-429-01-throttled',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42301RtgsCutoffRoute =
+  ErrorTransactionErrorsTx42301RtgsCutoffRouteImport.update({
+    id: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
+    path: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute =
+  ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport.update({
+    id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
+    path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42201NameMismatchRoute =
+  ErrorTransactionErrorsTx42201NameMismatchRouteImport.update({
+    id: '/error/transaction-errors/tx-422-01-name-mismatch',
+    path: '/error/transaction-errors/tx-422-01-name-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx41001TxnExpiredRoute =
+  ErrorTransactionErrorsTx41001TxnExpiredRouteImport.update({
+    id: '/error/transaction-errors/tx-410-01-txn-expired',
+    path: '/error/transaction-errors/tx-410-01-txn-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40903ReconciliationMismatchRoute =
+  ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport.update({
+    id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
+    path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute =
+  ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport.update({
+    id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
+    path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40901DuplicateTransactionRoute =
+  ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport.update({
+    id: '/error/transaction-errors/tx-409-01-duplicate-transaction',
+    path: '/error/transaction-errors/tx-409-01-duplicate-transaction',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute =
+  ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport.update({
+    id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
+    path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40402PurposeCodeMissingRoute =
+  ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport.update({
+    id: '/error/transaction-errors/tx-404-02-purpose-code-missing',
+    path: '/error/transaction-errors/tx-404-02-purpose-code-missing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute =
+  ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport.update({
+    id: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
+    path: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40303AccountFrozenRoute =
+  ErrorTransactionErrorsTx40303AccountFrozenRouteImport.update({
+    id: '/error/transaction-errors/tx-403-03-account-frozen',
+    path: '/error/transaction-errors/tx-403-03-account-frozen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40302KraTaxFailedRoute =
+  ErrorTransactionErrorsTx40302KraTaxFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-403-02-kra-tax-failed',
+    path: '/error/transaction-errors/tx-403-02-kra-tax-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40301AmlHoldRoute =
+  ErrorTransactionErrorsTx40301AmlHoldRouteImport.update({
+    id: '/error/transaction-errors/tx-403-01-aml-hold',
+    path: '/error/transaction-errors/tx-403-01-aml-hold',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40205FeeCalculationFailedRoute =
+  ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
+    path: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40204PerTxnLimitRoute =
+  ErrorTransactionErrorsTx40204PerTxnLimitRouteImport.update({
+    id: '/error/transaction-errors/tx-402-04-per-txn-limit',
+    path: '/error/transaction-errors/tx-402-04-per-txn-limit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40203DailyLimitReachedRoute =
+  ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport.update({
+    id: '/error/transaction-errors/tx-402-03-daily-limit-reached',
+    path: '/error/transaction-errors/tx-402-03-daily-limit-reached',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40202AmountMinMaxRoute =
+  ErrorTransactionErrorsTx40202AmountMinMaxRouteImport.update({
+    id: '/error/transaction-errors/tx-402-02-amount-min-max',
+    path: '/error/transaction-errors/tx-402-02-amount-min-max',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40201InsufficientBalanceRoute =
+  ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport.update({
+    id: '/error/transaction-errors/tx-402-01-insufficient-balance',
+    path: '/error/transaction-errors/tx-402-01-insufficient-balance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute =
+  ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport.update({
+    id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
+    path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40101Pin3xLockedRoute =
+  ErrorTransactionErrorsTx40101Pin3xLockedRouteImport.update({
+    id: '/error/transaction-errors/tx-401-01-pin-3x-locked',
+    path: '/error/transaction-errors/tx-401-01-pin-3x-locked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute =
+  ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport.update({
+    id: '/error/transaction-errors/tx-400-05-currency-not-allowed',
+    path: '/error/transaction-errors/tx-400-05-currency-not-allowed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute =
+  ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport.update({
+    id: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
+    path: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40003BankOfflineRoute =
+  ErrorTransactionErrorsTx40003BankOfflineRouteImport.update({
+    id: '/error/transaction-errors/tx-400-03-bank-offline',
+    path: '/error/transaction-errors/tx-400-03-bank-offline',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute =
+  ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport.update({
+    id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
+    path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40001RecipientNotFoundRoute =
+  ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport.update({
+    id: '/error/transaction-errors/tx-400-01-recipient-not-found',
+    path: '/error/transaction-errors/tx-400-01-recipient-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard50001ProcessorDownRoute =
+  ErrorCardCard50001ProcessorDownRouteImport.update({
+    id: '/error/card/card-500-01-processor-down',
+    path: '/error/card/card-500-01-processor-down',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard41001ExpiredRoute =
+  ErrorCardCard41001ExpiredRouteImport.update({
+    id: '/error/card/card-410-01-expired',
+    path: '/error/card/card-410-01-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40901AlreadyExistsEmployeeRoute =
+  ErrorCardCard40901AlreadyExistsEmployeeRouteImport.update({
+    id: '/error/card/card-409-01-already-exists-employee',
+    path: '/error/card/card-409-01-already-exists-employee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40801PersonalizationFailedRoute =
+  ErrorCardCard40801PersonalizationFailedRouteImport.update({
+    id: '/error/card/card-408-01-personalization-failed',
+    path: '/error/card/card-408-01-personalization-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40402EmployeeNotWhitelistedRoute =
+  ErrorCardCard40402EmployeeNotWhitelistedRouteImport.update({
+    id: '/error/card/card-404-02-employee-not-whitelisted',
+    path: '/error/card/card-404-02-employee-not-whitelisted',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40401DeliveryAddressInvalidRoute =
+  ErrorCardCard40401DeliveryAddressInvalidRouteImport.update({
+    id: '/error/card/card-404-01-delivery-address-invalid',
+    path: '/error/card/card-404-01-delivery-address-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40307SettingsConflictRoute =
+  ErrorCardCard40307SettingsConflictRouteImport.update({
+    id: '/error/card/card-403-07-settings-conflict',
+    path: '/error/card/card-403-07-settings-conflict',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40306NotActivatedRoute =
+  ErrorCardCard40306NotActivatedRouteImport.update({
+    id: '/error/card/card-403-06-not-activated',
+    path: '/error/card/card-403-06-not-activated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40305ProgramInactiveRoute =
+  ErrorCardCard40305ProgramInactiveRouteImport.update({
+    id: '/error/card/card-403-05-program-inactive',
+    path: '/error/card/card-403-05-program-inactive',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40304FrozenFraudRoute =
+  ErrorCardCard40304FrozenFraudRouteImport.update({
+    id: '/error/card/card-403-04-frozen-fraud',
+    path: '/error/card/card-403-04-frozen-fraud',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40303InternationalBlockedRoute =
+  ErrorCardCard40303InternationalBlockedRouteImport.update({
+    id: '/error/card/card-403-03-international-blocked',
+    path: '/error/card/card-403-03-international-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40302MerchantBlockedRoute =
+  ErrorCardCard40302MerchantBlockedRouteImport.update({
+    id: '/error/card/card-403-02-merchant-blocked',
+    path: '/error/card/card-403-02-merchant-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40301KycTierInsufficientRoute =
+  ErrorCardCard40301KycTierInsufficientRouteImport.update({
+    id: '/error/card/card-403-01-kyc-tier-insufficient',
+    path: '/error/card/card-403-01-kyc-tier-insufficient',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40204MinTopupFailedRoute =
+  ErrorCardCard40204MinTopupFailedRouteImport.update({
+    id: '/error/card/card-402-04-min-topup-failed',
+    path: '/error/card/card-402-04-min-topup-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40203ChargebackDisputedRoute =
+  ErrorCardCard40203ChargebackDisputedRouteImport.update({
+    id: '/error/card/card-402-03-chargeback-disputed',
+    path: '/error/card/card-402-03-chargeback-disputed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40202LimitExceededRoute =
+  ErrorCardCard40202LimitExceededRouteImport.update({
+    id: '/error/card/card-402-02-limit-exceeded',
+    path: '/error/card/card-402-02-limit-exceeded',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40201FundingFailedRoute =
+  ErrorCardCard40201FundingFailedRouteImport.update({
+    id: '/error/card/card-402-01-funding-failed',
+    path: '/error/card/card-402-01-funding-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40103CvvAttemptsExceededRoute =
+  ErrorCardCard40103CvvAttemptsExceededRouteImport.update({
+    id: '/error/card/card-401-03-cvv-attempts-exceeded',
+    path: '/error/card/card-401-03-cvv-attempts-exceeded',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40102Pin3xBlockedRoute =
+  ErrorCardCard40102Pin3xBlockedRouteImport.update({
+    id: '/error/card/card-401-02-pin-3x-blocked',
+    path: '/error/card/card-401-02-pin-3x-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard401013dsFailedRoute =
+  ErrorCardCard401013dsFailedRouteImport.update({
+    id: '/error/card/card-401-01-3ds-failed',
+    path: '/error/card/card-401-01-3ds-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40002ProgramLimitHighRoute =
+  ErrorCardCard40002ProgramLimitHighRouteImport.update({
+    id: '/error/card/card-400-02-program-limit-high',
+    path: '/error/card/card-400-02-program-limit-high',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40001VirtualLimitReachedRoute =
+  ErrorCardCard40001VirtualLimitReachedRouteImport.update({
+    id: '/error/card/card-400-01-virtual-limit-reached',
+    path: '/error/card/card-400-01-virtual-limit-reached',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorSessionExpiredRoute =
+  ErrorAdvancedErrorsErrorSessionExpiredRouteImport.update({
+    id: '/error/advanced-errors/error-session-expired',
+    path: '/error/advanced-errors/error-session-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorProcessingHoldRoute =
+  ErrorAdvancedErrorsErrorProcessingHoldRouteImport.update({
+    id: '/error/advanced-errors/error-processing-hold',
+    path: '/error/advanced-errors/error-processing-hold',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorPaymentFailedRoute =
+  ErrorAdvancedErrorsErrorPaymentFailedRouteImport.update({
+    id: '/error/advanced-errors/error-payment-failed',
+    path: '/error/advanced-errors/error-payment-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorMaintenanceRoute =
+  ErrorAdvancedErrorsErrorMaintenanceRouteImport.update({
+    id: '/error/advanced-errors/error-maintenance',
+    path: '/error/advanced-errors/error-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorKycFailedRoute =
+  ErrorAdvancedErrorsErrorKycFailedRouteImport.update({
+    id: '/error/advanced-errors/error-kyc-failed',
+    path: '/error/advanced-errors/error-kyc-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorAccountSuspendedRoute =
+  ErrorAdvancedErrorsErrorAccountSuspendedRouteImport.update({
+    id: '/error/advanced-errors/error-account-suspended',
+    path: '/error/advanced-errors/error-account-suspended',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError500Route =
+  ErrorAdvancedErrorsError500RouteImport.update({
+    id: '/error/advanced-errors/error-500',
+    path: '/error/advanced-errors/error-500',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError429Route =
+  ErrorAdvancedErrorsError429RouteImport.update({
+    id: '/error/advanced-errors/error-429',
+    path: '/error/advanced-errors/error-429',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError410Route =
+  ErrorAdvancedErrorsError410RouteImport.update({
+    id: '/error/advanced-errors/error-410',
+    path: '/error/advanced-errors/error-410',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError409Route =
+  ErrorAdvancedErrorsError409RouteImport.update({
+    id: '/error/advanced-errors/error-409',
+    path: '/error/advanced-errors/error-409',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError408Route =
+  ErrorAdvancedErrorsError408RouteImport.update({
+    id: '/error/advanced-errors/error-408',
+    path: '/error/advanced-errors/error-408',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError404Route =
+  ErrorAdvancedErrorsError404RouteImport.update({
+    id: '/error/advanced-errors/error-404',
+    path: '/error/advanced-errors/error-404',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError403Route =
+  ErrorAdvancedErrorsError403RouteImport.update({
+    id: '/error/advanced-errors/error-403',
+    path: '/error/advanced-errors/error-403',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError402Route =
+  ErrorAdvancedErrorsError402RouteImport.update({
+    id: '/error/advanced-errors/error-402',
+    path: '/error/advanced-errors/error-402',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError401Route =
+  ErrorAdvancedErrorsError401RouteImport.update({
+    id: '/error/advanced-errors/error-401',
+    path: '/error/advanced-errors/error-401',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError400Route =
+  ErrorAdvancedErrorsError400RouteImport.update({
+    id: '/error/advanced-errors/error-400',
+    path: '/error/advanced-errors/error-400',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute =
+  ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport.update({
+    id: '/error/advanced-errors/dev-500-03-elevated-error-rate',
+    path: '/error/advanced-errors/dev-500-03-elevated-error-rate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50002TestSuiteFailedRoute =
+  ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-500-02-test-suite-failed',
+    path: '/error/advanced-errors/dev-500-02-test-suite-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute =
+  ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
+    path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev42902WebhookQueueFullRoute =
+  ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport.update({
+    id: '/error/advanced-errors/dev-429-02-webhook-queue-full',
+    path: '/error/advanced-errors/dev-429-02-webhook-queue-full',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev42901RateLimit100Route =
+  ErrorAdvancedErrorsDev42901RateLimit100RouteImport.update({
+    id: '/error/advanced-errors/dev-429-01-rate-limit-100',
+    path: '/error/advanced-errors/dev-429-01-rate-limit-100',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev41001VersionDeprecatedRoute =
+  ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport.update({
+    id: '/error/advanced-errors/dev-410-01-version-deprecated',
+    path: '/error/advanced-errors/dev-410-01-version-deprecated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute =
+  ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport.update({
+    id: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
+    path: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40801WebhookTimeoutRoute =
+  ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport.update({
+    id: '/error/advanced-errors/dev-408-01-webhook-timeout',
+    path: '/error/advanced-errors/dev-408-01-webhook-timeout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40401EndpointNotFoundRoute =
+  ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport.update({
+    id: '/error/advanced-errors/dev-404-01-endpoint-not-found',
+    path: '/error/advanced-errors/dev-404-01-endpoint-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40304MissingWebhookRoute =
+  ErrorAdvancedErrorsDev40304MissingWebhookRouteImport.update({
+    id: '/error/advanced-errors/dev-403-04-missing-webhook',
+    path: '/error/advanced-errors/dev-403-04-missing-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute =
+  ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport.update({
+    id: '/error/advanced-errors/dev-403-03-partner-approval-pending',
+    path: '/error/advanced-errors/dev-403-03-partner-approval-pending',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute =
+  ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport.update({
+    id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
+    path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40301ScopeForbiddenRoute =
+  ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport.update({
+    id: '/error/advanced-errors/dev-403-01-scope-forbidden',
+    path: '/error/advanced-errors/dev-403-01-scope-forbidden',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40201OverageBillingRoute =
+  ErrorAdvancedErrorsDev40201OverageBillingRouteImport.update({
+    id: '/error/advanced-errors/dev-402-01-overage-billing',
+    path: '/error/advanced-errors/dev-402-01-overage-billing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40102OauthRevokedRoute =
+  ErrorAdvancedErrorsDev40102OauthRevokedRouteImport.update({
+    id: '/error/advanced-errors/dev-401-02-oauth-revoked',
+    path: '/error/advanced-errors/dev-401-02-oauth-revoked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute =
+  ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport.update({
+    id: '/error/advanced-errors/dev-401-01-api-key-invalid',
+    path: '/error/advanced-errors/dev-401-01-api-key-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40004SdkOutdatedRoute =
+  ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport.update({
+    id: '/error/advanced-errors/dev-400-04-sdk-outdated',
+    path: '/error/advanced-errors/dev-400-04-sdk-outdated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute =
+  ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport.update({
+    id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
+    path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute =
+  ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-400-02-signature-verification-failed',
+    path: '/error/advanced-errors/dev-400-02-signature-verification-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40001PayloadValidationRoute =
+  ErrorAdvancedErrorsDev40001PayloadValidationRouteImport.update({
+    id: '/error/advanced-errors/dev-400-01-payload-validation',
+    path: '/error/advanced-errors/dev-400-01-payload-validation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CardsAppVirtualDebitCardsRoute =
   CardsAppVirtualDebitCardsRouteImport.update({
     id: '/virtual-debit-cards',
@@ -678,6 +1378,106 @@ export interface FileRoutesByFullPath {
   '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
+  '/error/advanced-errors/dev-400-02-signature-verification-failed': typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute
+  '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute
+  '/error/advanced-errors/dev-400-04-sdk-outdated': typeof ErrorAdvancedErrorsDev40004SdkOutdatedRoute
+  '/error/advanced-errors/dev-401-01-api-key-invalid': typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute
+  '/error/advanced-errors/dev-401-02-oauth-revoked': typeof ErrorAdvancedErrorsDev40102OauthRevokedRoute
+  '/error/advanced-errors/dev-402-01-overage-billing': typeof ErrorAdvancedErrorsDev40201OverageBillingRoute
+  '/error/advanced-errors/dev-403-01-scope-forbidden': typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRoute
+  '/error/advanced-errors/dev-403-02-ip-whitelist-violation': typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute
+  '/error/advanced-errors/dev-403-03-partner-approval-pending': typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute
+  '/error/advanced-errors/dev-403-04-missing-webhook': typeof ErrorAdvancedErrorsDev40304MissingWebhookRoute
+  '/error/advanced-errors/dev-404-01-endpoint-not-found': typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRoute
+  '/error/advanced-errors/dev-408-01-webhook-timeout': typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRoute
+  '/error/advanced-errors/dev-409-01-duplicate-idempotency': typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute
+  '/error/advanced-errors/dev-410-01-version-deprecated': typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRoute
+  '/error/advanced-errors/dev-429-01-rate-limit-100': typeof ErrorAdvancedErrorsDev42901RateLimit100Route
+  '/error/advanced-errors/dev-429-02-webhook-queue-full': typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRoute
+  '/error/advanced-errors/dev-500-01-webhook-delivery-failed': typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute
+  '/error/advanced-errors/dev-500-02-test-suite-failed': typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRoute
+  '/error/advanced-errors/dev-500-03-elevated-error-rate': typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute
+  '/error/advanced-errors/error-400': typeof ErrorAdvancedErrorsError400Route
+  '/error/advanced-errors/error-401': typeof ErrorAdvancedErrorsError401Route
+  '/error/advanced-errors/error-402': typeof ErrorAdvancedErrorsError402Route
+  '/error/advanced-errors/error-403': typeof ErrorAdvancedErrorsError403Route
+  '/error/advanced-errors/error-404': typeof ErrorAdvancedErrorsError404Route
+  '/error/advanced-errors/error-408': typeof ErrorAdvancedErrorsError408Route
+  '/error/advanced-errors/error-409': typeof ErrorAdvancedErrorsError409Route
+  '/error/advanced-errors/error-410': typeof ErrorAdvancedErrorsError410Route
+  '/error/advanced-errors/error-429': typeof ErrorAdvancedErrorsError429Route
+  '/error/advanced-errors/error-500': typeof ErrorAdvancedErrorsError500Route
+  '/error/advanced-errors/error-account-suspended': typeof ErrorAdvancedErrorsErrorAccountSuspendedRoute
+  '/error/advanced-errors/error-kyc-failed': typeof ErrorAdvancedErrorsErrorKycFailedRoute
+  '/error/advanced-errors/error-maintenance': typeof ErrorAdvancedErrorsErrorMaintenanceRoute
+  '/error/advanced-errors/error-payment-failed': typeof ErrorAdvancedErrorsErrorPaymentFailedRoute
+  '/error/advanced-errors/error-processing-hold': typeof ErrorAdvancedErrorsErrorProcessingHoldRoute
+  '/error/advanced-errors/error-session-expired': typeof ErrorAdvancedErrorsErrorSessionExpiredRoute
+  '/error/card/card-400-01-virtual-limit-reached': typeof ErrorCardCard40001VirtualLimitReachedRoute
+  '/error/card/card-400-02-program-limit-high': typeof ErrorCardCard40002ProgramLimitHighRoute
+  '/error/card/card-401-01-3ds-failed': typeof ErrorCardCard401013dsFailedRoute
+  '/error/card/card-401-02-pin-3x-blocked': typeof ErrorCardCard40102Pin3xBlockedRoute
+  '/error/card/card-401-03-cvv-attempts-exceeded': typeof ErrorCardCard40103CvvAttemptsExceededRoute
+  '/error/card/card-402-01-funding-failed': typeof ErrorCardCard40201FundingFailedRoute
+  '/error/card/card-402-02-limit-exceeded': typeof ErrorCardCard40202LimitExceededRoute
+  '/error/card/card-402-03-chargeback-disputed': typeof ErrorCardCard40203ChargebackDisputedRoute
+  '/error/card/card-402-04-min-topup-failed': typeof ErrorCardCard40204MinTopupFailedRoute
+  '/error/card/card-403-01-kyc-tier-insufficient': typeof ErrorCardCard40301KycTierInsufficientRoute
+  '/error/card/card-403-02-merchant-blocked': typeof ErrorCardCard40302MerchantBlockedRoute
+  '/error/card/card-403-03-international-blocked': typeof ErrorCardCard40303InternationalBlockedRoute
+  '/error/card/card-403-04-frozen-fraud': typeof ErrorCardCard40304FrozenFraudRoute
+  '/error/card/card-403-05-program-inactive': typeof ErrorCardCard40305ProgramInactiveRoute
+  '/error/card/card-403-06-not-activated': typeof ErrorCardCard40306NotActivatedRoute
+  '/error/card/card-403-07-settings-conflict': typeof ErrorCardCard40307SettingsConflictRoute
+  '/error/card/card-404-01-delivery-address-invalid': typeof ErrorCardCard40401DeliveryAddressInvalidRoute
+  '/error/card/card-404-02-employee-not-whitelisted': typeof ErrorCardCard40402EmployeeNotWhitelistedRoute
+  '/error/card/card-408-01-personalization-failed': typeof ErrorCardCard40801PersonalizationFailedRoute
+  '/error/card/card-409-01-already-exists-employee': typeof ErrorCardCard40901AlreadyExistsEmployeeRoute
+  '/error/card/card-410-01-expired': typeof ErrorCardCard41001ExpiredRoute
+  '/error/card/card-500-01-processor-down': typeof ErrorCardCard50001ProcessorDownRoute
+  '/error/transaction-errors/tx-400-01-recipient-not-found': typeof ErrorTransactionErrorsTx40001RecipientNotFoundRoute
+  '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute
+  '/error/transaction-errors/tx-400-03-bank-offline': typeof ErrorTransactionErrorsTx40003BankOfflineRoute
+  '/error/transaction-errors/tx-400-04-invalid-mobile-network': typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute
+  '/error/transaction-errors/tx-400-05-currency-not-allowed': typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute
+  '/error/transaction-errors/tx-401-01-pin-3x-locked': typeof ErrorTransactionErrorsTx40101Pin3xLockedRoute
+  '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute
+  '/error/transaction-errors/tx-402-01-insufficient-balance': typeof ErrorTransactionErrorsTx40201InsufficientBalanceRoute
+  '/error/transaction-errors/tx-402-02-amount-min-max': typeof ErrorTransactionErrorsTx40202AmountMinMaxRoute
+  '/error/transaction-errors/tx-402-03-daily-limit-reached': typeof ErrorTransactionErrorsTx40203DailyLimitReachedRoute
+  '/error/transaction-errors/tx-402-04-per-txn-limit': typeof ErrorTransactionErrorsTx40204PerTxnLimitRoute
+  '/error/transaction-errors/tx-402-05-fee-calculation-failed': typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRoute
+  '/error/transaction-errors/tx-403-01-aml-hold': typeof ErrorTransactionErrorsTx40301AmlHoldRoute
+  '/error/transaction-errors/tx-403-02-kra-tax-failed': typeof ErrorTransactionErrorsTx40302KraTaxFailedRoute
+  '/error/transaction-errors/tx-403-03-account-frozen': typeof ErrorTransactionErrorsTx40303AccountFrozenRoute
+  '/error/transaction-errors/tx-404-01-mpesa-not-registered': typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute
+  '/error/transaction-errors/tx-404-02-purpose-code-missing': typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRoute
+  '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute
+  '/error/transaction-errors/tx-409-01-duplicate-transaction': typeof ErrorTransactionErrorsTx40901DuplicateTransactionRoute
+  '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute
+  '/error/transaction-errors/tx-409-03-reconciliation-mismatch': typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRoute
+  '/error/transaction-errors/tx-410-01-txn-expired': typeof ErrorTransactionErrorsTx41001TxnExpiredRoute
+  '/error/transaction-errors/tx-422-01-name-mismatch': typeof ErrorTransactionErrorsTx42201NameMismatchRoute
+  '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute
+  '/error/transaction-errors/tx-423-01-rtgs-cutoff': typeof ErrorTransactionErrorsTx42301RtgsCutoffRoute
+  '/error/transaction-errors/tx-429-01-throttled': typeof ErrorTransactionErrorsTx42901ThrottledRoute
+  '/error/transaction-errors/tx-500-01-settlement-delayed': typeof ErrorTransactionErrorsTx50001SettlementDelayedRoute
+  '/error/transaction-errors/tx-500-02-liquidity-failed': typeof ErrorTransactionErrorsTx50002LiquidityFailedRoute
+  '/error/utility-errors/util-400-01-name-mismatch': typeof ErrorUtilityErrorsUtil40001NameMismatchRoute
+  '/error/utility-errors/util-402-01-amount-below-min': typeof ErrorUtilityErrorsUtil40201AmountBelowMinRoute
+  '/error/utility-errors/util-402-02-insufficient-balance-utility': typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute
+  '/error/utility-errors/util-402-03-provider-not-supported': typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute
+  '/error/utility-errors/util-403-01-automation-failed': typeof ErrorUtilityErrorsUtil40301AutomationFailedRoute
+  '/error/utility-errors/util-404-01-meter-not-found': typeof ErrorUtilityErrorsUtil40401MeterNotFoundRoute
+  '/error/utility-errors/util-404-02-internet-invalid': typeof ErrorUtilityErrorsUtil40402InternetInvalidRoute
+  '/error/utility-errors/util-404-03-airtime-unreachable': typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute
+  '/error/utility-errors/util-408-01-pending-confirmation': typeof ErrorUtilityErrorsUtil40801PendingConfirmationRoute
+  '/error/utility-errors/util-409-01-bill-already-paid': typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute
+  '/error/utility-errors/util-409-02-automation-conflict': typeof ErrorUtilityErrorsUtil40902AutomationConflictRoute
+  '/error/utility-errors/util-410-01-provider-maintenance': typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute
+  '/error/utility-errors/util-429-01-rate-limited': typeof ErrorUtilityErrorsUtil42901RateLimitedRoute
+  '/error/utility-errors/util-500-01-token-gen-failed': typeof ErrorUtilityErrorsUtil50001TokenGenFailedRoute
   '/pm/app/$section': typeof PmAppSectionRoute
   '/pm/app/account': typeof PmAppAccountRoute
   '/pm/app/analytics': typeof PmAppAnalyticsRoute
@@ -766,6 +1566,106 @@ export interface FileRoutesByTo {
   '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
+  '/error/advanced-errors/dev-400-02-signature-verification-failed': typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute
+  '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute
+  '/error/advanced-errors/dev-400-04-sdk-outdated': typeof ErrorAdvancedErrorsDev40004SdkOutdatedRoute
+  '/error/advanced-errors/dev-401-01-api-key-invalid': typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute
+  '/error/advanced-errors/dev-401-02-oauth-revoked': typeof ErrorAdvancedErrorsDev40102OauthRevokedRoute
+  '/error/advanced-errors/dev-402-01-overage-billing': typeof ErrorAdvancedErrorsDev40201OverageBillingRoute
+  '/error/advanced-errors/dev-403-01-scope-forbidden': typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRoute
+  '/error/advanced-errors/dev-403-02-ip-whitelist-violation': typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute
+  '/error/advanced-errors/dev-403-03-partner-approval-pending': typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute
+  '/error/advanced-errors/dev-403-04-missing-webhook': typeof ErrorAdvancedErrorsDev40304MissingWebhookRoute
+  '/error/advanced-errors/dev-404-01-endpoint-not-found': typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRoute
+  '/error/advanced-errors/dev-408-01-webhook-timeout': typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRoute
+  '/error/advanced-errors/dev-409-01-duplicate-idempotency': typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute
+  '/error/advanced-errors/dev-410-01-version-deprecated': typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRoute
+  '/error/advanced-errors/dev-429-01-rate-limit-100': typeof ErrorAdvancedErrorsDev42901RateLimit100Route
+  '/error/advanced-errors/dev-429-02-webhook-queue-full': typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRoute
+  '/error/advanced-errors/dev-500-01-webhook-delivery-failed': typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute
+  '/error/advanced-errors/dev-500-02-test-suite-failed': typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRoute
+  '/error/advanced-errors/dev-500-03-elevated-error-rate': typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute
+  '/error/advanced-errors/error-400': typeof ErrorAdvancedErrorsError400Route
+  '/error/advanced-errors/error-401': typeof ErrorAdvancedErrorsError401Route
+  '/error/advanced-errors/error-402': typeof ErrorAdvancedErrorsError402Route
+  '/error/advanced-errors/error-403': typeof ErrorAdvancedErrorsError403Route
+  '/error/advanced-errors/error-404': typeof ErrorAdvancedErrorsError404Route
+  '/error/advanced-errors/error-408': typeof ErrorAdvancedErrorsError408Route
+  '/error/advanced-errors/error-409': typeof ErrorAdvancedErrorsError409Route
+  '/error/advanced-errors/error-410': typeof ErrorAdvancedErrorsError410Route
+  '/error/advanced-errors/error-429': typeof ErrorAdvancedErrorsError429Route
+  '/error/advanced-errors/error-500': typeof ErrorAdvancedErrorsError500Route
+  '/error/advanced-errors/error-account-suspended': typeof ErrorAdvancedErrorsErrorAccountSuspendedRoute
+  '/error/advanced-errors/error-kyc-failed': typeof ErrorAdvancedErrorsErrorKycFailedRoute
+  '/error/advanced-errors/error-maintenance': typeof ErrorAdvancedErrorsErrorMaintenanceRoute
+  '/error/advanced-errors/error-payment-failed': typeof ErrorAdvancedErrorsErrorPaymentFailedRoute
+  '/error/advanced-errors/error-processing-hold': typeof ErrorAdvancedErrorsErrorProcessingHoldRoute
+  '/error/advanced-errors/error-session-expired': typeof ErrorAdvancedErrorsErrorSessionExpiredRoute
+  '/error/card/card-400-01-virtual-limit-reached': typeof ErrorCardCard40001VirtualLimitReachedRoute
+  '/error/card/card-400-02-program-limit-high': typeof ErrorCardCard40002ProgramLimitHighRoute
+  '/error/card/card-401-01-3ds-failed': typeof ErrorCardCard401013dsFailedRoute
+  '/error/card/card-401-02-pin-3x-blocked': typeof ErrorCardCard40102Pin3xBlockedRoute
+  '/error/card/card-401-03-cvv-attempts-exceeded': typeof ErrorCardCard40103CvvAttemptsExceededRoute
+  '/error/card/card-402-01-funding-failed': typeof ErrorCardCard40201FundingFailedRoute
+  '/error/card/card-402-02-limit-exceeded': typeof ErrorCardCard40202LimitExceededRoute
+  '/error/card/card-402-03-chargeback-disputed': typeof ErrorCardCard40203ChargebackDisputedRoute
+  '/error/card/card-402-04-min-topup-failed': typeof ErrorCardCard40204MinTopupFailedRoute
+  '/error/card/card-403-01-kyc-tier-insufficient': typeof ErrorCardCard40301KycTierInsufficientRoute
+  '/error/card/card-403-02-merchant-blocked': typeof ErrorCardCard40302MerchantBlockedRoute
+  '/error/card/card-403-03-international-blocked': typeof ErrorCardCard40303InternationalBlockedRoute
+  '/error/card/card-403-04-frozen-fraud': typeof ErrorCardCard40304FrozenFraudRoute
+  '/error/card/card-403-05-program-inactive': typeof ErrorCardCard40305ProgramInactiveRoute
+  '/error/card/card-403-06-not-activated': typeof ErrorCardCard40306NotActivatedRoute
+  '/error/card/card-403-07-settings-conflict': typeof ErrorCardCard40307SettingsConflictRoute
+  '/error/card/card-404-01-delivery-address-invalid': typeof ErrorCardCard40401DeliveryAddressInvalidRoute
+  '/error/card/card-404-02-employee-not-whitelisted': typeof ErrorCardCard40402EmployeeNotWhitelistedRoute
+  '/error/card/card-408-01-personalization-failed': typeof ErrorCardCard40801PersonalizationFailedRoute
+  '/error/card/card-409-01-already-exists-employee': typeof ErrorCardCard40901AlreadyExistsEmployeeRoute
+  '/error/card/card-410-01-expired': typeof ErrorCardCard41001ExpiredRoute
+  '/error/card/card-500-01-processor-down': typeof ErrorCardCard50001ProcessorDownRoute
+  '/error/transaction-errors/tx-400-01-recipient-not-found': typeof ErrorTransactionErrorsTx40001RecipientNotFoundRoute
+  '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute
+  '/error/transaction-errors/tx-400-03-bank-offline': typeof ErrorTransactionErrorsTx40003BankOfflineRoute
+  '/error/transaction-errors/tx-400-04-invalid-mobile-network': typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute
+  '/error/transaction-errors/tx-400-05-currency-not-allowed': typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute
+  '/error/transaction-errors/tx-401-01-pin-3x-locked': typeof ErrorTransactionErrorsTx40101Pin3xLockedRoute
+  '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute
+  '/error/transaction-errors/tx-402-01-insufficient-balance': typeof ErrorTransactionErrorsTx40201InsufficientBalanceRoute
+  '/error/transaction-errors/tx-402-02-amount-min-max': typeof ErrorTransactionErrorsTx40202AmountMinMaxRoute
+  '/error/transaction-errors/tx-402-03-daily-limit-reached': typeof ErrorTransactionErrorsTx40203DailyLimitReachedRoute
+  '/error/transaction-errors/tx-402-04-per-txn-limit': typeof ErrorTransactionErrorsTx40204PerTxnLimitRoute
+  '/error/transaction-errors/tx-402-05-fee-calculation-failed': typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRoute
+  '/error/transaction-errors/tx-403-01-aml-hold': typeof ErrorTransactionErrorsTx40301AmlHoldRoute
+  '/error/transaction-errors/tx-403-02-kra-tax-failed': typeof ErrorTransactionErrorsTx40302KraTaxFailedRoute
+  '/error/transaction-errors/tx-403-03-account-frozen': typeof ErrorTransactionErrorsTx40303AccountFrozenRoute
+  '/error/transaction-errors/tx-404-01-mpesa-not-registered': typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute
+  '/error/transaction-errors/tx-404-02-purpose-code-missing': typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRoute
+  '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute
+  '/error/transaction-errors/tx-409-01-duplicate-transaction': typeof ErrorTransactionErrorsTx40901DuplicateTransactionRoute
+  '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute
+  '/error/transaction-errors/tx-409-03-reconciliation-mismatch': typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRoute
+  '/error/transaction-errors/tx-410-01-txn-expired': typeof ErrorTransactionErrorsTx41001TxnExpiredRoute
+  '/error/transaction-errors/tx-422-01-name-mismatch': typeof ErrorTransactionErrorsTx42201NameMismatchRoute
+  '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute
+  '/error/transaction-errors/tx-423-01-rtgs-cutoff': typeof ErrorTransactionErrorsTx42301RtgsCutoffRoute
+  '/error/transaction-errors/tx-429-01-throttled': typeof ErrorTransactionErrorsTx42901ThrottledRoute
+  '/error/transaction-errors/tx-500-01-settlement-delayed': typeof ErrorTransactionErrorsTx50001SettlementDelayedRoute
+  '/error/transaction-errors/tx-500-02-liquidity-failed': typeof ErrorTransactionErrorsTx50002LiquidityFailedRoute
+  '/error/utility-errors/util-400-01-name-mismatch': typeof ErrorUtilityErrorsUtil40001NameMismatchRoute
+  '/error/utility-errors/util-402-01-amount-below-min': typeof ErrorUtilityErrorsUtil40201AmountBelowMinRoute
+  '/error/utility-errors/util-402-02-insufficient-balance-utility': typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute
+  '/error/utility-errors/util-402-03-provider-not-supported': typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute
+  '/error/utility-errors/util-403-01-automation-failed': typeof ErrorUtilityErrorsUtil40301AutomationFailedRoute
+  '/error/utility-errors/util-404-01-meter-not-found': typeof ErrorUtilityErrorsUtil40401MeterNotFoundRoute
+  '/error/utility-errors/util-404-02-internet-invalid': typeof ErrorUtilityErrorsUtil40402InternetInvalidRoute
+  '/error/utility-errors/util-404-03-airtime-unreachable': typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute
+  '/error/utility-errors/util-408-01-pending-confirmation': typeof ErrorUtilityErrorsUtil40801PendingConfirmationRoute
+  '/error/utility-errors/util-409-01-bill-already-paid': typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute
+  '/error/utility-errors/util-409-02-automation-conflict': typeof ErrorUtilityErrorsUtil40902AutomationConflictRoute
+  '/error/utility-errors/util-410-01-provider-maintenance': typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute
+  '/error/utility-errors/util-429-01-rate-limited': typeof ErrorUtilityErrorsUtil42901RateLimitedRoute
+  '/error/utility-errors/util-500-01-token-gen-failed': typeof ErrorUtilityErrorsUtil50001TokenGenFailedRoute
   '/pm/app/$section': typeof PmAppSectionRoute
   '/pm/app/account': typeof PmAppAccountRoute
   '/pm/app/analytics': typeof PmAppAnalyticsRoute
@@ -863,6 +1763,106 @@ export interface FileRoutesById {
   '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
+  '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
+  '/error/advanced-errors/dev-400-02-signature-verification-failed': typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute
+  '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute
+  '/error/advanced-errors/dev-400-04-sdk-outdated': typeof ErrorAdvancedErrorsDev40004SdkOutdatedRoute
+  '/error/advanced-errors/dev-401-01-api-key-invalid': typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute
+  '/error/advanced-errors/dev-401-02-oauth-revoked': typeof ErrorAdvancedErrorsDev40102OauthRevokedRoute
+  '/error/advanced-errors/dev-402-01-overage-billing': typeof ErrorAdvancedErrorsDev40201OverageBillingRoute
+  '/error/advanced-errors/dev-403-01-scope-forbidden': typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRoute
+  '/error/advanced-errors/dev-403-02-ip-whitelist-violation': typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute
+  '/error/advanced-errors/dev-403-03-partner-approval-pending': typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute
+  '/error/advanced-errors/dev-403-04-missing-webhook': typeof ErrorAdvancedErrorsDev40304MissingWebhookRoute
+  '/error/advanced-errors/dev-404-01-endpoint-not-found': typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRoute
+  '/error/advanced-errors/dev-408-01-webhook-timeout': typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRoute
+  '/error/advanced-errors/dev-409-01-duplicate-idempotency': typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute
+  '/error/advanced-errors/dev-410-01-version-deprecated': typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRoute
+  '/error/advanced-errors/dev-429-01-rate-limit-100': typeof ErrorAdvancedErrorsDev42901RateLimit100Route
+  '/error/advanced-errors/dev-429-02-webhook-queue-full': typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRoute
+  '/error/advanced-errors/dev-500-01-webhook-delivery-failed': typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute
+  '/error/advanced-errors/dev-500-02-test-suite-failed': typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRoute
+  '/error/advanced-errors/dev-500-03-elevated-error-rate': typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute
+  '/error/advanced-errors/error-400': typeof ErrorAdvancedErrorsError400Route
+  '/error/advanced-errors/error-401': typeof ErrorAdvancedErrorsError401Route
+  '/error/advanced-errors/error-402': typeof ErrorAdvancedErrorsError402Route
+  '/error/advanced-errors/error-403': typeof ErrorAdvancedErrorsError403Route
+  '/error/advanced-errors/error-404': typeof ErrorAdvancedErrorsError404Route
+  '/error/advanced-errors/error-408': typeof ErrorAdvancedErrorsError408Route
+  '/error/advanced-errors/error-409': typeof ErrorAdvancedErrorsError409Route
+  '/error/advanced-errors/error-410': typeof ErrorAdvancedErrorsError410Route
+  '/error/advanced-errors/error-429': typeof ErrorAdvancedErrorsError429Route
+  '/error/advanced-errors/error-500': typeof ErrorAdvancedErrorsError500Route
+  '/error/advanced-errors/error-account-suspended': typeof ErrorAdvancedErrorsErrorAccountSuspendedRoute
+  '/error/advanced-errors/error-kyc-failed': typeof ErrorAdvancedErrorsErrorKycFailedRoute
+  '/error/advanced-errors/error-maintenance': typeof ErrorAdvancedErrorsErrorMaintenanceRoute
+  '/error/advanced-errors/error-payment-failed': typeof ErrorAdvancedErrorsErrorPaymentFailedRoute
+  '/error/advanced-errors/error-processing-hold': typeof ErrorAdvancedErrorsErrorProcessingHoldRoute
+  '/error/advanced-errors/error-session-expired': typeof ErrorAdvancedErrorsErrorSessionExpiredRoute
+  '/error/card/card-400-01-virtual-limit-reached': typeof ErrorCardCard40001VirtualLimitReachedRoute
+  '/error/card/card-400-02-program-limit-high': typeof ErrorCardCard40002ProgramLimitHighRoute
+  '/error/card/card-401-01-3ds-failed': typeof ErrorCardCard401013dsFailedRoute
+  '/error/card/card-401-02-pin-3x-blocked': typeof ErrorCardCard40102Pin3xBlockedRoute
+  '/error/card/card-401-03-cvv-attempts-exceeded': typeof ErrorCardCard40103CvvAttemptsExceededRoute
+  '/error/card/card-402-01-funding-failed': typeof ErrorCardCard40201FundingFailedRoute
+  '/error/card/card-402-02-limit-exceeded': typeof ErrorCardCard40202LimitExceededRoute
+  '/error/card/card-402-03-chargeback-disputed': typeof ErrorCardCard40203ChargebackDisputedRoute
+  '/error/card/card-402-04-min-topup-failed': typeof ErrorCardCard40204MinTopupFailedRoute
+  '/error/card/card-403-01-kyc-tier-insufficient': typeof ErrorCardCard40301KycTierInsufficientRoute
+  '/error/card/card-403-02-merchant-blocked': typeof ErrorCardCard40302MerchantBlockedRoute
+  '/error/card/card-403-03-international-blocked': typeof ErrorCardCard40303InternationalBlockedRoute
+  '/error/card/card-403-04-frozen-fraud': typeof ErrorCardCard40304FrozenFraudRoute
+  '/error/card/card-403-05-program-inactive': typeof ErrorCardCard40305ProgramInactiveRoute
+  '/error/card/card-403-06-not-activated': typeof ErrorCardCard40306NotActivatedRoute
+  '/error/card/card-403-07-settings-conflict': typeof ErrorCardCard40307SettingsConflictRoute
+  '/error/card/card-404-01-delivery-address-invalid': typeof ErrorCardCard40401DeliveryAddressInvalidRoute
+  '/error/card/card-404-02-employee-not-whitelisted': typeof ErrorCardCard40402EmployeeNotWhitelistedRoute
+  '/error/card/card-408-01-personalization-failed': typeof ErrorCardCard40801PersonalizationFailedRoute
+  '/error/card/card-409-01-already-exists-employee': typeof ErrorCardCard40901AlreadyExistsEmployeeRoute
+  '/error/card/card-410-01-expired': typeof ErrorCardCard41001ExpiredRoute
+  '/error/card/card-500-01-processor-down': typeof ErrorCardCard50001ProcessorDownRoute
+  '/error/transaction-errors/tx-400-01-recipient-not-found': typeof ErrorTransactionErrorsTx40001RecipientNotFoundRoute
+  '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute
+  '/error/transaction-errors/tx-400-03-bank-offline': typeof ErrorTransactionErrorsTx40003BankOfflineRoute
+  '/error/transaction-errors/tx-400-04-invalid-mobile-network': typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute
+  '/error/transaction-errors/tx-400-05-currency-not-allowed': typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute
+  '/error/transaction-errors/tx-401-01-pin-3x-locked': typeof ErrorTransactionErrorsTx40101Pin3xLockedRoute
+  '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute
+  '/error/transaction-errors/tx-402-01-insufficient-balance': typeof ErrorTransactionErrorsTx40201InsufficientBalanceRoute
+  '/error/transaction-errors/tx-402-02-amount-min-max': typeof ErrorTransactionErrorsTx40202AmountMinMaxRoute
+  '/error/transaction-errors/tx-402-03-daily-limit-reached': typeof ErrorTransactionErrorsTx40203DailyLimitReachedRoute
+  '/error/transaction-errors/tx-402-04-per-txn-limit': typeof ErrorTransactionErrorsTx40204PerTxnLimitRoute
+  '/error/transaction-errors/tx-402-05-fee-calculation-failed': typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRoute
+  '/error/transaction-errors/tx-403-01-aml-hold': typeof ErrorTransactionErrorsTx40301AmlHoldRoute
+  '/error/transaction-errors/tx-403-02-kra-tax-failed': typeof ErrorTransactionErrorsTx40302KraTaxFailedRoute
+  '/error/transaction-errors/tx-403-03-account-frozen': typeof ErrorTransactionErrorsTx40303AccountFrozenRoute
+  '/error/transaction-errors/tx-404-01-mpesa-not-registered': typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute
+  '/error/transaction-errors/tx-404-02-purpose-code-missing': typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRoute
+  '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute
+  '/error/transaction-errors/tx-409-01-duplicate-transaction': typeof ErrorTransactionErrorsTx40901DuplicateTransactionRoute
+  '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute
+  '/error/transaction-errors/tx-409-03-reconciliation-mismatch': typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRoute
+  '/error/transaction-errors/tx-410-01-txn-expired': typeof ErrorTransactionErrorsTx41001TxnExpiredRoute
+  '/error/transaction-errors/tx-422-01-name-mismatch': typeof ErrorTransactionErrorsTx42201NameMismatchRoute
+  '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute
+  '/error/transaction-errors/tx-423-01-rtgs-cutoff': typeof ErrorTransactionErrorsTx42301RtgsCutoffRoute
+  '/error/transaction-errors/tx-429-01-throttled': typeof ErrorTransactionErrorsTx42901ThrottledRoute
+  '/error/transaction-errors/tx-500-01-settlement-delayed': typeof ErrorTransactionErrorsTx50001SettlementDelayedRoute
+  '/error/transaction-errors/tx-500-02-liquidity-failed': typeof ErrorTransactionErrorsTx50002LiquidityFailedRoute
+  '/error/utility-errors/util-400-01-name-mismatch': typeof ErrorUtilityErrorsUtil40001NameMismatchRoute
+  '/error/utility-errors/util-402-01-amount-below-min': typeof ErrorUtilityErrorsUtil40201AmountBelowMinRoute
+  '/error/utility-errors/util-402-02-insufficient-balance-utility': typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute
+  '/error/utility-errors/util-402-03-provider-not-supported': typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute
+  '/error/utility-errors/util-403-01-automation-failed': typeof ErrorUtilityErrorsUtil40301AutomationFailedRoute
+  '/error/utility-errors/util-404-01-meter-not-found': typeof ErrorUtilityErrorsUtil40401MeterNotFoundRoute
+  '/error/utility-errors/util-404-02-internet-invalid': typeof ErrorUtilityErrorsUtil40402InternetInvalidRoute
+  '/error/utility-errors/util-404-03-airtime-unreachable': typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute
+  '/error/utility-errors/util-408-01-pending-confirmation': typeof ErrorUtilityErrorsUtil40801PendingConfirmationRoute
+  '/error/utility-errors/util-409-01-bill-already-paid': typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute
+  '/error/utility-errors/util-409-02-automation-conflict': typeof ErrorUtilityErrorsUtil40902AutomationConflictRoute
+  '/error/utility-errors/util-410-01-provider-maintenance': typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute
+  '/error/utility-errors/util-429-01-rate-limited': typeof ErrorUtilityErrorsUtil42901RateLimitedRoute
+  '/error/utility-errors/util-500-01-token-gen-failed': typeof ErrorUtilityErrorsUtil50001TokenGenFailedRoute
   '/pm/app/$section': typeof PmAppSectionRoute
   '/pm/app/account': typeof PmAppAccountRoute
   '/pm/app/analytics': typeof PmAppAnalyticsRoute
@@ -959,6 +1959,106 @@ export interface FileRouteTypes {
     | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
+    | '/error/advanced-errors/dev-400-01-payload-validation'
+    | '/error/advanced-errors/dev-400-02-signature-verification-failed'
+    | '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+    | '/error/advanced-errors/dev-400-04-sdk-outdated'
+    | '/error/advanced-errors/dev-401-01-api-key-invalid'
+    | '/error/advanced-errors/dev-401-02-oauth-revoked'
+    | '/error/advanced-errors/dev-402-01-overage-billing'
+    | '/error/advanced-errors/dev-403-01-scope-forbidden'
+    | '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+    | '/error/advanced-errors/dev-403-03-partner-approval-pending'
+    | '/error/advanced-errors/dev-403-04-missing-webhook'
+    | '/error/advanced-errors/dev-404-01-endpoint-not-found'
+    | '/error/advanced-errors/dev-408-01-webhook-timeout'
+    | '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+    | '/error/advanced-errors/dev-410-01-version-deprecated'
+    | '/error/advanced-errors/dev-429-01-rate-limit-100'
+    | '/error/advanced-errors/dev-429-02-webhook-queue-full'
+    | '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+    | '/error/advanced-errors/dev-500-02-test-suite-failed'
+    | '/error/advanced-errors/dev-500-03-elevated-error-rate'
+    | '/error/advanced-errors/error-400'
+    | '/error/advanced-errors/error-401'
+    | '/error/advanced-errors/error-402'
+    | '/error/advanced-errors/error-403'
+    | '/error/advanced-errors/error-404'
+    | '/error/advanced-errors/error-408'
+    | '/error/advanced-errors/error-409'
+    | '/error/advanced-errors/error-410'
+    | '/error/advanced-errors/error-429'
+    | '/error/advanced-errors/error-500'
+    | '/error/advanced-errors/error-account-suspended'
+    | '/error/advanced-errors/error-kyc-failed'
+    | '/error/advanced-errors/error-maintenance'
+    | '/error/advanced-errors/error-payment-failed'
+    | '/error/advanced-errors/error-processing-hold'
+    | '/error/advanced-errors/error-session-expired'
+    | '/error/card/card-400-01-virtual-limit-reached'
+    | '/error/card/card-400-02-program-limit-high'
+    | '/error/card/card-401-01-3ds-failed'
+    | '/error/card/card-401-02-pin-3x-blocked'
+    | '/error/card/card-401-03-cvv-attempts-exceeded'
+    | '/error/card/card-402-01-funding-failed'
+    | '/error/card/card-402-02-limit-exceeded'
+    | '/error/card/card-402-03-chargeback-disputed'
+    | '/error/card/card-402-04-min-topup-failed'
+    | '/error/card/card-403-01-kyc-tier-insufficient'
+    | '/error/card/card-403-02-merchant-blocked'
+    | '/error/card/card-403-03-international-blocked'
+    | '/error/card/card-403-04-frozen-fraud'
+    | '/error/card/card-403-05-program-inactive'
+    | '/error/card/card-403-06-not-activated'
+    | '/error/card/card-403-07-settings-conflict'
+    | '/error/card/card-404-01-delivery-address-invalid'
+    | '/error/card/card-404-02-employee-not-whitelisted'
+    | '/error/card/card-408-01-personalization-failed'
+    | '/error/card/card-409-01-already-exists-employee'
+    | '/error/card/card-410-01-expired'
+    | '/error/card/card-500-01-processor-down'
+    | '/error/transaction-errors/tx-400-01-recipient-not-found'
+    | '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+    | '/error/transaction-errors/tx-400-03-bank-offline'
+    | '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+    | '/error/transaction-errors/tx-400-05-currency-not-allowed'
+    | '/error/transaction-errors/tx-401-01-pin-3x-locked'
+    | '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+    | '/error/transaction-errors/tx-402-01-insufficient-balance'
+    | '/error/transaction-errors/tx-402-02-amount-min-max'
+    | '/error/transaction-errors/tx-402-03-daily-limit-reached'
+    | '/error/transaction-errors/tx-402-04-per-txn-limit'
+    | '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+    | '/error/transaction-errors/tx-403-01-aml-hold'
+    | '/error/transaction-errors/tx-403-02-kra-tax-failed'
+    | '/error/transaction-errors/tx-403-03-account-frozen'
+    | '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+    | '/error/transaction-errors/tx-404-02-purpose-code-missing'
+    | '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+    | '/error/transaction-errors/tx-409-01-duplicate-transaction'
+    | '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+    | '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+    | '/error/transaction-errors/tx-410-01-txn-expired'
+    | '/error/transaction-errors/tx-422-01-name-mismatch'
+    | '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+    | '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+    | '/error/transaction-errors/tx-429-01-throttled'
+    | '/error/transaction-errors/tx-500-01-settlement-delayed'
+    | '/error/transaction-errors/tx-500-02-liquidity-failed'
+    | '/error/utility-errors/util-400-01-name-mismatch'
+    | '/error/utility-errors/util-402-01-amount-below-min'
+    | '/error/utility-errors/util-402-02-insufficient-balance-utility'
+    | '/error/utility-errors/util-402-03-provider-not-supported'
+    | '/error/utility-errors/util-403-01-automation-failed'
+    | '/error/utility-errors/util-404-01-meter-not-found'
+    | '/error/utility-errors/util-404-02-internet-invalid'
+    | '/error/utility-errors/util-404-03-airtime-unreachable'
+    | '/error/utility-errors/util-408-01-pending-confirmation'
+    | '/error/utility-errors/util-409-01-bill-already-paid'
+    | '/error/utility-errors/util-409-02-automation-conflict'
+    | '/error/utility-errors/util-410-01-provider-maintenance'
+    | '/error/utility-errors/util-429-01-rate-limited'
+    | '/error/utility-errors/util-500-01-token-gen-failed'
     | '/pm/app/$section'
     | '/pm/app/account'
     | '/pm/app/analytics'
@@ -1047,6 +2147,106 @@ export interface FileRouteTypes {
     | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
+    | '/error/advanced-errors/dev-400-01-payload-validation'
+    | '/error/advanced-errors/dev-400-02-signature-verification-failed'
+    | '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+    | '/error/advanced-errors/dev-400-04-sdk-outdated'
+    | '/error/advanced-errors/dev-401-01-api-key-invalid'
+    | '/error/advanced-errors/dev-401-02-oauth-revoked'
+    | '/error/advanced-errors/dev-402-01-overage-billing'
+    | '/error/advanced-errors/dev-403-01-scope-forbidden'
+    | '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+    | '/error/advanced-errors/dev-403-03-partner-approval-pending'
+    | '/error/advanced-errors/dev-403-04-missing-webhook'
+    | '/error/advanced-errors/dev-404-01-endpoint-not-found'
+    | '/error/advanced-errors/dev-408-01-webhook-timeout'
+    | '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+    | '/error/advanced-errors/dev-410-01-version-deprecated'
+    | '/error/advanced-errors/dev-429-01-rate-limit-100'
+    | '/error/advanced-errors/dev-429-02-webhook-queue-full'
+    | '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+    | '/error/advanced-errors/dev-500-02-test-suite-failed'
+    | '/error/advanced-errors/dev-500-03-elevated-error-rate'
+    | '/error/advanced-errors/error-400'
+    | '/error/advanced-errors/error-401'
+    | '/error/advanced-errors/error-402'
+    | '/error/advanced-errors/error-403'
+    | '/error/advanced-errors/error-404'
+    | '/error/advanced-errors/error-408'
+    | '/error/advanced-errors/error-409'
+    | '/error/advanced-errors/error-410'
+    | '/error/advanced-errors/error-429'
+    | '/error/advanced-errors/error-500'
+    | '/error/advanced-errors/error-account-suspended'
+    | '/error/advanced-errors/error-kyc-failed'
+    | '/error/advanced-errors/error-maintenance'
+    | '/error/advanced-errors/error-payment-failed'
+    | '/error/advanced-errors/error-processing-hold'
+    | '/error/advanced-errors/error-session-expired'
+    | '/error/card/card-400-01-virtual-limit-reached'
+    | '/error/card/card-400-02-program-limit-high'
+    | '/error/card/card-401-01-3ds-failed'
+    | '/error/card/card-401-02-pin-3x-blocked'
+    | '/error/card/card-401-03-cvv-attempts-exceeded'
+    | '/error/card/card-402-01-funding-failed'
+    | '/error/card/card-402-02-limit-exceeded'
+    | '/error/card/card-402-03-chargeback-disputed'
+    | '/error/card/card-402-04-min-topup-failed'
+    | '/error/card/card-403-01-kyc-tier-insufficient'
+    | '/error/card/card-403-02-merchant-blocked'
+    | '/error/card/card-403-03-international-blocked'
+    | '/error/card/card-403-04-frozen-fraud'
+    | '/error/card/card-403-05-program-inactive'
+    | '/error/card/card-403-06-not-activated'
+    | '/error/card/card-403-07-settings-conflict'
+    | '/error/card/card-404-01-delivery-address-invalid'
+    | '/error/card/card-404-02-employee-not-whitelisted'
+    | '/error/card/card-408-01-personalization-failed'
+    | '/error/card/card-409-01-already-exists-employee'
+    | '/error/card/card-410-01-expired'
+    | '/error/card/card-500-01-processor-down'
+    | '/error/transaction-errors/tx-400-01-recipient-not-found'
+    | '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+    | '/error/transaction-errors/tx-400-03-bank-offline'
+    | '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+    | '/error/transaction-errors/tx-400-05-currency-not-allowed'
+    | '/error/transaction-errors/tx-401-01-pin-3x-locked'
+    | '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+    | '/error/transaction-errors/tx-402-01-insufficient-balance'
+    | '/error/transaction-errors/tx-402-02-amount-min-max'
+    | '/error/transaction-errors/tx-402-03-daily-limit-reached'
+    | '/error/transaction-errors/tx-402-04-per-txn-limit'
+    | '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+    | '/error/transaction-errors/tx-403-01-aml-hold'
+    | '/error/transaction-errors/tx-403-02-kra-tax-failed'
+    | '/error/transaction-errors/tx-403-03-account-frozen'
+    | '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+    | '/error/transaction-errors/tx-404-02-purpose-code-missing'
+    | '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+    | '/error/transaction-errors/tx-409-01-duplicate-transaction'
+    | '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+    | '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+    | '/error/transaction-errors/tx-410-01-txn-expired'
+    | '/error/transaction-errors/tx-422-01-name-mismatch'
+    | '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+    | '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+    | '/error/transaction-errors/tx-429-01-throttled'
+    | '/error/transaction-errors/tx-500-01-settlement-delayed'
+    | '/error/transaction-errors/tx-500-02-liquidity-failed'
+    | '/error/utility-errors/util-400-01-name-mismatch'
+    | '/error/utility-errors/util-402-01-amount-below-min'
+    | '/error/utility-errors/util-402-02-insufficient-balance-utility'
+    | '/error/utility-errors/util-402-03-provider-not-supported'
+    | '/error/utility-errors/util-403-01-automation-failed'
+    | '/error/utility-errors/util-404-01-meter-not-found'
+    | '/error/utility-errors/util-404-02-internet-invalid'
+    | '/error/utility-errors/util-404-03-airtime-unreachable'
+    | '/error/utility-errors/util-408-01-pending-confirmation'
+    | '/error/utility-errors/util-409-01-bill-already-paid'
+    | '/error/utility-errors/util-409-02-automation-conflict'
+    | '/error/utility-errors/util-410-01-provider-maintenance'
+    | '/error/utility-errors/util-429-01-rate-limited'
+    | '/error/utility-errors/util-500-01-token-gen-failed'
     | '/pm/app/$section'
     | '/pm/app/account'
     | '/pm/app/analytics'
@@ -1143,6 +2343,106 @@ export interface FileRouteTypes {
     | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
+    | '/error/advanced-errors/dev-400-01-payload-validation'
+    | '/error/advanced-errors/dev-400-02-signature-verification-failed'
+    | '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+    | '/error/advanced-errors/dev-400-04-sdk-outdated'
+    | '/error/advanced-errors/dev-401-01-api-key-invalid'
+    | '/error/advanced-errors/dev-401-02-oauth-revoked'
+    | '/error/advanced-errors/dev-402-01-overage-billing'
+    | '/error/advanced-errors/dev-403-01-scope-forbidden'
+    | '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+    | '/error/advanced-errors/dev-403-03-partner-approval-pending'
+    | '/error/advanced-errors/dev-403-04-missing-webhook'
+    | '/error/advanced-errors/dev-404-01-endpoint-not-found'
+    | '/error/advanced-errors/dev-408-01-webhook-timeout'
+    | '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+    | '/error/advanced-errors/dev-410-01-version-deprecated'
+    | '/error/advanced-errors/dev-429-01-rate-limit-100'
+    | '/error/advanced-errors/dev-429-02-webhook-queue-full'
+    | '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+    | '/error/advanced-errors/dev-500-02-test-suite-failed'
+    | '/error/advanced-errors/dev-500-03-elevated-error-rate'
+    | '/error/advanced-errors/error-400'
+    | '/error/advanced-errors/error-401'
+    | '/error/advanced-errors/error-402'
+    | '/error/advanced-errors/error-403'
+    | '/error/advanced-errors/error-404'
+    | '/error/advanced-errors/error-408'
+    | '/error/advanced-errors/error-409'
+    | '/error/advanced-errors/error-410'
+    | '/error/advanced-errors/error-429'
+    | '/error/advanced-errors/error-500'
+    | '/error/advanced-errors/error-account-suspended'
+    | '/error/advanced-errors/error-kyc-failed'
+    | '/error/advanced-errors/error-maintenance'
+    | '/error/advanced-errors/error-payment-failed'
+    | '/error/advanced-errors/error-processing-hold'
+    | '/error/advanced-errors/error-session-expired'
+    | '/error/card/card-400-01-virtual-limit-reached'
+    | '/error/card/card-400-02-program-limit-high'
+    | '/error/card/card-401-01-3ds-failed'
+    | '/error/card/card-401-02-pin-3x-blocked'
+    | '/error/card/card-401-03-cvv-attempts-exceeded'
+    | '/error/card/card-402-01-funding-failed'
+    | '/error/card/card-402-02-limit-exceeded'
+    | '/error/card/card-402-03-chargeback-disputed'
+    | '/error/card/card-402-04-min-topup-failed'
+    | '/error/card/card-403-01-kyc-tier-insufficient'
+    | '/error/card/card-403-02-merchant-blocked'
+    | '/error/card/card-403-03-international-blocked'
+    | '/error/card/card-403-04-frozen-fraud'
+    | '/error/card/card-403-05-program-inactive'
+    | '/error/card/card-403-06-not-activated'
+    | '/error/card/card-403-07-settings-conflict'
+    | '/error/card/card-404-01-delivery-address-invalid'
+    | '/error/card/card-404-02-employee-not-whitelisted'
+    | '/error/card/card-408-01-personalization-failed'
+    | '/error/card/card-409-01-already-exists-employee'
+    | '/error/card/card-410-01-expired'
+    | '/error/card/card-500-01-processor-down'
+    | '/error/transaction-errors/tx-400-01-recipient-not-found'
+    | '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+    | '/error/transaction-errors/tx-400-03-bank-offline'
+    | '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+    | '/error/transaction-errors/tx-400-05-currency-not-allowed'
+    | '/error/transaction-errors/tx-401-01-pin-3x-locked'
+    | '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+    | '/error/transaction-errors/tx-402-01-insufficient-balance'
+    | '/error/transaction-errors/tx-402-02-amount-min-max'
+    | '/error/transaction-errors/tx-402-03-daily-limit-reached'
+    | '/error/transaction-errors/tx-402-04-per-txn-limit'
+    | '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+    | '/error/transaction-errors/tx-403-01-aml-hold'
+    | '/error/transaction-errors/tx-403-02-kra-tax-failed'
+    | '/error/transaction-errors/tx-403-03-account-frozen'
+    | '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+    | '/error/transaction-errors/tx-404-02-purpose-code-missing'
+    | '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+    | '/error/transaction-errors/tx-409-01-duplicate-transaction'
+    | '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+    | '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+    | '/error/transaction-errors/tx-410-01-txn-expired'
+    | '/error/transaction-errors/tx-422-01-name-mismatch'
+    | '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+    | '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+    | '/error/transaction-errors/tx-429-01-throttled'
+    | '/error/transaction-errors/tx-500-01-settlement-delayed'
+    | '/error/transaction-errors/tx-500-02-liquidity-failed'
+    | '/error/utility-errors/util-400-01-name-mismatch'
+    | '/error/utility-errors/util-402-01-amount-below-min'
+    | '/error/utility-errors/util-402-02-insufficient-balance-utility'
+    | '/error/utility-errors/util-402-03-provider-not-supported'
+    | '/error/utility-errors/util-403-01-automation-failed'
+    | '/error/utility-errors/util-404-01-meter-not-found'
+    | '/error/utility-errors/util-404-02-internet-invalid'
+    | '/error/utility-errors/util-404-03-airtime-unreachable'
+    | '/error/utility-errors/util-408-01-pending-confirmation'
+    | '/error/utility-errors/util-409-01-bill-already-paid'
+    | '/error/utility-errors/util-409-02-automation-conflict'
+    | '/error/utility-errors/util-410-01-provider-maintenance'
+    | '/error/utility-errors/util-429-01-rate-limited'
+    | '/error/utility-errors/util-500-01-token-gen-failed'
     | '/pm/app/$section'
     | '/pm/app/account'
     | '/pm/app/analytics'
@@ -1186,6 +2486,106 @@ export interface RootRouteChildren {
   AuthSecurityRoute: typeof AuthSecurityRoute
   CardsAppRoute: typeof CardsAppRouteWithChildren
   PmAppRoute: typeof PmAppRouteWithChildren
+  ErrorAdvancedErrorsDev40001PayloadValidationRoute: typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
+  ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute: typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute
+  ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute: typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute
+  ErrorAdvancedErrorsDev40004SdkOutdatedRoute: typeof ErrorAdvancedErrorsDev40004SdkOutdatedRoute
+  ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute: typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute
+  ErrorAdvancedErrorsDev40102OauthRevokedRoute: typeof ErrorAdvancedErrorsDev40102OauthRevokedRoute
+  ErrorAdvancedErrorsDev40201OverageBillingRoute: typeof ErrorAdvancedErrorsDev40201OverageBillingRoute
+  ErrorAdvancedErrorsDev40301ScopeForbiddenRoute: typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRoute
+  ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute: typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute
+  ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute: typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute
+  ErrorAdvancedErrorsDev40304MissingWebhookRoute: typeof ErrorAdvancedErrorsDev40304MissingWebhookRoute
+  ErrorAdvancedErrorsDev40401EndpointNotFoundRoute: typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRoute
+  ErrorAdvancedErrorsDev40801WebhookTimeoutRoute: typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRoute
+  ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute: typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute
+  ErrorAdvancedErrorsDev41001VersionDeprecatedRoute: typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRoute
+  ErrorAdvancedErrorsDev42901RateLimit100Route: typeof ErrorAdvancedErrorsDev42901RateLimit100Route
+  ErrorAdvancedErrorsDev42902WebhookQueueFullRoute: typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRoute
+  ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute: typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute
+  ErrorAdvancedErrorsDev50002TestSuiteFailedRoute: typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRoute
+  ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute: typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute
+  ErrorAdvancedErrorsError400Route: typeof ErrorAdvancedErrorsError400Route
+  ErrorAdvancedErrorsError401Route: typeof ErrorAdvancedErrorsError401Route
+  ErrorAdvancedErrorsError402Route: typeof ErrorAdvancedErrorsError402Route
+  ErrorAdvancedErrorsError403Route: typeof ErrorAdvancedErrorsError403Route
+  ErrorAdvancedErrorsError404Route: typeof ErrorAdvancedErrorsError404Route
+  ErrorAdvancedErrorsError408Route: typeof ErrorAdvancedErrorsError408Route
+  ErrorAdvancedErrorsError409Route: typeof ErrorAdvancedErrorsError409Route
+  ErrorAdvancedErrorsError410Route: typeof ErrorAdvancedErrorsError410Route
+  ErrorAdvancedErrorsError429Route: typeof ErrorAdvancedErrorsError429Route
+  ErrorAdvancedErrorsError500Route: typeof ErrorAdvancedErrorsError500Route
+  ErrorAdvancedErrorsErrorAccountSuspendedRoute: typeof ErrorAdvancedErrorsErrorAccountSuspendedRoute
+  ErrorAdvancedErrorsErrorKycFailedRoute: typeof ErrorAdvancedErrorsErrorKycFailedRoute
+  ErrorAdvancedErrorsErrorMaintenanceRoute: typeof ErrorAdvancedErrorsErrorMaintenanceRoute
+  ErrorAdvancedErrorsErrorPaymentFailedRoute: typeof ErrorAdvancedErrorsErrorPaymentFailedRoute
+  ErrorAdvancedErrorsErrorProcessingHoldRoute: typeof ErrorAdvancedErrorsErrorProcessingHoldRoute
+  ErrorAdvancedErrorsErrorSessionExpiredRoute: typeof ErrorAdvancedErrorsErrorSessionExpiredRoute
+  ErrorCardCard40001VirtualLimitReachedRoute: typeof ErrorCardCard40001VirtualLimitReachedRoute
+  ErrorCardCard40002ProgramLimitHighRoute: typeof ErrorCardCard40002ProgramLimitHighRoute
+  ErrorCardCard401013dsFailedRoute: typeof ErrorCardCard401013dsFailedRoute
+  ErrorCardCard40102Pin3xBlockedRoute: typeof ErrorCardCard40102Pin3xBlockedRoute
+  ErrorCardCard40103CvvAttemptsExceededRoute: typeof ErrorCardCard40103CvvAttemptsExceededRoute
+  ErrorCardCard40201FundingFailedRoute: typeof ErrorCardCard40201FundingFailedRoute
+  ErrorCardCard40202LimitExceededRoute: typeof ErrorCardCard40202LimitExceededRoute
+  ErrorCardCard40203ChargebackDisputedRoute: typeof ErrorCardCard40203ChargebackDisputedRoute
+  ErrorCardCard40204MinTopupFailedRoute: typeof ErrorCardCard40204MinTopupFailedRoute
+  ErrorCardCard40301KycTierInsufficientRoute: typeof ErrorCardCard40301KycTierInsufficientRoute
+  ErrorCardCard40302MerchantBlockedRoute: typeof ErrorCardCard40302MerchantBlockedRoute
+  ErrorCardCard40303InternationalBlockedRoute: typeof ErrorCardCard40303InternationalBlockedRoute
+  ErrorCardCard40304FrozenFraudRoute: typeof ErrorCardCard40304FrozenFraudRoute
+  ErrorCardCard40305ProgramInactiveRoute: typeof ErrorCardCard40305ProgramInactiveRoute
+  ErrorCardCard40306NotActivatedRoute: typeof ErrorCardCard40306NotActivatedRoute
+  ErrorCardCard40307SettingsConflictRoute: typeof ErrorCardCard40307SettingsConflictRoute
+  ErrorCardCard40401DeliveryAddressInvalidRoute: typeof ErrorCardCard40401DeliveryAddressInvalidRoute
+  ErrorCardCard40402EmployeeNotWhitelistedRoute: typeof ErrorCardCard40402EmployeeNotWhitelistedRoute
+  ErrorCardCard40801PersonalizationFailedRoute: typeof ErrorCardCard40801PersonalizationFailedRoute
+  ErrorCardCard40901AlreadyExistsEmployeeRoute: typeof ErrorCardCard40901AlreadyExistsEmployeeRoute
+  ErrorCardCard41001ExpiredRoute: typeof ErrorCardCard41001ExpiredRoute
+  ErrorCardCard50001ProcessorDownRoute: typeof ErrorCardCard50001ProcessorDownRoute
+  ErrorTransactionErrorsTx40001RecipientNotFoundRoute: typeof ErrorTransactionErrorsTx40001RecipientNotFoundRoute
+  ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute: typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute
+  ErrorTransactionErrorsTx40003BankOfflineRoute: typeof ErrorTransactionErrorsTx40003BankOfflineRoute
+  ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute: typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute
+  ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute: typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute
+  ErrorTransactionErrorsTx40101Pin3xLockedRoute: typeof ErrorTransactionErrorsTx40101Pin3xLockedRoute
+  ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute: typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute
+  ErrorTransactionErrorsTx40201InsufficientBalanceRoute: typeof ErrorTransactionErrorsTx40201InsufficientBalanceRoute
+  ErrorTransactionErrorsTx40202AmountMinMaxRoute: typeof ErrorTransactionErrorsTx40202AmountMinMaxRoute
+  ErrorTransactionErrorsTx40203DailyLimitReachedRoute: typeof ErrorTransactionErrorsTx40203DailyLimitReachedRoute
+  ErrorTransactionErrorsTx40204PerTxnLimitRoute: typeof ErrorTransactionErrorsTx40204PerTxnLimitRoute
+  ErrorTransactionErrorsTx40205FeeCalculationFailedRoute: typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRoute
+  ErrorTransactionErrorsTx40301AmlHoldRoute: typeof ErrorTransactionErrorsTx40301AmlHoldRoute
+  ErrorTransactionErrorsTx40302KraTaxFailedRoute: typeof ErrorTransactionErrorsTx40302KraTaxFailedRoute
+  ErrorTransactionErrorsTx40303AccountFrozenRoute: typeof ErrorTransactionErrorsTx40303AccountFrozenRoute
+  ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute: typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute
+  ErrorTransactionErrorsTx40402PurposeCodeMissingRoute: typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRoute
+  ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute: typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute
+  ErrorTransactionErrorsTx40901DuplicateTransactionRoute: typeof ErrorTransactionErrorsTx40901DuplicateTransactionRoute
+  ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute: typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute
+  ErrorTransactionErrorsTx40903ReconciliationMismatchRoute: typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRoute
+  ErrorTransactionErrorsTx41001TxnExpiredRoute: typeof ErrorTransactionErrorsTx41001TxnExpiredRoute
+  ErrorTransactionErrorsTx42201NameMismatchRoute: typeof ErrorTransactionErrorsTx42201NameMismatchRoute
+  ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute: typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute
+  ErrorTransactionErrorsTx42301RtgsCutoffRoute: typeof ErrorTransactionErrorsTx42301RtgsCutoffRoute
+  ErrorTransactionErrorsTx42901ThrottledRoute: typeof ErrorTransactionErrorsTx42901ThrottledRoute
+  ErrorTransactionErrorsTx50001SettlementDelayedRoute: typeof ErrorTransactionErrorsTx50001SettlementDelayedRoute
+  ErrorTransactionErrorsTx50002LiquidityFailedRoute: typeof ErrorTransactionErrorsTx50002LiquidityFailedRoute
+  ErrorUtilityErrorsUtil40001NameMismatchRoute: typeof ErrorUtilityErrorsUtil40001NameMismatchRoute
+  ErrorUtilityErrorsUtil40201AmountBelowMinRoute: typeof ErrorUtilityErrorsUtil40201AmountBelowMinRoute
+  ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute: typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute
+  ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute: typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute
+  ErrorUtilityErrorsUtil40301AutomationFailedRoute: typeof ErrorUtilityErrorsUtil40301AutomationFailedRoute
+  ErrorUtilityErrorsUtil40401MeterNotFoundRoute: typeof ErrorUtilityErrorsUtil40401MeterNotFoundRoute
+  ErrorUtilityErrorsUtil40402InternetInvalidRoute: typeof ErrorUtilityErrorsUtil40402InternetInvalidRoute
+  ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute: typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute
+  ErrorUtilityErrorsUtil40801PendingConfirmationRoute: typeof ErrorUtilityErrorsUtil40801PendingConfirmationRoute
+  ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute: typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute
+  ErrorUtilityErrorsUtil40902AutomationConflictRoute: typeof ErrorUtilityErrorsUtil40902AutomationConflictRoute
+  ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute: typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute
+  ErrorUtilityErrorsUtil42901RateLimitedRoute: typeof ErrorUtilityErrorsUtil42901RateLimitedRoute
+  ErrorUtilityErrorsUtil50001TokenGenFailedRoute: typeof ErrorUtilityErrorsUtil50001TokenGenFailedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1764,6 +3164,706 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PmAppSectionRouteImport
       parentRoute: typeof PmAppRoute
     }
+    '/error/utility-errors/util-500-01-token-gen-failed': {
+      id: '/error/utility-errors/util-500-01-token-gen-failed'
+      path: '/error/utility-errors/util-500-01-token-gen-failed'
+      fullPath: '/error/utility-errors/util-500-01-token-gen-failed'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-429-01-rate-limited': {
+      id: '/error/utility-errors/util-429-01-rate-limited'
+      path: '/error/utility-errors/util-429-01-rate-limited'
+      fullPath: '/error/utility-errors/util-429-01-rate-limited'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil42901RateLimitedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-410-01-provider-maintenance': {
+      id: '/error/utility-errors/util-410-01-provider-maintenance'
+      path: '/error/utility-errors/util-410-01-provider-maintenance'
+      fullPath: '/error/utility-errors/util-410-01-provider-maintenance'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-409-02-automation-conflict': {
+      id: '/error/utility-errors/util-409-02-automation-conflict'
+      path: '/error/utility-errors/util-409-02-automation-conflict'
+      fullPath: '/error/utility-errors/util-409-02-automation-conflict'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40902AutomationConflictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-409-01-bill-already-paid': {
+      id: '/error/utility-errors/util-409-01-bill-already-paid'
+      path: '/error/utility-errors/util-409-01-bill-already-paid'
+      fullPath: '/error/utility-errors/util-409-01-bill-already-paid'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-408-01-pending-confirmation': {
+      id: '/error/utility-errors/util-408-01-pending-confirmation'
+      path: '/error/utility-errors/util-408-01-pending-confirmation'
+      fullPath: '/error/utility-errors/util-408-01-pending-confirmation'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-03-airtime-unreachable': {
+      id: '/error/utility-errors/util-404-03-airtime-unreachable'
+      path: '/error/utility-errors/util-404-03-airtime-unreachable'
+      fullPath: '/error/utility-errors/util-404-03-airtime-unreachable'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-02-internet-invalid': {
+      id: '/error/utility-errors/util-404-02-internet-invalid'
+      path: '/error/utility-errors/util-404-02-internet-invalid'
+      fullPath: '/error/utility-errors/util-404-02-internet-invalid'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40402InternetInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-01-meter-not-found': {
+      id: '/error/utility-errors/util-404-01-meter-not-found'
+      path: '/error/utility-errors/util-404-01-meter-not-found'
+      fullPath: '/error/utility-errors/util-404-01-meter-not-found'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-403-01-automation-failed': {
+      id: '/error/utility-errors/util-403-01-automation-failed'
+      path: '/error/utility-errors/util-403-01-automation-failed'
+      fullPath: '/error/utility-errors/util-403-01-automation-failed'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40301AutomationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-03-provider-not-supported': {
+      id: '/error/utility-errors/util-402-03-provider-not-supported'
+      path: '/error/utility-errors/util-402-03-provider-not-supported'
+      fullPath: '/error/utility-errors/util-402-03-provider-not-supported'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-02-insufficient-balance-utility': {
+      id: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      path: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      fullPath: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-01-amount-below-min': {
+      id: '/error/utility-errors/util-402-01-amount-below-min'
+      path: '/error/utility-errors/util-402-01-amount-below-min'
+      fullPath: '/error/utility-errors/util-402-01-amount-below-min'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-400-01-name-mismatch': {
+      id: '/error/utility-errors/util-400-01-name-mismatch'
+      path: '/error/utility-errors/util-400-01-name-mismatch'
+      fullPath: '/error/utility-errors/util-400-01-name-mismatch'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40001NameMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-500-02-liquidity-failed': {
+      id: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      path: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      fullPath: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx50002LiquidityFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-500-01-settlement-delayed': {
+      id: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      path: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      fullPath: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx50001SettlementDelayedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-429-01-throttled': {
+      id: '/error/transaction-errors/tx-429-01-throttled'
+      path: '/error/transaction-errors/tx-429-01-throttled'
+      fullPath: '/error/transaction-errors/tx-429-01-throttled'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42901ThrottledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-423-01-rtgs-cutoff': {
+      id: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      path: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      fullPath: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42301RtgsCutoffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': {
+      id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      fullPath: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-422-01-name-mismatch': {
+      id: '/error/transaction-errors/tx-422-01-name-mismatch'
+      path: '/error/transaction-errors/tx-422-01-name-mismatch'
+      fullPath: '/error/transaction-errors/tx-422-01-name-mismatch'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42201NameMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-410-01-txn-expired': {
+      id: '/error/transaction-errors/tx-410-01-txn-expired'
+      path: '/error/transaction-errors/tx-410-01-txn-expired'
+      fullPath: '/error/transaction-errors/tx-410-01-txn-expired'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx41001TxnExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-03-reconciliation-mismatch': {
+      id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      fullPath: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': {
+      id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      fullPath: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-01-duplicate-transaction': {
+      id: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      path: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      fullPath: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': {
+      id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      fullPath: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-404-02-purpose-code-missing': {
+      id: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      path: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      fullPath: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-404-01-mpesa-not-registered': {
+      id: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      path: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      fullPath: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-03-account-frozen': {
+      id: '/error/transaction-errors/tx-403-03-account-frozen'
+      path: '/error/transaction-errors/tx-403-03-account-frozen'
+      fullPath: '/error/transaction-errors/tx-403-03-account-frozen'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40303AccountFrozenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-02-kra-tax-failed': {
+      id: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      path: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      fullPath: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40302KraTaxFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-01-aml-hold': {
+      id: '/error/transaction-errors/tx-403-01-aml-hold'
+      path: '/error/transaction-errors/tx-403-01-aml-hold'
+      fullPath: '/error/transaction-errors/tx-403-01-aml-hold'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40301AmlHoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-05-fee-calculation-failed': {
+      id: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      path: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      fullPath: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-04-per-txn-limit': {
+      id: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      path: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      fullPath: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40204PerTxnLimitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-03-daily-limit-reached': {
+      id: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      path: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      fullPath: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-02-amount-min-max': {
+      id: '/error/transaction-errors/tx-402-02-amount-min-max'
+      path: '/error/transaction-errors/tx-402-02-amount-min-max'
+      fullPath: '/error/transaction-errors/tx-402-02-amount-min-max'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40202AmountMinMaxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-01-insufficient-balance': {
+      id: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      path: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      fullPath: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': {
+      id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      fullPath: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-401-01-pin-3x-locked': {
+      id: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      path: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      fullPath: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40101Pin3xLockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-05-currency-not-allowed': {
+      id: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      path: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      fullPath: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-04-invalid-mobile-network': {
+      id: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      path: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      fullPath: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-03-bank-offline': {
+      id: '/error/transaction-errors/tx-400-03-bank-offline'
+      path: '/error/transaction-errors/tx-400-03-bank-offline'
+      fullPath: '/error/transaction-errors/tx-400-03-bank-offline'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40003BankOfflineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': {
+      id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      fullPath: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-01-recipient-not-found': {
+      id: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      path: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      fullPath: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-500-01-processor-down': {
+      id: '/error/card/card-500-01-processor-down'
+      path: '/error/card/card-500-01-processor-down'
+      fullPath: '/error/card/card-500-01-processor-down'
+      preLoaderRoute: typeof ErrorCardCard50001ProcessorDownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-410-01-expired': {
+      id: '/error/card/card-410-01-expired'
+      path: '/error/card/card-410-01-expired'
+      fullPath: '/error/card/card-410-01-expired'
+      preLoaderRoute: typeof ErrorCardCard41001ExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-409-01-already-exists-employee': {
+      id: '/error/card/card-409-01-already-exists-employee'
+      path: '/error/card/card-409-01-already-exists-employee'
+      fullPath: '/error/card/card-409-01-already-exists-employee'
+      preLoaderRoute: typeof ErrorCardCard40901AlreadyExistsEmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-408-01-personalization-failed': {
+      id: '/error/card/card-408-01-personalization-failed'
+      path: '/error/card/card-408-01-personalization-failed'
+      fullPath: '/error/card/card-408-01-personalization-failed'
+      preLoaderRoute: typeof ErrorCardCard40801PersonalizationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-404-02-employee-not-whitelisted': {
+      id: '/error/card/card-404-02-employee-not-whitelisted'
+      path: '/error/card/card-404-02-employee-not-whitelisted'
+      fullPath: '/error/card/card-404-02-employee-not-whitelisted'
+      preLoaderRoute: typeof ErrorCardCard40402EmployeeNotWhitelistedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-404-01-delivery-address-invalid': {
+      id: '/error/card/card-404-01-delivery-address-invalid'
+      path: '/error/card/card-404-01-delivery-address-invalid'
+      fullPath: '/error/card/card-404-01-delivery-address-invalid'
+      preLoaderRoute: typeof ErrorCardCard40401DeliveryAddressInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-07-settings-conflict': {
+      id: '/error/card/card-403-07-settings-conflict'
+      path: '/error/card/card-403-07-settings-conflict'
+      fullPath: '/error/card/card-403-07-settings-conflict'
+      preLoaderRoute: typeof ErrorCardCard40307SettingsConflictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-06-not-activated': {
+      id: '/error/card/card-403-06-not-activated'
+      path: '/error/card/card-403-06-not-activated'
+      fullPath: '/error/card/card-403-06-not-activated'
+      preLoaderRoute: typeof ErrorCardCard40306NotActivatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-05-program-inactive': {
+      id: '/error/card/card-403-05-program-inactive'
+      path: '/error/card/card-403-05-program-inactive'
+      fullPath: '/error/card/card-403-05-program-inactive'
+      preLoaderRoute: typeof ErrorCardCard40305ProgramInactiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-04-frozen-fraud': {
+      id: '/error/card/card-403-04-frozen-fraud'
+      path: '/error/card/card-403-04-frozen-fraud'
+      fullPath: '/error/card/card-403-04-frozen-fraud'
+      preLoaderRoute: typeof ErrorCardCard40304FrozenFraudRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-03-international-blocked': {
+      id: '/error/card/card-403-03-international-blocked'
+      path: '/error/card/card-403-03-international-blocked'
+      fullPath: '/error/card/card-403-03-international-blocked'
+      preLoaderRoute: typeof ErrorCardCard40303InternationalBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-02-merchant-blocked': {
+      id: '/error/card/card-403-02-merchant-blocked'
+      path: '/error/card/card-403-02-merchant-blocked'
+      fullPath: '/error/card/card-403-02-merchant-blocked'
+      preLoaderRoute: typeof ErrorCardCard40302MerchantBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-01-kyc-tier-insufficient': {
+      id: '/error/card/card-403-01-kyc-tier-insufficient'
+      path: '/error/card/card-403-01-kyc-tier-insufficient'
+      fullPath: '/error/card/card-403-01-kyc-tier-insufficient'
+      preLoaderRoute: typeof ErrorCardCard40301KycTierInsufficientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-04-min-topup-failed': {
+      id: '/error/card/card-402-04-min-topup-failed'
+      path: '/error/card/card-402-04-min-topup-failed'
+      fullPath: '/error/card/card-402-04-min-topup-failed'
+      preLoaderRoute: typeof ErrorCardCard40204MinTopupFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-03-chargeback-disputed': {
+      id: '/error/card/card-402-03-chargeback-disputed'
+      path: '/error/card/card-402-03-chargeback-disputed'
+      fullPath: '/error/card/card-402-03-chargeback-disputed'
+      preLoaderRoute: typeof ErrorCardCard40203ChargebackDisputedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-02-limit-exceeded': {
+      id: '/error/card/card-402-02-limit-exceeded'
+      path: '/error/card/card-402-02-limit-exceeded'
+      fullPath: '/error/card/card-402-02-limit-exceeded'
+      preLoaderRoute: typeof ErrorCardCard40202LimitExceededRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-01-funding-failed': {
+      id: '/error/card/card-402-01-funding-failed'
+      path: '/error/card/card-402-01-funding-failed'
+      fullPath: '/error/card/card-402-01-funding-failed'
+      preLoaderRoute: typeof ErrorCardCard40201FundingFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-03-cvv-attempts-exceeded': {
+      id: '/error/card/card-401-03-cvv-attempts-exceeded'
+      path: '/error/card/card-401-03-cvv-attempts-exceeded'
+      fullPath: '/error/card/card-401-03-cvv-attempts-exceeded'
+      preLoaderRoute: typeof ErrorCardCard40103CvvAttemptsExceededRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-02-pin-3x-blocked': {
+      id: '/error/card/card-401-02-pin-3x-blocked'
+      path: '/error/card/card-401-02-pin-3x-blocked'
+      fullPath: '/error/card/card-401-02-pin-3x-blocked'
+      preLoaderRoute: typeof ErrorCardCard40102Pin3xBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-01-3ds-failed': {
+      id: '/error/card/card-401-01-3ds-failed'
+      path: '/error/card/card-401-01-3ds-failed'
+      fullPath: '/error/card/card-401-01-3ds-failed'
+      preLoaderRoute: typeof ErrorCardCard401013dsFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-400-02-program-limit-high': {
+      id: '/error/card/card-400-02-program-limit-high'
+      path: '/error/card/card-400-02-program-limit-high'
+      fullPath: '/error/card/card-400-02-program-limit-high'
+      preLoaderRoute: typeof ErrorCardCard40002ProgramLimitHighRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-400-01-virtual-limit-reached': {
+      id: '/error/card/card-400-01-virtual-limit-reached'
+      path: '/error/card/card-400-01-virtual-limit-reached'
+      fullPath: '/error/card/card-400-01-virtual-limit-reached'
+      preLoaderRoute: typeof ErrorCardCard40001VirtualLimitReachedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-session-expired': {
+      id: '/error/advanced-errors/error-session-expired'
+      path: '/error/advanced-errors/error-session-expired'
+      fullPath: '/error/advanced-errors/error-session-expired'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorSessionExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-processing-hold': {
+      id: '/error/advanced-errors/error-processing-hold'
+      path: '/error/advanced-errors/error-processing-hold'
+      fullPath: '/error/advanced-errors/error-processing-hold'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorProcessingHoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-payment-failed': {
+      id: '/error/advanced-errors/error-payment-failed'
+      path: '/error/advanced-errors/error-payment-failed'
+      fullPath: '/error/advanced-errors/error-payment-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorPaymentFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-maintenance': {
+      id: '/error/advanced-errors/error-maintenance'
+      path: '/error/advanced-errors/error-maintenance'
+      fullPath: '/error/advanced-errors/error-maintenance'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-kyc-failed': {
+      id: '/error/advanced-errors/error-kyc-failed'
+      path: '/error/advanced-errors/error-kyc-failed'
+      fullPath: '/error/advanced-errors/error-kyc-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorKycFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-account-suspended': {
+      id: '/error/advanced-errors/error-account-suspended'
+      path: '/error/advanced-errors/error-account-suspended'
+      fullPath: '/error/advanced-errors/error-account-suspended'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorAccountSuspendedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-500': {
+      id: '/error/advanced-errors/error-500'
+      path: '/error/advanced-errors/error-500'
+      fullPath: '/error/advanced-errors/error-500'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError500RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-429': {
+      id: '/error/advanced-errors/error-429'
+      path: '/error/advanced-errors/error-429'
+      fullPath: '/error/advanced-errors/error-429'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError429RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-410': {
+      id: '/error/advanced-errors/error-410'
+      path: '/error/advanced-errors/error-410'
+      fullPath: '/error/advanced-errors/error-410'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError410RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-409': {
+      id: '/error/advanced-errors/error-409'
+      path: '/error/advanced-errors/error-409'
+      fullPath: '/error/advanced-errors/error-409'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError409RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-408': {
+      id: '/error/advanced-errors/error-408'
+      path: '/error/advanced-errors/error-408'
+      fullPath: '/error/advanced-errors/error-408'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError408RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-404': {
+      id: '/error/advanced-errors/error-404'
+      path: '/error/advanced-errors/error-404'
+      fullPath: '/error/advanced-errors/error-404'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-403': {
+      id: '/error/advanced-errors/error-403'
+      path: '/error/advanced-errors/error-403'
+      fullPath: '/error/advanced-errors/error-403'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError403RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-402': {
+      id: '/error/advanced-errors/error-402'
+      path: '/error/advanced-errors/error-402'
+      fullPath: '/error/advanced-errors/error-402'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError402RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-401': {
+      id: '/error/advanced-errors/error-401'
+      path: '/error/advanced-errors/error-401'
+      fullPath: '/error/advanced-errors/error-401'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-400': {
+      id: '/error/advanced-errors/error-400'
+      path: '/error/advanced-errors/error-400'
+      fullPath: '/error/advanced-errors/error-400'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError400RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-03-elevated-error-rate': {
+      id: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      path: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      fullPath: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-02-test-suite-failed': {
+      id: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      path: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      fullPath: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-01-webhook-delivery-failed': {
+      id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      fullPath: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-429-02-webhook-queue-full': {
+      id: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      path: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      fullPath: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-429-01-rate-limit-100': {
+      id: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      path: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      fullPath: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev42901RateLimit100RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-410-01-version-deprecated': {
+      id: '/error/advanced-errors/dev-410-01-version-deprecated'
+      path: '/error/advanced-errors/dev-410-01-version-deprecated'
+      fullPath: '/error/advanced-errors/dev-410-01-version-deprecated'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-409-01-duplicate-idempotency': {
+      id: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      path: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      fullPath: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-408-01-webhook-timeout': {
+      id: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      path: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      fullPath: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-404-01-endpoint-not-found': {
+      id: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      path: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      fullPath: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-04-missing-webhook': {
+      id: '/error/advanced-errors/dev-403-04-missing-webhook'
+      path: '/error/advanced-errors/dev-403-04-missing-webhook'
+      fullPath: '/error/advanced-errors/dev-403-04-missing-webhook'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40304MissingWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-03-partner-approval-pending': {
+      id: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      path: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      fullPath: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-02-ip-whitelist-violation': {
+      id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      fullPath: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-01-scope-forbidden': {
+      id: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      path: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      fullPath: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-402-01-overage-billing': {
+      id: '/error/advanced-errors/dev-402-01-overage-billing'
+      path: '/error/advanced-errors/dev-402-01-overage-billing'
+      fullPath: '/error/advanced-errors/dev-402-01-overage-billing'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40201OverageBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-401-02-oauth-revoked': {
+      id: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      path: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      fullPath: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40102OauthRevokedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-401-01-api-key-invalid': {
+      id: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      path: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      fullPath: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-04-sdk-outdated': {
+      id: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      path: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      fullPath: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': {
+      id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      fullPath: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-02-signature-verification-failed': {
+      id: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      path: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      fullPath: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-01-payload-validation': {
+      id: '/error/advanced-errors/dev-400-01-payload-validation'
+      path: '/error/advanced-errors/dev-400-01-payload-validation'
+      fullPath: '/error/advanced-errors/dev-400-01-payload-validation'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40001PayloadValidationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cards/app/virtual-debit-cards': {
       id: '/cards/app/virtual-debit-cards'
       path: '/virtual-debit-cards'
@@ -2103,6 +4203,187 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSecurityRoute: AuthSecurityRoute,
   CardsAppRoute: CardsAppRouteWithChildren,
   PmAppRoute: PmAppRouteWithChildren,
+  ErrorAdvancedErrorsDev40001PayloadValidationRoute:
+    ErrorAdvancedErrorsDev40001PayloadValidationRoute,
+  ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute:
+    ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute,
+  ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute:
+    ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute,
+  ErrorAdvancedErrorsDev40004SdkOutdatedRoute:
+    ErrorAdvancedErrorsDev40004SdkOutdatedRoute,
+  ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute:
+    ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute,
+  ErrorAdvancedErrorsDev40102OauthRevokedRoute:
+    ErrorAdvancedErrorsDev40102OauthRevokedRoute,
+  ErrorAdvancedErrorsDev40201OverageBillingRoute:
+    ErrorAdvancedErrorsDev40201OverageBillingRoute,
+  ErrorAdvancedErrorsDev40301ScopeForbiddenRoute:
+    ErrorAdvancedErrorsDev40301ScopeForbiddenRoute,
+  ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute:
+    ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute,
+  ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute:
+    ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute,
+  ErrorAdvancedErrorsDev40304MissingWebhookRoute:
+    ErrorAdvancedErrorsDev40304MissingWebhookRoute,
+  ErrorAdvancedErrorsDev40401EndpointNotFoundRoute:
+    ErrorAdvancedErrorsDev40401EndpointNotFoundRoute,
+  ErrorAdvancedErrorsDev40801WebhookTimeoutRoute:
+    ErrorAdvancedErrorsDev40801WebhookTimeoutRoute,
+  ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute:
+    ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute,
+  ErrorAdvancedErrorsDev41001VersionDeprecatedRoute:
+    ErrorAdvancedErrorsDev41001VersionDeprecatedRoute,
+  ErrorAdvancedErrorsDev42901RateLimit100Route:
+    ErrorAdvancedErrorsDev42901RateLimit100Route,
+  ErrorAdvancedErrorsDev42902WebhookQueueFullRoute:
+    ErrorAdvancedErrorsDev42902WebhookQueueFullRoute,
+  ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute:
+    ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute,
+  ErrorAdvancedErrorsDev50002TestSuiteFailedRoute:
+    ErrorAdvancedErrorsDev50002TestSuiteFailedRoute,
+  ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute:
+    ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute,
+  ErrorAdvancedErrorsError400Route: ErrorAdvancedErrorsError400Route,
+  ErrorAdvancedErrorsError401Route: ErrorAdvancedErrorsError401Route,
+  ErrorAdvancedErrorsError402Route: ErrorAdvancedErrorsError402Route,
+  ErrorAdvancedErrorsError403Route: ErrorAdvancedErrorsError403Route,
+  ErrorAdvancedErrorsError404Route: ErrorAdvancedErrorsError404Route,
+  ErrorAdvancedErrorsError408Route: ErrorAdvancedErrorsError408Route,
+  ErrorAdvancedErrorsError409Route: ErrorAdvancedErrorsError409Route,
+  ErrorAdvancedErrorsError410Route: ErrorAdvancedErrorsError410Route,
+  ErrorAdvancedErrorsError429Route: ErrorAdvancedErrorsError429Route,
+  ErrorAdvancedErrorsError500Route: ErrorAdvancedErrorsError500Route,
+  ErrorAdvancedErrorsErrorAccountSuspendedRoute:
+    ErrorAdvancedErrorsErrorAccountSuspendedRoute,
+  ErrorAdvancedErrorsErrorKycFailedRoute:
+    ErrorAdvancedErrorsErrorKycFailedRoute,
+  ErrorAdvancedErrorsErrorMaintenanceRoute:
+    ErrorAdvancedErrorsErrorMaintenanceRoute,
+  ErrorAdvancedErrorsErrorPaymentFailedRoute:
+    ErrorAdvancedErrorsErrorPaymentFailedRoute,
+  ErrorAdvancedErrorsErrorProcessingHoldRoute:
+    ErrorAdvancedErrorsErrorProcessingHoldRoute,
+  ErrorAdvancedErrorsErrorSessionExpiredRoute:
+    ErrorAdvancedErrorsErrorSessionExpiredRoute,
+  ErrorCardCard40001VirtualLimitReachedRoute:
+    ErrorCardCard40001VirtualLimitReachedRoute,
+  ErrorCardCard40002ProgramLimitHighRoute:
+    ErrorCardCard40002ProgramLimitHighRoute,
+  ErrorCardCard401013dsFailedRoute: ErrorCardCard401013dsFailedRoute,
+  ErrorCardCard40102Pin3xBlockedRoute: ErrorCardCard40102Pin3xBlockedRoute,
+  ErrorCardCard40103CvvAttemptsExceededRoute:
+    ErrorCardCard40103CvvAttemptsExceededRoute,
+  ErrorCardCard40201FundingFailedRoute: ErrorCardCard40201FundingFailedRoute,
+  ErrorCardCard40202LimitExceededRoute: ErrorCardCard40202LimitExceededRoute,
+  ErrorCardCard40203ChargebackDisputedRoute:
+    ErrorCardCard40203ChargebackDisputedRoute,
+  ErrorCardCard40204MinTopupFailedRoute: ErrorCardCard40204MinTopupFailedRoute,
+  ErrorCardCard40301KycTierInsufficientRoute:
+    ErrorCardCard40301KycTierInsufficientRoute,
+  ErrorCardCard40302MerchantBlockedRoute:
+    ErrorCardCard40302MerchantBlockedRoute,
+  ErrorCardCard40303InternationalBlockedRoute:
+    ErrorCardCard40303InternationalBlockedRoute,
+  ErrorCardCard40304FrozenFraudRoute: ErrorCardCard40304FrozenFraudRoute,
+  ErrorCardCard40305ProgramInactiveRoute:
+    ErrorCardCard40305ProgramInactiveRoute,
+  ErrorCardCard40306NotActivatedRoute: ErrorCardCard40306NotActivatedRoute,
+  ErrorCardCard40307SettingsConflictRoute:
+    ErrorCardCard40307SettingsConflictRoute,
+  ErrorCardCard40401DeliveryAddressInvalidRoute:
+    ErrorCardCard40401DeliveryAddressInvalidRoute,
+  ErrorCardCard40402EmployeeNotWhitelistedRoute:
+    ErrorCardCard40402EmployeeNotWhitelistedRoute,
+  ErrorCardCard40801PersonalizationFailedRoute:
+    ErrorCardCard40801PersonalizationFailedRoute,
+  ErrorCardCard40901AlreadyExistsEmployeeRoute:
+    ErrorCardCard40901AlreadyExistsEmployeeRoute,
+  ErrorCardCard41001ExpiredRoute: ErrorCardCard41001ExpiredRoute,
+  ErrorCardCard50001ProcessorDownRoute: ErrorCardCard50001ProcessorDownRoute,
+  ErrorTransactionErrorsTx40001RecipientNotFoundRoute:
+    ErrorTransactionErrorsTx40001RecipientNotFoundRoute,
+  ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute:
+    ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute,
+  ErrorTransactionErrorsTx40003BankOfflineRoute:
+    ErrorTransactionErrorsTx40003BankOfflineRoute,
+  ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute:
+    ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute,
+  ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute:
+    ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute,
+  ErrorTransactionErrorsTx40101Pin3xLockedRoute:
+    ErrorTransactionErrorsTx40101Pin3xLockedRoute,
+  ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute:
+    ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute,
+  ErrorTransactionErrorsTx40201InsufficientBalanceRoute:
+    ErrorTransactionErrorsTx40201InsufficientBalanceRoute,
+  ErrorTransactionErrorsTx40202AmountMinMaxRoute:
+    ErrorTransactionErrorsTx40202AmountMinMaxRoute,
+  ErrorTransactionErrorsTx40203DailyLimitReachedRoute:
+    ErrorTransactionErrorsTx40203DailyLimitReachedRoute,
+  ErrorTransactionErrorsTx40204PerTxnLimitRoute:
+    ErrorTransactionErrorsTx40204PerTxnLimitRoute,
+  ErrorTransactionErrorsTx40205FeeCalculationFailedRoute:
+    ErrorTransactionErrorsTx40205FeeCalculationFailedRoute,
+  ErrorTransactionErrorsTx40301AmlHoldRoute:
+    ErrorTransactionErrorsTx40301AmlHoldRoute,
+  ErrorTransactionErrorsTx40302KraTaxFailedRoute:
+    ErrorTransactionErrorsTx40302KraTaxFailedRoute,
+  ErrorTransactionErrorsTx40303AccountFrozenRoute:
+    ErrorTransactionErrorsTx40303AccountFrozenRoute,
+  ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute:
+    ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute,
+  ErrorTransactionErrorsTx40402PurposeCodeMissingRoute:
+    ErrorTransactionErrorsTx40402PurposeCodeMissingRoute,
+  ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute:
+    ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute,
+  ErrorTransactionErrorsTx40901DuplicateTransactionRoute:
+    ErrorTransactionErrorsTx40901DuplicateTransactionRoute,
+  ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute:
+    ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute,
+  ErrorTransactionErrorsTx40903ReconciliationMismatchRoute:
+    ErrorTransactionErrorsTx40903ReconciliationMismatchRoute,
+  ErrorTransactionErrorsTx41001TxnExpiredRoute:
+    ErrorTransactionErrorsTx41001TxnExpiredRoute,
+  ErrorTransactionErrorsTx42201NameMismatchRoute:
+    ErrorTransactionErrorsTx42201NameMismatchRoute,
+  ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute:
+    ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute,
+  ErrorTransactionErrorsTx42301RtgsCutoffRoute:
+    ErrorTransactionErrorsTx42301RtgsCutoffRoute,
+  ErrorTransactionErrorsTx42901ThrottledRoute:
+    ErrorTransactionErrorsTx42901ThrottledRoute,
+  ErrorTransactionErrorsTx50001SettlementDelayedRoute:
+    ErrorTransactionErrorsTx50001SettlementDelayedRoute,
+  ErrorTransactionErrorsTx50002LiquidityFailedRoute:
+    ErrorTransactionErrorsTx50002LiquidityFailedRoute,
+  ErrorUtilityErrorsUtil40001NameMismatchRoute:
+    ErrorUtilityErrorsUtil40001NameMismatchRoute,
+  ErrorUtilityErrorsUtil40201AmountBelowMinRoute:
+    ErrorUtilityErrorsUtil40201AmountBelowMinRoute,
+  ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute:
+    ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute,
+  ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute:
+    ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute,
+  ErrorUtilityErrorsUtil40301AutomationFailedRoute:
+    ErrorUtilityErrorsUtil40301AutomationFailedRoute,
+  ErrorUtilityErrorsUtil40401MeterNotFoundRoute:
+    ErrorUtilityErrorsUtil40401MeterNotFoundRoute,
+  ErrorUtilityErrorsUtil40402InternetInvalidRoute:
+    ErrorUtilityErrorsUtil40402InternetInvalidRoute,
+  ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute:
+    ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute,
+  ErrorUtilityErrorsUtil40801PendingConfirmationRoute:
+    ErrorUtilityErrorsUtil40801PendingConfirmationRoute,
+  ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute:
+    ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute,
+  ErrorUtilityErrorsUtil40902AutomationConflictRoute:
+    ErrorUtilityErrorsUtil40902AutomationConflictRoute,
+  ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute:
+    ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute,
+  ErrorUtilityErrorsUtil42901RateLimitedRoute:
+    ErrorUtilityErrorsUtil42901RateLimitedRoute,
+  ErrorUtilityErrorsUtil50001TokenGenFailedRoute:
+    ErrorUtilityErrorsUtil50001TokenGenFailedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -206,7 +206,7 @@ export default function DevHeader({
 							<div className={cx(s["panel-footer"], "text-center")}>
 								<Link
 									to="/dev/$module"
-									params={{ module: "logs" }}
+									params={{ module: "monitoring-incidents" }}
 									className={cx(s.btnLink, s.btnLinkPrimary)}
 									onClick={() => onToggleDropdown("notifications")}
 								>

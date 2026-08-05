@@ -125,42 +125,57 @@ export const initialMockData: ShellContent = {
 
         navGroups: [
                 {
-                        title: "Dashboard",
+                        title: "Operations & Analytics",
                         items: [
                                 {
                                         key: "transfer-overview",
-                                        label: "Transfer Overview",
+                                        label: "Overview",
                                         icon: "bi-speedometer2",
                                 },
                                 {
                                         key: "analytics",
-                                        label: "Transaction Analytics",
+                                        label: "Analytics",
                                         icon: "bi-graph-up-arrow",
+                                },
+                                {
+                                        key: "cash-flow",
+                                        label: "Cash Flow",
+                                        icon: "bi-cash-stack",
+                                },
+                                {
+                                        key: "ops-health",
+                                        label: "System Health",
+                                        icon: "bi-cpu",
                                 },
                         ],
                 },
                 {
-                        title: "Cash Flow",
+                        title: "Payments & Transfers",
                         items: [
                                 {
                                         key: "initiate-transfer",
-                                        label: "Initiate Transfer",
+                                        label: "New Transfer",
                                         icon: "bi-send",
                                 },
                                 {
                                         key: "transfers",
-                                        label: "Transfers Record",
+                                        label: "Transfer Log",
                                         icon: "bi-arrow-left-right",
                                 },
                                 {
                                         key: "transfer-management",
-                                        label: "Transfer Management",
+                                        label: "Manage Transfers",
                                         icon: "bi-list-task",
                                 },
                                 {
                                         key: "payment-rails",
-                                        label: "Payment Rails & Routing",
+                                        label: "Rails & Routing",
                                         icon: "bi-signpost-split",
+                                },
+                                {
+                                        key: "mobile-money",
+                                        label: "Mobile Money & PSP",
+                                        icon: "bi-phone",
                                 },
                         ],
                 },
@@ -170,44 +185,42 @@ export const initialMockData: ShellContent = {
                                 { key: "liquidity", label: "Liquidity & Float", icon: "bi-droplet" },
                                 {
                                         key: "reconciliation",
-                                        label: "Reconciliation Center",
+                                        label: "Reconciliation",
                                         icon: "bi-clipboard-check",
                                 },
-                                { key: "settlement", label: "Settlement & Clearing", icon: "bi-bank" },
+                                { key: "settlement", label: "Settlement", icon: "bi-bank" },
                                 {
                                         key: "fx",
-                                        label: "Multi-Currency & FX",
+                                        label: "FX & Currencies",
                                         icon: "bi-currency-exchange",
                                 },
-                                { key: "fees", label: "Fee & Commission Mgt", icon: "bi-receipt" },
+                                { key: "fees", label: "Fees & Commissions", icon: "bi-receipt" },
                         ],
                 },
                 {
-                        title: "Compliance",
+                        title: "Compliance & Risk",
                         items: [
                                 {
                                         key: "compliance",
-                                        label: "Compliance & AML",
+                                        label: "AML & Compliance",
                                         icon: "bi-shield-check",
                                 },
                                 {
                                         key: "disputes",
-                                        label: "Disputes & Chargebacks",
+                                        label: "Disputes",
                                         icon: "bi-exclamation-triangle",
                                 },
                                 {
                                         key: "kra-government",
-                                        label: "KRA & Government",
+                                        label: "Tax & Gov",
                                         icon: "bi-building-check",
                                 },
                         ],
                 },
                 {
-                        title: "Integrations & Administration",
+                        title: "Administration",
                         items: [
-                                { key: "customers", label: "Customer Management", icon: "bi-people" },
-                                { key: "mobile-money", label: "Mobile Money & PSP", icon: "bi-phone" },
-                                { key: "ops-health", label: "System Health & Ops", icon: "bi-cpu" },
+                                { key: "customers", label: "Customers", icon: "bi-people" },
                         ],
                 },
         ],
@@ -416,7 +429,23 @@ export const cx = (
         ...parts: Array<string | false | null | undefined>
 ): string => parts.filter(Boolean).join(" ");
 
-/** Resolve a module by key, with a safe fallback to the dashboard module. */
+/** Fallback shown when a section has no dedicated page yet (e.g. /pm/app/cash-flow). */
+export const placeholderModule: ModuleDef = {
+        key: "placeholder",
+        label: "Module",
+        icon: "bi-box",
+        pill: "Coming soon",
+        titlePre: "This section is ",
+        titleAccent: "under construction",
+        copy: "The dedicated page for this module isn't wired up yet. Check back soon, or ask your developer to point this sidebar entry at a real route.",
+        c1: "#0d6efd",
+        c2: "#6610f2",
+        stats: [],
+        features: [],
+        actions: [],
+};
+
+/** Resolve a module by key, falling back to a safe placeholder for unbuilt sections. */
 export function findModule(content: ShellContent, key: string): ModuleDef {
-        return content.modules.find((m) => m.key === key) ?? content.modules[0];
+        return (content.modules ?? []).find((m) => m.key === key) ?? placeholderModule;
 }

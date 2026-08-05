@@ -123,13 +123,24 @@ export const initialMockData: CardsLayoutContent = {
 
 	navGroups: [
 		{
-			title: "Cards",
+			title: "Intelligence & Control",
 			items: [
+				{ key: "card-command-center", label: "Command Center", icon: "bi-cpu" },
 				{
 					key: "card-overview",
-					label: "Card Overview",
+					label: "Overview",
 					icon: "bi-speedometer2",
 				},
+				{
+					key: "card-analytics-reporting",
+					label: "Analytics",
+					icon: "bi-bar-chart-line",
+				},
+			],
+		},
+		{
+			title: "Issuance & Products",
+			items: [
 				{
 					key: "virtual-debit-cards",
 					label: "Virtual Debit",
@@ -152,38 +163,35 @@ export const initialMockData: CardsLayoutContent = {
 				},
 				{
 					key: "corporate-business-cards",
-					label: "Corporate Business",
+					label: "Corporate Cards",
 					icon: "bi-building",
 				},
-				{ key: "card-command-center", label: "Command Center", icon: "bi-cpu" },
+			],
+		},
+		{
+			title: "Program Management",
+			items: [
 				{
 					key: "card-program-administration",
 					label: "Program Admin",
 					icon: "bi-shield-check",
 				},
 				{
-					key: "card-analytics-reporting",
-					label: "Analytics & Reporting",
-					icon: "bi-bar-chart-line",
-				},
-				{
 					key: "card-security-fraud-prevention",
 					label: "Fraud Prevention",
 					icon: "bi-shield-lock",
 				},
-				{
-					key: "account-settings",
-					label: "Account & Settings",
-					icon: "bi-gear",
-				},
-				{ key: "support", label: "Support", icon: "bi-headset" },
 			],
 		},
 		{
-			title: "Account",
+			title: "Settings & Support",
 			items: [
-				{ key: "settings", label: "Settings", icon: "bi-gear" },
-				{ key: "logout", label: "Logout", icon: "bi-box-arrow-right" },
+				{
+					key: "account-settings",
+					label: "Settings",
+					icon: "bi-gear",
+				},
+				{ key: "support", label: "Support", icon: "bi-headset" },
 			],
 		},
 	],

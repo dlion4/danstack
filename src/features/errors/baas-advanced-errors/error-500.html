@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>500 • Server Error — Paymo BaaS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --red:#EF4444; --redSoft:#FEF2F2; --redBd:#FECACA; --redDark:#B91C1C; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:28px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(900px 500px at 10% 0%,#FEE2E2,transparent 60%), radial-gradient(700px 400px at 90% 5%,#D1FAE5,transparent 55%),var(--cream); min-height:100dvh; margin:0; display:flex; flex-direction:column}
+.topbar{padding:20px 24px; max-width:1200px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--red),#F87171); display:grid; place-items:center; color:white; box-shadow:0 6px 16px rgba(239,68,68,.28)}
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); max-width:640px; width:100%; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)} @keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.head{padding:26px 28px 18px; text-align:center}
+.srv{display:flex; gap:8px; justify-content:center; align-items:end; height:86px; margin:0 auto 16px}
+.bar{width:10px; border-radius:6px; background:linear-gradient(180deg,var(--emerald),var(--em600)); animation:pulseBar 1.6s ease-in-out infinite}
+.bar:nth-child(2){height:54px; animation-delay:.15s} .bar:nth-child(3){height:84px; animation-delay:.3s; background:linear-gradient(180deg,var(--red),#F87171)} .bar:nth-child(4){height:62px; animation-delay:.45s} .bar:nth-child(1){height:38px}
+@keyframes pulseBar{0%,100%{transform:scaleY(.7); opacity:.7}50%{transform:scaleY(1.2); opacity:1}}
+.badge{padding:6px 12px; border-radius:999px; background:var(--redSoft); border:1px solid var(--redBd); color:var(--redDark); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.06em}
+.title{font-family:Space Grotesk,sans-serif; font-size:26px; font-weight:700; margin:12px 0 8px}
+.sub{color:var(--ink2); font-size:14px; line-height:1.6}
+.tech{margin-top:16px; background:#0F172A; border-radius:14px; padding:14px; text-align:left; position:relative; overflow:hidden}
+.tech::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),var(--emerald))}
+.tech-top{display:flex; justify-content:space-between; align-items:center; color:#94A3B8; font-size:11px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; margin-bottom:8px}
+.code{font-family:JetBrains Mono,monospace; font-size:11.5px; color:#94A3B8; line-height:1.6; max-height:0; overflow:hidden; transition:.35s}
+.code.open{max-height:300px}
+.code .k{color:#F87171}
+.status-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0 0}
+.status-card{background:var(--cream); border:1px solid var(--bd); border-radius:12px; padding:10px 12px; font-size:12px; text-align:left}
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--bd); display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px}
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px}
+.toast{background:white; border:1px solid var(--bd); border-left:4px solid var(--red); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); min-width:300px; animation:slide .35s ease} @keyframes slide{from{transform:translateX(16px); opacity:0}to{transform:translateX(0); opacity:1}}
+@media(max-width:640px){.status-grid{grid-template-columns:1fr} .head{padding:20px 18px} .actions{padding:16px 18px} .btn-em,.btn-ghost{flex:1; justify-content:center}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-cpu"></i></div> Paymo BaaS</div><div class="d-flex gap-2"><a href="https://status.paymo.co" class="btn-ghost text-decoration-none" style="padding:8px 14px"><span style="width:7px; height:7px; background:#10b981; border-radius:50%; display:inline-block; animation:blink 1.2s infinite"></span> Status</a></div></div>
+<div class="wrap"><div class="cardx">
+<div class="head">
+<div class="srv"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+<div class="badge"><i class="bi bi-exclamation-triangle me-1"></i> 500 • Critical • We know</div>
+<div class="title">Our servers hiccuped — vault safe</div>
+<div class="sub">Something broke on our side. Engineering paged, ledger paused but funds secure in vault. Retry in a moment — no double charge.</div>
+
+<div class="status-grid">
+<div class="status-card"><b><i class="bi bi-shield-check text-success me-1"></i> Funds</b><div style="color:var(--ink2)">Safe in vault • No movement • Idempotent safe</div></div>
+<div class="status-card"><b><i class="bi bi-bell text-warning me-1"></i> Team</b><div style="color:var(--ink2)">Notified 12s ago • On-call engaged • Fix ETA 4 min</div></div>
+</div>
+
+<div class="tech">
+<div class="tech-top"><span><i class="bi bi-terminal me-1"></i> Technical trace</span><button class="btn-ghost" style="padding:4px 8px; font-size:11px; background:#1E293B; color:#E2E8F0; border-color:#334155" onclick="toggleTech()">Show details</button></div>
+<div class="code" id="codeBox">
+[INTERNAL_SERVER_ERROR] 500<br/>
+Timestamp: <span id="ts"></span><br/>
+Trace: paymo_core_v2.transactions.engine.processor_exception<br/>
+Caused by: <span class="k">ConnectionTimeoutException</span> at socket_io:8080<br/>
+Trace ID: <span id="traceId">srv_--</span><br/>
+User impact: none • Retriable: yes
+</div>
+</div>
+
+<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:14px"><span style="padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em600); font-weight:700; font-size:11px"><i class="bi bi-shield-check"></i> No funds moved</span><span style="padding:6px 12px; border-radius:999px; background:white; border:1px solid var(--bd); font-weight:700; font-size:11px"><i class="bi bi-arrow-clockwise"></i> Auto-retry in <span id="retrySec">15</span>s</span></div>
+</div>
+<div class="actions">
+<button class="btn-em" onclick="retryNow()"><i class="bi bi-arrow-clockwise"></i> Retry Now</button>
+<a href="/" class="btn-ghost text-decoration-none"><i class="bi bi-house-door"></i> Back to Safety</a>
+<button class="btn-ghost" onclick="toast('Support ticket opened','We linked trace ID — reply in <5 min')"><i class="bi bi-life-preserver"></i> Contact Support</button>
+</div>
+</div></div>
+<div class="toast-wrap" id="toasts"></div>
+<script>
+const tid='srv_'+Math.random().toString(36).slice(2,9)+'_500';
+document.getElementById('traceId').textContent=tid;
+document.getElementById('ts').textContent=new Date().toISOString();
+function toggleTech(){const c=document.getElementById('codeBox'); c.classList.toggle('open');}
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast'; e.innerHTML=`<div style="font-weight:700; font-size:13px"><i class='bi bi-info-circle-fill text-danger me-1'></i>${t}</div><div style='font-size:12px; color:#4B5563'>${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),4000)}
+function retryNow(){toast('Retrying transaction','Using safe retry with same idempotency'); setTimeout(()=>location.reload(),800)}
+let s=15; const el=document.getElementById('retrySec'); const iv=setInterval(()=>{s--; el.textContent=s; if(s<=0){clearInterval(iv); toast('Auto-retried','Re-checking now'); setTimeout(()=>location.reload(),800)}},1000);
+</script>
+</body>
+</html>

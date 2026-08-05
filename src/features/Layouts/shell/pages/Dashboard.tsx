@@ -10,7 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { useShell } from "../data/shellContext";
-import { cx, fetchShellContent, initialMockData } from "../data/shellData";
+import {
+	cx,
+	fetchShellContent,
+	initialMockData,
+	placeholderModule,
+} from "../data/shellData";
 import dash from "../styles/dashboard.module.css";
 import shell from "../styles/shell.module.css";
 
@@ -28,8 +33,9 @@ export default function Dashboard() {
 	});
 	const content = data ?? initialMockData;
 
-	const home = content.modules[0]; // dashboard module def
-	const quickLinks = content.modules.filter((m) => m.key !== "dashboard");
+	const modules = content.modules ?? [];
+	const home = modules[0] ?? placeholderModule; // dashboard module def
+	const quickLinks = modules.filter((m) => m.key !== "dashboard");
 
 	const handleAction = (label: string) =>
 		showToast({
@@ -104,38 +110,44 @@ export default function Dashboard() {
 						<p className={d.sectionSub}>Jump straight into any module.</p>
 					</div>
 				</div>
-				<div className={d.moduleGrid}>
-					{quickLinks.map((mod) => (
-						<Link
-							key={mod.key}
-							to="/pm/app/$section"
-							params={{ section: mod.key }}
-							className={d.moduleCard}
-						>
-							<span
-								className={d.moduleIcon}
-								style={{
-									background: `linear-gradient(135deg, ${mod.c1}, ${mod.c2})`,
-								}}
+				{quickLinks.length === 0 ? (
+					<p className={d.sectionSub}>
+						Workspace modules are being wired up — check back soon.
+					</p>
+				) : (
+					<div className={d.moduleGrid}>
+						{quickLinks.map((mod) => (
+							<Link
+								key={mod.key}
+								to="/pm/app/$section"
+								params={{ section: mod.key }}
+								className={d.moduleCard}
 							>
-								<i className={`bi ${mod.icon}`} />
-							</span>
-							<h3 className={d.moduleTitle}>{mod.label}</h3>
-							<p className={d.moduleDesc}>{mod.copy}</p>
-							<div className={d.moduleFoot}>
 								<span
-									className={
-										s.badgeSoft ? cx(s.badgeMini, s.badgeSoft) : s.badgeMini
-									}
-									style={{ fontSize: "0.68rem" }}
+									className={d.moduleIcon}
+									style={{
+										background: `linear-gradient(135deg, ${mod.c1}, ${mod.c2})`,
+									}}
 								>
-									{mod.pill}
+									<i className={`bi ${mod.icon}`} />
 								</span>
-								<i className={cx("bi bi-arrow-right", d.moduleArrow)} />
-							</div>
-						</Link>
-					))}
-				</div>
+								<h3 className={d.moduleTitle}>{mod.label}</h3>
+								<p className={d.moduleDesc}>{mod.copy}</p>
+								<div className={d.moduleFoot}>
+									<span
+										className={
+											s.badgeSoft ? cx(s.badgeMini, s.badgeSoft) : s.badgeMini
+										}
+										style={{ fontSize: "0.68rem" }}
+									>
+										{mod.pill}
+									</span>
+									<i className={cx("bi bi-arrow-right", d.moduleArrow)} />
+								</div>
+							</Link>
+						))}
+					</div>
+				)}
 			</section>
 		</div>
 	);

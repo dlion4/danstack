@@ -98,7 +98,7 @@ export const initialMockData: BusinessLayoutContent = {
 
         navGroups: [
                 {
-                        title: "Overview",
+                        title: "Overview & Insights",
                         items: [
                                 {
                                         key: "dashboard",
@@ -111,10 +111,15 @@ export const initialMockData: BusinessLayoutContent = {
                                         icon: "bi-activity",
                                         badge: "New",
                                 },
+                                {
+                                        key: "command-center",
+                                        label: "Command Center",
+                                        icon: "bi-terminal",
+                                },
                         ],
                 },
                 {
-                        title: "Operations",
+                        title: "Core Workflows",
                         items: [
                                 {
                                         key: "accounts-payable",
@@ -136,16 +141,16 @@ export const initialMockData: BusinessLayoutContent = {
                                         label: "Payroll & HR",
                                         icon: "bi-cash-stack",
                                 },
+                        ],
+                },
+                {
+                        title: "Treasury & Open Finance",
+                        items: [
                                 {
                                         key: "treasury-cash",
                                         label: "Treasury & Cash",
                                         icon: "bi-wallet2",
                                 },
-                        ],
-                },
-                {
-                        title: "Intelligence",
-                        items: [
                                 {
                                         key: "multi-currency-treasury",
                                         label: "Multi-Currency Treasury",
@@ -157,10 +162,16 @@ export const initialMockData: BusinessLayoutContent = {
                                         icon: "bi-file-earmark-bar-graph",
                                         badge: "Beta",
                                 },
+                                {
+                                        key: "virtual-accounts",
+                                        label: "Virtual Accounts",
+                                        icon: "bi-credit-card",
+                                        badge: "Beta",
+                                },
                         ],
                 },
                 {
-                        title: "Infrastructure",
+                        title: "Merchant Services & Growth",
                         items: [
                                 {
                                         key: "collections-merchant",
@@ -172,31 +183,20 @@ export const initialMockData: BusinessLayoutContent = {
                                         label: "Business Onboarding",
                                         icon: "bi-plug",
                                 },
+                        ],
+                },
+                {
+                        title: "Administration & Support",
+                        items: [
+                                {
+                                        key: "settings-administration",
+                                        label: "Settings & Admin",
+                                        icon: "bi-gear",
+                                },
                                 {
                                         key: "support-disputes",
                                         label: "Support & Disputes",
                                         icon: "bi-people-fill",
-                                },
-                                {
-                                        key: "settings-administration",
-                                        label: "Settings & Administration",
-                                        icon: "bi-gear",
-                                },
-                        ],
-                },
-                {
-                        title: "Control",
-                        items: [
-                                {
-                                        key: "command-center",
-                                        label: "Command Center",
-                                        icon: "bi-terminal",
-                                },
-                                {
-                                        key: "virtual-accounts",
-                                        label: "Virtual Accounts",
-                                        icon: "bi-credit-card",
-                                        badge: "Beta",
                                 },
                         ],
                 },

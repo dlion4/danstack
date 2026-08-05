@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Paymo BaaS • Advanced Error Pages — 16 Rebuilt</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --cream2:#FDF6E9; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --red:#EF4444; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:22px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FEF3C7,transparent 50%),var(--cream); min-height:100dvh; margin:0; color:var(--ink)}
+.topbar{padding:24px; max-width:1240px; margin:0 auto; width:100%; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px}
+.logo{display:flex; gap:12px; align-items:center; font-weight:800; font-size:18px} .logo-mark{width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white; box-shadow:0 8px 20px rgba(16,185,129,.28)}
+.hero{max-width:1240px; margin:0 auto; padding:10px 24px 24px}
+.card{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden}
+.pd{padding:22px}
+.badge-em{padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:#047857; font-weight:700; font-size:11px; text-transform:uppercase}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:14px; margin-top:18px}
+.tile{border:1px solid var(--bd); border-radius:18px; padding:16px; background:var(--w); transition:.22s; text-decoration:none; color:inherit; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden}
+.tile:hover{transform:translateY(-4px); box-shadow:0 16px 30px rgba(26,31,46,.08); border-color:var(--emerald)}
+.tile .ic{width:48px; height:48px; border-radius:14px; display:grid; place-items:center; font-size:22px}
+.tile h4{margin:0; font-size:14.5px; font-weight:700; font-family:Space Grotesk,sans-serif}
+.tile p{margin:0; font-size:12.5px; color:var(--ink2); line-height:1.5}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.chip{padding:5px 9px; border-radius:999px; background:white; border:1px solid var(--bd); font-size:10px; font-weight:600}
+.section{margin-top:28px}
+.section h3{font-family:Space Grotesk,sans-serif; font-weight:700; font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 18px; font-weight:700; box-shadow:0 8px 18px rgba(16,185,129,.28); transition:.2s}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.list{margin:0; padding-left:18px; font-size:13px; color:var(--ink2); line-height:1.7}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="logo"><div class="logo-mark"><i class="bi bi-lightning-charge-fill"></i></div> Paymo BaaS <span style="font-weight:500; color:var(--ink2)">• Error System v2 • 16 Pages</span></div>
+<div class="d-flex gap-2 flex-wrap"><span class="badge-em"><i class="bi bi-check2-all me-1"></i> All rebuilt • Cream + Emerald</span><a href="#phase2" class="chip text-decoration-none" style="font-size:11px"><i class="bi bi-stars me-1"></i> View New 6</a></div>
+</div>
+
+<div class="hero">
+<div class="card pd">
+<div class="d-flex justify-content-between flex-wrap gap-2 align-items-center">
+<div><h1 style="font-family:Space Grotesk; font-size:32px; font-weight:700; letter-spacing:-.02em; margin:0">All 16 Error Pages — Extremely Advanced</h1><div style="color:var(--ink2); font-size:14px; margin-top:6px; max-width:780px">Cream-white #FFFCF5, Emerald #10b981, Red #EF4444 for errors. Every page: animated icon, toast notifications, info modal, reason box, copy trace, mobile-responsive (full-width buttons, 16px padding), friendly "no funds moved" messaging.</div></div>
+<button class="btn-em"><i class="bi bi-phone me-1"></i> Mobile Ready • PWA</button>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-globe text-success"></i> Phase 1 — HTTP Core (10)</h3>
+<div class="grid">
+<a class="tile" href="./error-400.html" target="_blank"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-braces"></i></div><h4>400 • Bad Request</h4><p>Validation failed. Dark code block, field reasons, copy JSON, info modal, live clock.</p><div class="chips"><span class="chip">shake</span><span class="chip">copy trace</span></div></a>
+<a class="tile" href="./error-401.html" target="_blank"><div class="ic" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#059669"><i class="bi bi-key-fill"></i></div><h4>401 • Unauthorized</h4><p>Expired token checklist, pulse lock, security badges, re-auth flow.</p><div class="chips"><span class="chip">checklist</span><span class="chip">pulse</span></div></a>
+<a class="tile" href="./error-402.html" target="_blank"><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-wallet2"></i></div><h4>402 • Payment Required</h4><p>Quota meter 92%, invoice KES 1,240, Pro upsell, animated bar.</p><div class="chips"><span class="chip">meter</span><span class="chip">upsell</span></div></a>
+<a class="tile" href="./error-403.html" target="_blank"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C"><i class="bi bi-shield-lock-fill"></i></div><h4>403 • Scope Required</h4><p>Merged forbidden + scope. cards:write chip, plan diff, request access.</p><div class="chips"><span class="chip">merged</span><span class="chip">copy perm</span></div></a>
+<a class="tile" href="./error-404.html" target="_blank"><div class="ic" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#10b981"><i class="bi bi-compass"></i></div><h4>404 • Not Found</h4><p>Floating search icon, live filter, 6 vault quick links, report link toast.</p><div class="chips"><span class="chip">live search</span><span class="chip">floaty</span></div></a>
+<a class="tile" href="./error-408.html" target="_blank"><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#D97706"><i class="bi bi-hourglass-split"></i></div><h4>408 • Timeout</h4><p>Flip hourglass, timeline stepper, safety check banner to avoid double charge.</p><div class="chips"><span class="chip">timeline</span><span class="chip">safety</span></div></a>
+<a class="tile" href="./error-409.html" target="_blank"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-layers-half"></i></div><h4>409 • Conflict</h4><p>Idempotency guard — duplicate blocked, original txn copy, no double charge.</p><div class="chips"><span class="chip">idempotency</span><span class="chip">shake</span></div></a>
+<a class="tile" href="./error-410.html" target="_blank"><div class="ic" style="background:#F3F4F6; border:1px solid #E5E7EB; color:#6B7280"><i class="bi bi-trash3-fill"></i></div><h4>410 • Gone</h4><p>Permanently removed, archive notice, migration guide to /v2.</p><div class="chips"><span class="chip">archive</span><span class="chip">sunset</span></div></a>
+<a class="tile" href="./error-429.html" target="_blank"><div class="ic" style="background:#EEF2FF; border:1px solid #C7D2FE; color:#6366F1"><i class="bi bi-speedometer2"></i></div><h4>429 • Rate Limited</h4><p>Countdown 42s → 0, shrinking bar, auto-retry, quota 100 req/s.</p><div class="chips"><span class="chip">countdown</span><span class="chip">auto-retry</span></div></a>
+<a class="tile" href="./error-500.html" target="_blank"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-cpu"></i></div><h4>500 • Server Error</h4><p>Pulsing bars, collapsible trace, funds safe, auto-retry 15s.</p><div class="chips"><span class="chip">bars</span><span class="chip">trace</span></div></a>
+</div>
+</div>
+
+<div class="section" id="phase2">
+<h3><i class="bi bi-stars text-warning"></i> Phase 2 — BaaS Domain Errors (6 New)</h3>
+<div class="grid">
+<a class="tile" href="./error-account-suspended.html" target="_blank" style="border-color:#FECACA"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-shield-lock-fill"></i></div><h4>Suspended • Fraud Lock</h4><p>Risk score 87/100, device Nairobi, 3 failed logins. Funds frozen safe. Verify in 60s flow.</p><div class="chips"><span class="chip">pulse red</span><span class="chip">lockShake</span><span class="chip">copy trace</span></div></a>
+
+<a class="tile" href="./error-kyc-failed.html" target="_blank" style="border-color:#FECACA"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#BE123C"><i class="bi bi-person-badge"></i></div><h4>KYC Failed • Compliance</h4><p>Blurred ID + address mismatch docs with fail badges. Drag-drop upload with auto blur check.</p><div class="chips"><span class="chip">drag-drop</span><span class="chip">scan anim</span><span class="chip">docs status</span></div></a>
+
+<a class="tile" href="./error-maintenance.html" target="_blank" style="border-color:#A7F3D0"><div class="ic" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#059669"><i class="bi bi-gear-wide-connected"></i></div><h4>Maintenance • Ledger Upgrade</h4><p>Gear spin 8s, shimmer progress 75%→92% live, striped moving, notify email input.</p><div class="chips"><span class="chip">gear spin</span><span class="chip">shimmer</span><span class="chip">subscribe</span></div></a>
+
+<a class="tile" href="./error-payment-failed.html" target="_blank" style="border-color:#FECACA"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-x-circle-fill"></i></div><h4>Payment Failed • Declined</h4><p>Bank 51 insufficient funds, KES 45k details, 4 alt methods: M-Pesa, another card, bank, split.</p><div class="chips"><span class="chip">alts grid</span><span class="chip">bank code</span><span class="chip">orbit ring</span></div></a>
+
+<a class="tile" href="./error-processing-hold.html" target="_blank" style="border-color:#BAE6FD"><div class="ic" style="background:#F0F9FF; border:1px solid #BAE6FD; color:#0EA5E9"><i class="bi bi-shield-shaded"></i></div><h4>Processing Hold • Review</h4><p>KES 120k flagged, stepper Initiated→Verifying→Complete, live elapsed 00:06:12, ETA 1h.</p><div class="chips"><span class="chip">stepper</span><span class="chip">elapsed ticker</span><span class="chip">vault safe</span></div></a>
+
+<a class="tile" href="./error-session-expired.html" target="_blank" style="border-color:#E5E7EB"><div class="ic" style="background:#F3F4F6; border:1px solid #E5E7EB; color:#6B7280"><i class="bi bi-clock-history"></i></div><h4>Session Expired • 15 min</h4><p>Auto-saved draft (M-Pesa 07xx, KES 12k), tick clock animation, resume sign-in, Face ID tip.</p><div class="chips"><span class="chip">tick anim</span><span class="chip">draft saved</span><span class="chip">Face ID</span></div></a>
+</div>
+</div>
+
+<div class="card pd mt-4">
+<h5 style="font-weight:700"><i class="bi bi-check2-square me-2 text-success"></i>What's advanced now vs before?</h5>
+<ul class="list">
+<li><b>Visual:</b> cream-white radial gradients + orbs blur 60px + white cards 28px radius + shadow 20/60 — consistent across 16 pages</li>
+<li><b>Animations:</b> float 8-10s, pulseDot / pulseRed 2s, lockShake, scan, gear 8s spin, flip hourglass 2.2s, rev speedometer 1.2s alt, tick clock, shieldFloat, shimmer, stripes moving</li>
+<li><b>Buttons:</b> emerald gradient lift (-2px) + 20px shadow, red variant for critical, ghost + icon-only info button that rotates 12deg on hover</li>
+<li><b>Info & Pop-ups:</b> ⓘ opens blurred backdrop modal (8px), toast stack top-right 18px, slides in, emerald left border (red for critical), copy buttons show "Copied!"</li>
+<li><b>Reason boxes:</b> redSoft left border 4px, amber warnings, cream reason grid, document status chips (fail/warn)</li>
+<li><b>Mobile:</b> dvh units, 16px wrap padding, 1 column grids, full-width CTAs, toast full-width left/right 12px, inputs 14px touch-friendly</li>
+<li><b>Trust:</b> Every page shows "Funds safe in vault • No charge / No loss" pill, trace ID copy, no wordy paragraphs (≤2 lines sub)</li>
+</ul>
+</div>
+</div>
+
+<div style="max-width:1240px; margin:0 auto; padding:16px 24px 40px; text-align:center; color:var(--ink2); font-size:12px">Paymo BaaS • 16 error pages • Cream #FFFCF5 • Emerald #10b981 • Red #EF4444 • Built responsive • Ready for production</div>
+</body>
+</html>

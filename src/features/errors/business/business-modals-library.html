@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Modals Library — Warning vs Error — DanStack</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:22px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FEF3C7,transparent 50%),var(--cream); min-height:100dvh; margin:0}
+.topbar{padding:18px 24px; max-width:1280px; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.wrap{max-width:1280px; margin:0 auto; padding:10px 24px 40px}
+.card{background:var(--w); border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:18px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
+.tile{border:1px solid var(--bd); border-radius:14px; padding:12px; background:white; cursor:pointer; transition:.2s}
+.tile:hover{transform:translateY(-2px); border-color:#10b981; box-shadow:0 10px 20px rgba(16,185,129,.08)}
+.btn-em{background:linear-gradient(135deg,#10b981,#059669); color:white; border:none; border-radius:10px; padding:8px 14px; font-weight:700; font-size:12px}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:10px; padding:8px 12px; font-weight:600; font-size:12px}
+.modalx{position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(8px); display:none; place-items:center; z-index:10000; padding:16px}
+.modalx.open{display:grid}
+.modal-card{background:white; border-radius:22px; padding:20px; width:100%; max-width:520px; box-shadow:0 30px 80px rgba(0,0,0,.2); animation:rise .35s ease}
+@keyframes rise{from{transform:translateY(12px); opacity:0}to{transform:translateY(0); opacity:1}}
+.badge-warn{padding:5px 10px; border-radius:999px; font-weight:700; font-size:10px; border:1px solid; text-transform:uppercase}
+.type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E}
+.type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C}
+.type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1}
+.reason{border-radius:12px; padding:12px; display:flex; gap:10px; margin:12px 0; text-align:left}
+.permission{border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; align-items:flex-start; margin-top:10px}
+.toast-wrap{position:fixed; top:16px; right:16px; z-index:99999; display:flex; flex-direction:column; gap:8px}
+.toast-card{background:white; border:1px solid #E8E2D9; border-left:4px solid #10b981; border-radius:12px; padding:10px 12px; box-shadow:0 20px 60px rgba(26,31,46,.08); min-width:280px; animation:slide .3s ease}
+@keyframes slide{from{transform:translateX(14px); opacity:0}to{transform:translateX(0); opacity:1}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-window-stack"></i></div> Modals Library • Warning vs Error</div><a href="./index.html" class="btn-ghost text-decoration-none">← Back to Business Index</a></div>
+<div class="wrap">
+<div class="card">
+<h2 style="font-family:Space Grotesk; font-size:22px; font-weight:700; margin:0">Click to open — warning modals (before action) vs error modals (after failure)</h2>
+<div style="font-size:12px; color:#4B5563; margin-top:4px">Warning = permission checkbox + Confirm. Error = after send fails, with retry + vault safe. All same design system we built.</div>
+<div class="grid" style="margin-top:14px">
+
+<div class="tile" onclick="openModal('modal-0')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • BUS-KYC-001</span><i class="bi bi-shield-exclamation" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Business KYC Required</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KYB not started. Complete verification to unlock rails.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-1')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • BUS-KYC-006</span><i class="bi bi-diagram-3" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">UBO Missing</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">>10% shareholders not declared. CBK requires UBO graph.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-2')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • AP-002</span><i class="bi bi-person-check" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Insufficient Approval</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Amount KES 2.4M needs 2 approvers but only 1.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-3')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • AP-004</span><i class="bi bi-bank" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Vendor Bank Details Mismatch</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Bank name 78% match — confirm before payout.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-4')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • BULK-003</span><i class="bi bi-signpost-split" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Bulk Limit Exceeded</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KES 50M/1000 rows limit reached. Split or upgrade.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-5')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • COLL-002</span><i class="bi bi-calculator" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Reconciliation Mismatch</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Expected 200k, got 180k — 20k diff flagged.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-6')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • COLL-003</span><i class="bi bi-link-45deg" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">No Settlement Account</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Collections queue in suspense — no settlement mapping.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-7')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • TR-004</span><i class="bi bi-sign-stop" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Corridor Not Supported</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">USD→UGX corridor not enabled.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-8')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • VA-001</span><i class="bi bi-collection" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">VA Limit Reached</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">500 active VA limit reached.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-9')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • PAY-001</span><i class="bi bi-person-dash" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Terminated Staff</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">3 of 120 terminated in file. Remove or final settlement?</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-10')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • INV-001</span><i class="bi bi-exclamation-diamond" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Overdue Invoices</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">5 overdue KES 89k — BaaS throttled 10 req/s.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-11')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • REP-001</span><i class="bi bi-file-earmark-bar-graph" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Report Timeout</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">217 days too much — split 30 days.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-12')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • SET-001</span><i class="bi bi-person-gear" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Role Permission Conflict</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Admin+Auditor SoD violation.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-13')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-warn">WARNING • OB-001</span><i class="bi bi-shield-check" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Consent Expired</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">90-day PSD2 consent expired.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open warning modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-14')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • TR-001</span><i class="bi bi-water" style="color:#EF4444"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Insufficient Float</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Float KES 124.7M need 150M — top up.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-15')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • BUS-KYC-003</span><i class="bi bi-shield-x" style="color:#EF4444"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">KYC Failed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Registration mismatch — tax PIN invalid.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-16')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • AP-001</span><i class="bi bi-files" style="color:#EF4444"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Duplicate Invoice</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Invoice INV-8841 already exists.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-17')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • BULK-002</span><i class="bi bi-person-x" style="color:#EF4444"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Partial Failure 82/18</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">18 recipients not found — account closed.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-18')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • COLL-001</span><i class="bi bi-shop-window" style="color:#EF4444"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">Till Inactive</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Till 5234123 closed — customers can't pay.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+
+<div class="tile" onclick="openModal('modal-19')">
+<div class="d-flex justify-content-between align-items-center"><span class="badge-warn type-error">ERROR • TR-002</span><i class="bi bi-currency-exchange" style="color:#F59E0B"></i></div>
+<div style="font-weight:700; font-size:13px; margin-top:6px">FX Quote Expired</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Quote 30s expired after PIN 42s.</div>
+<div style="margin-top:6px"><span class="btn-em" style="padding:5px 10px; font-size:11px"><i class="bi bi-eye me-1"></i> Open error modal</span></div>
+</div>
+</div></div>
+<div class="modalx" id="modal-0" onclick="if(event.target.id==='modal-0') closeModal('modal-0')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div><div><b style="font-size:14px">Business KYC Required</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">BUS-KYC-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-0')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">KYB not started. Complete verification to unlock rails.</div>
+
+<div class="permission"><input type="checkbox" id="check-0"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-0')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('BUS-KYC-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-1" onclick="if(event.target.id==='modal-1') closeModal('modal-1')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-diagram-3"></i></div><div><b style="font-size:14px">UBO Missing</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">BUS-KYC-006 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-1')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">>10% shareholders not declared. CBK requires UBO graph.</div>
+
+<div class="permission"><input type="checkbox" id="check-1"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-1')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('BUS-KYC-006')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-2" onclick="if(event.target.id==='modal-2') closeModal('modal-2')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-check"></i></div><div><b style="font-size:14px">Insufficient Approval</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">AP-002 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-2')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Amount KES 2.4M needs 2 approvers but only 1.</div>
+
+<div class="permission"><input type="checkbox" id="check-2"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-2')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('AP-002')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-3" onclick="if(event.target.id==='modal-3') closeModal('modal-3')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-bank"></i></div><div><b style="font-size:14px">Vendor Bank Details Mismatch</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">AP-004 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-3')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Bank name 78% match — confirm before payout.</div>
+
+<div class="permission"><input type="checkbox" id="check-3"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-3')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('AP-004')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-4" onclick="if(event.target.id==='modal-4') closeModal('modal-4')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-signpost-split"></i></div><div><b style="font-size:14px">Bulk Limit Exceeded</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">BULK-003 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-4')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">KES 50M/1000 rows limit reached. Split or upgrade.</div>
+
+<div class="permission"><input type="checkbox" id="check-4"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-4')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('BULK-003')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-5" onclick="if(event.target.id==='modal-5') closeModal('modal-5')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-calculator"></i></div><div><b style="font-size:14px">Reconciliation Mismatch</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">COLL-002 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-5')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Expected 200k, got 180k — 20k diff flagged.</div>
+
+<div class="permission"><input type="checkbox" id="check-5"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-5')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('COLL-002')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-6" onclick="if(event.target.id==='modal-6') closeModal('modal-6')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-link-45deg"></i></div><div><b style="font-size:14px">No Settlement Account</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">COLL-003 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-6')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Collections queue in suspense — no settlement mapping.</div>
+
+<div class="permission"><input type="checkbox" id="check-6"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-6')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('COLL-003')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-7" onclick="if(event.target.id==='modal-7') closeModal('modal-7')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-sign-stop"></i></div><div><b style="font-size:14px">Corridor Not Supported</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">TR-004 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-7')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">USD→UGX corridor not enabled.</div>
+
+<div class="permission"><input type="checkbox" id="check-7"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-7')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('TR-004')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-8" onclick="if(event.target.id==='modal-8') closeModal('modal-8')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-collection"></i></div><div><b style="font-size:14px">VA Limit Reached</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">VA-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-8')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">500 active VA limit reached.</div>
+
+<div class="permission"><input type="checkbox" id="check-8"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-8')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('VA-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-9" onclick="if(event.target.id==='modal-9') closeModal('modal-9')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-dash"></i></div><div><b style="font-size:14px">Terminated Staff</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">PAY-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-9')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">3 of 120 terminated in file. Remove or final settlement?</div>
+
+<div class="permission"><input type="checkbox" id="check-9"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-9')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('PAY-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-10" onclick="if(event.target.id==='modal-10') closeModal('modal-10')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-exclamation-diamond"></i></div><div><b style="font-size:14px">Overdue Invoices</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">INV-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-10')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">5 overdue KES 89k — BaaS throttled 10 req/s.</div>
+
+<div class="permission"><input type="checkbox" id="check-10"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-10')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('INV-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-11" onclick="if(event.target.id==='modal-11') closeModal('modal-11')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-file-earmark-bar-graph"></i></div><div><b style="font-size:14px">Report Timeout</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">REP-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-11')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">217 days too much — split 30 days.</div>
+
+<div class="permission"><input type="checkbox" id="check-11"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-11')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('REP-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-12" onclick="if(event.target.id==='modal-12') closeModal('modal-12')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-gear"></i></div><div><b style="font-size:14px">Role Permission Conflict</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">SET-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-12')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Admin+Auditor SoD violation.</div>
+
+<div class="permission"><input type="checkbox" id="check-12"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-12')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('SET-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-13" onclick="if(event.target.id==='modal-13') closeModal('modal-13')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-check"></i></div><div><b style="font-size:14px">Consent Expired</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-warn">OB-001 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-13')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">90-day PSD2 consent expired.</div>
+
+<div class="permission"><input type="checkbox" id="check-13"><div><b style="font-size:12px">I understand the risk & want to proceed</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-13')">Cancel</button><button class="btn-em" style="flex:1" onclick="confirmAction('OB-001')"><i class="bi bi-check2"></i> Yes, Proceed — Confirm</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> Before send — permission gate</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-14" onclick="if(event.target.id==='modal-14') closeModal('modal-14')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-water"></i></div><div><b style="font-size:14px">Insufficient Float</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">TR-001 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-14')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Float KES 124.7M need 150M — top up.</div>
+
+<div class="reason" style="background:#FEF2F2; border:1px solid #FECACA"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444; font-size:18px"></i><div><b style="font-size:12px">Nostro shortfall 25.3M.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: tr-001_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-14')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TR-001','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-15" onclick="if(event.target.id==='modal-15') closeModal('modal-15')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-shield-x"></i></div><div><b style="font-size:14px">KYC Failed</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">BUS-KYC-003 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-15')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Registration mismatch — tax PIN invalid.</div>
+
+<div class="reason" style="background:#FEF2F2; border:1px solid #FECACA"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444; font-size:18px"></i><div><b style="font-size:12px">BRELA vs KRA name 2 chars mismatch.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: bus-kyc-003_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-15')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying BUS-KYC-003','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-16" onclick="if(event.target.id==='modal-16') closeModal('modal-16')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-files"></i></div><div><b style="font-size:14px">Duplicate Invoice</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">AP-001 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-16')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Invoice INV-8841 already exists.</div>
+
+<div class="reason" style="background:#FEF2F2; border:1px solid #FECACA"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444; font-size:18px"></i><div><b style="font-size:12px">Vendor Equity Suppliers 2 days ago.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: ap-001_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-16')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying AP-001','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-17" onclick="if(event.target.id==='modal-17') closeModal('modal-17')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-person-x"></i></div><div><b style="font-size:14px">Partial Failure 82/18</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">BULK-002 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-17')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">18 recipients not found — account closed.</div>
+
+<div class="reason" style="background:#FEF2F2; border:1px solid #FECACA"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444; font-size:18px"></i><div><b style="font-size:12px">Batch BA_2026_08_05_001 — retry failed 18.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: bulk-002_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-17')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying BULK-002','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-18" onclick="if(event.target.id==='modal-18') closeModal('modal-18')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-shop-window"></i></div><div><b style="font-size:14px">Till Inactive</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">COLL-001 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-18')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Till 5234123 closed — customers can't pay.</div>
+
+<div class="reason" style="background:#FEF2F2; border:1px solid #FECACA"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444; font-size:18px"></i><div><b style="font-size:12px">Safaricom 404 Business permit expired.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: coll-001_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-18')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying COLL-001','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+<div class="modalx" id="modal-19" onclick="if(event.target.id==='modal-19') closeModal('modal-19')">
+<div class="modal-card">
+<div class="d-flex justify-content-between align-items-start"><div class="d-flex gap-2 align-items-center"><div style="width:44px; height:44px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-currency-exchange"></i></div><div><b style="font-size:14px">FX Quote Expired</b><div style="font-size:11px; color:#4B5563"><span class="badge-warn type-error">TR-002 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('modal-19')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:13px; color:#4B5563; margin-top:10px; line-height:1.5">Quote 30s expired after PIN 42s.</div>
+
+<div class="reason" style="background:#FFFBEB; border:1px solid #FDE68A"><i class="bi bi-exclamation-triangle-fill" style="color:#F59E0B; font-size:18px"></i><div><b style="font-size:12px">New rate 129.62 vs 129.45.</b><div style="font-size:11px; color:#4B5563; margin-top:2px">Trace: tr-002_xxxx_KE • Funds safe in vault — no double charge. Retry safe with same idempotency.</div></div></div>
+
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('modal-19')">Cancel</button><button class="btn-em" style="flex:1; background:#F59E0B" onclick="toast('Retrying TR-002','Using safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+<div class="d-flex gap-2 mt-2 justify-content-center"><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-shield-check"></i> Vault safe • No loss</span><span style="padding:4px 8px; border-radius:999px; background:white; border:1px solid #E8E2D9; font-size:10px; font-weight:700"><i class="bi bi-clock-history"></i> After failure — 2.4s wait then fail</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="card" style="margin-top:16px">
+<h3 style="font-size:14px; font-weight:700"><i class="bi bi-info-circle me-1"></i> When to use which?</h3>
+<div style="font-size:12px; color:#4B5563; line-height:1.6">
+<b>Warning Modal (Before Action):</b> User clicks "Pay / Send / Create VA / Submit Bulk". Before calling API, show warning modal with permission checkbox (I understand risk). Example: AP-002 needs 2 approvers, BULK-003 limit exceeded, VA-001 limit reached. No money moved yet, can cancel 100% safe.<br><br>
+<b>Error Full-Page (After Failure):</b> User already confirmed, saw spinner "Processing 2-4s", then API returns error. Navigate to full-page error (like our 38 pages) or show error modal with retry. Shows trace ID + vault safe + no double charge. Example: TR-001 insufficient float — user sent, waited, failed.<br><br>
+<b>Implementation:</b> Copy modal markup to your React component. Replace IDs. Use same CSS variables. Toast + info modal logic already included.
+</div>
+</div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+<script>
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast-card'; e.innerHTML=`<div style="font-weight:700; font-size:12px">${t}</div><div style="font-size:11px; color:#4B5563">${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3000)}
+function confirmAction(code){toast('Confirmed — proceeding','Action '+code+' confirmed with permission');}
+</script>
+</body>
+</html>

@@ -17,7 +17,8 @@
  * ========================================================================== */
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import shared from "../styles/appPage.module.css";
 
 const s = shared as Record<string, string>;

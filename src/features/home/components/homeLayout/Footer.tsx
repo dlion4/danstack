@@ -21,16 +21,7 @@
  * Fully responsive: 5-col → 3-col → 2-col → 1-col across desktop / tablet / mobile.
  */
 
-import {
-  ArrowRight,
-  Github,
-  type LucideIcon,
-  Linkedin,
-  Mail,
-  MessageSquare,
-  Send,
-  Twitter,
-} from "lucide-react";
+import { ArrowRight, Github, type LucideIcon, Linkedin, Mail, MessageSquare, Send, Twitter } from "lucide-react";
 import { useState } from "react";
 import styles from "./Footer.module.css";
 

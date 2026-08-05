@@ -7,11 +7,7 @@
  *   <button>s and call back into the shell.
  * ========================================================================== */
 import { Link } from "@tanstack/react-router";
-import type {
-	AsideKind,
-	CardsLayoutContent,
-	NavItem,
-} from "../data/cardsLayoutData";
+import type { CardsLayoutContent, NavItem } from "../data/cardsLayoutData";
 import { cx } from "../data/cardsLayoutData";
 import styles from "../styles/cardsLayout.module.css";
 import PaymoLogo from "../../../../components/shared/PaymoLogo";
@@ -58,7 +54,7 @@ export default function CardsSidebar({
 		<aside className={classes} aria-label="Cards navigation">
 			<div className={s.brandRow}>
 				<Link
-					to="/cards/cards"
+					to="/cards/app"
 					className={s.brandLink}
 					aria-label="Go to card overview"
 				>
@@ -128,13 +124,8 @@ export default function CardsSidebar({
 										key={item.key}
 										to={
 											item.key === "card-overview"
-												? "/cards/cards"
-												: "/cards/app/$section"
-										}
-										params={
-											item.key === "card-overview"
-												? undefined
-												: { section: item.key }
+												? "/cards/app"
+												: `/cards/app/${item.key}`
 										}
 										className={className}
 										title={item.label}

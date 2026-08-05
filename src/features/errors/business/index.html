@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Business-Dashboard • 38 Error & Warning Pages — DanStack</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --red:#EF4444; --amber:#F59E0B; --blue:#0EA5E9; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:18px; --shadow:0 16px 40px rgba(26,31,46,.07)}
+body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FEF3C7,transparent 50%),var(--cream); min-height:100dvh; margin:0; color:var(--ink)}
+.topbar{padding:20px 24px; max-width:1280px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.hero{max-width:1280px; margin:0 auto; padding:10px 24px 30px}
+.card{background:var(--w); border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:20px}
+.badge-em{padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:#047857; font-weight:700; font-size:11px; text-transform:uppercase}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; margin-top:14px}
+.tile{border:1px solid var(--bd); border-radius:16px; padding:14px; background:var(--w); text-decoration:none; color:inherit; transition:.2s; display:flex; flex-direction:column; gap:8px}
+.tile:hover{transform:translateY(-3px); box-shadow:0 12px 24px rgba(26,31,46,.08); border-color:var(--emerald)}
+.tile .ic{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-size:18px}
+.tile h4{font-size:13.5px; font-weight:700; margin:0; font-family:Space Grotesk,sans-serif; line-height:1.3}
+.tile p{font-size:11.5px; color:var(--ink2); line-height:1.4; margin:0}
+.chip{padding:4px 8px; border-radius:999px; background:white; border:1px solid var(--bd); font-size:10px; font-weight:600}
+.type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E}
+.type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C}
+.type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1}
+.section{margin-top:26px}
+.section h3{font-family:Space Grotesk,sans-serif; font-weight:700; font-size:18px; display:flex; align-items:center; gap:8px; margin-bottom:10px}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:10px 16px; font-weight:700; font-size:13px}
+.explain{font-size:12.5px; color:var(--ink2); line-height:1.6; background:var(--cream); border:1px dashed var(--bd); border-radius:14px; padding:12px; margin-top:12px}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="logo"><div class="logo-mark"><i class="bi bi-briefcase-fill"></i></div> DanStack Business • 38 Pages • Modal + Full-Page</div>
+<div class="d-flex gap-2"><span class="badge-em"><i class="bi bi-check2-all me-1"></i> Cream + Emerald • Advanced</span><a href="./business-modals-library.html" class="btn-em text-decoration-none"><i class="bi bi-window-stack me-1"></i> Open Modals Library</a></div>
+</div>
+
+<div class="hero">
+<div class="card">
+<h1 style="font-family:Space Grotesk; font-size:28px; font-weight:700; margin:0">Business-Dashboard — All Error & Warning Variants</h1>
+<div style="font-size:13.5px; color:var(--ink2); margin-top:6px">Every item from your list built as standalone advanced page (cream #FFFCF5, emerald #10b981, red #EF4444). Separated by UX pattern: <b>Warning Modal (Before Action)</b> needs permission checkbox → then action. <b>Error Full-Page (After Failure)</b> shows after send & wait few seconds → fails. <b>Info Hold</b> = queued review.</div>
+
+<div class="explain">
+<b>How to use each:</b><br>
+• <span class="chip type-warn">WARNING Modal</span> → In-page popup. Trigger when user clicks "Send/Pay/Create". Requires tick "I understand risk" + Confirm. No money moved yet. Example: AP-002 Maker-Checker, BULK-003 Limit Exceeded, VA-001 Limit Reached.<br>
+• <span class="chip type-error">ERROR Full-Page</span> → User sent money, waited few seconds (spinner), then payment fails → show full error page with trace + retry. Example: TR-001 Insufficient Float, COLL-001 Till Inactive, PAY-002 PAYE Mismatch.<br>
+• <span class="chip type-info">INFO HOLD</span> → After send, goes to review queue (processing-hold twin). Shows timer, steps. Example: BUS-KYC-002 Under Review.
+</div>
+
+<div class="section">
+<h3><i class="bi bi-shield-check text-success"></i> A. Business Onboarding / KYC — 9 Pages</h3>
+<div class="grid">
+<a class="tile" href="./bus-kyc-001-business-kyc-required.html"><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div><h4>BUS-KYC-001 • KYC Required <span class="chip type-warn">WARNING MODAL</span></h4><p>Tries to transact but KYB not started. CTA to start verification. Before-action warning.</p><div><span class="chip">CTA: Start Verification</span></div></a>
+<a class="tile" href="./bus-kyc-002-under-review.html"><div class="ic" style="background:#F0F9FF; border:1px solid #BAE6FD; color:#0EA5E9"><i class="bi bi-hourglass-split"></i></div><h4>BUS-KYC-002 • Under Review <span class="chip type-info">INFO HOLD PAGE</span></h4><p>Docs uploaded, AI 87% + manual pending 1-4h. Timer + vault safe.</p><div><span class="chip">Steps: Submitted → Verifying → Done</span></div></a>
+<a class="tile" href="./bus-kyc-003-kyc-failed.html"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-shield-x"></i></div><h4>BUS-KYC-003 • KYC Failed <span class="chip type-error">ERROR PAGE</span></h4><p>Registration mismatch, tax PIN invalid. Blurred doc reason like KYC-failed page. After submit fail.</p></a>
+<a class="tile" href="./bus-kyc-004-suspicion-pep.html"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-person-bounding-box"></i></div><h4>BUS-KYC-004 • Suspicion PEP <span class="chip type-error">ERROR PAGE</span></h4><p>Director flagged PEP/sanctions. Needs interview. Critical amber.</p></a>
+<a class="tile" href="./bus-kyc-005-docs-expired.html"><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-calendar-x"></i></div><h4>BUS-KYC-005 • Docs Expired <span class="chip type-warn">WARNING MODAL</span></h4><p>CR12 >1yr, ID expired. List expiry dates. Before transaction block.</p></a>
+<a class="tile" href="./bus-kyc-006-ubo-missing.html"><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-diagram-3"></i></div><h4>BUS-KYC-006 • UBO Missing <span class="chip type-warn">WARNING MODAL</span></h4><p>>10% shareholders not declared. CBK needs UBO graph. Add owner flow.</p></a>
+<a class="tile" href="./bus-kyc-007-director-liveness-failed.html"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-camera-video-off"></i></div><h4>BUS-KYC-007 • Director Liveness Failed <span class="chip type-error">ERROR PAGE</span></h4><p>Face liveness 42%. Re-upload selfie + ID after failure.</p></a>
+<a class="tile" href="./bus-kyc-008-tin-mismatch.html"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-receipt-cutoff"></i></div><h4>BUS-KYC-008 • TIN/KRA Mismatch <span class="chip type-error">ERROR PAGE</span></h4><p>KRA API PIN not found. Name mismatch BRELA vs KRA.</p></a>
+<a class="tile" href="./bus-kyc-009-address-failed.html"><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-geo-alt"></i></div><h4>BUS-KYC-009 • Address Failed <span class="chip type-error">ERROR PAGE</span></h4><p>Proof address mismatch HQ. Bill vs registration diff.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-journal-text text-primary"></i> B. Accounts-Payable — 4 Pages</h3>
+<div class="grid">
+<a class="tile" href="./ap-001-duplicate-invoice.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-files"></i></div><h4>AP-001 • Duplicate Invoice <span class="chip type-error">ERROR PAGE</span></h4><p>INV already exists for vendor. Shows original ID + idempotency.</p></a>
+<a class="tile" href="./ap-002-maker-checker.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-person-check"></i></div><h4>AP-002 • Maker-Checker <span class="chip type-warn">WARNING MODAL</span></h4><p>KES 2.4M needs 2 approvers, only 1. Timeline before posting.</p></a>
+<a class="tile" href="./ap-003-vendor-blacklisted.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-slash-circle"></i></div><h4>AP-003 • Vendor Blacklisted <span class="chip type-error">ERROR PAGE</span></h4><p>OFAC 92% match. Compliance block after submit.</p></a>
+<a class="tile" href="./ap-004-bank-details-mismatch.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-bank"></i></div><h4>AP-004 • Bank Details Mismatch <span class="chip type-warn">WARNING MODAL</span></h4><p>Account name 78% match. Confirm before payout — permission modal.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-cloud-upload text-warning"></i> C. Bulk Disbursements — 5 Pages</h3>
+<div class="grid">
+<a class="tile" href="./bulk-001-csv-validation-failed.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-filetype-csv"></i></div><h4>BULK-001 • CSV Validation Failed <span class="chip type-error">ERROR PAGE + INLINE TABLE</span></h4><p>12/100 rows invalid. Shows row numbers after upload fail.</p></a>
+<a class="tile" href="./bulk-002-partial-failure.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-person-x"></i></div><h4>BULK-002 • Partial Failure 82/18 <span class="chip type-error">ERROR PAGE</span></h4><p>Cannot fetch end recipient 18 failed. Success settled, failed not moved.</p></a>
+<a class="tile" href="./bulk-003-limit-exceeded.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-signpost-split"></i></div><h4>BULK-003 • Bulk Limit Exceeded <span class="chip type-warn">WARNING MODAL</span></h4><p>KES 50M/1000 rows limit. Split or upgrade before submit.</p></a>
+<a class="tile" href="./bulk-004-duplicate-batch.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-copy"></i></div><h4>BULK-004 • Duplicate Batch <span class="chip type-error">ERROR PAGE</span></h4><p>Same hash twice. Original batch shows. Idempotent safe.</p></a>
+<a class="tile" href="./bulk-005-pin-locked.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-keyboard"></i></div><h4>BULK-005 • PIN Locked 3x <span class="chip type-error">ERROR PAGE</span></h4><p>Approver PIN 3x wrong — locked 15 min. After attempt fail.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-shop-window"></i> D. Collections / Merchant — 3 Pages</h3>
+<div class="grid">
+<a class="tile" href="./coll-001-till-inactive.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-shop-window"></i></div><h4>COLL-001 • Till Inactive <span class="chip type-error">ERROR PAGE</span></h4><p>Till 5234123 closed Safaricom 404. Customers can't pay.</p></a>
+<a class="tile" href="./coll-002-reconciliation-mismatch.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-calculator"></i></div><h4>COLL-002 • Reconciliation Mismatch <span class="chip type-warn">WARNING MODAL</span></h4><p>Expected 200k, got 180k. Discrepancy before settlement.</p></a>
+<a class="tile" href="./coll-003-no-settlement-account.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-link-45deg"></i></div><h4>COLL-003 • No Settlement Account <span class="chip type-warn">WARNING MODAL</span></h4><p>Collections incoming but no mapping — queue in suspense.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-currency-exchange text-success"></i> E. Treasury & Multi-Currency — 5 Pages</h3>
+<div class="grid">
+<a class="tile" href="./tr-001-insufficient-float.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-water"></i></div><h4>TR-001 • Insufficient Float <span class="chip type-error">ERROR PAGE</span></h4><p>Kes 124.7M float need 150M. After send attempt, fails.</p></a>
+<a class="tile" href="./tr-002-fx-quote-expired.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-currency-exchange"></i></div><h4>TR-002 • FX Quote Expired <span class="chip type-error">ERROR PAGE</span></h4><p>Quote 30s, user took 42s after PIN. Expired mid-tx.</p></a>
+<a class="tile" href="./tr-003-rate-deviation.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-graph-up-arrow"></i></div><h4>TR-003 • Rate Deviation >2% <span class="chip type-error">ERROR PAGE</span></h4><p>Rate moved 2.3% needs re-quote. Compliance block.</p></a>
+<a class="tile" href="./tr-004-corridor-not-supported.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-sign-stop"></i></div><h4>TR-004 • Corridor Not Supported <span class="chip type-warn">WARNING MODAL</span></h4><p>USD→UGX not enabled. Request activation before send.</p></a>
+<a class="tile" href="./tr-005-compliance-hold-corridor.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-shield-exclamation"></i></div><h4>TR-005 • Compliance Hold Sanctioned <span class="chip type-error">ERROR PAGE</span></h4><p>OFAC 95% match sanctioned country. Manual 24h review.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-collection"></i> F. Virtual Accounts — 2 Pages</h3>
+<div class="grid">
+<a class="tile" href="./va-001-limit-reached.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-collection"></i></div><h4>VA-001 • Limit Reached 500 <span class="chip type-warn">WARNING MODAL</span></h4><p>500 active limit Growth tier. Archive or upgrade before create.</p></a>
+<a class="tile" href="./va-002-duplicate-reference.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-hash"></i></div><h4>VA-002 • Duplicate Reference <span class="chip type-error">ERROR PAGE</span></h4><p>Ref ACC-123 already used. Unique required.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-people"></i> G. Payroll / HR — 3 Pages</h3>
+<div class="grid">
+<a class="tile" href="./pay-001-terminated-staff.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-person-dash"></i></div><h4>PAY-001 • Terminated Staff <span class="chip type-warn">WARNING MODAL</span></h4><p>3 of 120 terminated. Remove or final settlement — before payroll run.</p></a>
+<a class="tile" href="./pay-002-paye-mismatch.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-receipt"></i></div><h4>PAY-002 • PAYE Mismatch <span class="chip type-error">ERROR PAGE</span></h4><p>KRA PIN invalid vs name. Blocked after payroll attempt.</p></a>
+<a class="tile" href="./pay-003-staff-pin-locked.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-lock"></i></div><h4>PAY-003 • Staff PIN Locked 3x <span class="chip type-error">ERROR PAGE</span></h4><p>Employee PIN 3x wrong to view payslip. Locked 15 min.</p></a>
+</div>
+</div>
+
+<div class="section">
+<h3><i class="bi bi-gear"></i> H. Invoicing / Reporting / Settings / Support / Open Banking — 7 Pages</h3>
+<div class="grid">
+<a class="tile" href="./inv-001-overdue-limit.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-exclamation-diamond"></i></div><h4>INV-001 • Overdue Invoices Limit <span class="chip type-warn">WARNING MODAL</span></h4><p>5 overdue KES 89k — BaaS throttled 10 req/s. Pay before action.</p></a>
+<a class="tile" href="./rep-001-report-timeout.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-file-earmark-bar-graph"></i></div><h4>REP-001 • Report Timeout <span class="chip type-warn">WARNING MODAL</span></h4><p>217 days too much — split 30 days before generation.</p></a>
+<a class="tile" href="./set-001-role-conflict.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-person-gear"></i></div><h4>SET-001 • Role Conflict <span class="chip type-warn">WARNING MODAL</span></h4><p>Admin+Auditor SoD violation — can't assign both.</p></a>
+<a class="tile" href="./set-002-two-man-rule-violation.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-people"></i></div><h4>SET-002 • Two-Man Rule <span class="chip type-error">ERROR PAGE</span></h4><p>Maker = checker same user — blocked after approve attempt.</p></a>
+<a class="tile" href="./sup-001-dispute-window-expired.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-flag"></i></div><h4>SUP-001 • Dispute Window Expired <span class="chip type-error">ERROR PAGE</span></h4><p>Evidence window 21 days ended 7 days over — auto loss.</p></a>
+<a class="tile" href="./ob-001-consent-expired.html"><div class="ic" style="background:#FFFBEB; color:#F59E0B; border:1px solid #FDE68A"><i class="bi bi-shield-check"></i></div><h4>OB-001 • Consent Expired <span class="chip type-warn">WARNING MODAL</span></h4><p>90-day PSD2 consent expired — re-auth before fetch.</p></a>
+<a class="tile" href="./ob-002-provider-unavailable.html"><div class="ic" style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA"><i class="bi bi-wifi-off"></i></div><h4>OB-002 • Provider Unavailable <span class="chip type-error">ERROR PAGE</span></h4><p>KCB API 503 maintenance — after fetch attempt fails.</p></a>
+</div>
+</div>
+
+</div>
+
+<div style="max-width:1280px; margin:20px auto; padding:0 24px" class="card">
+<h5 style="font-weight:700; font-size:14px"><i class="bi bi-lightbulb me-1"></i> Integration Guide — Modal vs Full-Page</h5>
+<div style="font-size:12px; color:var(--ink2); line-height:1.6">
+<b>WARNING modal (before action):</b> Trigger on button click → show modal with permission checkbox (I understand risk) → Confirm → then call API. All warning pages include <code>#confirmCheck</code> checkbox + toast "Confirmed". Use for AP-002, AP-004, BULK-003, VA-001, SET-001, etc.<br><br>
+<b>ERROR full-page (after failure):</b> User already clicked Send → show spinner 2-3s → API returns error → navigate to error page variant we built. Shows trace ID, no double-charge guard, retry. Use for TR-001 Insufficient Float, COLL-001 Till Inactive, PAY-002 PAYE Mismatch, etc.<br><br>
+<b>INFO HOLD:</b> After send, status = VERIFYING → show hold page like processing-hold with elapsed ticker + ETA + vault safe. Use for BUS-KYC-002 Under Review.<br><br>
+All pages already have same design system: cream #FFFCF5, emerald gradient btn, red/amber/blue accents, toast top-right, info modal blurred, mobile responsive with full-width buttons.
+</div>
+</div>
+</body>
+</html>

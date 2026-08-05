@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card-Dashboard • 22 Error Pages — DanStack</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:18px; --shadow:0 16px 40px rgba(26,31,46,.07)}
+body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FEF3C7,transparent 50%),var(--cream); min-height:100dvh; margin:0; color:var(--ink)}
+.topbar{padding:20px 24px; max-width:1280px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.hero{max-width:1280px; margin:0 auto; padding:10px 24px 30px}
+.card{background:var(--w); border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:20px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; margin-top:14px}
+.tile{border:1px solid var(--bd); border-radius:16px; padding:14px; background:var(--w); text-decoration:none; color:inherit; transition:.2s; display:flex; flex-direction:column; gap:8px}
+.tile:hover{transform:translateY(-3px); box-shadow:0 12px 24px rgba(26,31,46,.08); border-color:#10b981}
+.badge-em{padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:#047857; font-weight:700; font-size:11px; text-transform:uppercase}
+.chip{padding:4px 8px; border-radius:999px; background:white; border:1px solid var(--bd); font-size:10px; font-weight:600}
+.type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E}
+.type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C}
+.type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:10px 16px; font-weight:700; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:6px}
+</style></head><body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-lightning-charge-fill"></i></div> DanStack Card • 22 Pages</div><span class="badge-em">Cream + Emerald • 22</span></div>
+<div class="hero"><div class="card">
+<h1 style="font-family:Space Grotesk; font-size:26px; font-weight:700; margin:0">Card-Dashboard • 22 Error Pages</h1>
+<div style="font-size:13px; color:#4B5563; margin-top:6px">Virtual, physical, corporate, BAAS cards, security fraud, spending limits, 3DS, PIN 3x, international block, etc. Warning before create/enable vs Error after auth fail.</div>
+<div class="grid" style="margin-top:16px">
+
+<a class="tile" href="./card-400-01-virtual-limit-reached.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-400-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-credit-card-2-front"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Virtual Card Creation Limit Reached</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">100 active virtual cards max per tier reached — archive or upgrade before create.</div>
+</a>
+
+<a class="tile" href="./card-402-01-funding-failed.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-402-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-wallet2"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Funding Failed — Source Insufficient</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KES float KES 8k, card needs KES 12k to fund — source insufficient after PIN.</div>
+</a>
+
+<a class="tile" href="./card-403-01-kyc-tier-insufficient.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-403-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">KYC Tier Insufficient for Card Issuance</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Personal KYC tier 1, need tier 2 for USD virtual cards — upgrade KYC before issuance.</div>
+</a>
+
+<a class="tile" href="./card-403-02-merchant-blocked.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-403-02</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-shop"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Transaction — Merchant Category Blocked</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Gambling/crypto MCC 7995 blocked by company policy — transaction declined after auth.</div>
+</a>
+
+<a class="tile" href="./card-403-03-international-blocked.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-403-03</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-globe"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">International Transaction Blocked</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Card not enabled for international — toggle off. Attempted USD 50 Amazon flagged.</div>
+</a>
+
+<a class="tile" href="./card-403-04-frozen-fraud.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-403-04</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-shield-lock"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Frozen Due To Fraud — Suspicious Spending</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">$500 Amazon unusual spend flagged — card auto-frozen 12 min ago, vault safe.</div>
+</a>
+
+<a class="tile" href="./card-401-01-3ds-failed.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-401-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-shield-check"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card 3D Secure Failed / OTP Wrong</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">3D Secure 2.0 OTP 3x wrong — authentication failed after 2s wait, transaction declined.</div>
+</a>
+
+<a class="tile" href="./card-401-02-pin-3x-blocked.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-401-02</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-keypad"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Physical Card PIN Attempts Exceeded — Blocked</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">ATM PIN 3x wrong — card blocked needs reset via app. Physical card locked.</div>
+</a>
+
+<a class="tile" href="./card-410-01-expired.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-410-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-calendar-x"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Expired</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Virtual card expired Dec 2025 — cannot fund. Create new card or renew.</div>
+</a>
+
+<a class="tile" href="./card-404-01-delivery-address-invalid.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-404-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-geo-alt"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Delivery Address Invalid — Physical</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">DHL can't find address — Ruiru, Kiambu address invalid or incomplete.</div>
+</a>
+
+<a class="tile" href="./card-402-02-limit-exceeded.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-402-02</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-graph-up-arrow"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Spending Limit Exceeded — Daily/Monthly</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KES 200k daily limit reached at 11:42 — reset midnight. Current KES 210k attempted.</div>
+</a>
+
+<a class="tile" href="./card-409-01-already-exists-employee.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-409-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-people"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Already Exists for Employee</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Corporate card duplicate for same staff email jane@ — already has active card.</div>
+</a>
+
+<a class="tile" href="./card-402-03-chargeback-disputed.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-info">INFO-HOLD • CARD-402-03</span><div style="width:36px; height:36px; border-radius:10px; background:#F0F9FF; border:1px solid #BAE6FD; display:grid; place-items:center; color:#0EA5E9"><i class="bi bi-flag"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Chargeback Initiated / Disputed Transaction</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Customer disputes $120 transaction — card hold KES 15k pending dispute 7-14 days.</div>
+</a>
+
+<a class="tile" href="./card-401-03-cvv-attempts-exceeded.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-401-03</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-lock"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">CVV Attempts Exceeded — Security Lock</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">CVV tried 5x wrong online — security lock 30 min, card temporarily blocked online.</div>
+</a>
+
+<a class="tile" href="./card-500-01-processor-down.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-500-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-cpu"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Processor Down — Scheme Maintenance</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Visa/Mastercard processor maintenance — card transactions fail 503, ETR 45 min.</div>
+</a>
+
+<a class="tile" href="./card-403-05-program-inactive.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-403-05</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-pause-circle"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">BAAS Card Program Inactive / Suspended</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Your card program not active — suspended for compliance review. Cannot issue cards.</div>
+</a>
+
+<a class="tile" href="./card-404-02-employee-not-whitelisted.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-404-02</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-dash"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Employee Not Whitelisted for Corporate Card</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Not in allowed list for corporate card — HR policy restricts. Whitelist before issuance.</div>
+</a>
+
+<a class="tile" href="./card-400-02-program-limit-high.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-400-02</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-exclamation-diamond"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Program Limit — Single Card Limit Too High</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Trying to set $50k but max $10k per program policy — reduce limit before create.</div>
+</a>
+
+<a class="tile" href="./card-403-06-not-activated.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-403-06</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-phone"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Not Activated</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Physical card not activated via app — activate before first use. Scan QR + set PIN.</div>
+</a>
+
+<a class="tile" href="./card-402-04-min-topup-failed.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-402-04</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-plus-circle"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Minimum Top-up Failed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Needs KES 500 min top-up — you tried KES 100. Below minimum — fix amount.</div>
+</a>
+
+<a class="tile" href="./card-403-07-settings-conflict.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-warn">WARNING • CARD-403-07</span><div style="width:36px; height:36px; border-radius:10px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-gear"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Settings Conflict — Cannot Enable Both</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Can't enable ATM + Ecomm off — settings conflict. Choose compatible combo.</div>
+</a>
+
+<a class="tile" href="./card-408-01-personalization-failed.html">
+<div style="display:flex; justify-content:space-between"><span class="chip type-error">ERROR • CARD-408-01</span><div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-printer"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Card Personalization Failed — Print Error</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Physical card printer error — chip encoding failed. Re-order with same details, no charge.</div>
+</a>
+</div></div></div></body></html>

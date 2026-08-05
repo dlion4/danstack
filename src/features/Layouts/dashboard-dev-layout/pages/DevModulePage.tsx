@@ -27,10 +27,10 @@ interface DevModulePageProps {
 
 // Modules that have a matching quick-access context panel in the right aside.
 const ASIDE_FOR: Record<string, AsideKind> = {
-	"api-keys": "apiKeys",
-	explorer: "apiExplorer",
-	servers: "systemStatus",
-	metrics: "systemStatus",
+	"api-governance": "apiKeys",
+	"api-reference": "apiExplorer",
+	"monitoring-incidents": "systemStatus",
+	security: "securityTab",
 };
 
 export default function DevModulePage({ module }: DevModulePageProps) {

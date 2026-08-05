@@ -1,0 +1,21 @@
+/* Card 401-01 - 3DS Failed - Specific Styles */
+@import '../../../features/errors/styles/ErrorPageShared.module.css';
+
+/* RED Theme Overrides */
+:root {
+  --theme-bg-gradient-1: #FEE2E2;
+  --theme-bg-gradient-2: #D1FAE5;
+  --theme-logo-gradient-1: #EF4444;
+  --theme-logo-gradient-2: #F87171;
+  --theme-top-line-gradient-1: #EF4444;
+  --theme-top-line-gradient-2: #F87171;
+  --theme-icon-bg: #FEF2F2;
+  --theme-icon-border: #FECACA;
+  --theme-icon-color: #EF4444;
+  --theme-badge-bg: #FEF2F2;
+  --theme-badge-border: #FECACA;
+  --theme-badge-color: #B91C1C;
+  --theme-reason-bg: #FEF2F2;
+  --theme-reason-border: #FECACA;
+  --theme-reason-accent: #EF4444;
+}

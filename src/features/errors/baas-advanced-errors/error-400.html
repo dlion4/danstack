@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>400 • Bad Request — Paymo BaaS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+ --cream:#FFFCF5; --cream-2:#FDF6E9; --cream-3:#F5F1EC;
+ --emerald:#10b981; --emerald-600:#059669; --emerald-700:#047857; --emerald-soft:#D1FAE5; --emerald-ghost:#ECFDF5;
+ --red:#EF4444; --red-soft:#FEF2F2; --red-border:#FECACA; --red-dark:#B91C1C;
+ --ink:#1A1F2E; --ink-2:#4B5563; --ink-3:#9CA3AF; --border:#E8E2D9; --white:#FFF;
+ --r-xl:28px; --r-lg:18px; --r-md:12px;
+ --shadow:0 20px 60px rgba(26,31,46,.08),0 4px 16px rgba(26,31,46,.04);
+}
+*{box-sizing:border-box}
+body{
+ font-family:'Inter',system-ui,sans-serif;
+ background: radial-gradient(1200px 600px at 20% -10%, #D1FAE5 0%, transparent 60%),
+             radial-gradient(900px 500px at 90% 10%, #FEF3C7 0%, transparent 50%),
+             var(--cream);
+ color:var(--ink);
+ min-height:100dvh; margin:0;
+ display:flex; flex-direction:column;
+ overflow-x:hidden;
+}
+/* header */
+.topbar{padding:20px 24px; display:flex; justify-content:space-between; align-items:center; max-width:1200px; width:100%; margin:0 auto}
+.logo{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.02em}
+.logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--emerald),var(--emerald-600)); display:grid; place-items:center; color:white; box-shadow:0 6px 16px rgba(16,185,129,.3)}
+.orb{position:fixed; border-radius:50%; filter:blur(60px); pointer-events:none; opacity:.55; z-index:-1}
+.orb1{width:420px; height:420px; background:#A7F3D0; top:-80px; left:-80px; animation:float 8s ease-in-out infinite}
+.orb2{width:540px; height:540px; background:#FDE68A; bottom:-120px; right:-80px; animation:float 10s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-18px) scale(1.05)}}
+
+/* card */
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--white); border:1px solid var(--border); border-radius:var(--r-xl); box-shadow:var(--shadow); width:100%; max-width:720px; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)}
+@keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.card-head{padding:22px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px}
+.badge-err{background:var(--red-soft); border:1px solid var(--red-border); color:var(--red-dark); font-weight:700; font-size:11px; letter-spacing:.06em; text-transform:uppercase; padding:6px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:6px}
+.badge-err .dot{width:7px; height:7px; border-radius:50%; background:var(--red); animation:pulseDot 1.5s infinite}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}70%{box-shadow:0 0 0 8px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.icon-stack{width:76px; height:76px; border-radius:22px; background:var(--red-soft); border:1px solid var(--red-border); color:var(--red); display:grid; place-items:center; font-size:32px; position:relative; animation:shakeSoft 4s ease-in-out infinite}
+.icon-stack::after{content:''; position:absolute; inset:-8px; border-radius:28px; border:1.5px dashed var(--red-border); animation:spinSlow 18s linear infinite}
+@keyframes shakeSoft{0%,90%,100%{transform:rotate(0)}92%{transform:rotate(-6deg)}94%{transform:rotate(6deg)}96%{transform:rotate(-3deg)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.title{font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; letter-spacing:-.02em; margin:6px 0 8px}
+.sub{color:var(--ink-2); font-size:14.5px; line-height:1.6}
+.code-panel{background:#0F172A; border-radius:var(--r-lg); padding:18px 18px 16px; position:relative; overflow:hidden; margin-top:16px}
+.code-panel::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),#F59E0B)}
+.code-top{display:flex; justify-content:space-between; align-items:center; color:#94A3B8; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:12px}
+.code{font-family:'JetBrains Mono',monospace; font-size:12.8px; color:#E2E8F0; white-space:pre-wrap; word-break:break-word; line-height:1.65; margin:0}
+.hl{color:#F87171}
+.k{color:#93C5FD}
+.v{color:#A7F3D0}
+.reason-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
+.reason{background:var(--cream); border:1px solid var(--border); border-radius:var(--r-md); padding:12px 14px; display:flex; gap:10px; align-items:flex-start}
+.reason i{width:28px; height:28px; border-radius:8px; background:var(--white); border:1px solid var(--border); display:grid; place-items:center; color:var(--red); flex-shrink:0}
+.reason b{font-size:12px; display:block} .reason span{font-size:12px; color:var(--ink-2); line-height:1.4}
+
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--border); display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--emerald-600)); color:white; border:none; border-radius:12px; padding:12px 20px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:inline-flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); box-shadow:0 12px 26px rgba(16,185,129,.36); color:white}
+.btn-em:active{transform:translateY(0) scale(.98)}
+.btn-ghost{background:var(--white); border:1px solid var(--border); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px; color:var(--ink); transition:.2s}
+.btn-ghost:hover{border-color:var(--ink-3); transform:translateY(-1px)}
+.btn-icon{width:42px; height:42px; border-radius:11px; border:1px solid var(--border); background:var(--white); display:grid; place-items:center; transition:.2s; color:var(--ink-2)}
+.btn-icon:hover{border-color:var(--emerald); color:var(--emerald); transform:rotate(12deg)}
+
+/* toast & modal */
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:10px}
+.toast{background:white; border:1px solid var(--border); border-left:4px solid var(--emerald); border-radius:12px; box-shadow:var(--shadow); padding:12px 14px; display:flex; gap:10px; min-width:300px; max-width:360px; animation:slideIn .4s ease}
+@keyframes slideIn{from{transform:translateX(18px); opacity:0}to{transform:translateX(0); opacity:1}}
+.modalx{position:fixed; inset:0; background:rgba(15,23,42,.4); backdrop-filter:blur(8px); display:none; place-items:center; z-index:10000; padding:16px}
+.modalx.open{display:grid}
+.modal-card{background:white; border-radius:22px; padding:22px; width:100%; max-width:460px; box-shadow:0 30px 80px rgba(0,0,0,.2); animation:rise .35s ease}
+.chip{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:var(--emerald-ghost); color:var(--emerald-700); font-weight:700; font-size:11px; letter-spacing:.04em; border:1px solid #A7F3D0}
+.trace{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--ink-3)}
+.trace code{background:var(--cream-3); padding:4px 8px; border-radius:8px; border:1px solid var(--border); color:var(--ink)}
+.copy-ok{color:var(--emerald-600); font-weight:700; font-size:11px; opacity:0; transition:.2s}
+.copy-ok.show{opacity:1}
+
+@media(max-width:640px){
+ .card-head{padding:18px 18px; flex-direction:column; align-items:flex-start}
+ .title{font-size:22px}
+ .reason-grid{grid-template-columns:1fr}
+ .actions{padding:16px 18px; gap:8px}
+ .btn-em,.btn-ghost{flex:1; justify-content:center}
+ .toast-wrap{left:12px; right:12px; top:12px} .toast{min-width:0; width:100%}
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+
+<div class="topbar">
+  <div class="logo"><div class="logo-mark"><i class="bi bi-lightning-charge-fill"></i></div> Paymo BaaS</div>
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn-icon" id="infoBtn" title="Why this happened?"><i class="bi bi-info-lg"></i></button>
+    <a href="/docs" class="btn-ghost text-decoration-none d-none d-sm-inline-flex"><i class="bi bi-book"></i> Docs</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="cardx">
+    <div class="card-head">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="icon-stack"><i class="bi bi-braces"></i></div>
+        <div>
+          <div class="badge-err"><span class="dot"></span> 400 • Validation Failed</div>
+          <div class="title">Check your request</div>
+          <div class="sub">Your payload failed schema validation. Don't worry — here's exactly what to fix.</div>
+        </div>
+      </div>
+      <button class="btn-icon d-none d-md-grid" id="copyTraceBtn" title="Copy Trace ID"><i class="bi bi-clipboard"></i></button>
+    </div>
+
+    <div class="p-3 p-md-4">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
+        <div class="chip"><i class="bi bi-code-slash"></i> API Error Response</div>
+        <div class="d-flex align-items-center gap-2"><span class="copy-ok" id="copyOk">Copied!</span><button class="btn-ghost" style="padding:6px 10px; font-size:12px" onclick="copyCode()"><i class="bi bi-clipboard me-1"></i>Copy JSON</button></div>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-top"><span><i class="bi bi-circle-fill text-danger me-1" style="font-size:7px"></i>paymo_api • v2/transfers</span><span id="liveClock">--:--:--</span></div>
+<pre class="code" id="codeBlock">{
+  "<span class="k">status</span>": "<span class="hl">error</span>",
+  "<span class="k">code</span>": "<span class="hl">VALIDATION_FAILED</span>",
+  "<span class="k">message</span>": "<span class="v">Missing required field: routing_number</span>",
+  "<span class="k">errors</span>": [
+    { "<span class="k">field</span>": "<span class="v">routing_number</span>", "<span class="k">reason</span>": "<span class="v">Required for KES bank transfers</span>" },
+    { "<span class="k">field</span>": "<span class="v">amount</span>", "<span class="k">reason</span>": "<span class="v">Must be &gt; 0 and &lt;= 5,000,000</span>" }
+  ],
+  "<span class="k">trace_id</span>": "<span class="v" id="traceVal">api_9921_x88_KE</span>",
+  "<span class="k">hint</span>": "<span class="v">Use IBAN for foreign, routing_number for KES</span>"
+}</pre>
+      </div>
+
+      <div class="reason-grid">
+        <div class="reason"><i><i class="bi bi-input-cursor"></i></i><div><b>Missing field</b><span>routing_number not sent — required for local KES rails</span></div></div>
+        <div class="reason"><i style="color:#D97706"><i class="bi bi-123"></i></i><div><b>Invalid amount</b><span>Send a positive number without commas</span></div></div>
+        <div class="reason"><i style="color:var(--emerald)"><i class="bi bi-shield-check"></i></i><div><b>Fix is safe</b><span>No funds moved. Correct payload and retry</span></div></div>
+        <div class="reason"><i style="color:#6366F1"><i class="bi bi-lightbulb"></i></i><div><b>Pro tip</b><span>Validate with /v1/validate before submit</span></div></div>
+      </div>
+
+      <div class="trace"><i class="bi bi-fingerprint text-muted"></i> Trace ID: <code id="traceCode">api_9921_x88_KE</code> <span class="ms-auto d-flex align-items-center gap-2"><span class="badge bg-light text-dark border">KES • Local</span><span class="badge" style="background:var(--emerald-ghost); color:var(--emerald-700); border:1px solid #A7F3D0">No charge</span></span></div>
+    </div>
+
+    <div class="actions">
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn-em" onclick="showToast('Re-validating payload...','Checking schema','emerald')"><i class="bi bi-wrench-adjustable"></i> Fix Request</button>
+        <a href="/docs" class="btn-ghost text-decoration-none"><i class="bi bi-box-arrow-up-right me-1"></i> API Docs</a>
+        <button class="btn-ghost d-md-none" onclick="copyTrace()"><i class="bi bi-clipboard"></i> Copy ID</button>
+      </div>
+      <div class="text-muted small d-flex align-items-center gap-2"><i class="bi bi-clock-history"></i> Detected 2 sec ago • <a href="/" class="text-decoration-none" style="color:var(--emerald-600); font-weight:600">Dashboard</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div class="modalx" id="infoModal">
+  <div class="modal-card">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div class="d-flex gap-3 align-items-center"><div style="width:44px;height:44px;border-radius:12px;background:var(--emerald-ghost);color:var(--emerald-700);display:grid;place-items:center;font-size:20px"><i class="bi bi-info-circle-fill"></i></div><div><b>Why 400 happens?</b><div class="small text-muted">Friendly explainer</div></div></div>
+      <button class="btn-icon" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="small" style="line-height:1.7; color:var(--ink-2)">
+      <p class="mb-2">This is a <b>client-side validation error</b> — your server sent JSON that doesn't match Paymo's schema.</p>
+      <ul class="ps-3 mb-3"><li>Missing required keys (like <code>routing_number</code> for KES)</li><li>Wrong type (string vs number)</li><li>Whitespace or trailing commas</li></ul>
+      <div class="p-3 rounded-3" style="background:var(--cream); border:1px dashed var(--border)"><i class="bi bi-magic me-1 text-warning"></i><b>Quick fix:</b> Open API docs → copy example payload → replace with your data → retry. No money was moved.</div>
+    </div>
+    <div class="d-grid mt-3"><button class="btn-em justify-content-center" onclick="closeModal()">Got it — fix my payload</button></div>
+  </div>
+</div>
+
+<script>
+const trace = 'api_' + Math.random().toString(36).slice(2,8) + '_x88';
+document.getElementById('traceVal').textContent=trace;
+document.getElementById('traceCode').textContent=trace;
+function copyCode(){
+ const txt=document.getElementById('codeBlock').innerText;
+ navigator.clipboard.writeText(txt).then(()=>showToast('JSON copied','Payload copied to clipboard'));
+ document.getElementById('copyOk').classList.add('show'); setTimeout(()=>document.getElementById('copyOk').classList.remove('show'),1800);
+}
+function copyTrace(){ navigator.clipboard.writeText(trace).then(()=>showToast('Trace ID copied','Share with support if needed')); }
+document.getElementById('copyTraceBtn')?.addEventListener('click',copyTrace);
+function showToast(title,msg,type='emerald'){
+ const wrap=document.getElementById('toastWrap');
+ const el=document.createElement('div');
+ el.className='toast';
+ el.style.borderLeftColor= type==='red'?'var(--red)':'var(--emerald)';
+ el.innerHTML=`<div style="width:32px;height:32px;border-radius:9px;background:${type==='red'?'var(--red-soft)':'var(--emerald-ghost)'};color:${type==='red'?'var(--red)':'var(--emerald-600)'};display:grid;place-items:center"><i class="bi bi-${type==='red'?'exclamation':'check2'}"></i></div><div><div style="font-weight:700;font-size:13px">${title}</div><div style="font-size:12px;color:var(--ink-2)">${msg}</div></div><button onclick="this.parentElement.remove()" class="btn-icon ms-auto" style="width:28px;height:28px"><i class="bi bi-x"></i></button>`;
+ wrap.appendChild(el); setTimeout(()=>{el.style.opacity='0'; el.style.transform='translateX(12px)'; setTimeout(()=>el.remove(),300)},4000);
+}
+setInterval(()=>{document.getElementById('liveClock').textContent=new Date().toLocaleTimeString()},1000);
+document.getElementById('infoBtn').onclick=()=>document.getElementById('infoModal').classList.add('open');
+function closeModal(){document.getElementById('infoModal').classList.remove('open')}
+document.getElementById('infoModal').addEventListener('click',e=>{if(e.target.id==='infoModal') closeModal()});
+</script>
+</body>
+</html>

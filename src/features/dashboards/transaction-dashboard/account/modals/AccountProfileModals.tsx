@@ -8,7 +8,8 @@
  * ========================================================================== */
 "use client";
 
-import { ReactNode, useState } from "react";
+import type { ReactNode } from "react";
+import { useState } from "react";
 import shared from "../../shared/styles/appPage.module.css";
 import {
   FlowModal,

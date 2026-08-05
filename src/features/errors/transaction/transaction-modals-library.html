@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Modals Library — 28</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --bd:#E8E2D9; --w:#fff; --shadow:0 20px 60px rgba(26,31,46,.08)}
+body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), var(--cream); min-height:100dvh; margin:0}
+.topbar{padding:18px 24px; max-width:1280px; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.wrap{max-width:1280px; margin:0 auto; padding:10px 24px 40px}
+.card{background:white; border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:18px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px}
+.tile{border:1px solid var(--bd); border-radius:14px; padding:12px; background:white; cursor:pointer; transition:.2s}
+.tile:hover{transform:translateY(-2px); border-color:#10b981}
+.modalx{position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(8px); display:none; place-items:center; z-index:10000; padding:16px}
+.modalx.open{display:grid}
+.modal-card{background:white; border-radius:22px; padding:20px; width:100%; max-width:520px; box-shadow:0 30px 80px rgba(0,0,0,.2)}
+.badge-warn{padding:5px 10px; border-radius:999px; font-weight:700; font-size:10px; border:1px solid; text-transform:uppercase}
+.type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E}
+.type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C}
+.type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1}
+.btn-em{background:linear-gradient(135deg,#10b981,#059669); color:white; border:none; border-radius:10px; padding:8px 14px; font-weight:700; font-size:12px}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:10px; padding:8px 12px; font-weight:600; font-size:12px}
+.toast-wrap{position:fixed; top:16px; right:16px; z-index:99999; display:flex; flex-direction:column; gap:8px}
+.toast-card{background:white; border:1px solid #E8E2D9; border-left:4px solid #10b981; border-radius:12px; padding:10px 12px; box-shadow:var(--shadow); min-width:280px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-window-stack"></i></div> Transaction Modals • 28 — Warning vs Error</div><a href="./index.html" class="btn-ghost text-decoration-none">← Back</a></div>
+<div class="wrap">
+<div class="card">
+<h2 style="font-family:Space Grotesk; font-size:20px; font-weight:700; margin:0">Click to open — warning before send vs error after fail</h2>
+<div style="font-size:12px; color:#4B5563; margin-top:4px">Same modal components you can copy to React. Warning includes checkbox permission gate. Error shows after 2-4s wait fail + trace.</div>
+<div class="grid" style="margin-top:12px">
+<div class="tile" onclick="openModal('m0')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-400-01</span><i class="bi bi-person-x"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Cannot Fetch End Recipient</div><div style="font-size:11px; color:#4B5563">404 — account not found at KCB, after 3s fail</div></div>
+<div class="tile" onclick="openModal('m1')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-400-02</span><i class="bi bi-123"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Invalid Account Check Digit</div><div style="font-size:11px; color:#4B5563">Wrong length, check digit fail — fix before send</div></div>
+<div class="tile" onclick="openModal('m2')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-400-03</span><i class="bi bi-wifi-off"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Receiver Bank Offline</div><div style="font-size:11px; color:#4B5563">PesaLink Equity 503 — switch to M-Pesa</div></div>
+<div class="tile" onclick="openModal('m3')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-400-04</span><i class="bi bi-phone"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Invalid Mobile Network</div><div style="font-size:11px; color:#4B5563">M-Pesa selected but number is Airtel — mismatch</div></div>
+<div class="tile" onclick="openModal('m4')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-402-01</span><i class="bi bi-wallet2"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Insufficient Balance</div><div style="font-size:11px; color:#4B5563">Float 12k need 45k — after PIN fails</div></div>
+<div class="tile" onclick="openModal('m5')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-402-02</span><i class="bi bi-currency-dollar"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Amount Below Min / Above Max</div><div style="font-size:11px; color:#4B5563">KES 5 violates min 10 — warning before send</div></div>
+<div class="tile" onclick="openModal('m6')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-402-03</span><i class="bi bi-graph-up-arrow"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Daily Limit Reached</div><div style="font-size:11px; color:#4B5563">5M/day reached 14:32 — reset midnight</div></div>
+<div class="tile" onclick="openModal('m7')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-402-04</span><i class="bi bi-person-check"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Per-TXN Limit Needs Approval</div><div style="font-size:11px; color:#4B5563">2.4M > 1M per-txn — director approval needed</div></div>
+<div class="tile" onclick="openModal('m8')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-409-01</span><i class="bi bi-copy"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Duplicate Transaction Guard</div><div style="font-size:11px; color:#4B5563">Same idem key 2 min apart — blocked double pay</div></div>
+<div class="tile" onclick="openModal('m9')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-401-01</span><i class="bi bi-keyboard"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Multiple PIN 3x Locked</div><div style="font-size:11px; color:#4B5563">PIN 3x wrong — locked 15 min — MOST requested</div></div>
+<div class="tile" onclick="openModal('m10')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-401-02</span><i class="bi bi-shield-exclamation"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Wrong PIN / OTP Expired</div><div style="font-size:11px; color:#4B5563">OTP expired 2 min, entered late — resend</div></div>
+<div class="tile" onclick="openModal('m11')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-408-01</span><i class="bi bi-phone-vibrate"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">M-Pesa STK Timeout / Cancelled</div><div style="font-size:11px; color:#4B5563">STK 30s timeout or user pressed cancel</div></div>
+<div class="tile" onclick="openModal('m12')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-404-01</span><i class="bi bi-phone-x"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Mobile Money Not Registered</div><div style="font-size:11px; color:#4B5563">Number not on M-Pesa — 404</div></div>
+<div class="tile" onclick="openModal('m13')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-409-02</span><i class="bi bi-currency-exchange"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">FX Quote Expired Mid-TX</div><div style="font-size:11px; color:#4B5563">Quote 30s, confirmed 42s — 12s over</div></div>
+<div class="tile" onclick="openModal('m14')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-429-01</span><i class="bi bi-speedometer2"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Throttled 100/min</div><div style="font-size:11px; color:#4B5563">127 in 60s, limit 100/min — countdown 42s</div></div>
+<div class="tile" onclick="openModal('m15')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-info">TX-500-01</span><i class="bi bi-hourglass-split"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Settlement Delayed PSP</div><div style="font-size:11px; color:#4B5563">Pending 68s vs 4s expected — polling</div></div>
+<div class="tile" onclick="openModal('m16')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-409-03</span><i class="bi bi-calculator"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Reconciliation Mismatch</div><div style="font-size:11px; color:#4B5563">Sent 45k settled 44,950 diff fee 50</div></div>
+<div class="tile" onclick="openModal('m17')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-info">TX-403-01</span><i class="bi bi-shield-exclamation"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">AML Risk 87 Hold</div><div style="font-size:11px; color:#4B5563">Risk 87/100 night 120k — 1-4h manual review</div></div>
+<div class="tile" onclick="openModal('m18')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-403-02</span><i class="bi bi-receipt-cutoff"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">KRA Tax Check Failed</div><div style="font-size:11px; color:#4B5563">KRA NON_COMPLIANT — outstanding PAYE 89k</div></div>
+<div class="tile" onclick="openModal('m19')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-422-01</span><i class="bi bi-person-bounding-box"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Recipient Name Mismatch 78%</div><div style="font-size:11px; color:#4B5563">J DOE LTD vs JOHN DOE LTD — confirm override</div></div>
+<div class="tile" onclick="openModal('m20')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-404-02</span><i class="bi bi-card-list"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Purpose Code Missing</div><div style="font-size:11px; color:#4B5563">Salary needs purpose code CBK</div></div>
+<div class="tile" onclick="openModal('m21')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-400-05</span><i class="bi bi-currency-dollar"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Currency Not Allowed</div><div style="font-size:11px; color:#4B5563">KES to USD without FX — need quote</div></div>
+<div class="tile" onclick="openModal('m22')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">TX-423-01</span><i class="bi bi-clock-history"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">RTGS Closed Weekend</div><div style="font-size:11px; color:#4B5563">RTGS cut-off 15:00 Fri — settles Mon</div></div>
+<div class="tile" onclick="openModal('m23')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-410-01</span><i class="bi bi-hourglass-bottom"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">TXN Expired 24h Auto-Reversed</div><div style="font-size:11px; color:#4B5563">Pending 24h auto-reversed to float</div></div>
+<div class="tile" onclick="openModal('m24')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-403-03</span><i class="bi bi-lock-fill"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Account Frozen Restricted</div><div style="font-size:11px; color:#4B5563">Float frozen — fraud lock 87/100</div></div>
+<div class="tile" onclick="openModal('m25')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-422-02</span><i class="bi bi-slash-circle"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Beneficiary Blacklisted</div><div style="font-size:11px; color:#4B5563">OFAC 92% + internal fraud — blocked</div></div>
+<div class="tile" onclick="openModal('m26')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">TX-500-02</span><i class="bi bi-water"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Liquidity Provider Failed</div><div style="font-size:11px; color:#4B5563">KCB Nostro fund 50M timeout 500</div></div>
+</div></div>
+<div class="modalx" id="m0" onclick="if(event.target.id==='m0') closeModal('m0')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-person-x"></i></div><div><b style="font-size:13px">Cannot Fetch End Recipient</b><div><span class="badge-warn type-error">TX-400-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m0')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">404 — account not found at KCB, after 3s fail</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>404 — account not found at KCB, after 3s fail</b><br>Trace: tx-400-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m0')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-400-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m1" onclick="if(event.target.id==='m1') closeModal('m1')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-123"></i></div><div><b style="font-size:13px">Invalid Account Check Digit</b><div><span class="badge-warn type-warn">TX-400-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m1')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Wrong length, check digit fail — fix before send</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c1"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m1')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-400-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m2" onclick="if(event.target.id==='m2') closeModal('m2')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-wifi-off"></i></div><div><b style="font-size:13px">Receiver Bank Offline</b><div><span class="badge-warn type-error">TX-400-03 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m2')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">PesaLink Equity 503 — switch to M-Pesa</div>
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#F59E0B"></i><div style="font-size:12px; color:#4B5563"><b>PesaLink Equity 503 — switch to M-Pesa</b><br>Trace: tx-400-03_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m2')">Cancel</button><button class="btn-em" style="flex:1; background:#F59E0B" onclick="toast('Retrying TX-400-03','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m3" onclick="if(event.target.id==='m3') closeModal('m3')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-phone"></i></div><div><b style="font-size:13px">Invalid Mobile Network</b><div><span class="badge-warn type-warn">TX-400-04 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m3')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">M-Pesa selected but number is Airtel — mismatch</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c3"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m3')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-400-04','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m4" onclick="if(event.target.id==='m4') closeModal('m4')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-wallet2"></i></div><div><b style="font-size:13px">Insufficient Balance</b><div><span class="badge-warn type-error">TX-402-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m4')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Float 12k need 45k — after PIN fails</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Float 12k need 45k — after PIN fails</b><br>Trace: tx-402-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m4')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-402-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m5" onclick="if(event.target.id==='m5') closeModal('m5')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-currency-dollar"></i></div><div><b style="font-size:13px">Amount Below Min / Above Max</b><div><span class="badge-warn type-warn">TX-402-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m5')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">KES 5 violates min 10 — warning before send</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c5"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m5')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-402-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m6" onclick="if(event.target.id==='m6') closeModal('m6')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-graph-up-arrow"></i></div><div><b style="font-size:13px">Daily Limit Reached</b><div><span class="badge-warn type-warn">TX-402-03 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m6')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">5M/day reached 14:32 — reset midnight</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c6"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m6')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-402-03','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m7" onclick="if(event.target.id==='m7') closeModal('m7')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-check"></i></div><div><b style="font-size:13px">Per-TXN Limit Needs Approval</b><div><span class="badge-warn type-warn">TX-402-04 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m7')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">2.4M > 1M per-txn — director approval needed</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c7"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m7')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-402-04','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m8" onclick="if(event.target.id==='m8') closeModal('m8')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-copy"></i></div><div><b style="font-size:13px">Duplicate Transaction Guard</b><div><span class="badge-warn type-error">TX-409-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m8')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Same idem key 2 min apart — blocked double pay</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Same idem key 2 min apart — blocked double pay</b><br>Trace: tx-409-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m8')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-409-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m9" onclick="if(event.target.id==='m9') closeModal('m9')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-keyboard"></i></div><div><b style="font-size:13px">Multiple PIN 3x Locked</b><div><span class="badge-warn type-error">TX-401-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m9')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">PIN 3x wrong — locked 15 min — MOST requested</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>PIN 3x wrong — locked 15 min — MOST requested</b><br>Trace: tx-401-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m9')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-401-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m10" onclick="if(event.target.id==='m10') closeModal('m10')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div><div><b style="font-size:13px">Wrong PIN / OTP Expired</b><div><span class="badge-warn type-warn">TX-401-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m10')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">OTP expired 2 min, entered late — resend</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c10"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m10')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-401-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m11" onclick="if(event.target.id==='m11') closeModal('m11')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-phone-vibrate"></i></div><div><b style="font-size:13px">M-Pesa STK Timeout / Cancelled</b><div><span class="badge-warn type-error">TX-408-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m11')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">STK 30s timeout or user pressed cancel</div>
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#F59E0B"></i><div style="font-size:12px; color:#4B5563"><b>STK 30s timeout or user pressed cancel</b><br>Trace: tx-408-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m11')">Cancel</button><button class="btn-em" style="flex:1; background:#F59E0B" onclick="toast('Retrying TX-408-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m12" onclick="if(event.target.id==='m12') closeModal('m12')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-phone-x"></i></div><div><b style="font-size:13px">Mobile Money Not Registered</b><div><span class="badge-warn type-error">TX-404-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m12')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Number not on M-Pesa — 404</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Number not on M-Pesa — 404</b><br>Trace: tx-404-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m12')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-404-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m13" onclick="if(event.target.id==='m13') closeModal('m13')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-currency-exchange"></i></div><div><b style="font-size:13px">FX Quote Expired Mid-TX</b><div><span class="badge-warn type-error">TX-409-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m13')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Quote 30s, confirmed 42s — 12s over</div>
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#F59E0B"></i><div style="font-size:12px; color:#4B5563"><b>Quote 30s, confirmed 42s — 12s over</b><br>Trace: tx-409-02_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m13')">Cancel</button><button class="btn-em" style="flex:1; background:#F59E0B" onclick="toast('Retrying TX-409-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m14" onclick="if(event.target.id==='m14') closeModal('m14')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-speedometer2"></i></div><div><b style="font-size:13px">Throttled 100/min</b><div><span class="badge-warn type-error">TX-429-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m14')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">127 in 60s, limit 100/min — countdown 42s</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>127 in 60s, limit 100/min — countdown 42s</b><br>Trace: tx-429-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m14')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-429-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m15" onclick="if(event.target.id==='m15') closeModal('m15')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#F0F9FF; border:1px solid #BAE6FD; display:grid; place-items:center; color:#0EA5E9"><i class="bi bi-hourglass-split"></i></div><div><b style="font-size:13px">Settlement Delayed PSP</b><div><span class="badge-warn type-info">TX-500-01 • INFO-HOLD</span></div></div></div><button class="btn-ghost" onclick="closeModal('m15')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Pending 68s vs 4s expected — polling</div>
+<div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#0EA5E9"></i><div style="font-size:12px; color:#4B5563"><b>Pending 68s vs 4s expected — polling</b><br>Trace: tx-500-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m15')">Cancel</button><button class="btn-em" style="flex:1; background:#0EA5E9" onclick="toast('Retrying TX-500-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m16" onclick="if(event.target.id==='m16') closeModal('m16')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-calculator"></i></div><div><b style="font-size:13px">Reconciliation Mismatch</b><div><span class="badge-warn type-warn">TX-409-03 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m16')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Sent 45k settled 44,950 diff fee 50</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c16"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m16')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-409-03','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m17" onclick="if(event.target.id==='m17') closeModal('m17')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#F0F9FF; border:1px solid #BAE6FD; display:grid; place-items:center; color:#0EA5E9"><i class="bi bi-shield-exclamation"></i></div><div><b style="font-size:13px">AML Risk 87 Hold</b><div><span class="badge-warn type-info">TX-403-01 • INFO-HOLD</span></div></div></div><button class="btn-ghost" onclick="closeModal('m17')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Risk 87/100 night 120k — 1-4h manual review</div>
+<div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#0EA5E9"></i><div style="font-size:12px; color:#4B5563"><b>Risk 87/100 night 120k — 1-4h manual review</b><br>Trace: tx-403-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m17')">Cancel</button><button class="btn-em" style="flex:1; background:#0EA5E9" onclick="toast('Retrying TX-403-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m18" onclick="if(event.target.id==='m18') closeModal('m18')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-receipt-cutoff"></i></div><div><b style="font-size:13px">KRA Tax Check Failed</b><div><span class="badge-warn type-error">TX-403-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m18')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">KRA NON_COMPLIANT — outstanding PAYE 89k</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>KRA NON_COMPLIANT — outstanding PAYE 89k</b><br>Trace: tx-403-02_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m18')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-403-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m19" onclick="if(event.target.id==='m19') closeModal('m19')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-bounding-box"></i></div><div><b style="font-size:13px">Recipient Name Mismatch 78%</b><div><span class="badge-warn type-warn">TX-422-01 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m19')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">J DOE LTD vs JOHN DOE LTD — confirm override</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c19"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m19')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-422-01','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m20" onclick="if(event.target.id==='m20') closeModal('m20')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-card-list"></i></div><div><b style="font-size:13px">Purpose Code Missing</b><div><span class="badge-warn type-warn">TX-404-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m20')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Salary needs purpose code CBK</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c20"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m20')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-404-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m21" onclick="if(event.target.id==='m21') closeModal('m21')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-currency-dollar"></i></div><div><b style="font-size:13px">Currency Not Allowed</b><div><span class="badge-warn type-warn">TX-400-05 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m21')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">KES to USD without FX — need quote</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c21"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m21')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-400-05','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m22" onclick="if(event.target.id==='m22') closeModal('m22')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-clock-history"></i></div><div><b style="font-size:13px">RTGS Closed Weekend</b><div><span class="badge-warn type-warn">TX-423-01 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m22')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">RTGS cut-off 15:00 Fri — settles Mon</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c22"><div><b style="font-size:12px">I confirm — recipient & amount correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm. Reversible 30 min.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m22')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed TX-423-01','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m23" onclick="if(event.target.id==='m23') closeModal('m23')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-hourglass-bottom"></i></div><div><b style="font-size:13px">TXN Expired 24h Auto-Reversed</b><div><span class="badge-warn type-error">TX-410-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m23')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Pending 24h auto-reversed to float</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Pending 24h auto-reversed to float</b><br>Trace: tx-410-01_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m23')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-410-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m24" onclick="if(event.target.id==='m24') closeModal('m24')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-lock-fill"></i></div><div><b style="font-size:13px">Account Frozen Restricted</b><div><span class="badge-warn type-error">TX-403-03 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m24')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Float frozen — fraud lock 87/100</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Float frozen — fraud lock 87/100</b><br>Trace: tx-403-03_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m24')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-403-03','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m25" onclick="if(event.target.id==='m25') closeModal('m25')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-slash-circle"></i></div><div><b style="font-size:13px">Beneficiary Blacklisted</b><div><span class="badge-warn type-error">TX-422-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m25')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">OFAC 92% + internal fraud — blocked</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>OFAC 92% + internal fraud — blocked</b><br>Trace: tx-422-02_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m25')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-422-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m26" onclick="if(event.target.id==='m26') closeModal('m26')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-water"></i></div><div><b style="font-size:13px">Liquidity Provider Failed</b><div><span class="badge-warn type-error">TX-500-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m26')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">KCB Nostro fund 50M timeout 500</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>KCB Nostro fund 50M timeout 500</b><br>Trace: tx-500-02_xxxx_KE • Vault safe • No double charge.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m26')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying TX-500-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+</div>
+<div class="toast-wrap" id="toasts"></div>
+<script>
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast-card'; e.innerHTML=`<div style="font-weight:700; font-size:12px">${t}</div><div style="font-size:11px; color:#4B5563">${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3000)}
+</script>
+</body>
+</html>

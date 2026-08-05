@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dev-Dashboard • 20 Modals Library</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --bd:#E8E2D9; --w:#fff; --shadow:0 20px 60px rgba(26,31,46,.08)} body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), var(--cream); min-height:100dvh; margin:0} .topbar{padding:18px 24px; max-width:1280px; margin:0 auto; display:flex; justify-content:space-between; align-items:center} .logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white} .wrap{max-width:1280px; margin:0 auto; padding:10px 24px 40px} .card{background:white; border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:18px} .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px} .tile{border:1px solid var(--bd); border-radius:14px; padding:12px; background:white; cursor:pointer; transition:.2s} .tile:hover{transform:translateY(-2px); border-color:#10b981} .modalx{position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(8px); display:none; place-items:center; z-index:10000; padding:16px} .modalx.open{display:grid} .modal-card{background:white; border-radius:22px; padding:20px; width:100%; max-width:520px; box-shadow:0 30px 80px rgba(0,0,0,.2)} .badge-warn{padding:5px 10px; border-radius:999px; font-weight:700; font-size:10px; border:1px solid; text-transform:uppercase} .type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E} .type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C} .type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1} .btn-em{background:linear-gradient(135deg,#10b981,#059669); color:white; border:none; border-radius:10px; padding:8px 14px; font-weight:700; font-size:12px} .btn-ghost{background:white; border:1px solid var(--bd); border-radius:10px; padding:8px 12px; font-weight:600; font-size:12px} .toast-wrap{position:fixed; top:16px; right:16px; z-index:99999; display:flex; flex-direction:column; gap:8px} .toast-card{background:white; border:1px solid #E8E2D9; border-left:4px solid #10b981; border-radius:12px; padding:10px 12px; box-shadow:var(--shadow); min-width:280px}</style></head><body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-window-stack"></i></div> Dev-Dashboard • 20 • Modals Library</div><a href="./index.html" class="btn-ghost" style="background:white; border:1px solid var(--bd); border-radius:10px; padding:8px 12px; text-decoration:none; color:#1A1F2E">← Back</a></div>
+<div class="wrap"><div class="card"><h2 style="font-family:Space Grotesk; font-size:20px; font-weight:700; margin:0">Dev-Dashboard • 20 — Click to open warning vs error modal</h2><div style="font-size:12px; color:#4B5563; margin-top:4px">Same components copy to React. Warning = checkbox gate before action. Error = after 2-4s fail with trace.</div><div class="grid" style="margin-top:12px">
+<div class="tile" onclick="openModal('m0')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-401-01</span><i class="bi bi-key"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">API Key Invalid / Expired / Revoked</div><div style="font-size:11px; color:#4B5563">API key expired / revoked — Bearer token invalid. Regenerate key....</div></div>
+<div class="tile" onclick="openModal('m1')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-429-01</span><i class="bi bi-speedometer2"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Rate Limit Exceeded — 100 req/sec</div><div style="font-size:11px; color:#4B5563">100 req/sec limit exceeded — throttled 42s. Countdown live like we built....</div></div>
+<div class="tile" onclick="openModal('m2')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-403-01</span><i class="bi bi-shield-lock"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">API Scope Forbidden — Insufficient Tier</div><div style="font-size:11px; color:#4B5563">Need cards:write but on Starter — read-only. Upgrade tier or request scope before call....</div></div>
+<div class="tile" onclick="openModal('m3')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-400-01</span><i class="bi bi-braces"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Payload Validation Failed — Schema Error</div><div style="font-size:11px; color:#4B5563">JSON payload failed schema validation — routing_number required for KES. Shows field error...</div></div>
+<div class="tile" onclick="openModal('m4')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-410-01</span><i class="bi bi-trash3"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">API Version Deprecated — Sunset</div><div style="font-size:11px; color:#4B5563">v1 endpoint /v1/legacy/cards sunset May 10 2026 — use /v2/virtual-cards migration guide....</div></div>
+<div class="tile" onclick="openModal('m5')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-409-01</span><i class="bi bi-copy"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Duplicate Idempotency Key</div><div style="font-size:11px; color:#4B5563">idem_KE_2024_9912 same key twice — original succeeded 42s ago, blocked double charge — saf...</div></div>
+<div class="tile" onclick="openModal('m6')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-500-01</span><i class="bi bi-webhook"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Webhook Delivery Failed — Endpoint Down 5xx</div><div style="font-size:11px; color:#4B5563">Webhook URL returned 500 — delivery failed. Retry schedule 1h, 3h, 6h....</div></div>
+<div class="tile" onclick="openModal('m7')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-400-02</span><i class="bi bi-shield-exclamation"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Webhook Signature Verification Failed</div><div style="font-size:11px; color:#4B5563">HMAC signature mismatch — check webhook secret. Your verification failed....</div></div>
+<div class="tile" onclick="openModal('m8')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-408-01</span><i class="bi bi-hourglass-split"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Webhook Timeout — Receiver Slow</div><div style="font-size:11px; color:#4B5563">Endpoint took >10s to respond — webhook timeout. Receiver slow, optimize....</div></div>
+<div class="tile" onclick="openModal('m9')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-400-03</span><i class="bi bi-sign-stop"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Sandbox vs Production Key Mismatch</div><div style="font-size:11px; color:#4B5563">Using prod key sk_live in sandbox — or vice versa. Switch key env before call....</div></div>
+<div class="tile" onclick="openModal('m10')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-403-02</span><i class="bi bi-geo-alt"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">IP Whitelist Violation</div><div style="font-size:11px; color:#4B5563">API call from IP 102.219.xxx not in whitelist — blocked per security policy....</div></div>
+<div class="tile" onclick="openModal('m11')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-404-01</span><i class="bi bi-compass"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Endpoint Not Found</div><div style="font-size:11px; color:#4B5563">API path /v9/invalid not found — 404. Check docs for correct endpoint....</div></div>
+<div class="tile" onclick="openModal('m12')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-429-02</span><i class="bi bi-stack"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Webhook Queue Full</div><div style="font-size:11px; color:#4B5563">Too many pending webhooks — queue full 1000/1000 — throttled, retry later....</div></div>
+<div class="tile" onclick="openModal('m13')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-500-02</span><i class="bi bi-bug"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Integration Test Suite Failed</div><div style="font-size:11px; color:#4B5563">Sandbox test suite failed 3/10 tests — transfer, refund, webhook failing....</div></div>
+<div class="tile" onclick="openModal('m14')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-400-04</span><i class="bi bi-box-seam"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">SDK Version Outdated — Needs Update</div><div style="font-size:11px; color:#4B5563">SDK v1.2 outdated — breaking changes in v2.0. Update SDK before prod calls....</div></div>
+<div class="tile" onclick="openModal('m15')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-info">DEV-403-03</span><i class="bi bi-shop-window"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Partner Marketplace — Approval Pending / Rejected</div><div style="font-size:11px; color:#4B5563">App submitted to marketplace — pending approval 1-2 days, or rejected needs fixes....</div></div>
+<div class="tile" onclick="openModal('m16')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-403-04</span><i class="bi bi-bell-slash"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Compliance Audit — Missing Webhook for Critical Event</div><div style="font-size:11px; color:#4B5563">Must subscribe to disputes.created webhook per compliance — audit failed. Subscribe before...</div></div>
+<div class="tile" onclick="openModal('m17')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-error">DEV-500-03</span><i class="bi bi-graph-up-arrow"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Monitoring Incident — Elevated Error Rate</div><div style="font-size:11px; color:#4B5563">API error rate 7.2% >5% threshold — incident declared, engineering paged. Check status....</div></div>
+<div class="tile" onclick="openModal('m18')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-401-02</span><i class="bi bi-person-x"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">OAuth Consent Revoked by User</div><div style="font-size:11px; color:#4B5563">User revoked Business OAuth consent — re-consent required to continue syncing KCB data....</div></div>
+<div class="tile" onclick="openModal('m19')"><div style="display:flex; justify-content:space-between"><span class="badge-warn type-warn">DEV-402-01</span><i class="bi bi-receipt"></i></div><div style="font-weight:700; font-size:12px; margin-top:6px">Billing — API Calls Over Overage, Upgrade Required</div><div style="font-size:11px; color:#4B5563">1M calls included, used 1.2M — overage KES 4k + throttled to 10 req/s. Upgrade to Pro....</div></div>
+</div></div>
+<div class="modalx" id="m0" onclick="if(event.target.id==='m0') closeModal('m0')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-key"></i></div><div><b style="font-size:13px">API Key Invalid / Expired / Revoked</b><div><span class="badge-warn type-error">DEV-401-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m0')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">API key expired / revoked — Bearer token invalid. Regenerate key.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>API key sk_live_xxx expired 2026-08-01 — revoked or TTL reached. JWT TTL 1h. Regenerate....</b><br>Trace: dev-401-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m0')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-401-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m1" onclick="if(event.target.id==='m1') closeModal('m1')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-speedometer2"></i></div><div><b style="font-size:13px">Rate Limit Exceeded — 100 req/sec</b><div><span class="badge-warn type-error">DEV-429-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m1')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">100 req/sec limit exceeded — throttled 42s. Countdown live like we built.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>100/sec sliding window — you sent 127/sec. Protects ledger. Retry after 42s, queued not dropped....</b><br>Trace: dev-429-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m1')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-429-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m2" onclick="if(event.target.id==='m2') closeModal('m2')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-lock"></i></div><div><b style="font-size:13px">API Scope Forbidden — Insufficient Tier</b><div><span class="badge-warn type-warn">DEV-403-01 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m2')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Need cards:write but on Starter — read-only. Upgrade tier or request scope before call.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c2"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m2')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-403-01','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m3" onclick="if(event.target.id==='m3') closeModal('m3')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-braces"></i></div><div><b style="font-size:13px">Payload Validation Failed — Schema Error</b><div><span class="badge-warn type-error">DEV-400-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m3')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">JSON payload failed schema validation — routing_number required for KES. Shows field errors.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Missing routing_number for KES bank transfer — required field. Also amount must >0....</b><br>Trace: dev-400-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m3')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-400-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m4" onclick="if(event.target.id==='m4') closeModal('m4')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-trash3"></i></div><div><b style="font-size:13px">API Version Deprecated — Sunset</b><div><span class="badge-warn type-error">DEV-410-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m4')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">v1 endpoint /v1/legacy/cards sunset May 10 2026 — use /v2/virtual-cards migration guide.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Endpoint /v1/legacy/cards sunset 2026-05-10, removed permanently — 410 Gone. Use /v2....</b><br>Trace: dev-410-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m4')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-410-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m5" onclick="if(event.target.id==='m5') closeModal('m5')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-copy"></i></div><div><b style="font-size:13px">Duplicate Idempotency Key</b><div><span class="badge-warn type-error">DEV-409-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m5')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">idem_KE_2024_9912 same key twice — original succeeded 42s ago, blocked double charge — safe.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Same idempotency key used twice — original txn txn_882199200xAL succeeded. Second blocked — good, no double charge....</b><br>Trace: dev-409-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m5')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-409-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m6" onclick="if(event.target.id==='m6') closeModal('m6')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-webhook"></i></div><div><b style="font-size:13px">Webhook Delivery Failed — Endpoint Down 5xx</b><div><span class="badge-warn type-error">DEV-500-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m6')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Webhook URL returned 500 — delivery failed. Retry schedule 1h, 3h, 6h.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Your webhook https://your.app/webhook returned 500 Internal Server Error — 3 retries. Next retry 1h....</b><br>Trace: dev-500-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m6')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-500-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m7" onclick="if(event.target.id==='m7') closeModal('m7')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div><div><b style="font-size:13px">Webhook Signature Verification Failed</b><div><span class="badge-warn type-warn">DEV-400-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m7')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">HMAC signature mismatch — check webhook secret. Your verification failed.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c7"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m7')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-400-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m8" onclick="if(event.target.id==='m8') closeModal('m8')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-hourglass-split"></i></div><div><b style="font-size:13px">Webhook Timeout — Receiver Slow</b><div><span class="badge-warn type-warn">DEV-408-01 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m8')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Endpoint took >10s to respond — webhook timeout. Receiver slow, optimize.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c8"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m8')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-408-01','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m9" onclick="if(event.target.id==='m9') closeModal('m9')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-sign-stop"></i></div><div><b style="font-size:13px">Sandbox vs Production Key Mismatch</b><div><span class="badge-warn type-warn">DEV-400-03 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m9')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Using prod key sk_live in sandbox — or vice versa. Switch key env before call.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c9"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m9')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-400-03','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m10" onclick="if(event.target.id==='m10') closeModal('m10')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-geo-alt"></i></div><div><b style="font-size:13px">IP Whitelist Violation</b><div><span class="badge-warn type-error">DEV-403-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m10')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">API call from IP 102.219.xxx not in whitelist — blocked per security policy.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Your IP whitelist has 192.168.1.0/24, but call from 102.219.xxx — not allowed. Add IP or disable whitelist....</b><br>Trace: dev-403-02_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m10')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-403-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m11" onclick="if(event.target.id==='m11') closeModal('m11')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-compass"></i></div><div><b style="font-size:13px">Endpoint Not Found</b><div><span class="badge-warn type-error">DEV-404-01 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m11')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">API path /v9/invalid not found — 404. Check docs for correct endpoint.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Path /v9/invalid doesn't exist — latest v2. Maybe typo or old version. Check API reference....</b><br>Trace: dev-404-01_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m11')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-404-01','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m12" onclick="if(event.target.id==='m12') closeModal('m12')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-stack"></i></div><div><b style="font-size:13px">Webhook Queue Full</b><div><span class="badge-warn type-warn">DEV-429-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m12')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Too many pending webhooks — queue full 1000/1000 — throttled, retry later.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c12"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m12')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-429-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m13" onclick="if(event.target.id==='m13') closeModal('m13')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-bug"></i></div><div><b style="font-size:13px">Integration Test Suite Failed</b><div><span class="badge-warn type-error">DEV-500-02 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m13')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Sandbox test suite failed 3/10 tests — transfer, refund, webhook failing.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Tests: transfer success PASS, transfer invalid FAIL, refund FAIL, webhook delivery FAIL — check sandbox logs....</b><br>Trace: dev-500-02_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m13')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-500-02','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m14" onclick="if(event.target.id==='m14') closeModal('m14')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-box-seam"></i></div><div><b style="font-size:13px">SDK Version Outdated — Needs Update</b><div><span class="badge-warn type-warn">DEV-400-04 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m14')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">SDK v1.2 outdated — breaking changes in v2.0. Update SDK before prod calls.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c14"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m14')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-400-04','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m15" onclick="if(event.target.id==='m15') closeModal('m15')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#F0F9FF; border:1px solid #BAE6FD; display:grid; place-items:center; color:#0EA5E9"><i class="bi bi-shop-window"></i></div><div><b style="font-size:13px">Partner Marketplace — Approval Pending / Rejected</b><div><span class="badge-warn type-info">DEV-403-03 • INFO-HOLD</span></div></div></div><button class="btn-ghost" onclick="closeModal('m15')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">App submitted to marketplace — pending approval 1-2 days, or rejected needs fixes.</div>
+<div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#0EA5E9"></i><div style="font-size:12px; color:#4B5563"><b>Your app DanStack Biz v1.0 submitted 2026-08-03 — status Pending Review. Average 1-2 days. If rejected, needs fixes....</b><br>Trace: dev-403-03_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m15')">Cancel</button><button class="btn-em" style="flex:1; background:#0EA5E9" onclick="toast('Retrying DEV-403-03','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m16" onclick="if(event.target.id==='m16') closeModal('m16')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-bell-slash"></i></div><div><b style="font-size:13px">Compliance Audit — Missing Webhook for Critical Event</b><div><span class="badge-warn type-warn">DEV-403-04 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m16')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">Must subscribe to disputes.created webhook per compliance — audit failed. Subscribe before prod.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c16"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m16')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-403-04','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m17" onclick="if(event.target.id==='m17') closeModal('m17')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FEF2F2; border:1px solid #FECACA; display:grid; place-items:center; color:#EF4444"><i class="bi bi-graph-up-arrow"></i></div><div><b style="font-size:13px">Monitoring Incident — Elevated Error Rate</b><div><span class="badge-warn type-error">DEV-500-03 • ERROR</span></div></div></div><button class="btn-ghost" onclick="closeModal('m17')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">API error rate 7.2% >5% threshold — incident declared, engineering paged. Check status.</div>
+<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:10px; margin-top:10px; display:flex; gap:8px"><i class="bi bi-exclamation-triangle-fill" style="color:#EF4444"></i><div style="font-size:12px; color:#4B5563"><b>Your app error rate 7.2% last 15 min — 72 errors / 1000 calls. Mostly 400 validation. Incident INC_8841 opened....</b><br>Trace: dev-500-03_xxxx_KE • Vault safe.</div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m17')">Cancel</button><button class="btn-em" style="flex:1; background:#EF4444" onclick="toast('Retrying DEV-500-03','Safe retry')"><i class="bi bi-arrow-clockwise"></i> Retry</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m18" onclick="if(event.target.id==='m18') closeModal('m18')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-person-x"></i></div><div><b style="font-size:13px">OAuth Consent Revoked by User</b><div><span class="badge-warn type-warn">DEV-401-02 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m18')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">User revoked Business OAuth consent — re-consent required to continue syncing KCB data.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c18"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m18')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-401-02','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+
+<div class="modalx" id="m19" onclick="if(event.target.id==='m19') closeModal('m19')">
+<div class="modal-card">
+<div class="d-flex justify-content-between"><div class="d-flex gap-2 align-items-center"><div style="width:40px; height:40px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:grid; place-items:center; color:#F59E0B"><i class="bi bi-receipt"></i></div><div><b style="font-size:13px">Billing — API Calls Over Overage, Upgrade Required</b><div><span class="badge-warn type-warn">DEV-402-01 • WARNING</span></div></div></div><button class="btn-ghost" onclick="closeModal('m19')"><i class="bi bi-x-lg"></i></button></div>
+<div style="font-size:12px; color:#4B5563; margin-top:8px">1M calls included, used 1.2M — overage KES 4k + throttled to 10 req/s. Upgrade to Pro.</div>
+<div style="border:1px dashed #E8E2D9; border-radius:12px; padding:10px; display:flex; gap:8px; margin-top:10px"><input type="checkbox" id="c19"><div><b style="font-size:12px">I confirm — details correct</b><div style="font-size:11px; color:#4B5563">No funds moved until Confirm.</div></div></div>
+<div class="d-flex gap-2 mt-3"><button class="btn-ghost" style="flex:1" onclick="closeModal('m19')">Cancel</button><button class="btn-em" style="flex:1" onclick="toast('Confirmed DEV-402-01','Proceeding')"><i class="bi bi-check2"></i> Yes, Proceed</button></div>
+</div>
+</div>
+</div><div class="toast-wrap" id="toasts"></div><script>function openModal(id){document.getElementById(id).classList.add('open')} function closeModal(id){document.getElementById(id).classList.remove('open')} function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast-card'; e.innerHTML=`<div style="font-weight:700; font-size:12px">${t}</div><div style="font-size:11px; color:#4B5563">${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3000)}</script></body></html>

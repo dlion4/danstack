@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Maintenance — Paymo BaaS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --em700:#047857; --emGhost:#ECFDF5; --amber:#F59E0B; --amberSoft:#FFFBEB; --amberBd:#FDE68A; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:28px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(900px 500px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FFFBEB,transparent 55%),var(--cream); min-height:100dvh; margin:0; display:flex; flex-direction:column}
+.topbar{padding:20px 24px; max-width:1200px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); max-width:600px; width:100%; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)} @keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.top-line{height:5px; background:linear-gradient(90deg,var(--emerald),#34D399 50%, var(--amber))}
+.head{padding:26px 28px 18px; text-align:center}
+.icon{width:96px; height:96px; margin:0 auto 14px; border-radius:28px; background:var(--emGhost); border:1px solid #A7F3D0; display:grid; place-items:center; font-size:44px; color:var(--em600); position:relative}
+.icon i{display:inline-block; animation:gear 8s linear infinite} @keyframes gear{to{transform:rotate(360deg)}}
+.badge{display:inline-flex; gap:6px; align-items:center; padding:6px 12px; border-radius:999px; background:#FFFBEB; border:1px solid var(--amberBd); color:#92400E; font-weight:700; font-size:11px; text-transform:uppercase}
+.title{font-family:Space Grotesk,sans-serif; font-size:26px; font-weight:700; margin:12px 0 8px}
+.sub{color:var(--ink2); font-size:14px; line-height:1.6}
+.progress-wrap{margin-top:18px; background:var(--cream); border:1px solid var(--bd); border-radius:16px; padding:16px}
+.progress-top{display:flex; justify-content:space-between; font-size:12px; font-weight:700}
+.bar{height:12px; background:white; border:1px solid var(--bd); border-radius:999px; overflow:hidden; margin-top:8px; position:relative}
+.fill{height:100%; width:75%; background:linear-gradient(90deg,var(--emerald),#34D399); border-radius:999px; position:relative; animation:shimmer 2s infinite linear; background-size:200% 100%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.stripes{position:absolute; inset:0; background:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 10px, transparent 10px 20px); animation:moveStripes 1s linear infinite} @keyframes moveStripes{to{transform:translateX(20px)}}
+.changelog{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px}
+.chip{padding:6px 10px; border-radius:10px; background:white; border:1px solid var(--bd); font-size:11px}
+.subscribe{margin-top:14px; display:flex; gap:8px}
+.subscribe input{flex:1; padding:12px 14px; border-radius:12px; border:1px solid var(--bd); background:var(--cream); font-size:13px}
+.subscribe input:focus{outline:none; border-color:var(--emerald); background:white; box-shadow:0 0 0 4px rgba(16,185,129,.12)}
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--bd); display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px}
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px}
+.toast{background:white; border:1px solid var(--bd); border-left:4px solid var(--emerald); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); min-width:300px; animation:slide .35s ease} @keyframes slide{from{transform:translateX(16px); opacity:0}to{transform:translateX(0); opacity:1}}
+@media(max-width:640px){.changelog{grid-template-columns:1fr} .head{padding:20px 18px} .actions{padding:16px 18px} .btn-em,.btn-ghost{flex:1; justify-content:center} .subscribe{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-gear-wide-connected"></i></div> Paymo BaaS</div><a href="https://status.paymo.co" class="btn-ghost text-decoration-none" style="padding:8px 14px"><span style="width:7px; height:7px; background:#F59E0B; border-radius:50%; display:inline-block; animation:blink 1.2s infinite"></span> Status: Maintenance</a></div>
+<div class="wrap"><div class="cardx"><div class="top-line"></div>
+<div class="head">
+<div class="icon"><i class="bi bi-gear-wide-connected"></i></div>
+<div class="badge"><span class="spinner-grow spinner-grow-sm" style="width:10px; height:10px"></span> Scheduled Maintenance</div>
+<div class="title">Upgrading ledger — back shortly</div>
+<div class="sub">Core banking ledger upgrade for faster KES rails (2x speed). Funds safe frozen. No action needed — we'll notify.</div>
+
+<div class="progress-wrap">
+<div class="progress-top"><span>Upgrade Progress</span><span style="color:var(--em600)" id="pct">75%</span></div>
+<div class="bar"><div class="fill" id="fill"><div class="stripes"></div></div></div>
+<div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px; color:var(--ink2)"><span><i class="bi bi-clock me-1"></i><span id="eta">~12 min left</span></span><span><i class="bi bi-check2-circle me-1"></i>Vault locked safe</span></div>
+
+<div class="changelog">
+<div class="chip"><b><i class="bi bi-lightning-charge text-success me-1"></i>Faster transfers</b><div style="color:var(--ink2)">M-Pesa rail 1.8s → 0.9s</div></div>
+<div class="chip"><b><i class="bi bi-shield-check text-primary me-1"></i>More secure</b><div style="color:var(--ink2)">HSM key rotation done</div></div>
+</div>
+
+<div class="subscribe"><input id="email" type="email" placeholder="you@company.com — get notified when live"/><button class="btn-em" onclick="subscribe()"><i class="bi bi-bell"></i> Notify Me</button></div>
+</div>
+
+<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:14px"><span style="padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em700); font-weight:700; font-size:11px"><i class="bi bi-vault"></i> Funds safe • Read-only</span><span style="padding:6px 12px; border-radius:999px; background:white; border:1px solid var(--bd); font-weight:700; font-size:11px"><i class="bi bi-clock-history"></i> Started 18 min ago</span></div>
+</div>
+<div class="actions">
+<button class="btn-em" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Check Status</button>
+<a href="https://status.paymo.co" class="btn-ghost text-decoration-none"><i class="bi bi-graph-up"></i> Status Page</a>
+<button class="btn-ghost" onclick="toast('Maintenance FAQ','Ledger frozen, no outbound but inbound queued')"><i class="bi bi-info-circle"></i> FAQ</button>
+</div>
+</div></div>
+<div class="toast-wrap" id="toasts"></div>
+<style>@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}</style>
+<script>
+let p=75; const fill=document.getElementById('fill'), pct=document.getElementById('pct'), eta=document.getElementById('eta');
+setInterval(()=>{if(p<92){p+=Math.random()*0.8; fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; eta.textContent='~'+Math.max(2, Math.round(100-p)/3)+' min left'}},1800);
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast'; e.innerHTML=`<div style="font-weight:700; font-size:13px"><i class='bi bi-check-circle-fill text-success me-1'></i>${t}</div><div style='font-size:12px; color:#4B5563'>${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3800)}
+function subscribe(){const v=document.getElementById('email').value; if(!v.includes('@')){toast('Enter valid email','We will notify when maintenance ends'); return} toast('You are subscribed','We will email '+v+' when live');}
+</script>
+</body>
+</html>

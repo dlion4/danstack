@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>409 • Conflict — Paymo BaaS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --red:#EF4444; --redSoft:#FEF2F2; --redBd:#FECACA; --redDark:#B91C1C; --amber:#F59E0B; --amberSoft:#FFFBEB; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:28px; --shadow:0 20px 60px rgba(26,31,46,.08)}
+*{box-sizing:border-box} body{font-family:Inter,sans-serif; background:radial-gradient(900px 500px at 0% 0%,#FEF2F2,transparent 60%), radial-gradient(700px 400px at 95% 5%,#FFFBEB,transparent 55%),var(--cream); min-height:100dvh; margin:0; display:flex; flex-direction:column}
+.topbar{padding:20px 24px; max-width:1200px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--red),#F87171); display:grid; place-items:center; color:white}
+.wrap{flex:1; display:flex; align-items:center; justify-content:center; padding:16px}
+.cardx{background:var(--w); border:1px solid var(--bd); border-radius:var(--r); box-shadow:var(--shadow); max-width:620px; width:100%; overflow:hidden; animation:rise .6s cubic-bezier(.16,1,.3,1)} @keyframes rise{from{transform:translateY(16px); opacity:0}to{transform:translateY(0); opacity:1}}
+.head{padding:26px 28px 18px; text-align:center}
+.icon{width:96px; height:96px; margin:0 auto 16px; border-radius:28px; background:var(--redSoft); border:1px solid var(--redBd); display:grid; place-items:center; font-size:42px; color:var(--red); position:relative; animation:shake 3s ease-in-out infinite} @keyframes shake{0%,88%,100%{transform:translateX(0)}90%{transform:translateX(-4px)}92%{transform:translateX(4px)}94%{transform:translateX(-2px)}}
+.badge{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; background:var(--redSoft); border:1px solid var(--redBd); color:var(--redDark); font-weight:700; font-size:11px; text-transform:uppercase}
+.title{font-family:Space Grotesk,sans-serif; font-size:26px; font-weight:700; margin:12px 0 8px}
+.sub{color:var(--ink2); font-size:14px; line-height:1.6}
+.idem-box{margin:18px 0; background:#FFFBFB; border:1px solid var(--redBd); border-radius:16px; padding:14px; text-align:left}
+.txn{font-family:JetBrains Mono,monospace; background:#0F172A; color:#E2E8F0; padding:10px 12px; border-radius:10px; font-size:13px; display:flex; justify-content:space-between; align-items:center; margin-top:10px}
+.good{background:var(--emGhost); border:1px solid #A7F3D0; border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:center; margin-top:12px; text-align:left}
+.actions{padding:18px 28px; background:#FFFEFB; border-top:1px solid var(--bd); display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:12px 22px; font-weight:700; font-size:14px; box-shadow:0 8px 20px rgba(16,185,129,.28); transition:.2s; display:flex; align-items:center; gap:8px}
+.btn-em:hover{transform:translateY(-2px); color:white}
+.btn-ghost{background:white; border:1px solid var(--bd); border-radius:12px; padding:11px 18px; font-weight:600; font-size:14px}
+.toast-wrap{position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px}
+.toast{background:white; border:1px solid var(--bd); border-left:4px solid var(--red); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); min-width:300px; animation:slide .35s ease} @keyframes slide{from{transform:translateX(16px); opacity:0}to{transform:translateX(0); opacity:1}}
+@media(max-width:640px){.head{padding:20px 18px} .actions{padding:16px 18px} .btn-em,.btn-ghost{flex:1; justify-content:center}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-exclamation-diamond-fill"></i></div> Paymo BaaS</div><button class="btn-ghost" style="padding:8px 14px" onclick="showInfo()"><i class="bi bi-info-circle"></i> What is this?</button></div>
+<div class="wrap"><div class="cardx">
+<div class="head">
+<div class="icon"><i class="bi bi-layers-half"></i></div>
+<div class="badge"><i class="bi bi-copy"></i> 409 • Duplicate Blocked</div>
+<div class="title">Already processed — we blocked double charge</div>
+<div class="sub">Same <code>idempotency_key</code> used twice. Paymo stopped duplicate to protect your customer. This is <b>good</b> — safety working.</div>
+
+<div class="idem-box">
+<div style="display:flex; justify-content:space-between; align-items:center"><b style="font-size:12px; text-transform:uppercase; letter-spacing:.06em">Idempotency protection active</b><span style="font-size:11px; padding:4px 8px; border-radius:999px; background:var(--amberSoft); border:1px solid #FDE68A; color:#92400E; font-weight:700">Duplicate</span></div>
+<div style="font-size:13px; color:var(--ink2); margin-top:8px">You sent <code style="background:white; border:1px solid var(--bd); padding:2px 6px; border-radius:6px">idem_KE_2024_9912</code> again. Original succeeded 42s ago.</div>
+<div class="txn"><span id="txnId">txn_882199200xAL</span><button class="btn-ghost" style="padding:4px 10px; font-size:11px" onclick="copyTxn()"><i class="bi bi-clipboard"></i> Copy ID</button></div>
+<div class="good"><div style="width:32px; height:32px; border-radius:10px; background:var(--emGhost); color:var(--em600); display:grid; place-items:center"><i class="bi bi-shield-check"></i></div><div><b style="font-size:13px">Customer charged once only</b><div style="font-size:12px; color:var(--ink2)">KES 12,400 moved once. Second request rejected.</div></div></div>
+</div>
+
+<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap"><span style="padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:var(--em600); font-weight:700; font-size:11px"><i class="bi bi-check2-circle"></i> No extra charge</span><span style="padding:6px 12px; border-radius:999px; background:white; border:1px solid var(--bd); font-weight:700; font-size:11px"><i class="bi bi-clock"></i> Original: 42s ago</span></div>
+</div>
+<div class="actions">
+<a id="viewTxn" href="/transactions/txn_882199200xAL" class="btn-em text-decoration-none"><i class="bi bi-receipt"></i> View Original Txn</a>
+<button class="btn-ghost" onclick="newKey()"><i class="bi bi-plus-circle"></i> Use new idempotency key</button>
+<button class="btn-ghost" onclick="toast('Logged','Our team noted this idempotency hit')"><i class="bi bi-flag"></i> Report</button>
+</div>
+</div></div>
+<div class="toast-wrap" id="toasts"></div>
+<script>
+function toast(t,m){const w=document.getElementById('toasts'); const e=document.createElement('div'); e.className='toast'; e.innerHTML=`<div style="font-weight:700; font-size:13px"><i class='bi bi-info-circle-fill text-danger me-1'></i>${t}</div><div style='font-size:12px; color:#4B5563'>${m}</div>`; w.appendChild(e); setTimeout(()=>e.remove(),3500)}
+function copyTxn(){navigator.clipboard.writeText(document.getElementById('txnId').textContent).then(()=>toast('Txn ID copied','Share with support'))}
+function newKey(){const nk='idem_'+Math.random().toString(36).slice(2,9); toast('New key generated: '+nk,'Use this for new payment');}
+function showInfo(){toast('Idempotency = safety','Same key twice = Paymo blocks duplicate. Use new key for new charge.')}
+</script>
+</body>
+</html>

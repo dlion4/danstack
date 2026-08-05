@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction-Dashboard • 28 Error Pages — DanStack</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FFFCF5; --emerald:#10b981; --em600:#059669; --emGhost:#ECFDF5; --ink:#1A1F2E; --ink2:#4B5563; --bd:#E8E2D9; --w:#fff; --r:18px; --shadow:0 16px 40px rgba(26,31,46,.07)}
+body{font-family:Inter,sans-serif; background:radial-gradient(1000px 600px at 10% 0%,#D1FAE5,transparent 60%), radial-gradient(800px 400px at 90% 0%,#FEF3C7,transparent 50%),var(--cream); min-height:100dvh; margin:0; color:var(--ink)}
+.topbar{padding:20px 24px; max-width:1280px; width:100%; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px}
+.logo{display:flex; gap:10px; align-items:center; font-weight:800} .logo-mark{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--emerald),var(--em600)); display:grid; place-items:center; color:white}
+.hero{max-width:1280px; margin:0 auto; padding:10px 24px 30px}
+.card{background:var(--w); border:1px solid var(--bd); border-radius:22px; box-shadow:var(--shadow); padding:20px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; margin-top:14px}
+.tile{border:1px solid var(--bd); border-radius:16px; padding:14px; background:var(--w); text-decoration:none; color:inherit; transition:.2s; display:flex; flex-direction:column; gap:8px}
+.tile:hover{transform:translateY(-3px); box-shadow:0 12px 24px rgba(26,31,46,.08); border-color:#10b981}
+.tile .ic{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-size:18px}
+.badge-em{padding:6px 12px; border-radius:999px; background:var(--emGhost); border:1px solid #A7F3D0; color:#047857; font-weight:700; font-size:11px; text-transform:uppercase}
+.chip{padding:4px 8px; border-radius:999px; background:white; border:1px solid var(--bd); font-size:10px; font-weight:600}
+.type-warn{background:#FFFBEB; border-color:#FDE68A; color:#92400E}
+.type-error{background:#FEF2F2; border-color:#FECACA; color:#B91C1C}
+.type-info{background:#F0F9FF; border-color:#BAE6FD; color:#0369A1}
+.explain{font-size:12.5px; color:var(--ink2); line-height:1.6; background:var(--cream); border:1px dashed var(--bd); border-radius:14px; padding:12px; margin-top:12px}
+.btn-em{background:linear-gradient(135deg,var(--emerald),var(--em600)); color:white; border:none; border-radius:12px; padding:10px 16px; font-weight:700; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:6px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><div class="logo-mark"><i class="bi bi-arrow-left-right"></i></div> DanStack Transaction • 28 Pages • Modal + Full-Page</div><div class="d-flex gap-2"><span class="badge-em"><i class="bi bi-check2-all me-1"></i> Cream + Emerald • Advanced</span><a class="btn-em" href="./transaction-modals-library.html"><i class="bi bi-window-stack me-1"></i> Modals Library</a></div></div>
+<div class="hero">
+<div class="card">
+<h1 style="font-family:Space Grotesk; font-size:26px; font-weight:700; margin:0">Transaction-Dashboard — 28 Errors & Warnings</h1>
+<div style="font-size:13px; color:#4B5563; margin-top:6px">Shell: initiate-transfer, mobile-money, payment-rails, fx, reconciliation, settlement, etc. Separated: WARNING before send (permission checkbox) vs ERROR after 2-4s wait then fail vs INFO HOLD polling.</div>
+<div class="explain">
+<b>WARNING Modal (Before):</b> Invalid account check digit, amount min/max, daily limit, per-txn approval, name mismatch 78%, purpose code missing, currency not allowed, RTGS closed — show checkbox "I confirm recipient & amount" → then call API.<br>
+<b>ERROR Full-Page (After):</b> Recipient not found after 3s name lookup fail, bank offline 503, insufficient balance after PIN, duplicate guard, PIN 3x locked, M-Pesa STK timeout 30s, not registered, FX expired mid-tx 42s, throttled 100/min, txn expired 24h auto-reversed, account frozen, beneficiary blacklisted, liquidity fail.<br>
+<b>INFO HOLD:</b> Settlement delayed 68s polling every 3s, AML risk 87 hold 1-4h — vault safe queued.
+</div>
+<div class="grid" style="margin-top:16px">
+
+<a class="tile" href="./tx-400-01-recipient-not-found.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-400-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-person-x"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Cannot Fetch End Recipient</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">404 — account not found at KCB, after 3s fail</div>
+<div style="margin-top:6px"><span class="chip">TX-400-01</span></div>
+</a>
+
+<a class="tile" href="./tx-400-02-invalid-account-checkdigit.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-400-02</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-123"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Invalid Account Check Digit</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Wrong length, check digit fail — fix before send</div>
+<div style="margin-top:6px"><span class="chip">TX-400-02</span></div>
+</a>
+
+<a class="tile" href="./tx-400-03-bank-offline.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-400-03</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-wifi-off"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Receiver Bank Offline</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">PesaLink Equity 503 — switch to M-Pesa</div>
+<div style="margin-top:6px"><span class="chip">TX-400-03</span></div>
+</a>
+
+<a class="tile" href="./tx-400-04-invalid-mobile-network.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-400-04</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-phone"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Invalid Mobile Network</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">M-Pesa selected but number is Airtel — mismatch</div>
+<div style="margin-top:6px"><span class="chip">TX-400-04</span></div>
+</a>
+
+<a class="tile" href="./tx-402-01-insufficient-balance.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-402-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-wallet2"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Insufficient Balance</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Float 12k need 45k — after PIN fails</div>
+<div style="margin-top:6px"><span class="chip">TX-402-01</span></div>
+</a>
+
+<a class="tile" href="./tx-402-02-amount-min-max.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-402-02</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-currency-dollar"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Amount Below Min / Above Max</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KES 5 violates min 10 — warning before send</div>
+<div style="margin-top:6px"><span class="chip">TX-402-02</span></div>
+</a>
+
+<a class="tile" href="./tx-402-03-daily-limit-reached.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-402-03</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-graph-up-arrow"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Daily Limit Reached</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">5M/day reached 14:32 — reset midnight</div>
+<div style="margin-top:6px"><span class="chip">TX-402-03</span></div>
+</a>
+
+<a class="tile" href="./tx-402-04-per-txn-limit.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-402-04</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-person-check"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Per-TXN Limit Needs Approval</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">2.4M > 1M per-txn — director approval needed</div>
+<div style="margin-top:6px"><span class="chip">TX-402-04</span></div>
+</a>
+
+<a class="tile" href="./tx-409-01-duplicate-transaction.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-409-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-copy"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Duplicate Transaction Guard</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Same idem key 2 min apart — blocked double pay</div>
+<div style="margin-top:6px"><span class="chip">TX-409-01</span></div>
+</a>
+
+<a class="tile" href="./tx-401-01-pin-3x-locked.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-401-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-keyboard"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Multiple PIN 3x Locked</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">PIN 3x wrong — locked 15 min — MOST requested</div>
+<div style="margin-top:6px"><span class="chip">TX-401-01</span></div>
+</a>
+
+<a class="tile" href="./tx-401-02-wrong-pin-otp-expired.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-401-02</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-shield-exclamation"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Wrong PIN / OTP Expired</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">OTP expired 2 min, entered late — resend</div>
+<div style="margin-top:6px"><span class="chip">TX-401-02</span></div>
+</a>
+
+<a class="tile" href="./tx-408-01-mpesa-stk-timeout.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-408-01</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-phone-vibrate"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">M-Pesa STK Timeout / Cancelled</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">STK 30s timeout or user pressed cancel</div>
+<div style="margin-top:6px"><span class="chip">TX-408-01</span></div>
+</a>
+
+<a class="tile" href="./tx-404-01-mpesa-not-registered.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-404-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-phone-x"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Mobile Money Not Registered</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Number not on M-Pesa — 404</div>
+<div style="margin-top:6px"><span class="chip">TX-404-01</span></div>
+</a>
+
+<a class="tile" href="./tx-409-02-fx-quote-expired-mid.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-409-02</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-currency-exchange"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">FX Quote Expired Mid-TX</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Quote 30s, confirmed 42s — 12s over</div>
+<div style="margin-top:6px"><span class="chip">TX-409-02</span></div>
+</a>
+
+<a class="tile" href="./tx-429-01-throttled.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-429-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-speedometer2"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Throttled 100/min</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">127 in 60s, limit 100/min — countdown 42s</div>
+<div style="margin-top:6px"><span class="chip">TX-429-01</span></div>
+</a>
+
+<a class="tile" href="./tx-500-01-settlement-delayed.html">
+<div class="d-flex justify-content-between"><span class="chip type-info">INFO-HOLD • TX-500-01</span><div class="ic" style="background:#F0F9FF; border:1px solid #BAE6FD; color:#0EA5E9"><i class="bi bi-hourglass-split"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Settlement Delayed PSP</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Pending 68s vs 4s expected — polling</div>
+<div style="margin-top:6px"><span class="chip">TX-500-01</span></div>
+</a>
+
+<a class="tile" href="./tx-409-03-reconciliation-mismatch.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-409-03</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-calculator"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Reconciliation Mismatch</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Sent 45k settled 44,950 diff fee 50</div>
+<div style="margin-top:6px"><span class="chip">TX-409-03</span></div>
+</a>
+
+<a class="tile" href="./tx-403-01-aml-hold.html">
+<div class="d-flex justify-content-between"><span class="chip type-info">INFO-HOLD • TX-403-01</span><div class="ic" style="background:#F0F9FF; border:1px solid #BAE6FD; color:#0EA5E9"><i class="bi bi-shield-exclamation"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">AML Risk 87 Hold</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Risk 87/100 night 120k — 1-4h manual review</div>
+<div style="margin-top:6px"><span class="chip">TX-403-01</span></div>
+</a>
+
+<a class="tile" href="./tx-403-02-kra-tax-failed.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-403-02</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-receipt-cutoff"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">KRA Tax Check Failed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KRA NON_COMPLIANT — outstanding PAYE 89k</div>
+<div style="margin-top:6px"><span class="chip">TX-403-02</span></div>
+</a>
+
+<a class="tile" href="./tx-422-01-name-mismatch.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-422-01</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-person-bounding-box"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Recipient Name Mismatch 78%</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">J DOE LTD vs JOHN DOE LTD — confirm override</div>
+<div style="margin-top:6px"><span class="chip">TX-422-01</span></div>
+</a>
+
+<a class="tile" href="./tx-404-02-purpose-code-missing.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-404-02</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-card-list"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Purpose Code Missing</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Salary needs purpose code CBK</div>
+<div style="margin-top:6px"><span class="chip">TX-404-02</span></div>
+</a>
+
+<a class="tile" href="./tx-400-05-currency-not-allowed.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-400-05</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-currency-dollar"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Currency Not Allowed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KES to USD without FX — need quote</div>
+<div style="margin-top:6px"><span class="chip">TX-400-05</span></div>
+</a>
+
+<a class="tile" href="./tx-423-01-rtgs-cutoff.html">
+<div class="d-flex justify-content-between"><span class="chip type-warn">WARNING • TX-423-01</span><div class="ic" style="background:#FFFBEB; border:1px solid #FDE68A; color:#F59E0B"><i class="bi bi-clock-history"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">RTGS Closed Weekend</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">RTGS cut-off 15:00 Fri — settles Mon</div>
+<div style="margin-top:6px"><span class="chip">TX-423-01</span></div>
+</a>
+
+<a class="tile" href="./tx-410-01-txn-expired.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-410-01</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-hourglass-bottom"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">TXN Expired 24h Auto-Reversed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Pending 24h auto-reversed to float</div>
+<div style="margin-top:6px"><span class="chip">TX-410-01</span></div>
+</a>
+
+<a class="tile" href="./tx-403-03-account-frozen.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-403-03</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-lock-fill"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Account Frozen Restricted</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">Float frozen — fraud lock 87/100</div>
+<div style="margin-top:6px"><span class="chip">TX-403-03</span></div>
+</a>
+
+<a class="tile" href="./tx-422-02-beneficiary-blacklisted.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-422-02</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-slash-circle"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Beneficiary Blacklisted</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">OFAC 92% + internal fraud — blocked</div>
+<div style="margin-top:6px"><span class="chip">TX-422-02</span></div>
+</a>
+
+<a class="tile" href="./tx-500-02-liquidity-failed.html">
+<div class="d-flex justify-content-between"><span class="chip type-error">ERROR • TX-500-02</span><div class="ic" style="background:#FEF2F2; border:1px solid #FECACA; color:#EF4444"><i class="bi bi-water"></i></div></div>
+<div style="font-weight:700; font-size:13px; font-family:Space Grotesk; margin-top:6px">Liquidity Provider Failed</div>
+<div style="font-size:11px; color:#4B5563; line-height:1.4">KCB Nostro fund 50M timeout 500</div>
+<div style="margin-top:6px"><span class="chip">TX-500-02</span></div>
+</a>
+
+</div>
+</div>
+</div>
+</body>
+</html>
