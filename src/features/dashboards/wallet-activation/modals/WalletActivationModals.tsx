@@ -58,6 +58,10 @@ export function WalletActivationModals({
   const [relocationDestination, setRelocationDestination] = useState(
     "Transfer to Primary PayMo Wallet"
   );
+  const [selectedLinkAccount, setSelectedLinkAccount] = useState<string | null>(null);
+  const [linkSourceWallet, setLinkSourceWallet] = useState<string | null>(null);
+  const [linkDestinationWallet, setLinkDestinationWallet] = useState<string | null>(null);
+  const [linkPermissionPreset, setLinkPermissionPreset] = useState<string>("Full Control");
 
   const fieldGrid: React.CSSProperties = {
     display: "grid",
@@ -365,35 +369,36 @@ export function WalletActivationModals({
       onClose={() => close("linkAccountModal")}
       iconCls="bi bi-link-45deg"
       title="Link Account"
-      steps={["Choose account", "Set permissions", "Confirm PIN"]}
+      steps={["Select source", "Select destination", "Flow preview", "Configure permissions", "Confirm PIN"]}
       confirmLabel="Link Account"
     >
       {(step) => {
         if (step === 1) {
           return (
             <div>
-              <SelectField
-                label="Dashboard origin"
-                options={["Transaction Hub", "Business Portal", "Savings & Investments", "Loans & Credit", "Crypto Center", "Utilities Hub"]}
-                defaultValue="Business Portal"
-              />
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
+              <InfoBox variant="info">
+                <i className="bi bi-wallet2" /> Select the source wallet you want to link from
+              </InfoBox>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 12 }}>Available Source Wallets</div>
                 {[
-                  { name: "Business Float", detail: "•••• 2207 • KES 6,150,000 • Active", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
-                  { name: "Collection Account", detail: "•••• 4418 • KES 890,000 • Active", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "C" },
-                  { name: "Payroll Float", detail: "•••• 7732 • KES 2,300,000 • Paused", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "P" },
+                  { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", balance: "KES 1,284,300", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "P" },
+                  { id: 2, name: "Business Float", origin: "Business Portal", number: "•••• 2207", balance: "KES 6,150,000", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
+                  { id: 3, name: "Savings Jar", origin: "Savings & Investments", number: "•••• 7793", balance: "KES 480,000", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "S" },
                 ].map((acc) => (
                   <div
-                    key={acc.name}
+                    key={acc.id}
+                    onClick={() => setLinkSourceWallet(acc.name)}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: 12,
                       padding: "12px 14px",
                       borderRadius: 12,
-                      border: acc.name === "Business Float" ? "2px solid var(--pri)" : "1px solid var(--border)",
-                      background: acc.name === "Business Float" ? "var(--success-bg)" : "var(--surface-2)",
+                      border: linkSourceWallet === acc.name ? "2px solid var(--pri)" : "1px solid var(--border)",
+                      background: linkSourceWallet === acc.name ? "var(--success-bg)" : "var(--surface-2)",
                       cursor: "pointer",
+                      marginBottom: 8,
                     }}
                   >
                     <div style={{ width: 38, height: 38, borderRadius: 11, background: acc.grad, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
@@ -401,9 +406,12 @@ export function WalletActivationModals({
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: 13 }}>{acc.name}</div>
-                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{acc.detail}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{acc.origin} • {acc.number}</div>
                     </div>
-                    <i className={`bi ${acc.name === "Business Float" ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: acc.name === "Business Float" ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>{acc.balance}</div>
+                      <i className={`bi ${linkSourceWallet === acc.name ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: linkSourceWallet === acc.name ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -414,21 +422,40 @@ export function WalletActivationModals({
           return (
             <div>
               <InfoBox variant="info">
-                <i className="bi bi-sliders" /> Choose the permission level for this dashboard to see and
-                use the linked account.
+                <i className="bi bi-arrow-right" /> Select the destination wallet to link {linkSourceWallet || 'the source wallet'} to
               </InfoBox>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 12 }}>Available Destination Wallets</div>
                 {[
-                  { name: "Full Control", desc: "View balance + transfer in/out + auto rules", active: true },
-                  { name: "View + Transfer In/Out", desc: "Balance visible with bidirectional transfers", active: false },
-                  { name: "View + Transfer In", desc: "Receive into this dashboard only", active: false },
-                  { name: "View Only", desc: "Balance visible, no transfers", active: false },
-                ].map((p) => (
-                  <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 12, border: p.active ? "2px solid var(--pri)" : "1px solid var(--border)", background: p.active ? "var(--success-bg)" : "var(--surface-2)", cursor: "pointer" }}>
-                    <i className={`bi ${p.active ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: p.active ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
+                  { id: 1, name: "Loan Disbursement", origin: "Loans & Credit", number: "•••• 8910", balance: "KES 0", grad: "linear-gradient(135deg,#3b82f6,#2563eb)", letter: "L" },
+                  { id: 2, name: "Fiat On-ramp", origin: "Crypto Center", number: "•••• 0042", balance: "USD 2,410", grad: "linear-gradient(135deg,#ef4444,#dc2626)", letter: "C" },
+                  { id: 3, name: "Developer Portal", origin: "Developer Portal", number: "•••• 9091", balance: "KES 2,100,000", grad: "linear-gradient(135deg,#8b5cf6,#a78bfa)", letter: "D" },
+                ].map((acc) => (
+                  <div
+                    key={acc.id}
+                    onClick={() => setLinkDestinationWallet(acc.name)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "12px 14px",
+                      borderRadius: 12,
+                      border: linkDestinationWallet === acc.name ? "2px solid var(--pri)" : "1px solid var(--border)",
+                      background: linkDestinationWallet === acc.name ? "var(--success-bg)" : "var(--surface-2)",
+                      cursor: "pointer",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <div style={{ width: 38, height: 38, borderRadius: 11, background: acc.grad, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
+                      {acc.letter}
+                    </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
-                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{p.desc}</div>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>{acc.name}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{acc.origin} • {acc.number}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>{acc.balance}</div>
+                      <i className={`bi ${linkDestinationWallet === acc.name ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: linkDestinationWallet === acc.name ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
                     </div>
                   </div>
                 ))}
@@ -436,20 +463,92 @@ export function WalletActivationModals({
             </div>
           );
         }
+        if (step === 3) {
+          return (
+            <div>
+              <InfoBox variant="warning">
+                <i className="bi bi-diagram-3" /> Review how money will flow between these wallets
+              </InfoBox>
+              <div style={{ marginTop: 16, padding: "16px", borderRadius: 12, background: "var(--surface-2)", border: "1px solid var(--border)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 16 }}>
+                  <div style={{ flex: 1, textAlign: "center" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--pri)" }}>{linkSourceWallet || 'Source'}</div>
+                    <div style={{ fontSize: 11, color: "var(--ink-500)" }}>Source Wallet</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <i className="bi bi-arrow-left-right" style={{ fontSize: 20, color: "var(--success)" }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "var(--success)" }}>Bidirectional</span>
+                  </div>
+                  <div style={{ flex: 1, textAlign: "center" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--pri)" }}>{linkDestinationWallet || 'Destination'}</div>
+                    <div style={{ fontSize: 11, color: "var(--ink-500)" }}>Destination Wallet</div>
+                  </div>
+                </div>
+                <div style={{ padding: "12px", borderRadius: 8, background: "var(--success-bg)", border: "1px solid var(--success)", fontSize: 12, color: "#065F46" }}>
+                  <i className="bi bi-info-circle" /> With the default Full Control permission, money can flow freely in both directions. You can customize this in the next step.
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 8 }}>What this means:</div>
+                  <ul style={{ fontSize: 11, color: "var(--ink-700)", paddingLeft: 16, margin: 0 }}>
+                    <li>Both wallets can see each other's balances</li>
+                    <li>Transfers can be initiated from either wallet</li>
+                    <li>Auto-sweep and auto-top-up rules can be configured</li>
+                    <li>Transaction history is shared between both</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        if (step === 4) {
+          return (
+            <div>
+              <InfoBox variant="info">
+                <i className="bi bi-sliders" /> Configure permissions and financial capabilities
+              </InfoBox>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 12 }}>Permission Preset</div>
+                {[
+                  { name: "Full Control", desc: "Bidirectional flow + all features", active: true },
+                  { name: "View + Transfer In/Out", desc: "Balance visible with bidirectional transfers", active: false },
+                  { name: "View + Transfer In", desc: "Receive into destination only", active: false },
+                  { name: "View Only", desc: "Balance visible, no transfers", active: false },
+                ].map((p) => (
+                  <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 10, border: p.active ? "2px solid var(--pri)" : "1px solid var(--border)", background: p.active ? "var(--success-bg)" : "var(--surface-2)", marginBottom: 8, cursor: "pointer" }}>
+                    <i className={`bi ${p.active ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: p.active ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{p.desc}</div>
+                    </div>
+                  </div>
+                ))}
+                
+                <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+                  <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 8 }}>Toggle Additional Features</div>
+                  <Toggle checked={true} onChange={() => { }} label="Balance Visibility" description="Allow both wallets to see each other's balance" />
+                  <Toggle checked={true} onChange={() => { }} label="Transaction History" description="Share full transaction history between wallets" />
+                  <Toggle checked={false} onChange={() => { }} label="Auto-Sweep" description="Move excess balance above threshold automatically" />
+                  <Toggle checked={false} onChange={() => { }} label="Auto-Top-Up" description="Refill when balance drops below threshold" />
+                  <Toggle checked={true} onChange={() => { }} label="Notification Sharing" description="Receive alerts about transactions on linked wallet" />
+                </div>
+              </div>
+            </div>
+          );
+        }
         return (
           <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
-            <p style={{ fontSize: 13, color: "var(--ink-700)", textAlign: "center", maxWidth: 360 }}>
-              Confirm with your PIN to link <strong>Business Float</strong> to this dashboard with
-              <strong> Full Control</strong> permissions.
-            </p>
+            <div style={{ textAlign: "center", maxWidth: 400 }}>
+              <p style={{ fontSize: 13, color: "var(--ink-700)", margin: 0 }}>
+                Confirm with your PIN to link <strong>{linkSourceWallet || 'source wallet'}</strong> to <strong>{linkDestinationWallet || 'destination wallet'}</strong> with <strong>Full Control</strong> permissions.
+              </p>
+            </div>
             <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
               {["_", "_", "_", "_"].map((_, i) => (
                 <input key={i} type="password" inputMode="numeric" maxLength={1} style={{ width: 48, height: 56, textAlign: "center", fontSize: 22, fontWeight: 700, border: "2px solid var(--border)", borderRadius: 10 }} />
               ))}
             </div>
             <InfoBox variant="success">
-              <i className="bi bi-shield-check" /> Linking is instant and reversible. You can revoke access
-              at any time from the links panel.
+              <i className="bi bi-shield-check" /> Linking is instant and reversible. You can modify permissions or unlink at any time from the links panel.
             </InfoBox>
           </div>
         );
@@ -463,19 +562,22 @@ export function WalletActivationModals({
       show={isOpen("linkPermissionsModal")}
       onClose={() => close("linkPermissionsModal")}
       iconCls="bi bi-sliders"
-      title="Link Permission Controls"
+      title={`Permission Controls - ${selectedLinkAccount || 'Account'}`}
       tabs={[
         {
           key: "presets",
           label: "Presets",
           render: () => (
             <div>
+              <InfoBox variant="info">
+                <i className="bi bi-info-circle" /> Quick permission presets for {selectedLinkAccount || 'this account'}
+              </InfoBox>
               {[
-                { name: "Full Inter-Dashboard Access", desc: "Enables all toggles below", active: true },
-                { name: "View Only", desc: "Balance visible, no transfers", active: false },
-                { name: "One-Way In", desc: "Can receive only", active: false },
-                { name: "One-Way Out", desc: "Can send only", active: false },
-                { name: "Custom", desc: "User-defined combination", active: false },
+                { name: "Full Inter-Dashboard Access", desc: "Enables all toggles below - bidirectional flow", active: true },
+                { name: "View Only", desc: "Balance visible, no transfers allowed", active: false },
+                { name: "One-Way In", desc: "Can receive funds only - no outbound transfers", active: false },
+                { name: "One-Way Out", desc: "Can send funds only - no inbound transfers", active: false },
+                { name: "Custom", desc: "User-defined combination of permissions", active: false },
               ].map((p) => (
                 <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", borderRadius: 10, border: p.active ? "2px solid var(--pri)" : "1px solid var(--border)", background: p.active ? "var(--success-bg)" : "var(--surface-2)", marginBottom: 8, cursor: "pointer" }}>
                   <i className={`bi ${p.active ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: p.active ? "var(--pri)" : "var(--ink-300)", fontSize: 16 }} />
@@ -493,13 +595,23 @@ export function WalletActivationModals({
           label: "Granular",
           render: () => (
             <div>
-              <Toggle checked onChange={() => { }} label="Visibility" description="Allow this dashboard to see my balance from Business Float" />
-              <Toggle checked onChange={() => { }} label="Inbound transfers" description="Allow money to flow INTO this dashboard from Business Float" />
-              <Toggle checked onChange={() => { }} label="Outbound transfers" description="Allow money to flow OUT to Business Float" />
-              <Toggle checked={false} onChange={() => { }} label="Auto-sweep" description="Move excess balance above a threshold automatically" />
-              <Toggle checked={false} onChange={() => { }} label="Auto-top-up" description="Refill this dashboard when balance drops below threshold" />
-              <Toggle checked onChange={() => { }} label="Notification sharing" description="Receive alerts about transactions on Business Float" />
-              <Toggle checked onChange={() => { }} label="Statement access" description="Include Business Float in consolidated statements" />
+              <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid var(--border)" }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 4 }}>Financial Permissions</div>
+                <div style={{ fontSize: 11, color: "var(--ink-500)" }}>Control how money can flow between accounts</div>
+              </div>
+              <Toggle checked onChange={() => { }} label="Balance Visibility" description="Allow this dashboard to see balance from {selectedLinkAccount}" />
+              <Toggle checked onChange={() => { }} label="Inbound Transfers" description="Allow money to flow INTO this dashboard from {selectedLinkAccount}" />
+              <Toggle checked onChange={() => { }} label="Outbound Transfers" description="Allow money to flow OUT to {selectedLinkAccount}" />
+              <Toggle checked={false} onChange={() => { }} label="Auto-Sweep" description="Move excess balance above threshold automatically" />
+              <Toggle checked={false} onChange={() => { }} label="Auto-Top-Up" description="Refill this dashboard when balance drops below threshold" />
+              
+              <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid var(--border)", marginTop: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 4 }}>Data & Notifications</div>
+                <div style={{ fontSize: 11, color: "var(--ink-500)" }}>Control information sharing and alerts</div>
+              </div>
+              <Toggle checked onChange={() => { }} label="Notification Sharing" description="Receive alerts about transactions on {selectedLinkAccount}" />
+              <Toggle checked onChange={() => { }} label="Statement Access" description="Include {selectedLinkAccount} in consolidated statements" />
+              <Toggle checked onChange={() => { }} label="Transaction History" description="View full transaction history from {selectedLinkAccount}" />
             </div>
           ),
         },
@@ -561,6 +673,124 @@ export function WalletActivationModals({
     </SimpleModal>
   );
 
+  /* ================= W10.5 Flow Control Modal ================= */
+  const linkFlowControlModal = (
+    <TabbedModal
+      show={isOpen("linkFlowControlModal")}
+      onClose={() => close("linkFlowControlModal")}
+      iconCls="bi bi-arrow-left-right"
+      title={`Flow Control - ${selectedLinkAccount || 'Account'}`}
+      tabs={[
+        {
+          key: "direction",
+          label: "Flow Direction",
+          render: () => (
+            <div>
+              <InfoBox variant="warning">
+                <i className="bi bi-arrow-left-right" /> Control the direction of money flow between your Primary Wallet and {selectedLinkAccount || 'this account'}
+              </InfoBox>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 12 }}>Select Flow Direction</div>
+                {[
+                  { name: "Bidirectional", desc: "Money can flow both ways - full access", icon: "bi-arrow-left-right", active: true },
+                  { name: "Inbound Only", desc: "Money can only flow INTO this account", icon: "bi-arrow-right", active: false },
+                  { name: "Outbound Only", desc: "Money can only flow OUT from this account", icon: "bi-arrow-left", active: false },
+                  { name: "No Flow", desc: "No transfers allowed - view only", icon: "bi-x-circle", active: false },
+                ].map((p) => (
+                  <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 10, border: p.active ? "2px solid var(--pri)" : "1px solid var(--border)", background: p.active ? "var(--success-bg)" : "var(--surface-2)", marginBottom: 8, cursor: "pointer" }}>
+                    <i className={`bi ${p.icon}`} style={{ color: p.active ? "var(--pri)" : "var(--ink-400)", fontSize: 18, width: 24 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{p.desc}</div>
+                    </div>
+                    <i className={`bi ${p.active ? "bi-check-circle-fill" : "bi-circle"}`} style={{ color: p.active ? "var(--pri)" : "var(--ink-300)", fontSize: 17 }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ),
+        },
+        {
+          key: "limits",
+          label: "Transfer Limits",
+          render: () => (
+            <div>
+              <InfoBox variant="info">
+                <i className="bi bi-shield-check" /> Set transfer limits to protect your funds
+              </InfoBox>
+              <div style={{ marginTop: 16 }}>
+                <div style={fieldGrid}>
+                  <div>
+                    <label className={s.formLabel}>Daily Transfer Limit</label>
+                    <input type="number" className={s.formControl} defaultValue="1000000" placeholder="KES" />
+                  </div>
+                  <div>
+                    <label className={s.formLabel}>Per Transaction Limit</label>
+                    <input type="number" className={s.formControl} defaultValue="500000" placeholder="KES" />
+                  </div>
+                  <div>
+                    <label className={s.formLabel}>Monthly Transfer Limit</label>
+                    <input type="number" className={s.formControl} defaultValue="10000000" placeholder="KES" />
+                  </div>
+                  <div>
+                    <label className={s.formLabel}>Minimum Transfer Amount</label>
+                    <input type="number" className={s.formControl} defaultValue="100" placeholder="KES" />
+                  </div>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <Toggle checked={true} onChange={() => { }} label="Enforce limits strictly" description="Block transfers that exceed limits" />
+                  <Toggle checked={false} onChange={() => { }} label="Allow limit override with PIN" description="Require PIN to exceed limits" />
+                </div>
+              </div>
+            </div>
+          ),
+        },
+        {
+          key: "schedule",
+          label: "Schedule",
+          render: () => (
+            <div>
+              <InfoBox variant="info">
+                <i className="bi bi-clock" /> Set time-based restrictions on transfers
+              </InfoBox>
+              <div style={{ marginTop: 16 }}>
+                <Toggle checked={false} onChange={() => { }} label="Enable time-based restrictions" description="Only allow transfers during specific hours" />
+                <div style={{ ...fieldGrid, marginTop: 12 }}>
+                  <div>
+                    <label className={s.formLabel}>Allowed from</label>
+                    <input type="time" className={s.formControl} defaultValue="06:00" />
+                  </div>
+                  <div>
+                    <label className={s.formLabel}>Allowed until</label>
+                    <input type="time" className={s.formControl} defaultValue="22:00" />
+                  </div>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <label className={s.formLabel}>Blocked days</label>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                      <button key={day} className={s.button} style={{ padding: "6px 12px", fontSize: 11 }}>{day}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ),
+        },
+      ]}
+      footer={
+        <>
+          <button className={s.button} onClick={() => close("linkFlowControlModal")}>
+            Cancel
+          </button>
+          <button className={`${s.button} ${s.buttonPrimary}`} onClick={() => close("linkFlowControlModal")}>
+            Save Flow Settings
+          </button>
+        </>
+      }
+    />
+  );
+
   /* ================= W11. Active links management panel ================= */
   const activeLinksModal = (
     <ModalShell
@@ -586,11 +816,11 @@ export function WalletActivationModals({
       </div>
       <div className="row g-3">
         {[
-          { name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", linked: "12 Jan 2023", balance: "KES 1,284,300", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "P" },
-          { name: "Business Float", origin: "Business Portal", number: "•••• 2207", linked: "03 Feb 2024", balance: "KES 6,150,000", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
-          { name: "Savings Jar", origin: "Savings & Investments", number: "•••• 7793", linked: "15 Mar 2024", balance: "KES 480,000", permission: "View + Transfer In", status: "Active", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "S" },
-          { name: "Loan Disbursement", origin: "Loans & Credit", number: "•••• 8910", linked: "02 Apr 2025", balance: "KES 0", permission: "View Only", status: "Paused", grad: "linear-gradient(135deg,#3b82f6,#2563eb)", letter: "L" },
-          { name: "Fiat On-ramp", origin: "Crypto Center", number: "•••• 0042", linked: "12 Jun 2025", balance: "USD 2,410", permission: "View + Transfer In", status: "Active", grad: "linear-gradient(135deg,#ef4444,#dc2626)", letter: "C" },
+          { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", linked: "12 Jan 2023", balance: "KES 1,284,300", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "P" },
+          { id: 2, name: "Business Float", origin: "Business Portal", number: "•••• 2207", linked: "03 Feb 2024", balance: "KES 6,150,000", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
+          { id: 3, name: "Savings Jar", origin: "Savings & Investments", number: "•••• 7793", linked: "15 Mar 2024", balance: "KES 480,000", permission: "View + Transfer In", status: "Active", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "S" },
+          { id: 4, name: "Loan Disbursement", origin: "Loans & Credit", number: "•••• 8910", linked: "02 Apr 2025", balance: "KES 0", permission: "View Only", status: "Paused", grad: "linear-gradient(135deg,#3b82f6,#2563eb)", letter: "L" },
+          { id: 5, name: "Fiat On-ramp", origin: "Crypto Center", number: "•••• 0042", linked: "12 Jun 2025", balance: "USD 2,410", permission: "View + Transfer In", status: "Active", grad: "linear-gradient(135deg,#ef4444,#dc2626)", letter: "C" },
         ].map((acc) => (
           <div className="col-md-6 col-lg-4" key={acc.name}>
             <div style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: 14, height: "100%", display: "flex", flexDirection: "column", gap: 10, transition: "all 0.2s" }}>
@@ -615,8 +845,9 @@ export function WalletActivationModals({
                 <i className="bi bi-shield-check" /> {acc.permission}
               </span>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: "auto" }}>
-                <button className={`${s.button} ${s.buttonSmall}`} onClick={() => openModal("linkPermissionsModal")}>Permissions</button>
+                <button className={`${s.button} ${s.buttonSmall}`} onClick={() => { setSelectedLinkAccount(acc.name); openModal("linkPermissionsModal"); }}>Permissions</button>
                 <button className={`${s.button} ${s.buttonSmall}`} onClick={() => openModal("linkNotificationsModal")}>Alerts</button>
+                <button className={`${s.button} ${s.buttonSmall}`} onClick={() => { setSelectedLinkAccount(acc.name); openModal("linkFlowControlModal"); }}>Flow Control</button>
                 <button className={`${s.button} ${s.buttonSmall} ${s.buttonDanger}`} onClick={() => openModal("unlinkAccountModal")}>Unlink</button>
               </div>
             </div>

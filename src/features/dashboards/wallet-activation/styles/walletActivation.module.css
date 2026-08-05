@@ -1843,8 +1843,28 @@
   position: relative;
   background:
     radial-gradient(900px 400px at 8% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
+    radial-gradient(700px 350px at 92% 85%, rgba(139, 92, 246, 0.06), transparent 55%),
+    radial-gradient(500px 300px at 50% 50%, rgba(245, 158, 11, 0.04), transparent 50%),
     linear-gradient(180deg, #0b1220, #0a1020);
   overflow: hidden;
+  animation: flowStagePulse 8s ease-in-out infinite;
+}
+
+@keyframes flowStagePulse {
+  0%, 100% {
+    background:
+      radial-gradient(900px 400px at 8% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
+      radial-gradient(700px 350px at 92% 85%, rgba(139, 92, 246, 0.06), transparent 55%),
+      radial-gradient(500px 300px at 50% 50%, rgba(245, 158, 11, 0.04), transparent 50%),
+      linear-gradient(180deg, #0b1220, #0a1020);
+  }
+  50% {
+    background:
+      radial-gradient(950px 420px at 12% 15%, rgba(16, 185, 129, 0.12), transparent 60%),
+      radial-gradient(750px 380px at 88% 80%, rgba(139, 92, 246, 0.09), transparent 55%),
+      radial-gradient(550px 320px at 48% 52%, rgba(245, 158, 11, 0.06), transparent 50%),
+      linear-gradient(180deg, #0d1628, #0b1220);
+  }
 }
 
 .flowChartGrid {
@@ -1855,6 +1875,35 @@
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 42px 42px;
   pointer-events: none;
+  animation: gridFloat 20s linear infinite;
+}
+
+@keyframes gridFloat {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 42px 42px;
+  }
+}
+
+.flowChartGrid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 25%);
+  animation: gridGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes gridGlow {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .flowSvg {
@@ -1981,13 +2030,16 @@
   border-radius: 14px;
   padding: 12px 14px;
   color: #e2e8f0;
-  transition: all 0.25s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
+  backdrop-filter: blur(10px);
 }
 
-.flowLaneCard:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  transform: translateY(-2px);
+.flowLaneCardHoverable:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.2);
+  background: rgba(15, 23, 42, 0.95);
 }
 
 .flowLaneCardBroken {
@@ -2064,6 +2116,43 @@
   padding: 6px 10px;
   font-size: 11px;
   border-radius: 8px;
+}
+
+/* ---- Feature badges ---- */
+.flowLaneFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  animation: featuresFadeIn 0.4s ease;
+}
+
+@keyframes featuresFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flowFeatureBadge {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border-width: 1px;
+  border-style: solid;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.flowFeatureBadge:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
 
 /* ---- info chip that appears on link ---- */
@@ -2160,6 +2249,146 @@
 
 .flowLineAnimated {
   transition: stroke 0.4s, opacity 0.4s;
+}
+
+/* ---- Hover Info Card ---- */
+.flowHoverCard {
+  position: fixed;
+  z-index: 1000;
+  width: 280px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.1);
+  animation: hoverCardIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes hoverCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.flowHoverCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flowHoverCardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.flowHoverCardTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+.flowHoverCardName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flowHoverCardOrigin {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.flowHoverCardDivider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  margin: 0;
+}
+
+.flowHoverCardBody {
+  padding: 14px 16px;
+}
+
+.flowHoverCardSection {
+  margin-bottom: 12px;
+}
+
+.flowHoverCardSection:last-child {
+  margin-bottom: 0;
+}
+
+.flowHoverCardLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.flowHoverCardValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flowHoverCardFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.flowHoverFeatureItem {
+  font-size: 10px;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.flowHoverCardFullAccess {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #34d399;
+  animation: fullAccessPulse 2s ease-in-out infinite;
+}
+
+@keyframes fullAccessPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  }
 }
 
 /* ---- narrow / mobile stage: wallet on top + scrollable lane strip ---- */
@@ -2321,6 +2550,229 @@
   padding: 24px;
 }
 
+.flowChartHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.flowChartTabs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.flowChartTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--ink-700);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.flowChartTab:hover {
+  border-color: var(--pri);
+  background: var(--surface);
+}
+
+.flowChartTabActive {
+  background: var(--pri);
+  color: #fff;
+  border-color: var(--pri);
+}
+
+.flowTableContainer {
+  padding: 20px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.flowTablePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.flowTableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.flowTableTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.flowTableWrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.flowTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.flowTable thead {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+}
+
+.flowTable th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-500);
+  white-space: nowrap;
+}
+
+.flowTable tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.flowTable tbody tr:hover {
+  background: var(--surface);
+}
+
+.flowTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.flowTableRowDisabled {
+  opacity: 0.5;
+  background: var(--surface-2);
+}
+
+.flowTableCellAccount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flowTableIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.flowTableAccountName {
+  font-weight: 600;
+  color: var(--ink-900);
+  font-size: 13px;
+}
+
+.flowTableAccountNum {
+  font-size: 11px;
+  color: var(--ink-500);
+}
+
+.flowTableCellOrigin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-700);
+  font-size: 12px;
+}
+
+.flowTableBalance {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-900);
+}
+
+.flowTablePermission {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.flowTableStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.flowTableStatusActive {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.flowTableStatusRevoked {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.flowTableActions {
+  display: flex;
+  gap: 6px;
+}
+
+.flowTableFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.flowTableStats {
+  display: flex;
+  gap: 16px;
+}
+
+.flowTableStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-500);
+}
+
 .hubHead {
   display: flex;
   align-items: flex-start;
@@ -2354,29 +2806,31 @@
 
 .hubGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
 .hubTile {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   text-align: left;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 11px 12px;
+  padding: 16px 18px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .hubTile:hover {
   border-color: var(--pri);
   background: #fff;
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .hubTileIcon {

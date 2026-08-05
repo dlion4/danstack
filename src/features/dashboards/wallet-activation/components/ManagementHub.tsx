@@ -30,7 +30,6 @@ const GROUPS: HubGroup[] = [
 		icon: 'bi bi-stars',
 		tiles: [
 			{ modal: 'activateDashboardModal', icon: 'bi bi-stars', label: 'Activate Dashboard', desc: 'Consent + PIN activation wizard', color: 'var(--acc)', bg: 'rgba(245,158,11,0.14)' },
-			// { modal: 'tourGuideModal', icon: 'bi bi-signpost-2', label: 'Tour Guide', desc: '8-step guided onboarding', color: 'var(--pri)', bg: 'var(--success-bg)' },
 		],
 	},
 	{
@@ -41,9 +40,6 @@ const GROUPS: HubGroup[] = [
 			{ modal: 'activeLinksModal', icon: 'bi bi-layout-three-columns', label: 'Manage Links', desc: 'All linked accounts & sync status', color: 'var(--info)', bg: 'var(--info-bg)' },
 			{ modal: 'linkPermissionsModal', icon: 'bi bi-sliders', label: 'Permissions', desc: 'Presets & granular controls', color: 'var(--purple)', bg: 'var(--purple-bg)' },
 			{ modal: 'linkNotificationsModal', icon: 'bi bi-bell', label: 'Alert Routing', desc: 'Channels, channels & quiet hours', color: 'var(--warning)', bg: 'var(--warning-bg)' },
-			// { modal: 'unlinkAccountModal', icon: 'bi bi-unlink', label: 'Unlink', desc: 'Reason + PIN + 24h grace', color: 'var(--danger)', bg: 'var(--danger-bg)' },
-			// { modal: 'relinkAccountModal', icon: 'bi bi-link-45deg', label: 'Relink', desc: 'Instant restore within 30 days', color: 'var(--pri)', bg: 'var(--success-bg)' },
-			// { modal: 'revokeAllAccessModal', icon: 'bi bi-shield-exclamation', label: 'Revoke All', desc: 'PIN + OTP, 72h cooldown', color: 'var(--danger)', bg: 'var(--danger-bg)' },
 		],
 	},
 	{
