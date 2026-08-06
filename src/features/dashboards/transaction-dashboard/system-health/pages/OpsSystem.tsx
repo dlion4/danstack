@@ -73,6 +73,15 @@ interface Ticket {
 	status: string;
 }
 
+interface SettlementBatch {
+	id: string;
+	corridor: string;
+	amount: string;
+	status: string;
+	progress: number;
+	eta: string;
+}
+
 interface OpsData {
 	platformUptime: string;
 	platformStatus: string;
@@ -115,6 +124,7 @@ interface OpsData {
 	reconciliationMatched: number;
 	reconciliationUnmatched: number;
 	reconciliationDisputed: number;
+	settlementBatches: SettlementBatch[];
 }
 
 const initialMockData: OpsData = {
@@ -324,6 +334,32 @@ const initialMockData: OpsData = {
 	reconciliationMatched: 1241892,
 	reconciliationUnmatched: 4812,
 	reconciliationDisputed: 187,
+	settlementBatches: [
+		{
+			id: "S-88219",
+			corridor: "KE → UG",
+			amount: "KES 184.2M",
+			status: "Delayed",
+			progress: 67,
+			eta: "+2h 14m",
+		},
+		{
+			id: "S-88220",
+			corridor: "KE → TZ",
+			amount: "KES 92.4M",
+			status: "Processing",
+			progress: 89,
+			eta: "41m",
+		},
+		{
+			id: "S-88221",
+			corridor: "UG → KE",
+			amount: "KES 67.8M",
+			status: "Completed",
+			progress: 100,
+			eta: "—",
+		},
+	],
 };
 
 async function fetchOpsData(): Promise<OpsData> {
@@ -843,7 +879,7 @@ export default function OpsSystem() {
 								className="bi bi-heart-pulse-fill"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							System Status Dashboard
+							1.17.1 — System Status Dashboard
 						</h3>
 						<p className={s.ss}>
 							Real-time health of all B2B transaction services, APIs, settlement
@@ -962,7 +998,7 @@ export default function OpsSystem() {
 								className="bi bi-activity"
 								style={{ color: "var(--pm-accent)" }}
 							/>{" "}
-							Transaction Health Monitor
+							1.17.2 — Transaction Health Monitor
 						</h3>
 						<p className={s.ss}>
 							Live transaction volume, success rates, failure reasons, and
@@ -1150,7 +1186,7 @@ export default function OpsSystem() {
 					<div>
 						<h3 className={s.st}>
 							<i className="bi bi-plug" style={{ color: "var(--pm-info)" }} />{" "}
-							API & Integration Health
+							1.17.3 — API & Integration Health
 						</h3>
 						<p className={s.ss}>
 							Partner API performance, webhook delivery, integration status and
@@ -1284,7 +1320,7 @@ export default function OpsSystem() {
 								className="bi bi-bank2"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							Settlement & Reconciliation
+							1.17.4 — Settlement & Reconciliation
 						</h3>
 						<p className={s.ss}>
 							Real-time settlement status, batch reconciliation, pending items
@@ -1310,6 +1346,81 @@ export default function OpsSystem() {
 				</div>
 				<div className="row g-3">
 					<div className="col-lg-8">
+						<div className={s.ub}>
+							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
+								Active Settlement Batches
+							</h4>
+							<div className="table-responsive">
+								<table className={s.tbl}>
+									<thead>
+										<tr>
+											<th>Batch ID</th>
+											<th>Corridor</th>
+											<th>Amount</th>
+											<th>Status</th>
+											<th>Progress</th>
+											<th>ETA</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data.settlementBatches.map((batch) => (
+											<tr key={batch.id}>
+												<td>{batch.id}</td>
+												<td>{batch.corridor}</td>
+												<td>{batch.amount}</td>
+												<td>
+													<span
+														className={cx(
+															s.badge,
+															batch.status === "Completed"
+																? s.badgeS
+																: batch.status === "Delayed"
+																	? s.badgeW
+																	: s.badgeS,
+														)}
+													>
+														{batch.status}
+													</span>
+												</td>
+												<td>
+													<div className={s.pmProgress}>
+														<div
+															className={s.pmProgressBar}
+															style={{
+																width: `${batch.progress}%`,
+																background:
+																	batch.status === "Delayed"
+																		? "var(--pm-warning)"
+																		: "var(--pm-accent)",
+															}}
+														/>
+													</div>
+												</td>
+												<td>{batch.eta}</td>
+												<td>
+													<button
+														type="button"
+														className={`${s.btnPm} ${s.btnSm}${
+															batch.status === "Delayed" ? ` ${s.btnPmD}` : ""
+														}`}
+														onClick={() => openModal("settlementDetail")}
+													>
+														{batch.status === "Delayed"
+															? "Investigate"
+															: batch.status === "Completed"
+																? "Receipt"
+																: "Details"}
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div className="col-lg-4">
 						<div className={s.ub}>
 							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
 								Reconciliation Summary
@@ -1368,7 +1479,7 @@ export default function OpsSystem() {
 								className="bi bi-shield-exclamation"
 								style={{ color: "var(--pm-danger)" }}
 							/>{" "}
-							Fraud & Security Operations
+							1.17.5 — Fraud & Security Operations
 						</h3>
 						<p className={s.ss}>
 							Real-time fraud detection, alert queue, model performance and
@@ -1543,7 +1654,7 @@ export default function OpsSystem() {
 								className="bi bi-server"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							Infrastructure & Uptime
+							1.17.6 — Infrastructure & Uptime
 						</h3>
 						<p className={s.ss}>
 							Server health, database performance, queue depths, auto-scaling
@@ -1659,7 +1770,7 @@ export default function OpsSystem() {
 								className="bi bi-headset"
 								style={{ color: "var(--pm-purple)" }}
 							/>{" "}
-							Operations Queue & Support Tickets
+							1.17.7 — Operations Queue & Support Tickets
 						</h3>
 						<p className={s.ss}>
 							Internal operations tickets, partner support requests, SLA

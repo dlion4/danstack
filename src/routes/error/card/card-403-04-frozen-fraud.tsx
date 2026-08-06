@@ -3,4 +3,4 @@ import { Card40304FrozenFraud } from '../../../features/errors/components/Card40
 
 export const Route = createFileRoute('/error/card/card-403-04-frozen-fraud')({
 	component: Card40304FrozenFraud,
-})
+});

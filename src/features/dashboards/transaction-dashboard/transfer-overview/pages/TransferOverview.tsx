@@ -512,7 +512,7 @@ export default function TransferOverview() {
 						<h2 className={styles.pageH2}>
 							{config.pageTitle}
 						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						<p className={styles.pageSub}></p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button
