@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { X } from "lucide-react";
 
 interface Toast {
   id: string;
@@ -84,7 +83,7 @@ export function ErrorToast({ toasts, onRemove }: ErrorToastProps) {
               onClick={() => onRemove(toast.id)}
               className="w-7 h-7 rounded-lg border border-[#E8E2D9] bg-white flex items-center justify-center hover:bg-gray-50 transition-colors flex-shrink-0"
             >
-              <X size={14} className="text-gray-500" />
+              <i className="bi bi-x-lg text-gray-500"></i>
             </button>
           </div>
         );

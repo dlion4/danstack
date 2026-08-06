@@ -1,5 +1,3 @@
-import { X } from "lucide-react";
-
 interface ErrorModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -53,7 +51,7 @@ export function ErrorModal({
             onClick={onClose}
             className="p-2.5 rounded-lg border border-[#E8E2D9] bg-white hover:bg-gray-50 transition-colors"
           >
-            <X size={18} className="text-gray-500" />
+            <i className="bi bi-x-lg text-gray-500"></i>
           </button>
         </div>
         <div className="text-sm leading-relaxed text-[#4B5563]">{children}</div>

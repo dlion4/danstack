@@ -288,18 +288,18 @@ const initialMockData: TransferConfig = {
 			label: "Limits",
 			modal: "transferLimitsModal",
 		},
-		{
-			icon: "bi-globe",
-			iconColor: "var(--pm-danger)",
-			label: "International",
-			modal: "internationalTransferModal",
-		},
-		{
-			icon: "bi-qr-code",
-			iconColor: "var(--pm-primary)",
-			label: "QR Pay",
-			modal: "qrPayModal",
-		},
+		// {
+		// 	icon: "bi-globe",
+		// 	iconColor: "var(--pm-danger)",
+		// 	label: "International",
+		// 	modal: "internationalTransferModal",
+		// },
+		// {
+		// 	icon: "bi-qr-code",
+		// 	iconColor: "var(--pm-primary)",
+		// 	label: "QR Pay",
+		// 	modal: "qrPayModal",
+		// },
 	],
 	recentTransfers: [
 		{

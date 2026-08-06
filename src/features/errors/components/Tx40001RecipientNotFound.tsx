@@ -12,6 +12,7 @@ export function Tx40001RecipientNotFound() {
 			<ErrorCard
 				errorCode="TX-400-01"
 				icon="person-x"
+				logoText="DanStack • TX • RED ERROR"
 				badgeText="Transfer • Recipient Not Found • 404"
 				title="Cannot Fetch End Recipient — Account Not Found"
 				subtitle="Name check fails — account doesn't exist at destination bank. KES 45k transfer blocked after 3s."
@@ -30,7 +31,6 @@ export function Tx40001RecipientNotFound() {
 				actions={[
 					{ label: 'Check Account Number', icon: 'lightning-charge', variant: 'colored' },
 					{ label: 'Try Different Bank', icon: 'arrow-up-right', variant: 'emerald' },
-					{ label: 'Go to Dashboard', icon: 'grid', variant: 'ghost', href: '/business-dashboard' },
 					{ label: 'Home', icon: 'house', variant: 'ghost', href: '/' },
 				]}
 				modalTitle="Cannot Fetch End Recipient — Account Not Found"

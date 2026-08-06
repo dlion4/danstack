@@ -1,81 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import {
-	User,
-	ShieldCheck,
-	History,
-	Zap,
-	ArrowUpRight,
-	Home,
-	Info,
-	AlertTriangle,
-	ShieldAlert,
-	X,
-	CreditCard,
-	Wallet,
-	Globe,
-	Wifi,
-	Phone,
-	Clock,
-	CheckCircle,
-	AlertCircle,
-	RefreshCw,
-	Ban,
-	ServerCrash,
-	Cpu,
-	CalendarX,
-	Printer,
-	Users,
-	MapPin,
-	PhoneOff,
-	Settings,
-	UserMinus,
-	Shield,
-	PauseCircle,
-	Lightbulb,
-} from 'lucide-react';
 
-// Icon mapping from Bootstrap names to Lucide components
-const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-	'person-bounding-box': User,
-	'shield-check': ShieldCheck,
-	'clock-history': History,
-	'lightning-charge': Zap,
-	'arrow-up-right': ArrowUpRight,
-	'house': Home,
-	'info-circle': Info,
-	'info-circle-fill': Info,
-	'exclamation-triangle': AlertTriangle,
-	'exclamation-octagon': AlertTriangle,
-	'shield-exclamation': ShieldAlert,
-	'x-lg': X,
-	'credit-card': CreditCard,
-	'wallet': Wallet,
-	'globe': Globe,
-	'wifi': Wifi,
-	'telephone': Phone,
-	'clock': Clock,
-	'check-circle': CheckCircle,
-	'exclamation-circle': AlertCircle,
-	'arrow-clockwise': RefreshCw,
-	'ban': Ban,
-	'server': ServerCrash,
-	'cpu': Cpu,
-	'calendar-x': CalendarX,
-	'printer': Printer,
-	'people': Users,
-	'geo-alt': MapPin,
-	'telephone-x': PhoneOff,
-	'gear': Settings,
-	'person-dash': UserMinus,
-	'shield-lock': Shield,
-	'pause-circle': PauseCircle,
-	'lightbulb': Lightbulb,
-};
-
+// Bootstrap icon component
 const IconComponent = ({ iconName, size = 20, className = '' }: { iconName: string; size?: number; className?: string }) => {
-	const Icon = iconMap[iconName] || Info;
-	return <Icon size={size} className={className} />;
+	return <i className={`bi bi-${iconName} ${className}`} style={{ fontSize: size }}></i>;
 };
 
 interface ErrorBox {
@@ -112,6 +40,7 @@ interface ErrorCardProps {
 	modalSubtitle: string;
 	modalTrace: string;
 	theme: 'red' | 'amber' | 'blue';
+	logoText?: string;
 	permissionBox?: {
 		checkbox?: boolean;
 		text: string;
@@ -126,6 +55,11 @@ const themeColors = {
 		borderLight: '#FECACA',
 		textDark: '#B91C1C',
 		iconColor: '#EF4444',
+		bgGradient1: '#FEE2E2',
+		bgGradient2: '#D1FAE5',
+		logoShadow: 'rgba(239,68,68,0.28)',
+		btnShadow: 'rgba(239,68,68,0.22)',
+		pulseColor: 'rgba(239,68,68,0.4)',
 	},
 	amber: {
 		gradient: 'linear-gradient(135deg, #F59E0B, #D97706)',
@@ -133,6 +67,11 @@ const themeColors = {
 		borderLight: '#FDE68A',
 		textDark: '#92400E',
 		iconColor: '#F59E0B',
+		bgGradient1: '#FFFBEB',
+		bgGradient2: '#D1FAE5',
+		logoShadow: 'rgba(245,158,11,0.28)',
+		btnShadow: 'rgba(245,158,11,0.22)',
+		pulseColor: 'rgba(245,158,11,0.4)',
 	},
 	blue: {
 		gradient: 'linear-gradient(135deg, #3B82F6, #2563EB)',
@@ -140,6 +79,11 @@ const themeColors = {
 		borderLight: '#BAE6FD',
 		textDark: '#0369A1',
 		iconColor: '#3B82F6',
+		bgGradient1: '#F0F9FF',
+		bgGradient2: '#D1FAE5',
+		logoShadow: 'rgba(59,130,246,0.28)',
+		btnShadow: 'rgba(59,130,246,0.22)',
+		pulseColor: 'rgba(59,130,246,0.4)',
 	},
 };
 
@@ -187,13 +131,14 @@ export function ErrorCard({
 					to { transform: translateY(0); opacity: 1; }
 				}
 				@keyframes pulse {
-					70% { box-shadow: 0 0 0 18px ${theme === 'red' ? 'rgba(239,68,68,0)' : theme === 'amber' ? 'rgba(245,158,11,0)' : 'rgba(59,130,246,0)'}; }
-					100% { box-shadow: 0 0 0 0 ${theme === 'red' ? 'rgba(239,68,68,0)' : theme === 'amber' ? 'rgba(245,158,11,0)' : 'rgba(59,130,246,0)'}; }
+					70% { box-shadow: 0 0 0 18px ${colors.pulseColor.replace('0.4', '0')}; }
+					100% { box-shadow: 0 0 0 0 ${colors.pulseColor.replace('0.4', '0')}; }
 				}
 				@keyframes shake {
 					0%, 85%, 100% { transform: rotate(0); }
 					88% { transform: rotate(-8deg); }
 					90% { transform: rotate(8deg); }
+					92% { transform: rotate(-4deg); }
 				}
 				@keyframes float {
 					0%, 100% { transform: translateY(0); }
@@ -217,12 +162,12 @@ export function ErrorCard({
 						className="w-9 h-9 rounded-[11px] flex items-center justify-center text-white"
 						style={{
 							background: colors.gradient,
-							boxShadow: `0 6px 16px ${theme === 'red' ? 'rgba(239,68,68,0.28)' : theme === 'amber' ? 'rgba(245,158,11,0.28)' : 'rgba(59,130,246,0.28)'}`,
+							boxShadow: `0 6px 16px ${colors.logoShadow}`,
 						}}
 					>
 						<IconComponent iconName={icon} size={20} />
 					</div>
-					<span>DanStack • Dev • {theme === 'red' ? 'RED' : theme === 'amber' ? 'AMBER' : 'BLUE'}</span>
+					<span>{logoText || `DanStack • Dev • ${theme === 'red' ? 'RED' : theme === 'amber' ? 'AMBER' : 'BLUE'}`}</span>
 				</div>
 				<div className="flex gap-2">
 					<span className="px-2 py-1 rounded-full bg-white border border-[#E8E2D9] text-[10px] font-bold">
@@ -405,7 +350,7 @@ export function ErrorCard({
 											: action.variant === 'colored'
 												? {
 														background: colors.gradient,
-														boxShadow: `0 8px 20px ${theme === 'red' ? 'rgba(239,68,68,0.22)' : theme === 'amber' ? 'rgba(245,158,11,0.22)' : 'rgba(59,130,246,0.22)'}`,
+														boxShadow: `0 8px 20px ${colors.btnShadow}`,
 													}
 												: {}
 									}
