@@ -51,6 +51,7 @@ function Card40303() {
 
   return (
     <ErrorLayout
+      logoText="DanStack • Card • AMBER"
       logoIcon={
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#D97706] flex items-center justify-center text-white shadow-lg">
           <Globe size={20} />

@@ -144,6 +144,13 @@ function Error410() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-fadeTrash { animation: fadeTrash 3s ease-in-out infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #FEE2E2;
+        --theme-bg-gradient-2: #D1FAE5;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

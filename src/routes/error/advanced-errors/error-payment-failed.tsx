@@ -227,6 +227,13 @@ function ErrorPaymentFailed() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-spin { animation: spin 12s linear infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #FEE2E2;
+        --theme-bg-gradient-2: #D1FAE5;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

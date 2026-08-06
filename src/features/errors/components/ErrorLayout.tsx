@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
+import shared from '../styles/ErrorPageShared.module.css';
 
 interface ErrorLayoutProps {
   children: ReactNode;
@@ -17,7 +18,9 @@ export function ErrorLayout({
   rightAction,
 }: ErrorLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col font-['Inter']">
+    <div
+      className={`${shared.body} min-h-screen flex flex-col font-['Inter'] text-[#1A1F2E]`}
+    >
       {/* Top Bar */}
       <div className="px-6 py-5 max-w-[1200px] w-full mx-auto flex justify-between items-center">
         <Link to={logoHref} className="flex gap-2.5 items-center font-extrabold">

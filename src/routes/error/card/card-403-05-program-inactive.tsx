@@ -44,6 +44,7 @@ function Card40305() {
 
   return (
     <ErrorLayout
+      logoText="DanStack • Card • RED"
       logoIcon={
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#EF4444] to-[#F87171] flex items-center justify-center text-white shadow-lg">
           <PauseCircle size={20} />

@@ -198,6 +198,13 @@ function ErrorSessionExpired() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-tick { animation: tick 2s ease-in-out infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #E0E7FF;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

@@ -30,7 +30,7 @@ import {
 	PhoneOff,
 	Settings,
 	UserMinus,
-	ShieldLock,
+	Shield,
 	PauseCircle,
 	Lightbulb,
 } from 'lucide-react';
@@ -68,7 +68,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 	'telephone-x': PhoneOff,
 	'gear': Settings,
 	'person-dash': UserMinus,
-	'shield-lock': ShieldLock,
+	'shield-lock': Shield,
 	'pause-circle': PauseCircle,
 	'lightbulb': Lightbulb,
 };

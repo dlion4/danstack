@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Settings, Info, Zap, ArrowUpRight, Home, ShieldAlert, History } from 'lucide-react';
+import { Settings, Info, Zap, ArrowUpRight, Home, ShieldAlert, ShieldCheck, History } from 'lucide-react';
 import { ErrorLayout } from '../../../features/errors/components/ErrorLayout';
 import { ErrorToast } from '../../../features/errors/components/ErrorToast';
 import { ErrorModal } from '../../../features/errors/components/ErrorModal';
@@ -51,6 +51,7 @@ function Card40307() {
 
   return (
     <ErrorLayout
+      logoText="DanStack • Card • AMBER"
       logoIcon={
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#D97706] flex items-center justify-center text-white shadow-lg">
           <Settings size={20} />

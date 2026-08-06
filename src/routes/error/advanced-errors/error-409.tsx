@@ -171,6 +171,13 @@ function Error409() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-shake { animation: shake 3s ease-in-out infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #FEF2F2;
+        --theme-bg-gradient-2: #FFFBEB;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

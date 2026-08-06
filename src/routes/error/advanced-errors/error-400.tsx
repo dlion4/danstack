@@ -327,6 +327,13 @@ function Error400() {
         .animate-shakeSoft { animation: shakeSoft 4s ease-in-out infinite; }
         .animate-pulse { animation: pulse 1.5s infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #FEF3C7;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

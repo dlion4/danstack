@@ -225,6 +225,13 @@ function Error429() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-rev { animation: rev 1.2s ease-in-out infinite alternate; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #E0E7FF;
+        --theme-bg-gradient-2: #D1FAE5;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

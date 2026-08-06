@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { CreditCard2Front, Info, Zap, ArrowUpRight, Home, ShieldCheck, History } from 'lucide-react';
+import { CreditCard, Info, Zap, ArrowUpRight, Home, ShieldCheck, History } from 'lucide-react';
 import { ErrorLayout } from '../../../features/errors/components/ErrorLayout';
 import { ErrorToast } from '../../../features/errors/components/ErrorToast';
 import { ErrorModal } from '../../../features/errors/components/ErrorModal';
@@ -51,9 +51,10 @@ function Card40001() {
 
   return (
     <ErrorLayout
+      logoText="DanStack • Card • AMBER"
       logoIcon={
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#D97706] flex items-center justify-center text-white shadow-lg">
-          <CreditCard2Front size={20} />
+          <CreditCard size={20} />
         </div>
       }
       rightAction={
@@ -78,7 +79,7 @@ function Card40001() {
           {/* Icon */}
           <div className="w-24 h-24 mx-auto mb-3.5 rounded-[28px] bg-[#FFFBEB] border border-[#FDE68A] flex items-center justify-center text-[44px] text-[#F59E0B] relative">
             <div className="absolute inset-0 rounded-[28px] border border-[#FDE68A] animate-pulse"></div>
-            <CreditCard2Front size={48} className="animate-float" />
+            <CreditCard size={48} className="animate-float" />
           </div>
 
           {/* Badge */}
@@ -198,7 +199,7 @@ function Card40001() {
         onClose={() => setShowModal(false)}
         title="Virtual Card Creation Limit Reached"
         subtitle="Warning — before send"
-        icon={<CreditCard2Front size={24} />}
+        icon={<CreditCard size={24} />}
         iconBg="#FFFBEB"
         iconColor="#F59E0B"
         actionButton={

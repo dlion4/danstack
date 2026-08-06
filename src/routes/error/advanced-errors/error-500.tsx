@@ -207,6 +207,13 @@ function Error500() {
         .animate-pulseBar { animation: pulseBar 1.6s ease-in-out infinite; }
         .animate-pulse { animation: pulse 1.2s infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #FEE2E2;
+        --theme-bg-gradient-2: #D1FAE5;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

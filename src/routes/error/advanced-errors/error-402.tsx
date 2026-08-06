@@ -171,6 +171,13 @@ function Error402() {
         .animate-spin { animation: spin 16s linear infinite; }
         .animate-grow { animation: grow 1.2s ease forwards; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #FDE68A;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

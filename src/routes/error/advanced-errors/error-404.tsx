@@ -165,6 +165,13 @@ function Error404() {
         .animate-rise { animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .animate-floaty { animation: floaty 3s ease-in-out infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #FEF3C7;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

@@ -215,6 +215,13 @@ function Error401() {
         .animate-spin { animation: spin 22s linear infinite; }
         .animate-pulse { animation: pulse 2.2s infinite; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #FDE68A;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

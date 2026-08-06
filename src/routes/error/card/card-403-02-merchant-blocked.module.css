@@ -1,2 +1,8 @@
 /* Card 403-02 - Merchant Blocked - Specific Styles */
 @import '../../../features/errors/styles/ErrorPageShared.module.css';
+
+/* Theme Overrides (from original HTML) */
+:root {
+  --theme-bg-gradient-1: #FEE2E2;
+  --theme-bg-gradient-2: #D1FAE5;
+}

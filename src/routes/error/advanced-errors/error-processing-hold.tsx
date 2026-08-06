@@ -223,6 +223,13 @@ function ErrorProcessingHold() {
         }
         .done { background: #10b981; border-color: #10b981; color: white; }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #E0F2FE;
+        --theme-bg-gradient-2: #D1FAE5;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }

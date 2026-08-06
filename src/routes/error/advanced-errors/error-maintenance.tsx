@@ -234,6 +234,13 @@ function ErrorMaintenance() {
           background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0 10px, transparent 10px 20px);
         }
       `}</style>
-    </ErrorLayout>
+    
+    <style>{`
+      :root {
+        --theme-bg-gradient-1: #D1FAE5;
+        --theme-bg-gradient-2: #FFFBEB;
+      }
+    `}</style>
+</ErrorLayout>
   );
 }
