@@ -577,10 +577,10 @@ export default function TransferManagement() {
 							<Link to="/app/transfers">Transactions</Link> /{" "}
 							<strong>Transfer Management</strong>
 						</div>
-						<h1 className={s.pageTitle}>Transfer Management</h1>
+						{/* <h1 className={s.pageTitle}> Transfer Management</h1> */}
 						<p className={s.pageCopy}>
-							Domestic, international, scheduled, recurring &amp;
-							compliance-controlled bank transfers.
+							{/* Domestic, international, scheduled, recurring &amp;
+							compliance-controlled bank transfers. */}
 						</p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -707,7 +707,7 @@ export default function TransferManagement() {
 							))}
 						</div>
 					</div>
-					<div className="col-lg-3">
+					<div className="col-lg-4">
 						<div className={s.card}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
@@ -737,7 +737,7 @@ export default function TransferManagement() {
 							))}
 						</div>
 					</div>
-					<div className="col-lg-5">
+					<div className="col-lg-4">
 						<div className={s.card}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>

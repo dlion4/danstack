@@ -125,7 +125,7 @@ export const initialMockData: ShellContent = {
 
         navGroups: [
                 {
-                        title: "Operations & Analytics",
+                        title: "Operations ",
                         items: [
                                 {
                                         key: "transfer-overview",
@@ -157,11 +157,11 @@ export const initialMockData: ShellContent = {
                                         label: "New Transfer",
                                         icon: "bi-send",
                                 },
-                                {
-                                        key: "transfers",
-                                        label: "Transfer Log",
-                                        icon: "bi-arrow-left-right",
-                                },
+                                // {
+                                //         key: "transfers",
+                                //         label: "Transfer Log",
+                                //         icon: "bi-arrow-left-right",
+                                // },
                                 {
                                         key: "transfer-management",
                                         label: "Manage Transfers",
@@ -174,7 +174,7 @@ export const initialMockData: ShellContent = {
                                 },
                                 {
                                         key: "mobile-money",
-                                        label: "Mobile Money & PSP",
+                                        label: "Mobile Money",
                                         icon: "bi-phone",
                                 },
                         ],

@@ -7,7 +7,7 @@
  * ========================================================================== */
 
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import styles from "../styles/systemHealth.module.css";
 
@@ -24,6 +24,7 @@ interface ModalProps {
 	icon?: string;
 	children: ReactNode;
 	footer?: ReactNode;
+	loading?: boolean;
 }
 
 interface PillTabsProps {
@@ -36,6 +37,60 @@ interface FlowState {
 	current: number;
 	total: number;
 	labels: string[];
+	loading?: boolean;
+	receipt?: { message: string; reference?: string };
+}
+
+interface ReceiptProps {
+	message: string;
+	reference?: string;
+}
+
+function useActionModal(initialMessage?: string, initialReference?: string) {
+	const [loading, setLoading] = useState(false);
+	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(
+		initialMessage ? { message: initialMessage, reference: initialReference } : null,
+	);
+
+	const execute = (message: string, reference?: string) => {
+		setLoading(true);
+		setTimeout(() => {
+			setLoading(false);
+			setReceipt({ message, reference });
+		}, 1500);
+	};
+
+	const reset = () => {
+		setLoading(false);
+		setReceipt(null);
+	};
+
+	return { loading, receipt, execute, reset };
+}
+
+function Receipt({ message, reference }: ReceiptProps) {
+	return (
+		<div className={s.receipt}>
+			<div className={s.ri}>
+				<i className="bi bi-check-lg" />
+			</div>
+			<h5 className={s.receiptTitle}>{message}</h5>
+			{reference && (
+				<p className={s.receiptSub}>Reference: {reference}</p>
+			)}
+			<div
+				className="d-flex justify-content-center mt-3"
+				style={{ gap: 8 }}
+			>
+				<button type="button" className={`${s.btnPm} ${s.btnSm}`}>
+					<i className="bi bi-download" /> Save
+				</button>
+				<button type="button" className={`${s.btnPm} ${s.btnSm}`}>
+					<i className="bi bi-share" /> Continue
+				</button>
+			</div>
+		</div>
+	);
 }
 
 /* ============================================================
@@ -49,11 +104,8 @@ function Modal({
 	icon,
 	children,
 	footer,
+	loading,
 }: ModalProps) {
-	const [animating, setAnimating] = useState(false);
-	useEffect(() => {
-		if (open) setAnimating(false);
-	}, [open]);
 	if (!open) return null;
 	const sizeClass =
 		size === "xl" ? s.modalBoxXl : size === "lg" ? s.modalBoxLg : "";
@@ -74,7 +126,7 @@ function Modal({
 						/>
 					</div>
 					<div className={s.modalBody}>
-						{animating ? (
+						{loading ? (
 							<div className={s.loadingOv}>
 								<div className={s.spinner} />
 								<p className={s.loadingLabel}>Processing...</p>
@@ -154,11 +206,15 @@ function useFlow(total: number, labels: string[]) {
 	);
 
 	const next = useCallback(
-		(key: string) => {
+		(key: string, receipt?: { message: string; reference?: string }) => {
 			setState((prev) => {
 				if (prev.current === prev.total - 1) {
-					setTimeout(() => showStep(key, prev.total), 1200);
-					return { ...prev, current: prev.total };
+					setState({ ...prev, loading: true, receipt });
+					setTimeout(() => {
+						setState((p) => ({ ...p, current: prev.total, loading: false }));
+						showStep(key, prev.total);
+					}, 1500);
+					return { ...prev, loading: true };
 				}
 				if (prev.current >= prev.total) return prev;
 				const nextStep = prev.current + 1;
@@ -170,7 +226,7 @@ function useFlow(total: number, labels: string[]) {
 	);
 
 	const reset = useCallback(
-		() => setState((prev) => ({ ...prev, current: 1 })),
+		() => setState((prev) => ({ ...prev, current: 1, loading: false, receipt: undefined })),
 		[],
 	);
 
@@ -180,6 +236,8 @@ function useFlow(total: number, labels: string[]) {
 		reset,
 		current: state.current,
 		total: state.total,
+		loading: state.loading,
+		receipt: state.receipt,
 	};
 }
 
@@ -395,7 +453,34 @@ function IncidentQueueModal() {
 }
 
 /* M3: Run Health Check */
-function RunHealthCheckModal() {
+function RunHealthCheckModalContent() {
+	const [loading, setLoading] = useState(false);
+	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(null);
+
+	const handleStart = () => {
+		setLoading(true);
+		setTimeout(() => {
+			setLoading(false);
+			setReceipt({
+				message: "Health check started. Results will appear in the Operations Log within 3 minutes.",
+				reference: "HC-20250627-9914",
+			});
+		}, 1500);
+	};
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return <Receipt message={receipt.message} reference={receipt.reference} />;
+	}
+
 	return (
 		<>
 			<div className="mb-3">
@@ -427,17 +512,80 @@ function RunHealthCheckModal() {
 	);
 }
 
-/* M4: Settlement Detail (multi-step) */
-function SettlementDetailModal() {
-	const flow = useFlow(4, ["Overview", "Reconciliation", "Resolution", "Done"]);
-	useEffect(() => {
-		flow.reset();
-		const t = setTimeout(() => flow.next("settle"), 0);
-		return () => clearTimeout(t);
-	}, []);
+function RunHealthCheckModalWrapper() {
+	const [loading, setLoading] = useState(false);
+	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(null);
+
+	const handleStart = () => {
+		setLoading(true);
+		setTimeout(() => {
+			setLoading(false);
+			setReceipt({
+				message: "Health check started. Results will appear in the Operations Log within 3 minutes.",
+				reference: "HC-20250627-9914",
+			});
+		}, 1500);
+	};
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return (
+			<>
+				<Receipt message={receipt.message} reference={receipt.reference} />
+				<div
+					style={{
+						display: "flex",
+						gap: 8,
+						justifyContent: "flex-end",
+						marginTop: 12,
+					}}
+				>
+					<button type="button" className={cx(s.btnPm, s.btnPmP)}>
+						Done
+					</button>
+				</div>
+			</>
+		);
+	}
+
 	return (
 		<>
-			<div className={s.stepper}>{flow.renderStepper()}</div>
+			<RunHealthCheckModalContent />
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button type="button" className={s.btnPm}>
+					Cancel
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={handleStart}
+				>
+					Start Health Check
+				</button>
+			</div>
+		</>
+	);
+}
+
+/* M4: Settlement Detail (multi-step) */
+function SettlementDetailModalContent() {
+	return (
+		<>
 			<div id="settleS1" className={cx(s.fstepActive)}>
 				<h6 style={{ fontWeight: 700, marginBottom: 12 }}>Batch Overview</h6>
 				<div className="row g-3">
@@ -555,33 +703,155 @@ function SettlementDetailModal() {
 					/>
 				</div>
 			</div>
+		</>
+	);
+}
+
+function SettlementDetailModal() {
+	const flow = useFlow(4, ["Overview", "Reconciliation", "Resolution", "Done"]);
+	useEffect(() => {
+		flow.reset();
+		const t = setTimeout(() => flow.next("settle"), 0);
+		return () => clearTimeout(t);
+	}, []);
+
+	return (
+		<>
+			<div className={s.stepper}>{flow.renderStepper()}</div>
+			<SettlementDetailModalContent />
 			<div id="settleS4" className={s.fstepActive} style={{ display: "none" }}>
-				<div className={s.receipt}>
-					<div className={s.ri}>
-						<i className="bi bi-check-lg" />
+				{flow.loading ? (
+					<div className={s.loadingOv}>
+						<div className={s.spinner} />
+						<p className={s.loadingLabel}>Processing...</p>
 					</div>
-					<h5 className={s.receiptTitle}>Resolution Logged</h5>
-					<p className={s.receiptSub}>
-						Manual push request sent to Stanbic. ETA updated to +4h. Ticket
-						INC-88219 updated.
-					</p>
-				</div>
+				) : flow.receipt ? (
+					<Receipt
+						message={flow.receipt.message}
+						reference={flow.receipt.reference}
+					/>
+				) : (
+					<div className={s.receipt}>
+						<div className={s.ri}>
+							<i className="bi bi-check-lg" />
+						</div>
+						<h5 className={s.receiptTitle}>Resolution Logged</h5>
+						<p className={s.receiptSub}>
+							Manual push request sent to Stanbic. ETA updated to +4h. Ticket
+							INC-88219 updated.
+						</p>
+					</div>
+				)}
+			</div>
+		</>
+	);
+}
+
+function SettlementDetailModalWrapper() {
+	const flow = useFlow(4, ["Overview", "Reconciliation", "Resolution", "Done"]);
+	useEffect(() => {
+		flow.reset();
+		const t = setTimeout(() => flow.next("settle"), 0);
+		return () => clearTimeout(t);
+	}, []);
+
+	return (
+		<>
+			<div className={s.stepper}>{flow.renderStepper()}</div>
+			<SettlementDetailModalContent />
+			<div id="settleS4" className={s.fstepActive} style={{ display: "none" }}>
+				{flow.loading ? (
+					<div className={s.loadingOv}>
+						<div className={s.spinner} />
+						<p className={s.loadingLabel}>Processing...</p>
+					</div>
+				) : flow.receipt ? (
+					<Receipt
+						message={flow.receipt.message}
+						reference={flow.receipt.reference}
+					/>
+				) : (
+					<div className={s.receipt}>
+						<div className={s.ri}>
+							<i className="bi bi-check-lg" />
+						</div>
+						<h5 className={s.receiptTitle}>Resolution Logged</h5>
+						<p className={s.receiptSub}>
+							Manual push request sent to Stanbic. ETA updated to +4h. Ticket
+							INC-88219 updated.
+						</p>
+					</div>
+				)}
+			</div>
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button
+					type="button"
+					className={s.btnPm}
+					onClick={() => {}}
+				>
+					Close
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={() =>
+						flow.next("settle", {
+							message: "Resolution Logged",
+							reference: "INC-88219",
+						})
+					}
+				>
+					Continue <i className="bi bi-arrow-right" />
+				</button>
 			</div>
 		</>
 	);
 }
 
 /* M5: Fraud Model Console */
-function FraudModelModal() {
+function FraudModelModal({ onApply }: { onApply: () => void }) {
 	const [tab, setTab] = useState("rules");
-	const tabs = [
-		{ key: "rules", label: "Active Rules" },
-		{ key: "perf", label: "Performance" },
-		{ key: "tune", label: "Tune Model" },
-	];
+	const [loading, setLoading] = useState(false);
+	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(null);
+
+	const handleApply = () => {
+		setLoading(true);
+		setTimeout(() => {
+			setLoading(false);
+			setReceipt({
+				message: "Model parameters updated. New rules will apply to next transaction batch.",
+				reference: "",
+			});
+		}, 1500);
+	};
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return <Receipt message={receipt.message} />;
+	}
+
 	return (
 		<>
-			<PillTabs tabs={tabs} active={tab} onChange={setTab} />
+			<PillTabs tabs={[
+				{ key: "rules", label: "Active Rules" },
+				{ key: "perf", label: "Performance" },
+				{ key: "tune", label: "Tune Model" },
+			]} active={tab} onChange={setTab} />
 			{tab === "rules" && (
 				<div className="table-responsive">
 					<table className={s.tbl}>
@@ -685,6 +955,13 @@ function FraudModelModal() {
 							Current FP rate 4.8%. Suggested: 750 (expected FP 2.9%)
 						</small>
 					</div>
+					<button
+						type="button"
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={handleApply}
+					>
+						Apply Changes
+					</button>
 				</>
 			)}
 		</>
@@ -1002,13 +1279,7 @@ function FraudReviewModal() {
 }
 
 /* M10: Incident Detail (multi-step) */
-function IncidentDetailModal() {
-	const flow = useFlow(4, ["Summary", "Timeline", "Resolution", "Done"]);
-	useEffect(() => {
-		flow.reset();
-		const t = setTimeout(() => flow.next("inc"), 0);
-		return () => clearTimeout(t);
-	}, []);
+function IncidentDetailModalContent() {
 	const timeline = [
 		{ time: "14:22", event: "Incident created" },
 		{ time: "14:45", event: "Assigned to James K." },
@@ -1017,7 +1288,6 @@ function IncidentDetailModal() {
 	];
 	return (
 		<>
-			<div className={s.stepper}>{flow.renderStepper()}</div>
 			<div id="incS1" className={cx(s.fstepActive)}>
 				<h6 style={{ fontWeight: 700, marginBottom: 12 }}>Incident Summary</h6>
 				<div className={s.summaryBoxDanger}>
@@ -1058,16 +1328,111 @@ function IncidentDetailModal() {
 					</label>
 				</div>
 			</div>
+		</>
+	);
+}
+
+function IncidentDetailModal() {
+	const flow = useFlow(4, ["Summary", "Timeline", "Resolution", "Done"]);
+	useEffect(() => {
+		flow.reset();
+		const t = setTimeout(() => flow.next("inc"), 0);
+		return () => clearTimeout(t);
+	}, []);
+
+	return (
+		<>
+			<div className={s.stepper}>{flow.renderStepper()}</div>
+			<IncidentDetailModalContent />
 			<div id="incS4" className={s.fstepActive} style={{ display: "none" }}>
-				<div className={s.receipt}>
-					<div className={s.ri}>
-						<i className="bi bi-check-lg" />
+				{flow.loading ? (
+					<div className={s.loadingOv}>
+						<div className={s.spinner} />
+						<p className={s.loadingLabel}>Processing...</p>
 					</div>
-					<h5 className={s.receiptTitle}>Incident Closed</h5>
-					<p className={s.receiptSub}>
-						INC-88219 marked as resolved. Post-mortem scheduled for 30 Jun 2025.
-					</p>
-				</div>
+				) : flow.receipt ? (
+					<Receipt
+						message={flow.receipt.message}
+						reference={flow.receipt.reference}
+					/>
+				) : (
+					<div className={s.receipt}>
+						<div className={s.ri}>
+							<i className="bi bi-check-lg" />
+						</div>
+						<h5 className={s.receiptTitle}>Incident Closed</h5>
+						<p className={s.receiptSub}>
+							INC-88219 marked as resolved. Post-mortem scheduled for 30 Jun 2025.
+						</p>
+					</div>
+				)}
+			</div>
+		</>
+	);
+}
+
+function IncidentDetailModalWrapper() {
+	const flow = useFlow(4, ["Summary", "Timeline", "Resolution", "Done"]);
+	useEffect(() => {
+		flow.reset();
+		const t = setTimeout(() => flow.next("inc"), 0);
+		return () => clearTimeout(t);
+	}, []);
+
+	return (
+		<>
+			<div className={s.stepper}>{flow.renderStepper()}</div>
+			<IncidentDetailModalContent />
+			<div id="incS4" className={s.fstepActive} style={{ display: "none" }}>
+				{flow.loading ? (
+					<div className={s.loadingOv}>
+						<div className={s.spinner} />
+						<p className={s.loadingLabel}>Processing...</p>
+					</div>
+				) : flow.receipt ? (
+					<Receipt
+						message={flow.receipt.message}
+						reference={flow.receipt.reference}
+					/>
+				) : (
+					<div className={s.receipt}>
+						<div className={s.ri}>
+							<i className="bi bi-check-lg" />
+						</div>
+						<h5 className={s.receiptTitle}>Incident Closed</h5>
+						<p className={s.receiptSub}>
+							INC-88219 marked as resolved. Post-mortem scheduled for 30 Jun 2025.
+						</p>
+					</div>
+				)}
+			</div>
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button
+					type="button"
+					className={s.btnPm}
+					onClick={() => {}}
+				>
+					Close
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={() =>
+						flow.next("inc", {
+							message: "Incident Closed",
+							reference: "INC-88219",
+						})
+					}
+				>
+					Continue <i className="bi bi-arrow-right" />
+				</button>
 			</div>
 		</>
 	);
@@ -1107,6 +1472,69 @@ function CreateIncidentModal() {
 					rows={4}
 					defaultValue="Describe the incident..."
 				/>
+			</div>
+		</>
+	);
+}
+
+function CreateIncidentModalWrapper() {
+	const { loading, receipt, execute } = useActionModal();
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return (
+			<>
+				<Receipt message={receipt.message} reference={receipt.reference} />
+				<div
+					style={{
+						display: "flex",
+						gap: 8,
+						justifyContent: "flex-end",
+						marginTop: 12,
+					}}
+				>
+					<button type="button" className={cx(s.btnPm, s.btnPmP)}>
+						Done
+					</button>
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<CreateIncidentModal />
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button type="button" className={s.btnPm}>
+					Cancel
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmD)}
+					onClick={() =>
+						execute(
+							"Incident INC-88222 created and assigned to on-call engineer.",
+							"INC-88222",
+						)
+					}
+				>
+					Create Incident
+				</button>
 			</div>
 		</>
 	);
@@ -1202,6 +1630,65 @@ function PartnerApiDetailModal() {
 	);
 }
 
+function PartnerApiDetailModalWrapper() {
+	const [tab, setTab] = useState("health");
+	const { loading, receipt, execute } = useActionModal();
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return (
+			<>
+				<Receipt message={receipt.message} />
+				<div
+					style={{
+						display: "flex",
+						gap: 8,
+						justifyContent: "flex-end",
+						marginTop: 12,
+					}}
+				>
+					<button type="button" className={cx(s.btnPm, s.btnPmP)}>
+						Done
+					</button>
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<PartnerApiDetailModal />
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button type="button" className={s.btnPm}>
+					Close
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={() => execute("Partner API configuration updated.")}
+				>
+					Save Config
+				</button>
+			</div>
+		</>
+	);
+}
+
 /* M13: Infrastructure Detail */
 function InfraDetailModal() {
 	return (
@@ -1290,6 +1777,64 @@ function InfraScalingModal() {
 			<div className="mb-3">
 				<label className={s.fl}>Scale Down Threshold</label>
 				<input className={s.fc} defaultValue="30% CPU for 15 min" />
+			</div>
+		</>
+	);
+}
+
+function InfraScalingModalWrapper() {
+	const { loading, receipt, execute } = useActionModal();
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return (
+			<>
+				<Receipt message={receipt.message} />
+				<div
+					style={{
+						display: "flex",
+						gap: 8,
+						justifyContent: "flex-end",
+						marginTop: 12,
+					}}
+				>
+					<button type="button" className={cx(s.btnPm, s.btnPmP)}>
+						Done
+					</button>
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<InfraScalingModal />
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button type="button" className={s.btnPm}>
+					Cancel
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={() => execute("Scaling policy updated. Changes will apply immediately.")}
+				>
+					Save Policy
+				</button>
 			</div>
 		</>
 	);
@@ -1641,6 +2186,69 @@ function ReconciliationModal() {
 			<div className={s.summaryBoxInfo} style={{ fontSize: 12 }}>
 				<i className="bi bi-info-circle me-1" /> Reconciliation typically takes
 				8–15 minutes depending on volume.
+			</div>
+		</>
+	);
+}
+
+function ReconciliationModalWrapper() {
+	const { loading, receipt, execute } = useActionModal();
+
+	if (loading) {
+		return (
+			<div className={s.loadingOv}>
+				<div className={s.spinner} />
+				<p className={s.loadingLabel}>Processing...</p>
+			</div>
+		);
+	}
+
+	if (receipt) {
+		return (
+			<>
+				<Receipt message={receipt.message} reference={receipt.reference} />
+				<div
+					style={{
+						display: "flex",
+						gap: 8,
+						justifyContent: "flex-end",
+						marginTop: 12,
+					}}
+				>
+					<button type="button" className={cx(s.btnPm, s.btnPmP)}>
+						Done
+					</button>
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<ReconciliationModal />
+			<div
+				style={{
+					display: "flex",
+					gap: 8,
+					justifyContent: "flex-end",
+					marginTop: 12,
+				}}
+			>
+				<button type="button" className={s.btnPm}>
+					Cancel
+				</button>
+				<button
+					type="button"
+					className={cx(s.btnPm, s.btnPmP)}
+					onClick={() =>
+						execute(
+							"Reconciliation job started. Results will be available in 12 minutes.",
+							"REC-20250627-8821",
+						)
+					}
+				>
+					Start Reconciliation
+				</button>
 			</div>
 		</>
 	);
@@ -2051,30 +2659,7 @@ export default function OpsSystemModals({
 				title="Run System Health Check"
 				icon="bi-play-circle"
 			>
-				<RunHealthCheckModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("runHealthCheck")}
-					>
-						Cancel
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => onClose("runHealthCheck")}
-					>
-						Start Health Check
-					</button>
-				</div>
+				<RunHealthCheckModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2084,7 +2669,7 @@ export default function OpsSystemModals({
 				title="Settlement Batch Detail — S-88219"
 				icon="bi-bank2"
 			>
-				<SettlementDetailModal />
+				<SettlementDetailModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2094,30 +2679,7 @@ export default function OpsSystemModals({
 				title="Fraud Detection Model Console"
 				icon="bi-shield-exclamation"
 			>
-				<FraudModelModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("fraudModel")}
-					>
-						Close
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => onClose("fraudModel")}
-					>
-						Apply Changes
-					</button>
-				</div>
+				<FraudModelModal onApply={() => {}} />
 			</Modal>
 
 			<Modal
@@ -2258,7 +2820,7 @@ export default function OpsSystemModals({
 				title="Incident Management — INC-88219"
 				icon="bi-exclamation-triangle"
 			>
-				<IncidentDetailModal />
+				<IncidentDetailModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2267,30 +2829,7 @@ export default function OpsSystemModals({
 				title="Create New Incident"
 				icon="bi-plus-circle"
 			>
-				<CreateIncidentModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("createIncident")}
-					>
-						Cancel
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmD)}
-						onClick={() => onClose("createIncident")}
-					>
-						Create Incident
-					</button>
-				</div>
+				<CreateIncidentModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2300,30 +2839,7 @@ export default function OpsSystemModals({
 				title="Partner API Detail — Stanbic Bank"
 				icon="bi-plug"
 			>
-				<PartnerApiDetailModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("partnerApiDetail")}
-					>
-						Close
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => onClose("partnerApiDetail")}
-					>
-						Save Config
-					</button>
-				</div>
+				<PartnerApiDetailModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2365,30 +2881,7 @@ export default function OpsSystemModals({
 				title="Auto-Scaling Configuration"
 				icon="bi-server"
 			>
-				<InfraScalingModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("infraScaling")}
-					>
-						Cancel
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => onClose("infraScaling")}
-					>
-						Save Policy
-					</button>
-				</div>
+				<InfraScalingModalWrapper />
 			</Modal>
 
 			<Modal
@@ -2613,30 +3106,7 @@ export default function OpsSystemModals({
 				title="Run Reconciliation"
 				icon="bi-check2-circle"
 			>
-				<ReconciliationModal />
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						justifyContent: "flex-end",
-						marginTop: 12,
-					}}
-				>
-					<button
-						type="button"
-						className={s.btnPm}
-						onClick={() => onClose("reconciliation")}
-					>
-						Cancel
-					</button>
-					<button
-						type="button"
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() => onClose("reconciliation")}
-					>
-						Start Reconciliation
-					</button>
-				</div>
+				<ReconciliationModalWrapper />
 			</Modal>
 
 			<Modal

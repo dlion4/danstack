@@ -1037,6 +1037,67 @@ input[type="date"].fc {
 	animation: pmFade 0.18s ease;
 }
 
+/* Mini Confirmation Modal Styles */
+.miniBackdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.25);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	z-index: 1100;
+	animation: pmFade 0.15s ease;
+}
+
+.miniModalWrap {
+	position: fixed;
+	inset: 0;
+	z-index: 1120;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.25rem;
+	animation: pmFade 0.15s ease;
+}
+
+.miniModalBox {
+	width: 100%;
+	max-width: 380px;
+	background: #ffffff;
+	border: 1px solid var(--pm-border-2);
+	border-radius: var(--pm-r-md);
+	box-shadow: var(--pm-shadow-lg);
+	color: var(--pm-ink);
+	animation: pmSlide 0.18s ease;
+	display: flex;
+	flex-direction: column;
+}
+
+.miniModalHeader {
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--pm-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-shrink: 0;
+}
+
+.miniModalBody {
+	padding: 16px 18px;
+	overflow-y: auto;
+	position: relative;
+}
+
+.miniModalFooter {
+	border-top: 1px solid var(--pm-border);
+	padding: 12px 18px;
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	flex-wrap: wrap;
+	flex-shrink: 0;
+}
+
 .modalWrap {
 	position: fixed;
 	inset: 0;
@@ -1393,6 +1454,16 @@ input[type="date"].fc {
 		white-space: nowrap;
 		padding: 6px 12px;
 		font-size: 12px;
+	}
+
+	.miniModalBox {
+		max-width: 340px;
+	}
+
+	.miniModalHeader,
+	.miniModalBody,
+	.miniModalFooter {
+		padding: 12px 14px;
 	}
 }
 

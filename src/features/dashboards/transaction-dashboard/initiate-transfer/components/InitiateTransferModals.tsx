@@ -1,14 +1,14 @@
 /* ============================================================================
- * InitiateTransferModals.tsx — all modals for the Initiate Transfer page (1.2).
+ * InitiateTransferModals.tsx — all modals for the Initiate Transfer page.
  * ----------------------------------------------------------------------------
- * MIGRATED FROM: legacy 1.2.html modal blocks + the vanilla openM()/closeM()
- * helpers. Every modal is state-driven via the shared modal primitives (no
- * Bootstrap-JS, no innerHTML). The page owns modalState; each modal reads its
- * `show` flag and closes through closeModal(id).
+ * MIGRATED & ENHANCED: All original modals retained, enhanced with Font
+ * Awesome icons and emerald theme styling. Modal primitives (FlowModal,
+ * SimpleModal, TabbedModal, SelectField, ReviewRow, PinRow) are preserved.
  * ========================================================================== */
 "use client";
 
 import shared from "../../shared/styles/appPage.module.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import {
 	FlowModal,
 	PinRow,
@@ -50,12 +50,12 @@ export function InitiateTransferModals({
 
 	return (
 		<>
-			{/* New Transfer — multi-step flow */}
+			{/* ── New Transfer — multi-step flow ── */}
 			<FlowModal
 				show={isOpen("newTransferModal")}
 				onClose={() => close("newTransferModal")}
-				iconCls="bi bi-send"
-				title="New Transfer"
+				iconCls="fa-solid fa-paper-plane"
+				title="Quick Transfer"
 				steps={["Beneficiary", "Amount", "Confirm", "Done"]}
 				confirmLabel="Send Transfer"
 			>
@@ -103,7 +103,7 @@ export function InitiateTransferModals({
 								<ReviewRow label="Fee" value="KES 175" />
 								<ReviewRow label="Total debit" value="KES 250,175" highlight />
 								<label className={`${s.fieldLabel} mt-3 d-block`}>
-									Enter PIN
+									<i className="fa-solid fa-key"></i> Enter PIN
 								</label>
 								<PinRow />
 							</>
@@ -111,7 +111,7 @@ export function InitiateTransferModals({
 						{step === 4 && (
 							<div className={s.receipt}>
 								<div className={s.receiptIcon}>
-									<i className="bi bi-check-lg" />
+									<i className="fa-solid fa-check" />
 								</div>
 								<h5 className={s.receiptTitle}>Transfer Submitted</h5>
 								<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
@@ -123,11 +123,11 @@ export function InitiateTransferModals({
 				)}
 			</FlowModal>
 
-			{/* Bulk upload */}
+			{/* ── Bulk upload ── */}
 			<SimpleModal
 				show={isOpen("bulkUploadModal")}
 				onClose={() => close("bulkUploadModal")}
-				iconCls="bi bi-upload"
+				iconCls="fa-solid fa-cloud-arrow-up"
 				title="Bulk Transfer Upload"
 				size="lg"
 				submitLabel="Process File"
@@ -138,16 +138,16 @@ export function InitiateTransferModals({
 					<input type="file" className={s.field} />
 				</div>
 				<div className={s.hintBox}>
-					<i className="bi bi-info-circle" />
+					<i className="fa-solid fa-circle-info" />
 					<span>Columns: Name, Account/Phone, Bank, Amount, Reference.</span>
 				</div>
 			</SimpleModal>
 
-			{/* Templates */}
+			{/* ── Templates ── */}
 			<TabbedModal
 				show={isOpen("templateModal")}
 				onClose={() => close("templateModal")}
-				iconCls="bi bi-file-earmark-plus"
+				iconCls="fa-regular fa-file-lines"
 				title="Transfer Templates"
 				tabs={[
 					{
@@ -189,19 +189,18 @@ export function InitiateTransferModals({
 						label: "Shared",
 						render: () => (
 							<p className="text-muted mb-0">
-								No shared templates yet. Templates shared by your team appear
-								here.
+								No shared templates yet. Templates shared by your team appear here.
 							</p>
 						),
 					},
 				]}
 			/>
 
-			{/* Rail health */}
+			{/* ── Rail health ── */}
 			<SimpleModal
 				show={isOpen("railHealthModal")}
 				onClose={() => close("railHealthModal")}
-				iconCls="bi bi-heart-pulse"
+				iconCls="fa-solid fa-heart-pulse"
 				title="Rail Health"
 				size="lg"
 			>
@@ -227,7 +226,7 @@ export function InitiateTransferModals({
 									<td>{r.success}</td>
 									<td>
 										<span className={`${s.badge} ${s.badgeSuccess}`}>
-											Operational
+											<i className="fa-solid fa-circle-check"></i> Operational
 										</span>
 									</td>
 								</tr>
@@ -237,11 +236,11 @@ export function InitiateTransferModals({
 				</div>
 			</SimpleModal>
 
-			{/* Fee calculator */}
+			{/* ─ Fee calculator ── */}
 			<SimpleModal
 				show={isOpen("feeCalcModal")}
 				onClose={() => close("feeCalcModal")}
-				iconCls="bi bi-calculator"
+				iconCls="fa-solid fa-calculator"
 				title="Transfer Fee Calculator"
 			>
 				<div className="mb-3">
@@ -258,11 +257,11 @@ export function InitiateTransferModals({
 				</div>
 			</SimpleModal>
 
-			{/* Rail comparison */}
+			{/* ── Rail comparison ─ */}
 			<SimpleModal
 				show={isOpen("railCompareModal")}
 				onClose={() => close("railCompareModal")}
-				iconCls="bi bi-bar-chart"
+				iconCls="fa-solid fa-chart-bar"
 				title="Compare Payment Rails"
 				size="lg"
 			>
@@ -292,11 +291,11 @@ export function InitiateTransferModals({
 				</div>
 			</SimpleModal>
 
-			{/* Add source account */}
+			{/* ── Add source account ─ */}
 			<SimpleModal
 				show={isOpen("addAccountModal")}
 				onClose={() => close("addAccountModal")}
-				iconCls="bi bi-plus-circle"
+				iconCls="fa-solid fa-plus-circle"
 				title="Add Source Account"
 				submitLabel="Add Account"
 				successMsg="Source account added!"
@@ -312,11 +311,11 @@ export function InitiateTransferModals({
 				<SelectField label="Bank" options={data.banks} />
 			</SimpleModal>
 
-			{/* Beneficiary address book */}
+			{/* ── Beneficiary address book ── */}
 			<TabbedModal
 				show={isOpen("beneficiaryModal")}
 				onClose={() => close("beneficiaryModal")}
-				iconCls="bi bi-people"
+				iconCls="fa-solid fa-address-book"
 				title="Beneficiary Address Book"
 				tabs={[
 					{
@@ -378,26 +377,26 @@ export function InitiateTransferModals({
 				]}
 			/>
 
-			{/* Verify account name */}
+			{/* ── Verify account name ─ */}
 			<SimpleModal
 				show={isOpen("verifyAccountModal")}
 				onClose={() => close("verifyAccountModal")}
-				iconCls="bi bi-patch-check"
+				iconCls="fa-solid fa-patch-check"
 				title="Account Verification"
 			>
 				<div className={`${s.hintBoxSuccess} ${s.hintBox}`}>
-					<i className="bi bi-check-circle" />
+					<i className="fa-solid fa-circle-check" />
 					<span>
 						Account 1234567890 resolves to <strong>GRACE WANJIKU</strong>.
 					</span>
 				</div>
 			</SimpleModal>
 
-			{/* Upload supporting document */}
+			{/* ── Upload supporting document ── */}
 			<SimpleModal
 				show={isOpen("uploadDocModal")}
 				onClose={() => close("uploadDocModal")}
-				iconCls="bi bi-file-earmark-arrow-up"
+				iconCls="fa-solid fa-cloud-arrow-up"
 				title="Upload Supporting Document"
 				submitLabel="Upload"
 				successMsg="Document uploaded!"
@@ -407,45 +406,45 @@ export function InitiateTransferModals({
 					<input type="file" className={s.field} />
 				</div>
 				<div className={s.hintBox}>
-					<i className="bi bi-info-circle" />
+					<i className="fa-solid fa-circle-info" />
 					<span>Max 10 MB. Invoices, contracts and KYC docs accepted.</span>
 				</div>
 			</SimpleModal>
 
-			{/* Terms */}
+			{/* ─ Terms ── */}
 			<SimpleModal
 				show={isOpen("termsModal")}
 				onClose={() => close("termsModal")}
-				iconCls="bi bi-file-text"
+				iconCls="fa-regular fa-file-lines"
 				title="Terms & Conditions"
 				size="lg"
 			>
 				<div style={{ fontSize: 14, color: "var(--ink-700)", lineHeight: 1.7 }}>
 					<p>
-						By submitting a transfer you confirm that the beneficiary details
-						are correct and that funds are for a lawful purpose.
+						By submitting a transfer you confirm that the beneficiary details are
+						correct and that funds are for a lawful purpose.
 					</p>
 					<p>
-						Transfers are subject to AML/CFT screening, maker-checker approval
-						and applicable daily and single-transaction limits.
+						Transfers are subject to AML/CFT screening, maker-checker approval and
+						applicable daily and single-transaction limits.
 					</p>
 					<p className="mb-0">
-						Completed transfers cannot be reversed. Fees are non-refundable once
-						a transfer settles on the selected rail.
+						Completed transfers cannot be reversed. Fees are non-refundable once a
+						transfer settles on the selected rail.
 					</p>
 				</div>
 			</SimpleModal>
 
-			{/* Submit success */}
+			{/* ── Submit success ── */}
 			<SimpleModal
 				show={isOpen("submitSuccessModal")}
 				onClose={() => close("submitSuccessModal")}
-				iconCls="bi bi-check-circle"
+				iconCls="fa-solid fa-circle-check"
 				title="Transfer Submitted"
 			>
 				<div className={s.receipt}>
 					<div className={s.receiptIcon}>
-						<i className="bi bi-check-lg" />
+						<i className="fa-solid fa-check" />
 					</div>
 					<h5 className={s.receiptTitle}>Transfer Submitted for Approval</h5>
 					<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
@@ -455,20 +454,270 @@ export function InitiateTransferModals({
 				</div>
 			</SimpleModal>
 
-			{/* Draft saved */}
+			{/* ── Draft saved ── */}
 			<SimpleModal
 				show={isOpen("draftSavedModal")}
 				onClose={() => close("draftSavedModal")}
-				iconCls="bi bi-save"
+				iconCls="fa-regular fa-floppy-disk"
 				title="Draft Saved"
 			>
 				<div className={`${s.hintBoxSuccess} ${s.hintBox}`}>
-					<i className="bi bi-check-circle" />
+					<i className="fa-solid fa-circle-check" />
 					<span>
 						Your transfer draft has been saved and can be resumed later.
 					</span>
 				</div>
 			</SimpleModal>
+
+			{/* ── Add Recipient (Drafts) - multi-step flow ── */}
+			<FlowModal
+				show={isOpen("addRecipientModal")}
+				onClose={() => close("addRecipientModal")}
+				iconCls="fa-solid fa-user-plus"
+				title="Add Recipient to Address Book"
+				steps={["User Details", "Paymo Wallet", "External Wallets", "Confirm", "Done"]}
+				confirmLabel="Save Recipient"
+			>
+				{(step) => (
+					<>
+						{step === 1 && (
+							<div className="row g-3">
+								<div className="col-md-6">
+									<label className={s.fieldLabel}>Name / Nickname</label>
+									<input className={s.field} placeholder="Enter recipient name" />
+								</div>
+								<div className="col-md-6">
+									<label className={s.fieldLabel}>Country</label>
+									<select className={s.field}>
+										<option value="">Select country</option>
+										<option value="KE">Kenya</option>
+										<option value="UG">Uganda</option>
+										<option value="TZ">Tanzania</option>
+										<option value="NG">Nigeria</option>
+										<option value="GH">Ghana</option>
+										<option value="ZA">South Africa</option>
+										<option value="RW">Rwanda</option>
+										<option value="ET">Ethiopia</option>
+										<option value="CI">Côte d'Ivoire</option>
+										<option value="SN">Senegal</option>
+										<option value="CM">Cameroon</option>
+										<option value="MZ">Mozambique</option>
+										<option value="ZM">Zambia</option>
+										<option value="ZW">Zimbabwe</option>
+										<option value="MW">Malawi</option>
+										<option value="BF">Burkina Faso</option>
+										<option value="ML">Mali</option>
+										<option value="NE">Niger</option>
+										<option value="CD">DR Congo</option>
+										<option value="AO">Angola</option>
+									</select>
+								</div>
+								<div className="col-12">
+									<label className={s.fieldLabel}>Relationship</label>
+									<select className={s.field}>
+										<option value="">Select relationship</option>
+										<option value="family">Family</option>
+										<option value="friend">Friend</option>
+										<option value="colleague">Colleague</option>
+										<option value="business">Business Partner</option>
+										<option value="supplier">Supplier</option>
+										<option value="employee">Employee</option>
+										<option value="customer">Customer</option>
+										<option value="other">Other</option>
+									</select>
+								</div>
+								<div className={s.hintBox}>
+									<i className="fa-solid fa-circle-info" />
+									<span>Add the recipient's basic information to help you identify them.</span>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div className="row g-3">
+								<div className="col-12">
+									<label className={s.fieldLabel}>Paymo Wallet ID</label>
+									<input className={s.field} defaultValue="PM-20250627-8841" readOnly />
+									<div className="mt-2">
+										<span className={`${s.badge} ${s.badgeSuccess}`}>
+											<i className="fa-solid fa-circle-check"></i> Verified
+										</span>
+									</div>
+								</div>
+								<div className="col-12">
+									<div className="form-check">
+										<input className="form-check-input" type="checkbox" id="usePaymoWallet" />
+										<label className="form-check-label" htmlFor="usePaymoWallet">
+											<i className="fa-solid fa-wallet"></i> Use this Paymo wallet for transfers
+										</label>
+									</div>
+								</div>
+								<div className={s.hintBox}>
+									<i className="fa-solid fa-circle-info" />
+									<span>The recipient's Paymo wallet is verified and ready for transfers.</span>
+								</div>
+							</div>
+						)}
+						{step === 3 && (
+							<div className="row g-3">
+								<div className="col-12">
+									<h6 className="mb-3">
+										<i className="fa-solid fa-building-columns"></i> Bank Accounts (up to 3)
+									</h6>
+								</div>
+								{[1, 2, 3].map((num) => (
+									<div key={num} className="col-12 mb-3">
+										<div className={`${s.softBox} p-3`}>
+											<div className="row g-2">
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Bank {num}
+													</label>
+													<select className={s.field}>
+														<option value="">Select bank</option>
+														{data.banks.map((bank) => (
+															<option key={bank}>{bank}</option>
+														))}
+													</select>
+												</div>
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Account Number {num}
+													</label>
+													<input className={s.field} placeholder={`Account ${num}`} />
+												</div>
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Account Name {num}
+													</label>
+													<input className={s.field} placeholder={`Account holder ${num}`} />
+												</div>
+											</div>
+										</div>
+									</div>
+								))}
+								<div className="col-12 mt-4">
+									<h6 className="mb-3">
+										<i className="fa-solid fa-mobile-screen"></i> Mobile Money Accounts
+									</h6>
+								</div>
+								{[1, 2, 3].map((num) => (
+									<div key={`mobile-${num}`} className="col-12 mb-3">
+										<div className={`${s.softBox} p-3`}>
+											<div className="row g-2">
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Provider {num}
+													</label>
+													<select className={s.field}>
+														<option value="">Select provider</option>
+														<option value="mpesa">M-Pesa (Safaricom)</option>
+														<option value="airtel">Airtel Money</option>
+														<option value="telkom">Telkom T-Kash</option>
+														<option value="mtn">MTN Mobile Money</option>
+														<option value="vodacom">Vodacom M-Pesa</option>
+														<option value="airtel_ug">Airtel Money Uganda</option>
+														<option value="mtn_ug">MTN Mobile Money Uganda</option>
+														<option value="tigo">Tigo Pesa</option>
+														<option value="halotel">Halotel Cash</option>
+														<option value="zantel">Zantel Ezy Pesa</option>
+														<option value="mtn_rw">MTN Mobile Money Rwanda</option>
+														<option value="airtel_rw">Airtel Money Rwanda</option>
+														<option value="mtn_gh">MTN Mobile Money Ghana</option>
+														<option value="airtel_gh">AirtelTigo Money Ghana</option>
+														<option value="vodacom_gh">Vodafone Cash Ghana</option>
+														<option value="momo">MTN MoMo Nigeria</option>
+														<option value="airtel_ng">Airtel Money Nigeria</option>
+														<option value="9mobile">9mobile Money</option>
+														<option value="gtbank">GTBank 737</option>
+														<option value="mtn_zm">MTN Mobile Money Zambia</option>
+														<option value="airtel_zm">Airtel Money Zambia</option>
+														<option value="zamtel">Zamtel Money</option>
+														<option value="mtn_ci">MTN Mobile Money Côte d'Ivoire</option>
+														<option value="orange_ci">Orange Money Côte d'Ivoire</option>
+														<option value="moov_ci">Moov Money Côte d'Ivoire</option>
+														<option value="wave">Wave Senegal</option>
+														<option value="orange_sn">Orange Money Senegal</option>
+														<option value="free_sn">Free Money Senegal</option>
+														<option value="mtn_cm">MTN Mobile Money Cameroon</option>
+														<option value="orange_cm">Orange Money Cameroon</option>
+														<option value="mtn_ml">MTN Mobile Money Mali</option>
+														<option value="orange_ml">Orange Money Mali</option>
+														<option value="moov_ml">Moov Money Mali</option>
+													</select>
+												</div>
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Phone Number {num}
+													</label>
+													<input className={s.field} placeholder={`2547XXXXXXXX`} />
+												</div>
+												<div className="col-md-4">
+													<label className={s.fieldLabel} style={{ fontSize: 12 }}>
+														Account Name {num}
+													</label>
+													<input className={s.field} placeholder={`Account holder ${num}`} />
+												</div>
+											</div>
+										</div>
+									</div>
+								))}
+								<div className={s.hintBox}>
+									<i className="fa-solid fa-circle-info" />
+									<span>Add bank accounts and mobile money wallets for different African countries.</span>
+								</div>
+							</div>
+						)}
+						{step === 4 && (
+							<div className="row g-3">
+								<div className="col-12">
+									<div className="form-check mb-3">
+										<input className="form-check-input" type="checkbox" id="confirmSave" />
+										<label className="form-check-label" htmlFor="confirmSave">
+											<i className="fa-solid fa-check-circle"></i> I confirm the recipient details are correct
+										</label>
+									</div>
+									<div className="form-check mb-3">
+										<input className="form-check-input" type="checkbox" id="quickTransfer" defaultChecked />
+										<label className="form-check-label" htmlFor="quickTransfer">
+											<i className="fa-solid fa-bolt"></i> Enable quick transfers for this recipient
+										</label>
+									</div>
+									<div className="form-check mb-3">
+										<input className="form-check-input" type="checkbox" id="addToFavorites" />
+										<label className="form-check-label" htmlFor="addToFavorites">
+											<i className="fa-solid fa-star"></i> Add to favorites
+										</label>
+									</div>
+								</div>
+								<div className={s.hintBox}>
+									<i className="fa-solid fa-circle-info" />
+									<span>Review and confirm before saving to your address book.</span>
+								</div>
+							</div>
+						)}
+						{step === 5 && (
+							<div className={s.receipt}>
+								<div className={s.receiptIcon}>
+									<i className="fa-solid fa-check" />
+								</div>
+								<h5 className={s.receiptTitle}>Successfully Saved</h5>
+								<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
+									Recipient has been added to your address book or favorites.
+								</p>
+								<button
+									className={`${s.button} ${s.buttonPrimary} mt-3`}
+									onClick={() => {
+										close("addRecipientModal");
+										setTimeout(() => openModal("addRecipientModal"), 100);
+									}}
+								>
+									<i className="fa-solid fa-plus"></i> Add Another Recipient
+								</button>
+							</div>
+						)}
+					</>
+				)}
+			</FlowModal>
 		</>
 	);
 }

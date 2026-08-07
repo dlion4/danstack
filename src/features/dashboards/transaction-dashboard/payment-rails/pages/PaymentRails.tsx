@@ -138,18 +138,18 @@ const initialMockData: PaymentRailsContent = {
 			sub: "Instant rails 4.2s • ACH 2h 11m",
 			labelTone: "info",
 		},
-		{
-			label: "MONTHLY RAIL COST",
-			value: "KES 184,200",
-			badge: {
-				text: "3 rails optimized",
-				icon: "bi-currency-exchange",
-				tone: "warn",
-			},
-			sub: "Potential savings: KES 31,400",
-			labelTone: "warn",
-			edge: "warn",
-		},
+		// {
+		// 	label: "MONTHLY RAIL COST",
+		// 	value: "KES 184,200",
+		// 	badge: {
+		// 		text: "3 rails optimized",
+		// 		icon: "bi-currency-exchange",
+		// 		tone: "warn",
+		// 	},
+		// 	sub: "Potential savings: KES 31,400",
+		// 	labelTone: "warn",
+		// 	edge: "warn",
+		// },
 	],
 	attention: [
 		{
@@ -480,10 +480,12 @@ export default function PaymentRails() {
 							<Link to="/app/transfers">Payments</Link> /{" "}
 							<strong>Payment Rails &amp; Routing</strong>
 						</div>
-						<h1 className={s.pageTitle}>Payment Rails &amp; Routing</h1>
+						<h1 className={s.pageTitle}>
+							{/* Payment Rails &amp; Routing */}
+							</h1>
 						<p className={s.pageCopy}>
-							Connected banks, smart routing, rail performance, configuration
-							&amp; nostro/vostro mapping.
+							{/* Connected banks, smart routing, rail performance, configuration
+							&amp; nostro/vostro mapping. */}
 						</p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -545,7 +547,7 @@ export default function PaymentRails() {
 									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
 									onClick={() => openModal("nostroModal")}
 								>
-									Nostro
+									Accounts
 								</button>
 							</div>
 						</div>

@@ -246,18 +246,18 @@ const initialMockData: LiquidityContent = {
 	heroSub:
 		"Across 12 partner banks, 847 agents and 31 settlement accounts — all monitored in real time.",
 
-	critical: {
-		label: "CRITICAL FLOAT",
-		value: "KES 42.8M",
-		badge: "7 accounts below threshold",
-		badgeTone: "warn",
-		bars: [
-			{ height: 85, color: "danger" },
-			{ height: 60, color: "warn" },
-			{ height: 40, color: "info" },
-			{ height: 75, color: "danger" },
-		],
-	},
+	// critical: {
+	// 	label: "CRITICAL FLOAT",
+	// 	value: "KES 42.8M",
+	// 	badge: "7 accounts below threshold",
+	// 	badgeTone: "warn",
+	// 	bars: [
+	// 		{ height: 85, color: "danger" },
+	// 		{ height: 60, color: "warn" },
+	// 		{ height: 40, color: "info" },
+	// 		{ height: 75, color: "danger" },
+	// 	],
+	// },
 	settlementsStat: {
 		label: "SETTLEMENTS TODAY",
 		value: "KES 318.4M",
@@ -877,11 +877,13 @@ export default function Liquidity() {
 							<Link to="/app/transfers">Transactions Hub</Link> /{" "}
 							<strong>Liquidity &amp; Float</strong>
 						</div>
-						<h1 className={s.pageTitle}>Liquidity &amp; Float Management</h1>
+						<h1 className={s.pageTitle}>
+							{/* Liquidity &amp; Float Management */}
+							</h1>
 						<p className={s.pageCopy}>
-							Monitor and manage float across banks, agents, and partners.
+							{/* Monitor and manage float across banks, agents, and partners.
 							Execute rebalancing, forecast shortfalls, and trigger emergency
-							liquidity with full audit trails.
+							liquidity with full audit trails. */}
 						</p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -918,7 +920,7 @@ export default function Liquidity() {
 
 				{/* ---------- HERO STATS ---------- */}
 				<div className="row g-3">
-					<div className="col-lg-4">
+					<div className="col-lg-5">
 						<div
 							className={cx(s.card, s.cardAccent)}
 							style={{ minHeight: 170 }}
@@ -972,7 +974,7 @@ export default function Liquidity() {
 							</div>
 						</div>
 					</div>
-					<div className="col-lg-2 col-md-4 col-6">
+					{/* <div className="col-lg-2 col-md-4 col-6">
 						<div className={s.card} style={{ minHeight: 170 }}>
 							<p className={s.statLabel} style={{ color: "var(--warning)" }}>
 								{c.critical.label}
@@ -996,8 +998,8 @@ export default function Liquidity() {
 								))}
 							</div>
 						</div>
-					</div>
-					<div className="col-lg-3 col-md-4 col-6">
+					</div> */}
+					<div className="col-lg-4 col-md-4 col-6">
 						<div className={s.card} style={{ minHeight: 170 }}>
 							<p className={s.statLabel} style={{ color: "var(--info)" }}>
 								{c.settlementsStat.label}

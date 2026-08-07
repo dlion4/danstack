@@ -419,119 +419,120 @@ export default function OpsSystem() {
 				</div>
 			)}
 
-			{/* ===== HERO STATS ===== */}
-			<div className="row g-3">
-				<div className="col-lg-4">
-					<div className={cx(s.card, s.cardAccent)} style={{ minHeight: 170 }}>
-						<p
-							style={{
-								margin: 0,
-								fontSize: 12,
-								color: "rgba(255,255,255,.78)",
-							}}
-						>
-							Platform status <span style={{ color: "#86efac" }}>●</span>{" "}
-							{data.platformStatus}
-						</p>
-						<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
-							{data.platformUptime} Uptime
-						</div>
-						<p
-							style={{
-								margin: 0,
-								fontSize: 12,
-								color: "rgba(255,255,255,.78)",
-							}}
-						>
-							Last 30 days • {data.incidents30d} minor incidents resolved •{" "}
-							{data.criticalOutages} critical outages
-						</p>
-						<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
-								onClick={() => openModal("uptimeHistory")}
+			<div className={s.content}>
+				{/* ===== HERO STATS ===== */}
+				<div className="row g-3">
+					<div className="col-lg-4">
+						<div className={cx(s.card, s.cardAccent)} style={{ minHeight: 170 }}>
+							<p
+								style={{
+									margin: 0,
+									fontSize: 12,
+									color: "rgba(255,255,255,.78)",
+								}}
 							>
-								History
-							</button>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
-								onClick={() => openModal("slaReport")}
+								Platform status <span style={{ color: "#86efac" }}>●</span>{" "}
+								{data.platformStatus}
+							</p>
+							<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
+								{data.platformUptime} Uptime
+							</div>
+							<p
+								style={{
+									margin: 0,
+									fontSize: 12,
+									color: "rgba(255,255,255,.78)",
+								}}
 							>
-								SLA Report
-							</button>
+								Last 30 days • {data.incidents30d} minor incidents resolved •{" "}
+								{data.criticalOutages} critical outages
+							</p>
+							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
+									onClick={() => openModal("uptimeHistory")}
+								>
+									History
+								</button>
+								<button
+									type="button"
+									className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
+									onClick={() => openModal("slaReport")}
+								>
+									SLA Report
+								</button>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div className="col-lg-2 col-md-4 col-6">
-					<div className={s.card} style={{ minHeight: 170 }}>
-						<p className={s.sl} style={{ color: "var(--pm-accent)" }}>
-							TRANSACTION SUCCESS
-						</p>
-						<div className={s.sv} style={{ margin: "6px 0" }}>
-							{data.txnSuccess}
-						</div>
-						<span className={cx(s.badge, s.badgeS)}>
-							<i className="bi bi-check-circle" /> {data.txnCount} txns today
-						</span>
-						<div className="mt-2">
-							<div
-								className="d-flex justify-content-between"
-								style={{ fontSize: 11, color: "var(--pm-muted)" }}
-							>
-								<span>Failed</span>
-								<span>
-									{data.txnFailed} ({data.txnFailedPct})
-								</span>
+					<div className="col-lg-2 col-md-4 col-6">
+						<div className={s.card} style={{ minHeight: 170 }}>
+							<p className={s.sl} style={{ color: "var(--pm-accent)" }}>
+								TRANSACTION SUCCESS
+							</p>
+							<div className={s.sv} style={{ margin: "6px 0" }}>
+								{data.txnSuccess}
 							</div>
-							<div className={s.pmProgress} style={{ marginTop: 6 }}>
+							<span className={cx(s.badge, s.badgeS)}>
+								<i className="bi bi-check-circle" /> {data.txnCount} txns today
+							</span>
+							<div className="mt-2">
 								<div
-									className={s.pmProgressBar}
-									style={{
-										width: data.txnSuccess,
-										background: "var(--pm-accent)",
-									}}
-								/>
+									className="d-flex justify-content-between"
+									style={{ fontSize: 11, color: "var(--pm-muted)" }}
+								>
+									<span>Failed</span>
+									<span>
+										{data.txnFailed} ({data.txnFailedPct})
+									</span>
+								</div>
+								<div className={s.pmProgress} style={{ marginTop: 6 }}>
+									<div
+										className={s.pmProgressBar}
+										style={{
+											width: data.txnSuccess,
+											background: "var(--pm-accent)",
+										}}
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className="col-lg-3 col-md-4 col-6">
-					<div className={s.card} style={{ minHeight: 170 }}>
-						<p className={s.sl} style={{ color: "var(--pm-info)" }}>
-							API RESPONSE (P95)
-						</p>
-						<div className={s.sv} style={{ margin: "6px 0" }}>
-							{data.apiP95}
+					<div className="col-lg-3 col-md-4 col-6">
+						<div className={s.card} style={{ minHeight: 170 }}>
+							<p className={s.sl} style={{ color: "var(--pm-info)" }}>
+								API RESPONSE (P95)
+							</p>
+							<div className={s.sv} style={{ margin: "6px 0" }}>
+								{data.apiP95}
+							</div>
+							<span className={cx(s.badge, s.badgeI)}>
+								<i className="bi bi-speedometer2" /> Within SLA
+							</span>
+							<div
+								className="mt-2"
+								style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+							>
+								<div>
+									Current load: <strong>{data.apiLoad}</strong>
+								</div>
+								<div>
+									Peak today: <strong>{data.apiPeak}</strong>
+								</div>
+							</div>
 						</div>
-						<span className={cx(s.badge, s.badgeI)}>
-							<i className="bi bi-speedometer2" /> Within SLA
-						</span>
+					</div>
+					<div className="col-lg-3 col-md-4">
 						<div
-							className="mt-2"
-							style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+							className={s.card}
+							style={{
+								minHeight: 170,
+								borderLeft: "3px solid var(--pm-warning)",
+							}}
 						>
-							<div>
-								Current load: <strong>{data.apiLoad}</strong>
-							</div>
-							<div>
-								Peak today: <strong>{data.apiPeak}</strong>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-3 col-md-4">
-					<div
-						className={s.card}
-						style={{
-							minHeight: 170,
-							borderLeft: "3px solid var(--pm-warning)",
-						}}
-					>
-						<p className={s.sl} style={{ color: "var(--pm-warning)" }}>
-							OPEN INCIDENTS
-						</p>
+							<p className={s.sl} style={{ color: "var(--pm-warning)" }}>
+								OPEN INCIDENTS
+							</p>
 						<div className={s.sv} style={{ margin: "6px 0" }}>
 							{data.openIncidents}
 						</div>
@@ -879,7 +880,7 @@ export default function OpsSystem() {
 								className="bi bi-heart-pulse-fill"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							1.17.1 — System Status Dashboard
+							System Status Dashboard
 						</h3>
 						<p className={s.ss}>
 							Real-time health of all B2B transaction services, APIs, settlement
@@ -998,7 +999,7 @@ export default function OpsSystem() {
 								className="bi bi-activity"
 								style={{ color: "var(--pm-accent)" }}
 							/>{" "}
-							1.17.2 — Transaction Health Monitor
+							Transaction Health Monitor
 						</h3>
 						<p className={s.ss}>
 							Live transaction volume, success rates, failure reasons, and
@@ -1186,7 +1187,7 @@ export default function OpsSystem() {
 					<div>
 						<h3 className={s.st}>
 							<i className="bi bi-plug" style={{ color: "var(--pm-info)" }} />{" "}
-							1.17.3 — API & Integration Health
+							API & Integration Health
 						</h3>
 						<p className={s.ss}>
 							Partner API performance, webhook delivery, integration status and
@@ -1320,7 +1321,7 @@ export default function OpsSystem() {
 								className="bi bi-bank2"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							1.17.4 — Settlement & Reconciliation
+							Settlement & Reconciliation
 						</h3>
 						<p className={s.ss}>
 							Real-time settlement status, batch reconciliation, pending items
@@ -1479,7 +1480,7 @@ export default function OpsSystem() {
 								className="bi bi-shield-exclamation"
 								style={{ color: "var(--pm-danger)" }}
 							/>{" "}
-							1.17.5 — Fraud & Security Operations
+							Fraud & Security Operations
 						</h3>
 						<p className={s.ss}>
 							Real-time fraud detection, alert queue, model performance and
@@ -1654,7 +1655,7 @@ export default function OpsSystem() {
 								className="bi bi-server"
 								style={{ color: "var(--pm-primary)" }}
 							/>{" "}
-							1.17.6 — Infrastructure & Uptime
+							Infrastructure & Uptime
 						</h3>
 						<p className={s.ss}>
 							Server health, database performance, queue depths, auto-scaling
@@ -1770,7 +1771,7 @@ export default function OpsSystem() {
 								className="bi bi-headset"
 								style={{ color: "var(--pm-purple)" }}
 							/>{" "}
-							1.17.7 — Operations Queue & Support Tickets
+							Operations Queue & Support Tickets
 						</h3>
 						<p className={s.ss}>
 							Internal operations tickets, partner support requests, SLA
@@ -1867,6 +1868,7 @@ export default function OpsSystem() {
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 
 			{/* ===== MODALS ===== */}

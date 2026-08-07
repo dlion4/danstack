@@ -130,9 +130,9 @@ const initialMockData: MobileMoneyConfig = {
 		detail:
 			"M-Pesa, Airtel Money, T-Kash, Pesalink, 8 PSPs and 3 bank integrations — all reconciled in real time.",
 		buttons: [
-			{ label: "Send", modal: "sendMoneyModal" },
-			{ label: "Bulk", modal: "bulkTransferModal" },
-			{ label: "Reconcile", modal: "reconcileModal" },
+			{ label: "Single Transaction", modal: "sendMoneyModal" },
+			{ label: "Bulk Money Transfer", modal: "bulkTransferModal" },
+			// { label: "Reconcile", modal: "reconcileModal" },
 		],
 	},
 	statCards: [
@@ -816,10 +816,10 @@ export default function MobileMoney() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>
+						{/* <h2 className={styles.pageH2}>
 							{config.pageTitle}
-						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						</h2> */}
+						{/* <p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button
