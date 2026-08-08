@@ -206,6 +206,7 @@ export default function MobileMoneyModals({
 		wd: "overview",
 		psp: "creds",
 		bulkRecipients: "paymo",
+		sendRecipient: "phone",
 	});
 	const sw = (prefix: string, key: string) =>
 		setTabs((prev) => ({ ...prev, [prefix]: key }));
@@ -250,9 +251,9 @@ export default function MobileMoneyModals({
 	};
 
 	/* ---------- LEGACY BRIDGE: nextFlow(key, total) with legacy modalMap ---------- */
-	const flowTotals: Record<FlowKey, number> = { send: 4, bulk: 7, disp: 3 };
+	const flowTotals: Record<FlowKey, number> = { send: 6, bulk: 7, disp: 3 };
 	const flowLabels: Record<FlowKey, string[]> = {
-		send: ["Wallets", "Amount", "Confirm", "Done"],
+		send: ["Source", "Recipient", "Review", "Costs", "Process", "Done"],
 		bulk: ["Source", "Recipients", "Country", "Review", "Costs", "Process", "Done"],
 		disp: ["Transaction", "Evidence", "Done"],
 	};
@@ -448,7 +449,7 @@ export default function MobileMoneyModals({
 				onCancel={() => setMiniConfirm({ show: false, title: "", message: "", onConfirm: () => {} })}
 			/>
 
-			{/* ============ M1: Send Money (multi-step + PIN) ============ */}
+			{/* ============ M1: Send Money (multi-step - 6 steps) ============ */}
 			<MBox
 				id="sendMoneyModal"
 				active={active}
@@ -467,93 +468,361 @@ export default function MobileMoneyModals({
 			>
 				{stepper("send")}
 				{busy === "send" && <BusyOverlay />}
+				
+				{/* Step 1: Source Funds Selection */}
 				{showFlow("send") && flows.send === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Select Wallets</h6>
+						<h6 style={{ fontWeight: 700 }}>Step 1: Select Source of Funds</h6>
 						<div className="row g-3">
 							<div className="col-md-6">
-								<label className={styles.fl}>From</label>
-								<select className={styles.fc} defaultValue={SEND_FROM[0]}>
-									{SEND_FROM.map((o) => (
-										<option key={o}>{o}</option>
-									))}
+								<label className={styles.fl}>Source Type</label>
+								<select className={styles.fc} defaultValue="linked">
+									<option value="linked">Linked Mobile Account</option>
+									<option value="new">Add New Mobile Number</option>
 								</select>
 							</div>
 							<div className="col-md-6">
-								<label className={styles.fl}>To</label>
-								<select className={styles.fc} defaultValue={SEND_TO[0]}>
-									{SEND_TO.map((o) => (
-										<option key={o}>{o}</option>
-									))}
+								<label className={styles.fl}>Mobile PSP Provider</label>
+								<select className={styles.fc} defaultValue="mpesa">
+									<option value="mpesa">M-Pesa (Safaricom)</option>
+									<option value="airtel">Airtel Money</option>
+									<option value="tkash">T-Kash (Telkom)</option>
+									<option value="equity">Equity Mobile</option>
+									<option value="kcb">KCB Mobile</option>
 								</select>
 							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Linked Account</label>
+								<select className={styles.fc} defaultValue="mpesa-business">
+									<option value="">Select linked account</option>
+									<option value="mpesa-business">M-Pesa Business (0712 345 890)</option>
+									<option value="airtel-disbursement">Airtel Disbursement (0733 112 445)</option>
+									<option value="tkash-collections">T-Kash Collections (0700 998 112)</option>
+								</select>
+							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Available Balance (KES)</label>
+								<input 
+									className={styles.fc} 
+									defaultValue="8,420,000"
+									placeholder="Enter balance"
+								/>
+							</div>
+							<div className="col-12">
+								<label className="d-flex align-items-center gap-2" style={{ cursor: "pointer", fontSize: 13 }}>
+									<input type="checkbox" defaultChecked />
+									<span>Save this account for future mobile transfers</span>
+								</label>
+							</div>
+						</div>
+						<div className={`${styles.summaryBoxInfo} mt-3`} style={{ fontSize: 12 }}>
+							<i className="bi bi-info-circle me-1" /> 
+							<strong>Balance is editable</strong> • Enter your current mobile wallet balance
 						</div>
 					</div>
 				)}
+
+				{/* Step 2: Recipient Selection */}
 				{showFlow("send") && flows.send === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Amount &amp; Reason</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>Amount (KES)</label>
-							<input className={styles.fc} defaultValue="250000" />
+						<h6 style={{ fontWeight: 700 }}>Step 2: Select Recipient</h6>
+						<div className={`${styles.pills} mb-3`}>
+							<button 
+								className={`${styles.pill} ${tabs.sendRecipient === "phone" ? styles.pillActive : ""}`}
+								onClick={() => sw("sendRecipient", "phone")}
+							>
+								Phone Number
+							</button>
+							<button 
+								className={`${styles.pill} ${tabs.sendRecipient === "till" ? styles.pillActive : ""}`}
+								onClick={() => sw("sendRecipient", "till")}
+							>
+								Till Number
+							</button>
+							<button 
+								className={`${styles.pill} ${tabs.sendRecipient === "paybill" ? styles.pillActive : ""}`}
+								onClick={() => sw("sendRecipient", "paybill")}
+							>
+								Paybill
+							</button>
 						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Reason / Reference</label>
-							<input
-								className={styles.fc}
-								defaultValue="Monthly supplier payment - June"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Charge Bearer</label>
-							<select className={styles.fc} defaultValue={CHARGE_BEARERS[0]}>
-								{CHARGE_BEARERS.map((o) => (
-									<option key={o}>{o}</option>
-								))}
+
+						{/* Phone Number Tab */}
+						{tabs.sendRecipient === "phone" && (
+							<div className="mb-3">
+								<label className={styles.fl}>Recipient Phone Number</label>
+								<input 
+									className={styles.fc} 
+									placeholder="07XX XXX XXX"
+									defaultValue="0712 345 890"
+								/>
+								<div className="row g-3 mt-3">
+									<div className="col-md-6">
+										<label className={styles.fl}>Recipient Name (Optional)</label>
+										<input className={styles.fc} placeholder="Enter recipient name" />
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Amount (KES)</label>
+										<input className={styles.fc} defaultValue="250,000" />
+									</div>
+								</div>
+							</div>
+						)}
+
+						{/* Till Number Tab */}
+						{tabs.sendRecipient === "till" && (
+							<div className="mb-3">
+								<label className={styles.fl}>Till Number</label>
+								<input 
+									className={styles.fc} 
+									placeholder="Enter till number"
+									defaultValue="123456"
+								/>
+								<div className="row g-3 mt-3">
+									<div className="col-md-6">
+										<label className={styles.fl}>Till Name (Optional)</label>
+										<input className={styles.fc} placeholder="Enter till name" />
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Amount (KES)</label>
+										<input className={styles.fc} defaultValue="250,000" />
+									</div>
+								</div>
+							</div>
+						)}
+
+						{/* Paybill Tab */}
+						{tabs.sendRecipient === "paybill" && (
+							<div className="mb-3">
+								<div className="row g-3">
+									<div className="col-md-6">
+										<label className={styles.fl}>Paybill Number</label>
+										<input 
+											className={styles.fc} 
+											placeholder="Enter paybill number"
+											defaultValue="174379"
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Account Number</label>
+										<input className={styles.fc} placeholder="Enter account number" />
+									</div>
+								</div>
+								<div className="row g-3 mt-3">
+									<div className="col-md-6">
+										<label className={styles.fl}>Amount (KES)</label>
+										<input className={styles.fc} defaultValue="250,000" />
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Account Name (Optional)</label>
+										<input className={styles.fc} placeholder="Enter account name" />
+									</div>
+								</div>
+							</div>
+						)}
+
+						{/* Country Selection */}
+						<div className={`${styles.summaryBox} p-3 mt-3`}>
+							<label className={styles.fl} style={{ fontWeight: 600, marginBottom: 8 }}>Recipient Country</label>
+							<select className={styles.fc} defaultValue="KE">
+								<option value="KE">Kenya</option>
+								<option value="UG">Uganda</option>
+								<option value="TZ">Tanzania</option>
+								<option value="RW">Rwanda</option>
+								<option value="NG">Nigeria</option>
+								<option value="GH">Ghana</option>
+								<option value="ZA">South Africa</option>
 							</select>
 						</div>
 					</div>
 				)}
+
+				{/* Step 3: Review */}
 				{showFlow("send") && flows.send === 3 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Confirm &amp; Authorize</h6>
+						<h6 style={{ fontWeight: 700 }}>Step 3: Review Transaction</h6>
 						<div className={styles.summaryBox}>
 							<div className="d-flex justify-content-between mb-2">
-								<span>From</span>
-								<strong>M-Pesa Business</strong>
+								<span className={styles.mutedSmall}>Source Account</span>
+								<strong>M-Pesa Business (0712 345 890)</strong>
 							</div>
 							<div className="d-flex justify-content-between mb-2">
-								<span>To</span>
+								<span className={styles.mutedSmall}>Source Balance</span>
+								<strong>KES 8,420,000</strong>
+							</div>
+							<hr className={styles.divider} />
+							<div className="d-flex justify-content-between mb-2">
+								<span className={styles.mutedSmall}>Recipient Type</span>
+								<strong>Phone Number</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className={styles.mutedSmall}>Recipient</span>
 								<strong>0712 345 890</strong>
 							</div>
 							<div className="d-flex justify-content-between mb-2">
-								<span>Amount</span>
-								<strong>KES 250,000</strong>
+								<span className={styles.mutedSmall}>Recipient Country</span>
+								<strong>Kenya</strong>
+							</div>
+							<hr className={styles.divider} />
+							<div className="d-flex justify-content-between mb-2">
+								<span className={styles.mutedSmall}>Amount</span>
+								<strong style={{ fontSize: 18, color: "var(--pm-primary)" }}>KES 250,000</strong>
 							</div>
 							<div className="d-flex justify-content-between">
-								<span>Fee</span>
-								<strong>KES 0</strong>
+								<span className={styles.mutedSmall}>Reason / Reference</span>
+								<strong>Monthly supplier payment</strong>
 							</div>
-						</div>
-						<label className={`${styles.fl} mt-3`}>Enter PIN</label>
-						<div className={styles.pinRow}>
-							{[0, 1, 2, 3].map((i) => (
-								<input
-									key={i}
-									type="password"
-									maxLength={1}
-									className={styles.pinInput}
-									aria-label={`PIN digit ${i + 1}`}
-									ref={(el) => {
-										pinRefs.current[i] = el;
-									}}
-									onChange={() => nf(i)}
-								/>
-							))}
 						</div>
 					</div>
 				)}
+
+				{/* Step 4: Cost Breakdown */}
 				{showFlow("send") && flows.send === 4 && (
+					<div className={styles.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Step 4: Cost Breakdown</h6>
+						<div className="row g-3">
+							<div className="col-md-6">
+								<div className={styles.summaryBox}>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Transfer Amount</span>
+										<strong>KES 250,000</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Transaction Fee</span>
+										<strong>KES 0</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>STK Push Fee</span>
+										<strong>KES 0</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Tax (16% VAT)</span>
+										<strong>KES 0</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Platform Charges</span>
+										<strong>KES 5</strong>
+									</div>
+									<hr className={styles.divider} />
+									<div className="d-flex justify-content-between">
+										<span className={styles.mutedSmall} style={{ fontWeight: 600 }}>Total to be Prompted</span>
+										<strong style={{ fontSize: 18, color: "var(--pm-primary)" }}>
+											KES 250,005
+										</strong>
+									</div>
+								</div>
+							</div>
+							<div className="col-md-6">
+								<div className={styles.summaryBoxInfo}>
+									<h6 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>
+										<i className="bi bi-info-circle me-1" /> Fee Information
+									</h6>
+									<div className="mb-2">
+										<span className={styles.mutedSmall}>Transaction Fee:</span>
+										<strong> KES 0 (Business Paybill)</strong>
+									</div>
+									<div className="mb-2">
+										<span className={styles.mutedSmall}>VAT Rate:</span>
+										<strong> 16%</strong>
+									</div>
+									<div>
+										<span className={styles.mutedSmall}>Platform Fee:</span>
+										<strong> KES 5</strong>
+									</div>
+								</div>
+								<div className={`${styles.summaryBoxWarn} mt-3`} style={{ fontSize: 12 }}>
+									<i className="bi bi-exclamation-triangle me-1" />
+									<strong>STK Prompt will request KES 250,005 from your phone</strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Step 5: Process */}
+				{showFlow("send") && flows.send === 5 && (
+					<div className={styles.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Step 5: Process Transaction</h6>
+						
+						{/* Schedule or Send Now */}
+						<div className={`${styles.summaryBox} p-3 mb-3`}>
+							<label className={styles.fl} style={{ fontWeight: 600, marginBottom: 8 }}>Processing Option</label>
+							<div className="d-flex gap-3 mb-3">
+								<label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+									<input type="radio" name="process-option" defaultChecked />
+									<strong>Send Now</strong>
+								</label>
+								<label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+									<input type="radio" name="process-option" />
+									<strong>Schedule for Later</strong>
+								</label>
+							</div>
+							
+							{/* Schedule Fields (hidden by default) */}
+							<div className="row g-2" style={{ display: "none" }}>
+								<div className="col-md-6">
+									<label className={styles.fl}>Date</label>
+									<input type="date" className={styles.fc} />
+								</div>
+								<div className="col-md-6">
+									<label className={styles.fl}>Time</label>
+									<input type="time" className={styles.fc} />
+								</div>
+							</div>
+						</div>
+
+						{/* PIN Entry for Send Now */}
+						<div className={`${styles.summaryBox} mb-3`}>
+							<div className="d-flex justify-content-between align-items-center mb-2">
+								<span className={styles.mutedSmall}>Enter PIN to Authorize</span>
+								<span className={`${styles.badge} ${styles.badgeI}`}>
+									<i className="bi bi-shield-lock" /> Secure
+								</span>
+							</div>
+							<div className={styles.pinRow}>
+								{[0, 1, 2, 3].map((i) => (
+									<input
+										key={i}
+										type="password"
+										maxLength={1}
+										className={styles.pinInput}
+										aria-label={`PIN digit ${i + 1}`}
+										ref={(el) => {
+											pinRefs.current[i] = el;
+										}}
+										onChange={() => nf(i)}
+									/>
+								))}
+							</div>
+						</div>
+
+						{/* STK Push Live Log */}
+						<div className={`${styles.summaryBoxInfo} mb-2`} style={{ fontSize: 12 }}>
+							<i className="bi bi-activity me-1" />
+							<strong>STK Push Live Log</strong> • Real-time updates
+						</div>
+						
+						<div className={`${styles.summaryBox} p-3`} style={{ fontFamily: "monospace", fontSize: 11, maxHeight: 200, overflowY: "auto" }}>
+							<div style={{ color: "var(--pm-muted)" }}>12:34:12</div>
+							<div style={{ color: "var(--pm-primary)" }}>→ User prompted for STK push</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:34:15</div>
+							<div style={{ color: "var(--pm-warning)" }}>→ Waiting for user to enter PIN...</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:35:23</div>
+							<div style={{ color: "var(--pm-primary)" }}>→ User entered PIN</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:35:44</div>
+							<div style={{ color: "var(--pm-success)" }}>→ PIN confirmed successfully</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:35:50</div>
+							<div style={{ color: "var(--pm-primary)" }}>→ Processing transaction...</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:36:01</div>
+							<div style={{ color: "var(--pm-success)" }}>→ Amount received by recipient</div>
+							<div style={{ color: "var(--pm-muted)", marginTop: 4 }}>12:36:05</div>
+							<div style={{ color: "var(--pm-success)" }}>→ Transaction completed successfully</div>
+						</div>
+					</div>
+				)}
+
+				{/* Step 6: Done */}
+				{showFlow("send") && flows.send === 6 && (
 					<div className={styles.fstepActive}>
 						<div className={styles.receipt}>
 							<div className={styles.ri}>
@@ -563,18 +832,47 @@ export default function MobileMoneyModals({
 							<p className={styles.receiptSub}>
 								KES 250,000 sent to 0712 345 890
 							</p>
-							<div
-								className={`${styles.summaryBox} text-start mt-3`}
-								style={{ fontSize: 13 }}
-							>
+							
+							<div className={`${styles.summaryBox} text-start mt-3`} style={{ fontSize: 13 }}>
 								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Reference</span>
+									<span className={styles.mutedSmall}>Transaction ID</span>
 									<strong>MP-882910</strong>
+								</div>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>Status</span>
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										<i className="bi bi-check-circle" /> Completed
+									</span>
+								</div>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>Amount Sent</span>
+									<strong>KES 250,000</strong>
+								</div>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>Fee Charged</span>
+									<strong>KES 5</strong>
 								</div>
 								<div className="d-flex justify-content-between">
 									<span className={styles.mutedSmall}>Time</span>
 									<strong>27 Jun 2025, 14:32</strong>
 								</div>
+							</div>
+
+							<div className="d-flex justify-content-center mt-4" style={{ gap: 8, flexWrap: "wrap" }}>
+								<button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={onClose}>
+									<i className="bi bi-check-circle" /> Complete
+								</button>
+								<button className={`${styles.btnPm} ${styles.btnPmA}`} onClick={() => {
+									setFlows(prev => ({ ...prev, send: 1 }));
+								}}>
+									<i className="bi bi-plus-circle" /> Send Another
+								</button>
+								<button className={`${styles.btnPm}`} onClick={() => {
+									onClose();
+									onOpen("bulkTransferModal");
+								}}>
+									<i className="bi bi-collection" /> Send Bulk
+								</button>
 							</div>
 						</div>
 					</div>

@@ -1056,6 +1056,7 @@ input[type="date"].fc {
 	align-items: center;
 	justify-content: center;
 	padding: 1.25rem;
+	/* padding-top: 180px; */
 	animation: pmFade 0.15s ease;
 }
 
@@ -1106,6 +1107,7 @@ input[type="date"].fc {
 	align-items: center;
 	justify-content: center;
 	padding: 1.25rem;
+	padding-top: 180px;
 	overflow-y: auto;
 	animation: pmFade 0.18s ease;
 }
