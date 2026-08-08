@@ -806,7 +806,8 @@
 	border-color: rgba(124, 58, 237, 0.25);
 }
 
-/* float-link chip (RB-… tie-in to the Liquidity page) */
+/* float-link chip (RB-… tie-in to the Liquidity page) — an <a> since the chip
+ * navigates to /pm/app/liquidity?business=… filtered to that business. */
 .floatLink {
 	display: inline-flex;
 	align-items: center;
@@ -819,6 +820,15 @@
 	font-size: 11px;
 	font-weight: 600;
 	white-space: nowrap;
+	text-decoration: none;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.floatLink:hover {
+	background: var(--purple);
+	color: #fff;
+	border-color: var(--purple);
 }
 
 .floatLink i {

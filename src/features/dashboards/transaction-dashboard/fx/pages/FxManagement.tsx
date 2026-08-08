@@ -1,27 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import FxModals from "../components/FxModals";
 import styles from "../styles/fx.module.css";
 
 /* ============================================================================
-   PayMo BaaS — Multi-Currency & FX Management (legacy page 1.13)
-   React + TypeScript + TanStack Query, emerald-glass dashboard theme.
-   LEGACY BRIDGE: legacy `renderPortfolio()` built the section-1 table with
-   innerHTML from a JS array — replaced by typed `portfolio` config below.
+   PayMo BaaS — Multi-Currency, Wallets & FX (facilitator edition)
+   Three worlds:
+     World A — Customer FX & Collections  (diaspora / card settlements → KES → floats)
+     World B — My Multi-Currency Wallets  (wallet structure + your own conversions)
+     World C — Rates, Locks, Rules & Permissions
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
+type BizId = "all" | "land" | "co2";
+type World = "cust" | "my";
 
-interface NavItem {
-	icon: string;
-	to: string;
-	label: string;
-	active?: boolean;
-	dot?: boolean;
-}
+const BIZ_NAMES: Record<"land" | "co2", string> = {
+	land: "Land Buyers LTD",
+	co2: "Company 2",
+};
 
 interface SrItem {
 	icon: string;
@@ -41,57 +41,31 @@ interface QuickAction {
 	modal: string;
 }
 
-interface TableCol {
-	key: string;
-	label: string;
+interface SubWallet {
+	ccy: string;
+	balance: string;
+	kes: string;
+	change: string;
+	source: string;
+	status: string;
+	tone: BadgeTone;
 }
 
-interface CellAction {
-	label: string;
-	modal: string;
-	tone?: "btnPmD" | "btnPmP";
-}
-
-type Cell =
-	| string
-	| { badge: string; tone: BadgeTone }
-	| { actions: CellAction[] }
-	| { text: string; color: string };
-
-interface StatCardF {
-	key: string;
-	colClass: string;
-	label: string;
-	labelColor: string;
-	value: string;
-	badge: { icon: string; text: string; tone: BadgeTone };
-	lines: { text: string; strong?: string; strongColor?: string }[];
-	progress?: { label: string; value: string; width: string; color: string };
-	borderColor?: string;
-}
-
-interface SrRow {
-	title: string;
-	sub?: string;
-	badge?: { text: string; tone: BadgeTone };
-	value?: string;
-	action?: { label: string; modal: string };
-	wideAction?: boolean;
+interface DiasporaRow {
+	ref: string;
+	business: string;
+	payer: string;
+	from: string;
+	kes: string;
+	rate: string;
+	status: string;
+	tone: BadgeTone;
+	actionLabel: string;
+	actionModal: string;
 }
 
 interface FxConfig {
-	nav: NavItem[];
-	headerTitle: string;
-	headerSub: string;
-	searchPlaceholder: string;
-	user: {
-		initials: string;
-		name: string;
-		role: string;
-		headerInitials: string;
-	};
 	breadcrumb: { parents: { label: string; to: string }[]; current: string };
-	pageCode: string;
 	pageTitle: string;
 	pageSub: string;
 	hero: {
@@ -100,124 +74,119 @@ interface FxConfig {
 		detail: string;
 		buttons: { label: string; modal: string }[];
 	};
-	statCards: StatCardF[];
+	stats: {
+		label: string;
+		labelColor: string;
+		value: string;
+		badge: { icon: string; text: string; tone: BadgeTone };
+		lines?: { text: string; strong?: string; strongColor?: string }[];
+		progress?: { label: string; value: string; width: string; color: string };
+	}[];
 	attention: SrItem[];
 	suggestions: SrItem[];
 	quickActions: QuickAction[];
-	portfolio: {
-		cols: TableCol[];
-		rows: {
-			currency: string;
-			wallet: string;
-			balance: string;
-			kes: string;
-			change: string;
-			status: string;
-			tone: BadgeTone;
-		}[];
-	};
-	liveRates: {
-		pair: string;
-		buy: string;
-		sell: string;
-		spread: string;
-		change: string;
-	}[];
-	rateAlerts: SrRow[];
-	recentFx: { cols: TableCol[]; rows: Cell[][] };
-	quickConvert: { fromOptions: string[]; toOptions: string[]; amount: string };
-	contracts: SrRow[];
-	exposure: {
-		label: string;
+	walletTree: {
+		name: string;
 		value: string;
-		valueColor: string;
-		width: string;
-		color: string;
+		meta: string;
+		icon: string;
 	}[];
+	diaspora: DiasporaRow[];
+	conversions: {
+		ref: string;
+		business: string;
+		from: string;
+		to: string;
+		rate: string;
+		fee: string;
+		status: string;
+		tone: BadgeTone;
+		dest: string;
+		destTone: "float" | "wallet";
+	}[];
+	businesses: {
+		id: "land" | "co2";
+		name: string;
+		customers: number;
+		role: string;
+		convLimit: string;
+		source: string;
+		floatVal: string;
+		floatMin: string;
+	}[];
+	subWallets: SubWallet[];
+	crossBorder: {
+		ref: string;
+		detail: string;
+		status: string;
+		tone: BadgeTone;
+		actionLabel: string;
+		actionModal: string;
+	}[];
+	liveRates: { pair: string; buy: string; sell: string; spread: string; change: string }[];
+	rateAlerts: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
+	rateLocks: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
+	lockStrip: { text: string; strong: string; btnLabel: string; modal: string };
 	costBars: { height: string; color: string; label: string }[];
 	keyMetrics: { label: string; value: string; color: string }[];
-	autoRules: SrRow[];
-	alertSettings: SrRow[];
-	walletPrefs: SrRow[];
-	activity: { cols: TableCol[]; rows: Cell[][] };
+	autoRules: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
+	alertSettings: { title: string; badge: { text: string; tone: BadgeTone } }[];
+	walletPrefs: { title: string; value?: string; badge?: { text: string; tone: BadgeTone } }[];
+	fxAccess: { scope: string; desc: string; granted: boolean }[];
+	activity: {
+		date: string;
+		world: "cust" | "my";
+		ref: string;
+		activity: string;
+		amount: string;
+		rate: string;
+		fee: string;
+		status: string;
+		tone: BadgeTone;
+	}[];
 }
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: FxConfig = {
-	nav: [
-		{ icon: "bi-house", to: "/dashboard", label: "Dashboard" },
-		{ icon: "bi-grid-3x3-gap", to: "/select-dashboard", label: "Hubs" },
-		{
-			icon: "bi-lightning-charge",
-			to: "/initiate-transfer",
-			label: "Transfers",
-		},
-		{
-			icon: "bi-currency-exchange",
-			to: "/fx",
-			label: "Multi-Currency & FX",
-			active: true,
-			dot: true,
-		},
-		{ icon: "bi-wallet2", to: "/wallets", label: "Wallets" },
-		{ icon: "bi-bar-chart-line", to: "/analytics", label: "Analytics" },
-		{ icon: "bi-gear", to: "/settings", label: "Settings" },
-	],
-	headerTitle: "Multi-Currency & FX Management",
-	headerSub:
-		"Global currency accounts, live FX rates, transfers, hedging, and cross-border analytics",
-	searchPlaceholder: "Search currencies, rates, transfers, FX alerts...",
-	user: {
-		initials: "JK",
-		name: "James K.",
-		role: "Treasury Manager",
-		headerInitials: "MN",
-	},
 	breadcrumb: {
 		parents: [
 			{ label: "Home", to: "/" },
-			{ label: "Transactions Hub", to: "/select-dashboard" },
+			{ label: "BaaS Transactions", to: "/pm/app" },
 		],
-		current: "Multi-Currency & FX",
+		current: "Multi-Currency, Wallets & FX",
 	},
-	pageCode: "",
-	// pageTitle: "Multi-Currency & FX Management",
+	pageTitle: "Multi-Currency, Wallets & FX",
 	pageSub:
-		"Manage multi-currency wallets, execute instant FX conversions, set up forward contracts, monitor live rates, and optimise cross-border cash flow across 20+ currencies.",
+		"Convert customer payments and your own funds across currencies to keep settlements flowing.",
 	hero: {
-		live: "FX command center is live",
-		value: "KES 124.8M equivalent",
+		live: "FX & wallet command center is live",
+		value: "KES 11.85M in foreign currency",
 		detail:
-			"Across 9 currencies in 14 wallets. USD, EUR, GBP, ZAR, UGX, TZS, GHS, NGN, AED.",
+			"≈ $48.2K USD + €18.4K EUR + £9.1K GBP + R214K ZAR across 4 sub-wallets — diaspora & card settlements.",
 		buttons: [
 			{ label: "Convert", modal: "convertModal" },
-			{ label: "Hedge", modal: "hedgeModal" },
-			{ label: "Add Wallet", modal: "newWalletModal" },
+			{ label: "Rate Lock", modal: "hedgeModal" },
+			{ label: "New Wallet", modal: "newWalletModal" },
 		],
 	},
-	statCards: [
+	stats: [
 		{
-			key: "volume",
-			colClass: "col-lg-2 col-md-4 col-6",
-			label: "TODAY'S FX VOLUME",
+			label: "FOREIGN CURRENCY HELD",
 			labelColor: "var(--pm-info)",
-			value: "KES 18.4M",
+			value: "KES 11.85M",
 			badge: {
-				icon: "bi-graph-up-arrow",
-				text: "+31% vs yesterday",
+				icon: "bi-currency-dollar",
+				text: "4 sub-wallets · USD/EUR/GBP/ZAR",
 				tone: "badgeS",
 			},
-			lines: [],
 			progress: {
-				label: "USD",
-				value: "KES 9.2M",
-				width: "50%",
+				label: "USD share",
+				value: "53%",
+				width: "53%",
 				color: "var(--pm-info)",
 			},
 		},
 		{
-			key: "bestRate",
-			colClass: "col-lg-3 col-md-4 col-6",
 			label: "BEST RATE TODAY",
 			labelColor: "var(--pm-accent)",
 			value: "1 USD = 129.45 KES",
@@ -227,90 +196,112 @@ const initialMockData: FxConfig = {
 				tone: "badgeS",
 			},
 			lines: [
-				{
-					text: "USD/EUR: 0.92 ",
-					strong: "+0.4%",
-					strongColor: "var(--pm-accent)",
-				},
-				{
-					text: "USD/GBP: 0.78 ",
-					strong: "-0.2%",
-					strongColor: "var(--pm-danger)",
-				},
+				{ text: "USD/EUR: 0.92 ", strong: "+0.4%", strongColor: "var(--pm-accent)" },
+				{ text: "USD/GBP: 0.78 ", strong: "-0.2%", strongColor: "var(--pm-danger)" },
 			],
 		},
 		{
-			key: "savings",
-			colClass: "col-lg-3 col-md-4",
-			label: "FX SAVINGS THIS MONTH",
-			labelColor: "var(--pm-warning)",
-			value: "KES 312,400",
+			label: "DIASPORA → FLOAT (MTD)",
+			labelColor: "var(--pm-primary)",
+			value: "KES 8.42M",
 			badge: {
-				icon: "bi-piggy-bank",
-				text: "Smart routing active",
+				icon: "bi-bank2",
+				text: "Land Buyers 86% · Company 2 14%",
 				tone: "badgeS",
 			},
-			lines: [
-				{ text: "Rate optimisation: ", strong: "KES 187,200" },
-				{ text: "Forward contracts: ", strong: "KES 125,200" },
-			],
-			borderColor: "var(--pm-warning)",
+			progress: {
+				label: "By source",
+				value: "USD 52% · GBP 30% · EUR 18%",
+				width: "72%",
+				color: "var(--pm-primary)",
+			},
+		},
+		{
+			label: "FX FEES PAID (MTD)",
+			labelColor: "var(--pm-warning)",
+			value: "KES 86,400",
+			badge: {
+				icon: "bi-piggy-bank",
+				text: "0.9% avg cost · smart routing on",
+				tone: "badgeS",
+			},
+		},
+		{
+			label: "RATE LOCKS ACTIVE",
+			labelColor: "var(--pm-purple)",
+			value: "2",
+			badge: {
+				icon: "bi-shield-lock",
+				text: "saves ≈ KES 41,200/mo",
+				tone: "badgeP",
+			},
+		},
+		{
+			label: "AWAITING CONVERSION",
+			labelColor: "var(--pm-danger)",
+			value: "KES 2.36M",
+			badge: {
+				icon: "bi-hourglass-split",
+				text: "1 diaspora batch · PLT-091",
+				tone: "badgeW",
+			},
 		},
 	],
 	attention: [
 		{
-			icon: "bi-currency-exchange",
+			icon: "bi-hourglass-split",
 			iconBg: "var(--pm-danger-soft)",
 			iconColor: "var(--pm-danger)",
-			title: "USD forward contract expiring",
-			sub: "Contract FX-8821 • 30 Jun",
-			actionLabel: "Roll",
-			modal: "hedgeModal",
+			title: "PLT-091 diaspora batch awaiting conversion",
+			sub: "£14,200 sits in GBP wallet — convert before Friday auto-settle",
+			actionLabel: "Convert",
+			actionTone: "btnPmD",
+			modal: "diasporaConvertModal",
 		},
 		{
-			icon: "bi-wallet2",
+			icon: "bi-lightning-charge",
 			iconBg: "var(--pm-warning-soft)",
 			iconColor: "var(--pm-warning)",
-			title: "EUR balance below threshold",
-			sub: "€2,180 remaining — top up recommended",
-			actionLabel: "Top-up",
-			modal: "convertModal",
+			title: "USD wallet above auto-convert threshold",
+			sub: "$48.2K > $10K rule — 3 auto-converts paused",
+			actionLabel: "Review",
+			modal: "fxAutomationModal",
 		},
 		{
 			icon: "bi-globe",
 			iconBg: "var(--pm-info-soft)",
 			iconColor: "var(--pm-info)",
-			title: "NGN rate moved 4.2%",
-			sub: "Alert triggered • 1 NGN = 0.084 KES",
+			title: "ZAR rate moved 4.2%",
+			sub: "Alert triggered • 1 ZAR = 7.12 KES",
 			actionLabel: "View",
 			modal: "rateAlertsModal",
 		},
 	],
 	suggestions: [
 		{
-			icon: "bi-arrow-left-right",
+			icon: "bi-shield-lock",
 			iconBg: "var(--pm-accent-soft)",
 			iconColor: "var(--pm-accent)",
-			title: "Convert USD → EUR now",
-			sub: "Rate 0.92 is 2.1% above 30-day avg",
-			actionLabel: "Convert",
-			modal: "convertModal",
+			title: "Lock USD/KES at 129.20 for August payouts",
+			sub: "Saves ≈ KES 21,000 vs spot for your scheduled payout",
+			actionLabel: "Lock",
+			modal: "hedgeModal",
 		},
 		{
-			icon: "bi-shield-check",
+			icon: "bi-arrow-repeat",
 			iconBg: "var(--pm-info-soft)",
 			iconColor: "var(--pm-info)",
-			title: "Lock USD/ZAR forward for July",
-			sub: "Expected volatility from elections",
-			actionLabel: "Hedge",
-			modal: "hedgeModal",
+			title: "Route Company 2 card settlements to USD wallet",
+			sub: "Avoids 1.2% Paymo currency fee on card rail",
+			actionLabel: "Enable",
+			modal: "fxAutomationModal",
 		},
 		{
 			icon: "bi-wallet2",
 			iconBg: "var(--pm-warning-soft)",
 			iconColor: "var(--pm-warning)",
-			title: "Open ZAR wallet for SA suppliers",
-			sub: "Save 1.8% on FX fees monthly",
+			title: "Open EUR sub-wallet for Land Buyers diaspora",
+			sub: "GBP-only buyers convert 2× cheaper when batched",
 			actionLabel: "Create",
 			modal: "newWalletModal",
 		},
@@ -323,8 +314,8 @@ const initialMockData: FxConfig = {
 			modal: "convertModal",
 		},
 		{
-			icon: "bi-shield-check",
-			label: "Forward Contract",
+			icon: "bi-shield-lock",
+			label: "Rate Lock",
 			color: "var(--pm-accent)",
 			modal: "hedgeModal",
 		},
@@ -359,116 +350,233 @@ const initialMockData: FxConfig = {
 			modal: "swapModal",
 		},
 		{
-			icon: "bi-bar-chart-line",
-			label: "Analytics",
+			icon: "bi-diagram-3",
+			label: "Wallet Structure",
 			color: "var(--pm-primary-light)",
-			modal: "fxAnalyticsModal",
+			modal: "walletDetailModal",
 		},
 	],
-	portfolio: {
-		cols: [
-			{ key: "currency", label: "Currency" },
-			{ key: "wallet", label: "Wallet" },
-			{ key: "balance", label: "Balance" },
-			{ key: "kes", label: "KES Equivalent" },
-			{ key: "change", label: "24h Change" },
-			{ key: "status", label: "Status" },
-			{ key: "actions", label: "Actions" },
-		],
-		rows: [
-			{
-				currency: "USD",
-				wallet: "USD Wallet",
-				balance: "48,200.00",
-				kes: "KES 6,240,900",
-				change: "+0.42%",
-				status: "Active",
-				tone: "badgeS",
-			},
-			{
-				currency: "EUR",
-				wallet: "EUR Wallet",
-				balance: "18,400.00",
-				kes: "KES 2,572,320",
-				change: "-0.18%",
-				status: "Low",
-				tone: "badgeW",
-			},
-			{
-				currency: "GBP",
-				wallet: "GBP Wallet",
-				balance: "9,100.00",
-				kes: "KES 1,512,420",
-				change: "+0.65%",
-				status: "Active",
-				tone: "badgeS",
-			},
-			{
-				currency: "ZAR",
-				wallet: "ZAR Wallet",
-				balance: "2,140,000",
-				kes: "KES 15,250,800",
-				change: "-1.12%",
-				status: "Active",
-				tone: "badgeS",
-			},
-			{
-				currency: "UGX",
-				wallet: "UGX Wallet",
-				balance: "68,200,000",
-				kes: "KES 2,373,360",
-				change: "+0.29%",
-				status: "Active",
-				tone: "badgeS",
-			},
-		],
-	},
-	liveRates: [
+	walletTree: [
 		{
-			pair: "USD/KES",
-			buy: "129.35",
-			sell: "129.85",
-			spread: "0.50",
+			name: "Paymo Master",
+			value: "KES 124.8M",
+			meta: "Platform account",
+			icon: "bi-house-gear",
+		},
+		{
+			name: "Business Wallet",
+			value: "KES 8.40M",
+			meta: "Available 7.95M",
+			icon: "bi-briefcase",
+		},
+		{
+			name: "Virtual Wallet",
+			value: "KES 1.25M",
+			meta: "Your funds",
+			icon: "bi-wallet2",
+		},
+		{
+			name: "4 Sub-wallets",
+			value: "KES 11.85M",
+			meta: "USD · EUR · GBP · ZAR",
+			icon: "bi-currency-exchange",
+		},
+		{
+			name: "2 Floats",
+			value: "KES 3.84M",
+			meta: "Land Buyers · Company 2",
+			icon: "bi-bank2",
+		},
+	],
+	diaspora: [
+		{
+			ref: "PLT-091",
+			business: "Land Buyers LTD",
+			payer: "Buyer • UK",
+			from: "GBP 14,200",
+			kes: "KES 2,360,040",
+			rate: "166.20",
+			status: "Awaiting convert",
+			tone: "badgeW",
+			actionLabel: "Convert to Float",
+			actionModal: "diasporaConvertModal",
+		},
+		{
+			ref: "ORD-8901",
+			business: "Company 2",
+			payer: "Order #ORD-8901",
+			from: "USD 1,840",
+			kes: "KES 238,188",
+			rate: "129.45",
+			status: "Converted 08:12",
+			tone: "badgeS",
+			actionLabel: "Receipt",
+			actionModal: "fxReceiptModal",
+		},
+		{
+			ref: "PLT-084",
+			business: "Land Buyers LTD",
+			payer: "Buyer • US",
+			from: "USD 8,500",
+			kes: "KES 1,100,325",
+			rate: "129.45",
+			status: "Converted 09:30",
+			tone: "badgeS",
+			actionLabel: "Receipt",
+			actionModal: "fxReceiptModal",
+		},
+		{
+			ref: "ORD-8877",
+			business: "Company 2",
+			payer: "Order #ORD-8877",
+			from: "USD 940",
+			kes: "KES 121,683",
+			rate: "129.45",
+			status: "Pending rate check",
+			tone: "badgeW",
+			actionLabel: "Track",
+			actionModal: "rateAlertsModal",
+		},
+	],
+	conversions: [
+		{
+			ref: "FX-44121",
+			business: "Land Buyers LTD",
+			from: "USD 28,400",
+			to: "KES 3,676,380",
+			rate: "129.45",
+			fee: "KES 2,900",
+			status: "Completed",
+			tone: "badgeS",
+			dest: "Land Buyers float · RB-9923",
+			destTone: "float",
+		},
+		{
+			ref: "FX-44118",
+			business: "Land Buyers LTD",
+			from: "GBP 14,200",
+			to: "KES 2,360,040",
+			rate: "166.20",
+			fee: "KES 1,980",
+			status: "Completed",
+			tone: "badgeS",
+			dest: "Land Buyers float · RB-9922",
+			destTone: "float",
+		},
+		{
+			ref: "FX-44112",
+			business: "My Wallets",
+			from: "KES 1,525,080",
+			to: "ZAR 214,000",
+			rate: "7.12",
+			fee: "KES 1,200",
+			status: "Completed",
+			tone: "badgeS",
+			dest: "Supplier payout",
+			destTone: "wallet",
+		},
+	],
+	businesses: [
+		{
+			id: "land",
+			name: "Land Buyers LTD",
+			customers: 30,
+			role: "Manager",
+			convLimit: "KES 5,000,000 / day",
+			source: "Diaspora USD · GBP · EUR installments",
+			floatVal: "KES 3.20M",
+			floatMin: "min KES 3.00M",
+		},
+		{
+			id: "co2",
+			name: "Company 2",
+			customers: 209,
+			role: "Owner",
+			convLimit: "Unlimited (Owner)",
+			source: "Card rail USD settlement",
+			floatVal: "KES 640K",
+			floatMin: "min KES 500K",
+		},
+	],
+	subWallets: [
+		{
+			ccy: "USD",
+			balance: "48,200.00",
+			kes: "KES 6,240,900",
 			change: "+0.42%",
+			source: "Land Buyers diaspora",
+			status: "Active",
+			tone: "badgeS",
 		},
 		{
-			pair: "EUR/KES",
-			buy: "139.10",
-			sell: "139.80",
-			spread: "0.70",
+			ccy: "EUR",
+			balance: "18,400.00",
+			kes: "KES 2,572,320",
 			change: "-0.18%",
+			source: "Land Buyers diaspora",
+			status: "Low",
+			tone: "badgeW",
 		},
 		{
-			pair: "GBP/KES",
-			buy: "165.40",
-			sell: "166.20",
-			spread: "0.80",
+			ccy: "GBP",
+			balance: "9,100.00",
+			kes: "KES 1,512,420",
 			change: "+0.65%",
+			source: "Land Buyers diaspora",
+			status: "Active",
+			tone: "badgeS",
 		},
 		{
-			pair: "ZAR/KES",
-			buy: "7.12",
-			sell: "7.22",
-			spread: "0.10",
+			ccy: "ZAR",
+			balance: "214,000.00",
+			kes: "KES 1,525,080",
 			change: "-1.12%",
+			source: "Company 2 card rail",
+			status: "Active",
+			tone: "badgeS",
+		},
+	],
+	crossBorder: [
+		{
+			ref: "FXTR-8821",
+			detail: "ZAR 214,000 → SA supplier · settles 3 Aug",
+			status: "Pending",
+			tone: "badgeW",
+			actionLabel: "Track",
+			actionModal: "fxTransferModal",
 		},
 		{
-			pair: "UGX/KES",
-			buy: "0.0348",
-			sell: "0.0354",
-			spread: "0.0006",
-			change: "+0.29%",
+			ref: "FXTR-8790",
+			detail: "USD 12,000 → China vendor",
+			status: "Completed",
+			tone: "badgeS",
+			actionLabel: "Receipt",
+			actionModal: "fxReceiptModal",
 		},
+		{
+			ref: "FXTR-8776",
+			detail: "GBP 6,000 → UK buyer refund",
+			status: "Completed",
+			tone: "badgeS",
+			actionLabel: "Receipt",
+			actionModal: "fxReceiptModal",
+		},
+	],
+	liveRates: [
+		{ pair: "USD/KES", buy: "129.35", sell: "129.85", spread: "0.50", change: "+0.42%" },
+		{ pair: "EUR/KES", buy: "139.10", sell: "139.80", spread: "0.70", change: "-0.18%" },
+		{ pair: "GBP/KES", buy: "165.40", sell: "166.20", spread: "0.80", change: "+0.65%" },
+		{ pair: "ZAR/KES", buy: "7.12", sell: "7.22", spread: "0.10", change: "-1.12%" },
 	],
 	rateAlerts: [
 		{
-			title: "USD/KES > 130.00",
-			sub: "Current: 129.85 • Trigger: 130.00",
+			title: "USD/KES > 130.50",
+			sub: "Current: 129.85 • Trigger: 130.50",
 			badge: { text: "Active", tone: "badgeS" },
 		},
 		{
-			title: "EUR/KES < 138.50",
-			sub: "Current: 139.80 • Trigger: 138.50",
+			title: "EUR/KES < 138.00",
+			sub: "Current: 139.80 • Trigger: 138.00",
 			badge: { text: "Paused", tone: "badgeW" },
 		},
 		{
@@ -476,100 +584,35 @@ const initialMockData: FxConfig = {
 			sub: "Current: 166.20 • Trigger: 167.00",
 			badge: { text: "Active", tone: "badgeS" },
 		},
+		{
+			title: "ZAR/KES < 7.00",
+			sub: "Current: 7.12 • Trigger: 7.00",
+			badge: { text: "Active", tone: "badgeS" },
+		},
 	],
-	recentFx: {
-		cols: [
-			{ key: "date", label: "Date" },
-			{ key: "from", label: "From" },
-			{ key: "to", label: "To" },
-			{ key: "rate", label: "Rate" },
-			{ key: "amount", label: "Amount" },
-			{ key: "fee", label: "Fee" },
-			{ key: "status", label: "Status" },
-			{ key: "action", label: "Action" },
-		],
-		rows: [
-			[
-				"27 Jun",
-				"USD 50,000",
-				"KES 6,472,500",
-				"129.45",
-				"KES 6,472,500",
-				"KES 3,200",
-				{ badge: "Completed", tone: "badgeS" },
-				{ actions: [{ label: "Receipt", modal: "fxReceiptModal" }] },
-			],
-			[
-				"26 Jun",
-				"EUR 12,000",
-				"USD 13,104",
-				"1.092",
-				"USD 13,104",
-				"USD 26",
-				{ badge: "Completed", tone: "badgeS" },
-				{ actions: [{ label: "Receipt", modal: "fxReceiptModal" }] },
-			],
-			[
-				"25 Jun",
-				"KES 2,000,000",
-				"ZAR 281,690",
-				"0.1408",
-				"ZAR 281,690",
-				"KES 1,800",
-				{ badge: "Pending", tone: "badgeW" },
-				{ actions: [{ label: "Track", modal: "fxTransferModal" }] },
-			],
-		],
-	},
-	quickConvert: {
-		fromOptions: [
-			"USD Wallet (48,200)",
-			"EUR Wallet (18,400)",
-			"GBP Wallet (9,100)",
-		],
-		toOptions: ["KES Wallet", "ZAR Wallet", "UGX Wallet"],
-		amount: "5000",
-	},
-	contracts: [
+	rateLocks: [
 		{
-			title: "USD Forward • FX-8821",
-			sub: "50,000 USD @ 130.00 • Expires 30 Jun",
+			title: "LK-8821 · USD/KES 129.20",
+			sub: "$12,000 locked · expires 30 Aug",
 			badge: { text: "Active", tone: "badgeS" },
 		},
 		{
-			title: "EUR Forward • FX-8799",
-			sub: "€25,000 @ 139.50 • Expires 15 Jul",
+			title: "LK-8819 · GBP/KES 165.90",
+			sub: "£8,000 locked · expires 22 Aug",
 			badge: { text: "Active", tone: "badgeS" },
 		},
 		{
-			title: "GBP Forward • FX-8754",
-			sub: "£10,000 @ 166.80 • Expired",
+			title: "LK-8799 · EUR/KES 139.10",
+			sub: "€5,000 locked · settled 15 Jul",
 			badge: { text: "Settled", tone: "badgeD" },
 		},
 	],
-	exposure: [
-		{
-			label: "USD Net Position",
-			value: "Long +$82,400",
-			valueColor: "var(--pm-accent)",
-			width: "68%",
-			color: "var(--pm-accent)",
-		},
-		{
-			label: "EUR Net Position",
-			value: "Short -€14,200",
-			valueColor: "var(--pm-danger)",
-			width: "32%",
-			color: "var(--pm-danger)",
-		},
-		{
-			label: "GBP Net Position",
-			value: "Long +£6,800",
-			valueColor: "var(--pm-accent)",
-			width: "55%",
-			color: "var(--pm-info)",
-		},
-	],
+	lockStrip: {
+		text: "Worth locking: USD/KES",
+		strong: "129.20 vs spot 129.45 — saves ≈ KES 21,000 on your August payouts.",
+		btnLabel: "Lock Now",
+		modal: "hedgeModal",
+	},
 	costBars: [
 		{ height: "65%", color: "var(--pm-primary-light)", label: "Jan" },
 		{ height: "72%", color: "var(--pm-primary-light)", label: "Feb" },
@@ -581,88 +624,108 @@ const initialMockData: FxConfig = {
 	keyMetrics: [
 		{ label: "Avg Spread", value: "0.48%", color: "var(--pm-accent)" },
 		{ label: "Best Execution", value: "99.2%", color: "var(--pm-info)" },
-		{ label: "Hedging Ratio", value: "64%", color: "var(--pm-purple)" },
+		{ label: "Rate-Lock Savings", value: "KES 41,200", color: "var(--pm-purple)" },
 	],
 	autoRules: [
 		{
-			title: "USD → KES",
-			sub: "When balance > $10,000",
+			title: "USD → KES auto-convert",
+			sub: "When USD wallet > $10,000 → Business Wallet",
 			badge: { text: "Active", tone: "badgeS" },
 		},
 		{
-			title: "EUR → KES",
-			sub: "Daily at 09:00 EAT",
+			title: "Diaspora GBP → Land Buyers float",
+			sub: "Every Friday 13:00 before auto-settle",
 			badge: { text: "Active", tone: "badgeS" },
 		},
 		{
-			title: "GBP → USD",
-			sub: "When rate > 1.28",
+			title: "EUR → KES daily 09:00",
+			sub: "Business Wallet sweep",
 			badge: { text: "Paused", tone: "badgeW" },
 		},
 	],
 	alertSettings: [
-		{
-			title: "USD/KES > 130.50",
-			badge: { text: "SMS + Push", tone: "badgeS" },
-		},
+		{ title: "USD/KES > 130.50", badge: { text: "SMS + Push", tone: "badgeS" } },
 		{ title: "EUR/KES < 138.00", badge: { text: "Push", tone: "badgeS" } },
-		{
-			title: "GBP/KES volatility > 2%",
-			badge: { text: "Email", tone: "badgeS" },
-		},
+		{ title: "GBP/KES volatility > 2%", badge: { text: "Email", tone: "badgeS" } },
 	],
 	walletPrefs: [
 		{ title: "Default display currency", value: "KES" },
 		{ title: "Show equivalent in", value: "USD" },
+		{ title: "Auto-hide small balances", badge: { text: "On", tone: "badgeS" } },
+	],
+	fxAccess: [
 		{
-			title: "Auto-hide small balances",
-			badge: { text: "On", tone: "badgeS" },
+			scope: "Convert customer FX to KES",
+			desc: "Turn diaspora & card settlements into float fuel",
+			granted: true,
+		},
+		{
+			scope: "Lock rates for scheduled payouts",
+			desc: "Create & manage rate locks up to KES 20M",
+			granted: true,
+		},
+		{
+			scope: "Open new currency wallets",
+			desc: "Create USD/EUR/GBP/ZAR sub-wallets",
+			granted: true,
+		},
+		{
+			scope: "Cross-border payouts > KES 1M",
+			desc: "Supplier & vendor payments above the limit",
+			granted: false,
+		},
+		{
+			scope: "Refund diaspora buyers in their currency",
+			desc: "Issue GBP/USD/EUR refunds from sub-wallets",
+			granted: false,
 		},
 	],
-	activity: {
-		cols: [
-			{ key: "date", label: "Date" },
-			{ key: "type", label: "Type" },
-			{ key: "details", label: "Details" },
-			{ key: "amount", label: "Amount" },
-			{ key: "rate", label: "Rate" },
-			{ key: "fee", label: "Fee" },
-			{ key: "status", label: "Status" },
-			{ key: "action", label: "Action" },
-		],
-		rows: [
-			[
-				"27 Jun",
-				"Conversion",
-				"USD → KES",
-				"KES 6,472,500",
-				"129.45",
-				"KES 3,200",
-				{ badge: "Completed", tone: "badgeS" },
-				{ actions: [{ label: "Receipt", modal: "fxReceiptModal" }] },
-			],
-			[
-				"26 Jun",
-				"Forward Settlement",
-				"EUR Forward FX-8799",
-				"USD 13,104",
-				"1.092",
-				"USD 26",
-				{ badge: "Completed", tone: "badgeS" },
-				{ actions: [{ label: "Receipt", modal: "fxReceiptModal" }] },
-			],
-			[
-				"25 Jun",
-				"Transfer",
-				"KES → ZAR Wallet",
-				"ZAR 281,690",
-				"0.1408",
-				"KES 1,800",
-				{ badge: "Pending", tone: "badgeW" },
-				{ actions: [{ label: "Track", modal: "fxTransferModal" }] },
-			],
-		],
-	},
+	activity: [
+		{
+			date: "27 Jun",
+			world: "cust",
+			ref: "FX-44121",
+			activity: "USD → KES · Land Buyers float",
+			amount: "KES 3,676,380",
+			rate: "129.45",
+			fee: "KES 2,900",
+			status: "Completed",
+			tone: "badgeS",
+		},
+		{
+			date: "26 Jun",
+			world: "my",
+			ref: "FXTR-8790",
+			activity: "KES → ZAR supplier payout",
+			amount: "ZAR 214,000",
+			rate: "7.12",
+			fee: "KES 1,200",
+			status: "Completed",
+			tone: "badgeS",
+		},
+		{
+			date: "25 Jun",
+			world: "cust",
+			ref: "FX-44118",
+			activity: "GBP → KES · PLT-091 diaspora",
+			amount: "KES 2,360,040",
+			rate: "166.20",
+			fee: "KES 1,980",
+			status: "Pending",
+			tone: "badgeW",
+		},
+		{
+			date: "24 Jun",
+			world: "my",
+			ref: "FXTR-8776",
+			activity: "GBP → UK buyer refund",
+			amount: "GBP 6,000",
+			rate: "166.20",
+			fee: "KES 900",
+			status: "Completed",
+			tone: "badgeS",
+		},
+	],
 };
 
 /* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
@@ -673,63 +736,10 @@ async function fetchFx(): Promise<FxConfig> {
 	return { ...initialMockData, ...json };
 }
 
-const TONES: Record<string, string> = {
-	s: styles.badgeS,
-	w: styles.badgeW,
-	d: styles.badgeD,
-	i: styles.badgeI,
-	p: styles.badgeP,
-};
-
-/* ---------- cell renderer for data tables ---------- */
-function CellValue({
-	cell,
-	onOpen,
-}: {
-	cell: Cell;
-	onOpen: (id: string) => void;
-}) {
-	if (typeof cell === "string") {
-		if (cell.startsWith("C:")) return <code>{cell.slice(2)}</code>;
-		if (cell.startsWith("B:")) {
-			const [, tone, text] = cell.split(":");
-			return (
-				<span className={`${styles.badge} ${TONES[tone] ?? styles.badgeS}`}>
-					{text}
-				</span>
-			);
-		}
-		if (cell.startsWith("STR:")) return <strong>{cell.slice(4)}</strong>;
-		return <>{cell}</>;
-	}
-	if ("badge" in cell)
-		return (
-			<span className={`${styles.badge} ${styles[cell.tone]}`}>
-				{cell.badge}
-			</span>
-		);
-	if ("text" in cell)
-		return <span style={{ color: cell.color }}>{cell.text}</span>;
-	return (
-		<div className="d-flex" style={{ gap: 4 }}>
-			{cell.actions.map((a) => (
-				<button
-					key={a.label}
-					className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-					onClick={() => onOpen(a.modal)}
-				>
-					{a.label}
-				</button>
-			))}
-		</div>
-	);
-}
-
 /* ---------- section header ---------- */
 function SectionHead({
 	icon,
 	iconColor,
-	code,
 	title,
 	sub,
 	actions,
@@ -737,7 +747,6 @@ function SectionHead({
 }: {
 	icon: string;
 	iconColor: string;
-	code: string;
 	title: string;
 	sub: string;
 	actions: {
@@ -760,7 +769,7 @@ function SectionHead({
 				</h3>
 				<p className={styles.ss}>{sub}</p>
 			</div>
-			<div className="d-flex" style={{ gap: 8 }}>
+			<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 				{actions.map((a) => (
 					<button
 						key={a.label}
@@ -808,7 +817,13 @@ function SrRowList({
 	wideButton,
 	onOpen,
 }: {
-	rows: SrRow[];
+	rows: {
+		title: string;
+		sub?: string;
+		badge?: { text: string; tone: BadgeTone };
+		value?: string;
+		action?: { label: string; modal: string };
+	}[];
 	wideButton?: { label: string; modal: string };
 	onOpen: (id: string) => void;
 }) {
@@ -859,10 +874,19 @@ export default function FxManagement() {
 
 	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [world, setWorld] = useState<World>("cust");
+	const [biz, setBiz] = useState<BizId>("all");
 
-	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	const bizName = biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
+	const inScope = (b: string) => biz === "all" || b === bizName;
+	const scopeTag = biz === "all" ? "All businesses" : bizName;
+
+	const diaspora = config.diaspora.filter((d) => inScope(d.business));
+	const conversions = config.conversions.filter((c) => inScope(c.business));
+	const crossBorder = config.crossBorder;
 
 	return (
 		<div className={styles.fxPage}>
@@ -912,29 +936,68 @@ export default function FxManagement() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>
-							{config.pageTitle}
-						</h2>
-						{/* <p className={styles.pageSub}>{config.pageSub}</p> */}
+						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
+						<p className={styles.pageSub}>{config.pageSub}</p>
+						<div className={styles.bizBar} style={{ marginTop: 10 }}>
+							<span className={styles.bizLabel}>
+								<i className="bi bi-diagram-3 me-1" />
+								World
+							</span>
+							<div className={styles.worldSwitch}>
+								<button
+									type="button"
+									className={`${styles.worldBtn} ${world === "cust" ? styles.worldBtnActive : ""}`}
+									onClick={() => setWorld("cust")}
+								>
+									<i className="bi bi-people me-1" /> Customer FX
+								</button>
+								<button
+									type="button"
+									className={`${styles.worldBtn} ${world === "my" ? styles.worldBtnActive : ""}`}
+									onClick={() => setWorld("my")}
+								>
+									<i className="bi bi-wallet2 me-1" /> My Wallets &amp; FX
+								</button>
+							</div>
+							{world === "cust" && (
+								<div className={styles.bizBar}>
+									<span className={styles.bizLabel}>Scope</span>
+									<div className={styles.pills}>
+										<button
+											type="button"
+											className={`${styles.pill} ${biz === "all" ? styles.pillActive : ""}`}
+											onClick={() => setBiz("all")}
+										>
+											All
+										</button>
+										<button
+											type="button"
+											className={`${styles.pill} ${biz === "land" ? styles.pillActive : ""}`}
+											onClick={() => setBiz("land")}
+										>
+											Land Buyers LTD <span className="ms-1">30</span>
+										</button>
+										<button
+											type="button"
+											className={`${styles.pill} ${biz === "co2" ? styles.pillActive : ""}`}
+											onClick={() => setBiz("co2")}
+										>
+											Company 2 <span className="ms-1">209</span>
+										</button>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("fxHealthModal")}
-						>
+						<button className={styles.btnPm} onClick={() => openM("fxHealthModal")}>
 							<i className="bi bi-heart-pulse" /> Health Check
 						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("rateAlertsModal")}
-						>
+						<button className={styles.btnPm} onClick={() => openM("rateAlertsModal")}>
 							<i className="bi bi-bell" /> Rate Alerts
 						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("convertModal")}
-						>
-							<i className="bi bi-arrow-left-right" /> Convert
+						<button className={styles.btnPm} onClick={() => openM("fxAccessModal")}>
+							<i className="bi bi-shield-check" /> FX Access
 						</button>
 						<button
 							className={`${styles.btnPm} ${styles.btnPmP}`}
@@ -942,16 +1005,48 @@ export default function FxManagement() {
 						>
 							<i className="bi bi-plus-lg" /> New Wallet
 						</button>
+						<button
+							className={styles.btnPm}
+							onClick={() => openM("profileModal")}
+						>
+							<i className="bi bi-person-circle me-1" /> JK
+						</button>
 					</div>
 				</div>
 
 				<div className={styles.content}>
-					{/* ======================= HERO STATS ======================= */}
+					{/* ======================= CONNECTION BANNER ======================= */}
+					<div className={styles.connBanner}>
+						<div className={styles.connIcon}>
+							<i className="bi bi-plug" />
+						</div>
+						<div style={{ flex: "1 1 260px" }}>
+							<div className={styles.connTitle}>
+								Paymo not connected yet
+							</div>
+							<div className={styles.connSub}>
+								Link your API key to start converting customer payments and
+								running multi-currency wallets. You're currently viewing
+								preview data.
+							</div>
+						</div>
+						<div className="d-flex align-items-center" style={{ gap: 10 }}>
+							<button
+								className={`${styles.btnPm} ${styles.btnSm}`}
+								onClick={() => openM("fxNotifModal")}
+							>
+								<i className="bi bi-bell" /> Notifications
+							</button>
+							<span className={styles.connTag}>Sandbox preview</span>
+						</div>
+					</div>
+
+					{/* ======================= HERO ======================= */}
 					<div className="row g-3">
-						<div className="col-lg-4">
+						<div className="col-lg-7">
 							<div
 								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
+								style={{ minHeight: 190 }}
 							>
 								<p
 									style={{
@@ -964,7 +1059,7 @@ export default function FxManagement() {
 								</p>
 								<div
 									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff", fontSize: 22 }}
+									style={{ margin: "8px 0", color: "#fff", fontSize: 24 }}
 								>
 									{config.hero.value}
 								</div>
@@ -990,32 +1085,53 @@ export default function FxManagement() {
 								</div>
 							</div>
 						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div
-									className={styles.card}
-									style={{
-										minHeight: 170,
-										...(card.borderColor
-											? { borderLeft: `3px solid ${card.borderColor}` }
-											: {}),
-									}}
-								>
+						<div className="col-lg-5">
+							<div className={styles.card} style={{ minHeight: 190 }}>
+								<p className={styles.sl} style={{ color: "var(--pm-muted)" }}>
+									WALLET STRUCTURE
+								</p>
+									<div className={styles.walletTree}>
+										{config.walletTree.map((n, i) => (
+											<Fragment key={n.name}>
+												<div
+													className={styles.walletNode}
+												onClick={() => openM("walletDetailModal")}
+											>
+												<div className={styles.walletNodeHead}>
+													<i className={`bi ${n.icon}`} /> {n.name}
+												</div>
+												<div className={styles.walletNodeVal}>{n.value}</div>												<div className={styles.walletNodeMeta}>{n.meta}</div>
+												</div>
+												{i < config.walletTree.length - 1 && (
+													<div className={styles.walletArrow}>
+														<i className="bi bi-chevron-right" />															</div>
+														)}
+														</Fragment>
+													))}
+												</div>
+								<p className={styles.mutedSmall} style={{ marginTop: 10 }}>
+									<i className="bi bi-info-circle me-1" />
+									Tap any wallet to manage, top up or withdraw.
+								</p>
+							</div>
+						</div>
+					</div>
+
+					{/* ======================= STATS ======================= */}
+					<div className="row g-3 mt-1">
+						{config.stats.map((card) => (
+							<div className="col-lg-2 col-md-4 col-6" key={card.label}>
+								<div className={styles.card} style={{ minHeight: 160 }}>
 									<p className={styles.sl} style={{ color: card.labelColor }}>
 										{card.label}
 									</p>
 									<div
 										className={styles.sv}
-										style={{
-											margin: "6px 0",
-											fontSize: card.key === "bestRate" ? 20 : undefined,
-										}}
+										style={{ margin: "6px 0", fontSize: 18 }}
 									>
 										{card.value}
 									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
+									<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
 										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
 									</span>
 									{card.progress && (
@@ -1038,7 +1154,7 @@ export default function FxManagement() {
 											</div>
 										</div>
 									)}
-									{card.lines.length > 0 && (
+									{card.lines && card.lines.length > 0 && (
 										<div
 											className="mt-2"
 											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
@@ -1068,71 +1184,86 @@ export default function FxManagement() {
 
 					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
 					<div className="row g-3">
-						{(
-							[
-								{
-									title: "Attention Required",
-									items: config.attention,
-									viewAll: "attentionModal",
-								},
-								{
-									title: "Smart Suggestions",
-									items: config.suggestions,
-									viewAll: undefined,
-								},
-							] as const
-						).map((col) => (
-							<div className="col-lg-4" key={col.title}>
-								<div className={`${styles.card} h-100`}>
-									<div className="d-flex justify-content-between align-items-center mb-2">
-										<h3 className={styles.st}>{col.title}</h3>
-										{col.viewAll ? (
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM(col.viewAll!)}
-											>
-												View all
-											</button>
-										) : (
-											<span className={`${styles.badge} ${styles.badgeP}`}>
-												<i className="bi bi-stars" /> AI
-											</span>
-										)}
-									</div>
-									{col.items.map((item) => (
-										<div className={styles.sr} key={item.title}>
-											<div className="d-flex align-items-center gap-3">
-												<div
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-														fontSize: 12,
-													}}
-												>
-													<i className={`bi ${item.icon}`} />
-												</div>
-												<div>
-													<div className={styles.fwBold13}>{item.title}</div>
-													<div className={styles.mutedSmall}>{item.sub}</div>
-												</div>
-											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									))}
+						<div className="col-lg-4">
+							<div className={`${styles.card} h-100`}>
+								<div className="d-flex justify-content-between align-items-center mb-2">
+									<h3 className={styles.st}>Attention Required</h3>
+									<button
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("attentionModal")}
+									>
+										View all
+									</button>
 								</div>
+								{config.attention.map((item) => (
+									<div className={styles.sr} key={item.title}>
+										<div className="d-flex align-items-center gap-3">
+											<div
+												className={styles.iconCircle}
+												style={{
+													background: item.iconBg,
+													color: item.iconColor,
+													fontSize: 12,
+												}}
+											>
+												<i className={`bi ${item.icon}`} />
+											</div>
+											<div>
+												<div className={styles.fwBold13}>{item.title}</div>
+												<div className={styles.mutedSmall}>{item.sub}</div>
+											</div>
+										</div>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
+											onClick={() => openM(item.modal)}
+										>
+											{item.actionLabel}
+										</button>
+									</div>
+								))}
 							</div>
-						))}
+						</div>
+						<div className="col-lg-4">
+							<div className={`${styles.card} h-100`}>
+								<div className="d-flex justify-content-between align-items-center mb-2">
+									<h3 className={styles.st}>Smart Suggestions</h3>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" /> AI
+									</span>
+								</div>
+								{config.suggestions.map((item) => (
+									<div className={styles.sr} key={item.title}>
+										<div className="d-flex align-items-center gap-3">
+											<div
+												className={styles.iconCircle}
+												style={{
+													background: item.iconBg,
+													color: item.iconColor,
+													fontSize: 12,
+												}}
+											>
+												<i className={`bi ${item.icon}`} />
+											</div>
+											<div>
+												<div className={styles.fwBold13}>{item.title}</div>
+												<div className={styles.mutedSmall}>{item.sub}</div>
+											</div>
+										</div>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
+											onClick={() => openM(item.modal)}
+										>
+											{item.actionLabel}
+										</button>
+									</div>
+								))}
+							</div>
+						</div>
 						<div className="col-lg-4">
 							<div className={`${styles.card} h-100`}>
 								<div className="mb-3">
 									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent FX workflows</p>
+									<p className={styles.ss}>Frequent FX &amp; wallet workflows</p>
 								</div>
 								<div className={styles.quickGrid}>
 									{config.quickActions.map((qa) => (
@@ -1153,67 +1284,332 @@ export default function FxManagement() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Portfolio Overview ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-wallet2"
-							iconColor="var(--pm-primary)"
-							code="1.13.1"
-							title="Multi-Currency Portfolio Overview"
-							sub="Real-time balances across all currency wallets with equivalent values, performance, and quick actions."
-							actions={[
-								{
-									label: "Analytics",
-									icon: "bi-bar-chart",
-									modal: "fxAnalyticsModal",
-								},
-								{
-									label: "New Wallet",
-									icon: "bi-plus-lg",
-									modal: "newWalletModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.portfolio.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.portfolio.rows.map((r) => (
-										<tr key={r.currency}>
-											<td>
-												<strong>{r.currency}</strong>
-											</td>
-											<td>{r.wallet}</td>
-											<td>
-												<strong>{r.balance}</strong>
-											</td>
-											<td>{r.kes}</td>
-											<td>
-												<span
-													style={{
-														color: r.change.includes("+")
-															? "var(--pm-accent)"
-															: "var(--pm-danger)",
+					{/* ============================================================
+					    WORLD A — CUSTOMER FX & COLLECTIONS
+					    ============================================================ */}
+					{world === "cust" && (
+						<>
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-people"
+									iconColor="var(--pm-info)"
+									title="Diaspora & Card Settlements"
+									sub={`${scopeTag} — foreign-currency payments from your customers, awaiting or already converted into KES float fuel.`}
+									actions={[
+										{
+											label: "Convert Batch",
+											icon: "bi-arrow-left-right",
+											modal: "diasporaConvertModal",
+											tone: "btnPmP",
+										},
+										{
+											label: "Bulk FX",
+											icon: "bi-collection",
+											modal: "bulkFxModal",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="table-responsive">
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Ref</th>
+												<th>Business</th>
+												<th>Payer / Order</th>
+												<th>From</th>
+												<th>KES Value</th>
+												<th>Rate</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											{diaspora.map((d) => (
+												<tr key={d.ref}>
+													<td>
+														<strong>{d.ref}</strong>
+													</td>
+													<td>{d.business}</td>
+													<td>{d.payer}</td>
+													<td>{d.from}</td>
+													<td>
+														<strong>{d.kes}</strong>
+													</td>
+													<td>{d.rate}</td>
+													<td>
+														<span className={`${styles.badge} ${styles[d.tone]}`}>
+															{d.status}
+														</span>
+													</td>
+													<td>
+														<button
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openM(d.actionModal)}
+														>
+															{d.actionLabel}
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-arrow-left-right"
+									iconColor="var(--pm-primary)"
+									title="Conversion History"
+									sub={`${scopeTag} — every conversion and where it landed (float fuel or your own wallet).`}
+									actions={[
+										{
+											label: "Convert Now",
+											icon: "bi-arrow-right",
+											modal: "convertModal",
+											tone: "btnPmP",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="table-responsive">
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Ref</th>
+												<th>Business</th>
+												<th>From → To</th>
+												<th>Rate</th>
+												<th>Fee</th>
+												<th>Destination</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											{conversions.map((c) => (
+												<tr key={c.ref}>
+													<td>
+														<strong>{c.ref}</strong>
+													</td>
+													<td>{c.business}</td>
+													<td>
+														{c.from} → <strong>{c.to}</strong>
+													</td>
+													<td>{c.rate}</td>
+													<td>{c.fee}</td>
+													<td>
+														<span
+															className={`${styles.destChip} ${c.destTone === "float" ? styles.destChipFloat : styles.destChipWallet}`}
+														>
+															<i
+																className={`bi ${c.destTone === "float" ? "bi-bank2" : "bi-wallet2"}`}
+															/>{" "}
+															{c.dest}
+														</span>
+													</td>
+													<td>
+														<span className={`${styles.badge} ${styles[c.tone]}`}>
+															{c.status}
+														</span>
+													</td>
+													<td>
+														<button
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openM("fxReceiptModal")}
+														>
+															Receipt
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-shield-check"
+									iconColor="var(--pm-purple)"
+									title="Per-Business Conversion Limits"
+									sub="What you may convert and move per business — tied to your role on each account."
+									actions={[
+										{
+											label: "Edit Limits",
+											icon: "bi-pencil",
+											modal: "fxLimitsModal",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="row g-3">
+									{config.businesses.map((b) => (
+										<div className="col-lg-6" key={b.id}>
+											<div className={styles.bizSourceCard}>
+												<div className="d-flex justify-content-between align-items-center mb-2">
+													<div>
+														<div className={styles.bizSourceName}>{b.name}</div>
+														<div className={styles.bizSourceRole}>
+															{b.role} · {b.customers} customers
+														</div>
+													</div>
+													<span className={`${styles.badge} ${b.id === "land" ? styles.badgeW : styles.badgeS}`}>
+														{b.id === "land" ? "Payouts ≤ KES 5M" : "Full access"}
+													</span>
+												</div>
+												<div className={styles.bizSourceRow}>
+													<span>Conversion limit</span>
+													<strong>{b.convLimit}</strong>
+												</div>
+												<div className={styles.bizSourceRow}>
+													<span>FX source</span>
+													<strong>{b.source}</strong>
+												</div>
+												<div className={styles.bizSourceRow}>
+													<span>Settlement float</span>
+													<strong>
+														{b.floatVal} / {b.floatMin}
+													</strong>
+												</div>
+												<button
+													className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
+													onClick={() => openM("fxLimitsModal")}
+												>
+													<i className="bi bi-pencil me-1" /> Edit {b.name} limits
+												</button>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+						</>
+					)}
+
+					{/* ============================================================
+					    WORLD B — MY MULTI-CURRENCY WALLETS & STRUCTURE
+					    ============================================================ */}
+					{world === "my" && (
+						<>
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-diagram-3"
+									iconColor="var(--pm-primary)"
+									title="Wallet Structure"
+									sub="Your money hierarchy: platform master → business wallet → virtual wallet → currency sub-wallets → business floats."
+									actions={[
+										{
+											label: "Top Up Wallet",
+											icon: "bi-plus-circle",
+											modal: "walletTopUpModal",
+											tone: "btnPmP",
+										},
+										{
+											label: "Withdraw",
+											icon: "bi-box-arrow-up-right",
+											modal: "walletWithdrawModal",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="row g-3">
+									{[
+										{
+											name: "Paymo Master",
+											value: "KES 124.8M",
+											meta: "Platform account · all flows route through here",
+											icon: "bi-house-gear",
+										},
+										{
+											name: "Business Wallet",
+											value: "KES 8.40M",
+											meta: "Available KES 7.95M · linked Equity Bank 01-2345678-0",
+											icon: "bi-briefcase",
+										},
+										{
+											name: "Virtual Wallet",
+											value: "KES 1.25M",
+											meta: "Your personal spending balance",
+											icon: "bi-wallet2",
+										},
+									].map((n) => (
+										<div className="col-lg-4" key={n.name}>
+											<div
+												className={styles.bizSourceCard}
+												style={{ cursor: "pointer" }}
+												onClick={() => openM("walletDetailModal")}
+											>
+												<div className={styles.walletNodeHead}>
+													<i className={`bi ${n.icon}`} /> {n.name}
+												</div>
+												<div className={styles.walletNodeVal} style={{ margin: "6px 0" }}>
+													{n.value}
+												</div>
+												<div className={styles.mutedSmall}>{n.meta}</div>
+												<button
+													className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
+													onClick={(e) => {
+														e.stopPropagation();
+														openM("walletDetailModal");
 													}}
 												>
-													{r.change}
-												</span>
-											</td>
-											<td>
-												<span className={`${styles.badge} ${styles[r.tone]}`}>
-													{r.status}
-												</span>
-											</td>
-											<td>
-												<div className="d-flex" style={{ gap: 4 }}>
+													Manage
+												</button>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-currency-exchange"
+									iconColor="var(--pm-info)"
+									title="Currency Sub-Wallets"
+									sub="Foreign-currency balances you hold — from diaspora payments and the card rail."
+									actions={[
+										{
+											label: "New Wallet",
+											icon: "bi-plus-lg",
+											modal: "newWalletModal",
+											tone: "btnPmP",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="row g-3">
+									{config.subWallets.map((w) => (
+										<div className="col-lg-3 col-md-6" key={w.ccy}>
+											<div className={styles.subWalletCard}>
+												<div className="d-flex align-items-center gap-3 mb-2">
+													<div className={styles.subWalletIcon}>{w.ccy}</div>
+													<div>
+														<div className={styles.subWalletName}>
+															{w.ccy} Wallet
+														</div>
+														<div className={styles.subWalletSrc}>{w.source}</div>
+													</div>
+												</div>
+												<div className={styles.subWalletBal}>{w.balance}</div>
+												<div className={styles.subWalletKes}>
+													{w.kes} ·{" "}
+													<span
+														style={{
+															color: w.change.includes("+")
+																? "var(--pm-accent)"
+																: "var(--pm-danger)",
+														}}
+													>
+														{w.change}
+													</span>
+												</div>
+												<div className="mt-2 mb-2">
+													<span className={`${styles.badge} ${styles[w.tone]}`}>
+														{w.status}
+													</span>
+												</div>
+												<div className="d-flex flex-wrap" style={{ gap: 6 }}>
 													<button
 														className={`${styles.btnPm} ${styles.btnSm}`}
 														onClick={() => openM("convertModal")}
@@ -1222,27 +1618,87 @@ export default function FxManagement() {
 													</button>
 													<button
 														className={`${styles.btnPm} ${styles.btnSm}`}
-														onClick={() => openM("fxTransferModal")}
+														onClick={() => openM("walletTopUpModal")}
 													>
-														Transfer
+														Top Up
+													</button>
+													<button
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("walletWithdrawModal")}
+													>
+														Withdraw
 													</button>
 												</div>
-											</td>
-										</tr>
+											</div>
+										</div>
 									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
+								</div>
+							</div>
 
-					{/* ======================= SECTION Live FX Rates & Market Center ======================= */}
+							<div className={styles.card}>
+								<SectionHead
+									icon="bi-send"
+									iconColor="var(--pm-danger)"
+									title="Cross-Border Payments"
+									sub="Supplier, vendor and diaspora refund payments from your sub-wallets."
+									actions={[
+										{
+											label: "New Transfer",
+											icon: "bi-send",
+											modal: "fxTransferModal",
+											tone: "btnPmP",
+										},
+									]}
+									onOpen={openM}
+								/>
+								<div className="table-responsive">
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Ref</th>
+												<th>Payment</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											{crossBorder.map((x) => (
+												<tr key={x.ref}>
+													<td>
+														<strong>{x.ref}</strong>
+													</td>
+													<td>{x.detail}</td>
+													<td>
+														<span className={`${styles.badge} ${styles[x.tone]}`}>
+															{x.status}
+														</span>
+													</td>
+													<td>
+														<button
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openM(x.actionModal)}
+														>
+															{x.actionLabel}
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</>
+					)}
+
+					{/* ============================================================
+					    WORLD C — RATES, LOCKS, RULES & PERMISSIONS
+					    ============================================================ */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-graph-up-arrow"
 							iconColor="var(--pm-accent)"
-							code="1.13.2"
 							title="Live FX Rates & Market Center"
-							sub="Real-time interbank and retail rates, historical charts, rate alerts, and market insights."
+							sub="Real-time rates for your settlement currencies, plus the alerts watching them."
 							actions={[
 								{ label: "Alerts", icon: "bi-bell", modal: "rateAlertsModal" },
 								{
@@ -1318,217 +1774,100 @@ export default function FxManagement() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION FX Transfers & Conversions ======================= */}
 					<div className={styles.card}>
 						<SectionHead
-							icon="bi-arrow-left-right"
-							iconColor="var(--pm-info)"
-							code="1.13.3"
-							title="FX Transfers & Conversions"
-							sub="Instant and scheduled currency conversions with smart routing, fee transparency, and receipt generation."
-							actions={[
-								{
-									label: "Transfer",
-									icon: "bi-send",
-									modal: "fxTransferModal",
-								},
-								{ label: "Convert Now", modal: "convertModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<Ub title="Recent FX Transactions">
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.recentFx.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.recentFx.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</Ub>
-							</div>
-							<div className="col-lg-4">
-								<Ub title="Quick Convert">
-									<div className="mb-2">
-										<label className={styles.fl}>From</label>
-										<select
-											className={styles.fc}
-											defaultValue={config.quickConvert.fromOptions[0]}
-										>
-											{config.quickConvert.fromOptions.map((o) => (
-												<option key={o}>{o}</option>
-											))}
-										</select>
-									</div>
-									<div className="mb-2">
-										<label className={styles.fl}>To</label>
-										<select
-											className={styles.fc}
-											defaultValue={config.quickConvert.toOptions[0]}
-										>
-											{config.quickConvert.toOptions.map((o) => (
-												<option key={o}>{o}</option>
-											))}
-										</select>
-									</div>
-									<div className="mb-2">
-										<label className={styles.fl}>Amount</label>
-										<input
-											className={styles.fc}
-											defaultValue={config.quickConvert.amount}
-										/>
-									</div>
-									<button
-										className={`${styles.btnPm} ${styles.btnPmP} w-100`}
-										onClick={() => openM("convertModal")}
-									>
-										Convert Instantly
-									</button>
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Hedging, Forwards & Risk ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-shield-check"
+							icon="bi-shield-lock"
 							iconColor="var(--pm-purple)"
-							code="1.13.4"
-							title="Hedging, Forwards & Risk Management"
-							sub="Forward contracts, options, hedging strategies, and exposure monitoring for treasury teams."
+							title="Rate Locks"
+							sub="Lock a rate for a scheduled payout so your float fuel costs exactly what you planned."
 							actions={[
-								{ label: "New Contract", modal: "hedgeModal" },
-								{ label: "Risk Dashboard", modal: "fxRiskModal" },
+								{ label: "New Lock", modal: "hedgeModal" },
+								{ label: "Manage Locks", modal: "rateLockModal", tone: "btnPmP" },
 							]}
 							onOpen={openM}
 						/>
+						<div className={styles.lockStrip}>
+							<i className="bi bi-stars" />
+							<div style={{ flex: "1 1 240px", fontSize: 13 }}>
+								<strong>{config.lockStrip.text}</strong>{" "}
+								<span>{config.lockStrip.strong}</span>
+							</div>
+							<button
+								className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+								onClick={() => openM(config.lockStrip.modal)}
+							>
+								{config.lockStrip.btnLabel}
+							</button>
+						</div>
 						<div className="row g-3">
 							<div className="col-lg-6">
-								<Ub title="Active Forward Contracts">
-									<SrRowList
-										rows={config.contracts}
-										wideButton={{
-											label: "Manage Contracts",
-											modal: "hedgeModal",
-										}}
-										onOpen={openM}
-									/>
+								<Ub title="Active Rate Locks">
+									<SrRowList rows={config.rateLocks} onOpen={openM} />
 								</Ub>
 							</div>
 							<div className="col-lg-6">
-								<Ub title="FX Exposure Summary">
-									{config.exposure.map((e) => (
-										<div className="mb-3" key={e.label}>
-											<div
-												className="d-flex justify-content-between mb-1"
-												style={{ fontSize: 12 }}
-											>
-												<span>{e.label}</span>
-												<span style={{ color: e.valueColor }}>{e.value}</span>
-											</div>
-											<div className={styles.pmProgress}>
+								<Ub
+									title="FX Analytics & Reporting"
+									action={
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("fxAnalyticsModal")}
+										>
+											<i className="bi bi-bar-chart me-1" /> Analytics
+										</button>
+									}
+								>
+									<div className="d-flex gap-4 flex-wrap">
+										<div className={styles.chartBars} style={{ height: 90, flex: "1 1 180px" }}>
+											{config.costBars.map((b) => (
 												<div
-													className={styles.pmProgressBar}
-													style={{ width: e.width, background: e.color }}
-												/>
-											</div>
-										</div>
-									))}
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100`}
-										onClick={() => openM("fxRiskModal")}
-									>
-										View Full Exposure
-									</button>
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION FX Analytics & Reporting ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-bar-chart-line"
-							iconColor="var(--pm-info)"
-							code="1.13.5"
-							title="FX Analytics & Reporting"
-							sub="Comprehensive FX performance reports, cost analysis, and predictive insights."
-							actions={[
-								{
-									label: "Export",
-									icon: "bi-download",
-									modal: "fxStatementModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<Ub title="Monthly FX Cost Breakdown">
-									<div className={styles.chartBars} style={{ height: 90 }}>
-										{config.costBars.map((b) => (
-											<div
-												key={b.label}
-												className={styles.chartBar}
-												style={{ height: b.height, background: b.color }}
-											>
-												<span className={styles.barLabel}>{b.label}</span>
-											</div>
-										))}
-									</div>
-								</Ub>
-							</div>
-							<div className="col-lg-7">
-								<Ub title="Key Metrics">
-									<div className="row g-3">
-										{config.keyMetrics.map((m) => (
-											<div className="col-md-4" key={m.label}>
-												<div className={styles.summaryBox}>
-													<div className={styles.mutedSmall}>{m.label}</div>
-													<div
-														style={{
-															fontSize: 22,
-															fontWeight: 700,
-															color: m.color,
-															fontFamily: "var(--pm-font-display)",
-														}}
-													>
-														{m.value}
-													</div>
+													key={b.label}
+													className={styles.chartBar}
+													style={{ height: b.height, background: b.color }}
+												>
+													<span className={styles.barLabel}>{b.label}</span>
 												</div>
+											))}
+										</div>
+										<div style={{ flex: "1 1 200px" }}>
+											<div className="row g-2">
+												{config.keyMetrics.map((m) => (
+													<div className="col-12" key={m.label}>
+														<div className={styles.summaryBox}>
+															<div className={styles.mutedSmall}>{m.label}</div>
+															<div
+																style={{
+																	fontSize: 20,
+																	fontWeight: 700,
+																	color: m.color,
+																	fontFamily: "var(--pm-font-display)",
+																}}
+															>
+																{m.value}
+															</div>
+														</div>
+													</div>
+												))}
 											</div>
-										))}
+											<button
+												className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+												onClick={() => openM("fxStatementModal")}
+											>
+												<i className="bi bi-download me-1" /> Export Report
+											</button>
+										</div>
 									</div>
 								</Ub>
 							</div>
 						</div>
 					</div>
 
-					{/* ======================= SECTION FX Automation & Preferences ======================= */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-gear"
 							iconColor="var(--pm-muted)"
-							code="1.13.6"
 							title="FX Automation & Preferences"
-							sub="Auto-conversion rules, rate alerts, wallet preferences, and permission controls."
+							sub="Auto-conversion rules, rate alert channels and wallet display preferences."
 							actions={[
 								{
 									label: "Automation",
@@ -1578,7 +1917,48 @@ export default function FxManagement() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Recent FX Activity ======================= */}
+					<div className={styles.card}>
+						<SectionHead
+							icon="bi-shield-check"
+							iconColor="var(--pm-primary)"
+							title="FX Permissions & Access"
+							sub="What you can do across FX — convert customer money, lock rates, and move your own funds."
+							actions={[
+								{
+									label: "View Permissions",
+									icon: "bi-shield-check",
+									modal: "fxAccessModal",
+									tone: "btnPmP",
+								},
+							]}
+							onOpen={openM}
+						/>
+						{config.fxAccess.map((p) => (
+							<div className={styles.permItem} key={p.scope}>
+								<div
+									className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`}
+								/>
+								<div style={{ flex: "1 1 auto" }}>
+									<div className={styles.permTitle}>{p.scope}</div>
+									<div className={styles.permSub}>{p.desc}</div>
+								</div>
+								{p.granted ? (
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										<i className="bi bi-check-lg" /> Granted
+									</span>
+								) : (
+									<button
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("fxAccessModal")}
+									>
+										Request Access
+									</button>
+								)}
+							</div>
+						))}
+					</div>
+
+					{/* ======================= RECENT FX ACTIVITY ======================= */}
 					<div className={styles.card}>
 						<div className="d-flex justify-content-between align-items-center mb-3">
 							<h3 className={styles.st}>
@@ -1599,19 +1979,53 @@ export default function FxManagement() {
 							<table className={styles.tbl}>
 								<thead>
 									<tr>
-										{config.activity.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
+										<th>Date</th>
+										<th>World</th>
+										<th>Ref</th>
+										<th>Activity</th>
+										<th>Amount</th>
+										<th>Rate</th>
+										<th>Fee</th>
+										<th>Status</th>
+										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
-									{config.activity.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
-											))}
+									{config.activity.map((a) => (
+										<tr key={a.ref}>
+											<td>{a.date}</td>
+											<td>
+												<span
+													className={`${styles.worldTag} ${a.world === "cust" ? styles.worldTagCust : styles.worldTagMy}`}
+												>
+													<i
+														className={`bi ${a.world === "cust" ? "bi-people" : "bi-wallet2"}`}
+													/>{" "}
+													{a.world === "cust" ? "Customer FX" : "My Wallets"}
+												</span>
+											</td>
+											<td>
+												<strong>{a.ref}</strong>
+											</td>
+											<td>{a.activity}</td>
+											<td>
+												<strong>{a.amount}</strong>
+											</td>
+											<td>{a.rate}</td>
+											<td>{a.fee}</td>
+											<td>
+												<span className={`${styles.badge} ${styles[a.tone]}`}>
+													{a.status}
+												</span>
+											</td>
+											<td>
+												<button
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM("fxReceiptModal")}
+												>
+													Receipt
+												</button>
+											</td>
 										</tr>
 									))}
 								</tbody>
@@ -1623,7 +2037,7 @@ export default function FxManagement() {
 			</div>
 			{/* main */}
 
-			{/* ======================= ALL 23 MODALS ======================= */}
+			{/* ======================= ALL MODALS ======================= */}
 			<FxModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);

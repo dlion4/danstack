@@ -18,7 +18,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	type LiquidityData,
@@ -684,10 +684,21 @@ async function fetchLiquidityFloat(): Promise<LiquidityContent> {
 /* --------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------ */
-export default function Liquidity() {
+export default function Liquidity({
+	initialBusiness,
+}: {
+	initialBusiness?: "land" | "co2";
+}) {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
 	const [world, setWorld] = useState<"floats" | "wallets">("floats");
-	const [biz, setBiz] = useState("all");
+	const [biz, setBiz] = useState(initialBusiness ?? "all");
+
+	/* keep the business filter in sync when a deep link (e.g. a float-link chip
+	 * from the Reconciliation page) changes the ?business= search param while
+	 * this page is already mounted (browser back/forward, in-app re-navigation). */
+	useEffect(() => {
+		setBiz(initialBusiness ?? "all");
+	}, [initialBusiness]);
 	const openModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>

@@ -92,17 +92,19 @@ function BusyOverlay() {
 
 /* ---------- static option lists ---------- */
 const CONV_FROM = [
-	"USD Wallet (48,200.00)",
-	"EUR Wallet (18,400.00)",
-	"GBP Wallet (9,100.00)",
+	"USD Wallet (48,200.00) — Land Buyers diaspora",
+	"EUR Wallet (18,400.00) — Land Buyers diaspora",
+	"GBP Wallet (9,100.00) — Land Buyers diaspora",
+	"ZAR Wallet (214,000.00) — Company 2 card rail",
 ];
 const CONV_TO = [
-	"KES Wallet (124,800,000)",
-	"ZAR Wallet (2,140,000)",
-	"UGX Wallet (68,200,000)",
+	"Business Wallet (KES 8.40M)",
+	"Virtual Wallet (KES 1.25M)",
+	"Land Buyers float (KES 3.20M)",
+	"Company 2 float (KES 640K)",
 ];
-const HEDGE_PAIRS = ["USD/KES", "EUR/KES", "GBP/KES"];
-const HEDGE_TYPES = ["Forward (Fixed Rate)", "Option (Right to Buy)", "Collar"];
+const HEDGE_PAIRS = ["USD/KES", "GBP/KES", "EUR/KES"];
+const LOCK_PERIODS = ["30 days", "60 days", "90 days"];
 const CURRENCIES = [
 	"USD — United States Dollar",
 	"EUR — Euro",
@@ -114,24 +116,34 @@ const CURRENCIES = [
 	"NGN — Nigerian Naira",
 	"AED — UAE Dirham",
 ];
-const FX_FROM = ["USD Wallet (48,200)", "KES Wallet (124.8M)"];
-const FX_TO = ["ZAR Wallet (Own)", "External Bank (South Africa)"];
-const FX_PURPOSES = ["Supplier Payment", "Salary", "Investment"];
+const FX_FROM = [
+	"USD Wallet (48,200)",
+	"GBP Wallet (9,100)",
+	"ZAR Wallet (214,000)",
+	"Business Wallet (KES 8.40M)",
+];
+const FX_TO = [
+	"External Bank (South Africa)",
+	"External Bank (UK)",
+	"External Bank (USA)",
+	"Business Wallet (KES)",
+];
+const FX_PURPOSES = ["Supplier Payment", "Diaspora Refund", "Salary", "Vendor Invoice"];
 const RATE_CONDITIONS = ["Rate above", "Rate below", "Volatility %"];
 const AUTO_RUNTIMES = [
 	"Daily 09:00 EAT",
+	"Friday 13:00 EAT (before auto-settle)",
 	"Every 4 hours",
-	"Weekly Monday 08:00",
 ];
 const PREF_SHOW = ["USD", "KES"];
 const STATEMENT_TYPES = [
 	"Full FX Activity",
 	"Conversion History",
-	"Forward Contracts",
-	"Risk & Exposure",
+	"Rate Locks",
+	"Fees & Savings",
 ];
 const FORMATS = ["PDF", "Excel", "CSV"];
-const SWAP_WALLETS = ["USD Wallet", "EUR Wallet"];
+const SWAP_WALLETS = ["USD Wallet", "GBP Wallet", "EUR Wallet", "ZAR Wallet"];
 
 type FlowKey = "conv" | "hedge" | "fxTrans";
 interface Result {
@@ -384,6 +396,16 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				{showFlow("conv") && flows.conv === 1 && (
 					<div className={styles.fstepActive}>
 						<h6 style={{ fontWeight: 700 }}>Step 1: Select Wallets</h6>
+						<div className="mb-3">
+							<label className={styles.fl}>For Business</label>
+							<select className={styles.fc} defaultValue={"Land Buyers LTD"}>
+								{["Land Buyers LTD", "Company 2", "My Wallets (own funds)"].map(
+									(b) => (
+										<option key={b}>{b}</option>
+									),
+								)}
+							</select>
+						</div>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.fl}>From Wallet</label>
@@ -465,13 +487,14 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 							</div>
 							<h5 className={styles.receiptTitle}>Conversion Successful</h5>
 							<p className={styles.receiptSub}>
-								KES 647,250 credited to your KES wallet.
+								KES 647,250 credited to your Business Wallet.
 							</p>
 							<div
 								className={`${styles.summaryBox} text-start mt-3`}
 								style={{ fontSize: 13 }}
 							>
 								<BoxRow label="Reference" value="FX-20250627-9912" />
+								<BoxRow label="Destination" value="Business Wallet" />
 								<BoxRow label="Completed" value="27 Jun 2025, 14:41 EAT" last />
 							</div>
 						</div>
@@ -479,7 +502,7 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				)}
 			</MBox>
 
-			{/* ============ M2: Create Forward Contract (multi-step) ============ */}
+			{/* ============ M2: Create Rate Lock (multi-step, replaces forward contract) ============ */}
 			<MBox
 				id="hedgeModal"
 				active={active}
@@ -488,10 +511,10 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				title={
 					<>
 						<i
-							className="bi bi-shield-check me-2"
+							className="bi bi-shield-lock me-2"
 							style={{ color: "var(--pm-accent)" }}
 						/>
-						Create Forward Contract
+						Create Rate Lock
 					</>
 				}
 				footer={flowFooter("hedge")}
@@ -500,7 +523,7 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				{busy === "hedge" && <BusyOverlay />}
 				{showFlow("hedge") && flows.hedge === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Contract Details</h6>
+						<h6 style={{ fontWeight: 700 }}>Step 1: Lock Details</h6>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.fl}>Currency Pair</label>
@@ -511,23 +534,23 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 								</select>
 							</div>
 							<div className="col-md-6">
-								<label className={styles.fl}>Amount</label>
-								<input className={styles.fc} defaultValue="50000" />
+								<label className={styles.fl}>Amount to Lock</label>
+								<input className={styles.fc} defaultValue="12000" />
 							</div>
 							<div className="col-md-6">
-								<label className={styles.fl}>Contract Type</label>
-								<select className={styles.fc} defaultValue={HEDGE_TYPES[0]}>
-									{HEDGE_TYPES.map((t) => (
+								<label className={styles.fl}>Lock Period</label>
+								<select className={styles.fc} defaultValue={LOCK_PERIODS[1]}>
+									{LOCK_PERIODS.map((t) => (
 										<option key={t}>{t}</option>
 									))}
 								</select>
 							</div>
 							<div className="col-md-6">
-								<label className={styles.fl}>Expiry Date</label>
+								<label className={styles.fl}>Scheduled Payout Date</label>
 								<input
 									type="date"
 									className={styles.fc}
-									defaultValue="2025-09-30"
+									defaultValue="2025-08-30"
 								/>
 							</div>
 						</div>
@@ -535,11 +558,11 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				)}
 				{showFlow("hedge") && flows.hedge === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Rate &amp; Margin</h6>
+						<h6 style={{ fontWeight: 700 }}>Step 2: Rate &amp; Savings</h6>
 						<div className={`${styles.summaryBox} mb-3`}>
-							<BoxRow label="Indicative Rate" value="130.20" />
-							<BoxRow label="Margin Required (5%)" value="KES 326,000" />
-							<BoxRow label="Settlement Date" value="30 Sep 2025" last />
+							<BoxRow label="Locked Rate" value="129.20" />
+							<BoxRow label="Current Spot" value="129.45" />
+							<BoxRow label="You Save" value="KES 21,000" last />
 						</div>
 						<div className="mb-3">
 							<label className={styles.fl}>Accept Rate</label>
@@ -551,7 +574,7 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 									id="hdg1"
 								/>
 								<label className="form-check-label" htmlFor="hdg1">
-									I accept the indicative rate and margin terms
+									I accept the locked rate for my scheduled payout
 								</label>
 							</div>
 						</div>
@@ -563,9 +586,10 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 							<div className={styles.ri}>
 								<i className="bi bi-check-lg" />
 							</div>
-							<h5 className={styles.receiptTitle}>Forward Contract Created</h5>
+							<h5 className={styles.receiptTitle}>Rate Lock Created</h5>
 							<p className={styles.receiptSub}>
-								Contract FX-8892 locked at 130.20 for 50,000 USD.
+								Rate lock LK-8892 locked at 129.20 for USD 12,000, valid until
+								30 Aug.
 							</p>
 						</div>
 					</div>
@@ -1113,15 +1137,15 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				{tabs.fxa === "predict" && (
 					<div className={styles.summaryBoxInfo}>
 						<div style={{ fontSize: 13 }}>
-							Next 30 days forecast: <strong>KES 142M volume</strong> with
-							expected savings of <strong>KES 380,000</strong> if current
-							hedging strategy continues.
+							Next 30 days forecast: <strong>KES 14.2M conversions</strong> with
+							expected savings of <strong>KES 84,000</strong> if your current
+							rate-lock strategy continues.
 						</div>
 					</div>
 				)}
 			</MBox>
 
-			{/* ============ M9: FX Risk Dashboard ============ */}
+			{/* ============ M9: FX Exposure (simple — balances vs float needs) ============ */}
 			<MBox
 				id="fxRiskModal"
 				active={active}
@@ -1133,7 +1157,7 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 							className="bi bi-shield-exclamation me-2"
 							style={{ color: "var(--pm-danger)" }}
 						/>
-						FX Risk Dashboard
+						FX Exposure &amp; Float Needs
 					</>
 				}
 				footer={
@@ -1145,7 +1169,7 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => onOpen("hedgeModal")}
 						>
-							Hedge Exposure
+							Lock a Rate
 						</button>
 					</>
 				}
@@ -1153,16 +1177,11 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 				<div className="row g-3">
 					{(
 						[
+							["FOREIGN HELD", "KES 11.85M", "var(--pm-info-soft)", "var(--pm-info)"],
+							["FLOAT NEED (30D)", "KES 6.4M", "var(--pm-warning-soft)", "var(--pm-warning)"],
 							[
-								"NET EXPOSURE",
-								"KES 42.8M",
-								"var(--pm-danger-soft)",
-								"var(--pm-danger)",
-							],
-							["HEDGED", "64%", "var(--pm-warning-soft)", "var(--pm-warning)"],
-							[
-								"RISK SCORE",
-								"42/100",
+								"COVER RATIO",
+								"1.85×",
 								"var(--pm-accent-soft)",
 								"var(--pm-accent)",
 							],
@@ -1188,16 +1207,19 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 						<thead>
 							<tr>
 								<th>Currency</th>
-								<th>Position</th>
-								<th>Exposure</th>
-								<th>VaR</th>
+								<th>Held</th>
+								<th>KES Value</th>
+								<th>Float Need</th>
+								<th>Worth Locking</th>
 							</tr>
 						</thead>
 						<tbody>
 							{(
 								[
-									["USD", "Long", "KES 82.4M", "KES 1.2M"],
-									["EUR", "Short", "KES 18.9M", "KES 0.8M"],
+									["USD", "48,200", "KES 6.24M", "KES 3.2M", "Yes — 129.20"],
+									["GBP", "9,100", "KES 1.51M", "KES 1.2M", "Yes — 165.90"],
+									["EUR", "18,400", "KES 2.57M", "KES 1.8M", "No — holding"],
+									["ZAR", "214,000", "KES 1.53M", "KES 640K", "No — settled"],
 								] as const
 							).map((row) => (
 								<tr key={row[0]}>
@@ -1256,6 +1278,9 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 								<div className={styles.sr}>
 									<div>
 										<strong>{"USD → KES when > $10,000"}</strong>
+										<div className={styles.mutedSmall}>
+											Convert surplus USD to Business Wallet
+										</div>
 									</div>
 									<span className={`${styles.badge} ${styles.badgeS}`}>
 										Active
@@ -1263,7 +1288,10 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 								</div>
 								<div className={styles.sr}>
 									<div>
-										<strong>EUR → KES daily 09:00</strong>
+										<strong>Diaspora GBP → Land Buyers float</strong>
+										<div className={styles.mutedSmall}>
+											Every Friday 13:00 before auto-settle
+										</div>
 									</div>
 									<span className={`${styles.badge} ${styles.badgeS}`}>
 										Active
@@ -1555,9 +1583,17 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 			>
 				{(
 					[
-						["USD forward FX-8821 expiring 30 Jun", "Roll", "hedgeModal"],
-						["EUR balance below threshold", "Top-up", "convertModal"],
-						["NGN rate alert triggered", "View", "rateAlertsModal"],
+						[
+							"PLT-091 diaspora batch awaiting conversion",
+							"Convert",
+							"diasporaConvertModal",
+						],
+						[
+							"USD wallet above auto-convert threshold",
+							"Review",
+							"fxAutomationModal",
+						],
+						["ZAR rate alert triggered", "View", "rateAlertsModal"],
 					] as const
 				).map(([title, label, modal]) => (
 					<div className={styles.sr} key={title}>
@@ -1607,14 +1643,14 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 					{(
 						[
 							[
-								"87",
+								"91",
 								"HEALTH SCORE",
 								"var(--pm-accent-soft)",
 								"var(--pm-accent)",
 							],
 							[
-								"9/14",
-								"WALLETS HEALTHY",
+								"4/5",
+								"SUB-WALLETS HEALTHY",
 								"var(--pm-info-soft)",
 								"var(--pm-info)",
 							],
@@ -1650,40 +1686,57 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>EUR Wallet</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeW}`}>
-										Low
-									</span>
-								</td>
-								<td>Below threshold</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("convertModal")}
-									>
-										Top-up
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>USD Forward</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeD}`}>
-										Expiring
-									</span>
-								</td>
-								<td>30 Jun 2025</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("hedgeModal")}
-									>
-										Roll
-									</button>
-								</td>
-							</tr>
+						<tr>
+							<td>EUR Wallet</td>
+							<td>
+								<span className={`${styles.badge} ${styles.badgeW}`}>
+									Low
+								</span>
+							</td>
+							<td>Below target for Land Buyers diaspora</td>
+							<td>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => onOpen("walletTopUpModal")}
+								>
+									Top-up
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td>PLT-091 batch</td>
+							<td>
+								<span className={`${styles.badge} ${styles.badgeW}`}>
+									Pending
+								</span>
+							</td>
+							<td>GBP 14,200 awaiting convert → float</td>
+							<td>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => onOpen("diasporaConvertModal")}
+								>
+									Convert
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td>Rate Lock LK-8821</td>
+							<td>
+								<span className={`${styles.badge} ${styles.badgeD}`}>
+									Expiring
+								</span>
+							</td>
+							<td>30 Aug 2025 · USD/KES 129.20</td>
+							<td>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => onOpen("rateLockModal")}
+								>
+									Extend
+								</button>
+							</td>
+						</tr>
 						</tbody>
 					</table>
 				</div>
@@ -1719,33 +1772,33 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 						className={`${styles.summaryBoxDanger} mb-2`}
 						style={{ fontSize: 13 }}
 					>
-						<strong>USD forward expiring</strong>
+						<strong>Rate lock LK-8821 expiring soon</strong>
 						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							Contract FX-8821 • 30 Jun
+							USD/KES 129.20 • expires 30 Aug
 						</div>
 					</div>
 					<div
 						className={`${styles.summaryBoxWarn} mb-2`}
 						style={{ fontSize: 13 }}
 					>
-						<strong>EUR balance low</strong>
+						<strong>GBP balance below target</strong>
 						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							€2,180 remaining
+							£9,100 held · £12,000 needed for August payouts
 						</div>
 					</div>
 					<div
 						className={`${styles.summaryBoxInfo} mb-2`}
 						style={{ fontSize: 13 }}
 					>
-						<strong>Rate alert triggered</strong>
+						<strong>PLT-091 awaiting conversion</strong>
 						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							{"USD/KES > 130.00"}
+							GBP 14,200 → Land Buyers float before Friday
 						</div>
 					</div>
 					<div className={styles.summaryBoxAccent} style={{ fontSize: 13 }}>
 						<strong>Auto-conversion executed</strong>
 						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							USD 10,000 → KES 1,294,500
+							USD 10,000 → KES 1,294,500 → Business Wallet
 						</div>
 					</div>
 				</div>
@@ -1775,23 +1828,23 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 					>
 						JK
 					</div>
-					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
+					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>Jckonia Kamau</h5>
 					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
-						james.kamau@email.com · +254 712 345 890
+						jckonia@paymo.co · +254 712 345 890
 					</p>
 					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
 						<div className="col-6">
 							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>FX Wallets</span>
+								<span className={styles.mutedSmall}>FX Sub-Wallets</span>
 								<br />
-								<strong>14 active</strong>
+								<strong>4 active</strong>
 							</div>
 						</div>
 						<div className="col-6">
 							<div className={`${styles.summaryBox} p-2`}>
 								<span className={styles.mutedSmall}>FX Score</span>
 								<br />
-								<strong style={{ color: "var(--pm-accent)" }}>87/100</strong>
+								<strong style={{ color: "var(--pm-accent)" }}>91/100</strong>
 							</div>
 						</div>
 						<div className="col-6">
@@ -1803,110 +1856,476 @@ export default function FxModals({ active, onClose, onOpen }: ModalsProps) {
 						</div>
 						<div className="col-6">
 							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>Forward Contracts</span>
+								<span className={styles.mutedSmall}>Rate Locks</span>
 								<br />
-								<strong>5 active</strong>
+								<strong>2 active</strong>
 							</div>
 						</div>
 					</div>
 				</div>
 			</MBox>
 
-			{/* ============ M19–M23: legacy placeholder duplicates (kept for parity) ============ */}
+			{/* ============ M19: Wallet Detail & Structure ============ */}
 			<MBox
-				id="fxPreferencesModal2"
+				id="walletDetailModal"
+				active={active}
+				size="lg"
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-diagram-3 me-2"
+							style={{ color: "var(--pm-primary-light)" }}
+						/>
+						Wallet Structure
+					</>
+				}
+				footer={
+					<>
+						<button className={styles.btnPm} onClick={onClose}>
+							Close
+						</button>
+						<button
+							className={`${styles.btnPm} ${styles.btnPmP}`}
+							onClick={() => onOpen("newWalletModal")}
+						>
+							New Wallet
+						</button>
+					</>
+				}
+			>
+				{(
+					[
+						["Paymo Master", "KES 124.8M", "Platform account — all flows route through here", "bi-house-gear"],
+						["Business Wallet", "KES 8.40M", "Available KES 7.95M · linked Equity Bank 01-2345678-0", "bi-briefcase"],
+						["Virtual Wallet", "KES 1.25M", "Your personal spending balance", "bi-wallet2"],
+						["USD / EUR / GBP / ZAR sub-wallets", "KES 11.85M", "Diaspora & card-rail holdings — manage each below", "bi-currency-exchange"],
+						["Land Buyers float · Company 2 float", "KES 3.84M", "Auto-settlement fuel per business", "bi-bank2"],
+					] as const
+				).map(([name, value, meta, icon]) => (
+					<div className={styles.sr} key={name}>
+						<div className="d-flex align-items-center gap-3">
+							<div className={styles.iconCircle} style={{ fontSize: 12 }}>
+								<i className={`bi ${icon}`} />
+							</div>
+							<div>
+								<strong>{name}</strong>
+								<div className={styles.mutedSmall}>
+									{value} · {meta}
+								</div>
+							</div>
+						</div>
+						<button
+							className={`${styles.btnPm} ${styles.btnSm}`}
+							onClick={() => onOpen("walletTopUpModal")}
+						>
+							Manage
+						</button>
+					</div>
+				))}
+				<div className={`${styles.summaryBoxAccent} mt-3`} style={{ fontSize: 13 }}>
+					<i className="bi bi-info-circle me-1" />
+					Sub-wallets convert into float fuel — converting to a float links the
+					transaction to the Liquidity page (RB- ref).
+				</div>
+			</MBox>
+
+			{/* ============ M20: Top Up Currency Wallet ============ */}
+			<MBox
+				id="walletTopUpModal"
 				active={active}
 				onClose={onClose}
-				title="FX Preferences"
+				title={
+					<>
+						<i
+							className="bi bi-plus-circle me-2"
+							style={{ color: "var(--pm-primary-light)" }}
+						/>
+						Top Up Currency Wallet
+					</>
+				}
 				footer={actionFooter(
-					"fxPreferencesModal2",
-					"Save",
-					"Preferences saved!",
+					"walletTopUpModal",
+					"Top Up",
+					"USD wallet topped up — KES 1,294,500 converted to USD 10,000.",
+					"WAL-20250808-4412",
+				)}
+			>
+				{actionBody(
+					"walletTopUpModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>Fund From</label>
+							<select className={styles.fc} defaultValue={"Business Wallet (KES 8.40M)"}>
+								{[
+									"Business Wallet (KES 8.40M)",
+									"Virtual Wallet (KES 1.25M)",
+									"Land Buyers float (KES 3.20M)",
+									"Company 2 float (KES 640K)",
+								].map((w) => (
+									<option key={w}>{w}</option>
+								))}
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>To Currency Wallet</label>
+							<select className={styles.fc} defaultValue={CONV_FROM[0]}>
+								{CONV_FROM.slice(0, 4).map((w) => (
+									<option key={w}>{w}</option>
+								))}
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Amount (KES)</label>
+							<input className={styles.fc} defaultValue="1294500" />
+						</div>
+						<div className={styles.summaryBox}>
+							<div className="d-flex justify-content-between">
+								<span>You receive</span>
+								<strong>USD 10,000 @ 129.45</strong>
+							</div>
+						</div>
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M21: Withdraw from Currency Wallet ============ */}
+			<MBox
+				id="walletWithdrawModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-box-arrow-up-right me-2"
+							style={{ color: "var(--pm-danger)" }}
+						/>
+						Withdraw from Currency Wallet
+					</>
+				}
+				footer={actionFooter(
+					"walletWithdrawModal",
+					"Withdraw",
+					"Withdrawal initiated — USD 5,000 to Equity Bank 01-2345678-0.",
+					"WD-20250808-3341",
+				)}
+			>
+				{actionBody(
+					"walletWithdrawModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>From Currency Wallet</label>
+							<select className={styles.fc} defaultValue={CONV_FROM[0]}>
+								{CONV_FROM.slice(0, 4).map((w) => (
+									<option key={w}>{w}</option>
+								))}
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Withdraw To</label>
+							<select className={styles.fc} defaultValue={"Equity Bank • 01-2345678-0"}>
+								{[
+									"Equity Bank • 01-2345678-0",
+									"Business Wallet (KES)",
+									"Virtual Wallet (KES)",
+								].map((w) => (
+									<option key={w}>{w}</option>
+								))}
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Amount</label>
+							<input className={styles.fc} defaultValue="5000" />
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Purpose</label>
+							<select className={styles.fc} defaultValue={"Withdraw to bank"}>
+								{["Withdraw to bank", "Rebalance to float", "Internal transfer"].map(
+									(p) => (
+										<option key={p}>{p}</option>
+									),
+								)}
+							</select>
+						</div>
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M22: Manage Rate Locks ============ */}
+			<MBox
+				id="rateLockModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-shield-lock me-2"
+							style={{ color: "var(--pm-purple)" }}
+						/>
+						Manage Rate Locks
+					</>
+				}
+				footer={
+					<>
+						<button className={styles.btnPm} onClick={onClose}>
+							Close
+						</button>
+						<button
+							className={`${styles.btnPm} ${styles.btnPmP}`}
+							onClick={() => onOpen("hedgeModal")}
+						>
+							Create New Lock
+						</button>
+					</>
+				}
+			>
+				{(
+					[
+						["LK-8821 · USD/KES 129.20", "$12,000 · expires 30 Aug", "Active", styles.badgeS, "hedgeModal", "Extend"],
+						["LK-8819 · GBP/KES 165.90", "£8,000 · expires 22 Aug", "Active", styles.badgeS, "hedgeModal", "Extend"],
+						["LK-8799 · EUR/KES 139.10", "€5,000 · settled 15 Jul", "Settled", styles.badgeD, "fxStatementModal", "Receipt"],
+					] as const
+				).map(([title, sub, badge, tone, modal, btn]) => (
+					<div className={styles.sr} key={title}>
+						<div>
+							<strong>{title}</strong>
+							<div className={styles.mutedSmall}>{sub}</div>
+						</div>
+						<div className="d-flex align-items-center" style={{ gap: 8 }}>
+							<span className={`${styles.badge} ${tone}`}>{badge}</span>
+							<button
+								className={`${styles.btnPm} ${styles.btnSm}`}
+								onClick={() => onOpen(modal)}
+							>
+								{btn}
+							</button>
+						</div>
+					</div>
+				))}
+			</MBox>
+
+			{/* ============ M23: Per-Business FX Limits ============ */}
+			<MBox
+				id="fxLimitsModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-sliders me-2"
+							style={{ color: "var(--pm-purple)" }}
+						/>
+						Per-Business Conversion Limits
+					</>
+				}
+				footer={actionFooter(
+					"fxLimitsModal",
+					"Save Limits",
+					"Conversion limits updated for Land Buyers LTD.",
 					undefined,
 					"Close",
 				)}
 			>
 				{actionBody(
-					"fxPreferencesModal2",
-					<div className="mb-3">
-						<label className={styles.fl}>Default Display</label>
-						<select className={styles.fc} defaultValue="KES">
-							{["KES", "USD"].map((c) => (
-								<option key={c}>{c}</option>
-							))}
-						</select>
-					</div>,
+					"fxLimitsModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>Business</label>
+							<select className={styles.fc} defaultValue={"Land Buyers LTD"}>
+								{["Land Buyers LTD", "Company 2"].map((b) => (
+									<option key={b}>{b}</option>
+								))}
+							</select>
+						</div>
+						<div className="row g-3">
+							<div className="col-md-6">
+								<label className={styles.fl}>Daily Conversion Limit (KES)</label>
+								<input className={styles.fc} defaultValue="5000000" />
+							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Max Single Conversion (KES)</label>
+								<input className={styles.fc} defaultValue="2500000" />
+							</div>
+						</div>
+						<div className="mt-3">
+							<div className="form-check mb-2">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									defaultChecked
+									id="fxlim1"
+								/>
+								<label
+									className="form-check-label"
+									htmlFor="fxlim1"
+									style={{ fontSize: 13 }}
+								>
+									Auto-convert diaspora funds to float (recommended)
+								</label>
+							</div>
+							<div className="form-check">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									id="fxlim2"
+								/>
+								<label
+									className="form-check-label"
+									htmlFor="fxlim2"
+									style={{ fontSize: 13 }}
+								>
+									Require PIN for conversions above KES 1M
+								</label>
+							</div>
+						</div>
+					</>,
 				)}
 			</MBox>
+
+			{/* ============ M24: FX Access & Permissions ============ */}
 			<MBox
-				id="fxStatementModal2"
+				id="fxAccessModal"
 				active={active}
 				onClose={onClose}
-				title="Export FX Statement"
+				title={
+					<>
+						<i
+							className="bi bi-shield-check me-2"
+							style={{ color: "var(--pm-primary-light)" }}
+						/>
+						FX Permissions &amp; Access
+					</>
+				}
 				footer={actionFooter(
-					"fxStatementModal2",
-					"Generate",
-					"Report generated!",
+					"fxAccessModal",
+					"Request Access",
+					"Access request submitted — pending approval by Paymo.",
 					undefined,
 					"Close",
 				)}
 			>
 				{actionBody(
-					"fxStatementModal2",
-					<div className="mb-3">
-						<label className={styles.fl}>Format</label>
-						<select className={styles.fc} defaultValue="PDF">
-							{["PDF", "Excel"].map((f) => (
-								<option key={f}>{f}</option>
-							))}
-						</select>
-					</div>,
+					"fxAccessModal",
+					<>
+						{(
+							[
+								[
+									"Convert customer FX to KES",
+									"Turn diaspora & card settlements into float fuel",
+									true,
+								],
+								[
+									"Lock rates for scheduled payouts",
+									"Create & manage rate locks up to KES 20M",
+									true,
+								],
+								[
+									"Open new currency wallets",
+									"Create USD/EUR/GBP/ZAR sub-wallets",
+									true,
+								],
+								[
+									"Cross-border payouts > KES 1M",
+									"Supplier & vendor payments above the limit",
+									false,
+								],
+								[
+									"Refund diaspora buyers in their currency",
+									"Issue GBP/USD/EUR refunds from sub-wallets",
+									false,
+								],
+							] as const
+						).map(([scope, desc, granted]) => (
+							<div className={styles.sr} key={scope}>
+								<div className="d-flex align-items-center gap-2">
+									<div
+										className={styles.permDot}
+										style={{
+											background: granted
+												? "var(--pm-primary)"
+												: "var(--pm-warning)",
+										}}
+									/>
+									<div>
+										<strong>{scope}</strong>
+										<div className={styles.mutedSmall}>{desc}</div>
+									</div>
+								</div>
+								{granted ? (
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										Granted
+									</span>
+								) : (
+									<span className={`${styles.badge} ${styles.badgeW}`}>
+										Pending
+									</span>
+								)}
+							</div>
+						))}
+					</>,
 				)}
 			</MBox>
+
+			{/* ============ M25: Convert Diaspora Batch → Float ============ */}
 			<MBox
-				id="fxMarketModal2"
+				id="diasporaConvertModal"
 				active={active}
 				onClose={onClose}
-				title="Market Depth"
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
+				title={
+					<>
+						<i
+							className="bi bi-people me-2"
+							style={{ color: "var(--pm-info)" }}
+						/>
+						Convert Diaspora Batch to Float
+					</>
 				}
+				footer={actionFooter(
+					"diasporaConvertModal",
+					"Convert & Fund Float",
+					"PLT-091 converted to KES 2,360,040 — Land Buyers float funded (RB-9922).",
+					"FX-20250808-9922",
+				)}
 			>
-				<div className={styles.summaryBox}>
-					Live order book data for USD/KES shown here.
-				</div>
-			</MBox>
-			<MBox
-				id="fxRiskModal2"
-				active={active}
-				onClose={onClose}
-				title="FX Risk"
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className={styles.summaryBoxDanger}>
-					High exposure detected in USD. Hedge recommended.
-				</div>
-			</MBox>
-			<MBox
-				id="fxAutomationModal2"
-				active={active}
-				onClose={onClose}
-				title="Automation"
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className={styles.summaryBoxAccent}>
-					Auto-conversion rule saved.
-				</div>
+				{actionBody(
+					"diasporaConvertModal",
+					<>
+						<div className={`${styles.summaryBox} mb-3`}>
+							<BoxRow label="Batch" value="PLT-091 · Land Buyers LTD" />
+							<BoxRow label="Payer" value="Buyer • UK (installment PLT-091)" />
+							<BoxRow label="Amount Held" value="GBP 14,200" />
+							<BoxRow label="Live Rate" value="166.20 GBP/KES" />
+							<BoxRow label="You Receive" value="KES 2,360,040" last />
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Destination</label>
+							<select className={styles.fc} defaultValue={"Land Buyers float (KES 3.20M / min 3.00M)"}>
+								{[
+									"Land Buyers float (KES 3.20M / min 3.00M)",
+									"Business Wallet (KES 8.40M)",
+									"Virtual Wallet (KES 1.25M)",
+								].map((d) => (
+									<option key={d}>{d}</option>
+								))}
+							</select>
+						</div>
+						<div className="form-check mb-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+								id="dc1"
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="dc1"
+								style={{ fontSize: 13 }}
+							>
+								Funds count toward Land Buyers float top-up (RB- ref linked)
+							</label>
+						</div>
+					</>,
+				)}
 			</MBox>
 		</>
 	);

@@ -1234,9 +1234,17 @@ export default function Reconciliation() {
 										</td>
 										<td>{m.by}</td>
 										<td>
-											<span className={s.floatLink}>
+											<Link
+												to="/pm/app/liquidity"
+												search={{
+													business:
+														m.business === "Land Buyers LTD" ? "land" : "co2",
+												}}
+												className={s.floatLink}
+												title={`View float movements for ${m.business}`}
+											>
 												<i className="bi bi-arrow-left-right" /> {m.floatLink}
-											</span>
+											</Link>
 										</td>
 										<td>
 											<button

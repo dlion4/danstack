@@ -124,17 +124,19 @@ const FLOWS: Record<
 };
 
 const TXN_TYPES = [
-	"Inter-bank Transfer",
-	"Instant Payment",
-	"Wallet Transfer",
-	"Agent Cash-in",
+	"M-Pesa collection",
+	"Bank transfer payout",
+	"International transfer",
+	"Card settlement (USD)",
+	"FX conversion",
+	"Refund",
 ];
 const FEE_TYPES = ["Percentage", "Fixed Amount", "Tiered"];
-const WAIVER_TYPES = ["Hardship", "Promotional", "Regulatory", "Partner"];
+const WAIVER_TYPES = ["Hardship", "Promotional", "Regulatory", "Bulk discount"];
 const SETTLEMENT_TYPES = [
-	"Agent Commission — June 2025",
-	"Partner Revenue Share",
-	"Merchant Cashback",
+	"Profit delivery — June 2025",
+	"Business Wallet sweep",
+	"Micro-profit instant delivery",
 ];
 const REPORT_PERIODS = ["June 2025", "Q2 2025", "YTD 2025"];
 const FORMATS = ["PDF", "Excel", "CSV"];
@@ -144,8 +146,13 @@ const EXEMPTION_TYPES = [
 	"Charity / NGO",
 	"Staff Benefit",
 ];
-const PARTNERS = ["Safaricom M-Pesa", "Airtel Money", "Equity Bank"];
-const SETTLE_FREQS = ["Weekly", "Bi-weekly", "Monthly"];
+const PARTNERS = [
+	"Business Wallet (KES)",
+	"Virtual Wallet (KES)",
+	"External M-Pesa (0712…890)",
+	"Equity Bank • 01-2345678-0",
+];
+const SETTLE_FREQS = ["Instant (any amount ≥ KES 2)", "Daily", "Weekly", "Monthly"];
 const REGULATORS = [
 	"CBK — Central Bank of Kenya",
 	"KRA — Kenya Revenue Authority",
@@ -157,7 +164,7 @@ const HARDSHIP_REASONS = [
 	"Natural disaster",
 	"Other",
 ];
-const ADV_TYPES = ["Inter-bank Transfer", "Instant Payment", "Wallet to Bank"];
+const ADV_TYPES = ["Money transfer", "International transfer", "Wallet to M-Pesa"];
 
 interface Result {
 	msg: string;
@@ -276,6 +283,21 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 		</div>
 	);
 
+	const BoxRow = ({
+		label,
+		value,
+		last,
+	}: {
+		label: string;
+		value: ReactNode;
+		last?: boolean;
+	}) => (
+		<div className={`d-flex justify-content-between ${last ? "" : "mb-2"}`}>
+			<span className={styles.mutedSmall}>{label}</span>
+			<strong>{value}</strong>
+		</div>
+	);
+
 	const actionFooter = (
 		id: string,
 		label: ReactNode,
@@ -373,8 +395,8 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 			bg: "var(--pm-warning-soft)",
 		},
 		{
-			value: "47",
-			label: "RULES AUDITED",
+			value: "18",
+			label: "MODELS REVIEWED",
 			vColor: "var(--pm-purple)",
 			bg: "var(--pm-purple-soft)",
 		},
@@ -392,34 +414,34 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 		string,
 		"badgeS" | "badgeP",
 	][] = [
-		["1", "AG-8821 — Grace W.", "KES 48.2M", "KES 866K", "Elite", "badgeS"],
-		["2", "AG-7744 — Peter M.", "KES 39.8M", "KES 715K", "Elite", "badgeS"],
-		["3", "AG-9910 — Amina K.", "KES 31.4M", "KES 565K", "Pro", "badgeP"],
-		["4", "AG-3342 — John O.", "KES 27.9M", "KES 502K", "Pro", "badgeP"],
-		["5", "AG-5510 — Sarah N.", "KES 24.1M", "KES 433K", "Pro", "badgeP"],
+		["1", "Installments (Land Buyers)", "KES 1.08M", "KES 864K", "Top", "badgeS"],
+		["2", "Orders (Company 2)", "KES 256K", "KES 178K", "Top", "badgeS"],
+		["3", "International transfers", "KES 98.4K", "KES 62.1K", "Rising", "badgeP"],
+		["4", "Card settlements (USD)", "KES 176.8K", "KES 41.2K", "Rising", "badgeP"],
+		["5", "FX conversions", "KES 86.4K", "KES 24.8K", "Steady", "badgeP"],
 	];
 	const attentionRows = [
 		{
-			title: "Tier 3 commission underperforming",
-			sub: "Only 12% of target volume",
+			title: "Profit pot above auto-deliver threshold",
+			sub: "KES 25K rule — M-Pesa channel paused",
 			label: "Review",
-			modal: "editCommissionModal",
+			modal: "partnerPayoutModal",
 		},
 		{
-			title: "Fee rule FR-415 expiring in 5 days",
-			sub: "Promotional 0.5% for SMEs",
-			label: "Extend",
-			modal: "editFeeRuleModal",
+			title: "Company 2 break-even orders",
+			sub: "12 orders covered by 2.0% charge — consider tiered",
+			label: "Adjust",
+			modal: "addFeeRuleModal",
 		},
 		{
-			title: "Settlement reconciliation pending",
-			sub: "KES 2.1M difference flagged",
-			label: "Reconcile",
-			modal: "settlementModal",
+			title: "International transfer fee rose 8%",
+			sub: "1.5% + KES 150 — 24 this month",
+			label: "View",
+			modal: "feeReportModal",
 		},
 		{
-			title: "Waiver WV-101 budget 78% used",
-			sub: "Consider increasing budget",
+			title: "Promo budget 78% used",
+			sub: "0% fee month for 5 new buyers — consider top-up",
 			label: "Adjust",
 			modal: "editWaiverModal",
 		},
@@ -427,36 +449,36 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 	const notifItems = [
 		{
 			box: "summaryBoxWarn",
-			title: "FR-415 expires in 5 days",
-			sub: "SME promotional fee ending soon.",
+			title: "Profit delivered — KES 84,500",
+			sub: "Auto-channelled to Business Wallet.",
 		},
 		{
 			box: "summaryBoxDanger",
-			title: "Settlement reconciliation difference",
-			sub: "KES 2.1M flagged for review.",
+			title: "M-Pesa channel paused",
+			sub: "External wallet link needs verification.",
 		},
 		{
 			box: "summaryBoxAccent",
-			title: "New commission tier T4 activated",
-			sub: "73 agents now eligible.",
+			title: "Company 2 break-even orders",
+			sub: "12 orders — consider tiered model.",
 		},
 		{
 			box: "summaryBox",
-			title: "Waiver WV-101 budget at 78%",
+			title: "Promo budget at 78%",
 			sub: "Consider top-up.",
 		},
 	] as const;
 	const notifSettingsRows: [string, boolean, boolean, boolean][] = [
-		["Fee rule changes", true, false, true],
-		["Settlement completed", true, true, false],
-		["Waiver budget alerts", true, false, true],
-		["Commission payout", true, true, true],
+		["Profit delivered", true, true, true],
+		["PayMo fee changes", true, false, true],
+		["Channel rule alerts", true, false, true],
+		["Promo budget", true, true, false],
 	];
 	const tierPerfRows = [
-		["T1 — Starter", "1,240", "KES 312K", "78%", "+12%"],
-		["T2 — Growth", "682", "KES 1.2M", "89%", "+24%"],
-		["T3 — Pro", "189", "KES 4.8M", "94%", "+18%"],
-		["T4 — Elite", "73", "KES 28.4M", "97%", "+31%"],
+		["Flat — Land Buyers", "3,240", "KES 1.08M", "91%", "+6%"],
+		["Percentage — Company 2", "88,410", "KES 256K", "84%", "+11%"],
+		["International transfers", "186", "KES 98.4K", "72%", "+8%"],
+		["Card settlements (USD)", "4,120", "KES 176.8K", "78%", "+4%"],
 	];
 	const feeCompareRows: [
 		string,
@@ -475,7 +497,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 
 	return (
 		<>
-			{/* ============ M1: Add Fee Rule (flow: fee, 4 steps) ============ */}
+			{/* ============ M1: New Fee Model (flow: fee, 4 steps) ============ */}
 			<MBox
 				id="addFeeRuleModal"
 				active={active}
@@ -487,7 +509,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							className="bi bi-plus-circle"
 							style={{ color: "var(--pm-info)" }}
 						/>{" "}
-						Create New Fee Rule
+						New Fee Model
 					</>
 				}
 				footer={flowFooter("fee")}
@@ -498,18 +520,18 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					{flows.fee === 1 && (
 						<div>
 							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Basic Details
+								Step 1: Model Details
 							</h6>
 							<div className="row g-3">
 								<div className="col-md-6">
-									<label className={styles.fl}>Rule Name</label>
-									<input
-										className={styles.fc}
-										defaultValue="SME Instant Transfer"
-									/>
+									<label className={styles.fl}>Apply To Business</label>
+									<select className={styles.fc}>
+										<option>Land Buyers LTD</option>
+										<option>Company 2</option>
+									</select>
 								</div>
 								<div className="col-md-6">
-									<label className={styles.fl}>Transaction Type</label>
+									<label className={styles.fl}>Service</label>
 									<select className={styles.fc}>
 										{TXN_TYPES.map((t) => (
 											<option key={t}>{t}</option>
@@ -517,7 +539,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 									</select>
 								</div>
 								<div className="col-md-6">
-									<label className={styles.fl}>Fee Type</label>
+									<label className={styles.fl}>Model Type</label>
 									<select className={styles.fc}>
 										{FEE_TYPES.map((t) => (
 											<option key={t}>{t}</option>
@@ -529,7 +551,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 									<input
 										type="date"
 										className={styles.fc}
-										defaultValue="2025-07-01"
+										defaultValue="2025-08-01"
 									/>
 								</div>
 							</div>
@@ -538,18 +560,18 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					{flows.fee === 2 && (
 						<div>
 							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Pricing
+								Step 2: Your Charge
 							</h6>
 							<div className="row g-3">
 								<div className="col-md-6">
-									<label className={styles.fl}>Rate / Amount</label>
-									<input className={styles.fc} defaultValue="0.75" />
+									<label className={styles.fl}>Charge (rate or amount)</label>
+									<input className={styles.fc} defaultValue="2.0" />
 								</div>
 								<div className="col-md-6">
 									<label className={styles.fl}>Unit</label>
 									<select className={styles.fc}>
 										<option>% of transaction</option>
-										<option>KES fixed</option>
+										<option>KES fixed per txn</option>
 									</select>
 								</div>
 								<div className="col-md-6">
@@ -565,22 +587,22 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 								className={`${styles.summaryBoxInfo} mt-3`}
 								style={{ fontSize: 12 }}
 							>
-								<i className="bi bi-info-circle me-1" /> Preview: KES 100,000
-								transfer = KES 750 fee
+								<i className="bi bi-info-circle me-1" /> Preview: KES 100,000 order = you charge
+								KES 2,000 → PayMo takes KES 1,280 → you keep KES 720
 							</div>
 						</div>
 					)}
 					{flows.fee === 3 && (
 						<div>
 							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 3: Conditions &amp; Approval
+								Step 3: Conditions &amp; Delivery
 							</h6>
 							<div className="mb-3">
-								<label className={styles.fl}>Applicable Segments</label>
+								<label className={styles.fl}>Applicable To</label>
 								{[
-									{ label: "All customers", on: true },
-									{ label: "SME only", on: false },
-									{ label: "Agents only", on: false },
+									{ label: "All customers of this business", on: true },
+									{ label: "New customers only (promo)", on: false },
+									{ label: "Diaspora buyers only", on: false },
 								].map((s, i) => (
 									<div
 										className={`form-check ${i < 2 ? "mb-1" : ""}`}
@@ -606,7 +628,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 									id="fee-approval"
 								/>
 								<label className="form-check-label" htmlFor="fee-approval">
-									Require manual approval for changes
+									Auto-channel profit to my wallet when collected
 								</label>
 							</div>
 						</div>
@@ -616,9 +638,10 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							<div className={styles.ri}>
 								<i className="bi bi-check-lg" />
 							</div>
-							<h5 className={styles.receiptTitle}>Fee Rule Created</h5>
+							<h5 className={styles.receiptTitle}>Fee Model Applied</h5>
 							<p className={styles.receiptSub}>
-								Rule FR-448 has been created and is pending approval.
+								Model FM-448 applied to Company 2 — profit auto-channels to your
+								wallet.
 							</p>
 						</div>
 					)}
@@ -646,10 +669,10 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					"editFeeRuleModal",
 					<>
 						<div className="mb-3">
-							<label className={styles.fl}>Rule</label>
+							<label className={styles.fl}>Model</label>
 							<input
 								className={styles.fc}
-								defaultValue="FR-415 — SME Promotional"
+								defaultValue="Land Buyers — Flat KES 1,250"
 							/>
 						</div>
 						<div className="row g-3">
@@ -810,7 +833,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				</div>
 			</MBox>
 
-			{/* ============ M4: Add Commission Tier ============ */}
+			{/* ============ M4: Add Tier to Tiered Model ============ */}
 			<MBox
 				id="addCommissionTierModal"
 				active={active}
@@ -818,39 +841,46 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				title={
 					<>
 						<i className="bi bi-layers" style={{ color: "var(--pm-accent)" }} />{" "}
-						Create Commission Tier
+						Add Tier to Tiered Model
 					</>
 				}
 				footer={actionFooter(
 					"addCommissionTierModal",
 					"Create Tier",
-					"Commission tier created successfully!",
-					"CT-013",
+					"Tier added to the tiered model successfully!",
+					"TIER-013",
 				)}
 			>
 				{actionBody(
 					"addCommissionTierModal",
 					<>
 						<div className="mb-3">
+							<label className={styles.fl}>Business / Model</label>
+							<select className={styles.fc}>
+								<option>Company 2 — Tiered</option>
+								<option>Land Buyers LTD — Tiered</option>
+							</select>
+						</div>
+						<div className="mb-3">
 							<label className={styles.fl}>Tier Name</label>
-							<input className={styles.fc} defaultValue="Super Agent" />
+							<input className={styles.fc} defaultValue="Band 2 — orders ≥ KES 50K" />
 						</div>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.fl}>Volume Threshold (KES)</label>
-								<input className={styles.fc} defaultValue="50000000" />
+								<input className={styles.fc} defaultValue="50000" />
 							</div>
 							<div className="col-md-6">
-								<label className={styles.fl}>Commission Rate</label>
-								<input className={styles.fc} defaultValue="2.2" />
+								<label className={styles.fl}>Charge Rate</label>
+								<input className={styles.fc} defaultValue="1.5" />
 							</div>
 						</div>
 						<div className="mb-3 mt-3">
-							<label className={styles.fl}>Benefits</label>
+							<label className={styles.fl}>Tier Benefits</label>
 							{[
-								{ label: "Priority support", on: true },
-								{ label: "Higher payout frequency", on: true },
-								{ label: "Dedicated account manager", on: false },
+								{ label: "Applies above threshold", on: true },
+								{ label: "Shown to customer at checkout", on: true },
+								{ label: "Excluded from discount promos", on: false },
 							].map((b, i) => (
 								<div
 									className={`form-check ${i < 2 ? "mb-1" : ""}`}
@@ -894,7 +924,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					<>
 						<div className="mb-3">
 							<label className={styles.fl}>Tier</label>
-							<input className={styles.fc} defaultValue="T3 — Pro" />
+							<input className={styles.fc} defaultValue="Band 2 — orders ≥ KES 50K" />
 						</div>
 						<div className="row g-3">
 							<div className="col-md-6">
@@ -945,7 +975,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 									<label className={styles.fl}>Waiver Name</label>
 									<input
 										className={styles.fc}
-										defaultValue="Flood Relief 2025"
+										defaultValue="0% promo — 5 new buyers"
 									/>
 								</div>
 								<div className="col-md-6">
@@ -974,10 +1004,9 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</h6>
 							<div className="mb-3">
 								<label className={styles.fl}>Eligible Segments</label>
-								{[
-									{ label: "All customers in affected counties", on: true },
-									{ label: "SME customers only", on: false },
-									{ label: "Agents in flood zones", on: false },
+								{[										{ label: "All customers of the business", on: true },
+										{ label: "New customers only (promo)", on: false },
+										{ label: "Diaspora buyers only", on: false },
 								].map((s, i) => (
 									<div
 										className={`form-check ${i < 2 ? "mb-1" : ""}`}
@@ -1012,7 +1041,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</div>
 							<h5 className={styles.receiptTitle}>Waiver Created</h5>
 							<p className={styles.receiptSub}>
-								WV-118 — Flood Relief 2025 is now active.
+								WV-118 — 0% promo for 5 new buyers is now active.
 							</p>
 						</div>
 					)}
@@ -1046,7 +1075,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							<label className={styles.fl}>Waiver</label>
 							<input
 								className={styles.fc}
-								defaultValue="WV-101 — SME First Transfer"
+								defaultValue="WV-101 — 0% promo new buyers"
 							/>
 						</div>
 						<div className="row g-3">
@@ -1071,7 +1100,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				)}
 			</MBox>
 
-			{/* ============ M8: Settlement (flow: settle, 3 steps) ============ */}
+			{/* ============ M8: Profit Pot Delivery (flow: settle, 3 steps) ============ */}
 			<MBox
 				id="settlementModal"
 				active={active}
@@ -1083,7 +1112,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							className="bi bi-cash-stack"
 							style={{ color: "var(--pm-purple)" }}
 						/>{" "}
-						Run Settlement
+						Profit Pot Delivery
 					</>
 				}
 				footer={flowFooter("settle")}
@@ -1094,10 +1123,10 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					{flows.settle === 1 && (
 						<div>
 							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Select Settlement
+								Step 1: Select Delivery
 							</h6>
 							<div className="mb-3">
-								<label className={styles.fl}>Settlement Type</label>
+								<label className={styles.fl}>Delivery Type</label>
 								<select className={styles.fc}>
 									{SETTLEMENT_TYPES.map((t) => (
 										<option key={t}>{t}</option>
@@ -1106,17 +1135,17 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</div>
 							<div className={styles.summaryBox}>
 								<div className="d-flex justify-content-between mb-2">
-									<span>Total Amount</span>
-									<strong>KES 4,820,000</strong>
+									<span>Pot Balance</span>
+									<strong>KES 1,342,000</strong>
 								</div>
 								<div className="d-flex justify-content-between mb-2">
-									<span>Recipients</span>
-									<strong>2,184 agents</strong>
+									<span>Pending (this batch)</span>
+									<strong>KES 84,500</strong>
 								</div>
 								<div className="d-flex justify-content-between">
 									<span>Status</span>
 									<span className={`${styles.badge} ${styles.badgeW}`}>
-										Ready to settle
+										Ready to deliver
 									</span>
 								</div>
 							</div>
@@ -1131,16 +1160,16 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 								<table className={styles.tbl}>
 									<thead>
 										<tr>
-											<th>Agent</th>
-											<th>Volume</th>
-											<th>Commission</th>
+											<th>Source</th>
+											<th>Profit</th>
+											<th>Channel</th>
 										</tr>
 									</thead>
 									<tbody>
 										{[
-											["AG-8821", "KES 48.2M", "KES 866,400"],
-											["AG-7744", "KES 39.8M", "KES 715,200"],
-											["AG-9910", "KES 31.4M", "KES 564,600"],
+											["CHG-4401 — Land Buyers", "KES 18,750", "Business Wallet"],
+											["CHG-4403 — Company 2", "KES 241", "Business Wallet"],
+											["FX conversions", "KES 24,800", "Business Wallet"],
 										].map(([a, v, c]) => (
 											<tr key={a}>
 												<td>{a}</td>
@@ -1159,7 +1188,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 									id="settle-approve"
 								/>
 								<label className="form-check-label" htmlFor="settle-approve">
-									I approve this settlement batch
+									I approve this profit delivery batch
 								</label>
 							</div>
 						</div>
@@ -1169,10 +1198,10 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							<div className={styles.ri}>
 								<i className="bi bi-check-lg" />
 							</div>
-							<h5 className={styles.receiptTitle}>Settlement Executed</h5>
+							<h5 className={styles.receiptTitle}>Profit Delivered</h5>
 							<p className={styles.receiptSub}>
-								KES 4,820,000 disbursed to 2,184 agents. Reference:
-								SET-20250627-9914
+								KES 84,500 delivered to your Business Wallet. Reference:
+								POT-20250808-9914
 							</p>
 						</div>
 					)}
@@ -1329,7 +1358,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							className="bi bi-trophy"
 							style={{ color: "var(--pm-warning)" }}
 						/>{" "}
-						Agent Leaderboard
+						Profit by Service
 					</>
 				}
 				footer={
@@ -1343,10 +1372,10 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 						<thead>
 							<tr>
 								<th>Rank</th>
-								<th>Agent</th>
-								<th>Volume</th>
-								<th>Commission</th>
-								<th>Tier</th>
+								<th>Service</th>
+								<th>Charges</th>
+								<th>Profit</th>
+								<th>Trend</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1523,7 +1552,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 						className={styles.fwBold13}
 						style={{ fontSize: 16, marginBottom: 2 }}
 					>
-						James Kamau
+						Jckonia Kamau
 					</h5>
 					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
 						james.kamau@paymo.co.ke
@@ -1536,7 +1565,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							>
 								<span className={styles.mutedSmall}>Role</span>
 								<br />
-								<strong>Treasury Manager</strong>
+								<strong>Account Holder</strong>
 							</div>
 						</div>
 						<div className="col-6">
@@ -1682,7 +1711,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					</div>
 					<div className="d-flex justify-content-between mb-2">
 						<span className={styles.mutedSmall}>User</span>
-						<strong>James K. (Treasury)</strong>
+						<strong>Jckonia K.</strong>
 					</div>
 					<div className="d-flex justify-content-between mb-2">
 						<span className={styles.mutedSmall}>IP Address</span>
@@ -1731,8 +1760,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 								style={{ fontSize: 12 }}
 								onClick={() =>
 									downloadFile(
-										"fee_rules_template.csv",
-										"rule_name,transaction_type,fee_type,rate,min_fee,max_fee,effective_date\nSME Instant,Instant Payment,Percentage,0.75,10,5000,2025-07-01",
+										"fee_rules_template.csv",													"model,business,charge,paymo_fee,profit,status\nPercentage,Company 2,2.0%,2.0%,KES 241,Collected",
 										"text/csv",
 									)
 								}
@@ -1751,20 +1779,20 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-building" /> Partner Payout Configuration
+						<i className="bi bi-send" /> Channel Profits to Wallet
 					</>
 				}
 				footer={actionFooter(
 					"partnerPayoutModal",
-					"Save",
-					"Partner payout configuration saved!",
+					"Save Rule",
+					"Profit channel rule saved — profits will auto-deliver.",
 				)}
 			>
 				{actionBody(
 					"partnerPayoutModal",
 					<>
 						<div className="mb-3">
-							<label className={styles.fl}>Partner</label>
+							<label className={styles.fl}>Deliver To</label>
 							<select className={styles.fc}>
 								{PARTNERS.map((p) => (
 									<option key={p}>{p}</option>
@@ -1772,16 +1800,20 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</select>
 						</div>
 						<div className="mb-3">
-							<label className={styles.fl}>Revenue Share %</label>
-							<input className={styles.fc} defaultValue="15" />
+							<label className={styles.fl}>Minimum Profit (KES)</label>
+							<input className={styles.fc} defaultValue="2" />
 						</div>
 						<div className="mb-3">
-							<label className={styles.fl}>Settlement Frequency</label>
+							<label className={styles.fl}>Delivery Frequency</label>
 							<select className={styles.fc}>
 								{SETTLE_FREQS.map((f) => (
 									<option key={f}>{f}</option>
 								))}
 							</select>
+						</div>
+						<div className={styles.summaryBox} style={{ fontSize: 12 }}>
+							<i className="bi bi-lightning-charge me-1" /> Even KES 2 of profit is
+							delivered the moment it's earned.
 						</div>
 					</>,
 				)}
@@ -1824,8 +1856,9 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</select>
 						</div>
 						<div className={styles.summaryBox} style={{ fontSize: 12 }}>
-							Report will include: Total fees collected, waiver utilization,
-							commission payouts, and compliance attestations.
+							Report will include: your customer charges, PayMo fees
+							deducted, profit delivered, waiver utilization, and fee
+							disclosure attestations.
 						</div>
 					</>,
 				)}
@@ -1859,12 +1892,11 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				<div className="table-responsive">
 					<table className={styles.tbl}>
 						<thead>
-							<tr>
-								<th>Tier</th>
-								<th>Agents</th>
-								<th>Avg Volume</th>
-								<th>Retention</th>
-								<th>Growth</th>
+							<tr>													<th>Model / Business</th>
+													<th>Volume</th>
+													<th>Revenue</th>
+													<th>Adoption</th>
+													<th>Growth</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1994,9 +2026,403 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					"finalConfirmModal",
 					<div className={styles.summaryBoxAccent}>
 						<i className="bi bi-info-circle me-1" /> This action will affect
-						142,890 transactions and KES 18.4M in monthly revenue. Are you sure?
+						your live fee models and KES 2.31M in monthly customer charges.
+						Are you sure?
 					</div>,
 				)}
+			</MBox>
+
+			{/* ============ M26: Charge a Customer ============ */}
+			<MBox
+				id="chargeCustomerModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-receipt me-2"
+							style={{ color: "var(--pm-info)" }}
+						/>
+						Charge a Customer
+					</>
+				}
+				footer={actionFooter(
+					"chargeCustomerModal",
+					"Apply Charge",
+					"Charge applied — KES 277 profit delivered instantly to Business Wallet.",
+					"CHG-20250808-4409",
+				)}
+			>
+				{actionBody(
+					"chargeCustomerModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>Business</label>
+							<select className={styles.fc}>
+								<option>Land Buyers LTD — Flat KES 1,250</option>
+								<option>Company 2 — 2.0%</option>
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Customer / Ref</label>
+							<input
+								className={styles.fc}
+								defaultValue="Order #ORD-8904"
+							/>
+						</div>
+						<div className="row g-3">
+							<div className="col-md-6">
+								<label className={styles.fl}>Transaction Amount (KES)</label>
+								<input className={styles.fc} defaultValue="50000" />
+							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Your Charge</label>
+								<input className={styles.fc} defaultValue="2.0% = KES 1,000" />
+							</div>
+						</div>
+						<div className={`${styles.summaryBox} mt-3`} style={{ fontSize: 13 }}>
+							<BoxRow label="PayMo fee (deducted)" value="KES 723" />
+							<BoxRow label="Your profit" value="KES 277" last />
+						</div>
+						<div className={`${styles.summaryBoxAccent} mt-3`} style={{ fontSize: 12 }}>
+							<i className="bi bi-lightning-charge me-1" /> Profit auto-channels to
+							Business Wallet the moment this settles.
+						</div>
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M27: Channel Rule ============ */}
+			<MBox
+				id="channelRuleModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-arrow-left-right me-2"
+							style={{ color: "var(--pm-accent)" }}
+						/>
+						Channel Rule
+					</>
+				}
+				footer={actionFooter(
+					"channelRuleModal",
+					"Save Rule",
+					"Channel rule saved — profits deliver on schedule.",
+					"CR-012",
+				)}
+			>
+				{actionBody(
+					"channelRuleModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>Rule Name</label>
+							<input
+								className={styles.fc}
+								defaultValue="Micro-profit instant delivery"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className={styles.fl}>Deliver To</label>
+							<select className={styles.fc}>
+								{PARTNERS.map((p) => (
+									<option key={p}>{p}</option>
+								))}
+							</select>
+						</div>
+						<div className="row g-3">
+							<div className="col-md-6">
+								<label className={styles.fl}>Trigger</label>
+								<select className={styles.fc}>
+									<option>Instant (any profit ≥ KES 2)</option>
+									<option>When pot ≥ threshold</option>
+									<option>Weekly schedule</option>
+								</select>
+							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Threshold (KES)</label>
+								<input className={styles.fc} defaultValue="2" />
+							</div>
+						</div>
+						<div className="form-check mt-3">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+								id="cr1"
+							/>
+							<label className="form-check-label" htmlFor="cr1" style={{ fontSize: 13 }}>
+								Active — deliver profits immediately as earned
+							</label>
+						</div>
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M28: Profit Pot Detail ============ */}
+			<MBox
+				id="potDetailModal"
+				active={active}
+				size="lg"
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-cash-stack me-2"
+							style={{ color: "var(--pm-purple)" }}
+						/>
+						Profit Pot
+					</>
+				}
+				footer={
+					<>
+						<button className={styles.btnPm} onClick={onClose}>
+							Close
+						</button>
+						<button
+							className={`${styles.btnPm} ${styles.btnPmP}`}
+							onClick={() => onOpen("settlementModal")}
+						>
+							Deliver Now
+						</button>
+					</>
+				}
+			>
+				<div className={`${styles.summaryBox} mb-3`}>
+					<div className="d-flex justify-content-between mb-2">
+						<span>Pot balance</span>
+						<strong>KES 1,342,000</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span>Pending</span>
+						<strong>KES 84,500</strong>
+					</div>
+					<div className="d-flex justify-content-between">
+						<span>Delivered MTD</span>
+						<strong style={{ color: "var(--pm-accent)" }}>KES 968,000</strong>
+					</div>
+				</div>
+				<div className="table-responsive">
+					<table className={styles.tbl}>
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Source</th>
+								<th>Profit</th>
+								<th>Channel</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{[
+								["14:32", "CHG-4401 · Land Buyers", "KES 18,750", "Business Wallet", "Delivered"],
+								["14:28", "CHG-4403 · Company 2", "KES 241", "Business Wallet", "Delivered"],
+								["13:10", "FX conversions", "KES 24,800", "Business Wallet", "Delivered"],
+							].map((r) => (
+								<tr key={r[0]}>
+									{r.map((c, j) => (
+										<td key={j}>{c}</td>
+									))}
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</MBox>
+
+			{/* ============ M29: Profit Access & Permissions ============ */}
+			<MBox
+				id="profitAccessModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-shield-check me-2"
+							style={{ color: "var(--pm-primary-light)" }}
+						/>
+						Profit Permissions &amp; Access
+					</>
+				}
+				footer={actionFooter(
+					"profitAccessModal",
+					"Request Access",
+					"Access request submitted — pending approval by Paymo.",
+					undefined,
+				)}
+			>
+				{actionBody(
+					"profitAccessModal",
+					<>
+						{(
+							[
+								["Channel profits to Business Wallet", "Auto-deliver to KES Business Wallet", true],
+								["Auto-deliver micro-profits (≥ KES 2)", "Instant delivery on every charge", true],
+								["Route profits to external M-Pesa", "Deliver to 0712…890 on schedule", false],
+								["Withdraw profit pot to linked bank", "Equity Bank • 01-2345678-0", false],
+							] as const
+						).map(([scope, desc, granted]) => (
+							<div className={styles.sr} key={scope}>
+								<div className="d-flex align-items-center gap-2">
+									<div
+										className={styles.permDot}
+										style={{
+											background: granted
+												? "var(--pm-primary)"
+												: "var(--pm-warning)",
+										}}
+									/>
+									<div>
+										<strong>{scope}</strong>
+										<div className={styles.mutedSmall}>{desc}</div>
+									</div>
+								</div>
+								{granted ? (
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										Granted
+									</span>
+								) : (
+									<span className={`${styles.badge} ${styles.badgeW}`}>
+										Pending
+									</span>
+								)}
+							</div>
+						))}
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M30: Promo Campaign ============ */}
+			<MBox
+				id="promoModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-megaphone me-2"
+							style={{ color: "var(--pm-warning)" }}
+						/>
+						Promo &amp; Discount Campaign
+					</>
+				}
+				footer={actionFooter(
+					"promoModal",
+					"Launch Promo",
+					"Promo launched — 0% fees for 5 new buyers this month.",
+					"PRM-20250808-2210",
+				)}
+			>
+				{actionBody(
+					"promoModal",
+					<>
+						<div className="mb-3">
+							<label className={styles.fl}>Campaign Name</label>
+							<input
+								className={styles.fc}
+								defaultValue="0% fees — new buyers month"
+							/>
+						</div>
+						<div className="row g-3">
+							<div className="col-md-6">
+								<label className={styles.fl}>Discount</label>
+								<select className={styles.fc}>
+									<option>0% charge (absorb cost)</option>
+									<option>50% off your charge</option>
+									<option>Bulk rebate (10+ orders)</option>
+								</select>
+							</div>
+							<div className="col-md-6">
+								<label className={styles.fl}>Business</label>
+								<select className={styles.fc}>
+									<option>Land Buyers LTD</option>
+									<option>Company 2</option>
+								</select>
+							</div>
+						</div>
+						<div className="mb-3 mt-3">
+							<label className={styles.fl}>End Date</label>
+							<input type="date" className={styles.fc} defaultValue="2025-08-31" />
+						</div>
+						<div className={`${styles.summaryBoxInfo} mb-3`} style={{ fontSize: 12 }}>
+							<i className="bi bi-graph-up me-1" /> Typical lift: 12% more buyers —
+							forecast +KES 210K extra volume this month.
+						</div>
+					</>,
+				)}
+			</MBox>
+
+			{/* ============ M31: Fee Model Detail ============ */}
+			<MBox
+				id="feeModelDetailModal"
+				active={active}
+				onClose={onClose}
+				title={
+					<>
+						<i
+							className="bi bi-grid-3x3-gap me-2"
+							style={{ color: "var(--pm-info)" }}
+						/>
+						Fee Model — Percentage
+					</>
+				}
+				footer={
+					<>
+						<button className={styles.btnPm} onClick={onClose}>
+							Close
+						</button>
+						<button
+							className={`${styles.btnPm} ${styles.btnPmP}`}
+							onClick={() => onOpen("addFeeRuleModal")}
+						>
+							Apply to Business
+						</button>
+					</>
+				}
+			>
+				<div className={`${styles.summaryBox} mb-3`} style={{ fontSize: 13 }}>
+					<BoxRow label="How it works" value="% of each transaction" />
+					<BoxRow label="Example" value="KES 50,000 order × 2.0% = KES 1,000 charge" />
+					<BoxRow label="PayMo fee" value="KES 723 deducted" />
+					<BoxRow label="You keep" value="KES 277 delivered instantly" last />
+				</div>
+				<div className={`${styles.summaryBoxAccent} mb-3`} style={{ fontSize: 12 }}>
+					<i className="bi bi-lightbulb me-1" /> Best for low-value, high-volume
+					businesses like Company 2 (209 daily orders).
+				</div>
+				<div className="table-responsive">
+					<table className={styles.tbl}>
+						<thead>
+							<tr>
+								<th>Band</th>
+								<th>Rate</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{[
+								["Orders < KES 50K", "2.0%", "Active"],
+								["Orders ≥ KES 50K", "1.5%", "Active"],
+							].map((r) => (
+								<tr key={r[0]}>
+									<td>{r[0]}</td>
+									<td>{r[1]}</td>
+									<td>{r[2]}</td>
+									<td>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => onOpen("editCommissionModal")}
+										>
+											Edit
+										</button>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</MBox>
 		</>
 	);
