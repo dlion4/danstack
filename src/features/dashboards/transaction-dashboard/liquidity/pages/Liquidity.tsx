@@ -1,26 +1,23 @@
 /* ============================================================================
  * Liquidity.tsx — Page 1.5 "Liquidity & Float Management".
  * ----------------------------------------------------------------------------
- * MIGRATED FROM: legacy 1.5.html (single-file HTML/CSS/JS, ~2,850 LOC).
- *   - raw HTML converted 1:1 to TSX (class → className, style → style={{ }}),
- *     Bootstrap grid classes (row / col-lg-* / g-3 / d-flex…) kept intact;
- *   - every repeating block (stat cards, bank float rows, agent tables, alert
- *     lists, forecast bars, activity tables…) extracted into `initialMockData`
- *     below and rendered with .map();
- *   - data loads through TanStack Query (fetchLiquidityFloat →
- *     GET /api/liquidity-float) with the bundled mock as fallback; a Bootstrap
- *     .spinner-border shows while isLoading and an .alert-danger banner shows
- *     on error — the page never renders empty;
- *   - the legacy pm-sidebar + pm-header chrome is replaced by the shared
- *     AppShell (this page renders inside routes/app.tsx <Outlet />);
- *   - all 25 Bootstrap-JS modals + flows{} + sw() + doAction() + nf() became
- *     React state-driven modals (see ../components/LiquidityModals.tsx).
+ * MIGRATED FROM: legacy 1.5.html (single-file HTML/CSS/JS, ~2,850 LOC) and
+ * REBUILT as a payment-facilitator float workspace (LIQUIDITY_REBUILD_PLAN.md):
+ *
+ *   - World A — Business Floats: per-business settlement floats (the tanks that
+ *     fund customer auto-settlement), with meters, My Access pills, editable
+ *     Float Rules, a float-movement ledger, payout-rail liquidity and a runway
+ *     forecast. Replaces the old bank/agent/partner treasury console.
+ *   - World B — My Liquidity: your Business Wallet + Virtual Wallet, internal
+ *     transfers, and the Facilitator Permissions scopes over customer money.
+ *   - The rebalance (World B wallet -> World A business float) is the hero flow,
+ *     and the RB- refs cross-link to the Reconciliation page.
  *
  * STYLES: ../styles/liquidity.module.css (emerald theme = Transfer page theme).
  * ========================================================================== */
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
@@ -75,7 +72,6 @@ interface Row {
 	sub: string;
 	action: string;
 	modal: string;
-	dangerBtn?: boolean;
 }
 interface QuickAction {
 	icon: string;
@@ -83,35 +79,56 @@ interface QuickAction {
 	label: string;
 	modal: string;
 }
-interface BankFloatRow {
-	bank: string;
-	account: string;
-	float: string;
-	threshold: string;
+interface BusinessFloat {
+	id: string;
+	name: string;
+	type: string;
+	customers: number;
+	schedule: string;
+	balance: number;
+	minimum: number;
 	status: string;
 	statusTone: Tone;
-	action: { label: string; modal: string; danger?: boolean };
+	runwayDays: string;
+	runwayTone: "success" | "warn" | "danger";
+	role: string;
+	roleLimit: string;
+	rails: { rail: string; share: number }[];
+	autoRule: { trigger: string; source: string; topUp: string };
 }
-interface PoolRow {
-	name: string;
+interface FloatMovement {
+	ref: string;
+	time: string;
+	business: string;
+	direction: string;
+	from: string;
+	to: string;
 	amount: string;
-	status: string;
-	tone: Tone;
-}
-interface AgentRow {
-	name: string;
-	location: string;
-	current: string;
-	min: string;
+	trigger: "Manual" | "Auto";
 	status: string;
 	statusTone: Tone;
-	action: { label: string; modal: string; danger?: boolean };
 }
-interface PartnerRow {
+interface RailUsage {
+	rail: string;
+	share: number;
+	consumed: string;
+	businesses: string;
+	tone: ToneColor;
+}
+interface MyWallet {
+	icon: string;
 	name: string;
-	amount: string;
-	status: string;
-	tone: Tone;
+	balance: string;
+	available: string;
+	pending: string;
+	purpose: string;
+	linked: string;
+}
+interface ScopeRow {
+	icon: string;
+	scope: string;
+	desc: string;
+	granted: boolean;
 }
 interface AlertRow {
 	title: string;
@@ -124,25 +141,7 @@ interface ToggleRow {
 	sub: string;
 	on: boolean;
 }
-interface RebalanceRow {
-	time: string;
-	from: string;
-	to: string;
-	amount: string;
-	status: string;
-	statusTone: Tone;
-	ref: string;
-}
-interface SettlementRow {
-	batch: string;
-	counterparty: string;
-	amount: string;
-	status: string;
-	statusTone: Tone;
-	variance: string;
-	action: { label: string; modal: string };
-}
-interface ForecastBar {
+interface RunwayBar {
 	height: number;
 	color: ToneColor;
 	label: string;
@@ -153,26 +152,9 @@ interface ScenarioRow {
 	badge: string;
 	tone: Tone;
 }
-interface Facility {
-	title: string;
-	value: string;
-	sub: string;
-	tone: "danger" | "warn";
-	btnLabel: string;
-	btnDanger?: boolean;
-	modal: string;
-}
-interface GovRow {
-	time: string;
-	action: string;
-	initiator: string;
-	approver: string;
-	amount: string;
-	status: string;
-	statusTone: Tone;
-}
 interface ActivityRow {
 	time: string;
+	world: "customer" | "internal";
 	action: string;
 	from: string;
 	to: string;
@@ -180,154 +162,148 @@ interface ActivityRow {
 	status: string;
 	statusTone: Tone;
 	ref: string;
-	btn: { label: string; modal: string };
-}
-interface MiniBar {
-	height: number;
-	color: ToneColor;
 }
 
 export interface LiquidityContent extends LiquidityData {
-	heroTitle: string;
-	heroValue: string;
-	heroSub: string;
-	critical: {
+	connected: boolean;
+	connTitle: string;
+	connSub: string;
+	totalFloat: string;
+	totalFloatSub: string;
+	worldStats: {
 		label: string;
 		value: string;
 		badge: string;
 		badgeTone: Tone;
-		bars: MiniBar[];
-	};
-	settlementsStat: {
-		label: string;
-		value: string;
-		badge: string;
-		badgeTone: Tone;
-		pendingLabel: string;
-		pendingValue: string;
-		pct: number;
-	};
-	forecastStat: {
-		label: string;
-		value: string;
-		badge: string;
-		badgeTone: Tone;
-		line1: string;
-		line2: string;
-		edge: boolean;
-	};
+		icon: string;
+	}[];
 	attention: Row[];
 	suggestions: Row[];
 	quickActions: QuickAction[];
-	bankFloat: BankFloatRow[];
-	settlementPools: PoolRow[];
-	criticalAgents: AgentRow[];
-	partnerFloat: PartnerRow[];
+	floats: BusinessFloat[];
+	movements: FloatMovement[];
+	rails: RailUsage[];
+	wallets: MyWallet[];
+	facilitatorScopes: ScopeRow[];
 	activeAlerts: AlertRow[];
 	alertConfig: ToggleRow[];
-	quickTopup: { label: string; modal: string }[];
-	recentRebalance: RebalanceRow[];
-	settlements: SettlementRow[];
-	reconQueue: AlertRow[];
-	forecastBars: ForecastBar[];
+	runwayBars: RunwayBar[];
 	scenarios: ScenarioRow[];
-	facilities: Facility[];
-	governance: GovRow[];
 	activity: ActivityRow[];
+	businesses: string[];
+	businessWallets: string[];
+	walletsList: string[];
 }
+
+const fmt = (n: number) => (n >= 1_000_000 ? `KES ${(n / 1_000_000).toFixed(2)}M` : `KES ${(n / 1_000).toFixed(0)}K`);
 
 /* --------------------------------------------------------------------------
  * initialMockData — every repeating block from legacy 1.5.html extracted.
  * GET /api/liquidity-float should return this same shape.
  * ------------------------------------------------------------------------ */
 const initialMockData: LiquidityContent = {
-	heroTitle: "Liquidity command center is live",
-	heroValue: "KES 1.84B Total Float",
-	heroSub:
-		"Across 12 partner banks, 847 agents and 31 settlement accounts — all monitored in real time.",
+	connected: false,
+	connTitle: "Paymo not connected yet",
+	connSub:
+		"Link your API key to start holding and moving float. You're currently viewing preview data.",
+	totalFloat: "KES 3.84M",
+	totalFloatSub: "Total float held for auto-settlement across your 2 linked businesses",
 
-	// critical: {
-	// 	label: "CRITICAL FLOAT",
-	// 	value: "KES 42.8M",
-	// 	badge: "7 accounts below threshold",
-	// 	badgeTone: "warn",
-	// 	bars: [
-	// 		{ height: 85, color: "danger" },
-	// 		{ height: 60, color: "warn" },
-	// 		{ height: 40, color: "info" },
-	// 		{ height: 75, color: "danger" },
-	// 	],
-	// },
-	settlementsStat: {
-		label: "SETTLEMENTS TODAY",
-		value: "KES 318.4M",
-		badge: "94% completed",
-		badgeTone: "success",
-		pendingLabel: "Pending",
-		pendingValue: "KES 19.2M",
-		pct: 94,
-	},
-	forecastStat: {
-		label: "FORECASTED SHORTFALL (48H)",
-		value: "KES 87.5M",
-		badge: "3 banks at risk",
-		badgeTone: "info",
-		line1: "Recommended top-up: KES 120M",
-		line2: "Auto-rebalance scheduled: Tomorrow 06:00",
-		edge: true,
-	},
+	worldStats: [
+		{
+			label: "TOTAL FLOAT HELD",
+			value: "KES 3.84M",
+			badge: "2 business floats",
+			badgeTone: "success",
+			icon: "bi-bank2",
+		},
+		{
+			label: "FLOAT VS MINIMUM",
+			value: "KES 340K",
+			badge: "above combined minimum",
+			badgeTone: "warn",
+			icon: "bi-bar-chart",
+		},
+		{
+			label: "DAYS OF PAYOUT RUNWAY",
+			value: "2.5 days",
+			badge: "worst business",
+			badgeTone: "info",
+			icon: "bi-calendar2-week",
+		},
+		{
+			label: "AUTO-SETTLE READY",
+			value: "KES 3.2M",
+			badge: "1 of 2 floats above min",
+			badgeTone: "success",
+			icon: "bi-lightning-charge",
+		},
+		{
+			label: "PAYOUTS THIS WEEK",
+			value: "KES 4.6M",
+			badge: "drawn from floats",
+			badgeTone: "purple",
+			icon: "bi-arrow-up-right",
+		},
+		{
+			label: "FLOATS BELOW MINIMUM",
+			value: "1",
+			badge: "Company 2 at risk",
+			badgeTone: "danger",
+			icon: "bi-exclamation-triangle",
+		},
+	],
 
 	attention: [
 		{
-			icon: "bi-bank",
+			icon: "bi-wallet2",
 			tone: "danger",
-			title: "KCB Float critically low",
-			sub: "KES 8.2M remaining (threshold KES 15M)",
-			action: "Top-up",
+			title: "Company 2 float below minimum",
+			sub: "KES 640K available • KES 500K min • auto-settle at risk",
+			action: "Rebalance",
 			modal: "rebalanceModal",
-			dangerBtn: true,
 		},
 		{
-			icon: "bi-people",
+			icon: "bi-calendar-event",
 			tone: "warn",
-			title: "47 agents below minimum float",
-			sub: "Auto-replenishment failed for 12",
-			action: "Review",
-			modal: "agentFloatModal",
+			title: "Land Buyers payout batch due Friday",
+			sub: "Projected draw KES 2.8M • float short by KES 2.8M",
+			action: "Top-up",
+			modal: "topupBankModal",
 		},
 		{
-			icon: "bi-clock-history",
+			icon: "bi-arrow-repeat",
 			tone: "info",
-			title: "Settlement mismatch detected",
-			sub: "Equity Bank batch #SB-44291 — KES 1.8M variance",
-			action: "Investigate",
-			modal: "reconciliationModal",
+			title: "Auto-refill rule paused for Land Buyers",
+			sub: "Re-enable to prevent future gaps before Friday batch",
+			action: "Enable",
+			modal: "thresholdModal",
 		},
 	],
 	suggestions: [
 		{
-			icon: "bi-arrow-repeat",
+			icon: "bi-shield-plus",
 			tone: "success",
-			title: "Rebalance 5 low-float banks tonight",
-			sub: "Projected savings: KES 340K in overnight fees",
-			action: "Schedule",
-			modal: "rebalanceModal",
-		},
-		{
-			icon: "bi-graph-up",
-			tone: "info",
-			title: "Increase Co-op float buffer by 18%",
-			sub: "Based on weekend transaction patterns",
+			title: "Set auto-rebalance at 20% above minimum",
+			sub: "Prevents weekend gaps for Land Buyers",
 			action: "Apply",
-			modal: "forecastModal",
+			modal: "thresholdModal",
 		},
 		{
-			icon: "bi-shield-check",
+			icon: "bi-arrow-left-right",
+			tone: "info",
+			title: "Move KES 2M Virtual → Business Wallet",
+			sub: "Before Friday's Land Buyers payout batch",
+			action: "Move",
+			modal: "internalTransferModal",
+		},
+		{
+			icon: "bi-clock",
 			tone: "warn",
-			title: "Activate emergency liquidity line",
-			sub: "KES 200M standby facility ready",
-			action: "Activate",
-			modal: "emergencyLiquidityModal",
+			title: "Schedule daily float top-up at 6 AM",
+			sub: "Avoids auto-settle pauses during peak hours",
+			action: "Schedule",
+			modal: "forecastModal",
 		},
 	],
 	quickActions: [
@@ -338,34 +314,34 @@ const initialMockData: LiquidityContent = {
 			modal: "rebalanceModal",
 		},
 		{
-			icon: "bi-bank",
+			icon: "bi-plus-circle",
 			tone: "info",
-			label: "Top-up Bank",
+			label: "Top-up Float",
 			modal: "topupBankModal",
 		},
 		{
-			icon: "bi-people",
+			icon: "bi-wallet2",
 			tone: "pri",
-			label: "Agent Float",
-			modal: "agentFloatModal",
+			label: "My Wallets",
+			modal: "internalTransferModal",
 		},
 		{
-			icon: "bi-clock-history",
+			icon: "bi-sliders",
 			tone: "purple",
-			label: "Settlements",
-			modal: "settlementModal",
+			label: "Float Rules",
+			modal: "thresholdModal",
+		},
+		{
+			icon: "bi-shield-check",
+			tone: "warn",
+			label: "My Access",
+			modal: "governanceModal",
 		},
 		{
 			icon: "bi-graph-up-arrow",
-			tone: "warn",
-			label: "Forecast",
-			modal: "forecastModal",
-		},
-		{
-			icon: "bi-lightning-charge",
 			tone: "danger",
-			label: "Emergency",
-			modal: "emergencyLiquidityModal",
+			label: "Runway",
+			modal: "forecastModal",
 		},
 		{
 			icon: "bi-search",
@@ -381,413 +357,317 @@ const initialMockData: LiquidityContent = {
 		},
 	],
 
-	bankFloat: [
+	floats: [
 		{
-			bank: "KCB Bank",
-			account: "KCB-447291",
-			float: "KES 142.8M",
-			threshold: "KES 80M",
-			status: "Healthy",
+			id: "land",
+			name: "Land Buyers LTD",
+			type: "Real Estate • 30 customers • Weekly • Fri",
+			customers: 30,
+			schedule: "Weekly • Fri",
+			balance: 3_200_000,
+			minimum: 3_000_000,
+			status: "Active",
 			statusTone: "success",
-			action: { label: "Manage", modal: "rebalanceModal" },
+			runwayDays: "6 days",
+			runwayTone: "success",
+			role: "Manager",
+			roleLimit: "payouts ≤ KES 5M",
+			rails: [
+				{ rail: "Bank transfer", share: 60 },
+				{ rail: "M-Pesa", share: 40 },
+			],
+			autoRule: {
+				trigger: "below-minimum",
+				source: "Business Wallet",
+				topUp: "to min + 20%",
+			},
 		},
 		{
-			bank: "Equity Bank",
-			account: "EQB-991023",
-			float: "KES 98.4M",
-			threshold: "KES 60M",
-			status: "Healthy",
+			id: "co2",
+			name: "Company 2",
+			type: "Retail • 209 customers • Daily",
+			customers: 209,
+			schedule: "Daily",
+			balance: 640_000,
+			minimum: 500_000,
+			status: "Active",
 			statusTone: "success",
-			action: { label: "Manage", modal: "rebalanceModal" },
-		},
-		{
-			bank: "Co-op Bank",
-			account: "COOP-334871",
-			float: "KES 41.2M",
-			threshold: "KES 45M",
-			status: "Warning",
-			statusTone: "warn",
-			action: { label: "Top-up", modal: "topupBankModal", danger: true },
-		},
-		{
-			bank: "Absa Bank",
-			account: "ABSA-772910",
-			float: "KES 67.9M",
-			threshold: "KES 40M",
-			status: "Healthy",
-			statusTone: "success",
-			action: { label: "Manage", modal: "rebalanceModal" },
-		},
-		{
-			bank: "Stanbic Bank",
-			account: "STB-556102",
-			float: "KES 12.4M",
-			threshold: "KES 25M",
-			status: "Critical",
-			statusTone: "danger",
-			action: {
-				label: "Emergency",
-				modal: "emergencyLiquidityModal",
-				danger: true,
+			runwayDays: "2.5 days",
+			runwayTone: "danger",
+			role: "Owner",
+			roleLimit: "full rights",
+			rails: [
+				{ rail: "M-Pesa", share: 78 },
+				{ rail: "Card", share: 22 },
+			],
+			autoRule: {
+				trigger: "below-minimum",
+				source: "Business Wallet",
+				topUp: "to min + 25% • daily 06:00",
 			},
 		},
 	],
-	settlementPools: [
+	movements: [
 		{
-			name: "PayMo Main Pool",
-			amount: "KES 284.6M",
-			status: "Optimal",
-			tone: "success",
+			ref: "RB-9921",
+			time: "Today 09:15",
+			business: "Land Buyers LTD",
+			direction: "Auto-refill",
+			from: "Business Wallet",
+			to: "Land Buyers Float",
+			amount: "KES 3,000,000",
+			trigger: "Auto",
+			status: "Completed",
+			statusTone: "success",
 		},
 		{
-			name: "Agent Float Pool",
-			amount: "KES 119.3M",
-			status: "Warning",
-			tone: "warn",
+			ref: "RB-9922",
+			time: "Today 08:30",
+			business: "Company 2",
+			direction: "Auto-refill",
+			from: "Business Wallet",
+			to: "Company 2 Float",
+			amount: "KES 640,000",
+			trigger: "Auto",
+			status: "Completed",
+			statusTone: "success",
 		},
 		{
-			name: "Partner Settlement",
-			amount: "KES 67.8M",
-			status: "Healthy",
-			tone: "success",
+			ref: "RB-9919",
+			time: "Yesterday 16:05",
+			business: "Land Buyers LTD",
+			direction: "Payout",
+			from: "Land Buyers Float",
+			to: "Bank transfer",
+			amount: "KES 2,250,000",
+			trigger: "Auto",
+			status: "Completed",
+			statusTone: "success",
 		},
 		{
-			name: "Emergency Reserve",
-			amount: "KES 200.0M",
-			status: "Ready",
-			tone: "success",
-		},
-	],
-
-	criticalAgents: [
-		{
-			name: "John's M-Pesa",
-			location: "Kawangware",
-			current: "KES 18,400",
-			min: "KES 50,000",
-			status: "Critical",
-			statusTone: "danger",
-			action: { label: "Top-up", modal: "agentTopupModal", danger: true },
-		},
-		{
-			name: "Grace Kiosk",
-			location: "Kayole",
-			current: "KES 29,100",
-			min: "KES 40,000",
-			status: "Low",
-			statusTone: "warn",
-			action: { label: "Top-up", modal: "agentTopupModal" },
-		},
-		{
-			name: "Peter Agent",
-			location: "Embakasi",
-			current: "KES 12,800",
-			min: "KES 35,000",
-			status: "Critical",
-			statusTone: "danger",
-			action: { label: "Top-up", modal: "agentTopupModal", danger: true },
+			ref: "TN-9921",
+			time: "Yesterday 11:20",
+			business: "—",
+			direction: "Wallet transfer",
+			from: "Business Wallet",
+			to: "Virtual Wallet",
+			amount: "KES 150,000",
+			trigger: "Manual",
+			status: "Completed",
+			statusTone: "success",
 		},
 	],
-	partnerFloat: [
+	rails: [
 		{
-			name: "Safaricom M-Pesa",
-			amount: "KES 1.24B",
-			status: "Healthy",
-			tone: "success",
+			rail: "M-Pesa",
+			share: 62,
+			consumed: "KES 2.9M",
+			businesses: "Company 2 • Land Buyers",
+			tone: "pri",
 		},
 		{
-			name: "Airtel Money",
-			amount: "KES 312M",
-			status: "Healthy",
-			tone: "success",
+			rail: "Bank transfer",
+			share: 24,
+			consumed: "KES 1.1M",
+			businesses: "Land Buyers LTD",
+			tone: "info",
 		},
 		{
-			name: "Telkom T-Kash",
-			amount: "KES 87M",
-			status: "Warning",
-			tone: "warn",
+			rail: "Card",
+			share: 10,
+			consumed: "KES 460K",
+			businesses: "Company 2",
+			tone: "purple",
 		},
 		{
-			name: "Equity Pay",
-			amount: "KES 156M",
-			status: "Healthy",
-			tone: "success",
+			rail: "Paymo wallet",
+			share: 4,
+			consumed: "KES 184K",
+			businesses: "Refills & fees",
+			tone: "muted",
+		},
+	],
+	wallets: [
+		{
+			icon: "bi-briefcase",
+			name: "Business Wallet",
+			balance: "KES 8.40M",
+			available: "KES 7.90M",
+			pending: "KES 500K",
+			purpose: "Funding customer payouts & floats",
+			linked: "Equity Bank • 01-2345678-0",
+		},
+		{
+			icon: "bi-person-circle",
+			name: "Virtual Wallet",
+			balance: "KES 2.10M",
+			available: "KES 2.10M",
+			pending: "KES 0",
+			purpose: "My own money, withdrawable",
+			linked: "Paymo account • VIR-88213",
+		},
+	],
+	facilitatorScopes: [
+		{
+			icon: "bi-eye",
+			scope: "View customer transactions",
+			desc: "See all 239 customers' txn data flowing through your floats",
+			granted: true,
+		},
+		{
+			icon: "bi-arrow-counterclockwise",
+			scope: "Initiate refunds",
+			desc: "Auto-approve refunds under KES 5K to customers",
+			granted: true,
+		},
+		{
+			icon: "bi-shield-exclamation",
+			scope: "Reverse chargebacks",
+			desc: "File and manage disputes on customer payments",
+			granted: true,
+		},
+		{
+			icon: "bi-pause-circle",
+			scope: "Hold settlements",
+			desc: "Pause a business's payouts while an exception is open",
+			granted: false,
+		},
+		{
+			icon: "bi-file-earmark-bar-graph",
+			scope: "Export statements",
+			desc: "Per-business float & settlement statements",
+			granted: true,
 		},
 	],
 
 	activeAlerts: [
 		{
-			title: "Stanbic Bank float critical",
-			sub: "12.4M / 25M threshold",
+			title: "Company 2 float below minimum",
+			sub: "KES 640K / KES 500K min • auto-settle at risk",
 			badge: "Critical",
 			tone: "danger",
 		},
 		{
-			title: "Co-op Bank warning",
-			sub: "41.2M / 45M threshold",
+			title: "Land Buyers weekly payout due Friday",
+			sub: "Projected draw KES 2.8M",
+			badge: "Watch",
+			tone: "warn",
+		},
+		{
+			title: "Auto-refill paused for Land Buyers",
+			sub: "Manual top-up required before Friday",
 			badge: "Warning",
 			tone: "warn",
 		},
 		{
-			title: "12 agents below minimum",
-			sub: "Auto-replenishment failed",
-			badge: "Warning",
-			tone: "warn",
-		},
-		{
-			title: "Equity settlement variance",
-			sub: "KES 1.8M mismatch",
-			badge: "Investigate",
+			title: "M-Pesa payout rail slight delay",
+			sub: "+12 min avg this morning",
+			badge: "Info",
 			tone: "info",
 		},
 	],
 	alertConfig: [
 		{
-			label: "Bank float threshold",
+			label: "Business float threshold",
 			sub: "Alert when below 80% of minimum",
 			on: true,
 		},
 		{
-			label: "Agent float threshold",
-			sub: "Alert when below KES 30,000",
+			label: "Runway below 3 days",
+			sub: "Alert before auto-settle pauses",
 			on: true,
 		},
 		{
-			label: "Settlement mismatch",
-			sub: "Alert on >KES 500K variance",
+			label: "Auto-refill failure",
+			sub: "Alert when a scheduled refill fails",
 			on: true,
 		},
 		{
-			label: "Forecast shortfall",
-			sub: "Alert 48 hours before predicted low",
-			on: true,
+			label: "Rail delay",
+			sub: "Alert when a payout rail slows > 10 min",
+			on: false,
 		},
 	],
 
-	quickTopup: [
-		{ label: "Bank Float", modal: "topupBankModal" },
-		{ label: "Agent Float", modal: "agentTopupModal" },
-		{ label: "Partner Float", modal: "partnerTopupModal" },
-		{ label: "Internal Transfer", modal: "internalTransferModal" },
-	],
-	recentRebalance: [
-		{
-			time: "27 Jun 14:22",
-			from: "PayMo Main",
-			to: "Stanbic Bank",
-			amount: "KES 25.0M",
-			status: "Completed",
-			statusTone: "success",
-			ref: "RB-44291",
-		},
-		{
-			time: "27 Jun 11:45",
-			from: "Equity Bank",
-			to: "Co-op Bank",
-			amount: "KES 12.5M",
-			status: "Completed",
-			statusTone: "success",
-			ref: "RB-44288",
-		},
-		{
-			time: "27 Jun 09:10",
-			from: "PayMo Main",
-			to: "Agent Pool",
-			amount: "KES 8.0M",
-			status: "Completed",
-			statusTone: "success",
-			ref: "RB-44285",
-		},
-	],
-
-	settlements: [
-		{
-			batch: "SB-44291",
-			counterparty: "Equity Bank",
-			amount: "KES 87.4M",
-			status: "Variance",
-			statusTone: "warn",
-			variance: "KES 1.8M",
-			action: { label: "Investigate", modal: "reconciliationModal" },
-		},
-		{
-			batch: "SB-44290",
-			counterparty: "KCB Bank",
-			amount: "KES 112.6M",
-			status: "Matched",
-			statusTone: "success",
-			variance: "KES 0",
-			action: { label: "View", modal: "settlementDetailModal" },
-		},
-		{
-			batch: "SB-44289",
-			counterparty: "Co-op Bank",
-			amount: "KES 54.2M",
-			status: "Matched",
-			statusTone: "success",
-			variance: "KES 0",
-			action: { label: "View", modal: "settlementDetailModal" },
-		},
-	],
-	reconQueue: [
-		{ title: "Pending batches", sub: "3 batches", badge: "3", tone: "info" },
-		{
-			title: "Mismatches to resolve",
-			sub: "1 variance",
-			badge: "1",
-			tone: "warn",
-		},
-		{ title: "Auto-matched today", sub: "94%", badge: "28", tone: "success" },
-	],
-
-	forecastBars: [
-		{ height: 75, color: "pri", label: "Now" },
-		{ height: 68, color: "pri", label: "+6h" },
-		{ height: 55, color: "warn", label: "+12h" },
-		{ height: 42, color: "danger", label: "+24h" },
-		{ height: 38, color: "danger", label: "+36h" },
-		{ height: 52, color: "warn", label: "+48h" },
+	runwayBars: [
+		{ height: 95, color: "pri", label: "Now" },
+		{ height: 82, color: "pri", label: "+12h" },
+		{ height: 64, color: "warn", label: "+24h" },
+		{ height: 48, color: "danger", label: "+36h" },
+		{ height: 38, color: "danger", label: "+48h" },
 	],
 	scenarios: [
 		{
-			title: "Weekend surge (+40%)",
-			sub: "Probability: 68%",
-			badge: "Medium",
-			tone: "warn",
-		},
-		{
-			title: "Salary run (end of month)",
-			sub: "Probability: 92%",
+			title: "Land Buyers weekly batch due Fri",
+			sub: "Probability: 92% • draw KES 2.8M",
 			badge: "High",
 			tone: "danger",
 		},
 		{
-			title: "Partner outage",
-			sub: "Probability: 12%",
+			title: "Company 2 weekend surge",
+			sub: "Probability: 68% • M-Pesa orders",
+			badge: "Medium",
+			tone: "warn",
+		},
+		{
+			title: "M-Pesa payout rail delay",
+			sub: "Probability: 12% • +2h worst case",
 			badge: "Low",
 			tone: "info",
 		},
 	],
 
-	facilities: [
-		{
-			title: "STANDBY LINE",
-			value: "KES 200M",
-			sub: "Available 24/7 • Pre-approved",
-			tone: "danger",
-			btnLabel: "Activate Now",
-			btnDanger: true,
-			modal: "emergencyLiquidityModal",
-		},
-		{
-			title: "PARTNER CREDIT LINE",
-			value: "KES 150M",
-			sub: "Equity Bank facility • 2-hour activation",
-			tone: "warn",
-			btnLabel: "Request",
-			modal: "emergencyLiquidityModal",
-		},
-	],
-	governance: [
-		{
-			time: "26 Jun 22:14",
-			action: "Emergency top-up",
-			initiator: "System",
-			approver: "CFO (auto)",
-			amount: "KES 80M",
-			status: "Executed",
-			statusTone: "success",
-		},
-		{
-			time: "25 Jun 14:02",
-			action: "Float rebalance override",
-			initiator: "Liquidity Mgr",
-			approver: "Treasurer",
-			amount: "KES 45M",
-			status: "Executed",
-			statusTone: "success",
-		},
-		{
-			time: "24 Jun 09:30",
-			action: "Threshold change",
-			initiator: "Ops Lead",
-			approver: "Risk Committee",
-			amount: "—",
-			status: "Approved",
-			statusTone: "success",
-		},
-	],
-
 	activity: [
 		{
-			time: "27 Jun 14:22",
-			action: "Rebalance",
-			from: "PayMo Main",
-			to: "Stanbic",
-			amount: "KES 25.0M",
-			status: "Success",
+			time: "Today 09:15",
+			world: "customer",
+			action: "Auto-refill",
+			from: "Business Wallet",
+			to: "Land Buyers Float",
+			amount: "KES 3,000,000",
+			status: "Completed",
 			statusTone: "success",
-			ref: "RB-44291",
-			btn: { label: "View", modal: "reconciliationModal" },
+			ref: "RB-9921",
 		},
 		{
-			time: "27 Jun 11:45",
-			action: "Top-up",
-			from: "KCB",
-			to: "Co-op",
-			amount: "KES 12.5M",
-			status: "Success",
+			time: "Today 08:30",
+			world: "customer",
+			action: "Auto-refill",
+			from: "Business Wallet",
+			to: "Company 2 Float",
+			amount: "KES 640,000",
+			status: "Completed",
 			statusTone: "success",
-			ref: "TP-44288",
-			btn: { label: "View", modal: "reconciliationModal" },
+			ref: "RB-9922",
 		},
 		{
-			time: "27 Jun 09:10",
-			action: "Agent top-up",
-			from: "Agent Pool",
-			to: "John's M-Pesa",
-			amount: "KES 50,000",
-			status: "Success",
+			time: "Yesterday 16:05",
+			world: "customer",
+			action: "Payout",
+			from: "Land Buyers Float",
+			to: "Bank transfer",
+			amount: "KES 2,250,000",
+			status: "Completed",
 			statusTone: "success",
-			ref: "AG-44285",
-			btn: { label: "View", modal: "agentFloatModal" },
+			ref: "RB-9919",
 		},
 		{
-			time: "26 Jun 22:14",
-			action: "Emergency",
-			from: "Reserve",
-			to: "Equity",
-			amount: "KES 80.0M",
-			status: "Success",
+			time: "Yesterday 11:20",
+			world: "internal",
+			action: "Wallet transfer",
+			from: "Business Wallet",
+			to: "Virtual Wallet",
+			amount: "KES 150,000",
+			status: "Completed",
 			statusTone: "success",
-			ref: "EM-44279",
-			btn: { label: "Audit", modal: "governanceModal" },
+			ref: "TN-9921",
 		},
 	],
 
 	/* option lists consumed by the modal forms */
-	banks: [
-		"KCB Bank (KES 142.8M)",
-		"Equity Bank (KES 98.4M)",
-		"Co-op Bank (KES 41.2M)",
-		"Absa Bank (KES 67.9M)",
-		"Stanbic Bank (KES 12.4M)",
-	],
-	pools: [
-		"PayMo Main Pool (KES 284.6M)",
-		"Emergency Reserve (KES 200M)",
-		"Agent Float Pool (KES 119.3M)",
-	],
-	agents: [
-		"John's M-Pesa (KES 18,400)",
-		"Peter Agent (KES 12,800)",
-		"Grace Kiosk (KES 29,100)",
-	],
-	partners: [
-		"Safaricom M-Pesa (KES 1.24B)",
-		"Airtel Money (KES 312M)",
-		"Telkom T-Kash (KES 87M)",
-	],
+	businesses: ["Land Buyers LTD", "Company 2"],
+	businessWallets: ["Business Wallet (KES 8.40M)", "Virtual Wallet (KES 2.10M)"],
+	walletsList: ["Business Wallet (KES 8.40M)", "Virtual Wallet (KES 2.10M)"],
 };
 
 /* --------------------------------------------------------------------------
@@ -802,50 +682,12 @@ async function fetchLiquidityFloat(): Promise<LiquidityContent> {
 }
 
 /* --------------------------------------------------------------------------
- * Settlement navigation buttons — navigate to /pm/app/settlement and pass
- * a ?modal= search param so the Settlement page opens the right modal.
- * ------------------------------------------------------------------------ */
-function MakeSettlementsBtn() {
-	const navigate = useNavigate();
-	return (
-		<button
-			type="button"
-			className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-			onClick={() =>
-				navigate({
-					to: "/pm/app/settlement",
-					search: { modal: "initiateSettlementModal" },
-				})
-			}
-		>
-			Make Settlements
-		</button>
-	);
-}
-
-function ScheduleSettlementsBtn() {
-	const navigate = useNavigate();
-	return (
-		<button
-			type="button"
-			className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-			onClick={() =>
-				navigate({
-					to: "/pm/app/settlement",
-					search: { modal: "settlementCalendarModal" },
-				})
-			}
-		>
-			Schedule Settlements
-		</button>
-	);
-}
-
-/* --------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Liquidity() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [world, setWorld] = useState<"floats" | "wallets">("floats");
+	const [biz, setBiz] = useState("all");
 	const openModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>
@@ -860,6 +702,14 @@ export default function Liquidity() {
 	// Falls back to initialMockData so the page never breaks.
 	const c = data ?? initialMockData;
 
+	const bizName =
+		biz === "land" ? "Land Buyers LTD" : biz === "co2" ? "Company 2" : "";
+	const inScope = (b: string) => biz === "all" || b === bizName;
+	const bizFloats = c.floats.filter((f) => inScope(f.name));
+	const bizMovements = c.movements.filter(
+		(m) => m.business === "—" || inScope(m.business),
+	);
+
 	const renderRow = (item: Row) => (
 		<div className={s.rowItem} key={item.title}>
 			<div className={s.rowLead}>
@@ -873,7 +723,7 @@ export default function Liquidity() {
 			</div>
 			<button
 				type="button"
-				className={cx(s.btn, s.btnSm, item.dangerBtn && s.btnDangerGhost)}
+				className={cx(s.btn, s.btnSm)}
 				onClick={() => openModal(item.modal)}
 			>
 				{item.action}
@@ -917,29 +767,32 @@ export default function Liquidity() {
 							<Link to="/app/transfers">Transactions Hub</Link> /{" "}
 							<strong>Liquidity &amp; Float</strong>
 						</div>
-						<h1 className={s.pageTitle}>
-							{/* Liquidity &amp; Float Management */}
-							</h1>
+						<h1 className={s.pageTitle}>Liquidity &amp; Float</h1>
 						<p className={s.pageCopy}>
-							{/* Monitor and manage float across banks, agents, and partners.
-							Execute rebalancing, forecast shortfalls, and trigger emergency
-							liquidity with full audit trails. */}
+							The money-fuel side of your settlements — what's in the tanks,
+							and how you move it so customers can always auto-settle.
 						</p>
+						<div className="d-flex align-items-center mt-2" style={{ gap: 10 }}>
+							<span className={cx(s.badge, s.badgeSuccess)}>
+								<i className="bi bi-bank2" /> Total Float {c.totalFloat}
+							</span>
+							<span className={s.connSub}>{c.totalFloatSub}</span>
+						</div>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("liquidityHealthModal")}
+							onClick={() => openModal("floatAlertModal")}
 						>
-							<i className="bi bi-heart-pulse" /> Health Check
+							<i className="bi bi-bell" /> Alerts
 						</button>
 						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("floatAlertModal")}
+							onClick={() => openModal("thresholdModal")}
 						>
-							<i className="bi bi-exclamation-triangle" /> Alerts
+							<i className="bi bi-sliders" /> Float Rules
 						</button>
 						<button
 							type="button"
@@ -948,141 +801,633 @@ export default function Liquidity() {
 						>
 							<i className="bi bi-arrow-left-right" /> Rebalance
 						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnAm, s.btnSm)}
-							onClick={() => openModal("emergencyLiquidityModal")}
-						>
-							<i className="bi bi-lightning-charge" /> Emergency
-						</button>
 					</div>
 				</div>
 
-				{/* ---------- HERO STATS ---------- */}
-				<div className="row g-3">
-					<div className="col-lg-5">
-						<div
-							className={cx(s.card, s.cardAccent)}
-							style={{ minHeight: 170 }}
-						>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
+				{/* ---------- CONNECTION BANNER ---------- */}
+				{!c.connected && (
+					<div className={s.connBanner}>
+						<div className={s.connIcon}>
+							<i className="bi bi-lightbulb" />
+						</div>
+						<div style={{ minWidth: 0 }}>
+							<div className={s.connTitle}>{c.connTitle}</div>
+							<p className={s.connSub}>{c.connSub}</p>
+							<span className={s.connTag}>
+								<i className="bi bi-sandwich" /> Sandbox preview
+							</span>
+						</div>
+						<div style={{ marginLeft: "auto" }}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm, s.btnPrimary)}
+								onClick={() => openModal("topupBankModal")}
 							>
-								{c.heroTitle} <span style={{ color: "#86efac" }}>●</span>
-							</p>
-							<div
-								className={s.statValue}
-								style={{ margin: "8px 0", color: "#fff" }}
-							>
-								{c.heroValue}
-							</div>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
-							>
-								{c.heroSub}
-							</p>
-							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-								<MakeSettlementsBtn />
-								<ScheduleSettlementsBtn />
-							</div>
+								<i className="bi bi-key" /> Link API Key
+							</button>
 						</div>
 					</div>
-					{/* <div className="col-lg-2 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.statLabel} style={{ color: "var(--warning)" }}>
-								{c.critical.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.critical.value}
+				)}
+
+				{/* ---------- WORLD SWITCH + BUSINESS SELECTOR ---------- */}
+				<div
+					style={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						gap: 14,
+						flexWrap: "wrap",
+					}}
+				>
+					<div className={s.worldSwitch}>
+						<button
+							type="button"
+							className={cx(s.worldBtn, world === "floats" && s.worldBtnActive)}
+							onClick={() => setWorld("floats")}
+						>
+							<i className="bi bi-bank2" /> Business Floats
+						</button>
+						<button
+							type="button"
+							className={cx(s.worldBtn, world === "wallets" && s.worldBtnActive)}
+							onClick={() => setWorld("wallets")}
+						>
+							<i className="bi bi-wallet2" /> My Liquidity
+						</button>
+					</div>
+					{world === "floats" && (
+						<div className={s.bizBar}>
+							<span className={s.bizLabel}>Scope</span>
+							<div className={s.pills}>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "all" && s.pillActive)}
+									onClick={() => setBiz("all")}
+								>
+									All Floats
+								</button>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "land" && s.pillActive)}
+									onClick={() => setBiz("land")}
+								>
+									Land Buyers LTD <span className="ms-1">30</span>
+								</button>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "co2" && s.pillActive)}
+									onClick={() => setBiz("co2")}
+								>
+									Company 2 <span className="ms-1">209</span>
+								</button>
 							</div>
-							<span className={cx(s.badge, toneBadge[c.critical.badgeTone])}>
-								<i className="bi bi-exclamation-triangle" /> {c.critical.badge}
-							</span>
-							<div className={cx(s.miniBars, "mt-3")}>
-								{c.critical.bars.map((b, i) => (
-									<div
-										key={`${b.height}-${i}`}
-										className={s.miniBar}
-										style={{
-											height: `${b.height}%`,
-											background: toneColor(b.color),
-										}}
-									/>
+						</div>
+					)}
+				</div>
+
+				{/* ================= WORLD A — BUSINESS FLOATS ================= */}
+				{world === "floats" && (
+					<>
+						{/* ---------- FLOAT HEALTH STATS ---------- */}
+						<div className="row g-3">
+							{c.worldStats.map((st) => (
+								<div className="col-lg-2 col-md-4 col-6" key={st.label}>
+									<div className={s.card} style={{ minHeight: 150 }}>
+										<div
+											style={{
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "space-between",
+											}}
+										>
+											<p className={s.statLabel} style={{ margin: 0 }}>
+												{st.label}
+											</p>
+											<i
+												className={cx("bi", st.icon)}
+												style={{ color: "var(--ink-300)", fontSize: 18 }}
+											/>
+										</div>
+										<div className={s.statValue} style={{ margin: "8px 0" }}>
+											{st.value}
+										</div>
+										<span
+											className={cx(s.badge, toneBadge[st.badgeTone])}
+											style={{ fontSize: 11 }}
+										>
+											{st.badge}
+										</span>
+									</div>
+								</div>
+							))}
+						</div>
+
+						{/* ---------- BUSINESS FLOAT CARDS ---------- */}
+						<div className={s.card}>
+							<div className={s.sectionHead}>
+								<div>
+									<h3 className={s.sectionTitle}>
+										<i className="bi bi-bank2" /> Business Settlement Floats
+									</h3>
+									<p className={s.sectionSub}>
+										Pre-funded tanks that auto-settle each business's customer
+										payments. Rebalance from your wallet to keep them topped up.
+									</p>
+								</div>
+								<div className="d-flex" style={{ gap: 8 }}>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm)}
+										onClick={() => openModal("thresholdModal")}
+									>
+										<i className="bi bi-sliders" /> Float Rules
+									</button>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm, s.btnPrimary)}
+										onClick={() => openModal("rebalanceModal")}
+									>
+										<i className="bi bi-arrow-left-right" /> Rebalance
+									</button>
+								</div>
+							</div>
+							<div className="row g-3">
+								{bizFloats.map((f) => {
+									const pct = Math.round((f.balance / f.minimum) * 100);
+									const fillCls =
+										pct >= 100
+											? s.floatFill
+											: pct >= 80
+												? s.floatFillLow
+												: s.floatFillCritical;
+									return (
+										<div className="col-lg-6" key={f.id}>
+											<div className={s.floatCard}>
+												<div className={s.floatHead}>
+													<div>
+														<h4 className={s.floatName}>{f.name}</h4>
+														<div className={s.floatMeta}>{f.type}</div>
+													</div>
+													<span
+														className={cx(s.badge, toneBadge[f.statusTone])}
+													>
+														<i className="bi bi-circle-fill" style={{ fontSize: 7 }} />{" "}
+														{f.status}
+													</span>
+												</div>
+												<div className={s.floatKpis}>
+													<div className={s.floatKpi}>
+														<div className={s.floatKpiLabel}>Float</div>
+														<div className={s.floatKpiValue}>
+															{fmt(f.balance)}
+														</div>
+													</div>
+													<div className={s.floatKpi}>
+														<div className={s.floatKpiLabel}>Minimum</div>
+														<div className={s.floatKpiValue}>
+															{fmt(f.minimum)}
+														</div>
+													</div>
+												</div>
+												<div>
+													<div className={s.floatMeter}>
+														<div className={fillCls} style={{ width: `${Math.min(pct, 100)}%` }} />
+													</div>
+													<div className={s.floatPct}>
+														<span>
+															{pct}% of minimum • {f.runwayDays} runway
+														</span>
+														<span>
+															<i className="bi bi-lightning-charge" />{" "}
+															{f.autoRule.trigger === "below-minimum"
+																? "auto-settle ready"
+																: "manual"}
+														</span>
+													</div>
+												</div>
+												<div>
+													<span className={s.myAccessPill}>
+														<i className="bi bi-shield-check" /> My Access:{" "}
+														{f.role} · {f.roleLimit}
+													</span>
+													<div
+														className={s.floatMeta}
+														style={{ marginTop: 10 }}
+													>
+														Rails:{" "}
+														{f.rails
+															.map((r) => `${r.rail} ${r.share}%`)
+															.join(" · ")}
+													</div>
+													<div className={s.floatMeta}>
+														Auto-rule: {f.autoRule.source} → top-up{" "}
+														{f.autoRule.topUp}
+													</div>
+												</div>
+												<div
+													className="d-flex"
+													style={{ gap: 8, flexWrap: "wrap", marginTop: "auto" }}
+												>
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("thresholdModal")}
+													>
+														<i className="bi bi-sliders" /> Float Rules
+													</button>
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("topupBankModal")}
+													>
+														<i className="bi bi-plus-circle" /> Top-up
+													</button>
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm, s.btnPrimary)}
+														onClick={() => openModal("rebalanceModal")}
+													>
+														<i className="bi bi-arrow-left-right" /> Rebalance
+													</button>
+												</div>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+
+						{/* ---------- FLOAT MOVEMENTS LEDGER ---------- */}
+						<div className={s.card}>
+							<div className={s.sectionHead}>
+								<div>
+									<h3 className={s.sectionTitle}>
+										<i className="bi bi-arrow-left-right" /> Float Movements
+									</h3>
+									<p className={s.sectionSub}>
+										Every top-up, payout, refund and auto-refill — with the RB-
+										refs that reconcile on the Reconciliation page.
+									</p>
+								</div>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("rebalanceModal")}
+								>
+									<i className="bi bi-plus-lg" /> New Movement
+								</button>
+							</div>
+							<div className={s.tableWrap}>
+								<table className={s.table}>
+									<thead>
+										<tr>
+											<th>Ref</th>
+											<th>Time</th>
+											<th>Business</th>
+											<th>Direction</th>
+											<th>From</th>
+											<th>To</th>
+											<th>Amount</th>
+											<th>Trigger</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{bizMovements.map((m) => (
+											<tr key={m.ref}>
+												<td>
+													<code>{m.ref}</code>
+												</td>
+												<td>{m.time}</td>
+												<td>
+													<strong>{m.business}</strong>
+												</td>
+												<td>{m.direction}</td>
+												<td>{m.from}</td>
+												<td>{m.to}</td>
+												<td>
+													<strong>{m.amount}</strong>
+												</td>
+												<td>
+													<span
+														className={cx(
+															s.badge,
+															m.trigger === "Auto" ? s.badgeInfo : s.badgeOutline,
+														)}
+													>
+														{m.trigger}
+													</span>
+												</td>
+												<td>
+													<span
+														className={cx(s.badge, toneBadge[m.statusTone])}
+													>
+														{m.status}
+													</span>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						{/* ---------- PAYOUT RAIL LIQUIDITY ---------- */}
+						<div className={s.card}>
+							<div className={s.sectionHead}>
+								<div>
+									<h3 className={s.sectionTitle}>
+										<i className="bi bi-people-fill" /> Payout Rail Liquidity
+									</h3>
+									<p className={s.sectionSub}>
+										The sinks of your float — how much each rail (M-Pesa, bank,
+										card, wallet) consumed this week, per business.
+									</p>
+								</div>
+							</div>
+							<div className="row g-3">
+								<div className="col-lg-6">
+									{c.rails.map((r) => (
+										<div className={s.railRow} key={r.rail}>
+											<i
+												className="bi bi-diagram-3"
+												style={{ color: toneColor(r.tone), fontSize: 18 }}
+											/>
+											<div style={{ minWidth: 0, flex: 1 }}>
+												<div
+													style={{
+														display: "flex",
+														justifyContent: "space-between",
+														fontSize: 13,
+													}}
+												>
+													<strong>{r.rail}</strong>
+													<span style={{ color: "var(--ink-500)" }}>
+														{r.consumed}
+													</span>
+												</div>
+												<div className={s.railBar} style={{ marginTop: 6 }}>
+													<div
+														className={s.railFill}
+														style={{
+															width: `${r.share}%`,
+															background: toneColor(r.tone),
+														}}
+													/>
+												</div>
+												<div className={s.floatMeta}>{r.businesses}</div>
+											</div>
+										</div>
+									))}
+								</div>
+								<div className="col-lg-6">
+									<div className={s.subBlock}>
+										<h4 className={s.blockHead}>48-Hour Float Runway</h4>
+										<div className={s.chartBars}>
+											{c.runwayBars.map((b) => (
+												<div
+													key={b.label}
+													className={s.chartBar}
+													style={{
+														height: `${b.height}%`,
+														background: toneColor(b.color),
+													}}
+												>
+													<span className={s.barLabel}>{b.label}</span>
+												</div>
+											))}
+										</div>
+										<div
+											className={cx(s.tile, s.tileDanger, "mt-4")}
+											style={{ fontSize: 12 }}
+										>
+											<i className="bi bi-exclamation-triangle me-1" />{" "}
+											<strong>Company 2 runway drops below 2 days at +36h</strong>{" "}
+											— recommend rebalancing KES 640K from Business Wallet now.
+										</div>
+										<div className="mt-3">
+											<h4 className={s.blockHead}>Risk Scenarios</h4>
+											{c.scenarios.map((sc) => (
+												<div className={s.rowItem} key={sc.title}>
+													<div style={{ minWidth: 0 }}>
+														<strong>{sc.title}</strong>
+														<div className={s.rowSub}>{sc.sub}</div>
+													</div>
+													<span className={cx(s.badge, toneBadge[sc.tone])}>
+														{sc.badge}
+													</span>
+												</div>
+											))}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* ---------- MONITORING & ALERTS ---------- */}
+						<div className={s.card}>
+							<div className={s.sectionHead}>
+								<div>
+									<h3 className={s.sectionTitle}>
+										<i className="bi bi-graph-up-arrow" /> Float Monitoring
+										&amp; Alerts
+									</h3>
+									<p className={s.sectionSub}>
+										Live float levels with per-business thresholds and
+										auto-refill rules.
+									</p>
+								</div>
+								<div className="d-flex" style={{ gap: 8 }}>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm)}
+										onClick={() => openModal("floatAlertModal")}
+									>
+										<i className="bi bi-bell" /> Alerts
+									</button>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm)}
+										onClick={() => openModal("thresholdModal")}
+									>
+										<i className="bi bi-sliders" /> Thresholds
+									</button>
+								</div>
+							</div>
+							<div className="row g-3">
+								<div className="col-lg-6">
+									<div className={s.subBlock}>
+										<h4 className={s.blockHead}>Active Alerts</h4>
+										{c.activeAlerts.map((a) => (
+											<div className={s.rowItem} key={a.title}>
+												<div style={{ minWidth: 0 }}>
+													<strong>{a.title}</strong>
+													<div className={s.rowSub}>{a.sub}</div>
+												</div>
+												<span className={cx(s.badge, toneBadge[a.tone])}>
+													{a.badge}
+												</span>
+											</div>
+										))}
+									</div>
+								</div>
+								<div className="col-lg-6">
+									<div className={s.subBlock}>
+										<h4 className={s.blockHead}>Alert Configuration</h4>
+										{c.alertConfig.map((t) => (
+											<div className={s.switchRow} key={t.label}>
+												<div style={{ minWidth: 0 }}>
+													<div className={s.rowTitle}>{t.label}</div>
+													<div className={s.rowSub}>{t.sub}</div>
+												</div>
+												<div className="form-check form-switch">
+													<input
+														className="form-check-input"
+														type="checkbox"
+														defaultChecked={t.on}
+														aria-label={t.label}
+													/>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+					</>
+				)}
+
+				{/* ================= WORLD B — MY LIQUIDITY ================= */}
+				{world === "wallets" && (
+					<>
+						{/* ---------- MY WALLETS ---------- */}
+						<div className="row g-3">
+							{c.wallets.map((w) => (
+								<div className="col-lg-6" key={w.name}>
+									<div className={s.walletCard}>
+										<div
+											style={{
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "space-between",
+											}}
+										>
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													gap: 12,
+												}}
+											>
+												<div className={s.walletIcon}>
+													<i className={cx("bi", w.icon)} />
+												</div>
+												<div>
+													<h4 className={s.floatName} style={{ margin: 0 }}>
+														{w.name}
+													</h4>
+													<div className={s.floatMeta}>{w.purpose}</div>
+												</div>
+											</div>
+											<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
+										</div>
+										<div className={s.walletBalance}>{w.balance}</div>
+										<div>
+											<div className={s.walletRow}>
+												<span className={s.walletRowLabel}>Available</span>
+												<strong>{w.available}</strong>
+											</div>
+											<div className={s.walletRow}>
+												<span className={s.walletRowLabel}>Pending</span>
+												<strong>{w.pending}</strong>
+											</div>
+											<div className={s.walletRow}>
+												<span className={s.walletRowLabel}>Linked</span>
+												<strong style={{ fontSize: 12 }}>{w.linked}</strong>
+											</div>
+										</div>
+										<div
+											className="d-flex"
+											style={{ gap: 8, flexWrap: "wrap", marginTop: "auto" }}
+										>
+											<button
+												type="button"
+												className={cx(s.btn, s.btnSm)}
+												onClick={() => openModal("internalTransferModal")}
+											>
+												<i className="bi bi-arrow-left-right" /> Send
+											</button>
+											<button
+												type="button"
+												className={cx(s.btn, s.btnSm, s.btnPrimary)}
+												onClick={() => openModal("topupBankModal")}
+											>
+												<i className="bi bi-plus-circle" /> Top Up
+											</button>
+											<button
+												type="button"
+												className={cx(s.btn, s.btnSm)}
+												onClick={() => openModal("internalTransferModal")}
+											>
+												<i className="bi bi-bank" /> Withdraw
+											</button>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+
+						{/* ---------- FACILITATOR PERMISSIONS ---------- */}
+						<div className={s.card}>
+							<div className={s.sectionHead}>
+								<div>
+									<h3 className={s.sectionTitle}>
+										<i className="bi bi-shield-check" /> Facilitator Permissions
+									</h3>
+									<p className={s.sectionSub}>
+										Your authority over your customers' money and data while it
+										flows through your floats.
+									</p>
+								</div>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("governanceModal")}
+								>
+									<i className="bi bi-arrow-repeat" /> Request Access
+								</button>
+							</div>
+							<div className="row g-3">
+								{c.facilitatorScopes.map((sc) => (
+									<div className="col-lg-4" key={sc.scope}>
+										<div className={s.permItem}>
+											<i
+												className={cx("bi", sc.icon)}
+												style={{
+													color: sc.granted ? "var(--success)" : "var(--warning)",
+													fontSize: 18,
+													marginTop: 2,
+												}}
+											/>
+											<div style={{ minWidth: 0, flex: 1 }}>
+												<div className={s.permTitle}>{sc.scope}</div>
+												<div className={s.permSub}>{sc.desc}</div>
+											</div>
+											<span
+												className={cx(
+													s.badge,
+													sc.granted ? s.badgeSuccess : s.badgeWarn,
+												)}
+											>
+												{sc.granted ? "Granted" : "Pending"}
+											</span>
+										</div>
+									</div>
 								))}
 							</div>
 						</div>
-					</div> */}
-					<div className="col-lg-4 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.statLabel} style={{ color: "var(--info)" }}>
-								{c.settlementsStat.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.settlementsStat.value}
-							</div>
-							<span
-								className={cx(s.badge, toneBadge[c.settlementsStat.badgeTone])}
-							>
-								<i className="bi bi-check-circle" /> {c.settlementsStat.badge}
-							</span>
-							<div className="mt-2">
-								<div
-									className="d-flex justify-content-between"
-									style={{ fontSize: 11, color: "var(--ink-500)" }}
-								>
-									<span>{c.settlementsStat.pendingLabel}</span>
-									<span>{c.settlementsStat.pendingValue}</span>
-								</div>
-								<div className={cx(s.progress, "mt-1")}>
-									<div
-										className={s.progressBar}
-										style={{
-											width: `${c.settlementsStat.pct}%`,
-											background: "var(--pri)",
-										}}
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-3 col-md-4">
-						<div
-							className={cx(s.card, c.forecastStat.edge && s.cardAccentEdge)}
-							style={{ minHeight: 170 }}
-						>
-							<p className={s.statLabel} style={{ color: "var(--pri)" }}>
-								{c.forecastStat.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.forecastStat.value}
-							</div>
-							<span
-								className={cx(s.badge, toneBadge[c.forecastStat.badgeTone])}
-							>
-								<i className="bi bi-graph-down-arrow" /> {c.forecastStat.badge}
-							</span>
-							<div
-								className="mt-2"
-								style={{ fontSize: 12, color: "var(--ink-700)" }}
-							>
-								<div>
-									Recommended top-up: <strong>KES 120M</strong>
-								</div>
-								<div>
-									Auto-rebalance scheduled: <strong>Tomorrow 06:00</strong>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+					</>
+				)}
 
 				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
 				<div className="row g-3">
@@ -1138,672 +1483,7 @@ export default function Liquidity() {
 					</div>
 				</div>
 
-				{/* ---------- SECTION Float Portfolio Overview ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-bank2" /> Float Portfolio Overview
-							</h3>
-							<p className={s.sectionSub}>
-								Real-time view of all float accounts across banks, agents, and
-								internal settlement pools with health indicators.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("liquidityHealthModal")}
-							>
-								<i className="bi bi-heart-pulse" /> Health
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnPrimary)}
-								onClick={() => openModal("rebalanceModal")}
-							>
-								<i className="bi bi-arrow-left-right" /> Rebalance
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-8">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Bank Float Accounts</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Bank</th>
-												<th>Account</th>
-												<th>Current Float</th>
-												<th>Threshold</th>
-												<th>Status</th>
-												<th>Actions</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.bankFloat.map((b) => (
-												<tr key={b.account}>
-													<td>
-														<strong>{b.bank}</strong>
-													</td>
-													<td>{b.account}</td>
-													<td>
-														<strong>{b.float}</strong>
-													</td>
-													<td>{b.threshold}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[b.statusTone])}
-														>
-															{b.status}
-														</span>
-													</td>
-													<td>
-														<button
-															type="button"
-															className={cx(
-																s.btn,
-																s.btnSm,
-																b.action.danger && s.btnDangerGhost,
-															)}
-															onClick={() => openModal(b.action.modal)}
-														>
-															{b.action.label}
-														</button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Internal Settlement Pools</h4>
-								{c.settlementPools.map((p) => (
-									<button
-										key={p.name}
-										type="button"
-										className={cx(s.rowItem, s.rowItemButton)}
-										onClick={() => openModal("internalPoolModal")}
-										title={`Manage ${p.name}`}
-									>
-										<div style={{ textAlign: "left", minWidth: 0 }}>
-											<strong>{p.name}</strong>
-											<div className={s.rowSub}>{p.amount}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[p.tone])}>
-											{p.status}
-										</span>
-									</button>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Agent & Partner Float ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-people-fill"
-									style={{ color: "var(--pri)" }}
-								/>{" "}
-								Agent &amp; Partner Float Management
-							</h3>
-							<p className={s.sectionSub}>
-								Monitor and replenish float for 847 agents and 31 partner
-								organizations with automated rules and manual overrides.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("agentFloatModal")}
-							>
-								<i className="bi bi-people" /> Manage Agents
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnPrimary)}
-								onClick={() => openModal("bulkTopupModal")}
-							>
-								<i className="bi bi-upload" /> Bulk Top-up
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>
-									Critical Agent Float (Below Threshold)
-								</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Agent</th>
-												<th>Location</th>
-												<th>Current</th>
-												<th>Min</th>
-												<th>Status</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.criticalAgents.map((a) => (
-												<tr key={a.name}>
-													<td>
-														<button
-															type="button"
-															className={s.btnLink}
-															onClick={() => openModal("agentDetailModal")}
-														>
-															{a.name}
-														</button>
-													</td>
-													<td>{a.location}</td>
-													<td>{a.current}</td>
-													<td>{a.min}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[a.statusTone])}
-														>
-															{a.status}
-														</span>
-													</td>
-													<td>
-														<button
-															type="button"
-															className={cx(
-																s.btn,
-																s.btnSm,
-																a.action.danger && s.btnDangerGhost,
-															)}
-															onClick={() => openModal(a.action.modal)}
-														>
-															{a.action.label}
-														</button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Partner Float Summary</h4>
-								{c.partnerFloat.map((p) => (
-									<div className={s.rowItem} key={p.name}>
-										<div style={{ minWidth: 0 }}>
-											<strong>{p.name}</strong>
-											<div className={s.rowSub}>{p.amount}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[p.tone])}>
-											{p.status}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Monitoring & Alerts ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-graph-up-arrow"
-									style={{ color: "var(--info)" }}
-								/>{" "}
-								Liquidity Monitoring &amp; Real-time Alerts
-							</h3>
-							<p className={s.sectionSub}>
-								Live monitoring of float levels with configurable thresholds,
-								automated alerts, and escalation workflows.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("floatAlertModal")}
-							>
-								<i className="bi bi-bell" /> Alerts
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("thresholdModal")}
-							>
-								<i className="bi bi-sliders" /> Thresholds
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Active Alerts (14)</h4>
-								{c.activeAlerts.map((a) => (
-									<div className={s.rowItem} key={a.title}>
-										<div style={{ minWidth: 0 }}>
-											<strong>{a.title}</strong>
-											<div className={s.rowSub}>{a.sub}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[a.tone])}>
-											{a.badge}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Alert Configuration</h4>
-								{c.alertConfig.map((t) => (
-									<div className={s.switchRow} key={t.label}>
-										<div style={{ minWidth: 0 }}>
-											<div className={s.rowTitle}>{t.label}</div>
-											<div className={s.rowSub}>{t.sub}</div>
-										</div>
-										<div className="form-check form-switch">
-											<input
-												className="form-check-input"
-												type="checkbox"
-												defaultChecked={t.on}
-												aria-label={t.label}
-											/>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Top-up, Rebalancing & Transfers ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-arrow-left-right" /> Float Top-up,
-								Rebalancing &amp; Transfers
-							</h3>
-							<p className={s.sectionSub}>
-								Execute manual and automated float movements between banks,
-								agents, and internal pools with full approval workflows.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("rebalanceModal")}
-							>
-								<i className="bi bi-arrow-left-right" /> Rebalance
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnPrimary)}
-								onClick={() => openModal("bulkTopupModal")}
-							>
-								<i className="bi bi-upload" /> Bulk
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-5">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Quick Top-up</h4>
-								<div className={s.quickGrid}>
-									{c.quickTopup.map((q) => (
-										<button
-											key={q.label}
-											type="button"
-											className={s.quickBtn}
-											onClick={() => openModal(q.modal)}
-										>
-											{q.label}
-										</button>
-									))}
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-7">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Recent Rebalancing Activity</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Time</th>
-												<th>From</th>
-												<th>To</th>
-												<th>Amount</th>
-												<th>Status</th>
-												<th>Ref</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.recentRebalance.map((r) => (
-												<tr key={r.ref}>
-													<td>{r.time}</td>
-													<td>{r.from}</td>
-													<td>{r.to}</td>
-													<td>{r.amount}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[r.statusTone])}
-														>
-															{r.status}
-														</span>
-													</td>
-													<td>{r.ref}</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Settlement & Reconciliation ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--purple)" }}
-								/>{" "}
-								Settlement &amp; Reconciliation
-							</h3>
-							<p className={s.sectionSub}>
-								Track daily settlements, investigate mismatches, and reconcile
-								float movements across all counterparties.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("settlementModal")}
-							>
-								<i className="bi bi-clock-history" /> Settlements
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("reconciliationModal")}
-							>
-								<i className="bi bi-search" /> Reconcile
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-8">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Today's Settlements</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Batch</th>
-												<th>Counterparty</th>
-												<th>Amount</th>
-												<th>Status</th>
-												<th>Variance</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.settlements.map((row) => (
-												<tr key={row.batch}>
-													<td>{row.batch}</td>
-													<td>{row.counterparty}</td>
-													<td>{row.amount}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[row.statusTone])}
-														>
-															{row.status}
-														</span>
-													</td>
-													<td>{row.variance}</td>
-													<td>
-														<button
-															type="button"
-															className={cx(s.btn, s.btnSm)}
-															onClick={() => openModal(row.action.modal)}
-														>
-															{row.action.label}
-														</button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Reconciliation Queue</h4>
-								{c.reconQueue.map((q) => (
-									<div className={s.rowItem} key={q.title}>
-										<div style={{ minWidth: 0 }}>
-											<strong>{q.title}</strong>
-											<div className={s.rowSub}>{q.sub}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[q.tone])}>
-											{q.badge}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Forecasting & Analytics ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-graph-up"
-									style={{ color: "var(--warning)" }}
-								/>{" "}
-								Liquidity Forecasting &amp; Analytics
-							</h3>
-							<p className={s.sectionSub}>
-								AI-powered forecasting of float requirements, seasonal patterns,
-								and risk scenarios with recommended actions.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("forecastModal")}
-							>
-								<i className="bi bi-graph-up" /> Forecast
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("scenarioModal")}
-							>
-								<i className="bi bi-sliders" /> Scenarios
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>48-Hour Float Forecast</h4>
-								<div className={s.chartBars}>
-									{c.forecastBars.map((b) => (
-										<div
-											key={b.label}
-											className={s.chartBar}
-											style={{
-												height: `${b.height}%`,
-												background: toneColor(b.color),
-											}}
-										>
-											<span className={s.barLabel}>{b.label}</span>
-										</div>
-									))}
-								</div>
-								<div
-									className={cx(s.tile, s.tileDanger, "mt-4")}
-									style={{ fontSize: 12 }}
-								>
-									<i className="bi bi-exclamation-triangle me-1" />{" "}
-									<strong>Critical shortfall predicted at +36h</strong> —
-									Recommend KES 120M top-up before 06:00 tomorrow.
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Risk Scenarios</h4>
-								{c.scenarios.map((sc) => (
-									<div className={s.rowItem} key={sc.title}>
-										<div style={{ minWidth: 0 }}>
-											<strong>{sc.title}</strong>
-											<div className={s.rowSub}>{sc.sub}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[sc.tone])}>
-											{sc.badge}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Emergency Liquidity & Governance ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-shield-lock"
-									style={{ color: "var(--danger)" }}
-								/>{" "}
-								Emergency Liquidity &amp; Governance
-							</h3>
-							<p className={s.sectionSub}>
-								Pre-approved emergency facilities, governance controls, audit
-								logs, and executive override capabilities.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnDanger)}
-								onClick={() => openModal("emergencyLiquidityModal")}
-							>
-								<i className="bi bi-lightning-charge" /> Emergency
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("governanceModal")}
-							>
-								<i className="bi bi-file-earmark-check" /> Governance
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-5">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Emergency Facilities</h4>
-								{c.facilities.map((f) => (
-									<div
-										key={f.title}
-										className={cx(
-											s.tile,
-											f.tone === "danger" ? s.tileDanger : s.tileWarn,
-											"mb-2",
-										)}
-									>
-										<div className={s.tileTitle}>{f.title}</div>
-										<div className={s.tileValue}>{f.value}</div>
-										<div className={s.tileSub}>{f.sub}</div>
-										<button
-											type="button"
-											className={cx(
-												s.btn,
-												s.btnSm,
-												"mt-2",
-												f.btnDanger ? s.btnDanger : s.btnSecondary,
-											)}
-											onClick={() => openModal(f.modal)}
-										>
-											{f.btnLabel}
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-7">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Governance & Override Log</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Time</th>
-												<th>Action</th>
-												<th>Initiator</th>
-												<th>Approver</th>
-												<th>Amount</th>
-												<th>Status</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.governance.map((g) => (
-												<tr key={`${g.time}-${g.action}`}>
-													<td>{g.time}</td>
-													<td>{g.action}</td>
-													<td>{g.initiator}</td>
-													<td>{g.approver}</td>
-													<td>{g.amount}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[g.statusTone])}
-														>
-															{g.status}
-														</span>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ---------- Recent Liquidity Activity ---------- */}
+				{/* ---------- RECENT LIQUIDITY ACTIVITY ---------- */}
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<h3 className={s.sectionTitle}>
@@ -1826,37 +1506,52 @@ export default function Liquidity() {
 							<thead>
 								<tr>
 									<th>Time</th>
+									<th>World</th>
 									<th>Action</th>
 									<th>From</th>
 									<th>To</th>
 									<th>Amount</th>
 									<th>Status</th>
 									<th>Ref</th>
-									<th>Action</th>
 								</tr>
 							</thead>
 							<tbody>
 								{c.activity.map((a) => (
 									<tr key={a.ref}>
 										<td>{a.time}</td>
+										<td>
+											<span
+												className={cx(
+													s.flowTag,
+													a.world === "customer" ? s.flowCustomer : s.flowInternal,
+												)}
+											>
+												<i
+													className={cx(
+														"bi",
+														a.world === "customer"
+															? "bi-people"
+															: "bi-wallet2",
+													)}
+												/>
+												{a.world === "customer"
+													? "Business Float"
+													: "My Liquidity"}
+											</span>
+										</td>
 										<td>{a.action}</td>
 										<td>{a.from}</td>
 										<td>{a.to}</td>
-										<td>{a.amount}</td>
+										<td>
+											<strong>{a.amount}</strong>
+										</td>
 										<td>
 											<span className={cx(s.badge, toneBadge[a.statusTone])}>
 												{a.status}
 											</span>
 										</td>
-										<td>{a.ref}</td>
 										<td>
-											<button
-												type="button"
-												className={cx(s.btn, s.btnSm)}
-												onClick={() => openModal(a.btn.modal)}
-											>
-												{a.btn.label}
-											</button>
+											<code>{a.ref}</code>
 										</td>
 									</tr>
 								))}

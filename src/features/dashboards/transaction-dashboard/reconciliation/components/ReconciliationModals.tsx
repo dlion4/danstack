@@ -32,8 +32,16 @@ const s = styles as Record<string, string>;
 /* --------------------------------------------------------------------------
  * Data the page injects (mirrors GET /api/reconciliation-center).
  * ------------------------------------------------------------------------ */
+export interface ReconScope {
+	scope: string;
+	desc: string;
+	granted: boolean;
+}
+
 export interface ReconciliationData {
-	banks: string[];
+	businesses: string[];
+	rails: string[];
+	reconAccess: ReconScope[];
 }
 
 export interface ReconciliationModalsProps {
@@ -307,18 +315,18 @@ function RuleEngineModal({
 								<StepTitle>Step 1: Rule Basics</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<Field
-											label="Rule Name"
-											defaultValue="Payroll Auto-Match v2"
-											className=""
-										/>
+							<Field
+								label="Rule Name"
+								defaultValue="Land Buyers weekly installments"
+								className=""
+							/>
 									</div>
 									<div className="col-md-6">
-										<SelectField
-											label="Applies To"
-											options={["Equity → KCB", "All Banks", "M-Pesa B2B"]}
-											className=""
-										/>
+								<SelectField
+									label="Applies To"
+									options={["Land Buyers LTD", "Company 2", "All businesses"]}
+									className=""
+								/>
 									</div>
 								</div>
 							</>
@@ -363,7 +371,7 @@ function RuleEngineModal({
 											style={{ fontSize: 13 }}
 											htmlFor="condCredit"
 										>
-											Must be credit on receiving bank
+											Must be a collection on the business's float
 										</label>
 									</div>
 									<div className="form-check">
@@ -378,7 +386,7 @@ function RuleEngineModal({
 											style={{ fontSize: 13 }}
 											htmlFor="condDesc"
 										>
-											Description contains "payroll"
+											Customer ref starts with "PLT-"
 										</label>
 									</div>
 								</div>
@@ -416,7 +424,7 @@ function RuleEngineModal({
 								</div>
 								<h5 className={s.receiptTitle}>Rule Created Successfully</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									Payroll Auto-Match v2 will run on every incoming statement.
+									Land Buyers weekly installments will run on every Friday batch.
 								</p>
 							</div>
 						)}
@@ -437,8 +445,8 @@ function RuleEngineModal({
 							</thead>
 							<tbody>
 								<tr>
-									<td>Payroll Auto-Match v2</td>
-									<td>Amount ±500, Ref PAY-</td>
+									<td>Land Buyers installments</td>
+									<td>Ref PLT-, amount ± KES 500</td>
 									<td>99.2%</td>
 									<td>
 										<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
@@ -454,8 +462,8 @@ function RuleEngineModal({
 									</td>
 								</tr>
 								<tr>
-									<td>Supplier Invoice</td>
-									<td>Amount ±2%, 3-day window</td>
+									<td>Company 2 M-Pesa orders</td>
+									<td>Ref ORD-, 3-day window</td>
 									<td>97.8%</td>
 									<td>
 										<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
@@ -570,42 +578,42 @@ export function ReconciliationModals({
 											className="p-3 border rounded"
 											style={{ borderColor: "var(--border)" }}
 										>
-											<h6 style={{ fontSize: 13, fontWeight: 700 }}>
-												Debit (Equity Bank)
-											</h6>
-											<div
-												className={s.rowItem}
-												style={{ borderBottom: "none", padding: "8px 0 0" }}
-											>
-												<div style={{ minWidth: 0 }}>
-													<strong>EQ-882910</strong>
-													<div className={s.rowSub}>
-														27 Jun • Payroll transfer
-													</div>
-												</div>
-												<strong>KES 2,800,000</strong>
-											</div>
+								<h6 style={{ fontSize: 13, fontWeight: 700 }}>
+									Collection (Paymo record)
+								</h6>
+								<div
+									className={s.rowItem}
+									style={{ borderBottom: "none", padding: "8px 0 0" }}
+								>
+									<div style={{ minWidth: 0 }}>
+										<strong>COL-5501</strong>
+										<div className={s.rowSub}>
+											27 Jun • Land Buyers plot installment
 										</div>
 									</div>
-									<div className="col-md-6">
-										<div
-											className="p-3 border rounded"
-											style={{ borderColor: "var(--border)" }}
-										>
-											<h6 style={{ fontSize: 13, fontWeight: 700 }}>
-												Credit (KCB Bank)
-											</h6>
-											<div
-												className={s.rowItem}
-												style={{ borderBottom: "none", padding: "8px 0 0" }}
-											>
-												<div style={{ minWidth: 0 }}>
-													<strong>KCB-991028</strong>
-													<div className={s.rowSub}>
-														27 Jun • Incoming transfer
-													</div>
-												</div>
-												<strong>KES 2,800,000</strong>
+									<strong>KES 4,500,000</strong>
+								</div>
+							</div>
+						</div>
+						<div className="col-md-6">
+							<div
+								className="p-3 border rounded"
+								style={{ borderColor: "var(--border)" }}
+							>
+								<h6 style={{ fontSize: 13, fontWeight: 700 }}>
+									Credit (M-Pesa statement)
+								</h6>
+								<div
+									className={s.rowItem}
+									style={{ borderBottom: "none", padding: "8px 0 0" }}
+								>
+									<div style={{ minWidth: 0 }}>
+										<strong>MPS-882910</strong>
+										<div className={s.rowSub}>
+											27 Jun • Company 2 order ORD-8901
+										</div>
+									</div>
+									<strong>KES 4,500,000</strong>
 											</div>
 										</div>
 									</div>
@@ -625,7 +633,7 @@ export function ReconciliationModals({
 											marginTop: 6,
 										}}
 									>
-										96% — Amount, date and reference prefix match
+										96% — Amount, date and customer reference match
 									</div>
 								</div>
 							</>
@@ -646,18 +654,18 @@ export function ReconciliationModals({
 										/>
 									</div>
 									<div className="col-md-6">
-										<Field
-											label="Internal Reference"
-											defaultValue="PAY-2025-0627-001"
-											className=""
-										/>
+									<Field
+										label="Float Link (RB-…)"
+										defaultValue="RB-9921"
+										className=""
+									/>
 									</div>
 									<div className="col-12">
 										<label className={s.fieldLabel}>Notes</label>
 										<textarea
 											className={s.field}
 											rows={3}
-											defaultValue="Payroll transfer from Equity to KCB for June salaries. Approved by Finance on 26 Jun."
+											defaultValue="Land Buyers plot installment COL-5501 matched to M-Pesa payout. Float refill RB-9921 funded the settlement."
 										/>
 									</div>
 								</div>
@@ -670,12 +678,12 @@ export function ReconciliationModals({
 								</div>
 								<h5 className={s.receiptTitle}>Match Confirmed</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									Transaction EQ-882910 successfully matched to KCB-991028.
+									Land Buyers collection COL-5501 successfully matched to M-Pesa statement.
 								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
-									<ReviewRow label="Match ID" value="MATCH-20250627-88291" />
-									<ReviewRow label="Amount" value="KES 2,800,000" />
-									<ReviewRow label="Matched By" value="James K. (Manual)" />
+								<ReviewRow label="Match ID" value="MATCH-20250627-88291" />
+								<ReviewRow label="Amount" value="KES 4,500,000" />
+									<ReviewRow label="Matched By" value="You (Manual)" />
 								</div>
 							</div>
 						)}
@@ -699,25 +707,23 @@ export function ReconciliationModals({
 								<StepTitle>Step 1: Transaction Details</StepTitle>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField
-											label="Bank"
-											options={data.banks}
-											className=""
-										/>
+									<SelectField
+										label="Business"
+										options={data.businesses}
+										className=""
+									/>
 									</div>
-									<div className="col-md-6">
-										<Field
-											label="Reference"
-											defaultValue="EQ-991022"
-											className=""
-										/>
+									<div className="col-md-6">											<Field
+												label="Customer Ref"
+												defaultValue="ORD-8899"
+												className=""
+											/>
 									</div>
-									<div className="col-md-6">
-										<Field
-											label="Amount"
-											defaultValue="1,450,000"
-											className=""
-										/>
+									<div className="col-md-6">											<Field
+												label="Amount"
+												defaultValue="48,200"
+												className=""
+											/>
 									</div>
 									<div className="col-md-6">
 										<Field
@@ -737,10 +743,9 @@ export function ReconciliationModals({
 									label="Issue Type"
 									options={[
 										"Amount mismatch",
-										"Duplicate transaction",
-										"Missing reference",
-										"FX rate difference",
-										"Timing difference",
+										"Duplicate transaction",												"Missing reference",
+												"Missing statement",
+												"Timing difference",
 									]}
 								/>
 								<div className="row g-3">
@@ -751,12 +756,11 @@ export function ReconciliationModals({
 											className=""
 										/>
 									</div>
-									<div className="col-md-6">
-										<SelectField
-											label="Assigned To"
-											options={["James K.", "Grace M.", "Auto-assign"]}
-											className=""
-										/>
+									<div className="col-md-6">											<SelectField
+												label="Assigned To"
+												options={["You", "System", "Auto-assign"]}
+												className=""
+											/>
 									</div>
 								</div>
 								<div className="mb-3 mt-3">
@@ -842,11 +846,11 @@ export function ReconciliationModals({
 				show={isOpen("uploadStatementModal")}
 				onClose={() => close("uploadStatementModal")}
 				iconCls="bi bi-upload"
-				title="Upload Bank Statement"
+				title="Upload Rail Statement"
 				submitLabel="Upload & Process"
 				successMsg="Statement uploaded and queued for processing. You will be notified when reconciliation is ready. Reference: STMT-20250627-001"
 			>
-				<SelectField label="Bank" options={data.banks} />
+				<SelectField label="Business" options={data.businesses} />
 				<div className="mb-3">
 					<label className={s.fieldLabel}>Statement Date Range</label>
 					<div className="row g-3">
@@ -875,49 +879,49 @@ export function ReconciliationModals({
 				<div className={cx(s.hintBox)}>
 					<i className="bi bi-info-circle" />
 					<span>
-						Supported formats: PDF (Equity, KCB), CSV (Co-op), MT940 (Stanbic,
-						international).
+						Supported formats: PDF (M-Pesa), CSV (Card), MT940 (Bank transfer),
+						API sync (Paymo wallet).
 					</span>
 				</div>
 			</SimpleModal>
 
-			{/* ============ M6: FX Rate Resolution ============ */}
+			{/* ============ M6: Variance Resolution (was FX Rate) ============ */}
 			<SimpleModal
 				show={isOpen("fxRateModal")}
 				onClose={() => close("fxRateModal")}
 				iconCls="bi bi-currency-exchange"
-				title="Resolve FX Rate Difference"
+				title="Resolve Unmatched Variance"
 				submitLabel="Resolve"
-				successMsg="FX discrepancy resolved. Case logged for audit. Reference: FX-20250627-001"
+				successMsg="Variance resolved. Case logged for audit. Reference: VAR-20250627-001"
 			>
 				<div className={cx(s.tile, s.tileDanger, "mb-3")}>
 					<div className="d-flex justify-content-between mb-1">
-						<span style={{ color: "var(--ink-500)" }}>Transaction</span>
-						<strong>SWIFT-IN-88291</strong>
+						<span style={{ color: "var(--ink-500)" }}>Customer Ref</span>
+						<strong>ORD-8899</strong>
 					</div>
 					<div className="d-flex justify-content-between mb-1">
-						<span style={{ color: "var(--ink-500)" }}>Amount</span>
-						<strong>USD 125,000</strong>
+						<span style={{ color: "var(--ink-500)" }}>Business</span>
+						<strong>Company 2</strong>
 					</div>
 					<div className="d-flex justify-content-between">
-						<span style={{ color: "var(--ink-500)" }}>Expected Rate</span>
-						<strong>129.45 KES/USD</strong>
+						<span style={{ color: "var(--ink-500)" }}>Recorded</span>
+						<strong>KES 48,200</strong>
 					</div>
 				</div>
-				<Field label="Actual Rate Applied" defaultValue="128.80" />
+				<Field label="Received on Statement" defaultValue="47,900" />
 				<div className="mb-3">
-					<label className={s.fieldLabel}>Difference</label>
+					<label className={s.fieldLabel}>Variance</label>
 					<div className={cx(s.tile, s.tileWarn)}>
-						<strong>KES 81,250 difference</strong> — Bank used lower rate
+						<strong>KES 300 difference</strong> — M-Pesa settled less than recorded
 					</div>
 				</div>
 				<SelectField
 					label="Resolution Action"
 					options={[
-						"Accept bank rate (write-off)",
-						"Dispute with bank",
+						"Accept received amount",
+						"Dispute with rail provider",
 						"Adjust internal records",
-						"Request rate correction",
+						"Issue refund to customer",
 					]}
 				/>
 			</SimpleModal>
@@ -937,8 +941,7 @@ export function ReconciliationModals({
 						"Daily Reconciliation Summary",
 						"Monthly Reconciliation Report",
 						"Exception & Discrepancy Report",
-						"Audit Trail Export",
-						"Bank Reconciliation Certificate",
+						"Audit Trail Export",							"Business Settlement Certificate",
 					]}
 				/>
 				<div className="row g-3 mb-3">
@@ -978,8 +981,7 @@ export function ReconciliationModals({
 				<div className="d-flex gap-2 mb-3 flex-wrap">
 					<select className={cx(s.field, s.select)} style={{ width: "auto" }}>
 						<option>All Users</option>
-						<option>James K.</option>
-						<option>Grace M.</option>
+						<option>You</option>
 						<option>System</option>
 					</select>
 					<select className={cx(s.field, s.select)} style={{ width: "auto" }}>
@@ -1012,10 +1014,10 @@ export function ReconciliationModals({
 						<tbody>
 							<tr>
 								<td>27 Jun 14:32</td>
-								<td>James K.</td>
+								<td>You</td>
 								<td>Manual Match</td>
-								<td>EQ-882910</td>
-								<td>Matched to KCB-991028</td>
+								<td>COL-5501</td>
+								<td>Matched to M-Pesa stmt</td>
 								<td>
 									<span className={cx(s.badge, s.badgeSuccess)}>Success</span>
 								</td>
@@ -1024,18 +1026,18 @@ export function ReconciliationModals({
 								<td>27 Jun 14:28</td>
 								<td>System</td>
 								<td>Auto-Rule</td>
-								<td>47 items</td>
-								<td>Payroll rule applied</td>
+								<td>34 items</td>
+								<td>Company 2 auto-match applied</td>
 								<td>
 									<span className={cx(s.badge, s.badgeSuccess)}>Success</span>
 								</td>
 							</tr>
 							<tr>
 								<td>27 Jun 13:55</td>
-								<td>Grace M.</td>
+								<td>You</td>
 								<td>Flag Exception</td>
-								<td>KCB-99102</td>
-								<td>Amount mismatch KES 50k</td>
+								<td>ORD-8899</td>
+								<td>Amount mismatch KES 300</td>
 								<td>
 									<span className={cx(s.badge, s.badgeWarn)}>Flagged</span>
 								</td>
@@ -1044,7 +1046,7 @@ export function ReconciliationModals({
 								<td>27 Jun 12:10</td>
 								<td>System</td>
 								<td>Statement Upload</td>
-								<td>Equity 27 Jun</td>
+								<td>M-Pesa 27 Jun</td>
 								<td>1,284 transactions</td>
 								<td>
 									<span className={cx(s.badge, s.badgeSuccess)}>Processed</span>
@@ -1153,8 +1155,8 @@ export function ReconciliationModals({
 				<div className="row g-3">
 					<div className="col-md-6">
 						<SelectField
-							label="Bank Pair"
-							options={["All Pairs", "Equity ↔ KCB", "KCB ↔ M-Pesa"]}
+							label="Business"
+							options={["All businesses", ...data.businesses]}
 							className=""
 						/>
 					</div>
@@ -1196,7 +1198,7 @@ export function ReconciliationModals({
 				<div style={{ maxHeight: 400, overflowY: "auto" }}>
 					<div className={cx(s.tile, s.tileDanger, "mb-2")}>
 						<strong>High-value exception flagged</strong>
-						<div className={s.tileSub}>KES 2.8M • EQ-882910</div>
+						<div className={s.tileSub}>KES 2.25M • PLT-088</div>
 					</div>
 					<div className={cx(s.tile, s.tileWarn, "mb-2")}>
 						<strong>Auto-recon completed</strong>
@@ -1204,7 +1206,7 @@ export function ReconciliationModals({
 					</div>
 					<div className={cx(s.tile, s.tileSuccess, "mb-2")}>
 						<strong>Statement processed</strong>
-						<div className={s.tileSub}>Equity Bank • 1,284 transactions</div>
+						<div className={s.tileSub}>Company 2 • 209 orders</div>
 					</div>
 				</div>
 			</ModalShell>
@@ -1255,95 +1257,62 @@ export function ReconciliationModals({
 				</div>
 			</SimpleModal>
 
-			{/* ============ M13: Team Access ============ */}
+			{/* ============ M13: My Recon Access (was Team Access) ============ */}
 			<SimpleModal
 				show={isOpen("teamAccessModal")}
 				onClose={() => close("teamAccessModal")}
-				iconCls="bi bi-people"
-				title="Team Access & Permissions"
+				iconCls="bi bi-shield-check"
+				title="My Recon Access"
 				submitLabel="Save Changes"
-				successMsg="Permissions updated."
+				successMsg="Recon access scopes updated."
 			>
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>User</th>
-								<th>Role</th>
-								<th>Access</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>James K.</td>
-								<td>Finance Manager</td>
-								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>Full</span>
-								</td>
-								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>
-										Edit
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>Grace M.</td>
-								<td>Reconciliation Lead</td>
-								<td>
-									<span className={cx(s.badge, s.badgeInfo)}>Match + Flag</span>
-								</td>
-								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>
-										Edit
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>Auditor Team</td>
-								<td>External Auditors</td>
-								<td>
-									<span className={cx(s.badge, s.badgeWarn)}>View Only</span>
-								</td>
-								<td>
-									<button type="button" className={cx(s.btn, s.btnSm)}>
-										Edit
-									</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<p style={{ fontSize: 13, color: "var(--ink-500)", marginBottom: 12 }}>
+					Your facilitator permissions over customer transactions and money
+					movements during reconciliation.
+				</p>
+				{(data.reconAccess ?? []).map((sc) => (
+					<div className={s.permItem} key={sc.scope}>
+						<span
+							className={cx(s.permDot, sc.granted ? s.permOk : s.permPending)}
+						/>
+						<div style={{ minWidth: 0, flex: 1 }}>
+							<div className={s.permTitle}>{sc.scope}</div>
+							<div className={s.permSub}>{sc.desc}</div>
+						</div>
+						<span className={cx(s.badge, sc.granted ? s.badgeSuccess : s.badgeWarn)}>
+							{sc.granted ? "Granted" : "Pending"}
+						</span>
+					</div>
+				))}
 			</SimpleModal>
 
 			{/* ============ M14: Dispute ============ */}
 			<SimpleModal
 				show={isOpen("disputeModal")}
 				onClose={() => close("disputeModal")}
-				iconCls="bi bi-flag"
-				title="Raise Bank Dispute"
-				submitLabel="Submit Dispute"
-				successMsg="Dispute filed with bank. Ticket #DISP-88291 created."
-			>
-				<SelectField label="Bank" options={["Equity Bank", "KCB Bank"]} />
-				<Field label="Reference" defaultValue="EQ-882910" />
-				<SelectField
-					label="Dispute Reason"
-					options={[
-						"Incorrect amount",
-						"Duplicate debit",
-						"Failed credit",
-						"FX error",
-					]}
-				/>
-				<div className="mb-3">
-					<label className={s.fieldLabel}>Description</label>
-					<textarea
-						className={s.field}
-						rows={3}
-						defaultValue="Bank debited KES 2,800,000 but only KES 2,750,000 was authorized."
-					/>
-				</div>
+				iconCls="bi bi-flag"							title="Raise Dispute"
+							submitLabel="Submit Dispute"
+							successMsg="Dispute raised with rail provider. Ticket #DISP-88291 created."
+						>
+							<SelectField label="Rail" options={data.rails} />
+							<Field label="Customer Ref" defaultValue="ORD-8899" />
+							<SelectField
+								label="Dispute Reason"
+								options={[
+									"Incorrect amount",
+									"Duplicate charge",
+									"Failed payout",
+									"Chargeback",
+								]}
+							/>
+							<div className="mb-3">
+								<label className={s.fieldLabel}>Description</label>
+								<textarea
+									className={s.field}
+									rows={3}
+									defaultValue="M-Pesa statement shows KES 47,900 but KES 48,200 was recorded for order ORD-8899."
+								/>
+							</div>
 			</SimpleModal>
 
 			{/* ============ M15: Advanced Filters (both legacy #filterModal merged) ============ */}
@@ -1372,8 +1341,8 @@ export function ReconciliationModals({
 					</div>
 					<div className="col-md-6">
 						<SelectField
-							label="Bank"
-							options={["All Banks", "Equity", "KCB", "Co-op", "Stanbic"]}
+							label="Business"
+							options={["All businesses", ...data.businesses]}
 							className=""
 						/>
 					</div>
@@ -1431,8 +1400,8 @@ export function ReconciliationModals({
 			>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>Equity credit not matched</div>
-						<div className={s.rowSub}>KES 2.8M</div>
+						<div className={s.rowTitle}>Land Buyers installment unmatched</div>
+						<div className={s.rowSub}>KES 2.25M</div>
 					</div>
 					<button
 						type="button"
@@ -1444,8 +1413,8 @@ export function ReconciliationModals({
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>KCB debit duplicate</div>
-						<div className={s.rowSub}>KES 450k</div>
+						<div className={s.rowTitle}>Company 2 M-Pesa variance</div>
+						<div className={s.rowSub}>KES 48,200</div>
 					</div>
 					<button
 						type="button"
@@ -1457,13 +1426,13 @@ export function ReconciliationModals({
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>SWIFT FX rate pending</div>
-						<div className={s.rowSub}>USD 125k</div>
+						<div className={s.rowTitle}>Float refill RB-9923 not yet linked</div>
+						<div className={s.rowSub}>KES 3M</div>
 					</div>
 					<button
 						type="button"
 						className={cx(s.btn, s.btnSm)}
-						onClick={() => swap("attentionFullModal", "fxRateModal")}
+						onClick={() => swap("attentionFullModal", "manualMatchModal")}
 					>
 						Resolve
 					</button>
@@ -1496,8 +1465,8 @@ export function ReconciliationModals({
 					</div>
 					<div className="col-md-3 col-6">
 						<div className={cx(s.tile, s.tileInfo, s.tileCenter)}>
-							<div className={s.tileValue}>6</div>
-							<div className={s.tileTitle}>Banks</div>
+							<div className={s.tileValue}>2</div>
+							<div className={s.tileTitle}>Businesses</div>
 						</div>
 					</div>
 					<div className="col-md-3 col-6">

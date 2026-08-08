@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquidity & Float Management - Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<style>
+:root {
+  --pri: #10b981;
+  --pri-600: #059669;
+  --pri-700: #047857;
+  --pri-light: #34d399;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  --purple: #8b5cf6;
+  --purple-bg: #ede9fe;
+  --surface: #f5f1ec;
+  --surface-elev: #ffffff;
+  --surface-2: #faf7f3;
+  --ink-900: #1a1f2e;
+  --ink-700: #4b5563;
+  --ink-500: #9ca3af;
+  --ink-300: #d1d5db;
+  --border: #e5e2dc;
+  --border-2: #d4d0c8;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(26,31,46,0.04);
+  --shadow-md: 0 4px 12px rgba(26,31,46,0.06);
+  --shadow-lg: 0 10px 30px rgba(26,31,46,0.08);
+  --shadow-xl: 0 20px 50px rgba(26,31,46,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--surface);
+  color: var(--ink-900);
+  padding: 24px;
+}
+
+/* Page Bar */
+.page-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.breadcrumb {
+  font-size: 13px;
+  color: var(--ink-500);
+  margin-bottom: 8px;
+}
+.breadcrumb a {
+  color: var(--pri);
+  text-decoration: none;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.page-copy {
+  font-size: 15px;
+  color: var(--ink-500);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  color: var(--ink-700);
+}
+.btn:hover {
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.btn-primary {
+  background: var(--pri);
+  color: #fff;
+  border-color: var(--pri);
+}
+.btn-primary:hover {
+  background: var(--pri-600);
+  color: #fff;
+}
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}
+.btn-danger:hover {
+  background: #dc2626;
+  color: #fff;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+
+/* Cards */
+.card {
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+.card-accent {
+  background: linear-gradient(135deg, var(--pri) 0%, var(--pri-600) 100%);
+  color: #fff;
+  border: none;
+}
+.stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 8px 0;
+}
+.stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--ink-500);
+}
+
+/* Section */
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title i { color: var(--pri); }
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-500);
+  border-bottom: 2px solid var(--border);
+  background: var(--surface-2);
+}
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.table tr:hover td {
+  background: var(--surface-2);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-success { background: #ecfdf5; color: var(--pri); }
+.badge-warn { background: var(--warning-bg); color: var(--warning); }
+.badge-danger { background: var(--danger-bg); color: var(--danger); }
+.badge-info { background: var(--info-bg); color: var(--info); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+/* Progress */
+.progress {
+  height: 8px;
+  background: var(--ink-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--pri);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* Tiles */
+.tile {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-elev);
+  font-size: 13px;
+}
+.tile-danger {
+  background: var(--danger-bg);
+  border-color: rgba(239,68,68,0.25);
+}
+.tile-warn {
+  background: var(--warning-bg);
+  border-color: rgba(245,158,11,0.25);
+}
+.tile-success {
+  background: #ecfdf5;
+  border-color: rgba(16,185,129,0.25);
+}
+.tile-center {
+  text-align: center;
+}
+.tile-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 4px 0;
+}
+.tile-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Chart */
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  margin-bottom: 24px;
+}
+.chart-bar {
+  flex: 1;
+  min-width: 20px;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+}
+.bar-label {
+  position: absolute;
+  bottom: -22px;
+  font-size: 11px;
+  color: var(--ink-500);
+}
+
+/* Row Items */
+.row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.row-item:last-child { border-bottom: none; }
+.row-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.row-sub {
+  font-size: 12px;
+  color: var(--ink-500);
+}
+
+/* Quick Grid */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.quick-btn {
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.quick-btn:hover {
+  border-color: var(--pri);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.quick-btn i {
+  font-size: 24px;
+  color: var(--pri);
+}
+
+/* QA Grid */
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.qa-btn:hover {
+  border-color: var(--pri);
+  background: #ecfdf5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-bar { flex-direction: column; align-items: stretch; }
+  .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .qa-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Page Bar -->
+<div class="page-bar">
+  <div>
+    <div class="breadcrumb">
+      <a href="#">Home</a> / <a href="#">Transactions Hub</a> / <strong>Liquidity & Float</strong>
+    </div>
+    <h1 class="page-title">Liquidity & Float Management</h1>
+    <p class="page-copy">Monitor and manage float across banks, agents, and partners.</p>
+  </div>
+  <div class="d-flex flex-wrap" style="gap: 8px;">
+    <button class="btn btn-sm"><i class="fa-solid fa-heart-pulse"></i> Health Check</button>
+    <button class="btn btn-sm"><i class="fa-solid fa-bell"></i> Alerts</button>
+    <button class="btn btn-primary btn-sm"><i class="fa-solid fa-arrows-left-right"></i> Rebalance</button>
+    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-bolt"></i> Emergency</button>
+  </div>
+</div>
+
+<!-- Hero Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-5">
+    <div class="card card-accent" style="min-height: 170px;">
+      <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,.78);">
+        Liquidity command center is live <span style="color: #86efac;">●</span>
+      </p>
+      <div class="stat-value" style="color: #fff;">KES 1.84B Total Float</div>
+      <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,.78);">
+        Across 12 partner banks, 847 agents and 31 settlement accounts
+      </p>
+      <div class="d-flex flex-wrap mt-3" style="gap: 8px;">
+        <button class="btn btn-sm btn-ghost"><i class="fa-solid fa-arrows-left-right"></i> Rebalance Now</button>
+        <button class="btn btn-sm btn-ghost"><i class="fa-solid fa-chart-line"></i> View Forecast</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-4 col-6">
+    <div class="card" style="min-height: 170px;">
+      <p class="stat-label" style="color: var(--info);">SETTLEMENTS TODAY</p>
+      <div class="stat-value">KES 318.4M</div>
+      <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> 94% completed</span>
+      <div class="mt-2">
+        <div class="d-flex justify-content-between" style="font-size: 11px; color: var(--ink-500);">
+          <span>Pending</span><span>KES 19.2M</span>
+        </div>
+        <div class="progress mt-1">
+          <div class="progress-bar" style="width: 94%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-4">
+    <div class="card" style="min-height: 170px; border-left: 4px solid var(--pri);">
+      <p class="stat-label" style="color: var(--pri);">FORECASTED SHORTFALL (48H)</p>
+      <div class="stat-value">KES 87.5M</div>
+      <span class="badge badge-info"><i class="fa-solid fa-chart-line"></i> 3 banks at risk</span>
+      <div class="mt-2" style="font-size: 12px; color: var(--ink-700);">
+        <div>Recommended top-up: <strong>KES 120M</strong></div>
+        <div>Auto-rebalance: <strong>Tomorrow 06:00</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attention / Suggestions / Quick Actions -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="section-head">
+        <h3 class="section-title"><i class="fa-solid fa-exclamation-circle" style="color: var(--warning);"></i> Attention Required</h3>
+        <button class="btn btn-sm">View all</button>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">KCB Float critically low</div>
+          <div class="row-sub">KES 8.2M remaining (threshold KES 15M)</div>
+        </div>
+        <button class="btn btn-sm btn-danger">Top-up</button>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">47 agents below minimum float</div>
+          <div class="row-sub">Auto-replenishment failed for 12</div>
+        </div>
+        <button class="btn btn-sm">Review</button>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">Settlement mismatch detected</div>
+          <div class="row-sub">Equity Bank batch — KES 1.8M variance</div>
+        </div>
+        <button class="btn btn-sm">Investigate</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="section-head">
+        <h3 class="section-title"><i class="fa-solid fa-lightbulb" style="color: var(--pri);"></i> Smart Suggestions</h3>
+        <span class="badge badge-purple"><i class="fa-solid fa-sparkles"></i> AI</span>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">Rebalance 5 low-float banks tonight</div>
+          <div class="row-sub">Projected savings: KES 340K in overnight fees</div>
+        </div>
+        <button class="btn btn-sm">Schedule</button>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">Increase Co-op float buffer by 18%</div>
+          <div class="row-sub">Based on weekend transaction patterns</div>
+        </div>
+        <button class="btn btn-sm">Apply</button>
+      </div>
+      <div class="row-item">
+        <div>
+          <div class="row-title">Activate emergency liquidity line</div>
+          <div class="row-sub">KES 200M standby facility ready</div>
+        </div>
+        <button class="btn btn-sm">Activate</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div style="margin-bottom: 16px;">
+        <h3 class="section-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Quick Actions</h3>
+        <p class="page-copy">Frequent liquidity workflows</p>
+      </div>
+      <div class="qa-grid">
+        <button class="qa-btn"><i class="fa-solid fa-arrows-left-right" style="color: var(--pri);"></i> Rebalance Float</button>
+        <button class="qa-btn"><i class="fa-solid fa-building-columns" style="color: var(--info);"></i> Top-up Bank</button>
+        <button class="qa-btn"><i class="fa-solid fa-users" style="color: var(--pri);"></i> Agent Float</button>
+        <button class="qa-btn"><i class="fa-solid fa-clock-rotate-left" style="color: var(--purple);"></i> Settlements</button>
+        <button class="qa-btn"><i class="fa-solid fa-chart-line" style="color: var(--warning);"></i> Forecast</button>
+        <button class="qa-btn"><i class="fa-solid fa-bolt" style="color: var(--danger);"></i> Emergency</button>
+        <button class="qa-btn"><i class="fa-solid fa-magnifying-glass" style="color: var(--ink-500);"></i> Reconcile</button>
+        <button class="qa-btn"><i class="fa-solid fa-download" style="color: var(--pri);"></i> Reports</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Float Portfolio Overview -->
+<div class="card mb-4">
+  <div class="section-head">
+    <div>
+      <h3 class="section-title"><i class="fa-solid fa-building-columns"></i> Float Portfolio Overview</h3>
+      <p class="page-copy">Real-time view of all float accounts across banks, agents, and internal settlement pools.</p>
+    </div>
+    <div class="d-flex" style="gap: 8px;">
+      <button class="btn btn-sm"><i class="fa-solid fa-heart-pulse"></i> Health</button>
+      <button class="btn btn-primary btn-sm"><i class="fa-solid fa-arrows-left-right"></i> Rebalance</button>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Bank Float Accounts</h4>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Bank</th><th>Account</th><th>Current Float</th><th>Threshold</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>KCB Bank</strong></td><td>KCB-447291</td><td><strong>KES 142.8M</strong></td><td>KES 80M</td><td><span class="badge badge-success">Healthy</span></td><td><button class="btn btn-sm">Manage</button></td></tr>
+            <tr><td><strong>Equity Bank</strong></td><td>EQB-991023</td><td><strong>KES 98.4M</strong></td><td>KES 60M</td><td><span class="badge badge-success">Healthy</span></td><td><button class="btn btn-sm">Manage</button></td></tr>
+            <tr><td><strong>Co-op Bank</strong></td><td>COOP-334871</td><td><strong>KES 41.2M</strong></td><td>KES 45M</td><td><span class="badge badge-warn">Warning</span></td><td><button class="btn btn-sm btn-danger">Top-up</button></td></tr>
+            <tr><td><strong>Absa Bank</strong></td><td>ABSA-772910</td><td><strong>KES 67.9M</strong></td><td>KES 40M</td><td><span class="badge badge-success">Healthy</span></td><td><button class="btn btn-sm">Manage</button></td></tr>
+            <tr><td><strong>Stanbic Bank</strong></td><td>STB-556102</td><td><strong>KES 12.4M</strong></td><td>KES 25M</td><td><span class="badge badge-danger">Critical</span></td><td><button class="btn btn-sm btn-danger">Emergency</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Internal Settlement Pools</h4>
+      <div class="row-item" style="cursor: pointer;">
+        <div><strong>PayMo Main Pool</strong><div class="row-sub">KES 284.6M</div></div>
+        <span class="badge badge-success">Optimal</span>
+      </div>
+      <div class="row-item" style="cursor: pointer;">
+        <div><strong>Agent Float Pool</strong><div class="row-sub">KES 119.3M</div></div>
+        <span class="badge badge-warn">Warning</span>
+      </div>
+      <div class="row-item" style="cursor: pointer;">
+        <div><strong>Partner Settlement</strong><div class="row-sub">KES 67.8M</div></div>
+        <span class="badge badge-success">Healthy</span>
+      </div>
+      <div class="row-item" style="cursor: pointer;">
+        <div><strong>Emergency Reserve</strong><div class="row-sub">KES 200.0M</div></div>
+        <span class="badge badge-success">Ready</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forecasting & Analytics -->
+<div class="card mb-4">
+  <div class="section-head">
+    <div>
+      <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color: var(--warning);"></i> Liquidity Forecasting & Analytics</h3>
+      <p class="page-copy">AI-powered forecasting of float requirements, seasonal patterns, and risk scenarios.</p>
+    </div>
+    <div class="d-flex" style="gap: 8px;">
+      <button class="btn btn-sm"><i class="fa-solid fa-chart-line"></i> Forecast</button>
+      <button class="btn btn-sm"><i class="fa-solid fa-sliders"></i> Scenarios</button>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">48-Hour Float Forecast</h4>
+      <div class="chart-bars">
+        <div class="chart-bar" style="height: 75%; background: var(--pri);"><span class="bar-label">Now</span></div>
+        <div class="chart-bar" style="height: 68%; background: var(--pri);"><span class="bar-label">+6h</span></div>
+        <div class="chart-bar" style="height: 55%; background: var(--warning);"><span class="bar-label">+12h</span></div>
+        <div class="chart-bar" style="height: 42%; background: var(--danger);"><span class="bar-label">+24h</span></div>
+        <div class="chart-bar" style="height: 38%; background: var(--danger);"><span class="bar-label">+36h</span></div>
+        <div class="chart-bar" style="height: 52%; background: var(--warning);"><span class="bar-label">+48h</span></div>
+      </div>
+      <div class="tile tile-danger mt-4" style="font-size: 12px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Critical shortfall predicted at +36h</strong> — Recommend KES 120M top-up before 06:00 tomorrow.
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Risk Scenarios</h4>
+      <div class="row-item">
+        <div><strong>Weekend surge (+40%)</strong><div class="row-sub">Probability: 68%</div></div>
+        <span class="badge badge-warn">Medium</span>
+      </div>
+      <div class="row-item">
+        <div><strong>Salary run (end of month)</strong><div class="row-sub">Probability: 92%</div></div>
+        <span class="badge badge-danger">High</span>
+      </div>
+      <div class="row-item">
+        <div><strong>Partner outage</strong><div class="row-sub">Probability: 12%</div></div>
+        <span class="badge badge-info">Low</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Emergency Liquidity & Governance -->
+<div class="card mb-4">
+  <div class="section-head">
+    <div>
+      <h3 class="section-title"><i class="fa-solid fa-shield-halved" style="color: var(--danger);"></i> Emergency Liquidity & Governance</h3>
+      <p class="page-copy">Pre-approved emergency facilities, governance controls, audit logs, and executive override capabilities.</p>
+    </div>
+    <div class="d-flex" style="gap: 8px;">
+      <button class="btn btn-danger btn-sm"><i class="fa-solid fa-bolt"></i> Emergency</button>
+      <button class="btn btn-sm"><i class="fa-solid fa-file-lines"></i> Governance</button>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Emergency Facilities</h4>
+      <div class="tile tile-danger mb-2">
+        <div class="tile-title">STANDBY LINE</div>
+        <div class="tile-value">KES 200M</div>
+        <div class="row-sub">Available 24/7 • Pre-approved</div>
+        <button class="btn btn-danger btn-sm mt-2">Activate Now</button>
+      </div>
+      <div class="tile tile-warn mb-2">
+        <div class="tile-title">PARTNER CREDIT LINE</div>
+        <div class="tile-value">KES 150M</div>
+        <div class="row-sub">Equity Bank facility • 2-hour activation</div>
+        <button class="btn btn-sm mt-2">Request</button>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Governance & Override Log</h4>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Time</th><th>Action</th><th>Initiator</th><th>Approver</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>26 Jun 22:14</td><td>Emergency top-up</td><td>System</td><td>CFO (auto)</td><td>KES 80M</td><td><span class="badge badge-success">Executed</span></td></tr>
+            <tr><td>25 Jun 14:02</td><td>Float rebalance override</td><td>Liquidity Mgr</td><td>Treasurer</td><td>KES 45M</td><td><span class="badge badge-success">Executed</span></td></tr>
+            <tr><td>24 Jun 09:30</td><td>Threshold change</td><td>Ops Lead</td><td>Risk Committee</td><td>—</td><td><span class="badge badge-success">Approved</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

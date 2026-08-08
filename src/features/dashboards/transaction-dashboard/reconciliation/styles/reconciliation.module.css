@@ -755,6 +755,120 @@
 	transform: scale(1.15);
 }
 
+/* ---------- business selector (page-bar pills) ---------- */
+.bizBar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.bizLabel {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--ink-500);
+}
+
+/* ---------- stream tags (Collection / Payout / Float movement) ---------- */
+.streamTag {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+	border: 1px solid transparent;
+}
+
+.streamTag i {
+	flex: 0 0 auto;
+}
+
+.streamCollection {
+	background: var(--success-bg);
+	color: var(--success);
+	border-color: rgba(16, 185, 129, 0.25);
+}
+
+.streamPayout {
+	background: var(--info-bg);
+	color: var(--info);
+	border-color: rgba(59, 130, 246, 0.25);
+}
+
+.streamFloat {
+	background: var(--purple-bg);
+	color: var(--purple);
+	border-color: rgba(124, 58, 237, 0.25);
+}
+
+/* float-link chip (RB-… tie-in to the Liquidity page) */
+.floatLink {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: var(--purple-bg);
+	color: var(--purple);
+	border: 1px solid rgba(124, 58, 237, 0.2);
+	border-radius: 6px;
+	padding: 2px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.floatLink i {
+	flex: 0 0 auto;
+}
+
+/* ---------- My Recon Access scope panel (replaces team list) ---------- */
+.permItem {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.permItem:last-child {
+	border-bottom: none;
+}
+
+.permDot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-top: 5px;
+	flex: 0 0 10px;
+}
+
+.permOk {
+	background: var(--success);
+}
+
+.permPending {
+	background: var(--warning);
+}
+
+.permReq {
+	background: var(--danger);
+}
+
+.permTitle {
+	font-weight: 600;
+	font-size: 14px;
+	color: var(--ink-900);
+}
+
+.permSub {
+	font-size: 12px;
+	color: var(--ink-500);
+}
+
 /* ---------- soft boxes (status tiles) ---------- */
 .softBox {
 	border-radius: var(--radius-md);

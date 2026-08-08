@@ -16,6 +16,14 @@
  *     state-driven modals (see ../components/ReconciliationModals.tsx). The
  *     two duplicate legacy #filterModal blocks were merged into one.
  *
+ * FACILITATOR REBUILD: the page is now a payment-facilitator reconciliation
+ * workspace — it verifies the money flows from the Settlement page (what
+ * flowed) and the Liquidity page (what's in the tanks) against the actual
+ * rail/settlement statements. Every row carries a traceable chain:
+ *   customer txn (COL-/ORD-/PLT-) → business → rail → statement → float link
+ *   (RB-…). Bank/SWIFT/FX concepts removed; team permissions replaced by the
+ *   My Recon Access scope panel. Business selector refilters every table.
+ *
  * STYLES: ../styles/reconciliation.module.css (emerald theme = Transfer theme).
  * ========================================================================== */
 "use client";
@@ -30,6 +38,7 @@ import {
 import s from "../styles/reconciliation.module.css";
 
 type Tone = "success" | "warn" | "danger" | "info" | "purple" | "neutral";
+type Stream = "collection" | "payout" | "float";
 
 const toneBadge: Record<Tone, string> = {
 	success: s.badgeSuccess,
@@ -65,6 +74,12 @@ function toneColor(t: ToneColor): string {
 	}
 }
 
+const streamMeta: Record<Stream, { icon: string; cls: string; label: string }> = {
+	collection: { icon: "bi-arrow-down-circle", cls: s.streamCollection, label: "Collection" },
+	payout: { icon: "bi-arrow-up-circle", cls: s.streamPayout, label: "Payout" },
+	float: { icon: "bi-arrow-left-right", cls: s.streamFloat, label: "Float" },
+};
+
 /* --------------------------------------------------------------------------
  * Types for the extracted content model.
  * ------------------------------------------------------------------------ */
@@ -82,7 +97,7 @@ interface QuickAction {
 	label: string;
 	modal: string;
 }
-interface BankCoverage {
+interface CoverageRow {
 	name: string;
 	rate: string;
 	tone: Tone;
@@ -104,28 +119,34 @@ interface HealthTile {
 }
 interface PendingRow {
 	date: string;
-	bank: string;
-	ref: string;
-	desc: string;
-	amount: string;
-	direction: "Debit" | "Credit";
+	business: string;
+	customerRef: string;
+	stream: Stream;
+	rail: string;
+	expected: string;
+	received: string;
+	variance: string;
 	status: string;
 	statusTone: Tone;
 }
 interface MatchedRow {
 	id: string;
 	date: string;
-	bankA: string;
-	bankB: string;
+	business: string;
+	recordSide: string;
+	statementSide: string;
 	amount: string;
 	by: string;
 	time: string;
+	floatLink: string;
 	status: string;
 	statusTone: Tone;
 }
 interface ExceptionRow {
 	id: string;
 	ref: string;
+	business: string;
+	stream: Stream;
 	issue: string;
 	amount: string;
 	priority: string;
@@ -134,6 +155,7 @@ interface ExceptionRow {
 }
 interface RuleRow {
 	name: string;
+	business: string;
 	conditions: string;
 	rate: string;
 	lastRun: string;
@@ -161,10 +183,10 @@ interface NotifyToggle {
 	label: string;
 	on: boolean;
 }
-interface TeamRow {
-	name: string;
-	access: string;
-	tone: Tone;
+interface ScopeRow {
+	scope: string;
+	desc: string;
+	granted: boolean;
 }
 
 export interface ReconciliationContent extends ReconciliationData {
@@ -183,7 +205,7 @@ export interface ReconciliationContent extends ReconciliationData {
 	attention: Row[];
 	suggestions: Row[];
 	quickActions: QuickAction[];
-	bankCoverage: BankCoverage[];
+	coverage: CoverageRow[];
 	activityBars: ActivityBar[];
 	exceptionBreakdown: ExceptionBreakdown[];
 	healthTiles: HealthTile[];
@@ -196,7 +218,9 @@ export interface ReconciliationContent extends ReconciliationData {
 	auditActivity: AuditRow[];
 	tolerances: ToleranceRow[];
 	notifications: NotifyToggle[];
-	team: TeamRow[];
+	reconAccess: ScopeRow[];
+	businesses: string[];
+	rails: string[];
 }
 
 /* --------------------------------------------------------------------------
@@ -205,55 +229,55 @@ export interface ReconciliationContent extends ReconciliationData {
  * GET /api/reconciliation-center should return this same shape.
  * ------------------------------------------------------------------------ */
 const initialMockData: ReconciliationContent = {
-	heroTitle: "Reconciliation engine is live",
-	heroValue: "94.7% match rate",
+	heroTitle: "Reconciliation coverage is live",
+	heroValue: "98.2% match rate",
 	heroSub:
-		"8,412 of 8,882 transactions reconciled today across 6 banks. 47 exceptions awaiting review.",
+		"Land Buyers LTD 98.2% • Company 2 96.4% — collections, payouts and float movements verified against rail statements.",
 
 	matchedStat: {
 		label: "MATCHED TODAY",
 		value: "8,412",
 		badge: "+312 since morning",
-		pct: 94.7,
+		pct: 98.2,
 	},
 	pendingStat: {
 		label: "PENDING / EXCEPTIONS",
 		value: "47",
-		badge: "12 high-value",
-		line1: "KES 18.4M in unmatched transfers",
-		line2: "3 international SWIFT items",
+		badge: "5 high-value",
+		line1: "KES 18.4M in unmatched customer payments",
+		line2: "1 float refill pending linkage",
 	},
 	auditStat: {
 		label: "AUDIT TRAIL",
 		value: "124,892",
 		badge: "entries this month",
-		lastRun: "Last reconciliation run: 27 Jun 2025, 14:12",
+		lastRun: "Last reconciliation run: Today 06:00",
 	},
 
 	attention: [
 		{
 			icon: "bi-bank",
 			tone: "danger",
-			title: "Equity Bank credit not matched",
-			sub: "KES 2.8M • Ref EQ-882910",
+			title: "Land Buyers LTD installment unmatched",
+			sub: "KES 2.25M • PLT-088 • bank statement not received",
 			action: "Match",
 			modal: "manualMatchModal",
 		},
 		{
 			icon: "bi-exclamation-triangle",
 			tone: "warn",
-			title: "KCB debit duplicate detected",
-			sub: "KES 450,000 • Same ref twice",
+			title: "Company 2 M-Pesa batch variance",
+			sub: "KES 48,200 • ORD-8899 • amount mismatch",
 			action: "Review",
 			modal: "discrepancyModal",
 		},
 		{
-			icon: "bi-globe",
+			icon: "bi-arrow-left-right",
 			tone: "info",
-			title: "SWIFT inbound pending FX rate",
-			sub: "USD 125,000 • Rate lock expired",
-			action: "Resolve",
-			modal: "fxRateModal",
+			title: "Float refill RB-9923 not yet linked",
+			sub: "Business Wallet → Land Buyers float • KES 3M",
+			action: "Track",
+			modal: "manualMatchModal",
 		},
 	],
 	suggestions: [
@@ -268,16 +292,16 @@ const initialMockData: ReconciliationContent = {
 		{
 			icon: "bi-link-45deg",
 			tone: "warn",
-			title: "Create rule for recurring payroll",
-			sub: "KES 8.2M every 25th",
+			title: "Create rule for Land Buyers Friday installments",
+			sub: "Ref prefix PLT- • weekly batch",
 			action: "Create",
 			modal: "ruleEngineModal",
 		},
 		{
 			icon: "bi-file-earmark-text",
 			tone: "purple",
-			title: "Export June reconciliation report",
-			sub: "Ready for auditors",
+			title: "Export June reconciliation for Company 2",
+			sub: "Ready for the business to verify",
 			action: "Export",
 			modal: "exportReportModal",
 		},
@@ -314,10 +338,10 @@ const initialMockData: ReconciliationContent = {
 			modal: "ruleEngineModal",
 		},
 		{
-			icon: "bi-currency-exchange",
-			tone: "danger",
-			label: "FX Rate",
-			modal: "fxRateModal",
+			icon: "bi-play-fill",
+			tone: "success",
+			label: "Run Auto-Recon",
+			modal: "runAutoReconModal",
 		},
 		{
 			icon: "bi-clock-history",
@@ -333,29 +357,29 @@ const initialMockData: ReconciliationContent = {
 		},
 	],
 
-	bankCoverage: [
-		{ name: "Equity Bank", rate: "98.4%", tone: "success" },
-		{ name: "KCB Bank", rate: "96.1%", tone: "success" },
-		{ name: "Co-op Bank", rate: "94.8%", tone: "success" },
-		{ name: "Stanbic Bank", rate: "89.2%", tone: "warn" },
-		{ name: "M-Pesa B2B", rate: "99.1%", tone: "success" },
+	coverage: [
+		{ name: "Land Buyers LTD", rate: "98.2%", tone: "success" },
+		{ name: "Company 2", rate: "96.4%", tone: "warn" },
+		{ name: "M-Pesa", rate: "99.1%", tone: "success" },
+		{ name: "Card", rate: "97.8%", tone: "success" },
+		{ name: "Bank transfer", rate: "98.8%", tone: "success" },
 	],
 	activityBars: [
-		{ height: 85, color: "pri", label: "Equity" },
-		{ height: 72, color: "info", label: "KCB" },
-		{ height: 68, color: "muted", label: "Co-op" },
-		{ height: 55, color: "warn", label: "Stanbic" },
-		{ height: 90, color: "purple", label: "M-Pesa" },
+		{ height: 85, color: "pri", label: "L.Buyers" },
+		{ height: 90, color: "info", label: "Co. 2" },
+		{ height: 72, color: "muted", label: "M-Pesa" },
+		{ height: 55, color: "warn", label: "Card" },
+		{ height: 60, color: "purple", label: "Bank" },
 	],
 	exceptionBreakdown: [
 		{ label: "Amount mismatch", tone: "danger", count: "18" },
 		{ label: "Duplicate", tone: "warn", count: "9" },
 		{ label: "Missing reference", tone: "info", count: "12" },
-		{ label: "FX rate pending", tone: "purple", count: "5" },
+		{ label: "Missing statement", tone: "purple", count: "5" },
 		{ label: "Timing difference", tone: "success", count: "3" },
 	],
 	healthTiles: [
-		{ label: "AUTO-MATCH RATE", value: "94.7%", tone: "success" },
+		{ label: "AUTO-MATCH RATE", value: "98.2%", tone: "success" },
 		{ label: "MANUAL REVIEW NEEDED", value: "47 items", tone: "info" },
 		{ label: "AVG RESOLUTION TIME", value: "14 min", tone: "warn" },
 	],
@@ -363,55 +387,90 @@ const initialMockData: ReconciliationContent = {
 	pending: [
 		{
 			date: "27 Jun",
-			bank: "Equity",
-			ref: "EQ-882910",
-			desc: "Payroll transfer",
-			amount: "KES 2,800,000",
-			direction: "Debit",
+			business: "Land Buyers LTD",
+			customerRef: "PLT-088",
+			stream: "collection",
+			rail: "Bank transfer",
+			expected: "KES 2,250,000",
+			received: "—",
+			variance: "KES 2,250,000",
 			status: "Unmatched",
 			statusTone: "warn",
 		},
 		{
 			date: "27 Jun",
-			bank: "KCB",
-			ref: "KCB-991028",
-			desc: "Incoming transfer",
-			amount: "KES 2,800,000",
-			direction: "Credit",
-			status: "Unmatched",
-			statusTone: "warn",
+			business: "Company 2",
+			customerRef: "ORD-8899",
+			stream: "collection",
+			rail: "M-Pesa",
+			expected: "KES 48,200",
+			received: "KES 47,900",
+			variance: "KES 300",
+			status: "Exception",
+			statusTone: "danger",
 		},
 		{
 			date: "26 Jun",
-			bank: "Co-op",
-			ref: "COOP-77102",
-			desc: "Supplier payment",
-			amount: "KES 450,000",
-			direction: "Debit",
+			business: "Company 2",
+			customerRef: "ORD-8897",
+			stream: "payout",
+			rail: "M-Pesa",
+			expected: "KES 12,400",
+			received: "KES 12,400",
+			variance: "Duplicate",
 			status: "Exception",
 			statusTone: "danger",
+		},
+		{
+			date: "26 Jun",
+			business: "Land Buyers LTD",
+			customerRef: "RB-9923",
+			stream: "float",
+			rail: "Paymo wallet",
+			expected: "KES 3,000,000",
+			received: "KES 3,000,000",
+			variance: "Unlinked",
+			status: "Unmatched",
+			statusTone: "warn",
 		},
 	],
 	matched: [
 		{
 			id: "MATCH-88291",
 			date: "27 Jun",
-			bankA: "Equity",
-			bankB: "KCB",
-			amount: "KES 2,800,000",
-			by: "James K.",
+			business: "Land Buyers LTD",
+			recordSide: "COL-5501",
+			statementSide: "M-Pesa stmt",
+			amount: "KES 4,500,000",
+			by: "You",
 			time: "14:32",
+			floatLink: "RB-9921",
 			status: "Matched",
 			statusTone: "success",
 		},
 		{
 			id: "MATCH-88290",
 			date: "27 Jun",
-			bankA: "KCB",
-			bankB: "M-Pesa",
-			amount: "KES 1,200,000",
+			business: "Company 2",
+			recordSide: "ORD-8901",
+			statementSide: "M-Pesa stmt",
+			amount: "KES 12,400",
 			by: "System",
 			time: "14:28",
+			floatLink: "RB-9922",
+			status: "Matched",
+			statusTone: "success",
+		},
+		{
+			id: "MATCH-88289",
+			date: "26 Jun",
+			business: "Land Buyers LTD",
+			recordSide: "PLT-087",
+			statementSide: "Bank stmt",
+			amount: "KES 2,250,000",
+			by: "System",
+			time: "09:10",
+			floatLink: "RB-9920",
 			status: "Matched",
 			statusTone: "success",
 		},
@@ -419,53 +478,79 @@ const initialMockData: ReconciliationContent = {
 	exceptions: [
 		{
 			id: "EXC-9910",
-			ref: "KCB-99102",
+			ref: "ORD-8899",
+			business: "Company 2",
+			stream: "collection",
 			issue: "Amount mismatch",
-			amount: "KES 50,000",
+			amount: "KES 300",
 			priority: "High",
 			priorityTone: "danger",
-			assigned: "James K.",
+			assigned: "You",
 		},
 		{
 			id: "EXC-9909",
-			ref: "EQ-882901",
+			ref: "ORD-8897",
+			business: "Company 2",
+			stream: "payout",
 			issue: "Duplicate",
-			amount: "KES 120,000",
+			amount: "KES 12,400",
 			priority: "Medium",
 			priorityTone: "warn",
-			assigned: "Grace M.",
+			assigned: "You",
+		},
+		{
+			id: "EXC-9908",
+			ref: "PLT-088",
+			business: "Land Buyers LTD",
+			stream: "collection",
+			issue: "Missing statement",
+			amount: "KES 2,250,000",
+			priority: "High",
+			priorityTone: "danger",
+			assigned: "System",
 		},
 	],
 	rules: [
 		{
-			name: "Payroll Auto-Match v2",
-			conditions: "Amount ±500, Ref PAY-",
-			rate: "99.2%",
-			lastRun: "27 Jun 14:28",
+			name: "Land Buyers weekly installments",
+			business: "Land Buyers LTD",
+			conditions: "Ref prefix PLT- • amount ± KES 500",
+			rate: "99.1%",
+			lastRun: "Fri 09:00",
 			status: "Active",
 			statusTone: "success",
 		},
 		{
-			name: "Supplier Invoice",
-			conditions: "Amount ±2%, 3-day window",
-			rate: "97.8%",
-			lastRun: "27 Jun 09:15",
+			name: "Company 2 M-Pesa orders",
+			business: "Company 2",
+			conditions: "Ref prefix ORD- • 3-day window",
+			rate: "99.4%",
+			lastRun: "Today 06:00",
+			status: "Active",
+			statusTone: "success",
+		},
+		{
+			name: "Float refill auto-match",
+			business: "All businesses",
+			conditions: "Ref prefix RB- • exact amount",
+			rate: "100%",
+			lastRun: "Today 06:00",
 			status: "Active",
 			statusTone: "success",
 		},
 	],
 	topRules: [
 		{
-			name: "Payroll Auto-Match",
-			sub: "Exact amount + ref prefix",
-			rate: "99.2%",
+			name: "Land Buyers installments",
+			sub: "Ref prefix PLT- + exact amount",
+			rate: "99.1%",
 		},
 		{
-			name: "Supplier Invoice",
-			sub: "Amount ±2% + date window",
-			rate: "97.8%",
+			name: "Company 2 M-Pesa orders",
+			sub: "Ref prefix ORD- + 3-day window",
+			rate: "99.4%",
 		},
-		{ name: "Internal Transfer", sub: "Same bank, same day", rate: "100%" },
+		{ name: "Float refill", sub: "Ref prefix RB- same day", rate: "100%" },
 	],
 
 	quickReports: [
@@ -477,9 +562,9 @@ const initialMockData: ReconciliationContent = {
 	auditActivity: [
 		{
 			time: "14:32",
-			user: "James K.",
+			user: "You",
 			action: "Manual Match",
-			item: "EQ-882910",
+			item: "COL-5501",
 			result: "Matched",
 			resultTone: "success",
 		},
@@ -487,17 +572,25 @@ const initialMockData: ReconciliationContent = {
 			time: "14:28",
 			user: "System",
 			action: "Auto-Rule",
-			item: "47 items",
+			item: "34 items",
 			result: "Success",
 			resultTone: "success",
 		},
 		{
 			time: "13:55",
-			user: "Grace M.",
+			user: "You",
 			action: "Flag Exception",
-			item: "KCB-99102",
+			item: "ORD-8899",
 			result: "Flagged",
 			resultTone: "warn",
+		},
+		{
+			time: "13:50",
+			user: "System",
+			action: "Statement Upload",
+			item: "M-Pesa 27 Jun",
+			result: "Processed",
+			resultTone: "success",
 		},
 	],
 
@@ -511,14 +604,37 @@ const initialMockData: ReconciliationContent = {
 		{ label: "Auto-match success", on: true },
 		{ label: "Daily summary email", on: false },
 	],
-	team: [
-		{ name: "Finance Team", access: "Full access", tone: "success" },
-		{ name: "Auditors", access: "View only", tone: "info" },
-		{ name: "Ops Staff", access: "Match only", tone: "warn" },
+	reconAccess: [
+		{
+			scope: "View customer transactions",
+			desc: "See all 239 customers' txn details in the workbench",
+			granted: true,
+		},
+		{
+			scope: "Initiate refunds",
+			desc: "Auto-approve refunds under KES 5K to resolve exceptions",
+			granted: true,
+		},
+		{
+			scope: "Reverse chargebacks / disputes",
+			desc: "File and manage disputes on unmatched items",
+			granted: true,
+		},
+		{
+			scope: "Hold settlements",
+			desc: "Pause a business's payouts while an exception is open",
+			granted: false,
+		},
+		{
+			scope: "Export statements",
+			desc: "Reconciliation certificates & audit reports",
+			granted: true,
+		},
 	],
 
-	/* option list consumed by the modal forms */
-	banks: ["Equity Bank", "KCB Bank", "Co-op Bank", "Stanbic Bank"],
+	/* option lists consumed by the modal forms */
+	businesses: ["Land Buyers LTD", "Company 2"],
+	rails: ["M-Pesa", "Card", "Bank transfer", "Paymo wallet"],
 };
 
 /* --------------------------------------------------------------------------
@@ -537,6 +653,7 @@ async function fetchReconciliationCenter(): Promise<ReconciliationContent> {
  * ------------------------------------------------------------------------ */
 export default function Reconciliation() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [biz, setBiz] = useState("all");
 	const openModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>
@@ -550,6 +667,21 @@ export default function Reconciliation() {
 	});
 	// Falls back to initialMockData so the page never breaks.
 	const c = data ?? initialMockData;
+
+	const bizName =
+		biz === "land" ? "Land Buyers LTD" : biz === "co2" ? "Company 2" : "";
+	const inScope = (b: string) => biz === "all" || b === bizName;
+	const bizPending = c.pending.filter((p) => inScope(p.business));
+	const bizMatched = c.matched.filter((m) => inScope(m.business));
+	const bizExceptions = c.exceptions.filter((e) => inScope(e.business));
+	const bizRules = c.rules.filter((r) => inScope(r.business));
+
+	const scopeTag =
+		biz === "all"
+			? "All businesses"
+			: biz === "land"
+				? "Land Buyers LTD"
+				: "Company 2";
 
 	const renderRow = (item: Row) => (
 		<div className={s.rowItem} key={item.title}>
@@ -608,42 +740,48 @@ export default function Reconciliation() {
 							<Link to="/app/transfers">B2B Transactions</Link> /{" "}
 							<strong>Reconciliation Center</strong>
 						</div>
-						{/* <h1 className={s.pageTitle}>Reconciliation Center</h1>
-						<p className={s.pageCopy}>
-							Match incoming and outgoing bank transfers across Equity, KCB,
-							Co-op, Stanbic, M-Pesa and international corridors. Resolve
-							discrepancies, run auto-rules and maintain full audit trail.
-						</p> */}
+						<div className={cx(s.bizBar, "mt-2")}>
+							<span className={s.bizLabel}>Scope</span>
+							<div className={s.pills}>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "all" && s.pillActive)}
+									onClick={() => setBiz("all")}
+								>
+									All businesses
+								</button>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "land" && s.pillActive)}
+									onClick={() => setBiz("land")}
+								>
+									Land Buyers LTD <span className="ms-1">30</span>
+								</button>
+								<button
+									type="button"
+									className={cx(s.pill, biz === "co2" && s.pillActive)}
+									onClick={() => setBiz("co2")}
+								>
+									Company 2 <span className="ms-1">209</span>
+								</button>
+							</div>
+						</div>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						{/* <button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("uploadStatementModal")}
-						>
-							<i className="bi bi-upload" /> Upload Statement
-						</button> */}
-						 <button
+						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
 							onClick={() => openModal("runAutoReconModal")}
 						>
 							<i className="bi bi-magic" /> Run Auto-Recon
 						</button>
-						{/* <button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("bulkMatchModal")}
-						>
-							<i className="bi bi-collection" /> Bulk Match
-						</button>
 						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("reconcileNotifModal")}
+							onClick={() => openModal("teamAccessModal")}
 						>
-							<i className="bi bi-bell" /> Alerts
-						</button> */}
+							<i className="bi bi-shield-check" /> My Recon Access
+						</button>
 						<button
 							type="button"
 							className={cx(s.btn, s.btnPrimary, s.btnSm)}
@@ -693,13 +831,6 @@ export default function Reconciliation() {
 								>
 									Auto-Reconcile
 								</button>
-								{/* <button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("exportReportModal")}
-								>
-									Export
-								</button> */}
 								<button
 									type="button"
 									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
@@ -840,8 +971,8 @@ export default function Reconciliation() {
 								Dashboard
 							</h3>
 							<p className={s.sectionSub}>
-								Real-time status across all connected bank accounts and
-								corridors.
+								Real-time coverage across your linked businesses and payout
+								rails — {scopeTag}.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -864,8 +995,8 @@ export default function Reconciliation() {
 					<div className="row g-3">
 						<div className="col-lg-3 col-md-6">
 							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Bank Coverage</h4>
-								{c.bankCoverage.map((b) => (
+								<h4 className={s.blockHead}>Business &amp; Rail Coverage</h4>
+								{c.coverage.map((b) => (
 									<div className={s.rowItem} key={b.name}>
 										<div>{b.name}</div>
 										<span className={cx(s.badge, toneBadge[b.tone])}>
@@ -946,8 +1077,8 @@ export default function Reconciliation() {
 								Pending Reconciliations Workbench
 							</h3>
 							<p className={s.sectionSub}>
-								All unmatched transactions requiring attention. Use filters,
-								search and quick actions.
+								Unmatched customer payments, payouts and float movements
+								requiring attention — {scopeTag}.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -972,56 +1103,71 @@ export default function Reconciliation() {
 							<thead>
 								<tr>
 									<th>Date</th>
-									<th>Bank</th>
-									<th>Reference</th>
-									<th>Description</th>
-									<th>Amount</th>
-									<th>Direction</th>
+									<th>Business</th>
+									<th>Customer Ref</th>
+									<th>Stream</th>
+									<th>Rail</th>
+									<th>Expected</th>
+									<th>Received</th>
+									<th>Variance</th>
 									<th>Status</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
 							<tbody>
-								{c.pending.map((p) => (
-									<tr key={p.ref}>
-										<td>{p.date}</td>
-										<td>{p.bank}</td>
-										<td>
-											<code>{p.ref}</code>
-										</td>
-										<td>{p.desc}</td>
-										<td>
-											<strong>{p.amount}</strong>
-										</td>
-										<td>{p.direction}</td>
-										<td>
-											<span className={cx(s.badge, toneBadge[p.statusTone])}>
-												{p.status}
-											</span>
-										</td>
-										<td>
-											<div
-												className="d-flex"
-												style={{ gap: 4, flexWrap: "wrap" }}
-											>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal("manualMatchModal")}
+								{bizPending.map((p) => {
+									const sm = streamMeta[p.stream];
+									return (
+										<tr key={`${p.customerRef}-${p.date}`}>
+											<td>{p.date}</td>
+											<td>
+												<strong>{p.business}</strong>
+											</td>
+											<td>
+												<code>{p.customerRef}</code>
+											</td>
+											<td>
+												<span className={cx(s.streamTag, sm.cls)}>
+													<i className={cx("bi", sm.icon)} /> {sm.label}
+												</span>
+											</td>
+											<td>{p.rail}</td>
+											<td>{p.expected}</td>
+											<td>{p.received}</td>
+											<td>
+												<strong>{p.variance}</strong>
+											</td>
+											<td>
+												<span
+													className={cx(s.badge, toneBadge[p.statusTone])}
 												>
-													Match
-												</button>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal("discrepancyModal")}
+													{p.status}
+												</span>
+											</td>
+											<td>
+												<div
+													className="d-flex"
+													style={{ gap: 4, flexWrap: "wrap" }}
 												>
-													Flag
-												</button>
-											</div>
-										</td>
-									</tr>
-								))}
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("manualMatchModal")}
+													>
+														Match
+													</button>
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("discrepancyModal")}
+													>
+														Flag
+													</button>
+												</div>
+											</td>
+										</tr>
+									);
+								})}
 							</tbody>
 						</table>
 					</div>
@@ -1035,7 +1181,8 @@ export default function Reconciliation() {
 								<i className="bi bi-check2-circle" /> Matched Transactions
 							</h3>
 							<p className={s.sectionSub}>
-								Successfully reconciled items with full audit trail.
+								Verified items — Paymo record vs rail statement, with the float
+								movement each one funded — {scopeTag}.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -1061,28 +1208,36 @@ export default function Reconciliation() {
 								<tr>
 									<th>Match ID</th>
 									<th>Date</th>
-									<th>Bank A</th>
-									<th>Bank B</th>
+									<th>Business</th>
+									<th>Paymo Record</th>
+									<th>Statement</th>
 									<th>Amount</th>
 									<th>Matched By</th>
-									<th>Time</th>
+									<th>Float Link</th>
 									<th>View</th>
 								</tr>
 							</thead>
 							<tbody>
-								{c.matched.map((m) => (
+								{bizMatched.map((m) => (
 									<tr key={m.id}>
 										<td>
 											<code>{m.id}</code>
 										</td>
 										<td>{m.date}</td>
-										<td>{m.bankA}</td>
-										<td>{m.bankB}</td>
+										<td>
+											<strong>{m.business}</strong>
+										</td>
+										<td>{m.recordSide}</td>
+										<td>{m.statementSide}</td>
 										<td>
 											<strong>{m.amount}</strong>
 										</td>
 										<td>{m.by}</td>
-										<td>{m.time}</td>
+										<td>
+											<span className={s.floatLink}>
+												<i className="bi bi-arrow-left-right" /> {m.floatLink}
+											</span>
+										</td>
 										<td>
 											<button
 												type="button"
@@ -1111,7 +1266,8 @@ export default function Reconciliation() {
 								Discrepancies &amp; Exceptions
 							</h3>
 							<p className={s.sectionSub}>
-								Investigate, flag, dispute or resolve unmatched items.
+								Investigate, flag, refund, dispute or re-match unmatched items —
+								{scopeTag}.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -1137,6 +1293,8 @@ export default function Reconciliation() {
 								<tr>
 									<th>Exception ID</th>
 									<th>Ref</th>
+									<th>Business</th>
+									<th>Stream</th>
 									<th>Issue</th>
 									<th>Amount</th>
 									<th>Priority</th>
@@ -1145,45 +1303,58 @@ export default function Reconciliation() {
 								</tr>
 							</thead>
 							<tbody>
-								{c.exceptions.map((e) => (
-									<tr key={e.id}>
-										<td>
-											<code>{e.id}</code>
-										</td>
-										<td>{e.ref}</td>
-										<td>{e.issue}</td>
-										<td>
-											<strong>{e.amount}</strong>
-										</td>
-										<td>
-											<span className={cx(s.badge, toneBadge[e.priorityTone])}>
-												{e.priority}
-											</span>
-										</td>
-										<td>{e.assigned}</td>
-										<td>
-											<div
-												className="d-flex"
-												style={{ gap: 4, flexWrap: "wrap" }}
-											>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal("manualMatchModal")}
+								{bizExceptions.map((e) => {
+									const sm = streamMeta[e.stream];
+									return (
+										<tr key={e.id}>
+											<td>
+												<code>{e.id}</code>
+											</td>
+											<td>{e.ref}</td>
+											<td>
+												<strong>{e.business}</strong>
+											</td>
+											<td>
+												<span className={cx(s.streamTag, sm.cls)}>
+													<i className={cx("bi", sm.icon)} /> {sm.label}
+												</span>
+											</td>
+											<td>{e.issue}</td>
+											<td>
+												<strong>{e.amount}</strong>
+											</td>
+											<td>
+												<span
+													className={cx(s.badge, toneBadge[e.priorityTone])}
 												>
-													Resolve
-												</button>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal("disputeModal")}
+													{e.priority}
+												</span>
+											</td>
+											<td>{e.assigned}</td>
+											<td>
+												<div
+													className="d-flex"
+													style={{ gap: 4, flexWrap: "wrap" }}
 												>
-													Dispute
-												</button>
-											</div>
-										</td>
-									</tr>
-								))}
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("manualMatchModal")}
+													>
+														Resolve
+													</button>
+													<button
+														type="button"
+														className={cx(s.btn, s.btnSm)}
+														onClick={() => openModal("disputeModal")}
+													>
+														Dispute
+													</button>
+												</div>
+											</td>
+										</tr>
+									);
+								})}
 							</tbody>
 						</table>
 					</div>
@@ -1198,7 +1369,8 @@ export default function Reconciliation() {
 								Auto-Reconciliation Rules Engine
 							</h3>
 							<p className={s.sectionSub}>
-								Create, edit and monitor intelligent matching rules.
+								Per-business matching rules for collections, payouts and float
+								refills — {scopeTag}.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -1225,6 +1397,7 @@ export default function Reconciliation() {
 									<thead>
 										<tr>
 											<th>Rule Name</th>
+											<th>Business</th>
 											<th>Conditions</th>
 											<th>Match Rate</th>
 											<th>Last Run</th>
@@ -1233,9 +1406,12 @@ export default function Reconciliation() {
 										</tr>
 									</thead>
 									<tbody>
-										{c.rules.map((r) => (
+										{bizRules.map((r) => (
 											<tr key={r.name}>
 												<td>{r.name}</td>
+												<td>
+													<strong>{r.business}</strong>
+												</td>
 												<td>{r.conditions}</td>
 												<td>{r.rate}</td>
 												<td>{r.lastRun}</td>
@@ -1292,7 +1468,7 @@ export default function Reconciliation() {
 								Reports, Exports &amp; Audit Trail
 							</h3>
 							<p className={s.sectionSub}>
-								Generate compliance reports, audit logs and reconciliation
+								Per-business reconciliation statements, audit logs and
 								certificates.
 							</p>
 						</div>
@@ -1381,8 +1557,8 @@ export default function Reconciliation() {
 								Reconciliation Settings &amp; Automation
 							</h3>
 							<p className={s.sectionSub}>
-								Configure matching tolerances, notification rules and team
-								permissions.
+								Matching tolerances, notifications and your facilitator access
+								to customer data.
 							</p>
 						</div>
 						<div className="d-flex" style={{ gap: 8 }}>
@@ -1398,7 +1574,7 @@ export default function Reconciliation() {
 								className={cx(s.btn, s.btnSm)}
 								onClick={() => openModal("teamAccessModal")}
 							>
-								<i className="bi bi-people" /> Team
+								<i className="bi bi-shield-check" /> My Recon Access
 							</button>
 						</div>
 					</div>
@@ -1438,14 +1614,26 @@ export default function Reconciliation() {
 						</div>
 						<div className="col-lg-4">
 							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Team Permissions</h4>
-								{c.team.map((t) => (
-									<div className={s.rowItem} key={t.name}>
+								<h4 className={s.blockHead}>My Recon Access</h4>
+								{c.reconAccess.map((sc) => (
+									<div className={s.permItem} key={sc.scope}>
+										<span
+											className={cx(
+												s.permDot,
+												sc.granted ? s.permOk : s.permPending,
+											)}
+										/>
 										<div style={{ minWidth: 0 }}>
-											<strong>{t.name}</strong>
+											<div className={s.permTitle}>{sc.scope}</div>
+											<div className={s.permSub}>{sc.desc}</div>
 										</div>
-										<span className={cx(s.badge, toneBadge[t.tone])}>
-											{t.access}
+										<span
+											className={cx(
+												s.badge,
+												sc.granted ? s.badgeSuccess : s.badgeWarn,
+											)}
+										>
+											{sc.granted ? "Granted" : "Pending"}
 										</span>
 									</div>
 								))}

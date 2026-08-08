@@ -35,11 +35,18 @@ const s = styles as Record<string, string>;
 /* --------------------------------------------------------------------------
  * Data the page injects (mirrors GET /api/liquidity-float).
  * ------------------------------------------------------------------------ */
+export interface FacilitatorScope {
+	icon: string;
+	scope: string;
+	desc: string;
+	granted: boolean;
+}
+
 export interface LiquidityData {
-	banks: string[];
-	pools: string[];
-	agents: string[];
-	partners: string[];
+	businesses: string[];
+	businessWallets: string[];
+	walletsList: string[];
+	facilitatorScopes: FacilitatorScope[];
 }
 
 export interface LiquidityModalsProps {
@@ -445,20 +452,16 @@ export function LiquidityModals({
 								</h6>
 								<div className="row g-3">
 									<div className="col-md-6">
-										<SelectField
-											label="From (Source)"
-											options={[...data.pools, ...data.banks]}
-										/>
+								<SelectField
+									label="From (Source Wallet)"
+									options={data.walletsList}
+								/>
 									</div>
 									<div className="col-md-6">
-										<SelectField
-											label="To (Destination)"
-											options={[
-												"Stanbic Bank (KES 12.4M)",
-												"Co-op Bank (KES 41.2M)",
-												"Agent Float Pool (KES 119.3M)",
-											]}
-										/>
+								<SelectField
+									label="To (Business Float)"
+									options={data.businesses}
+								/>
 									</div>
 								</div>
 							</>
@@ -466,14 +469,14 @@ export function LiquidityModals({
 						{step === 2 && (
 							<>
 								<h6 style={{ fontWeight: 700 }}>Step 2: Amount &amp; Reason</h6>
-								<Field label="Amount (KES)" defaultValue="25000000" />
+								<Field label="Amount (KES)" defaultValue="640000" />
 								<SelectField
 									label="Reason"
 									options={[
-										"Critical float replenishment",
-										"Weekend surge preparation",
-										"Partner settlement requirement",
-										"Scheduled rebalancing",
+										"Below-minimum top-up",
+										"Friday batch preparation",
+										"Scheduled refill",
+										"Manual rebalance",
 									]}
 								/>
 								<div className="mb-3">
@@ -481,7 +484,7 @@ export function LiquidityModals({
 									<textarea
 										className={s.field}
 										rows={2}
-										defaultValue="Emergency top-up for Stanbic due to unexpected salary run volume."
+										defaultValue="Top-up Company 2 float to minimum + 25% before daily auto-settle."
 									/>
 								</div>
 							</>
@@ -492,12 +495,12 @@ export function LiquidityModals({
 									Step 3: Approval &amp; Execution
 								</h6>
 								<div className={cx(s.reviewBox, "mb-3")}>
-									<ReviewRow label="Amount" value="KES 25,000,000" />
+									<ReviewRow label="Amount" value="KES 640,000" />
 									<ReviewRow label="Fee" value="KES 0 (internal)" />
 									<div className="d-flex justify-content-between">
 										<span style={{ fontWeight: 700 }}>Total Movement</span>
 										<strong style={{ fontSize: 18, color: "var(--pri)" }}>
-											KES 25,000,000
+											KES 640,000
 										</strong>
 									</div>
 								</div>
@@ -516,13 +519,13 @@ export function LiquidityModals({
 									Rebalance Executed Successfully
 								</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									KES 25M transferred from PayMo Main Pool to Stanbic Bank. New
-									balance: KES 37.4M.
+									KES 640,000 transferred from Business Wallet to Company 2 Float.
+									New balance: KES 1.28M.
 								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
-									<ReviewRow label="Reference" value="RB-44291" />
-									<ReviewRow label="Executed" value="27 Jun 2025, 14:22" />
-									<ReviewRow label="Approved by" value="System (Auto)" />
+									<ReviewRow label="Reference" value="RB-9924" />
+									<ReviewRow label="Executed" value="Today, 09:15" />
+									<ReviewRow label="Approved by" value="You (Manual)" />
 								</div>
 							</div>
 						)}
@@ -535,29 +538,25 @@ export function LiquidityModals({
 				show={isOpen("topupBankModal")}
 				onClose={() => close("topupBankModal")}
 				iconCls="bi bi-bank"
-				title="Top-up Bank Float"
+				title="Top-up Business Float"
 				submitLabel="Execute Top-up"
-				successMsg="Bank float topped up successfully! Reference: TP-44292"
+				successMsg="Business float topped up successfully! Reference: TP-44292"
 			>
 				<SelectField
-					label="Bank"
-					options={[
-						"Stanbic Bank (KES 12.4M)",
-						"Co-op Bank (KES 41.2M)",
-						"Equity Bank (KES 98.4M)",
-					]}
+					label="Business Float"
+					options={data.businesses}
 				/>
-				<Field label="Amount (KES)" defaultValue="25000000" />
+				<Field label="Amount (KES)" defaultValue="640000" />
 				<SelectField
 					label="Source"
-					options={["PayMo Main Pool", "Emergency Reserve", "KCB Bank"]}
+					options={data.walletsList}
 				/>
 				<SelectField
 					label="Reason"
 					options={[
-						"Critical float replenishment",
+						"Below-minimum top-up",
 						"Scheduled top-up",
-						"Partner request",
+						"Friday batch preparation",
 					]}
 				/>
 			</SimpleModal>
@@ -747,19 +746,15 @@ export function LiquidityModals({
 				show={isOpen("agentTopupModal")}
 				onClose={() => close("agentTopupModal")}
 				iconCls="bi bi-people"
-				title="Top-up Agent Float"
-				submitLabel="Top-up Agent"
-				successMsg="Agent float topped up successfully! Reference: AG-44293"
+				title="Top-up Float"
+				submitLabel="Top-up Float"
+				successMsg="Float topped up successfully! Reference: TP-44293"
 			>
-				<SelectField label="Agent" options={data.agents} />
-				<Field label="Amount (KES)" defaultValue="50000" />
+				<SelectField label="Business Float" options={data.businesses} />
+				<Field label="Amount (KES)" defaultValue="500000" />
 				<SelectField
-					label="Method"
-					options={[
-						"Auto (from Agent Pool)",
-						"Manual from PayMo Main",
-						"From Partner Float",
-					]}
+					label="Source"
+					options={data.walletsList}
 				/>
 			</SimpleModal>
 
@@ -1031,8 +1026,8 @@ export function LiquidityModals({
 				<SelectField
 					label="Batch"
 					options={[
-						"SB-44291 — Equity Bank (KES 87.4M)",
-						"SB-44292 — Co-op Bank (KES 54.2M)",
+						"RB-9919 — Land Buyers payout (KES 2.25M)",
+						"RB-9921 — Land Buyers refill (KES 3M)",
 					]}
 				/>
 				<div className={cx(s.tile, s.tileWarn, "mb-3")}>
@@ -1043,10 +1038,10 @@ export function LiquidityModals({
 							color: "var(--warning-mid)",
 						}}
 					>
-						Variance Detected: KES 1,820,000
+						Variance Detected: KES 2,250,000
 					</div>
 					<div style={{ fontSize: 12 }}>
-						Expected: KES 87,420,000 | Received: KES 85,600,000
+						Expected: KES 2,250,000 | Received: not on statement
 					</div>
 				</div>
 				<div className="mb-3">
@@ -1054,7 +1049,7 @@ export function LiquidityModals({
 					<textarea
 						className={s.field}
 						rows={3}
-						defaultValue="Discrepancy likely due to failed transaction reversal on 26 Jun. Awaiting confirmation from Equity Bank operations team."
+						defaultValue="Land Buyers payout RB-9919 not yet reflected on the bank statement. Awaiting confirmation before Friday batch."
 					/>
 				</div>
 				<SelectField
@@ -1066,20 +1061,28 @@ export function LiquidityModals({
 						"Schedule full reconciliation meeting",
 					]}
 				/>
-			</SimpleModal>
-
-			{/* ============ M10: Threshold Config ============ */}
+			</SimpleModal>				{/* ============ M10: Float Rules (editable, per business) ============ */}
 			<SimpleModal
 				show={isOpen("thresholdModal")}
 				onClose={() => close("thresholdModal")}
 				iconCls="bi bi-sliders"
-				title="Float Threshold Configuration"
-				submitLabel="Save Thresholds"
-				successMsg="Thresholds updated successfully!"
+				title="Float Rules & Thresholds"
+				submitLabel="Save Rules"
+				successMsg="Float rules updated successfully!"
 			>
-				<Field label="Bank Float Minimum" defaultValue="25000000" />
-				<Field label="Agent Float Minimum" defaultValue="30000" />
-				<Field label="Partner Float Minimum" defaultValue="50000000" />
+				<SelectField label="Business" options={data.businesses} />
+				<Field label="Minimum Float (KES)" defaultValue="500000" />
+				<Field label="Top-up To (KES)" defaultValue="625000" />
+				<SelectField
+					label="Auto-rebalance trigger"
+					options={[
+						"Below minimum",
+						"Scheduled daily 06:00",
+						"Scheduled weekly Friday 15:00",
+						"Manual only",
+					]}
+				/>
+				<SelectField label="Source Wallet" options={data.walletsList} />
 				<SelectField
 					label="Alert when below % of minimum"
 					options={["80%", "70%", "60%"]}
@@ -1111,7 +1114,7 @@ export function LiquidityModals({
 						style={{ fontSize: 13 }}
 						htmlFor="liqReplenish"
 					>
-						Auto-replenish when possible
+						Auto-refill float when below minimum
 					</label>
 				</div>
 			</SimpleModal>
@@ -1162,8 +1165,8 @@ export function LiquidityModals({
 				show={isOpen("governanceModal")}
 				onClose={() => close("governanceModal")}
 				size="lg"
-				iconCls="bi bi-file-earmark-check"
-				title="Governance & Audit"
+				iconCls="bi bi-shield-check"
+				title="My Access & Permissions"
 				footer={
 					<>
 						<button
@@ -1178,12 +1181,30 @@ export function LiquidityModals({
 							className={cx(s.btn, s.btnPrimary)}
 							onClick={() => close("governanceModal")}
 						>
-							Export Audit
+							Request Access
 						</button>
 					</>
 				}
 			>
-				<GovernanceTabs />
+				{(data.facilitatorScopes ?? []).map((sc) => (
+					<div className={s.permItem} key={sc.scope}>
+						<i
+							className={cx("bi", sc.icon)}
+							style={{
+								color: sc.granted ? "var(--success)" : "var(--warning)",
+								fontSize: 18,
+								marginTop: 2,
+							}}
+						/>
+						<div style={{ minWidth: 0, flex: 1 }}>
+							<div className={s.permTitle}>{sc.scope}</div>
+							<div className={s.permSub}>{sc.desc}</div>
+						</div>
+						<span className={cx(s.badge, sc.granted ? s.badgeSuccess : s.badgeWarn)}>
+							{sc.granted ? "Granted" : "Pending"}
+						</span>
+					</div>
+				))}
 			</ModalShell>
 
 			{/* ============ M13: Liquidity Health ============ */}
@@ -1313,20 +1334,20 @@ export function LiquidityModals({
 			>
 				<div style={{ maxHeight: 500, overflowY: "auto" }}>
 					<div className={cx(s.tile, s.tileDanger, "mb-2")}>
-						<strong>Stanbic Bank critical</strong>
-						<div className={s.tileSub}>12.4M / 25M threshold • 2h ago</div>
+						<strong>Company 2 float below minimum</strong>
+						<div className={s.tileSub}>KES 640K / KES 500K min • auto-settle at risk</div>
 					</div>
 					<div className={cx(s.tile, s.tileWarn, "mb-2")}>
-						<strong>Co-op Bank warning</strong>
-						<div className={s.tileSub}>41.2M / 45M threshold • 4h ago</div>
+						<strong>Land Buyers weekly payout due Friday</strong>
+						<div className={s.tileSub}>Projected draw KES 2.8M • float short by KES 2.8M</div>
 					</div>
 					<div className={cx(s.tile, s.tileInfo, "mb-2")}>
-						<strong>12 agents below minimum</strong>
-						<div className={s.tileSub}>Auto-replenishment failed • 6h ago</div>
+						<strong>Auto-refill rule paused</strong>
+						<div className={s.tileSub}>Land Buyers • manual top-up required</div>
 					</div>
 					<div className={cx(s.tile, "mb-2")}>
-						<strong>Settlement variance detected</strong>
-						<div className={s.rowSub}>Equity Bank batch • 8h ago</div>
+						<strong>Float movement RB-9919 unmatched</strong>
+						<div className={s.rowSub}>KES 2.25M payout awaiting reconciliation</div>
 					</div>
 				</div>
 			</ModalShell>
@@ -1336,26 +1357,19 @@ export function LiquidityModals({
 				show={isOpen("internalTransferModal")}
 				onClose={() => close("internalTransferModal")}
 				iconCls="bi bi-arrow-left-right"
-				title="Internal Float Transfer"
+				title="Wallet Transfer"
 				submitLabel="Execute Transfer"
-				successMsg="Internal transfer completed successfully! Reference: IT-44295"
+				successMsg="Wallet transfer completed successfully! Reference: TN-9924"
 			>
-				<SelectField label="From Pool" options={data.pools} />
-				<SelectField
-					label="To Pool"
-					options={[
-						"Agent Float Pool (KES 119.3M)",
-						"Partner Settlement (KES 67.8M)",
-						"PayMo Main Pool (KES 284.6M)",
-					]}
-				/>
-				<Field label="Amount (KES)" defaultValue="50000000" />
+				<SelectField label="From Wallet" options={data.walletsList} />
+				<SelectField label="To Wallet" options={data.walletsList} />
+				<Field label="Amount (KES)" defaultValue="2000000" />
 				<SelectField
 					label="Reason"
 					options={[
-						"Agent replenishment",
-						"Partner settlement",
-						"Internal rebalancing",
+						"Fund business float",
+						"Personal withdrawal",
+						"Move to savings",
 					]}
 				/>
 			</SimpleModal>
@@ -1365,16 +1379,13 @@ export function LiquidityModals({
 				show={isOpen("partnerTopupModal")}
 				onClose={() => close("partnerTopupModal")}
 				iconCls="bi bi-building"
-				title="Partner Float Top-up"
-				submitLabel="Top-up Partner"
-				successMsg="Partner float topped up successfully! Reference: PT-44296"
+				title="Float Top-up"
+				submitLabel="Top-up Float"
+				successMsg="Float topped up successfully! Reference: TP-44296"
 			>
-				<SelectField label="Partner" options={data.partners} />
-				<Field label="Amount (KES)" defaultValue="100000000" />
-				<SelectField
-					label="Source"
-					options={["PayMo Main Pool", "Emergency Reserve"]}
-				/>
+				<SelectField label="Business Float" options={data.businesses} />
+				<Field label="Amount (KES)" defaultValue="500000" />
+				<SelectField label="Source" options={data.walletsList} />
 			</SimpleModal>
 
 			{/* ============ M17: Liquidity Report ============ */}
@@ -1427,21 +1438,21 @@ export function LiquidityModals({
 			>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>Stanbic Bank critical</div>
-						<div className={s.rowSub}>KES 12.4M remaining</div>
+						<div className={s.rowTitle}>Company 2 float below minimum</div>
+						<div className={s.rowSub}>KES 640K / min KES 500K</div>
 					</div>
 					<button
 						type="button"
 						className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
-						onClick={() => swap("attentionModal", "emergencyLiquidityModal")}
+						onClick={() => swap("attentionModal", "rebalanceModal")}
 					>
-						Emergency
+						Rebalance
 					</button>
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>Co-op Bank warning</div>
-						<div className={s.rowSub}>KES 41.2M remaining</div>
+						<div className={s.rowTitle}>Land Buyers payout batch due Friday</div>
+						<div className={s.rowSub}>Projected draw KES 2.8M</div>
 					</div>
 					<button
 						type="button"
@@ -1453,21 +1464,21 @@ export function LiquidityModals({
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>47 agents below minimum</div>
-						<div className={s.rowSub}>Auto-replenishment failed</div>
+						<div className={s.rowTitle}>Auto-refill rule paused</div>
+						<div className={s.rowSub}>Land Buyers • manual top-up needed</div>
 					</div>
 					<button
 						type="button"
 						className={cx(s.btn, s.btnSm)}
-						onClick={() => swap("attentionModal", "agentFloatModal")}
+						onClick={() => swap("attentionModal", "thresholdModal")}
 					>
-						Review
+						Enable
 					</button>
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>Settlement variance</div>
-						<div className={s.rowSub}>KES 1.8M mismatch</div>
+						<div className={s.rowTitle}>Float movement RB-9919 unmatched</div>
+						<div className={s.rowSub}>KES 2.25M payout awaiting recon</div>
 					</div>
 					<button
 						type="button"
@@ -1801,90 +1812,6 @@ function ForecastTabs() {
 					Monthly forecast shows recurring pattern of low float every 3rd
 					weekend. Recommendation: Increase minimum float buffer by 25% during
 					salary run periods.
-				</div>
-			)}
-		</>
-	);
-}
-
-/* --------------------------------------------------------------------------
- * GovernanceTabs — legacy M12 sw('gov', …) (Actions / Approvals / Audit Log).
- * ------------------------------------------------------------------------ */
-function GovernanceTabs() {
-	const [tab, setTab] = useState<"actions" | "approvals" | "audit">("actions");
-	return (
-		<>
-			<div className={s.pills} style={{ marginBottom: 20 }}>
-				{(
-					[
-						{ key: "actions", label: "Actions" },
-						{ key: "approvals", label: "Approvals" },
-						{ key: "audit", label: "Audit Log" },
-					] as const
-				).map((t) => (
-					<button
-						key={t.key}
-						type="button"
-						className={cx(s.pill, tab === t.key && s.pillActive)}
-						onClick={() => setTab(t.key)}
-					>
-						{t.label}
-					</button>
-				))}
-			</div>
-			{tab === "actions" && (
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>Action</th>
-								<th>Amount</th>
-								<th>Initiator</th>
-								<th>Approver</th>
-								<th>Time</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Emergency top-up</td>
-								<td>KES 80M</td>
-								<td>System</td>
-								<td>CFO (auto)</td>
-								<td>26 Jun 22:14</td>
-							</tr>
-							<tr>
-								<td>Float rebalance override</td>
-								<td>KES 45M</td>
-								<td>Liquidity Mgr</td>
-								<td>Treasurer</td>
-								<td>25 Jun 14:02</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			)}
-			{tab === "approvals" && (
-				<>
-					<div className={s.rowItem}>
-						<div style={{ minWidth: 0 }}>
-							<div className={s.rowTitle}>Threshold change request</div>
-							<div className={s.rowSub}>Ops Lead → Risk Committee</div>
-						</div>
-						<span className={cx(s.badge, s.badgeSuccess)}>Approved</span>
-					</div>
-					<div className={s.rowItem}>
-						<div style={{ minWidth: 0 }}>
-							<div className={s.rowTitle}>Emergency line activation</div>
-							<div className={s.rowSub}>CFO + CEO (Dual)</div>
-						</div>
-						<span className={cx(s.badge, s.badgeSuccess)}>Approved</span>
-					</div>
-				</>
-			)}
-			{tab === "audit" && (
-				<div className={s.reviewBox} style={{ fontSize: 12 }}>
-					Full audit trail available for download. All actions are immutable and
-					timestamped with digital signatures.
 				</div>
 			)}
 		</>

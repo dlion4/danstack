@@ -1,7 +1,7 @@
 /* ============================================================
    PayMo BaaS — Settlement & Clearing (page 1.7)
-   CSS Module scoped to .settlementPage — emerald-glass dark theme
-   (dashboard design system shared across 1.7–1.11)
+   CSS Module scoped to .settlementPage — emerald theme
+   Fully responsive, unified design system
    ============================================================ */
 
 .settlementPage {
@@ -141,17 +141,8 @@
 }
 
 @keyframes pmPulse {
-
-	0%,
-	100% {
-		opacity: 1;
-		transform: scale(1);
-	}
-
-	50% {
-		opacity: 0.6;
-		transform: scale(1.2);
-	}
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50% { opacity: 0.6; transform: scale(1.2); }
 }
 
 /* ======================= MAIN / HEADER ======================= */
@@ -440,6 +431,10 @@
 	white-space: nowrap;
 }
 
+.badge i {
+	font-size: 10px;
+}
+
 .badgeS {
 	background: var(--pm-accent-soft);
 	color: #047857;
@@ -545,17 +540,14 @@
 .btnGhost {
 	background: rgba(255, 255, 255, 0.18);
 	border-color: rgba(255, 255, 255, 0.3);
-	/* color: var(--pm-ink-soft); */
 	color: #fff;
 	backdrop-filter: blur(4px);
 }
 
-
-
 .btnGhost:hover {
-	background: #f3f4f6;
-	color: #1f1f1f;
-	border-color: #d1d5db;
+	background: rgba(255, 255, 255, 0.28);
+	color: #fff;
+	border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* ======================= TABLES ======================= */
@@ -650,6 +642,7 @@
 	transition: all 0.2s;
 	background: #fff;
 	color: var(--pm-ink);
+	font-family: inherit;
 }
 
 .fc:focus {
@@ -819,11 +812,13 @@ input[type="date"].fc {
 	font-weight: 700;
 	color: var(--pm-accent);
 	font-size: 1.15rem;
+	margin-bottom: 4px;
 }
 
 .receiptSub {
 	font-size: 13px;
 	color: var(--pm-ink-soft);
+	margin: 0;
 }
 
 /* ======================= INFO BLOCKS / ROWS ======================= */
@@ -905,7 +900,6 @@ input[type="date"].fc {
 	border-left: 3px solid var(--pm-warning);
 }
 
-/* small stat tiles inside modals */
 .miniStat {
 	padding: 16px;
 	border-radius: 10px;
@@ -953,7 +947,7 @@ input[type="date"].fc {
 	color: var(--pm-primary);
 }
 
-/* ======================= MINI BARS / PROGRESS / CHART (styles the legacy page was missing) ======================= */
+/* ======================= MINI BARS / PROGRESS / CHART ======================= */
 .miniBars {
 	display: flex;
 	align-items: flex-end;
@@ -1012,7 +1006,7 @@ input[type="date"].fc {
 	white-space: nowrap;
 }
 
-/* ======================= MODALS (React-driven, Bootstrap look) ======================= */
+/* ======================= MODALS ======================= */
 .backdrop {
 	position: fixed;
 	inset: 0;
@@ -1036,13 +1030,8 @@ input[type="date"].fc {
 }
 
 @keyframes pmFade {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
+	from { opacity: 0; }
+	to { opacity: 1; }
 }
 
 @keyframes pmSlide {
@@ -1050,7 +1039,6 @@ input[type="date"].fc {
 		opacity: 0;
 		transform: translateY(-16px) scale(0.985);
 	}
-
 	to {
 		opacity: 1;
 		transform: translateY(0) scale(1);
@@ -1123,7 +1111,6 @@ input[type="date"].fc {
 	opacity: 1;
 }
 
-/* loading overlay inside modal bodies (legacy showLoading) */
 .loadingOv {
 	position: absolute;
 	inset: 0;
@@ -1146,9 +1133,7 @@ input[type="date"].fc {
 }
 
 @keyframes pmSpin {
-	to {
-		transform: rotate(360deg);
-	}
+	to { transform: rotate(360deg); }
 }
 
 .loadingLabel {
@@ -1158,7 +1143,6 @@ input[type="date"].fc {
 	color: var(--pm-primary);
 }
 
-/* step fade-in (legacy .fstep animation) */
 .fstepActive {
 	animation: pmFi 0.3s ease;
 }
@@ -1168,7 +1152,6 @@ input[type="date"].fc {
 		opacity: 0;
 		transform: translateY(8px);
 	}
-
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -1260,6 +1243,408 @@ input[type="date"].fc {
 
 .textPurple {
 	color: #6d28d9;
+}
+
+/* ======================= PAYMO CONNECTION BANNER ======================= */
+.connBanner {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	padding: 14px 18px;
+	border-radius: 14px;
+	background: var(--pm-gradient-slate);
+	color: #fff;
+	box-shadow: var(--pm-shadow-md);
+	margin-bottom: 16px;
+}
+
+.connIcon {
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.14);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	flex-shrink: 0;
+}
+
+.connIcon i {
+	color: #fff;
+}
+
+.connText {
+	flex: 1;
+	min-width: 240px;
+}
+
+.connTitle {
+	font-weight: 700;
+	font-size: 14px;
+	margin-bottom: 2px;
+}
+
+.connSub {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.8);
+	margin: 0;
+}
+
+.connTag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	font-weight: 600;
+	background: rgba(255, 255, 255, 0.12);
+	border-radius: 999px;
+	padding: 5px 12px;
+	white-space: nowrap;
+}
+
+/* ======================= WORLD SWITCH & BUSINESS SELECTOR ======================= */
+.worldSwitch {
+	display: flex;
+	gap: 6px;
+	background: var(--pm-surface-2);
+	border: 1px solid var(--pm-border);
+	padding: 4px;
+	border-radius: 12px;
+	width: fit-content;
+	flex-wrap: wrap;
+}
+
+.worldBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border: none;
+	background: transparent;
+	padding: 9px 16px;
+	border-radius: 9px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--pm-ink-soft);
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.worldBtn:hover {
+	color: var(--pm-ink);
+}
+
+.worldBtnActive {
+	background: var(--pm-surface);
+	color: var(--pm-primary);
+	box-shadow: var(--pm-shadow-sm);
+	border: 1px solid var(--pm-border-2);
+}
+
+.bizBar {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.bizPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	border: 1px solid var(--pm-border-2);
+	background: var(--pm-surface);
+	color: var(--pm-ink-soft);
+	border-radius: 999px;
+	padding: 7px 14px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.bizPill:hover {
+	border-color: var(--pm-primary);
+	color: var(--pm-primary);
+}
+
+.bizPillActive {
+	background: var(--pm-primary);
+	border-color: var(--pm-primary);
+	color: #fff;
+}
+
+.bizCount {
+	font-size: 10px;
+	background: rgba(26, 31, 46, 0.08);
+	border-radius: 999px;
+	padding: 1px 7px;
+}
+
+.bizPillActive .bizCount {
+	background: rgba(255, 255, 255, 0.24);
+	color: #fff;
+}
+
+/* ======================= BUSINESS CARDS ======================= */
+.bizCard {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	position: relative;
+	overflow: hidden;
+}
+
+.bizCard::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: var(--pm-primary);
+	border-radius: 0 4px 4px 0;
+}
+
+.bizHead {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.bizName {
+	font-weight: 700;
+	font-size: 14px;
+	margin: 0;
+}
+
+.bizType {
+	font-size: 11px;
+	color: var(--pm-muted);
+	margin: 0;
+}
+
+.bizKpis {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+}
+
+.bizKpi {
+	background: var(--pm-surface-2);
+	border: 1px solid var(--pm-border);
+	border-radius: 10px;
+	padding: 8px 10px;
+}
+
+.bizKpiLabel {
+	font-size: 10px;
+	color: var(--pm-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+.bizKpiValue {
+	font-size: 14px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: var(--pm-ink);
+}
+
+.permTrack {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 11px;
+	color: var(--pm-ink-soft);
+}
+
+.permBar {
+	flex: 1;
+	height: 6px;
+	background: var(--pm-border);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.permFill {
+	height: 100%;
+	background: var(--pm-primary);
+	border-radius: 999px;
+	transition: width 0.3s ease;
+}
+
+.floatMeter {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 11px;
+	color: var(--pm-ink-soft);
+}
+
+.floatFill {
+	background: var(--pm-info);
+}
+
+.floatLow {
+	background: var(--pm-warning);
+}
+
+/* ======================= WALLET CARDS ======================= */
+.walletCard {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.walletCard::after {
+	content: "";
+	position: absolute;
+	right: -34px;
+	top: -34px;
+	width: 130px;
+	height: 130px;
+	border-radius: 50%;
+	background: rgba(16, 185, 129, 0.1);
+	pointer-events: none;
+}
+
+.walletIcon {
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	flex-shrink: 0;
+}
+
+.walletBalance {
+	font-size: 24px;
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	color: var(--pm-ink);
+}
+
+.walletRow {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	font-size: 12px;
+	padding: 6px 0;
+	border-bottom: 1px dashed var(--pm-border);
+}
+
+.walletRow:last-child {
+	border-bottom: none;
+}
+
+/* ======================= WORLD TAGS ======================= */
+.flowTag {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	border-radius: 6px;
+	padding: 3px 8px;
+	white-space: nowrap;
+}
+
+.flowCustomer {
+	background: var(--pm-accent-soft);
+	color: #047857;
+}
+
+.flowInternal {
+	background: var(--pm-purple-soft);
+	color: #6d28d9;
+}
+
+/* ======================= PERMISSION CHECKLIST ======================= */
+.permItem {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border: 1px solid var(--pm-border);
+	border-radius: 10px;
+	margin-bottom: 8px;
+}
+
+.permDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.permOk {
+	background: var(--pm-primary);
+	box-shadow: 0 0 0 3px var(--pm-accent-soft);
+}
+
+.permPending {
+	background: var(--pm-warning);
+	box-shadow: 0 0 0 3px var(--pm-warning-soft);
+}
+
+.permReq {
+	background: var(--pm-danger);
+	box-shadow: 0 0 0 3px var(--pm-danger-soft);
+}
+
+/* ======================= QUICK ACTION PILLS ======================= */
+.qaGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.qaBtn {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 10px 12px;
+	min-height: 44px;
+	border: 1px solid var(--pm-border-2);
+	border-radius: 8px;
+	background: var(--pm-surface);
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--pm-ink);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	text-align: left;
+}
+
+.qaBtn i {
+	font-size: 15px;
+	transition: transform 0.2s ease;
+}
+
+.qaBtn:hover {
+	border-color: var(--pm-primary);
+	background: #ecfdf5;
+	transform: translateY(-1px);
+	box-shadow: var(--pm-shadow-sm);
+}
+
+.qaBtn:hover i {
+	transform: scale(1.15);
+}
+
+.qaBtn:active {
+	transform: translateY(0);
+	box-shadow: none;
 }
 
 /* ======================= RESPONSIVE ======================= */
@@ -1446,6 +1831,23 @@ input[type="date"].fc {
 	.summaryBoxAccent {
 		padding: 10px 12px;
 	}
+
+	.worldSwitch {
+		width: 100%;
+	}
+
+	.worldBtn {
+		flex: 1;
+		justify-content: center;
+	}
+
+	.bizBar {
+		width: 100%;
+	}
+
+	.connBanner {
+		align-items: flex-start;
+	}
 }
 
 @media (max-width: 420px) {
@@ -1462,6 +1864,10 @@ input[type="date"].fc {
 	}
 
 	.quickGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.qaGrid {
 		grid-template-columns: 1fr;
 	}
 
@@ -1494,7 +1900,6 @@ input[type="date"].fc {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
 	.badgeDot,
 	.spinner {
 		animation: none !important;

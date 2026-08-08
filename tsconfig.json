@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "src/routes/main.tsx.txt"],
+  "include": ["**/*.ts", "**/*.tsx", "src/routes/main.tsx.txt", "src/features/dashboards/transaction-dashboard/liquidity/components/LiquidityModals.tsx.txt", "src/features/dashboards/transaction-dashboard/liquidity/pages/Liquidity.tsx.txt"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
