@@ -576,7 +576,7 @@ export default function PaymentRails() {
 				{/* attention / suggestions / quick actions */}
 				<div className="row g-3">
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
 								<button
@@ -610,7 +610,7 @@ export default function PaymentRails() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
 								<span className={cx(s.badge, s.badgePurple)}>
@@ -640,16 +640,16 @@ export default function PaymentRails() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>
 								<p className={s.sectionSub}>Rail &amp; routing workflows</p>
 							</div>
-							<div className={s.quickGrid}>
+							<div className={s.qaGrid}>
 								{c.quickActions.map((qa) => (
 									<button
 										type="button"
-										className={s.quickBtn}
+										className={s.qaBtn}
 										key={qa.label}
 										onClick={() => openModal(qa.modal)}
 									>

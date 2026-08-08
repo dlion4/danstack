@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import SettlementModals from "../components/SettlementModals";
@@ -646,6 +646,13 @@ export default function Settlement() {
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
 
+	/* ---------- Deep-link: open modal from ?modal= search param ---------- */
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const modalId = params.get("modal");
+		if (modalId) openM(modalId);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 	return (
 		<div className={styles.settlementPage}>
 			{/* ---------- query error banner ---------- */}
@@ -958,7 +965,7 @@ export default function Settlement() {
 										className="bi bi-speedometer2"
 										style={{ color: "var(--pm-primary-light)" }}
 									/>{" "}
-									Settlement Overview Dashboard
+									Settlement Overview 
 								</h3>
 								<p className={styles.ss}>
 									Real-time view of all settlement channels, success rates,

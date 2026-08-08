@@ -1005,6 +1005,59 @@ input[type="date"].fc {
 	color: #059669;
 }
 
+/* ======================= FREQUENT-WORKFLOW QUICK ACTIONS =======================
+ * Same mobile-money treatment as the other dashboards: compact 2-col grid,
+ * inline icon + label pills, emerald hover tint, icon micro-lift.
+ * Used by the "Frequent operations workflows" card (OpsSystem.tsx).
+ * ========================================================================== */
+.qaGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+}
+
+.qaBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-height: 44px;
+	padding: 10px 8px;
+	border: 1px solid var(--pm-border);
+	border-radius: var(--pm-r-sm);
+	background: #ffffff;
+	text-align: center;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.2;
+	color: var(--pm-ink);
+	transition: all 0.2s ease;
+}
+
+.qaBtn:hover {
+	border-color: var(--pm-primary);
+	background: #ecfdf5;
+	box-shadow: var(--pm-shadow-sm);
+	transform: translateY(-1px);
+	color: #059669;
+}
+
+.qaBtn:active {
+	transform: translateY(0);
+}
+
+.qaBtn i {
+	flex: 0 0 auto;
+	font-size: 15px;
+	color: var(--pm-primary);
+	transition: transform 0.2s ease;
+}
+
+.qaBtn:hover i {
+	transform: scale(1.15);
+}
+
 /* ======================= MINI BARS / PROGRESS / CHART ======================= */
 .miniBars {
 	display: flex;
@@ -1449,6 +1502,15 @@ input[type="date"].fc {
 
 	.quickGrid {
 		grid-template-columns: 1fr;
+	}
+
+	.qaGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.qaBtn {
+		min-height: 40px;
+		font-size: 12px;
 	}
 
 	.btnPm {

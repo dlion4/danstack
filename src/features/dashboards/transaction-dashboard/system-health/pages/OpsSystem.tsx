@@ -561,7 +561,7 @@ export default function OpsSystem() {
 			{/* ===== ATTENTION / SUGGESTIONS / QUICK ACTIONS ===== */}
 			<div className="row g-3">
 				<div className="col-lg-4">
-					<div className={s.card}>
+					<div className={cx(s.card, "h-100")}>
 						<div className="d-flex justify-content-between align-items-center mb-3">
 							<h3 className={s.st}>Attention Required</h3>
 							<button
@@ -681,7 +681,7 @@ export default function OpsSystem() {
 				</div>
 
 				<div className="col-lg-4">
-					<div className={s.card}>
+					<div className={cx(s.card, "h-100")}>
 						<div className="d-flex justify-content-between align-items-center mb-3">
 							<h3 className={s.st}>Smart Suggestions</h3>
 							<span className={cx(s.badge, s.badgeP)}>
@@ -797,15 +797,15 @@ export default function OpsSystem() {
 				</div>
 
 				<div className="col-lg-4">
-					<div className={s.card}>
+					<div className={cx(s.card, "h-100")}>
 						<div className="mb-3">
 							<h3 className={s.st}>Quick Actions</h3>
 							<p className={s.ss}>Frequent operations workflows</p>
 						</div>
-						<div className={s.quickGrid}>
+						<div className={s.qaGrid}>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("runHealthCheck")}
 							>
 								<i className="bi bi-play-circle textAccent me-1" /> Run Health
@@ -813,7 +813,7 @@ export default function OpsSystem() {
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("incidentQueue")}
 							>
 								<i className="bi bi-exclamation-triangle textDanger me-1" />{" "}
@@ -821,14 +821,14 @@ export default function OpsSystem() {
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("settlementDetail")}
 							>
 								<i className="bi bi-bank textInfo me-1" /> Settlement Status
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("fraudModel")}
 							>
 								<i className="bi bi-shield-exclamation textWarn me-1" /> Fraud
@@ -836,14 +836,14 @@ export default function OpsSystem() {
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("apiPerformance")}
 							>
 								<i className="bi bi-speedometer2 textInfo me-1" /> API Metrics
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("auditLog")}
 							>
 								<i className="bi bi-file-earmark-text textPurple me-1" /> Audit
@@ -851,14 +851,14 @@ export default function OpsSystem() {
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("ticketDetail")}
 							>
 								<i className="bi bi-headset textAccent me-1" /> Support Queue
 							</button>
 							<button
 								type="button"
-								className={s.quickBtn}
+								className={s.qaBtn}
 								onClick={() => openModal("infraScaling")}
 							>
 								<i className="bi bi-server textInfo me-1" /> Scale Services

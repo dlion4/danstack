@@ -20,7 +20,7 @@
  * ========================================================================== */
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
@@ -802,6 +802,46 @@ async function fetchLiquidityFloat(): Promise<LiquidityContent> {
 }
 
 /* --------------------------------------------------------------------------
+ * Settlement navigation buttons — navigate to /pm/app/settlement and pass
+ * a ?modal= search param so the Settlement page opens the right modal.
+ * ------------------------------------------------------------------------ */
+function MakeSettlementsBtn() {
+	const navigate = useNavigate();
+	return (
+		<button
+			type="button"
+			className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+			onClick={() =>
+				navigate({
+					to: "/pm/app/settlement",
+					search: { modal: "initiateSettlementModal" },
+				})
+			}
+		>
+			Make Settlements
+		</button>
+	);
+}
+
+function ScheduleSettlementsBtn() {
+	const navigate = useNavigate();
+	return (
+		<button
+			type="button"
+			className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+			onClick={() =>
+				navigate({
+					to: "/pm/app/settlement",
+					search: { modal: "settlementCalendarModal" },
+				})
+			}
+		>
+			Schedule Settlements
+		</button>
+	);
+}
+
+/* --------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------ */
 export default function Liquidity() {
@@ -950,27 +990,8 @@ export default function Liquidity() {
 								{c.heroSub}
 							</p>
 							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("rebalanceModal")}
-								>
-									Rebalance
-								</button>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("forecastModal")}
-								>
-									Forecast
-								</button>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("emergencyLiquidityModal")}
-								>
-									Emergency
-								</button>
+								<MakeSettlementsBtn />
+								<ScheduleSettlementsBtn />
 							</div>
 						</div>
 					</div>
@@ -1066,7 +1087,7 @@ export default function Liquidity() {
 				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
 				<div className="row g-3">
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
 								<button
@@ -1081,7 +1102,7 @@ export default function Liquidity() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
 								<span className={cx(s.badge, s.badgePurple)}>
@@ -1092,23 +1113,23 @@ export default function Liquidity() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>
 								<p className={s.sectionSub}>Frequent liquidity workflows</p>
 							</div>
-							<div className={s.quickGrid}>
+							<div className={s.qaGrid}>
 								{c.quickActions.map((qa) => (
 									<button
 										key={qa.label}
 										type="button"
-										className={s.quickBtn}
+										className={s.qaBtn}
 										onClick={() => openModal(qa.modal)}
 									>
 										<i
 											className={cx("bi", qa.icon)}
 											style={{ color: toneColor(qa.tone) }}
-										/>{" "}
+										/>
 										{qa.label}
 									</button>
 								))}

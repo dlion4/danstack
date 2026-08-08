@@ -130,6 +130,64 @@ const RTGS_REASONS = [
 	"Salary payment deadline",
 	"Regulatory deadline",
 ];
+const RULE_TYPES = ["Retry", "Escalation", "Deferral", "Routing", "Cut-off"];
+const RULE_CHANNELS = [
+	"RTGS",
+	"PesaLink",
+	"EFT / ACH",
+	"SWIFT",
+	"All channels",
+];
+const RULE_HISTORY = [
+	{
+		time: "27 Jun 14:02",
+		rule: "Auto-retry failed RTGS",
+		change: "Max attempts 3 → 5",
+		user: "James K.",
+		status: "Applied",
+		tone: "badgeS" as BadgeTone,
+	},
+	{
+		time: "26 Jun 09:30",
+		rule: "Weekend batch deferral",
+		change: "Paused by operator",
+		user: "Grace M.",
+		status: "Paused",
+		tone: "badgeW" as BadgeTone,
+	},
+	{
+		time: "25 Jun 17:12",
+		rule: "Auto-escalate high-value disputes",
+		change: "Threshold KES 5M → KES 10M",
+		user: "James K.",
+		status: "Applied",
+		tone: "badgeS" as BadgeTone,
+	},
+	{
+		time: "24 Jun 11:45",
+		rule: "Auto-retry failed RTGS",
+		change: "Rule created",
+		user: "System",
+		status: "Applied",
+		tone: "badgeS" as BadgeTone,
+	},
+	{
+		time: "23 Jun 08:20",
+		rule: "Weekend batch deferral",
+		change: "Hold window 06:00 → 08:00",
+		user: "Ops Lead",
+		status: "Applied",
+		tone: "badgeS" as BadgeTone,
+	},
+	{
+		time: "22 Jun 16:05",
+		rule: "Cut-off auto-urgent flag",
+		change: "Removed by operator",
+		user: "Grace M.",
+		status: "Removed",
+		tone: "badgeD" as BadgeTone,
+	},
+];
 
 type FlowKey = "init" | "recon" | "disp";
 interface Result {
@@ -153,6 +211,55 @@ export default function SettlementModals({
 	const [channel, setChannel] = useState("RTGS");
 	const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+	/* ---------- Auto Rules modal: tabs + editable rule list ---------- */
+	const [rulesTab, setRulesTab] = useState<"active" | "create" | "history">(
+		"active",
+	);
+	const [rules, setRules] = useState<
+		{
+			id: number;
+			name: string;
+			type: string;
+			channel: string;
+			attempts: string;
+			interval: string;
+			threshold: string;
+			on: boolean;
+		}[]
+	>([
+		{
+			id: 1,
+			name: "Auto-retry failed RTGS",
+			type: "Retry",
+			channel: "RTGS",
+			attempts: "3",
+			interval: "15",
+			threshold: "1,000,000",
+			on: true,
+		},
+		{
+			id: 2,
+			name: "Auto-escalate high-value disputes",
+			type: "Escalation",
+			channel: "All channels",
+			attempts: "1",
+			interval: "0",
+			threshold: "5,000,000",
+			on: true,
+		},
+		{
+			id: 3,
+			name: "Weekend batch deferral",
+			type: "Deferral",
+			channel: "EFT / ACH",
+			attempts: "1",
+			interval: "0",
+			threshold: "0",
+			on: false,
+		},
+	]);
+	const [newRuleNote, setNewRuleNote] = useState("");
+
 	/* ---------- LEGACY BRIDGE: cacheAndReset → fresh state on next open ---------- */
 	useEffect(() => {
 		if (active === null) {
@@ -160,6 +267,8 @@ export default function SettlementModals({
 			setFlows({ init: 1, recon: 1, disp: 1 });
 			setBusy(null);
 			setChannel("RTGS");
+			setRulesTab("active");
+			setNewRuleNote("");
 		}
 	}, [active]);
 
@@ -936,44 +1045,287 @@ export default function SettlementModals({
 					"autoRulesModal",
 					<>
 						<div className={`${styles.pills} mb-3`}>
-							<button className={`${styles.pill} ${styles.pillActive}`}>
-								Active Rules
+							<button
+								className={`${styles.pill} ${rulesTab === "active" ? styles.pillActive : ""}`}
+								onClick={() => setRulesTab("active")}
+							>
+								Active Rules ({rules.length})
 							</button>
-							<button className={styles.pill}>Create New</button>
-							<button className={styles.pill}>History</button>
+							<button
+								className={`${styles.pill} ${rulesTab === "create" ? styles.pillActive : ""}`}
+								onClick={() => {
+									setRulesTab("create");
+									setNewRuleNote("");
+								}}
+							>
+								Create New
+							</button>
+							<button
+								className={`${styles.pill} ${rulesTab === "history" ? styles.pillActive : ""}`}
+								onClick={() => setRulesTab("history")}
+							>
+								History
+							</button>
 						</div>
-						{[
-							{
-								title: "Auto-retry failed RTGS",
-								sub: "Max 3 attempts • 15 min interval",
-								on: true,
-							},
-							{
-								title: "Auto-escalate high-value disputes",
-								sub: "> KES 5M → Treasury Manager",
-								on: true,
-							},
-							{
-								title: "Weekend deferral",
-								sub: "Non-urgent batches held until Monday",
-								on: false,
-							},
-						].map((r) => (
-							<div className={styles.sr} key={r.title}>
-								<div>
-									<strong>{r.title}</strong>
-									<div className={styles.mutedSmall}>{r.sub}</div>
-								</div>
-								<div className="form-check form-switch">
-									<input
-										className="form-check-input"
-										type="checkbox"
-										defaultChecked={r.on}
-										aria-label={r.title}
-									/>
-								</div>
+
+						{/* ---- Tab 1: Active Rules (editable) ---- */}
+						{rulesTab === "active" && (
+							<div>
+								{rules.map((r) => (
+									<div
+										key={r.id}
+										className={styles.ub}
+										style={{ marginBottom: 10 }}
+									>
+										<div
+											className="d-flex justify-content-between align-items-center mb-2 flex-wrap"
+											style={{ gap: 8 }}
+										>
+											<strong style={{ fontSize: 13 }}>{r.name}</strong>
+											<span
+													className={`${styles.badge} ${r.on ? styles.badgeS : styles.badgeW}`}
+											>
+												{r.on ? "Active" : "Paused"}
+											</span>
+										</div>
+										<div className="row g-2">
+											<div className="col-md-3">
+												<label className={styles.fl} style={{ fontSize: 10 }}>
+													Rule Type
+												</label>
+												<select
+													className={styles.fc}
+													defaultValue={r.type}
+												>
+													{RULE_TYPES.map((t) => (
+														<option key={t}>{t}</option>
+													))}
+												</select>
+											</div>
+											<div className="col-md-3">
+												<label className={styles.fl} style={{ fontSize: 10 }}>
+													Channel
+												</label>
+												<select
+													className={styles.fc}
+													defaultValue={r.channel}
+												>
+													{RULE_CHANNELS.map((c) => (
+														<option key={c}>{c}</option>
+													))}
+												</select>
+											</div>
+											<div className="col-md-2">
+												<label className={styles.fl} style={{ fontSize: 10 }}>
+													Max Attempts
+												</label>
+												<input
+													type="number"
+													className={styles.fc}
+													defaultValue={r.attempts}
+													min={1}
+													max={10}
+												/>
+											</div>
+											<div className="col-md-2">
+												<label className={styles.fl} style={{ fontSize: 10 }}>
+													Interval (min)
+												</label>
+												<input
+													type="number"
+													className={styles.fc}
+													defaultValue={r.interval}
+													min={0}
+												/>
+											</div>
+											<div className="col-md-2">
+												<label className={styles.fl} style={{ fontSize: 10 }}>
+													Threshold (KES)
+												</label>
+												<input className={styles.fc} defaultValue={r.threshold} />
+											</div>
+										</div>
+										<div className="form-check form-switch mt-2">
+											<input
+													className="form-check-input"
+													type="checkbox"
+													defaultChecked={r.on}
+													id={`rule-on-${r.id}`}
+												/>
+											<label
+													className="form-check-label"
+													htmlFor={`rule-on-${r.id}`}
+													style={{ fontSize: 12 }}
+												>
+													Enable rule
+												</label>
+											</div>
+									</div>
+								))}
 							</div>
-						))}
+						)}
+
+						{/* ---- Tab 2: Create New ---- */}
+						{rulesTab === "create" && (
+							<form
+								onSubmit={(e) => {
+									e.preventDefault();
+									const fd = new FormData(e.currentTarget);
+									const name = String(fd.get("ruleName") || "Untitled rule");
+									const type = String(fd.get("ruleType") || "Retry");
+									const channel = String(fd.get("ruleChannel") || "RTGS");
+									const threshold = String(
+										fd.get("ruleThreshold") || "0",
+									);
+									const attempts = String(fd.get("ruleAttempts") || "1");
+									const interval = String(fd.get("ruleInterval") || "0");
+									setRules((prev) => [
+										...prev,
+										{
+											id: Date.now(),
+											name,
+											type,
+											channel,
+											attempts,
+											interval,
+											threshold,
+											on: true,
+										},
+									]);
+									setNewRuleNote(
+										`Rule "${name}" added to Active Rules. Click Save Rules to persist.`,
+									);
+									setRulesTab("active");
+								}}
+							>
+								<div className="row g-3">
+									<div className="col-md-6">
+										<label className={styles.fl}>Rule Name</label>
+										<input
+											name="ruleName"
+											className={styles.fc}
+											placeholder="e.g. Auto-route failed RTGS to PesaLink"
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Rule Type</label>
+										<select name="ruleType" className={styles.fc} defaultValue="Retry">
+											{RULE_TYPES.map((t) => (
+												<option key={t}>{t}</option>
+											))}
+										</select>
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Trigger Channel</label>
+										<select
+											name="ruleChannel"
+											className={styles.fc}
+											defaultValue="RTGS"
+										>
+											{RULE_CHANNELS.map((c) => (
+												<option key={c}>{c}</option>
+											))}
+										</select>
+									</div>
+									<div className="col-md-6">
+										<label className={styles.fl}>Min Amount Threshold (KES)</label>
+										<input
+											name="ruleThreshold"
+											className={styles.fc}
+											placeholder="e.g. 1,000,000"
+										/>
+									</div>
+									<div className="col-md-4">
+										<label className={styles.fl}>Max Attempts</label>
+										<input
+											name="ruleAttempts"
+											type="number"
+											className={styles.fc}
+											defaultValue={3}
+											min={1}
+										/>
+									</div>
+									<div className="col-md-4">
+										<label className={styles.fl}>Retry Interval (min)</label>
+										<input
+											name="ruleInterval"
+											type="number"
+											className={styles.fc}
+											defaultValue={15}
+											min={0}
+										/>
+									</div>
+									<div className="col-md-4">
+										<label className={styles.fl}>Action On Trigger</label>
+										<select className={styles.fc} defaultValue="Retry transaction">
+											<option>Retry transaction</option>
+											<option>Escalate to Treasury Manager</option>
+											<option>Defer to next window</option>
+											<option>Route to PesaLink</option>
+											<option>Flag for manual review</option>
+										</select>
+									</div>
+									<div
+										className="col-12 d-flex align-items-center justify-content-between flex-wrap"
+										style={{ gap: 8 }}
+									>
+										<div className="form-check form-switch mb-0">
+											<input
+													className="form-check-input"
+													type="checkbox"
+													defaultChecked
+													id="rule-enable-new"
+												/>
+											<label
+													className="form-check-label"
+													htmlFor="rule-enable-new"
+													style={{ fontSize: 12 }}
+												>
+													Enable immediately
+												</label>
+											</div>
+											<button
+												type="submit"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+											>
+												<i className="bi bi-plus-lg" /> Add Rule
+											</button>
+										</div>
+									</div>
+							</form>
+						)}
+
+						{/* ---- Tab 3: History ---- */}
+						{rulesTab === "history" && (
+							<div className="table-responsive">
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Time</th>
+											<th>Rule</th>
+											<th>Change</th>
+											<th>User</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{RULE_HISTORY.map((h) => (
+											<tr key={h.time + h.rule}>
+												<td>{h.time}</td>
+												<td>{h.rule}</td>
+												<td>{h.change}</td>
+												<td>{h.user}</td>
+												<td>
+													<span className={`${styles.badge} ${styles[h.tone]}`}>
+														{h.status}
+													</span>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						)}
 					</>,
 				)}
 			</MBox>

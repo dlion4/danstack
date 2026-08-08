@@ -608,29 +608,29 @@ export default function Reconciliation() {
 							<Link to="/app/transfers">B2B Transactions</Link> /{" "}
 							<strong>Reconciliation Center</strong>
 						</div>
-						<h1 className={s.pageTitle}>Reconciliation Center</h1>
+						{/* <h1 className={s.pageTitle}>Reconciliation Center</h1>
 						<p className={s.pageCopy}>
 							Match incoming and outgoing bank transfers across Equity, KCB,
 							Co-op, Stanbic, M-Pesa and international corridors. Resolve
 							discrepancies, run auto-rules and maintain full audit trail.
-						</p>
+						</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
+						{/* <button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
 							onClick={() => openModal("uploadStatementModal")}
 						>
 							<i className="bi bi-upload" /> Upload Statement
-						</button>
-						<button
+						</button> */}
+						 <button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
 							onClick={() => openModal("runAutoReconModal")}
 						>
 							<i className="bi bi-magic" /> Run Auto-Recon
 						</button>
-						<button
+						{/* <button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
 							onClick={() => openModal("bulkMatchModal")}
@@ -643,7 +643,7 @@ export default function Reconciliation() {
 							onClick={() => openModal("reconcileNotifModal")}
 						>
 							<i className="bi bi-bell" /> Alerts
-						</button>
+						</button> */}
 						<button
 							type="button"
 							className={cx(s.btn, s.btnPrimary, s.btnSm)}
@@ -693,13 +693,13 @@ export default function Reconciliation() {
 								>
 									Auto-Reconcile
 								</button>
-								<button
+								{/* <button
 									type="button"
 									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
 									onClick={() => openModal("exportReportModal")}
 								>
 									Export
-								</button>
+								</button> */}
 								<button
 									type="button"
 									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
@@ -778,7 +778,7 @@ export default function Reconciliation() {
 				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
 				<div className="row g-3">
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
 								<button
@@ -793,7 +793,7 @@ export default function Reconciliation() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
 								<span className={cx(s.badge, s.badgePurple)}>
@@ -804,25 +804,25 @@ export default function Reconciliation() {
 						</div>
 					</div>
 					<div className="col-lg-4">
-						<div className={s.card}>
+						<div className={cx(s.card, "h-100")}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>
 								<p className={s.sectionSub}>
 									Frequent reconciliation workflows
 								</p>
 							</div>
-							<div className={s.quickGrid}>
+							<div className={s.qaGrid}>
 								{c.quickActions.map((qa) => (
 									<button
 										key={qa.label}
 										type="button"
-										className={s.quickBtn}
+										className={s.qaBtn}
 										onClick={() => openModal(qa.modal)}
 									>
 										<i
 											className={cx("bi", qa.icon)}
 											style={{ color: toneColor(qa.tone) }}
-										/>{" "}
+										/>
 										{qa.label}
 									</button>
 								))}
@@ -1317,12 +1317,12 @@ export default function Reconciliation() {
 						<div className="col-lg-4">
 							<div className={s.subBlock}>
 								<h4 className={s.blockHead}>Quick Reports</h4>
-								<div className={s.quickGrid}>
+								<div className={s.qaGrid}>
 									{c.quickReports.map((q) => (
 										<button
 											key={q.label}
 											type="button"
-											className={s.quickBtn}
+											className={s.qaBtn}
 											onClick={() => openModal(q.modal)}
 										>
 											{q.label}

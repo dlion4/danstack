@@ -701,6 +701,60 @@
 	color: var(--pri-600);
 }
 
+/* ---------- frequent-workflow quick actions (mobile-money style) ----------
+ * Compact 2-col action grid — mirrors the Mobile Money "Quick Actions" card:
+ * inline icon + label pills, 8px radius, emerald hover tint, micro-lift.
+ * Used only by the "Frequent reconciliation workflows" card
+ * (Reconciliation.tsx); the wider .quickGrid/.quickBtn above stays for the
+ * Quick Reports block.
+ * -------------------------------------------------------------------------- */
+.qaGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+}
+
+.qaBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-height: 44px;
+	padding: 10px 8px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	background: var(--surface-elev);
+	text-align: center;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.2;
+	color: var(--ink-700);
+	transition: all 0.2s ease;
+}
+
+.qaBtn:hover {
+	border-color: var(--pri);
+	background: var(--success-bg);
+	box-shadow: var(--shadow-sm);
+	transform: translateY(-1px);
+	color: var(--pri-600);
+}
+
+.qaBtn:active {
+	transform: translateY(0);
+}
+
+.qaBtn i {
+	flex: 0 0 auto;
+	font-size: 15px;
+	transition: transform 0.2s ease;
+}
+
+.qaBtn:hover i {
+	transform: scale(1.15);
+}
+
 /* ---------- soft boxes (status tiles) ---------- */
 .softBox {
 	border-radius: var(--radius-md);
@@ -1606,6 +1660,15 @@
 
 	.quickBtn {
 		min-height: 70px;
+		font-size: 12px;
+	}
+
+	.qaGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.qaBtn {
+		min-height: 40px;
 		font-size: 12px;
 	}
 
