@@ -354,18 +354,18 @@
 }
 
 .content {
-	padding: 16px 32px 32px;
+	padding: 16px 24px 24px;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 16px;
 }
 
 /* ======================= CARDS ======================= */
 .card {
 	background: var(--pm-surface);
 	border: 1px solid var(--pm-border);
-	border-radius: var(--pm-r-lg);
-	padding: 20px;
+	border-radius: var(--pm-r-md);
+	padding: 16px;
 	box-shadow: var(--pm-shadow-sm);
 	transition: box-shadow 0.2s;
 	backdrop-filter: blur(14px);
@@ -391,13 +391,13 @@
 
 .sv {
 	font-family: var(--pm-font-display);
-	font-size: 28px;
+	font-size: 24px;
 	font-weight: 700;
 	letter-spacing: -0.02em;
 }
 
 .sl {
-	font-size: 11px;
+	font-size: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: var(--pm-muted);
@@ -407,17 +407,17 @@
 
 .st {
 	font-family: var(--pm-font-display);
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 700;
 	margin: 0;
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	color: var(--pm-ink);
 }
 
 .ss {
-	font-size: 12px;
+	font-size: 11px;
 	color: var(--pm-ink-soft);
 	margin: 2px 0 0;
 }
@@ -926,7 +926,7 @@ input[type="date"].fc {
 /* ======================= QUICK ACTIONS ======================= */
 .quickGrid {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	gap: 8px;
 }
 
@@ -1264,20 +1264,81 @@ input[type="date"].fc {
 
 	.content {
 		padding: 12px 16px 24px;
-		gap: 16px;
+		gap: 12px;
 	}
 
 	.card {
-		padding: 16px;
-		border-radius: var(--pm-r-md);
+		padding: 12px;
+		border-radius: var(--pm-r-sm);
 	}
 
 	.sv {
-		font-size: 22px;
+		font-size: 20px;
 	}
 
 	.sl {
+		font-size: 9px;
+	}
+
+	.custCard {
+		padding: 10px;
+	}
+
+	.avatar {
+		width: 28px;
+		height: 28px;
+		font-size: 11px;
+	}
+
+	.custName {
+		font-size: 12px;
+	}
+
+	.custMeta {
 		font-size: 10px;
+	}
+
+	.chip {
+		font-size: 9px;
+		padding: 2px 6px;
+	}
+
+	.planCard {
+		padding: 10px;
+	}
+
+	.planName {
+		font-size: 11px;
+	}
+
+	.planAmt {
+		font-size: 14px;
+	}
+
+	.planMeta {
+		font-size: 9px;
+	}
+
+	.remCard {
+		padding: 8px 10px;
+	}
+
+	.remIcon {
+		width: 28px;
+		height: 28px;
+		font-size: 12px;
+	}
+
+	.remTitle {
+		font-size: 11px;
+	}
+
+	.remSub {
+		font-size: 9px;
+	}
+
+	.kycBlock {
+		padding: 10px;
 	}
 
 	.quickGrid {
@@ -1620,9 +1681,9 @@ input[type="date"].fc {
 
 .custCard {
 	border: 1px solid var(--pm-border);
-	border-radius: var(--pm-r-md);
+	border-radius: var(--pm-r-sm);
 	background: var(--pm-surface);
-	padding: 14px;
+	padding: 12px;
 	height: 100%;
 	transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -1633,45 +1694,45 @@ input[type="date"].fc {
 .custTop {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	margin-bottom: 10px;
+	gap: 8px;
+	margin-bottom: 8px;
 }
 .avatar {
-	width: 38px;
-	height: 38px;
+	width: 32px;
+	height: 32px;
 	border-radius: 999px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	font-weight: 700;
-	font-size: 13px;
+	font-size: 12px;
 	color: #fff;
 	flex-shrink: 0;
 }
 .custName {
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 700;
 	color: var(--pm-ink);
 	margin: 0;
 }
 .custMeta {
-	font-size: 11.5px;
+	font-size: 11px;
 	color: var(--pm-muted);
 }
 .custChips {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
-	margin: 8px 0 10px;
+	gap: 4px;
+	margin: 6px 0 8px;
 }
 .chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
-	font-size: 11px;
+	gap: 4px;
+	font-size: 10px;
 	font-weight: 600;
 	border-radius: 999px;
-	padding: 3px 9px;
+	padding: 2px 8px;
 	border: 1px solid var(--pm-border);
 	background: var(--pm-surface-2);
 	color: var(--pm-ink-soft);
@@ -1728,9 +1789,9 @@ input[type="date"].fc {
 
 .planCard {
 	border: 1px solid var(--pm-border);
-	border-radius: var(--pm-r-md);
+	border-radius: var(--pm-r-sm);
 	background: var(--pm-surface);
-	padding: 14px;
+	padding: 12px;
 	height: 100%;
 	transition: box-shadow 0.15s ease;
 }
@@ -1741,29 +1802,29 @@ input[type="date"].fc {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 8px;
-	margin-bottom: 8px;
+	gap: 6px;
+	margin-bottom: 6px;
 }
 .planName {
-	font-size: 13.5px;
+	font-size: 12px;
 	font-weight: 700;
 	color: var(--pm-ink);
 	margin: 0;
 }
 .planAmt {
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 800;
 	color: var(--pm-ink);
-	margin: 2px 0 6px;
+	margin: 2px 0 4px;
 }
 .planMeta {
-	font-size: 11.5px;
+	font-size: 10px;
 	color: var(--pm-muted);
 }
 .planActions {
 	display: flex;
-	gap: 6px;
-	margin-top: 10px;
+	gap: 4px;
+	margin-top: 8px;
 }
 .planAction {
 	flex: 1;
@@ -1819,21 +1880,21 @@ input[type="date"].fc {
 
 .remCard {
 	border: 1px solid var(--pm-border);
-	border-radius: var(--pm-r-md);
+	border-radius: var(--pm-r-sm);
 	background: var(--pm-surface);
-	padding: 13px 14px;
+	padding: 10px 12px;
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 }
 .remIcon {
-	width: 36px;
-	height: 36px;
-	border-radius: 10px;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 16px;
+	font-size: 14px;
 	flex-shrink: 0;
 }
 .remBody {
@@ -1841,13 +1902,13 @@ input[type="date"].fc {
 	min-width: 0;
 }
 .remTitle {
-	font-size: 13px;
+	font-size: 12px;
 	font-weight: 700;
 	color: var(--pm-ink);
 	margin: 0;
 }
 .remSub {
-	font-size: 11.5px;
+	font-size: 10px;
 	color: var(--pm-muted);
 }
 .remActions {
@@ -1902,9 +1963,9 @@ input[type="date"].fc {
 
 .kycBlock {
 	border: 1px solid var(--pm-border);
-	border-radius: var(--pm-r-md);
+	border-radius: var(--pm-r-sm);
 	background: var(--pm-surface);
-	padding: 14px;
+	padding: 12px;
 }
 .kycDoc {
 	display: flex;

@@ -134,6 +134,53 @@ export const initialMockData: ShellContent = {
 
         navGroups: [
                 {
+                        title: "Payments & Transfers",
+                        subGroups: [
+                                {
+                                        title: "Overview",
+                                        items: [
+                                                {
+                                                        key: "transfer-overview",
+                                                        label: "Overview",
+                                                        icon: "bi-speedometer2",
+                                                },
+                                        ],
+                                },
+                                {
+                                        title: "Transfer Operations",
+                                        items: [
+                                                {
+                                                        key: "initiate-transfer",
+                                                        label: "New Transfer",
+                                                        icon: "bi-send",
+                                                },
+                                                {
+                                                        key: "transfer-management",
+                                                        label: "Manage Transfers",
+                                                        icon: "bi-list-task",
+                                                },
+                                        ],
+                                },
+                                {
+                                        title: "Payment Infrastructure",
+                                        items: [
+                                                {
+                                                        key: "payment-rails",
+                                                        label: "Rails & Routing",
+                                                        icon: "bi-signpost-split",
+                                                },
+                                                {
+                                                        key: "mobile-money",
+                                                        label: "Mobile Money",
+                                                        icon: "bi-phone",
+                                                },
+                                        ],
+                                },
+                        ],
+                        items: [],
+                },
+                
+                {
                         title: "Business Operations",
                         bgColor: "blue",
                         subGroups: [
@@ -209,52 +256,7 @@ export const initialMockData: ShellContent = {
                         ],
                         items: [],
                 },
-                {
-                        title: "Payments & Transfers",
-                        subGroups: [
-                                {
-                                        title: "Overview",
-                                        items: [
-                                                {
-                                                        key: "transfer-overview",
-                                                        label: "Overview",
-                                                        icon: "bi-speedometer2",
-                                                },
-                                        ],
-                                },
-                                {
-                                        title: "Transfer Operations",
-                                        items: [
-                                                {
-                                                        key: "initiate-transfer",
-                                                        label: "New Transfer",
-                                                        icon: "bi-send",
-                                                },
-                                                {
-                                                        key: "transfer-management",
-                                                        label: "Manage Transfers",
-                                                        icon: "bi-list-task",
-                                                },
-                                        ],
-                                },
-                                {
-                                        title: "Payment Infrastructure",
-                                        items: [
-                                                {
-                                                        key: "payment-rails",
-                                                        label: "Rails & Routing",
-                                                        icon: "bi-signpost-split",
-                                                },
-                                                {
-                                                        key: "mobile-money",
-                                                        label: "Mobile Money",
-                                                        icon: "bi-phone",
-                                                },
-                                        ],
-                                },
-                        ],
-                        items: [],
-                },
+                
         ],
         modules: [],
 

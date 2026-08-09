@@ -2544,10 +2544,23 @@
 
 /* ---- Management Hub (compact launcher grid) ---- */
 .hubCard {
-  background: var(--surface);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.hubCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pri) 0%, var(--success) 50%, var(--info) 100%);
 }
 
 .flowChartHead {
@@ -2592,10 +2605,11 @@
 }
 
 .flowTableContainer {
-  padding: 20px;
-  background: var(--surface-2);
-  border-radius: var(--radius-md);
+  padding: 24px;
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .flowTablePlaceholder {
@@ -2611,21 +2625,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
 .flowTableTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--ink-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flowTableTitle::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--pri) 0%, var(--pri-dark) 100%);
+  border-radius: 2px;
 }
 
 .flowTableWrapper {
   overflow-x: auto;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .flowTable {
@@ -2635,28 +2662,30 @@
 }
 
 .flowTable thead {
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface-elev) 0%, var(--surface) 100%);
   border-bottom: 2px solid var(--border);
 }
 
 .flowTable th {
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ink-500);
+  letter-spacing: 0.08em;
+  color: var(--ink-600);
   white-space: nowrap;
 }
 
 .flowTable tbody tr {
   border-bottom: 1px solid var(--border);
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .flowTable tbody tr:hover {
-  background: var(--surface);
+  background: var(--surface-elev);
+  transform: scale(1.005);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .flowTable tbody tr:last-child {
@@ -2664,113 +2693,168 @@
 }
 
 .flowTableRowDisabled {
-  opacity: 0.5;
-  background: var(--surface-2);
+  opacity: 0.4;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--surface-2),
+    var(--surface-2) 10px,
+    var(--surface) 10px,
+    var(--surface) 20px
+  );
 }
 
 .flowTableCellAccount {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .flowTableIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 18px;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.flowTable tbody tr:hover .flowTableIcon {
+  transform: scale(1.1);
 }
 
 .flowTableAccountName {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink-900);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .flowTableAccountNum {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-500);
+  font-weight: 500;
 }
 
 .flowTableCellOrigin {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   color: var(--ink-700);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.flowTableCellOrigin i {
+  font-size: 14px;
 }
 
 .flowTableBalance {
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 16px;
   color: var(--ink-900);
+  letter-spacing: 0.02em;
 }
 
 .flowTablePermission {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   border: 1px solid;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.flowTablePermission i {
+  font-size: 12px;
 }
 
 .flowTableStatus {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.flowTableStatus i {
+  font-size: 12px;
 }
 
 .flowTableStatusActive {
-  background: var(--success-bg);
+  background: linear-gradient(135deg, var(--success-bg) 0%, rgba(16, 185, 129, 0.15) 100%);
   color: var(--success);
   border: 1px solid var(--success);
 }
 
 .flowTableStatusRevoked {
-  background: var(--danger-bg);
+  background: linear-gradient(135deg, var(--danger-bg) 0%, rgba(239, 68, 68, 0.15) 100%);
   color: var(--danger);
   border: 1px solid var(--danger);
 }
 
 .flowTableActions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+}
+
+.flowTableActions button {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.flowTableActions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .flowTableFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
 .flowTableStats {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 
 .flowTableStat {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-500);
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-600);
+  font-weight: 600;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.flowTableStat i {
+  font-size: 14px;
 }
 
 .hubHead {
@@ -2784,64 +2868,95 @@
 .hubGroups {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 28px;
 }
 
 .hubGroup {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .hubGroupTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 700;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-500);
+  letter-spacing: 0.1em;
+  color: var(--ink-600);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.hubGroupTitle i {
+  font-size: 14px;
+  color: var(--pri);
 }
 
 .hubGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .hubTile {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   text-align: left;
-  background: var(--surface-2);
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 18px 20px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 0;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.hubTile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--pri) 0%, var(--pri-dark) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .hubTile:hover {
   border-color: var(--pri);
   background: #fff;
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.hubTile:hover::before {
+  opacity: 1;
 }
 
 .hubTileIcon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 18px;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hubTile:hover .hubTileIcon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .hubTileBody {
@@ -2852,31 +2967,33 @@
 }
 
 .hubTileLabel {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   color: var(--ink-900);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.02em;
 }
 
 .hubTileDesc {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--ink-500);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .hubTileArrow {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-300);
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .hubTile:hover .hubTileArrow {
-  transform: translateX(2px);
+  transform: translateX(4px);
   color: var(--pri);
 }
 

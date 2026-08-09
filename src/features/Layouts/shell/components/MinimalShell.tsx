@@ -107,8 +107,8 @@ export default function MinimalShell({ children }: MinimalShellProps) {
 	 * SWITCH ACCOUNT
 	 * ==================================================================== */
 	const handleSwitchAccount = useCallback(() => {
-		showToast("Switch account panel opened", "info");
-	}, [showToast]);
+		window.location.href = "/auth/hub";
+	}, []);
 
 	/* ======================================================================
 	 * RESPONSIVENESS

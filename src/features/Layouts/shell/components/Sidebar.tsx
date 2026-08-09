@@ -215,15 +215,14 @@ export default function Sidebar({
 			</div>
 
 			{/* Switch Account button */}
-			<button
-				type="button"
+			<Link
+				to="/auth/hub"
 				className={s.switchAccountBtn}
-				onClick={() => onOpenAside("securityTab")}
 				title="Switch Account — easily switch between Utility, Business, Developer, and Savings accounts"
 			>
 				<i className="bi bi-arrow-left-right" />
 				{(expanded || !isDesktop) && <span>Switch Account</span>}
-			</button>
+			</Link>
 
 		</aside>
 	);

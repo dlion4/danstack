@@ -1776,31 +1776,34 @@ input:focus+.slider {
 
 /* ===== Account Actions ===== */
 .accountActions {
-        display: flex;
-        gap: 0.5rem;
-        width: 100%;
+display: flex;
+gap: 0.5rem;
+width: 100%;
 }
 
-.accountActions button {
-        flex: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.5rem 0.6rem;
-        border-radius: var(--radius-xs);
-        font-size: 0.78rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        border: 1px solid var(--cl-border);
-        background: var(--cl-surface);
-        color: var(--cl-text-secondary);
+.accountActions button,
+.accountActions a {
+flex: 1;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 0.4rem;
+padding: 0.5rem 0.6rem;
+border-radius: var(--radius-xs);
+font-size: 0.78rem;
+font-weight: 600;
+cursor: pointer;
+transition: all var(--transition-fast);
+border: 1px solid var(--cl-border);
+background: var(--cl-surface);
+color: var(--cl-text-secondary);
+text-decoration: none;
 }
 
 .btnLinkAccount:hover {
-        background: rgba(16, 185, 129, 0.08) !important;
-        border-color: rgba(16, 185, 129, 0.35) !important;
+background: rgba(16, 185, 129, 0.08) !important;
+border-color: rgba(16, 185, 129, 0.35) !important;
+color: #059669 !important;
         color: #059669 !important;
 }
 

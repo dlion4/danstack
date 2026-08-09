@@ -128,14 +128,14 @@ export default function UtilitySidebar({
                         </div>
 
 {/* Switch Account button */}
-                                <button
-                                        type="button"
+                                <Link
+                                        to="/auth/hub"
                                         className={s.switchAccountBtn}
                                         title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
                                 >
                                         <i className="bi bi-arrow-left-right" />
                                         {(expanded || !isDesktop) && <span>Switch Account</span>}
-                                </button>
+                                </Link>
 
                                 {/* User footer */}
                                 <Link

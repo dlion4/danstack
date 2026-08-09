@@ -81,12 +81,16 @@
 		0 20px 50px rgba(26, 31, 46, 0.12);
 	--shadow-glow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 
+	--header-height: 72px;
+	--sidebar-width: 264px;
+	--sidebar-collapsed: 76px;
+
 	font-family:
 		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	background: var(--surface);
 	color: var(--ink-900);
 	min-height: 100vh;
-	padding: 24px;
+	padding: calc(24px + var(--header-height)) 24px 24px;
 	max-width: 100%;
 	overflow-x: hidden;
 }
@@ -1052,6 +1056,12 @@ input[type="date"].field {
 	overflow-y: auto;
 }
 
+@media (min-width: 1200px) {
+	.modalOverlay {
+		padding-left: calc(16px + var(--sidebar-width));
+	}
+}
+
 .modalWrapper {
 	width: 100%;
 	max-width: 500px;
@@ -1243,7 +1253,7 @@ input[type="date"].field {
 	}
 
 	.pageRoot {
-		padding: 20px;
+		padding: calc(20px + var(--header-height)) 20px 20px;
 	}
 }
 
@@ -1253,7 +1263,7 @@ input[type="date"].field {
 	}
 
 	.pageRoot {
-		padding: 16px;
+		padding: calc(16px + var(--header-height)) 16px 16px;
 	}
 
 	.modalWrapper.modal-lg,
@@ -1264,7 +1274,7 @@ input[type="date"].field {
 
 @media (max-width: 767.98px) {
 	.pageRoot {
-		padding: 12px 14px 24px;
+		padding: calc(12px + var(--header-height)) 14px 24px;
 		overflow-x: hidden;
 	}
 

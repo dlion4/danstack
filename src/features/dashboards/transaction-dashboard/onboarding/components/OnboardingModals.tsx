@@ -650,39 +650,38 @@ function StepType({
 	setBizType: (key: string) => void;
 }) {
 	return (
-		<div>
+		<div className={styles.wizardStepContent}>
 			<p className={styles.stepHint}>
 				Choose the category that best describes your business. The documents
 				required in Step 5 and your progress metric adapt to this choice.
 			</p>
-			<div className="row g-3">
+			<div className={styles.bizTypeGrid}>
 				{BIZ_TYPES.map((b) => {
 					const reqCount = b.docs.filter((d) => d.required).length;
 					return (
-						<div className="col-md-4 col-sm-6" key={b.key}>
-							<div
-								className={cx(
-									styles.bizTypeCard,
-									draft.bizType === b.key && styles.bizTypeSelected,
-								)}
-								onClick={() => setBizType(b.key)}
-								role="button"
-								tabIndex={0}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ")
-										setBizType(b.key);
-								}}
-							>
-								<div className={styles.bizTypeIcon}>
-									<i className={cx("bi", b.icon)} />
-								</div>
-								<div className={styles.bizTypeName}>{b.name}</div>
-								<div className={styles.bizTypeDesc}>{b.desc}</div>
-								<div className={styles.bizTypeDocs}>
-									<span className={styles.docCount}>
-										{reqCount} required {reqCount === 1 ? "doc" : "docs"}
-									</span>
-								</div>
+						<div
+							className={cx(
+								styles.bizTypeCard,
+								draft.bizType === b.key && styles.bizTypeSelected,
+							)}
+							onClick={() => setBizType(b.key)}
+							role="button"
+							tabIndex={0}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ")
+									setBizType(b.key);
+							}}
+							key={b.key}
+						>
+							<div className={styles.bizTypeIcon}>
+								<i className={cx("bi", b.icon)} />
+							</div>
+							<div className={styles.bizTypeName}>{b.name}</div>
+							<div className={styles.bizTypeDesc}>{b.desc}</div>
+							<div className={styles.bizTypeDocs}>
+								<span className={styles.docCount}>
+									{reqCount} required {reqCount === 1 ? "doc" : "docs"}
+								</span>
 							</div>
 						</div>
 					);
@@ -1396,217 +1395,168 @@ function OnboardingWizard({
 	return (
 		<div className={styles.modalOverlay} onClick={onClose}>
 			<div
-				className="modal-lg"
-				style={{
-					width: "100%",
-					maxWidth: 900,
-					margin: "auto",
-					flexShrink: 0,
-				}}
+				className={styles.modalContentAdvanced}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div
-					style={{
-						background: "var(--surface-elev)",
-						borderRadius: "var(--radius-lg)",
-						color: "var(--ink-900)",
-						boxShadow: "var(--shadow-xl)",
-						maxHeight: "92vh",
-						overflow: "hidden",
-						display: "flex",
-						flexDirection: "column",
-						animation: "modalSlideIn 0.3s ease-out",
-					}}
-				>
-					<div
+				<div className={styles.modalHeaderAdvanced}>
+					<h5
 						style={{
-							background:
-								"linear-gradient(135deg, var(--pri) 0%, var(--pri-600) 100%)",
-							color: "#fff",
-							padding: "18px 24px",
-							display: "flex",
-							justifyContent: "space-between",
+							fontWeight: 700,
+							display: "inline-flex",
 							alignItems: "center",
-							flexShrink: 0,
-							gap: 12,
-						}}
-					>
-						<h5
-							style={{
-								fontWeight: 700,
-								display: "inline-flex",
-								alignItems: "center",
-								gap: 10,
-								fontSize: 18,
-								margin: 0,
-							}}
-						>
-							<i className="bi bi-rocket-takeoff" /> Business Onboarding Wizard
-						</h5>
-						<div className="d-flex align-items-center gap-2">
-							<span
-								style={{ fontSize: 12, opacity: 0.9 }}
-								className="d-none d-sm-inline"
-							>
-								Step {step} of {STEP_LABELS.length} •{" "}
-								{getBizType(draft.bizType || "small-scale").name}
-							</span>
-							<button
-								type="button"
-								onClick={onClose}
-								aria-label="Close"
-								style={{
-									width: 36,
-									height: 36,
-									border: "none",
-									background: "transparent",
-									borderRadius: 8,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									cursor: "pointer",
-									color: "#fff",
-								}}
-							>
-								<i className="bi bi-x-lg" />
-							</button>
-						</div>
-					</div>
-
-					<div
-						style={{
-							padding: "20px 24px",
-							overflowY: "auto",
-							flex: 1,
-							minHeight: 0,
-						}}
-					>
-						{/* stepper */}
-						<div className={styles.wizardStepper}>
-							{STEP_LABELS.map((label, i) => {
-								const n = i + 1;
-								const done = draft.completedSteps.includes(n) && n !== step;
-								const active = n === step;
-								return (
-									<div key={label} style={{ display: "contents" }}>
-										<div
-											className={cx(
-												styles.wizardStep,
-												active && styles.wizardActive,
-												done && styles.wizardDone,
-											)}
-											role="button"
-											tabIndex={0}
-											onClick={() => goTo(n)}
-											onKeyDown={(e) => {
-												if (e.key === "Enter" || e.key === " ") goTo(n);
-											}}
-										>
-											<div className={styles.wizardCircle}>
-												{done ? <i className="bi bi-check" /> : n}
-											</div>
-											<div className={styles.wizardLabel}>{label}</div>
-										</div>
-										{i < STEP_LABELS.length - 1 && (
-											<div
-												className={cx(
-													styles.wizardConnector,
-													done && styles.wizardConnectorDone,
-												)}
-											/>
-										)}
-									</div>
-								);
-							})}
-						</div>
-
-						{/* step body */}
-						<div key={step}>
-							<h6 className={styles.wizardStepTitle}>
-								<i
-									className={cx(
-										"bi",
-										[
-											"bi-grid-1x2",
-											"bi-building",
-											"bi-person",
-											"bi-telephone",
-											"bi-folder2-open",
-											"bi-bank",
-											"bi-gear",
-											"bi-shield-check",
-											"bi-clipboard-check",
-										][step - 1],
-									)}
-								/>
-								Step {step}: {STEP_LABELS[step - 1]}
-							</h6>
-							{step === 1 && <StepType draft={draft} setField={setField} setBizType={setBizType} />}
-							{step === 2 && <StepIdentity draft={draft} setField={setField} />}
-							{step === 3 && <StepOwner draft={draft} setField={setField} />}
-							{step === 4 && <StepContact draft={draft} setField={setField} />}
-							{step === 5 && (
-								<StepDocs draft={draft} setDoc={setDoc} removeDoc={removeDoc} />
-							)}
-							{step === 6 && <StepBanking draft={draft} setField={setField} />}
-							{step === 7 && <StepOps draft={draft} setField={setField} />}
-							{step === 8 && (
-								<StepCompliance draft={draft} setField={setField} />
-							)}
-							{step === 9 && <StepReview draft={draft} goTo={goTo} />}
-						</div>
-					</div>
-
-					<div
-						style={{
-							borderTop: "1px solid var(--border)",
-							padding: "16px 24px",
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							flexShrink: 0,
 							gap: 10,
-							flexWrap: "wrap",
+							fontSize: 18,
+							margin: 0,
 						}}
 					>
+						<i className="bi bi-rocket-takeoff" /> Business Onboarding Wizard
+					</h5>
+					<div className="d-flex align-items-center gap-2">
+						<span
+							style={{ fontSize: 12, opacity: 0.9 }}
+							className="d-none d-sm-inline"
+						>
+							Step {step} of {STEP_LABELS.length} •{" "}
+							{getBizType(draft.bizType || "small-scale").name}
+						</span>
 						<button
 							type="button"
-							className={cx(styles.btn, styles.btnSecondary)}
-							onClick={saveAndClose}
+							onClick={onClose}
+							aria-label="Close"
+							style={{
+								width: 36,
+								height: 36,
+								border: "none",
+								background: "transparent",
+								borderRadius: 8,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								cursor: "pointer",
+								color: "#fff",
+							}}
 						>
-							<i className="bi bi-save" /> Save &amp; Continue Later
+							<i className="bi bi-x-lg" />
 						</button>
-						{savedFlash && (
-							<span style={{ fontSize: 12, color: "var(--success)" }}>
-								<i className="bi bi-check-circle" /> Saved
-							</span>
+					</div>
+				</div>
+
+				<div className={styles.modalBodyAdvanced}>
+					{/* stepper */}
+					<div className={styles.wizardStepper}>
+						{STEP_LABELS.map((label, i) => {
+							const n = i + 1;
+							const done = draft.completedSteps.includes(n) && n !== step;
+							const active = n === step;
+							return (
+								<div key={label} style={{ display: "contents" }}>
+									<div
+										className={cx(
+											styles.wizardStep,
+											active && styles.wizardActive,
+											done && styles.wizardDone,
+										)}
+										role="button"
+										tabIndex={0}
+										onClick={() => goTo(n)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") goTo(n);
+										}}
+									>
+										<div className={styles.wizardCircle}>
+											{done ? <i className="bi bi-check" /> : n}
+										</div>
+										<div className={styles.wizardLabel}>{label}</div>
+									</div>
+									{i < STEP_LABELS.length - 1 && (
+										<div
+											className={cx(
+												styles.wizardConnector,
+												done && styles.wizardConnectorDone,
+											)}
+										/>
+									)}
+								</div>
+							);
+						})}
+					</div>
+
+					{/* step body */}
+					<div className={styles.wizardStepContent} key={step}>
+						<h6 className={styles.wizardStepTitle}>
+							<i
+								className={cx(
+									"bi",
+									[
+										"bi-grid-1x2",
+										"bi-building",
+										"bi-person",
+										"bi-telephone",
+										"bi-folder2-open",
+										"bi-bank",
+										"bi-gear",
+										"bi-shield-check",
+										"bi-clipboard-check",
+									][step - 1],
+								)}
+							/>
+							Step {step}: {STEP_LABELS[step - 1]}
+						</h6>
+						{step === 1 && <StepType draft={draft} setField={setField} setBizType={setBizType} />}
+						{step === 2 && <StepIdentity draft={draft} setField={setField} />}
+						{step === 3 && <StepOwner draft={draft} setField={setField} />}
+						{step === 4 && <StepContact draft={draft} setField={setField} />}
+						{step === 5 && (
+							<StepDocs draft={draft} setDoc={setDoc} removeDoc={removeDoc} />
 						)}
-						<div className="d-flex" style={{ gap: 10 }}>
-							{step > 1 && (
-								<button
-									type="button"
-									className={cx(styles.btn)}
-									onClick={() => goTo(step - 1)}
-								>
-									<i className="bi bi-arrow-left" /> Back
-								</button>
-							)}
-							{!isReview ? (
-								<button
-									type="button"
-									className={cx(styles.btn, styles.btnPrimary)}
-									onClick={() => {
-										markDone();
-										goTo(step + 1);
-									}}
-									disabled={!canContinue}
-									title={
-										!canContinue ? "Select a business type first" : undefined
-									}
-								>
-									{step === STEP_LABELS.length - 1 ? "Review" : "Continue"}{" "}
-									<i className="bi bi-arrow-right" />
-								</button>
+						{step === 6 && <StepBanking draft={draft} setField={setField} />}
+						{step === 7 && <StepOps draft={draft} setField={setField} />}
+						{step === 8 && (
+							<StepCompliance draft={draft} setField={setField} />
+						)}
+						{step === 9 && <StepReview draft={draft} goTo={goTo} />}
+					</div>
+				</div>
+
+				<div className={styles.modalFooterAdvanced}>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={saveAndClose}
+					>
+						<i className="bi bi-save" /> Save &amp; Continue Later
+					</button>
+					{savedFlash && (
+						<span style={{ fontSize: 12, color: "var(--success)" }}>
+							<i className="bi bi-check-circle" /> Saved
+						</span>
+					)}
+					<div className="d-flex" style={{ gap: 10 }}>
+						{step > 1 && (
+							<button
+								type="button"
+								className={cx(styles.btn)}
+								onClick={() => goTo(step - 1)}
+							>
+								<i className="bi bi-arrow-left" /> Back
+							</button>
+						)}
+						{!isReview ? (
+							<button
+								type="button"
+								className={cx(styles.btn, styles.btnPrimary)}
+								onClick={() => {
+									markDone();
+									goTo(step + 1);
+								}}
+								disabled={!canContinue}
+								title={
+									!canContinue ? "Select a business type first" : undefined
+								}
+							>
+								{step === STEP_LABELS.length - 1 ? "Review" : "Continue"}{" "}
+								<i className="bi bi-arrow-right" />
+							</button>
 							) : (
 								<button
 									type="button"
@@ -1620,7 +1570,7 @@ function OnboardingWizard({
 					</div>
 				</div>
 			</div>
-		</div>
+		
 	);
 }
 
@@ -1761,32 +1711,31 @@ export function OnboardingModals({
 					Choose the category that best describes your business. Your required
 					documents and limits depend on this choice.
 				</p>
-				<div className="row g-3">
+				<div className={styles.bizTypeGrid}>
 					{BIZ_TYPES.map((b) => (
-						<div className="col-md-4 col-sm-6" key={b.key}>
-							<div
-								className={cx(
-									styles.bizTypeCard,
-									draft.bizType === b.key && styles.bizTypeSelected,
-								)}
-								onClick={() => setDraft({ ...draft, bizType: b.key })}
-								role="button"
-								tabIndex={0}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ")
-										setDraft({ ...draft, bizType: b.key });
-								}}
-							>
-								<div className={styles.bizTypeIcon}>
-									<i className={cx("bi", b.icon)} />
-								</div>
-								<div className={styles.bizTypeName}>{b.name}</div>
-								<div className={styles.bizTypeDesc}>{b.desc}</div>
-								<div className={styles.bizTypeDocs}>
-									<span className={styles.docCount}>
-										{b.docs.filter((d) => d.required).length} required docs
-									</span>
-								</div>
+						<div
+							className={cx(
+								styles.bizTypeCard,
+								draft.bizType === b.key && styles.bizTypeSelected,
+							)}
+							onClick={() => setDraft({ ...draft, bizType: b.key })}
+							role="button"
+							tabIndex={0}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ")
+									setDraft({ ...draft, bizType: b.key });
+							}}
+							key={b.key}
+						>
+							<div className={styles.bizTypeIcon}>
+								<i className={cx("bi", b.icon)} />
+							</div>
+							<div className={styles.bizTypeName}>{b.name}</div>
+							<div className={styles.bizTypeDesc}>{b.desc}</div>
+							<div className={styles.bizTypeDocs}>
+								<span className={styles.docCount}>
+									{b.docs.filter((d) => d.required).length} required docs
+								</span>
 							</div>
 						</div>
 					))}

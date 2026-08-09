@@ -118,12 +118,12 @@ export default function CardsHeader({
 								</div>
 								<div className={cx(s.panelFooter, "d-flex justify-content-between")}>
 									<div className={s.accountActions}>
-										<button type="button" className={s.btnLinkAccount} onClick={() => onToggleDropdown("accounts")}>
+										<Link to="/wallet-activation" className={s.btnLinkAccount}>
 											<i className="bi bi-link-45deg" /> Link Account
-										</button>
-										<button type="button" className={s.btnUnlinkAccount} onClick={() => onToggleDropdown("accounts")}>
+										</Link>
+										<Link to="/wallet-activation" className={s.btnUnlinkAccount}>
 											<i className="bi bi-link-break" /> Unlink Account
-										</button>
+										</Link>
 									</div>
 								</div>
 							</div>

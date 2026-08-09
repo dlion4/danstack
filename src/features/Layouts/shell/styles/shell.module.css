@@ -1696,7 +1696,8 @@
 	width: 100%;
 }
 
-.accountActions button {
+.accountActions button,
+.accountActions a {
 	flex: 1;
 	display: inline-flex;
 	align-items: center;
@@ -1711,6 +1712,7 @@
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface);
 	color: var(--sh-text-secondary);
+	text-decoration: none;
 }
 
 .btnLinkAccount:hover {
@@ -1968,7 +1970,8 @@
 	width: 100%;
 }
 
-.accountActions button {
+.accountActions button,
+.accountActions a {
 	flex: 1;
 	display: inline-flex;
 	align-items: center;
@@ -1983,6 +1986,7 @@
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface);
 	color: var(--sh-text-secondary);
+	text-decoration: none;
 }
 
 .btnLinkAccount:hover {

@@ -1468,7 +1468,8 @@
         width: 100%;
 }
 
-.accountActions button {
+.accountActions button,
+.accountActions a {
         flex: 1;
         display: inline-flex;
         align-items: center;
@@ -1483,6 +1484,7 @@
         border: 1px solid var(--border);
         background: var(--surface);
         color: var(--text-secondary);
+        text-decoration: none;
 }
 
 .btnLinkAccount:hover {

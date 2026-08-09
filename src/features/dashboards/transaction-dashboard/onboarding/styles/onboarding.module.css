@@ -49,12 +49,16 @@
 	--shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
 	--shadow-glow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 
+	--header-height: 72px;
+	--sidebar-width: 264px;
+	--sidebar-collapsed: 76px;
+
 	font-family:
 		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	background: var(--surface);
 	color: var(--ink-900);
 	min-height: 100vh;
-	padding: 24px;
+	padding: calc(24px) 24px 24px;
 	max-width: 100%;
 	overflow-x: hidden;
 }
@@ -1139,6 +1143,365 @@
 	overflow-y: auto;
 }
 
+@media (min-width: 1200px) {
+	.modalOverlay {
+		padding-left: calc(16px + var(--sidebar-width));
+	}
+}
+
+/* Advanced modal content container */
+.modalContentAdvanced {
+	background: var(--surface-elev);
+	border-radius: var(--radius-lg);
+	color: var(--ink-900);
+	box-shadow: var(--shadow-xl);
+	max-height: 92vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	animation: modalSlideIn 0.3s ease-out;
+	width: 100%;
+	max-width: 900px;
+	margin: auto;
+}
+
+.modalHeaderAdvanced {
+	background: linear-gradient(135deg, var(--pri) 0%, var(--pri-600) 100%);
+	color: #fff;
+	padding: 18px 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-shrink: 0;
+	gap: 12;
+	flex-wrap: wrap;
+}
+
+.modalBodyAdvanced {
+	padding: 20px 24px;
+	overflow-y: auto;
+	flex: 1;
+	min-height: 0;
+}
+
+.modalFooterAdvanced {
+	border-top: 1px solid var(--border);
+	padding: 16px 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-shrink: 0;
+	gap: 10;
+	flex-wrap: wrap;
+}
+
+/* Wizard-specific improvements */
+.wizardStepper {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin-bottom: 24px;
+	overflow-x: auto;
+	padding-bottom: 8px;
+	scrollbar-width: thin;
+	scrollbar-color: var(--border) transparent;
+}
+
+.wizardStepper::-webkit-scrollbar {
+	height: 4px;
+}
+
+.wizardStepper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.wizardStepper::-webkit-scrollbar-thumb {
+	background: var(--border);
+	border-radius: 4px;
+}
+
+.wizardStep {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	min-width: 72px;
+	position: relative;
+	cursor: pointer;
+	transition: all 0.2s;
+	flex-shrink: 0;
+}
+
+.wizardStep:hover .wizardCircle {
+	transform: scale(1.1);
+}
+
+.wizardCircle {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 13px;
+	background: var(--surface-2);
+	color: var(--ink-500);
+	border: 2px solid var(--border);
+	transition: all 0.2s;
+	z-index: 1;
+	flex-shrink: 0;
+}
+
+.wizardActive .wizardCircle {
+	background: var(--pri);
+	color: #fff;
+	border-color: var(--pri);
+}
+
+.wizardDone .wizardCircle {
+	background: var(--success-bg);
+	color: var(--pri);
+	border-color: var(--pri);
+}
+
+.wizardLabel {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--ink-500);
+	text-align: center;
+	white-space: nowrap;
+}
+
+.wizardActive .wizardLabel {
+	color: var(--pri-700);
+}
+
+.wizardDone .wizardLabel {
+	color: var(--pri);
+}
+
+.wizardConnector {
+	flex: 1;
+	height: 2px;
+	background: var(--border);
+	min-width: 16px;
+	margin: 0 6px;
+	margin-bottom: 22px;
+	flex-shrink: 0;
+}
+
+.wizardConnectorDone {
+	background: var(--pri);
+}
+
+/* Step content improvements */
+.wizardStepContent {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.wizardStepTitle {
+	font-weight: 700;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.wizardStepTitle i {
+	color: var(--pri);
+	flex-shrink: 0;
+}
+
+.stepHint {
+	font-size: 12px;
+	color: var(--ink-500);
+	margin: -12px 0 16px;
+	line-height: 1.5;
+}
+
+/* Business type cards grid improvement */
+.bizTypeGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 16px;
+}
+
+.bizTypeCard {
+	border: 2px solid var(--border);
+	border-radius: var(--radius-md);
+	padding: 20px;
+	cursor: pointer;
+	transition: all 0.2s;
+	height: 100%;
+	text-align: center;
+	background: var(--surface-elev);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.bizTypeCard:hover {
+	border-color: var(--pri);
+	transform: translateY(-2px);
+	box-shadow: var(--shadow);
+}
+
+.bizTypeSelected {
+	border-color: var(--pri);
+	background: var(--success-bg);
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.bizTypeIcon {
+	font-size: 32px;
+	color: var(--pri);
+	flex-shrink: 0;
+}
+
+.bizTypeName {
+	font-weight: 700;
+	font-size: 14px;
+	margin-bottom: 4px;
+}
+
+.bizTypeDesc {
+	font-size: 12px;
+	color: var(--ink-500);
+	line-height: 1.4;
+	flex: 1;
+}
+
+.bizTypeDocs {
+	margin-top: auto;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	justify-content: center;
+}
+
+/* Suggestion items improvements */
+.suggestionItem {
+	background: var(--surface-elev);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 12px;
+	transition: all 0.2s;
+	flex-wrap: wrap;
+}
+
+.suggestionItem:hover {
+	transform: translateX(4px);
+	box-shadow: var(--shadow-sm);
+}
+
+.suggestionPriority {
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 14px;
+	flex-shrink: 0;
+}
+
+.priorityHigh {
+	background: var(--danger-bg);
+	color: var(--danger);
+}
+
+.priorityMedium {
+	background: var(--warning-bg);
+	color: var(--warning);
+}
+
+.priorityLow {
+	background: var(--info-bg);
+	color: var(--info);
+}
+
+.suggestionContent {
+	flex: 1;
+	min-width: 0;
+}
+
+.suggestionTitle {
+	font-weight: 600;
+	font-size: 14px;
+	margin-bottom: 2px;
+}
+
+.suggestionMeta {
+	font-size: 12px;
+	color: var(--ink-500);
+}
+
+.suggestionImpact {
+	background: var(--success-bg);
+	color: var(--pri-700);
+	padding: 4px 12px;
+	border-radius: var(--radius-pill);
+	font-size: 11px;
+	font-weight: 700;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+/* Upload row improvements */
+.uploadRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 16px;
+	background: var(--surface-2);
+	border-radius: var(--radius-sm);
+	margin-bottom: 8px;
+	border: 1px solid var(--border);
+	transition: all 0.2s;
+	flex-wrap: wrap;
+}
+
+.uploadRow:hover {
+	background: var(--surface-elev);
+}
+
+.uploadIcon {
+	font-size: 20px;
+	color: var(--pri);
+	flex-shrink: 0;
+}
+
+.uploadInfo {
+	flex: 1;
+	min-width: 0;
+}
+
+.uploadLabel {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--ink-900);
+}
+
+.uploadHint {
+	font-size: 11px;
+	color: var(--ink-500);
+	margin-top: 2px;
+}
+
+.uploadAction {
+	flex-shrink: 0;
+}
+
 @keyframes modalSlideIn {
 	from {
 		opacity: 0;
@@ -1222,23 +1585,127 @@
 /* ============================ RESPONSIVE ============================ */
 @media (max-width: 1199.98px) {
 	.pageRoot {
-		padding: 20px;
+		padding: calc(20px + var(--header-height)) 20px 20px;
+	}
+
+	.modalContentAdvanced {
+		max-width: 800px;
 	}
 }
 
 @media (max-width: 991.98px) {
 	.pageRoot {
-		padding: 16px;
+		padding: calc(16px + var(--header-height)) 16px 16px;
 	}
 
 	.heroTitle {
 		font-size: 26px;
 	}
+
+	.modalContentAdvanced {
+		max-width: 700px;
+	}
+
+	.bizTypeGrid {
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	}
 }
 
 @media (max-width: 767.98px) {
 	.pageRoot {
-		padding: 12px 14px 24px;
+		padding: calc(12px + var(--header-height)) 14px 24px;
+	}
+
+	.modalContentAdvanced {
+		max-width: 100%;
+		margin: 0;
+		max-height: 95vh;
+	}
+
+	.modalHeaderAdvanced {
+		padding: 16px 20px;
+	}
+
+	.modalBodyAdvanced {
+		padding: 16px 20px;
+	}
+
+	.modalFooterAdvanced {
+		padding: 16px 20px;
+		flex-direction: column-reverse;
+	}
+
+	.modalFooterAdvanced button {
+		width: 100%;
+	}
+
+	.modalFooterAdvanced .d-flex {
+		width: 100%;
+		flex-direction: column;
+	}
+
+	.wizardStepper {
+		margin-bottom: 20px;
+	}
+
+	.wizardStep {
+		min-width: 60px;
+	}
+
+	.wizardLabel {
+		font-size: 9px;
+	}
+
+	.wizardCircle {
+		width: 30px;
+		height: 30px;
+		font-size: 11px;
+	}
+
+	.bizTypeGrid {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: 12px;
+	}
+
+	.bizTypeCard {
+		padding: 16px;
+	}
+
+	.bizTypeIcon {
+		font-size: 28px;
+	}
+
+	.suggestionItem {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+		padding: 12px;
+	}
+
+	.suggestionPriority {
+		width: 36px;
+		height: 36px;
+		font-size: 12px;
+	}
+
+	.suggestionImpact {
+		width: 100%;
+		text-align: center;
+	}
+
+	.uploadRow {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+		padding: 12px;
+	}
+
+	.uploadAction {
+		width: 100%;
+	}
+
+	.uploadAction button {
+		width: 100%;
 	}
 
 	.pageBar {
