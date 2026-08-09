@@ -23,7 +23,6 @@
  *   initTooltips() (Bootstrap JS) ....... NOT needed — we use title= attributes
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -32,7 +31,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import type { ShellContextValue, ToastInput } from "../data/shellContext";
 import { ShellContext } from "../data/shellContext";
 import type { AsideKind, ToastTone } from "../data/shellData";
-import { cx, fetchShellContent, initialMockData } from "../data/shellData";
+import { cx, initialMockData } from "../data/shellData";
 import styles from "../styles/shell.module.css";
 import LeftDrawer from "./LeftDrawer";
 import RightAside from "./RightAside";
@@ -47,16 +46,9 @@ const s = styles as Record<string, string>;
 let toastIdSeq = 0;
 
 export default function AppShell() {
-        /* ---------- TanStack Query: backend-ready shell content ---------- */
-        const { data: apiData, isLoading } = useQuery({
-                queryKey: ["paymo-shell-content"],
-                queryFn: fetchShellContent,
-                staleTime: 5 * 60_000,
-                retry: 1,
-        });
-        // Falls back to initialMockData while the API is unreachable so the shell
-        // never breaks; the error banner surfaces that failure state.
-        const content = apiData ?? initialMockData;
+        // No backend exists for /api/shell-content in this demo, so the shell
+        // renders directly from the bundled mock data (no 404 fetch noise).
+        const content = initialMockData;
 
         /* ---------- layout state ---------- */
         const [isDesktop, setIsDesktop] = useState<boolean>(() =>
@@ -167,7 +159,7 @@ export default function AppShell() {
         );
 
         const handleCopyAccountId = useCallback(async () => {
-                const text = content.accountId;
+                const text = initialMockData.accountId;
                 try {
                         if (navigator.clipboard && window.isSecureContext) {
                                 await navigator.clipboard.writeText(text);
@@ -185,7 +177,7 @@ export default function AppShell() {
                 } catch {
                         showToast("Could not copy account ID", "danger");
                 }
-        }, [content.accountId, showToast]);
+        }, [showToast]);
 
         const handleLogout = useCallback(() => {
                 closeAllDropdowns();
@@ -304,17 +296,6 @@ export default function AppShell() {
                                 <div className={s.gridOverlay} />
                                 <div className={cx(s.blob, s.blobMint)} />
                                 <div className={cx(s.blob, s.blobDeep)} />
-
-                                {/* ===== TanStack Query: loading spinner ===== */}
-                                {isLoading && (
-                                        <div className={s.loadingOverlay} role="status" aria-live="polite">
-                                                <div
-                                                        className="spinner-border"
-                                                        style={{ width: "3rem", height: "3rem" }}
-                                                />
-                                                <span>Loading your workspace…</span>
-                                        </div>
-                                )}
 
                                 {/* ============ SIDEBAR ============ */}
                                 <Sidebar

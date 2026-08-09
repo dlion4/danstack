@@ -51,7 +51,7 @@ let toastIdSeq = 0;
 
 export default function CardsShell() {
 	/* ---------- TanStack Query: backend-ready cards layout content ---------- */
-	const { data: apiData, isLoading } = useQuery({
+	const { data: apiData } = useQuery({
 		queryKey: ["cards-layout-content"],
 		queryFn: fetchCardsLayoutContent,
 		staleTime: 5 * 60_000,
@@ -246,16 +246,6 @@ export default function CardsShell() {
 	return (
 		<CardsShellContext.Provider value={ctxValue}>
 			<div className={s.cardsRoot}>
-				{/* ===== TanStack Query: loading spinner ===== */}
-				{isLoading && (
-					<div className={s.loadingOverlay} role="status" aria-live="polite">
-						<div
-							className="spinner-border"
-							style={{ width: "3rem", height: "3rem" }}
-						/>
-						<span>Loading your card workspace…</span>
-					</div>
-				)}
 
 				{/* ============ SIDEBAR ============ */}
 				<CardsSidebar

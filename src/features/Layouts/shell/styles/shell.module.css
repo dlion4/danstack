@@ -1285,42 +1285,6 @@
 }
 
 /* ============================================================
-   QUERY STATES
-   ============================================================ */
-.loadingOverlay {
-	position: fixed;
-	inset: 0;
-	z-index: 4000;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 16px;
-	background: rgba(255, 255, 255, 0.98);
-	backdrop-filter: blur(10px);
-	color: var(--sh-primary);
-	letter-spacing: 0.03em;
-}
-
-.loadingOverlay :global(.spinner-border) {
-	color: var(--sh-primary);
-}
-
-.errorBanner {
-	position: fixed;
-	top: 16px;
-	right: 16px;
-	z-index: 3500;
-	max-width: 420px;
-	background: #fef2f2 !important;
-	border: 1px solid rgba(239, 68, 68, 0.3) !important;
-	color: var(--sh-danger) !important;
-	box-shadow: var(--shadow);
-	border-radius: var(--sh-radius) !important;
-	padding: 16px 20px;
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 /* ============================================================
@@ -2168,12 +2132,6 @@
 	.paymoToast {
 		min-width: 0;
 		width: 100%;
-	}
-
-	.errorBanner {
-		left: 12px;
-		right: 12px;
-		max-width: none;
 	}
 }
 

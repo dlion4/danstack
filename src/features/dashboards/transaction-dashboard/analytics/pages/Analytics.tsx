@@ -552,7 +552,7 @@ function downloadFile(name: string, content: string, type = "text/plain") {
 }
 
 export default function Analytics() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-analytics"],
 		queryFn: fetchAnalytics,
 		retry: 1,
@@ -634,18 +634,6 @@ export default function Analytics() {
 				</div>
 			)}
 
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading analytics workspace…
-					</div>
-				</div>
-			)}
 
 			{/* ======================= SIDEBAR ======================= */}
 			{/* <aside className={styles.sidebar}>

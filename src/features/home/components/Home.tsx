@@ -1132,8 +1132,7 @@ export default function Home() {
         // pointing at /api/paymo-home — shape must match `initialMockData`.
         const apiData = null;
         const error = null;
-        const isLoading = false;
-
+        
         const content = apiData ?? initialMockData;
         const { images } = content;
 
@@ -1532,16 +1531,6 @@ export default function Home() {
                         <div className={s.ambientOrb2} />
                         <div className={s.ambientOrb3} />
 
-                        {/* ===== TanStack Query: loading spinner ===== */}
-                        {isLoading && (
-                                <div className={s.loadingOverlay} role="status" aria-live="polite">
-                                        <div
-                                                className="spinner-border"
-                                                style={{ width: "3rem", height: "3rem" }}
-                                        />
-                                        <span>Loading Paymo content…</span>
-                                </div>
-                        )}
 
                         {/* ===== TanStack Query: error banner (page falls back to mock data) ===== */}
                         {error && (

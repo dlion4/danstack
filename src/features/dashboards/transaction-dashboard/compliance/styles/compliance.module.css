@@ -389,6 +389,205 @@
 	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.2);
 }
 
+/* ======================= HERO STYLE-UP ======================= */
+.heroCard {
+	position: relative;
+	overflow: hidden;
+}
+
+.heroWatermark {
+	position: absolute;
+	top: -16px;
+	right: -12px;
+	font-size: 138px;
+	line-height: 1;
+	color: rgba(255, 255, 255, 0.08);
+	transform: rotate(-8deg);
+	pointer-events: none;
+}
+
+.heroGrid {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+	background-size: 22px 22px;
+	opacity: 0.45;
+	pointer-events: none;
+}
+
+.heroLive {
+	margin: 0;
+	font-size: 12px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.88);
+	display: flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.liveDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #86efac;
+	animation: pmLive 2.2s infinite;
+}
+
+@keyframes pmLive {
+	0% {
+		box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.55);
+	}
+
+	70% {
+		box-shadow: 0 0 0 9px rgba(134, 239, 172, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(134, 239, 172, 0);
+	}
+}
+
+.livePill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 9px;
+	border-radius: var(--pm-r-pill);
+	background: rgba(255, 255, 255, 0.14);
+	border: 1px solid rgba(255, 255, 255, 0.26);
+	color: #d1fae5;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.heroValue {
+	font-family: var(--pm-font-display);
+	font-size: 25px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: #fff;
+	line-height: 1.2;
+	margin: 12px 0 8px;
+}
+
+.heroDetail {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: rgba(255, 255, 255, 0.84);
+	max-width: 94%;
+}
+
+.throughputWrap {
+	margin-top: 14px;
+	padding: 10px 12px 12px;
+	border-radius: 12px;
+	background: rgba(4, 47, 46, 0.38);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}
+
+.throughputLabel {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.throughputCount {
+	font-size: 10.5px;
+	font-weight: 600;
+	color: #a7f3d0;
+}
+
+.throughputStrip {
+	display: flex;
+	align-items: flex-end;
+	gap: 3px;
+	height: 34px;
+	margin-top: 6px;
+}
+
+.throughputBar {
+	flex: 1;
+	border-radius: 3px 3px 1px 1px;
+	background: linear-gradient(180deg, #6ee7b7 0%, #059669 100%);
+	opacity: 0.92;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	cursor: default;
+}
+
+.throughputBar:hover {
+	opacity: 1;
+	transform: scaleY(1.1);
+	transform-origin: bottom;
+}
+
+/* ======================= STAT CARDS STYLE-UP ======================= */
+.statCard {
+	position: relative;
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.statCard:hover {
+	transform: translateY(-2px);
+}
+
+.statChip {
+	width: 34px;
+	height: 34px;
+	min-width: 34px;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+}
+
+.sparkline {
+	display: flex;
+	align-items: flex-end;
+	gap: 3px;
+	height: 34px;
+	width: 88px;
+	flex-shrink: 0;
+}
+
+.sparkBar {
+	flex: 1;
+	border-radius: 2px;
+	opacity: 0.8;
+	transition: opacity 0.2s ease;
+}
+
+.sparkBar:hover {
+	opacity: 1;
+}
+
+.statFooter {
+	margin-top: 12px;
+	padding-top: 10px;
+	border-top: 1px dashed var(--pm-border);
+	display: grid;
+	gap: 5px;
+	font-size: 12px;
+	color: var(--pm-ink-soft);
+}
+
+.statFootRow {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.statFootRow strong {
+	color: var(--pm-ink);
+	white-space: nowrap;
+}
+
 .sv {
 	font-family: var(--pm-font-display);
 	font-size: 28px;
@@ -549,8 +748,6 @@
 	color: #fff;
 	backdrop-filter: blur(4px);
 }
-
-
 
 .btnGhost:hover {
 	background: #f3f4f6;
@@ -1175,30 +1372,6 @@ input[type="date"].fc {
 }
 
 /* ======================= QUERY STATES ======================= */
-.loadingOverlay {
-	position: fixed;
-	inset: 0;
-	z-index: 2000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(255, 255, 255, 0.72);
-	backdrop-filter: blur(6px);
-}
-
-.loadingBox {
-	display: flex;
-	align-items: center;
-	gap: 0.9rem;
-	padding: 1rem 1.4rem;
-	border-radius: 16px;
-	background: #fff;
-	border: 1px solid var(--pm-border);
-	color: var(--pm-ink);
-	font-weight: 600;
-	box-shadow: var(--pm-shadow-lg);
-}
-
 .errorBanner {
 	position: fixed;
 	top: 1rem;
@@ -1495,7 +1668,8 @@ input[type="date"].fc {
 @media (prefers-reduced-motion: reduce) {
 
 	.badgeDot,
-	.spinner {
+	.spinner,
+	.liveDot {
 		animation: none !important;
 	}
 
@@ -1504,5 +1678,19 @@ input[type="date"].fc {
 	.modalBox,
 	.fstepActive {
 		animation: none;
+	}
+}
+
+@media (max-width: 768px) {
+	.heroValue {
+		font-size: 21px;
+	}
+
+	.sparkline {
+		width: 64px;
+	}
+
+	.statFooter {
+		font-size: 11.5px;
 	}
 }

@@ -186,7 +186,7 @@ export const InitiateTransfer: React.FC = () => {
 	const [summary, setSummary] = useState<TransactionSummary>({});
 	const carouselRef = useRef<HTMLDivElement>(null);
 
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["initiateTransferData"],
 		queryFn: fetchInitiateTransferData,
 		initialData: initialMockData,
@@ -285,18 +285,6 @@ export const InitiateTransfer: React.FC = () => {
 	}, [currentStep, activeType, activeReceiver]);
 
 	/* ── Render helpers ── */
-	if (isLoading) {
-		return (
-			<div className={styles.pageRoot}>
-				<div className={styles.loadingOverlay}>
-					<div className={styles.spinner}></div>
-					<p style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: "var(--pri)" }}>
-						Loading transfer data...
-					</p>
-				</div>
-			</div>
-		);
-	}
 	if (error) {
 		return (
 			<div className={styles.pageRoot}>

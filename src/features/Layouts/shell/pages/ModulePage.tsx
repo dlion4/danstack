@@ -6,16 +6,10 @@
  * section is unknown it renders a friendly empty state (never a broken page).
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { useShell } from "../data/shellContext";
-import {
-	cx,
-	fetchShellContent,
-	findModule,
-	initialMockData,
-} from "../data/shellData";
+import { cx, findModule, initialMockData } from "../data/shellData";
 import dash from "../styles/dashboard.module.css";
 import shell from "../styles/shell.module.css";
 
@@ -29,12 +23,8 @@ interface ModulePageProps {
 export default function ModulePage({ section }: ModulePageProps) {
 	const { showToast, openAside } = useShell();
 
-	const { data } = useQuery({
-		queryKey: ["paymo-shell-content"],
-		queryFn: fetchShellContent,
-		staleTime: 5 * 60_000,
-	});
-	const content = data ?? initialMockData;
+	/* No backend exists — render straight from the bundled mock data. */
+	const content = initialMockData;
 	const mod = findModule(content, section);
 
 	const isDevelopers = section === "developers";

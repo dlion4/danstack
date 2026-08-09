@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/features/Layouts/shell", "src/routes/__root.tsx", "src/routeTree.gen.ts", "src/router.tsx"],
+  "compilerOptions": { "noEmit": true }
+}

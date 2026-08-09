@@ -550,8 +550,6 @@
 	backdrop-filter: blur(4px);
 }
 
-
-
 .btnGhost:hover {
 	background: #f3f4f6;
 	color: #1f1f1f;
@@ -1176,30 +1174,6 @@ input[type="date"].fc {
 }
 
 /* ======================= QUERY STATES ======================= */
-.loadingOverlay {
-	position: fixed;
-	inset: 0;
-	z-index: 2000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(255, 255, 255, 0.72);
-	backdrop-filter: blur(6px);
-}
-
-.loadingBox {
-	display: flex;
-	align-items: center;
-	gap: 0.9rem;
-	padding: 1rem 1.4rem;
-	border-radius: 16px;
-	background: #fff;
-	border: 1px solid var(--pm-border);
-	color: var(--pm-ink);
-	font-weight: 600;
-	box-shadow: var(--pm-shadow-lg);
-}
-
 .errorBanner {
 	position: fixed;
 	top: 1rem;

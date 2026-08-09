@@ -382,7 +382,7 @@ export default function OpsSystem() {
 		setModals((prev: typeof initialModalsState) => ({ ...prev, [key]: false }));
 	}, []);
 
-	const { data, isLoading, error } = useQuery<OpsData>({
+	const { data, error } = useQuery<OpsData>({
 		queryKey: ["paymo-ops-system"],
 		queryFn: fetchOpsData,
 		staleTime: 30_000,
@@ -394,15 +394,6 @@ export default function OpsSystem() {
 
 	return (
 		<div className={s.systemHealthPage}>
-			{/* ===== Loading Overlay ===== */}
-			{isLoading && (
-				<div className={s.loadingOverlay}>
-					<div className={s.loadingBox}>
-						<div className={s.spinner} />
-						<span>Loading operations dashboard...</span>
-					</div>
-				</div>
-			)}
 
 			{/* ===== Error Banner ===== */}
 			{error && (

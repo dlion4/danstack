@@ -51,7 +51,7 @@ let toastIdSeq = 0;
 
 export default function DevShell() {
 	/* ---------- TanStack Query: backend-ready dev layout content ---------- */
-	const { data: apiData, isLoading } = useQuery({
+	const { data: apiData } = useQuery({
 		queryKey: ["dev-layout-content"],
 		queryFn: fetchDevLayoutContent,
 		staleTime: 5 * 60_000,
@@ -311,20 +311,7 @@ export default function DevShell() {
 						expanded && isDesktop && s["sidebar-expanded"],
 					)}
 				>
-					{isLoading ? (
-						<div
-							className="d-flex justify-content-center align-items-center"
-							style={{ padding: 80 }}
-						>
-							<div className="spinner-border text-primary" role="status">
-								<span className="visually-hidden">
-									Loading developer workspace…
-								</span>
-							</div>
-						</div>
-					) : (
-						<Outlet />
-					)}
+					<Outlet />
 				</main>
 
 				{/* ============ LEFT DRAWER (Security & Environments) ============ */}

@@ -629,7 +629,7 @@ function MiniStatBox({ b }: { b: MiniBox }) {
 }
 
 export default function Disputes() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-disputes"],
 		queryFn: fetchDisputes,
 		retry: 1,
@@ -666,19 +666,6 @@ export default function Disputes() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading dispute workspace…
-					</div>
-				</div>
-			)}
 
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}

@@ -109,10 +109,7 @@ interface KraConfig {
 		actionLabel?: string;
 	}[];
 	scheduled: { title: string; sub: string; status: string; tone: BadgeTone }[];
-	govServices: { cols: TableCol[]; rows: Cell[][] };
-	quickServices: string[];
-	countyRows: { title: string; sub: string }[];
-	ardhisasaRows: { title: string; sub: string }[];
+	clientPins: { cols: TableCol[]; rows: Cell[][] };
 	activity: { cols: TableCol[]; rows: Cell[][] };
 }
 
@@ -138,9 +135,8 @@ const initialMockData: KraConfig = {
 		{ icon: "bi-gear", to: "/settings", label: "Settings" },
 	],
 	headerTitle: "KRA & Government Integration",
-	headerSub: "iTax, eCitizen, County Revenue, Land & Public Service Payments",
-	searchPlaceholder:
-		"Search tax types, KRA PIN, eCitizen services, county permits...",
+	headerSub: "iTax integration, tax payments, filings & compliance",
+	searchPlaceholder: "Search KRA PIN, tax types, obligations, returns...",
 	user: {
 		initials: "JK",
 		name: "James K.",
@@ -155,9 +151,9 @@ const initialMockData: KraConfig = {
 		current: "KRA & Government",
 	},
 	pageCode: "",
-	// pageTitle: "KRA & Government Integration",
+	pageTitle: "KRA & Government Integration",
 	pageSub:
-		"Manage iTax obligations, file returns, pay national & county government fees, handle land services via Ardhisasa, and maintain full compliance from a single hub.",
+		"Link multiple KRA PINs, sync obligations, file returns, pay taxes, and manage client tax identities across countries and authorities.",
 	hero: {
 		live: "KRA integration live",
 		value: "4 KRA PINs linked",
@@ -229,15 +225,6 @@ const initialMockData: KraConfig = {
 			actionLabel: "Pay",
 			modal: "payKRAModal",
 		},
-		{
-			icon: "bi-file-earmark-text",
-			iconBg: "var(--pm-info-soft)",
-			iconColor: "var(--pm-info)",
-			title: "eCitizen passport renewal ready",
-			sub: "Application #P-449281 · Pay KES 4,500",
-			actionLabel: "Pay",
-			modal: "payECitizenModal",
-		},
 	],
 	suggestions: [
 		{
@@ -258,15 +245,6 @@ const initialMockData: KraConfig = {
 			actionLabel: "Claim",
 			modal: "taxOptimizerModal",
 		},
-		{
-			icon: "bi-building",
-			iconBg: "var(--pm-warning-soft)",
-			iconColor: "var(--pm-warning)",
-			title: "Renew 3 county business permits",
-			sub: "Nairobi, Kiambu, Nakuru",
-			actionLabel: "Renew",
-			modal: "payCountyModal",
-		},
 	],
 	quickActions: [
 		{
@@ -282,22 +260,10 @@ const initialMockData: KraConfig = {
 			modal: "fileReturnModal",
 		},
 		{
-			icon: "bi-globe",
-			label: "eCitizen",
+			icon: "bi-person-badge",
+			label: "Link KRA PIN",
 			color: "var(--pm-info)",
-			modal: "payECitizenModal",
-		},
-		{
-			icon: "bi-building",
-			label: "County Permit",
-			color: "var(--pm-warning)",
-			modal: "payCountyModal",
-		},
-		{
-			icon: "bi-map",
-			label: "Ardhisasa",
-			color: "var(--pm-accent)",
-			modal: "payArdhisasaModal",
+			modal: "addKRAModal",
 		},
 		{
 			icon: "bi-collection",
@@ -478,71 +444,73 @@ const initialMockData: KraConfig = {
 			tone: "badgeW",
 		},
 	],
-	govServices: {
+	clientPins: {
 		cols: [
-			{ key: "service", label: "Service" },
-			{ key: "ref", label: "Ref / Application" },
-			{ key: "amount", label: "Amount" },
+			{ key: "entity", label: "Client / Entity" },
+			{ key: "country", label: "Country" },
+			{ key: "authority", label: "Authority" },
+			{ key: "pin", label: "PIN / TIN" },
+			{ key: "format", label: "Format" },
 			{ key: "status", label: "Status" },
-			{ key: "due", label: "Due / Expiry" },
 			{ key: "action", label: "Action" },
 		],
 		rows: [
 			[
-				"Passport Renewal",
-				"P-449281",
-				"KES 4,500",
-				{ badge: "Ready to Pay", tone: "badgeW" },
-				"30 Jun 2025",
-				{ actions: [{ label: "Pay", modal: "payECitizenModal" }] },
+				"James Kamau (Personal)",
+				"Kenya",
+				"KRA",
+				"C:A012345678Y",
+				"Letter + 9 digits + letter",
+				{ badge: "Compliant", tone: "badgeS" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
 			],
 			[
-				"Driving Licence Renewal",
-				"DL-882910",
-				"KES 3,200",
-				{ badge: "Paid", tone: "badgeS" },
-				"15 Aug 2025",
-				{ actions: [{ label: "Receipt", modal: "govReceiptModal" }] },
+				"JK Holdings Ltd",
+				"Kenya",
+				"KRA",
+				"C:P987654321Z",
+				"Letter + 9 digits + letter",
+				{ badge: "Compliant", tone: "badgeS" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
 			],
 			[
-				"Police Clearance",
-				"PC-334102",
-				"KES 1,000",
-				{ badge: "Processing", tone: "badgeI" },
-				"28 Jun 2025",
-				{ actions: [{ label: "Track", modal: "trackGovModal" }] },
+				"Grace Akinyi Traders",
+				"Uganda",
+				"URA TIN",
+				"C:1234567890",
+				"10 digits",
+				{ badge: "Synced", tone: "badgeI" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
 			],
 			[
-				"Business Registration (LLC)",
-				"BN-991827",
-				"KES 12,500",
-				{ badge: "Paid", tone: "badgeS" },
-				"—",
-				{ actions: [{ label: "Download", modal: "govReceiptModal" }] },
+				"Serengeti Coffee Exports",
+				"Tanzania",
+				"TRA TIN",
+				"C:123-456-789",
+				"9 digits (3-3-3)",
+				{ badge: "Synced", tone: "badgeI" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
+			],
+			[
+				"Accra Imports Ltd",
+				"Ghana",
+				"GRA TIN",
+				"C:C0001234567890",
+				"Letter + 12 digits",
+				{ badge: "Synced", tone: "badgeI" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
+			],
+			[
+				"Lagos Retail Co.",
+				"Nigeria",
+				"FIRS TIN",
+				"C:1234567-001",
+				"8 digits + 4 digits",
+				{ badge: "Needs Attention", tone: "badgeW" },
+				{ actions: [{ label: "Manage", modal: "addKRAModal" }] },
 			],
 		],
 	},
-	quickServices: [
-		"Passport",
-		"Driving Licence",
-		"Police Clearance",
-		"Good Conduct",
-		"Business Reg",
-		"CRB Report",
-	],
-	countyRows: [
-		{
-			title: "Nairobi City County",
-			sub: "Single Business Permit • KES 18,500",
-		},
-		{ title: "Kiambu County", sub: "Land Rates • KES 42,300" },
-		{ title: "Nakuru County", sub: "Health Permit • KES 7,800" },
-	],
-	ardhisasaRows: [
-		{ title: "Title Deed Processing", sub: "LR No. 209/881 • KES 28,500" },
-		{ title: "Stamp Duty — Property Transfer", sub: "KES 124,000" },
-		{ title: "Lease Renewal", sub: "Plot LR-334102 • KES 15,200" },
-	],
 	activity: {
 		cols: [
 			{ key: "date", label: "Date" },
@@ -576,24 +544,24 @@ const initialMockData: KraConfig = {
 				{ actions: [{ label: "View", modal: "fileReturnModal" }] },
 			],
 			[
-				"18 Jun",
-				"Passport Renewal",
-				"eCitizen",
-				"KES 4,500",
-				"Bank",
-				{ badge: "Processing", tone: "badgeI" },
-				"C:EC-449281",
-				{ actions: [{ label: "Track", modal: "trackGovModal" }] },
+				"20 Jun",
+				"Rental Income Tax (TOT)",
+				"KRA",
+				"KES 18,600",
+				"Wallet",
+				{ badge: "Paid", tone: "badgeS" },
+				"C:ITX-882102",
+				{ actions: [{ label: "Receipt", modal: "taxReceiptModal" }] },
 			],
 			[
 				"15 Jun",
-				"Land Rates",
-				"Nairobi County",
-				"KES 42,300",
+				"Capital Gains Tax",
+				"KRA",
+				"KES 62,000",
 				"M-Pesa",
-				{ badge: "Success", tone: "badgeS" },
-				"C:CCN-772910",
-				{ actions: [{ label: "Receipt", modal: "govReceiptModal" }] },
+				{ badge: "Overdue", tone: "badgeD" },
+				"C:ITX-880117",
+				{ actions: [{ label: "Pay", modal: "payKRAModal" }] },
 			],
 		],
 	},
@@ -615,6 +583,21 @@ const TONES: Record<string, string> = {
 	i: styles.badgeI,
 	p: styles.badgeP,
 };
+
+/* ---------- PIN / TIN format validation per country ---------- */
+const PIN_PATTERNS: Record<string, RegExp> = {
+	Kenya: /^[A-Za-z]\d{9}[A-Za-z]$/,
+	Uganda: /^\d{10}$/,
+	Tanzania: /^\d{3}-\d{3}-\d{3}$/,
+	Ghana: /^[A-Za-z]\d{12}$/,
+	Nigeria: /^\d{8}-\d{4}$/,
+};
+
+/** Validate a client PIN/TIN against its country's expected format. */
+function validatePin(country: string, pin: string): boolean {
+	const pattern = PIN_PATTERNS[country];
+	return pattern ? pattern.test(pin.trim()) : true;
+}
 
 function CellValue({
 	cell,
@@ -661,7 +644,6 @@ function CellValue({
 function SectionHead({
 	icon,
 	iconColor,
-	code,
 	title,
 	sub,
 	actions,
@@ -669,7 +651,6 @@ function SectionHead({
 }: {
 	icon: string;
 	iconColor: string;
-	code: string;
 	title: string;
 	sub: string;
 	actions: {
@@ -736,7 +717,7 @@ function Ub({
 }
 
 export default function KraGovernment() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-kra-government"],
 		queryFn: fetchKra,
 		retry: 1,
@@ -773,19 +754,6 @@ export default function KraGovernment() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading government workspace…
-					</div>
-				</div>
-			)}
 
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
@@ -1050,7 +1018,6 @@ export default function KraGovernment() {
 						<SectionHead
 							icon="bi-bank2"
 							iconColor="var(--pm-primary)"
-							code="1.12.1"
 							title="KRA iTax Integration Hub"
 							sub="Link multiple KRA PINs, sync obligations, view real-time tax position, and manage filings across personal and business entities."
 							actions={[
@@ -1165,12 +1132,80 @@ export default function KraGovernment() {
 						</div>
 					</div>
 
+					{/* ======================= SECTION Client Tax PINs & Formats ======================= */}
+					<div className={styles.card}>
+						<SectionHead
+							icon="bi-person-badge"
+							iconColor="var(--pm-warning)"
+							title="Client Tax PINs & Formats"
+							sub="Tax identities for your clients across countries and authorities — every PIN/TIN is checked against its country's expected format."
+							actions={[
+								{ label: "Link PIN", icon: "bi-plus-lg", modal: "addKRAModal" },
+								{
+									label: "Sync iTax",
+									icon: "bi-arrow-repeat",
+									modal: "syncItaxModal",
+									tone: "btnPmP",
+								},
+							]}
+							onOpen={openM}
+						/>
+						<div className="table-responsive">
+							<table className={styles.tbl}>
+						<thead>
+							<tr>
+								{config.clientPins.cols.slice(0, 5).map((c) => (
+									<th key={c.key}>{c.label}</th>
+								))}
+								<th>Validation</th>
+								{config.clientPins.cols.slice(5).map((c) => (
+									<th key={c.key}>{c.label}</th>
+								))}
+							</tr>
+						</thead>
+						<tbody>
+							{config.clientPins.rows.map((row, i) => {
+								const pinStr = String(row[3]).replace(/^C:/, "");
+								const country = String(row[1]);
+								const valid = validatePin(country, pinStr);
+								return (
+									<tr key={i}>
+										{row.slice(0, 5).map((cell, j) => (
+											<td key={j}>
+												<CellValue cell={cell} onOpen={openM} />
+											</td>
+										))}
+										<td>
+											<span
+													className={`${styles.badge} ${
+														valid ? styles.badgeS : styles.badgeD
+													}`}
+													title={`Expected format: ${PIN_PATTERNS[country]?.source ?? "No rule for this country"}`}
+												>
+													<i
+														className={`bi ${valid ? "bi-check-lg" : "bi-x-lg"}`}
+													/>{" "}
+													{valid ? "Valid" : "Invalid"}
+												</span>
+											</td>
+											{row.slice(5).map((cell, j) => (
+												<td key={j + 5}>
+													<CellValue cell={cell} onOpen={openM} />
+												</td>
+											))}
+									</tr>
+								);
+							})}
+						</tbody>
+							</table>
+						</div>
+					</div>
+
 					{/* ======================= SECTION Tax Payment Execution & Scheduling ======================= */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-credit-card"
 							iconColor="var(--pm-info)"
-							code="1.12.2"
 							title="Tax Payment Execution & Scheduling"
 							sub="Execute single or bulk tax payments, set recurring schedules, and manage payment plans with full audit trails."
 							actions={[
@@ -1236,130 +1271,19 @@ export default function KraGovernment() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION eCitizen & Government Services ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-globe"
-							iconColor="var(--pm-purple)"
-							code="1.12.3"
-							title="eCitizen & Government Services Portal"
-							sub="Pay for passports, driving licences, police clearance, business registration, and other eCitizen services in one place."
-							actions={[{ label: "Pay Service", modal: "payECitizenModal" }]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<Ub title="Recent & Upcoming Government Services">
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.govServices.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.govServices.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</Ub>
-							</div>
-							<div className="col-lg-4">
-								<Ub title="Quick Government Services">
-									<div className={styles.quickGrid}>
-										{config.quickServices.map((s) => (
-											<button
-												key={s}
-												className={styles.quickBtn}
-												onClick={() => openM("payECitizenModal")}
-											>
-												{s}
-											</button>
-										))}
-									</div>
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION County & Ardhisasa Land Services ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-map"
-							iconColor="var(--pm-accent)"
-							code="1.12.4"
-							title="County & Ardhisasa Land Services"
-							sub="Pay land rates, single business permits, building approvals, and manage property transactions via Ardhisasa."
-							actions={[
-								{ label: "County Permit", modal: "payCountyModal" },
-								{
-									label: "Ardhisasa",
-									modal: "payArdhisasaModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-6">
-								<Ub title="County Revenue Payments">
-									{config.countyRows.map((r) => (
-										<div className={styles.sr} key={r.title}>
-											<div>
-												<strong>{r.title}</strong>
-												<div className={styles.mutedSmall}>{r.sub}</div>
-											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM("payCountyModal")}
-											>
-												Pay
-											</button>
-										</div>
-									))}
-								</Ub>
-							</div>
-							<div className="col-lg-6">
-								<Ub title="Ardhisasa Land Services">
-									{config.ardhisasaRows.map((r) => (
-										<div className={styles.sr} key={r.title}>
-											<div>
-												<strong>{r.title}</strong>
-												<div className={styles.mutedSmall}>{r.sub}</div>
-											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM("payArdhisasaModal")}
-											>
-												Pay
-											</button>
-										</div>
-									))}
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= RECENT GOVERNMENT TRANSACTIONS ======================= */}
+					{/* ======================= SECTION Recent Tax & Filing Activity ======================= */}
 					<div className={styles.card}>
 						<div className="d-flex justify-content-between align-items-center mb-3">
-							<h3 className={styles.st}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--pm-muted)" }}
-								/>{" "}
-								Recent Government Transactions
-							</h3>
+							<div>
+								<h3 className={styles.st}>
+									<i
+										className="bi bi-clock-history"
+										style={{ color: "var(--pm-muted)" }}
+									/>{" "}
+									Recent Tax & Filing Activity
+								</h3>
+								<p className={styles.ss}>Payments, filings and receipts across linked PINs</p>
+							</div>
 							<button
 								className={`${styles.btnPm} ${styles.btnSm}`}
 								onClick={() => openM("govHistoryModal")}

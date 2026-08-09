@@ -670,7 +670,7 @@ function SectionHead({
 }
 
 export default function MobileMoney() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-mobile-money"],
 		queryFn: fetchMobileMoney,
 		retry: 1,
@@ -707,19 +707,6 @@ export default function MobileMoney() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading mobile money workspace…
-					</div>
-				</div>
-			)}
 
 			{/* ======================= SIDEBAR ======================= */}
 			{/* <aside className={styles.sidebar}>

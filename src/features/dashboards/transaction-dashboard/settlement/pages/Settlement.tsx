@@ -742,7 +742,7 @@ function CellValue({ cell, onOpen }: { cell: Cell; onOpen: (id: string) => void 
 }
 
 export default function Settlement() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-settlement"],
 		queryFn: fetchSettlement,
 		retry: 1,
@@ -816,14 +816,6 @@ export default function Settlement() {
 					<strong>Could not load settlement data.</strong> Showing the built-in defaults.{" "}
 					<span className="text-decoration-underline">{String((error as Error).message ?? "")}</span>
 					<button type="button" className="btn-close" aria-label="Close" onClick={() => setErrorDismissed(true)} />
-				</div>
-			)}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-						Loading settlement workspace…
-					</div>
 				</div>
 			)}
 			<div className={styles.main}>

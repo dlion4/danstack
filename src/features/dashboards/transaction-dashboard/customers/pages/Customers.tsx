@@ -666,7 +666,7 @@ function priorityTone(p: TicketRow["p"]): BadgeTone {
 }
 
 export default function Customers() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-customers"],
 		queryFn: fetchCustomers,
 		retry: 1,
@@ -708,15 +708,6 @@ export default function Customers() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-						Loading customer workspace…
-					</div>
-				</div>
-			)}
 
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}

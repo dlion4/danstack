@@ -660,7 +660,7 @@ function SectionHead({
 }
 
 export default function Fees() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-fees"],
 		queryFn: fetchFees,
 		retry: 1,
@@ -704,19 +704,6 @@ export default function Fees() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading fee workspace…
-					</div>
-				</div>
-			)}
 
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}

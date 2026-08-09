@@ -41,7 +41,7 @@ let toastIdSeq = 0;
 
 export default function UtilityShell() {
         /* ---------- TanStack Query: backend-ready utility layout content ---------- */
-        const { data: apiData, isLoading } = useQuery({
+        const { data: apiData } = useQuery({
                 queryKey: ["utility-layout-content"],
                 queryFn: fetchUtilityLayoutContent,
                 staleTime: 5 * 60_000,
@@ -284,20 +284,7 @@ export default function UtilityShell() {
                                                 expanded && isDesktop && s["sidebar-expanded"],
                                         )}
                                 >
-                                        {isLoading ? (
-                                                <div
-                                                        className="d-flex justify-content-center align-items-center"
-                                                        style={{ padding: 80 }}
-                                                >
-                                                        <div className="spinner-border text-primary" role="status">
-                                                                <span className="visually-hidden">
-                                                                        Loading utility workspace…
-                                                                </span>
-                                                        </div>
-                                                </div>
-                                        ) : (
-                                                <Outlet />
-                                        )}
+                                        <Outlet />
                                 </main>
 
                                                 {/* ============ RIGHT DRAWER (Developers & Security) ============ */}

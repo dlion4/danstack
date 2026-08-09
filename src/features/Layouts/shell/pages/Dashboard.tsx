@@ -2,20 +2,14 @@
  * Dashboard.tsx — the /app home overview rendered inside the AppShell outlet.
  * ----------------------------------------------------------------------------
  * Surfaces the operating overview (balances, volume, success) and a grid of
- * every navigable module so the home view is never empty. Uses the same
- * initialMockData the shell loads (kept in sync via TanStack Query's cache).
+ * every navigable module so the home view is never empty. Renders directly
+ * from the same bundled initialMockData the shell uses (no backend in demo).
  * ========================================================================== */
 
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { useShell } from "../data/shellContext";
-import {
-	cx,
-	fetchShellContent,
-	initialMockData,
-	placeholderModule,
-} from "../data/shellData";
+import { cx, initialMockData, placeholderModule } from "../data/shellData";
 import dash from "../styles/dashboard.module.css";
 import shell from "../styles/shell.module.css";
 
@@ -25,13 +19,8 @@ const s = shell as Record<string, string>;
 export default function Dashboard() {
 	const { showToast } = useShell();
 
-	/* Same queryKey as the shell — react-query dedupes the request. */
-	const { data } = useQuery({
-		queryKey: ["paymo-shell-content"],
-		queryFn: fetchShellContent,
-		staleTime: 5 * 60_000,
-	});
-	const content = data ?? initialMockData;
+	/* No backend exists — render straight from the bundled mock data. */
+	const content = initialMockData;
 
 	const modules = content.modules ?? [];
 	const home = modules[0] ?? placeholderModule; // dashboard module def
@@ -151,4 +140,3 @@ export default function Dashboard() {
 			</section>
 		</div>
 	);
-}

@@ -7,14 +7,15 @@ import ComplianceModals from "../components/ComplianceModals";
 import styles from "../styles/compliance.module.css";
 
 /* ============================================================================
-   PayMo BaaS — Compliance & AML, Transactions (legacy page 1.9)
+   PayMo BaaS — Compliance & AML Command Center
    React + TypeScript + TanStack Query, emerald-glass dashboard theme.
 
-   LEGACY BRIDGE NOTES (broken references in the original 1.9.html):
-	 openM('railConfigModal')  → modal never existed in legacy HTML; routed
-								  to 'monitorSettingsModal' (same intent).
-	 openM('riskModelModal')   → modal never existed in legacy HTML; routed
-								  to 'riskScoringModal' (has the AI Model tab).
+   Refined surface: five focused sections —
+   1. Real-time transaction monitoring (live feed + risk distribution)
+   2. AML rules engine & threshold configuration
+   3. Sanctions & PEP screening
+   4. Investigation case management
+   5. Regulatory reporting (STR / CTR / SAR)
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -63,7 +64,11 @@ interface StatCardC {
 	value: string;
 	badge: { icon: string; text: string; tone: BadgeTone };
 	lines: { label: string; value: string }[];
-	bordered?: boolean;
+	accent: string;
+	icon: string;
+	chipBg: string;
+	chipColor: string;
+	spark: string[];
 }
 
 interface ComplianceConfig {
@@ -86,6 +91,7 @@ interface ComplianceConfig {
 		value: string;
 		detail: string;
 		buttons: { label: string; modal: string }[];
+		rails: { label: string; pct: string }[];
 	};
 	statCards: StatCardC[];
 	attention: SrItem[];
@@ -115,13 +121,6 @@ interface ComplianceConfig {
 	screeningSummary: { label: string; value: string }[];
 	screeningRefresh: string;
 	recentMatches: { cols: TableCol[]; rows: Cell[][] };
-	riskScoreBands: {
-		label: string;
-		value: string;
-		width: string;
-		color: string;
-	}[];
-	riskFactors: { label: string; value: string }[];
 	cases: { cols: TableCol[]; rows: Cell[][] };
 	filings: { cols: TableCol[]; rows: Cell[][] };
 	deadlines: {
@@ -131,7 +130,6 @@ interface ComplianceConfig {
 		actionTone?: "btnPmD";
 		modal: string;
 	}[];
-	audit: { cols: TableCol[]; rows: string[][] };
 }
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
@@ -156,9 +154,9 @@ const initialMockData: ComplianceConfig = {
 		},
 		{ icon: "bi-gear", to: "/settings", label: "Settings" },
 	],
-	headerTitle: "Compliance & AML (Transactions)",
+	headerTitle: "Compliance & AML",
 	headerSub:
-		"Transaction monitoring, AML rules, sanctions screening, risk scoring, case management & regulatory reporting",
+		"Transaction monitoring, AML rules, sanctions screening, case management & regulatory reporting",
 	searchPlaceholder: "Search transactions, alerts, cases, sanctions lists...",
 	user: {
 		initials: "AK",
@@ -174,70 +172,138 @@ const initialMockData: ComplianceConfig = {
 		current: "Compliance & AML",
 	},
 	pageCode: "",
-	// pageTitle: "Compliance & AML (Transactions)",
-	pageSub: "Real-time transaction monitoring, AML rules engine, sanctions & PEP screening, risk scoring, investigation case management, and automated regulatory reporting.",
-hero: {
-	live: "AML engine is live",
+	pageTitle: "Compliance & AML",
+	pageSub:
+		"Real-time transaction monitoring, AML rules, sanctions & PEP screening, case investigations, and regulatory reporting across all payment rails.",
+	hero: {
+		live: "AML engine is live",
 		value: "47,291 transactions monitored today",
-			detail:
-	"Real-time screening across 12 payment rails. 17 alerts generated. 4 cases under active investigation.",
+		detail:
+			"Real-time screening across 12 payment rails. 17 alerts generated. 4 cases under active investigation.",
 		buttons: [
 			{ label: "Rules", modal: "amlRulesModal" },
 			{ label: "Sanctions", modal: "sanctionsSearchModal" },
 			{ label: "Risk Engine", modal: "riskScoringModal" },
 		],
+		rails: [
+			{ label: "PesaLink", pct: "100%" },
+			{ label: "M-Pesa", pct: "86%" },
+			{ label: "RTGS", pct: "72%" },
+			{ label: "Bulk / Corporate", pct: "62%" },
+			{ label: "EFT / ACH", pct: "55%" },
+			{ label: "Card (Visa)", pct: "48%" },
+			{ label: "SWIFT", pct: "42%" },
+			{ label: "Card (Mastercard)", pct: "36%" },
+			{ label: "Airtel Money", pct: "30%" },
+			{ label: "Mobile Wallet", pct: "24%" },
+			{ label: "T-Kash", pct: "18%" },
+			{ label: "Internal Ledger", pct: "12%" },
+		],
 	},
-statCards: [
-	{
-		key: "alerts",
-		colClass: "col-lg-2 col-md-4 col-6",
-		label: "HIGH RISK ALERTS",
-		labelColor: "var(--pm-danger)",
-		value: "17",
-		badge: {
+	statCards: [
+		{
+			key: "alerts",
+			colClass: "col-lg-2 col-md-4 col-6",
+			label: "HIGH RISK ALERTS",
+			labelColor: "var(--pm-danger)",
+			value: "17",
+			badge: {
+				icon: "bi-exclamation-triangle",
+				text: "4 require immediate action",
+				tone: "badgeD",
+			},
+			lines: [
+				{ label: "STRs filed today:", value: "2" },
+				{ label: "CTR threshold breaches:", value: "9" },
+			],
+			accent: "var(--pm-danger)",
 			icon: "bi-exclamation-triangle",
-			text: "4 require immediate action",
-			tone: "badgeD",
+			chipBg: "var(--pm-danger-soft)",
+			chipColor: "var(--pm-danger)",
+			spark: [
+				"32%",
+				"58%",
+				"42%",
+				"70%",
+				"50%",
+				"64%",
+				"82%",
+				"58%",
+				"68%",
+				"90%",
+				"74%",
+				"100%",
+			],
 		},
-		lines: [
-			{ label: "STRs filed today:", value: "2" },
-			{ label: "CTR threshold breaches:", value: "9" },
-		],
-	},
-	{
-		key: "detection",
-		colClass: "col-lg-3 col-md-4 col-6",
-		label: "AML DETECTION RATE",
-		labelColor: "var(--pm-warning)",
-		value: "98.7%",
-		badge: {
+		{
+			key: "detection",
+			colClass: "col-lg-3 col-md-4 col-6",
+			label: "AML DETECTION RATE",
+			labelColor: "var(--pm-warning)",
+			value: "98.7%",
+			badge: {
+				icon: "bi-graph-up-arrow",
+				text: "+1.2% vs last month",
+				tone: "badgeS",
+			},
+			lines: [
+				{ label: "False positive rate:", value: "4.1%" },
+				{ label: "Avg investigation time:", value: "2.4 hrs" },
+			],
+			accent: "var(--pm-warning)",
 			icon: "bi-graph-up-arrow",
-			text: "+1.2% vs last month",
-			tone: "badgeS",
+			chipBg: "var(--pm-warning-soft)",
+			chipColor: "var(--pm-warning)",
+			spark: [
+				"22%",
+				"34%",
+				"45%",
+				"40%",
+				"56%",
+				"62%",
+				"70%",
+				"66%",
+				"78%",
+				"85%",
+				"92%",
+				"100%",
+			],
 		},
-		lines: [
-			{ label: "False positive rate:", value: "4.1%" },
-			{ label: "Avg investigation time:", value: "2.4 hrs" },
-		],
-	},
-	{
-		key: "filings",
-		colClass: "col-lg-3 col-md-4",
-		label: "REGULATORY FILINGS",
-		labelColor: "var(--pm-accent)",
-		value: "142",
-		badge: {
+		{
+			key: "filings",
+			colClass: "col-lg-3 col-md-4",
+			label: "REGULATORY FILINGS",
+			labelColor: "var(--pm-accent)",
+			value: "142",
+			badge: {
+				icon: "bi-file-earmark-check",
+				text: "This month",
+				tone: "badgeI",
+			},
+			lines: [
+				{ label: "STRs: 31 | CTRs: 89 | SARs: 22", value: "" },
+				{ label: "Next CBK report due:", value: "30 Jun" },
+			],
+			accent: "var(--pm-accent)",
 			icon: "bi-file-earmark-check",
-			text: "This month",
-			tone: "badgeI",
+			chipBg: "var(--pm-info-soft)",
+			chipColor: "var(--pm-info)",
+			spark: [
+				"38%",
+				"52%",
+				"44%",
+				"62%",
+				"56%",
+				"48%",
+				"66%",
+				"60%",
+				"54%",
+				"70%",
+				"64%",
+				"76%",
+			],
 		},
-		lines: [
-			{ label: "STRs: 31 | CTRs: 89 | SARs: 22", value: "" },
-			{ label: "Next CBK report due:", value: "30 Jun" },
-		],
-		bordered: true,
-	},
-],
+	],
 	attention: [
 		{
 			icon: "bi-exclamation-triangle",
@@ -268,98 +334,84 @@ statCards: [
 			modal: "sanctionsSearchModal",
 		},
 	],
-		suggestions: [
-			{
-				icon: "bi-robot",
-				iconBg: "var(--pm-accent-soft)",
-				iconColor: "var(--pm-accent)",
-				title: "Tighten velocity rule for cross-border",
-				sub: "Reduce false positives by 18%",
-				actionLabel: "Tune Rule",
-				modal: "amlRulesModal",
-			},
-			{
-				icon: "bi-graph-up",
-				iconBg: "var(--pm-warning-soft)",
-				iconColor: "var(--pm-warning)",
-				title: "Increase risk score weight for crypto exchanges",
-				sub: "Current weight: 25% → Suggested: 40%",
-				actionLabel: "Adjust",
-				modal: "riskScoringModal",
-			},
-			{
-				icon: "bi-link-45deg",
-				iconBg: "var(--pm-info-soft)",
-				iconColor: "var(--pm-info)",
-				title: "Enable real-time sanctions screening on PesaLink",
-				sub: "Currently batch (every 15 min)",
-				actionLabel: "Enable",
-				// LEGACY BRIDGE: legacy called openM('railConfigModal') — that modal id
-				// does not exist in 1.9.html; mapped to the monitoring settings modal.
-				modal: "monitorSettingsModal",
-			},
-		],
-			quickActions: [
-				{
-					icon: "bi-folder-plus",
-					label: "New Investigation",
-					color: "var(--pm-danger)",
-					modal: "newCaseModal",
-				},
-				{
-					icon: "bi-globe",
-					label: "Sanctions Search",
-					color: "var(--pm-warning)",
-					modal: "sanctionsSearchModal",
-				},
-				{
-					icon: "bi-sliders",
-					label: "Edit Rules",
-					color: "var(--pm-primary-light)",
-					modal: "amlRulesModal",
-				},
-				{
-					icon: "bi-file-earmark-text",
-					label: "File STR/CTR",
-					color: "var(--pm-purple)",
-					modal: "regReportModal",
-				},
-				{
-					icon: "bi-speedometer2",
-					label: "Risk Engine",
-					color: "var(--pm-info)",
-					modal: "riskScoringModal",
-				},
-				{
-					icon: "bi-clock-history",
-					label: "Audit Log",
-					color: "var(--pm-accent)",
-					modal: "auditTrailModal",
-				},
-				{
-					icon: "bi-people",
-					label: "Bulk Screen",
-					color: "var(--pm-warning)",
-					modal: "bulkScreeningModal",
-				},
-				{
-					icon: "bi-archive",
-					label: "Evidence Locker",
-					color: "var(--pm-muted)",
-					modal: "evidenceLockerModal",
-				},
-			],
-				liveFeed: {
-	cols: [
-		{ key: "time", label: "Time" },
-		{ key: "ref", label: "Reference" },
-		{ key: "route", label: "From → To" },
-		{ key: "amount", label: "Amount" },
-		{ key: "rail", label: "Rail" },
-		{ key: "risk", label: "Risk" },
-		{ key: "status", label: "Status" },
-		{ key: "actions", label: "Actions" },
+	suggestions: [
+		{
+			icon: "bi-robot",
+			iconBg: "var(--pm-accent-soft)",
+			iconColor: "var(--pm-accent)",
+			title: "Tighten velocity rule for cross-border",
+			sub: "Reduce false positives by 18%",
+			actionLabel: "Tune Rule",
+			modal: "amlRulesModal",
+		},
+		{
+			icon: "bi-graph-up",
+			iconBg: "var(--pm-warning-soft)",
+			iconColor: "var(--pm-warning)",
+			title: "Increase risk score weight for crypto exchanges",
+			sub: "Current weight: 25% → Suggested: 40%",
+			actionLabel: "Adjust",
+			modal: "riskScoringModal",
+		},
+		{
+			icon: "bi-link-45deg",
+			iconBg: "var(--pm-info-soft)",
+			iconColor: "var(--pm-info)",
+			title: "Enable real-time sanctions screening on PesaLink",
+			sub: "Currently batch (every 15 min)",
+			actionLabel: "Enable",
+			modal: "monitorSettingsModal",
+		},
 	],
+	quickActions: [
+		{
+			icon: "bi-folder-plus",
+			label: "New Investigation",
+			color: "var(--pm-danger)",
+			modal: "newCaseModal",
+		},
+		{
+			icon: "bi-globe",
+			label: "Sanctions Search",
+			color: "var(--pm-warning)",
+			modal: "sanctionsSearchModal",
+		},
+		{
+			icon: "bi-sliders",
+			label: "Edit Rules",
+			color: "var(--pm-primary-light)",
+			modal: "amlRulesModal",
+		},
+		{
+			icon: "bi-file-earmark-text",
+			label: "File STR/CTR",
+			color: "var(--pm-purple)",
+			modal: "regReportModal",
+		},
+		{
+			icon: "bi-speedometer2",
+			label: "Risk Engine",
+			color: "var(--pm-info)",
+			modal: "riskScoringModal",
+		},
+		{
+			icon: "bi-people",
+			label: "Bulk Screen",
+			color: "var(--pm-warning)",
+			modal: "bulkScreeningModal",
+		},
+	],
+	liveFeed: {
+		cols: [
+			{ key: "time", label: "Time" },
+			{ key: "ref", label: "Reference" },
+			{ key: "route", label: "From → To" },
+			{ key: "amount", label: "Amount" },
+			{ key: "rail", label: "Rail" },
+			{ key: "risk", label: "Risk" },
+			{ key: "status", label: "Status" },
+			{ key: "actions", label: "Actions" },
+		],
 		rows: [
 			[
 				"14:32",
@@ -413,76 +465,76 @@ statCards: [
 			],
 		],
 	},
-riskDistribution: [
-	{
-		label: "Low Risk (0-30)",
-		value: "41,882 (88.5%)",
-		width: "88.5%",
-		color: "var(--pm-accent)",
-	},
-	{
-		label: "Medium Risk (31-60)",
-		value: "4,392 (9.3%)",
-		width: "9.3%",
-		color: "var(--pm-warning)",
-	},
-	{
-		label: "High Risk (61-100)",
-		value: "1,017 (2.2%)",
-		width: "2.2%",
-		color: "var(--pm-danger)",
-	},
-],
-	riskFlagged: {
-	title: "4 transactions",
-		body: "currently flagged for immediate review. Average risk score:",
-			scoreLabel: "",
-				score: "47.2",
-	},
-rules: [
-	{
-		title: "Structuring Detection",
-		sub: "Multiple transactions just below threshold in 48h",
-		status: "Active",
-		statusTone: "badgeS",
-		precision: "98.4%",
-	},
-	{
-		title: "Velocity Rule — Cross-border",
-		sub: ">3 international txns in 24h from same originator",
-		status: "Active",
-		statusTone: "badgeS",
-		precision: "94.1%",
-	},
-	{
-		title: "Round-Tripping Detection",
-		sub: "Funds returning to originator within 7 days",
-		status: "Active",
-		statusTone: "badgeS",
-		precision: "87.6%",
-	},
-	{
-		title: "PEP Transaction Spike",
-		sub: "PEP-linked account >300% avg volume",
-		status: "Active",
-		statusTone: "badgeS",
-		precision: "91.2%",
-	},
-	{
-		title: "Crypto Exchange Concentration",
-		sub: ">40% monthly volume to crypto exchanges",
-		status: "Paused",
-		statusTone: "badgeW",
-		precision: "—",
-	},
-],
-	rulePerformance: {
-	cols: [
-		{ key: "rule", label: "Rule" },
-		{ key: "alerts", label: "Alerts" },
-		{ key: "confirmed", label: "Confirmed" },
-		{ key: "precision", label: "Precision" },
+	riskDistribution: [
+		{
+			label: "Low Risk (0-30)",
+			value: "41,882 (88.5%)",
+			width: "88.5%",
+			color: "var(--pm-accent)",
+		},
+		{
+			label: "Medium Risk (31-60)",
+			value: "4,392 (9.3%)",
+			width: "9.3%",
+			color: "var(--pm-warning)",
+		},
+		{
+			label: "High Risk (61-100)",
+			value: "1,017 (2.2%)",
+			width: "2.2%",
+			color: "var(--pm-danger)",
+		},
 	],
+	riskFlagged: {
+		title: "4 transactions",
+		body: "currently flagged for immediate review. Average risk score:",
+		scoreLabel: "",
+		score: "47.2",
+	},
+	rules: [
+		{
+			title: "Structuring Detection",
+			sub: "Multiple transactions just below threshold in 48h",
+			status: "Active",
+			statusTone: "badgeS",
+			precision: "98.4%",
+		},
+		{
+			title: "Velocity Rule — Cross-border",
+			sub: ">3 international txns in 24h from same originator",
+			status: "Active",
+			statusTone: "badgeS",
+			precision: "94.1%",
+		},
+		{
+			title: "Round-Tripping Detection",
+			sub: "Funds returning to originator within 7 days",
+			status: "Active",
+			statusTone: "badgeS",
+			precision: "87.6%",
+		},
+		{
+			title: "PEP Transaction Spike",
+			sub: "PEP-linked account >300% avg volume",
+			status: "Active",
+			statusTone: "badgeS",
+			precision: "91.2%",
+		},
+		{
+			title: "Crypto Exchange Concentration",
+			sub: ">40% monthly volume to crypto exchanges",
+			status: "Paused",
+			statusTone: "badgeW",
+			precision: "—",
+		},
+	],
+	rulePerformance: {
+		cols: [
+			{ key: "rule", label: "Rule" },
+			{ key: "alerts", label: "Alerts" },
+			{ key: "confirmed", label: "Confirmed" },
+			{ key: "precision", label: "Precision" },
+		],
 		rows: [
 			["Structuring", "412", "89", "STR:21.6%"],
 			["Velocity (Intl)", "187", "61", "STR:32.6%"],
@@ -490,21 +542,21 @@ rules: [
 			["PEP Spike", "31", "19", "STR:61.3%"],
 		],
 	},
-screeningSummary: [
-	{ label: "Total Screened", value: "47,291" },
-	{ label: "Matches Found", value: "47" },
-	{ label: "False Positives", value: "38" },
-	{ label: "True Matches (Confirmed)", value: "9" },
-	{ label: "PEP Hits", value: "12" },
-],
-	screeningRefresh: "27 Jun 2025, 06:00 EAT",
-		recentMatches: {
-	cols: [
-		{ key: "entity", label: "Entity" },
-		{ key: "list", label: "List" },
-		{ key: "score", label: "Match Score" },
-		{ key: "action", label: "Action" },
+	screeningSummary: [
+		{ label: "Total Screened", value: "47,291" },
+		{ label: "Matches Found", value: "47" },
+		{ label: "False Positives", value: "38" },
+		{ label: "True Matches (Confirmed)", value: "9" },
+		{ label: "PEP Hits", value: "12" },
 	],
+	screeningRefresh: "27 Jun 2025, 06:00 EAT",
+	recentMatches: {
+		cols: [
+			{ key: "entity", label: "Entity" },
+			{ key: "list", label: "List" },
+			{ key: "score", label: "Match Score" },
+			{ key: "action", label: "Action" },
+		],
 		rows: [
 			[
 				"John Kamau (Beneficiary)",
@@ -526,56 +578,17 @@ screeningSummary: [
 			],
 		],
 	},
-riskScoreBands: [
-	{
-		label: "0-20 (Very Low)",
-		value: "18,442 (39%)",
-		width: "39%",
-		color: "var(--pm-accent)",
-	},
-	{
-		label: "21-40 (Low)",
-		value: "14,188 (30%)",
-		width: "30%",
-		color: "#34D399",
-	},
-	{
-		label: "41-60 (Medium)",
-		value: "9,458 (20%)",
-		width: "20%",
-		color: "var(--pm-warning)",
-	},
-	{
-		label: "61-80 (High)",
-		value: "3,776 (8%)",
-		width: "8%",
-		color: "var(--pm-danger)",
-	},
-	{
-		label: "81-100 (Critical)",
-		value: "1,427 (3%)",
-		width: "3%",
-		color: "#DC2626",
-	},
-],
-	riskFactors: [
-		{ label: "High-risk jurisdiction", value: "2,841 txns" },
-		{ label: "PEP relationship", value: "1,992 txns" },
-		{ label: "Crypto exchange exposure", value: "1,447 txns" },
-		{ label: "Structuring pattern", value: "892 txns" },
-		{ label: "Adverse media hit", value: "611 txns" },
-	],
-		cases: {
-	cols: [
-		{ key: "id", label: "Case ID" },
-		{ key: "type", label: "Type" },
-		{ key: "subject", label: "Subject" },
-		{ key: "risk", label: "Risk" },
-		{ key: "status", label: "Status" },
-		{ key: "opened", label: "Opened" },
-		{ key: "owner", label: "Owner" },
-		{ key: "actions", label: "Actions" },
-	],
+	cases: {
+		cols: [
+			{ key: "id", label: "Case ID" },
+			{ key: "type", label: "Type" },
+			{ key: "subject", label: "Subject" },
+			{ key: "risk", label: "Risk" },
+			{ key: "status", label: "Status" },
+			{ key: "opened", label: "Opened" },
+			{ key: "owner", label: "Owner" },
+			{ key: "actions", label: "Actions" },
+		],
 		rows: [
 			[
 				"C:AML-44892",
@@ -619,15 +632,15 @@ riskScoreBands: [
 			],
 		],
 	},
-filings: {
-	cols: [
-		{ key: "id", label: "Report ID" },
-		{ key: "type", label: "Type" },
-		{ key: "subject", label: "Subject" },
-		{ key: "filed", label: "Filed" },
-		{ key: "status", label: "Status" },
-		{ key: "actions", label: "Actions" },
-	],
+	filings: {
+		cols: [
+			{ key: "id", label: "Report ID" },
+			{ key: "type", label: "Type" },
+			{ key: "subject", label: "Subject" },
+			{ key: "filed", label: "Filed" },
+			{ key: "status", label: "Status" },
+			{ key: "actions", label: "Actions" },
+		],
 		rows: [
 			[
 				"C:STR-2025-0612",
@@ -655,71 +668,27 @@ filings: {
 			],
 		],
 	},
-deadlines: [
-	{
-		title: "STR Draft #AML-44892",
-		sub: "Due in 18 hours",
-		actionLabel: "Complete",
-		actionTone: "btnPmD",
-		modal: "caseDetailModal",
-	},
-	{
-		title: "Monthly CBK Summary",
-		sub: "Due 30 Jun 2025",
-		actionLabel: "Prepare",
-		modal: "regReportModal",
-	},
-	{
-		title: "Quarterly AML Report",
-		sub: "Due 15 Jul 2025",
-		actionLabel: "Start",
-		modal: "regReportModal",
-	},
-],
-	audit: {
-	cols: [
-		{ key: "ts", label: "Timestamp" },
-		{ key: "user", label: "User" },
-		{ key: "action", label: "Action" },
-		{ key: "entity", label: "Entity" },
-		{ key: "evidence", label: "Evidence" },
-		{ key: "ip", label: "IP / Device" },
+	deadlines: [
+		{
+			title: "STR Draft #AML-44892",
+			sub: "Due in 18 hours",
+			actionLabel: "Complete",
+			actionTone: "btnPmD",
+			modal: "caseDetailModal",
+		},
+		{
+			title: "Monthly CBK Summary",
+			sub: "Due 30 Jun 2025",
+			actionLabel: "Prepare",
+			modal: "regReportModal",
+		},
+		{
+			title: "Quarterly AML Report",
+			sub: "Due 15 Jul 2025",
+			actionLabel: "Start",
+			modal: "regReportModal",
+		},
 	],
-		rows: [
-			[
-				"27 Jun 14:28",
-				"Sarah M.",
-				"Case escalated to CBK",
-				"AML-44892",
-				"STR-2025-0612",
-				"102.68.XX.XX — MacBook",
-			],
-			[
-				"27 Jun 13:55",
-				"David O.",
-				"Added evidence file",
-				"AML-44885",
-				"bank_statements.pdf",
-				"102.68.XX.XX — Windows",
-			],
-			[
-				"27 Jun 11:42",
-				"Amina K.",
-				"Updated risk score",
-				"PEP-7721",
-				"—",
-				"102.68.XX.XX — iPhone",
-			],
-			[
-				"26 Jun 09:15",
-				"System",
-				"Auto-block triggered",
-				"TXN-992184",
-				"Rule: Velocity-INTL",
-				"—",
-			],
-		],
-	},
 };
 
 /* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
@@ -773,11 +742,10 @@ function CellValue({
 	);
 }
 
-/* ---------- section header (1.9.x pattern) ---------- */
+/* ---------- section header (refined pattern) ---------- */
 function SectionHead({
 	icon,
 	iconColor,
-	code,
 	title,
 	sub,
 	actions,
@@ -785,7 +753,6 @@ function SectionHead({
 }: {
 	icon: string;
 	iconColor: string;
-	code: string;
 	title: string;
 	sub: string;
 	actions: {
@@ -824,7 +791,7 @@ function SectionHead({
 }
 
 export default function Compliance() {
-	const { data, isLoading, error } = useQuery({
+	const { data, error } = useQuery({
 		queryKey: ["paymo-compliance"],
 		queryFn: fetchCompliance,
 		retry: 1,
@@ -835,7 +802,6 @@ export default function Compliance() {
 	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
-	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
 
@@ -847,8 +813,8 @@ export default function Compliance() {
 					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
 					role="alert"
 				>
-					<strong>Could not load compliance data.</strong> Showing the built-in
-					defaults.{" "}
+					<strong>Could not load compliance data.</strong> Showing the
+					built-in defaults.{" "}
 					<span className="text-decoration-underline">
 						{String((error as Error).message ?? "")}
 					</span>
@@ -861,19 +827,6 @@ export default function Compliance() {
 				</div>
 			)}
 
-			{/* ---------- loading overlay ---------- */}
-			{isLoading && (
-				<div className={styles.loadingOverlay}>
-					<div className={styles.loadingBox}>
-						<div
-							className="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-						/>
-						Loading compliance workspace…
-					</div>
-				</div>
-			)}
 
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
@@ -887,18 +840,10 @@ export default function Compliance() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>
-							{config.pageTitle}
-						</h2>
+						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
 						<p className={styles.pageSub}>{config.pageSub}</p>
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("amlHealthModal")}
-						>
-							<i className="bi bi-heart-pulse" /> Health Check
-						</button>
 						<button
 							className={styles.btnPm}
 							onClick={() => openM("regReportModal")}
@@ -920,80 +865,112 @@ export default function Compliance() {
 					</div>
 				</div>
 
-				<div className={styles.content}>
-					{/* ======================= HERO STATS ======================= */}
+				<div className={styles.content}>					{/* ======================= HERO STATS ======================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
 							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
+								className={`${styles.card} ${styles.cardAccent} ${styles.heroCard}`}
+								style={{ minHeight: 196 }}
 							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff", fontSize: 22 }}
-								>
-									{config.hero.value}
-								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.buttons.map((b) => (
-										<button
-											key={b.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-											onClick={() => openM(b.modal)}
-										>
-											{b.label}
-										</button>
-									))}
+								<i
+									className={`bi bi-shield-check ${styles.heroWatermark}`}
+									aria-hidden="true"
+								/>
+								<div className={styles.heroGrid} aria-hidden="true" />
+								<div className="position-relative">
+									<div className="d-flex justify-content-between align-items-center">
+										<p className={styles.heroLive}>
+											<span className={styles.liveDot} /> {config.hero.live}
+										</p>
+										<span className={styles.livePill}>
+											<i className="bi bi-radio" /> LIVE
+										</span>
+									</div>
+									<div className={styles.heroValue}>{config.hero.value}</div>
+									<p className={styles.heroDetail}>{config.hero.detail}</p>
+									<div className={styles.throughputWrap}>
+										<div className="d-flex justify-content-between align-items-center">
+											<span className={styles.throughputLabel}>
+												Screening load · today
+											</span>
+											<span className={styles.throughputCount}>
+												{config.hero.rails.length} rails
+											</span>
+										</div>
+										<div className={styles.throughputStrip}>
+											{config.hero.rails.map((r) => (
+												<div
+													key={r.label}
+													className={styles.throughputBar}
+													style={{ height: r.pct }}
+													title={`${r.label} · ${r.pct}`}
+												/>
+											))}
+										</div>
+									</div>
+									<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+										{config.hero.buttons.map((b) => (
+											<button
+												key={b.label}
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+												onClick={() => openM(b.modal)}
+											>
+												{b.label}
+											</button>
+										))}
+									</div>
 								</div>
 							</div>
 						</div>
 						{config.statCards.map((card) => (
 							<div className={card.colClass} key={card.key}>
 								<div
-									className={styles.card}
+									className={`${styles.card} ${styles.statCard}`}
 									style={{
-										minHeight: 170,
-										...(card.bordered
-											? { borderLeft: "3px solid var(--pm-accent)" }
-											: {}),
+										minHeight: 196,
+										borderTop: `3px solid ${card.accent}`,
 									}}
 								>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
+									<div className="d-flex justify-content-between align-items-start">
+										<p
+											className={styles.sl}
+											style={{ color: card.labelColor, paddingTop: 6 }}
+										>
+											{card.label}
+										</p>
+										<div
+											className={styles.statChip}
+											style={{ background: card.chipBg, color: card.chipColor }}
+										>
+											<i className={`bi ${card.icon}`} />
+										</div>
 									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-									<div
-										className="mt-2"
-										style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-									>
+									<div className="d-flex align-items-end justify-content-between mt-3">
+										<div className={styles.sv} style={{ margin: 0, fontSize: 30 }}>
+											{card.value}
+										</div>
+										<div className={styles.sparkline} aria-hidden="true">
+											{card.spark.map((h, idx) => (
+												<div
+													key={idx}
+													className={styles.sparkBar}
+													style={{ height: h, background: card.chipColor }}
+												/>
+											))}
+										</div>
+									</div>
+									<div className="mt-3">
+										<span
+											className={`${styles.badge} ${styles[card.badge.tone]}`}
+										>
+											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										</span>
+									</div>
+									<div className={styles.statFooter}>
 										{card.lines.map((li) => (
-											<div key={li.label}>
-												{li.label} {li.value && <strong>{li.value}</strong>}
+											<div key={li.label} className={styles.statFootRow}>
+												<span>{li.label}</span>
+												{li.value && <strong>{li.value}</strong>}
 											</div>
 										))}
 									</div>
@@ -1002,7 +979,7 @@ export default function Compliance() {
 						))}
 					</div>
 
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
+					{/* ========== ATTENTION / SUGGESTIONS / QUICK ACTIONS ========== */}
 					<div className="row g-3">
 						<div className="col-lg-4">
 							<div className={`${styles.card} h-100`}>
@@ -1104,13 +1081,12 @@ export default function Compliance() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Real-Time Transaction Monitoring ======================= */}
+					{/* ========== SECTION 1: Real-Time Transaction Monitoring ========== */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-activity"
 							iconColor="var(--pm-primary)"
-							code="1.9.1"
-							title="Real-Time Transaction Monitoring Dashboard"
+							title="Real-Time Transaction Monitoring"
 							sub="Live feed of all bank-to-bank transactions with risk scoring, alerts, and immediate action capabilities."
 							actions={[
 								{
@@ -1188,12 +1164,11 @@ export default function Compliance() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION AML Rules Engine ======================= */}
+					{/* ========== SECTION 2: AML Rules Engine ========== */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-sliders"
 							iconColor="var(--pm-purple)"
-							code="1.9.2"
 							title="AML Rules Engine & Threshold Configuration"
 							sub="Create, tune, and A/B test detection rules for structuring, velocity, round-tripping, and sanctions evasion."
 							actions={[
@@ -1226,7 +1201,9 @@ export default function Compliance() {
 												>
 													{r.status}
 												</span>{" "}
-												<span className={`${styles.badge} ${styles.badgeP}`}>
+												<span
+													className={`${styles.badge} ${styles.badgeP}`}
+												>
 													{r.precision}
 												</span>
 											</div>
@@ -1236,7 +1213,9 @@ export default function Compliance() {
 							</div>
 							<div className="col-lg-5">
 								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Rule Performance (30 days)</h4>
+									<h4 className={styles.ubTitle}>
+										Rule Performance (30 days)
+									</h4>
 									<div className="table-responsive">
 										<table className={styles.tbl}>
 											<thead>
@@ -1264,12 +1243,11 @@ export default function Compliance() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Sanctions & PEP Screening ======================= */}
+					{/* ========== SECTION 3: Sanctions & PEP Screening ========== */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-globe"
 							iconColor="var(--pm-info)"
-							code="1.9.3"
 							title="Sanctions & PEP Screening"
 							sub="Real-time and batch screening against UN, OFAC, EU, UK, and local sanctions lists plus PEP databases."
 							actions={[
@@ -1289,7 +1267,9 @@ export default function Compliance() {
 						<div className="row g-3">
 							<div className="col-lg-5">
 								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Screening Summary (Today)</h4>
+									<h4 className={styles.ubTitle}>
+										Screening Summary (Today)
+									</h4>
 									{config.screeningSummary.map((r) => (
 										<div className={styles.sr} key={r.label}>
 											<div>
@@ -1302,8 +1282,9 @@ export default function Compliance() {
 										className={`${styles.summaryBoxInfo} mt-3`}
 										style={{ fontSize: 12 }}
 									>
-										<i className="bi bi-info-circle me-1" /> Last full sanctions
-										list refresh: <strong>{config.screeningRefresh}</strong>
+										<i className="bi bi-info-circle me-1" /> Last full
+										sanctions list refresh:{" "}
+										<strong>{config.screeningRefresh}</strong>
 									</div>
 								</div>
 							</div>
@@ -1337,75 +1318,11 @@ export default function Compliance() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Risk Scoring ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-speedometer2"
-							iconColor="var(--pm-warning)"
-							code="1.9.4"
-							title="Risk Scoring & Customer Risk Profiles"
-							sub="Dynamic risk scoring engine with explainable AI, customer risk profiles, and automated risk-based controls."
-							actions={[
-								{
-									label: "Configure",
-									icon: "bi-gear",
-									modal: "riskScoringModal",
-								},
-								// LEGACY BRIDGE: legacy called openM('riskModelModal') — id missing in 1.9.html; mapped to riskScoringModal.
-								{
-									label: "AI Model",
-									icon: "bi-robot",
-									modal: "riskScoringModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-6">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Risk Score Distribution</h4>
-									{config.riskScoreBands.map((b, i) => (
-										<div key={b.label}>
-											<div className="d-flex justify-content-between mb-2">
-												<span>{b.label}</span>
-												<strong>{b.value}</strong>
-											</div>
-											<div
-												className={`${styles.pmProgress} ${i < config.riskScoreBands.length - 1 ? "mb-2" : ""}`}
-											>
-												<div
-													className={styles.pmProgressBar}
-													style={{ width: b.width, background: b.color }}
-												/>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-6">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Top Risk Factors (This Month)
-									</h4>
-									{config.riskFactors.map((f) => (
-										<div className={styles.sr} key={f.label}>
-											<div>
-												<strong>{f.label}</strong>
-											</div>
-											<strong>{f.value}</strong>
-										</div>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Case Management ======================= */}
+					{/* ========== SECTION 4: Investigation Case Management ========== */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-folder-check"
 							iconColor="var(--pm-info)"
-							code="1.9.5"
 							title="Investigation Case Management"
 							sub="End-to-end case lifecycle: creation, evidence gathering, collaboration, escalation, and regulatory filing."
 							actions={[
@@ -1446,12 +1363,11 @@ export default function Compliance() {
 						</div>
 					</div>
 
-					{/* ======================= SECTION Regulatory Reporting ======================= */}
+					{/* ========== SECTION 5: Regulatory Reporting ========== */}
 					<div className={styles.card}>
 						<SectionHead
 							icon="bi-file-earmark-text"
 							iconColor="var(--pm-purple)"
-							code="1.9.6"
 							title="Regulatory Reporting (STR / CTR / SAR)"
 							sub="Automated generation, review, and submission of Suspicious Transaction Reports, Currency Transaction Reports, and Suspicious Activity Reports."
 							actions={[
@@ -1517,56 +1433,12 @@ export default function Compliance() {
 							</div>
 						</div>
 					</div>
-
-					{/* ======================= SECTION Audit Trail & Evidence ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-archive"
-							iconColor="var(--pm-muted)"
-							code="1.9.7"
-							title="Audit Trail & Evidence Locker"
-							sub="Immutable audit log of all compliance actions, evidence management, chain of custody, and regulatory inspection readiness."
-							actions={[
-								{
-									label: "Full Log",
-									icon: "bi-clock-history",
-									modal: "auditTrailModal",
-								},
-								{
-									label: "Evidence Locker",
-									icon: "bi-archive",
-									modal: "evidenceLockerModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.audit.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.audit.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>{cell}</td>
-											))}
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
 				</div>
 				{/* content */}
 			</div>
 			{/* main */}
 
-			{/* ======================= ALL 24 MODALS ======================= */}
+			{/* ======================= MODALS ======================= */}
 			<ComplianceModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);
