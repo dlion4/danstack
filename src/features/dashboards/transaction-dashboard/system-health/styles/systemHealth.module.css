@@ -1281,20 +1281,7 @@ input[type="date"].fc {
 	}
 }
 
-/* ======================= QUERY STATES ======================= */
-.errorBanner {
-	position: fixed;
-	top: 1rem;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 2100;
-	width: min(680px, calc(100vw - 2rem));
-	background: #fef2f2;
-	border: 1px solid rgba(239, 68, 68, 0.35);
-	color: #ef4444;
-	border-radius: 14px;
-	backdrop-filter: blur(8px);
-}
+
 
 .systemHealthPage :global(.alert) {
 	margin-bottom: 0;

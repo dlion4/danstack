@@ -628,8 +628,57 @@ function MiniStatBox({ b }: { b: MiniBox }) {
 	);
 }
 
+/* ---------- hero visuals: case lifecycle funnel ---------- */
+const DISPUTE_FUNNEL = [
+	{ label: "Filed", n: 38, pct: "27%", c: "var(--pm-info)" },
+	{ label: "In progress", n: 67, pct: "47%", c: "var(--pm-warning)" },
+	{ label: "Won", n: 37, pct: "26%", c: "var(--pm-accent)" },
+];
+
+function RingGauge({
+	pct,
+	color,
+	track,
+}: {
+	pct: number;
+	color: string;
+	track: string;
+}) {
+	const r = 20;
+	const c = 2 * Math.PI * r;
+	return (
+		<svg
+			width="52"
+			height="52"
+			viewBox="0 0 52 52"
+			className={styles.ring}
+			aria-hidden="true"
+		>
+			<circle
+				cx="26"
+				cy="26"
+				r={r}
+				fill="none"
+				stroke={track}
+				strokeWidth="5"
+			/>
+			<circle
+				cx="26"
+				cy="26"
+				r={r}
+				fill="none"
+				stroke={color}
+				strokeWidth="5"
+				strokeLinecap="round"
+				strokeDasharray={`${(pct / 100) * c} ${c}`}
+				transform="rotate(-90 26 26)"
+			/>
+		</svg>
+	);
+}
+
 export default function Disputes() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-disputes"],
 		queryFn: fetchDisputes,
 		retry: 1,
@@ -637,7 +686,6 @@ export default function Disputes() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
@@ -646,27 +694,6 @@ export default function Disputes() {
 
 	return (
 		<div className={styles.disputesPage}>
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load dispute data.</strong> Showing the built-in
-					defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -679,10 +706,10 @@ export default function Disputes() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>
+						{/* <h2 className={styles.pageH2}>
 							{config.pageTitle}
 						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button
@@ -716,34 +743,41 @@ export default function Disputes() {
 					{/* ======================= HERO STATS ======================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.78)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff" }}
-								>
-									{config.hero.value}
+						<div className={styles.heroClip}>
+							<div className={styles.heroTriage}>
+								<i
+									className={`bi bi-shield-shaded ${styles.heroMark}`}
+									aria-hidden="true"
+								/>
+								<div className={styles.livePillRow}>
+									<span className={styles.livePill}>
+										<span className={styles.liveDot} />
+										{config.hero.live}
+									</span>
+									<span className={styles.heroEta}>Next deadline · 27 Jun</span>
 								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.78)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
+								<div className={styles.heroValue}>{config.hero.value}</div>
+								<p className={styles.heroDetail}>{config.hero.detail}</p>
+
+								{/* case lifecycle funnel */}
+								<div className={styles.funnel} title="Case lifecycle">
+									{DISPUTE_FUNNEL.map((f) => (
+										<div
+											key={f.label}
+											className={styles.funnelSeg}
+											style={{ width: f.pct, background: f.c }}
+											title={`${f.label}: ${f.n}`}
+										/>
+									))}
+								</div>
+								<div className={styles.funnelLegend}>
+									{DISPUTE_FUNNEL.map((f) => (
+										<span key={f.label}>
+											<i style={{ background: f.c }} /> {f.label} · {f.n}
+										</span>
+									))}
+								</div>
+
 								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
 									{config.hero.actions.map((a) => (
 										<button
@@ -757,44 +791,87 @@ export default function Disputes() {
 								</div>
 							</div>
 						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div
-									className={styles.card}
-									style={{
-										minHeight: 170,
-										borderLeft: card.accent
-											? "3px solid var(--pm-accent)"
-											: undefined,
-									}}
-								>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
-										{card.valueSuffix && (
-											<span style={{ fontSize: 14, color: "var(--pm-muted)" }}>
-												{card.valueSuffix}
-											</span>
+						</div>
+						{config.statCards.map((card) => {
+							const isDial = card.key === "winrate";
+							const shapeCls = isDial
+								? styles.shapeDial
+								: card.key === "atrisk"
+									? styles.shapeCut
+									: styles.shapeStack;
+							return (
+								<div className={card.colClass} key={card.key}>
+									<div
+										className={`${styles.card} ${styles.statCard} ${shapeCls}`}
+										style={{
+											minHeight: 196,
+											borderTop: `3px solid ${card.labelColor}`,
+										}}
+									>
+										{isDial && (
+											<div className={styles.dialMedal}>
+												<RingGauge
+													pct={68}
+													color="var(--pm-accent)"
+													track="var(--pm-accent-soft)"
+												/>
+											</div>
+										)}
+										<div className={styles.statTopRow}>
+											<p className={styles.sl} style={{ color: card.labelColor }}>
+												{card.label}
+											</p>
+											<span
+													className={styles.statChip}
+													style={{ background: card.labelColor, color: "#fff" }}
+												>
+													<i className={`bi ${card.badge.icon}`} />
+												</span>
+										</div>
+										<div className={styles.statMainRow}>
+											<div className={styles.sv} style={{ fontSize: 30 }}>
+												{card.value}
+												{card.valueSuffix && (
+													<span className={styles.statSuffix}>
+														{card.valueSuffix}
+													</span>
+												)}
+											</div>
+											{card.key === "atrisk" && (
+												<div className={styles.tickGrid}>
+													{Array.from({ length: 29 }).map((_, i) => (
+														<i
+															key={i}
+															className={i < 11 ? styles.tickHot : styles.tickCool}
+															title={i < 11 ? "Expiring in 7 days" : "Within window"}
+														/>
+													))}
+												</div>
+											)}
+											{card.key === "savings" && (
+												<div className={styles.spark}>
+													{[42, 55, 48, 68, 60, 80, 74, 96].map((h, i) => (
+														<i key={i} style={{ height: `${h}%` }} />
+													))}
+												</div>
+											)}
+										</div>
+										<span
+											className={`${styles.badge} ${styles[card.badge.tone]}`}
+										>
+											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										</span>
+										{card.lines.length > 0 && (
+											<div className={styles.statFoot}>
+												{card.lines.map((li) => (
+													<span key={li}>{li}</span>
+												))}
+											</div>
 										)}
 									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-									<div
-										className="mt-2"
-										style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-									>
-										{card.lines.map((l) => (
-											<div key={l}>{l}</div>
-										))}
-									</div>
 								</div>
-							</div>
-						))}
+							);
+						})}
 					</div>
 
 					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}

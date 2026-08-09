@@ -2044,18 +2044,7 @@
         width: 100%;
 }
 
-.errorBanner {
-        position: fixed;
-        top: 86px;
-        right: 18px;
-        z-index: 3500;
-        max-width: 420px;
-        background: rgba(60, 10, 20, 0.92) !important;
-        border: 1px solid rgba(255, 120, 140, 0.4) !important;
-        color: #ffd9df !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-        border-radius: 16px !important;
-}
+
 
 /* ---------- reveals & toasts ---------- */
 .reveal {
@@ -2337,11 +2326,7 @@
                 left: 16px;
                 right: 16px;
         }
-        .errorBanner {
-                left: 16px;
-                right: 16px;
-                max-width: none;
-        }
+        
 }
 
 @media (prefers-reduced-motion: reduce) {

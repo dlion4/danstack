@@ -285,6 +285,35 @@
 	transition: opacity var(--transition-base);
 }
 
+.navGroupBlue {
+	background: rgba(59, 130, 246, 0.08);
+	border-radius: var(--sh-radius-sm);
+	padding: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.navGroupBlue .navGroupLabel {
+	color: var(--sh-info);
+}
+
+.navSubGroupLabel {
+	display: block;
+	padding: 0.5rem 0.85rem 0.25rem;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--sh-text-secondary);
+	white-space: nowrap;
+	opacity: 0;
+	transition: opacity var(--transition-base);
+}
+
+.sidebar.expanded .navSubGroupLabel,
+.sidebar.mobileOpen .navSubGroupLabel {
+	opacity: 1;
+}
+
 .sidebar.expanded .navGroupLabel,
 .sidebar.mobileOpen .navGroupLabel {
 	opacity: 1;

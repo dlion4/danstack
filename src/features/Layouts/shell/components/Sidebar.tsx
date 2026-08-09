@@ -78,66 +78,138 @@ export default function Sidebar({
 
 			<div className={s.navScroll}>
 				{content.navGroups.map((group) => (
-					<div className="mb-2" key={group.title}>
+					<div 
+						className={cx("mb-2", group.bgColor === "blue" && s.navGroupBlue)} 
+						key={group.title}
+					>
 						<span className={s.navGroupLabel}>{group.title}</span>
-						<nav className="d-flex flex-column">
-							{group.items.map((item) => {
-								const active = activeSection === item.key;
-								const isBadgeNumber = typeof item.badge === "number";
+						
+						{/* Render sub-groups if they exist */}
+						{group.subGroups && group.subGroups.length > 0 ? (
+							group.subGroups.map((subGroup) => (
+								<div key={subGroup.title} className="mb-1">
+									<span className={s.navSubGroupLabel}>{subGroup.title}</span>
+									<nav className="d-flex flex-column">
+										{subGroup.items.map((item) => {
+											const active = activeSection === item.key;
+											const isBadgeNumber = typeof item.badge === "number";
 
-								const inner = (
-									<>
-										<span className={s.navIcon}>
-											<i className={`bi ${item.icon}`} />
-										</span>
-										<span className={s.navLabel}>{item.label}</span>
-										{item.badge && (
-											<span
-												className={cx(
-													s.navBadge,
-													item.badge === "Live" && s.live,
-												)}
-											>
-												{item.badge}
+											const inner = (
+												<>
+													<span className={s.navIcon}>
+														<i className={`bi ${item.icon}`} />
+													</span>
+													<span className={s.navLabel}>{item.label}</span>
+													{item.badge && (
+														<span
+															className={cx(
+																s.navBadge,
+																item.badge === "Live" && s.live,
+															)}
+														>
+															{item.badge}
+														</span>
+													)}
+													{/* numeric badges stay visible even when collapsed */}
+													{isBadgeNumber && (
+														<span className={s.navBadgeAlways}>{item.badge}</span>
+													)}
+												</>
+											);
+
+											const className = cx(s.navLink, active && s.active);
+
+											if (item.opensAside || item.key === "logout") {
+												return (
+													<button
+														type="button"
+														key={item.key}
+														className={className}
+														onClick={() => handleItemClick(item)}
+														title={item.label}
+													>
+														{inner}
+													</button>
+												);
+											}
+
+											return (
+												<Link
+													key={item.key}
+													to="/pm/app/$section"
+													params={{ section: item.key }}
+													className={className}
+													title={item.label}
+													onClick={() => handleItemClick(item)}
+												>
+													{inner}
+												</Link>
+											);
+										})}
+									</nav>
+								</div>
+							))
+						) : (
+							/* Fallback to items array if no sub-groups */
+							<nav className="d-flex flex-column">
+								{group.items.map((item) => {
+									const active = activeSection === item.key;
+									const isBadgeNumber = typeof item.badge === "number";
+
+									const inner = (
+										<>
+											<span className={s.navIcon}>
+												<i className={`bi ${item.icon}`} />
 											</span>
-										)}
-										{/* numeric badges stay visible even when collapsed */}
-										{isBadgeNumber && (
-											<span className={s.navBadgeAlways}>{item.badge}</span>
-										)}
-									</>
-								);
+											<span className={s.navLabel}>{item.label}</span>
+											{item.badge && (
+												<span
+													className={cx(
+														s.navBadge,
+														item.badge === "Live" && s.live,
+													)}
+												>
+													{item.badge}
+												</span>
+											)}
+											{/* numeric badges stay visible even when collapsed */}
+											{isBadgeNumber && (
+												<span className={s.navBadgeAlways}>{item.badge}</span>
+											)}
+										</>
+									);
 
-								const className = cx(s.navLink, active && s.active);
+									const className = cx(s.navLink, active && s.active);
 
-								if (item.opensAside || item.key === "logout") {
+									if (item.opensAside || item.key === "logout") {
+										return (
+											<button
+												type="button"
+												key={item.key}
+												className={className}
+												onClick={() => handleItemClick(item)}
+												title={item.label}
+											>
+												{inner}
+											</button>
+										);
+									}
+
 									return (
-										<button
-											type="button"
+										<Link
 											key={item.key}
+											to="/pm/app/$section"
+											params={{ section: item.key }}
 											className={className}
-											onClick={() => handleItemClick(item)}
 											title={item.label}
+											onClick={() => handleItemClick(item)}
 										>
 											{inner}
-										</button>
+										</Link>
 									);
-								}
-
-								return (
-									<Link
-										key={item.key}
-										to="/pm/app/$section"
-										params={{ section: item.key }}
-										className={className}
-										title={item.label}
-										onClick={() => handleItemClick(item)}
-									>
-										{inner}
-									</Link>
-								);
-							})}
-						</nav>
+								})}
+							</nav>
+						)}
 					</div>
 				))}
 			</div>

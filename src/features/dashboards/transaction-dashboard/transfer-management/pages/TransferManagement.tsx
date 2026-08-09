@@ -536,7 +536,7 @@ export default function TransferManagement() {
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
 
-	const { data, error, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-transfer-management"],
 		queryFn: fetchTransferManagement,
 		staleTime: 60_000,
@@ -546,28 +546,6 @@ export default function TransferManagement() {
 
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
-			{isLoading && (
-				<div className={s.qLoading} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading transfer management…</span>
-				</div>
-			)}
-			{error && (
-				<div className={cx("alert alert-danger", s.qError)} role="alert">
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Transfer data unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/transfer-management</code> — {(error as Error).message}.
-						Showing bundled sample data.
-					</div>
-				</div>
-			)}
-
 			<div className={s.stack}>
 				{/* page bar */}
 				<div className={s.pageBar}>

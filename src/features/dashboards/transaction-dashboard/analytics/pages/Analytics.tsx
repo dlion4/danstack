@@ -552,7 +552,7 @@ function downloadFile(name: string, content: string, type = "text/plain") {
 }
 
 export default function Analytics() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-analytics"],
 		queryFn: fetchAnalytics,
 		retry: 1,
@@ -560,7 +560,6 @@ export default function Analytics() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
@@ -586,25 +585,6 @@ export default function Analytics() {
 
 	return (
 		<div className={styles.analyticsPage}>
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load analytics data.</strong> Showing the built-in
-					defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
 			{notice && (
 				<div
 					className="alert alert-dismissible"

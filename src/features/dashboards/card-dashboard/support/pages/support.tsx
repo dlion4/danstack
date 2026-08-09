@@ -377,7 +377,7 @@ async function fetchSupportConfig(): Promise<SupportConfig> {
 
 /* SUPPORT PAGE COMPONENT - PROFESSIONAL BOOTSTRAP GRID LAYOUT */
 export default function Support() {
-	const { data, isLoading, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-card-support"],
 		queryFn: fetchSupportConfig,
 		retry: 1,
@@ -385,7 +385,6 @@ export default function Support() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	return (
@@ -421,37 +420,6 @@ export default function Support() {
 						</button>
 					</div>
 				</div>
-
-				{isLoading && (
-					<div className="col-12">
-						<div
-							className="d-flex justify-content-center align-items-center"
-							style={{ padding: 60 }}
-						>
-							<div className="spinner-border text-primary" role="status">
-								<span className="visually-hidden">Loading...</span>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{error && !errorDismissed && (
-					<div className="col-12">
-						<div
-							className="alert alert-danger m-3 d-flex align-items-center justify-content-between"
-							role="alert"
-						>
-							<span>
-								<i className="bi bi-exclamation-triangle me-2" />
-								Failed to load support data. Showing cached data.
-							</span>
-							<button
-								className="btn-close"
-								onClick={() => setErrorDismissed(true)}
-							/>
-						</div>
-					</div>
-				)}
 
 				{/* HERO STATS SECTION - FULL WIDTH */}
 				<div className="row g-3">

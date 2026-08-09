@@ -864,7 +864,7 @@ function SrRowList({
 }
 
 export default function FxManagement() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-fx"],
 		queryFn: fetchFx,
 		retry: 1,
@@ -872,7 +872,6 @@ export default function FxManagement() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 	const [world, setWorld] = useState<World>("cust");
 	const [biz, setBiz] = useState<BizId>("all");
@@ -890,27 +889,6 @@ export default function FxManagement() {
 
 	return (
 		<div className={styles.fxPage}>
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load FX data.</strong> Showing the built-in
-					defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -923,8 +901,8 @@ export default function FxManagement() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 						<div className={styles.bizBar} style={{ marginTop: 10 }}>
 							<span className={styles.bizLabel}>
 								<i className="bi bi-diagram-3 me-1" />

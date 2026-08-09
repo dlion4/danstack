@@ -480,7 +480,7 @@ async function fetchPrepaidCardManagement(): Promise<PrepaidCardManagementConfig
 }
 
 export default function PrepaidCardManagement() {
-	const { data, isLoading, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-prepaid-card-management"],
 		queryFn: fetchPrepaidCardManagement,
 		retry: 1,
@@ -488,7 +488,6 @@ export default function PrepaidCardManagement() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 	const [cardFilter, setCardFilter] = useState<string>("all");
 
@@ -500,33 +499,6 @@ export default function PrepaidCardManagement() {
 	return (
 		<div className={styles.prepaidCardManagement}>
 			<div className={styles.main}>
-				{isLoading && (
-					<div
-						className="d-flex justify-content-center align-items-center"
-						style={{ padding: 60 }}
-					>
-						<div className="spinner-border text-primary" role="status">
-							<span className="visually-hidden">Loading...</span>
-						</div>
-					</div>
-				)}
-
-				{error && !errorDismissed && (
-					<div
-						className="alert alert-danger m-3 d-flex align-items-center justify-content-between"
-						role="alert"
-					>
-						<span>
-							<i className="bi bi-exclamation-triangle me-2" />
-							Failed to load prepaid card data. Showing cached data.
-						</span>
-						<button
-							className="btn-close"
-							onClick={() => setErrorDismissed(true)}
-						/>
-					</div>
-				)}
-
 				{/* PAGE BAR */}
 				<div className={styles.pageBar}>
 					<div>

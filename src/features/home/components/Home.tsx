@@ -1130,10 +1130,8 @@ export default function Home() {
         /* ---------- Static content (TanStack Query stripped for demo) ---------- */
         // In production, swap this for `useQuery({ queryKey: ['paymo-home-content'], ... })`
         // pointing at /api/paymo-home — shape must match `initialMockData`.
-        const apiData = null;
-        const error = null;
         
-        const content = apiData ?? initialMockData;
+        const content = initialMockData;
         const { images } = content;
 
         /* ---------- React state (was vanilla globals / dataset toggles) ---------- */
@@ -1531,32 +1529,6 @@ export default function Home() {
                         <div className={s.ambientOrb2} />
                         <div className={s.ambientOrb3} />
 
-
-                        {/* ===== TanStack Query: error banner (page falls back to mock data) ===== */}
-                        {error && (
-                                <div
-                                        className={cx(
-                                                "alert alert-danger alert-dismissible fade show",
-                                                s.errorBanner,
-                                        )}
-                                        role="alert"
-                                >
-                                        <strong>
-                                                <i className="bi bi-exclamation-triangle me-2" />
-                                                Content API unreachable
-                                        </strong>
-                                        <div className="small mt-1">
-                                                <code>/api/paymo-home</code> — {error.message}. Showing bundled mock
-                                                content until the backend is connected.
-                                        </div>
-                                        <button
-                                                type="button"
-                                                className="btn-close"
-                                                data-bs-dismiss="alert"
-                                                aria-label="Close"
-                                        />
-                                </div>
-                        )}
 
                         <main>
                                 {/* ================= HERO ================= */}

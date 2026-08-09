@@ -436,7 +436,7 @@ async function fetchVirtualDebitCardsConfig(): Promise<VirtualDebitCardsConfig> 
 }
 
 export default function VirtualDebitCards() {
-	const { data, isLoading, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-virtual-debit-cards"],
 		queryFn: fetchVirtualDebitCardsConfig,
 		retry: 1,
@@ -444,39 +444,11 @@ export default function VirtualDebitCards() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	return (
 		<div className={styles.virtualDebitCardsPage}>
 			<div className={styles.main}>
-				{isLoading && (
-					<div
-						className="d-flex justify-content-center align-items-center"
-						style={{ padding: 60 }}
-					>
-						<div className="spinner-border text-primary" role="status">
-							<span className="visually-hidden">Loading...</span>
-						</div>
-					</div>
-				)}
-
-				{error && !errorDismissed && (
-					<div
-						className="alert alert-danger m-3 d-flex align-items-center justify-content-between"
-						role="alert"
-					>
-						<span>
-							<i className="bi bi-exclamation-triangle me-2" />
-							Failed to load cards data. Showing cached data.
-						</span>
-						<button
-							className="btn-close"
-							onClick={() => setErrorDismissed(true)}
-						/>
-					</div>
-				)}
-
 				{/* PAGE BAR */}
 				<div className={styles.pageBar}>
 					<div>

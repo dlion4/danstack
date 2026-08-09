@@ -791,7 +791,7 @@ function SectionHead({
 }
 
 export default function Compliance() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-compliance"],
 		queryFn: fetchCompliance,
 		retry: 1,
@@ -799,7 +799,6 @@ export default function Compliance() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	const openM = (id: string) => setActiveModal(id);
@@ -807,27 +806,6 @@ export default function Compliance() {
 
 	return (
 		<div className={styles.compliancePage}>
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load compliance data.</strong> Showing the
-					built-in defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -840,8 +818,8 @@ export default function Compliance() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button

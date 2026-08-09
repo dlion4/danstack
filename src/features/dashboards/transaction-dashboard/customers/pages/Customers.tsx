@@ -111,6 +111,8 @@ interface CustomersConfig {
 		badge: { icon: string; text: string; tone: BadgeTone };
 		lines: string[];
 		attention?: boolean;
+		bars?: { label: string; pct: number; color: string }[];
+		foot?: string;
 	}[];
 	attention: RemTrigger[];
 	suggestions: RemTrigger[];
@@ -176,22 +178,31 @@ const initialMockData: CustomersConfig = {
 		},
 		{
 			key: "failed",
-			colClass: "col-lg-2 col-md-4 col-6",
+			colClass: "col-lg-6 col-md-6",
 			label: "FAILED PAYMENTS (30D)",
 			labelColor: "var(--pm-danger)",
 			value: "12",
 			badge: { icon: "bi-exclamation-triangle", text: "KES 96K · 4 reminders", tone: "badgeD" },
 			lines: ["8 insufficient funds", "4 declined / expired"],
 			attention: true,
+			bars: [
+				{ label: "8 insufficient funds", pct: 67, color: "var(--pm-danger)" },
+				{ label: "4 declined / expired", pct: 33, color: "var(--pm-warning)" },
+			],
 		},
 		{
 			key: "refunds",
-			colClass: "col-lg-2 col-md-4 col-6",
+			colClass: "col-lg-6 col-md-6",
 			label: "REFUNDS THIS MONTH",
 			labelColor: "var(--pm-purple)",
 			value: "KES 41K",
 			badge: { icon: "bi-arrow-counterclockwise", text: "8 issued", tone: "badgeP" },
 			lines: ["5 full · 3 partial", "avg KES 5,125"],
+			bars: [
+				{ label: "5 full refunds", pct: 63, color: "var(--pm-purple)" },
+				{ label: "3 partial refunds", pct: 37, color: "var(--pm-purple)" },
+			],
+			foot: "avg KES 5,125 per refund",
 		},
 	],
 	attention: [
@@ -666,7 +677,7 @@ function priorityTone(p: TicketRow["p"]): BadgeTone {
 }
 
 export default function Customers() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-customers"],
 		queryFn: fetchCustomers,
 		retry: 1,
@@ -674,7 +685,6 @@ export default function Customers() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 	const [biz, setBiz] = useState<BizId>("all");
 	const [world, setWorld] = useState<"directory" | "billing">("directory");
@@ -692,23 +702,6 @@ export default function Customers() {
 
 	return (
 		<div className={styles.customersPage}>
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div className={`alert alert-danger alert-dismissible ${styles.errorBanner}`} role="alert">
-					<strong>Could not load customer data.</strong> Showing the built-in defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -722,8 +715,8 @@ export default function Customers() {
 							</span>
 							<strong>{config.pageTitle}</strong>
 						</div>
-						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button className={styles.btnPm} onClick={() => openM("sendReminderModal")}>
@@ -806,21 +799,57 @@ export default function Customers() {
 						</div>
 						{config.statCards.map((card) => (
 							<div className={card.colClass} key={card.key}>
-								<div className={`${styles.card} ${card.attention ? styles.attentionCard : ""}`} style={{ minHeight: 170 }}>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
-									</div>
-									<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-									<div className="mt-2" style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
-										{card.lines.map((l) => (
-											<div key={l}>{l}</div>
-										))}
-									</div>
+								<div className={`${styles.card} ${card.attention ? styles.attentionCard : ""}`} style={{ minHeight: 170, height: "100%" }}>
+									{card.bars ? (
+										<>
+											<div className="d-flex flex-wrap justify-content-between align-items-start" style={{ gap: 8 }}>
+												<p className={styles.sl} style={{ color: card.labelColor, margin: 0 }}>
+													{card.label}
+												</p>
+												<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
+													<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+												</span>
+											</div>
+											<div className={styles.sv} style={{ margin: "10px 0 12px" }}>
+												{card.value}
+											</div>
+											<div>
+												{card.bars.map((b) => (
+													<div key={b.label} style={{ marginBottom: 10 }}>
+														<div className="d-flex justify-content-between align-items-center" style={{ fontSize: 12, marginBottom: 4 }}>
+															<span>{b.label}</span>
+															<span style={{ color: "var(--pm-muted)" }}>{b.pct}%</span>
+														</div>
+														<div className={styles.barTrack}>
+															<div className={styles.barFill} style={{ width: `${b.pct}%`, background: b.color }} />
+														</div>
+													</div>
+												))}
+												{card.foot && (
+													<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+														<i className="bi bi-info-circle" style={{ marginRight: 4 }} />{card.foot}
+													</div>
+												)}
+											</div>
+										</>
+									) : (
+										<>
+											<p className={styles.sl} style={{ color: card.labelColor }}>
+												{card.label}
+											</p>
+											<div className={styles.sv} style={{ margin: "6px 0" }}>
+												{card.value}
+											</div>
+											<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
+												<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+											</span>
+											<div className="mt-2" style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
+												{card.lines.map((l) => (
+													<div key={l}>{l}</div>
+												))}
+											</div>
+										</>
+									)}
 								</div>
 							</div>
 						))}

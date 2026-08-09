@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/features/dashboards/transaction-dashboard/disputes/pages/Disputes.tsx",
+    "src/features/dashboards/transaction-dashboard/kra-government/pages/KraGovernment.tsx",
+    "src/routeTree.gen.ts"
+  ]
+}

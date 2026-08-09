@@ -26,9 +26,18 @@ export interface NavItem {
         opensAside?: AsideKind;
 }
 
+export interface NavSubGroup {
+        title: string;
+        items: NavItem[];
+}
+
 export interface NavGroup {
         title: string;
         items: NavItem[];
+        /** Optional background color for the section (e.g., 'blue' for light blue background) */
+        bgColor?: "blue" | "default";
+        /** Optional sub-groups for better organization */
+        subGroups?: NavSubGroup[];
 }
 
 export interface NotificationItem {
@@ -125,105 +134,129 @@ export const initialMockData: ShellContent = {
 
         navGroups: [
                 {
-                        title: "Operations ",
-                        items: [
+                        title: "Business Operations",
+                        bgColor: "blue",
+                        subGroups: [
                                 {
-                                        key: "transfer-overview",
-                                        label: "Overview",
-                                        icon: "bi-speedometer2",
+                                        title: "Business Setup",
+                                        items: [
+                                                {
+                                                        key: "onboarding",
+                                                        label: "Onboarding & KYC",
+                                                        icon: "bi-rocket-takeoff",
+                                                },
+                                        ],
                                 },
                                 {
-                                        key: "analytics",
-                                        label: "Analytics",
-                                        icon: "bi-graph-up-arrow",
+                                        title: "Customer Management",
+                                        items: [
+                                                { key: "customers", label: "Customers", icon: "bi-people" },
+                                        ],
                                 },
                                 {
-                                        key: "cash-flow",
-                                        label: "Cash Flow",
-                                        icon: "bi-cash-stack",
+                                        title: "Financial Operations",
+                                        items: [
+                                                { key: "liquidity", label: "Liquidity & Float", icon: "bi-droplet" },
+                                                {
+                                                        key: "reconciliation",
+                                                        label: "Reconciliation",
+                                                        icon: "bi-clipboard-check",
+                                                },
+                                                { key: "settlement", label: "Settlement", icon: "bi-bank" },
+                                                {
+                                                        key: "fx",
+                                                        label: "FX & Currencies",
+                                                        icon: "bi-currency-exchange",
+                                                },
+                                                { key: "fees", label: "Fees & Commissions", icon: "bi-receipt" },
+                                        ],
                                 },
                                 {
-                                        key: "ops-health",
-                                        label: "System Health",
-                                        icon: "bi-cpu",
+                                        title: "Compliance & Risk",
+                                        items: [
+                                                {
+                                                        key: "compliance",
+                                                        label: "AML & Compliance",
+                                                        icon: "bi-shield-check",
+                                                },
+                                                {
+                                                        key: "disputes",
+                                                        label: "Disputes",
+                                                        icon: "bi-exclamation-triangle",
+                                                },
+                                                {
+                                                        key: "kra-government",
+                                                        label: "Tax & Gov",
+                                                        icon: "bi-building-check",
+                                                },
+                                        ],
+                                },
+                                {
+                                        title: "Operations & Analytics",
+                                        items: [
+                                                {
+                                                        key: "analytics",
+                                                        label: "Analytics",
+                                                        icon: "bi-graph-up-arrow",
+                                                },
+                                                {
+                                                        key: "ops-health",
+                                                        label: "System Health",
+                                                        icon: "bi-cpu",
+                                                },
+                                        ],
                                 },
                         ],
+                        items: [],
                 },
                 {
                         title: "Payments & Transfers",
-                        items: [
+                        subGroups: [
                                 {
-                                        key: "initiate-transfer",
-                                        label: "New Transfer",
-                                        icon: "bi-send",
-                                },
-                                // {
-                                //         key: "transfers",
-                                //         label: "Transfer Log",
-                                //         icon: "bi-arrow-left-right",
-                                // },
-                                {
-                                        key: "transfer-management",
-                                        label: "Manage Transfers",
-                                        icon: "bi-list-task",
+                                        title: "Overview",
+                                        items: [
+                                                {
+                                                        key: "transfer-overview",
+                                                        label: "Overview",
+                                                        icon: "bi-speedometer2",
+                                                },
+                                        ],
                                 },
                                 {
-                                        key: "payment-rails",
-                                        label: "Rails & Routing",
-                                        icon: "bi-signpost-split",
+                                        title: "Transfer Operations",
+                                        items: [
+                                                {
+                                                        key: "initiate-transfer",
+                                                        label: "New Transfer",
+                                                        icon: "bi-send",
+                                                },
+                                                {
+                                                        key: "transfer-management",
+                                                        label: "Manage Transfers",
+                                                        icon: "bi-list-task",
+                                                },
+                                        ],
                                 },
                                 {
-                                        key: "mobile-money",
-                                        label: "Mobile Money",
-                                        icon: "bi-phone",
-                                },
-                        ],
-                },
-                {
-                        title: "Treasury & Finance",
-                        items: [
-                                { key: "liquidity", label: "Liquidity & Float", icon: "bi-droplet" },
-                                {
-                                        key: "reconciliation",
-                                        label: "Reconciliation",
-                                        icon: "bi-clipboard-check",
-                                },
-                                { key: "settlement", label: "Settlement", icon: "bi-bank" },
-                                {
-                                        key: "fx",
-                                        label: "FX & Currencies",
-                                        icon: "bi-currency-exchange",
-                                },
-                                { key: "fees", label: "Fees & Commissions", icon: "bi-receipt" },
-                        ],
-                },
-                {
-                        title: "Compliance & Risk",
-                        items: [
-                                {
-                                        key: "compliance",
-                                        label: "AML & Compliance",
-                                        icon: "bi-shield-check",
-                                },
-                                {
-                                        key: "disputes",
-                                        label: "Disputes",
-                                        icon: "bi-exclamation-triangle",
-                                },
-                                {
-                                        key: "kra-government",
-                                        label: "Tax & Gov",
-                                        icon: "bi-building-check",
+                                        title: "Payment Infrastructure",
+                                        items: [
+                                                {
+                                                        key: "payment-rails",
+                                                        label: "Rails & Routing",
+                                                        icon: "bi-signpost-split",
+                                                },
+                                                {
+                                                        key: "mobile-money",
+                                                        label: "Mobile Money",
+                                                        icon: "bi-phone",
+                                                },
+                                        ],
                                 },
                         ],
-                },
-                {
-                        title: "Administration",
-                        items: [
-                                { key: "customers", label: "Customers", icon: "bi-people" },
-                        ],
+                        items: [],
                 },
         ],
+        modules: [],
 
         notifications: [
                 {

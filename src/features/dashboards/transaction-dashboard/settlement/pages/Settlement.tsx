@@ -742,7 +742,7 @@ function CellValue({ cell, onOpen }: { cell: Cell; onOpen: (id: string) => void 
 }
 
 export default function Settlement() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-settlement"],
 		queryFn: fetchSettlement,
 		retry: 1,
@@ -750,7 +750,6 @@ export default function Settlement() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 	const [world, setWorld] = useState<"customers" | "internal">("customers");
 	const [biz, setBiz] = useState<string>("all");
@@ -811,13 +810,6 @@ export default function Settlement() {
 
 	return (
 		<div className={styles.settlementPage}>
-			{error && !errorDismissed && (
-				<div className={`alert alert-danger alert-dismissible ${styles.errorBanner}`} role="alert">
-					<strong>Could not load settlement data.</strong> Showing the built-in defaults.{" "}
-					<span className="text-decoration-underline">{String((error as Error).message ?? "")}</span>
-					<button type="button" className="btn-close" aria-label="Close" onClick={() => setErrorDismissed(true)} />
-				</div>
-			)}
 			<div className={styles.main}>
 				<div className={styles.pageBar}>
 					<div>
@@ -829,8 +821,8 @@ export default function Settlement() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button className={styles.btnPm} onClick={() => openM("linkApiModal")}>

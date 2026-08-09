@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danstack — Business Onboarding</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pri: #10b981;
+  --pri-600: #059669;
+  --pri-700: #047857;
+  --pri-light: #34d399;
+  --pri-bg: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  --purple: #8b5cf6;
+  --purple-bg: #ede9fe;
+  --surface: #f5f1ec;
+  --surface-elev: #ffffff;
+  --surface-2: #faf7f3;
+  --ink-900: #1a1f2e;
+  --ink-700: #4b5563;
+  --ink-500: #9ca3af;
+  --border: #e5e2dc;
+  --border-2: #d4d0c8;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(26,31,46,0.04);
+  --shadow-md: 0 4px 12px rgba(26,31,46,0.06);
+  --shadow-lg: 0 10px 30px rgba(26,31,46,0.08);
+}
+
+* { box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--surface);
+  color: var(--ink-900);
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.display-font { font-family: 'Space Grotesk', sans-serif; }
+
+/* Hero */
+.hero-section {
+  background: linear-gradient(135deg, var(--pri) 0%, var(--pri-600) 100%);
+  color: #fff;
+  padding: 40px 32px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(52,211,153,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1; }
+.hero-subtitle { font-size: 16px; opacity: 0.92; margin-bottom: 28px; max-width: 600px; position: relative; z-index: 1; }
+.hero-actions { position: relative; z-index: 1; display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Buttons */
+.btn-emerald {
+  background: var(--pri);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-emerald:hover { background: var(--pri-600); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+.btn-emerald-white {
+  background: #fff;
+  color: var(--pri-700);
+  border: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-emerald-white:hover { background: #f0fdf4; transform: translateY(-1px); }
+.btn-ghost-outline {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(4px);
+}
+.btn-ghost-outline:hover { background: rgba(255,255,255,0.25); color: #fff; }
+.btn-soft {
+  background: var(--surface-elev);
+  color: var(--ink-700);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-soft:hover { background: var(--surface-2); transform: translateY(-1px); }
+.btn-danger-custom {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+.btn-danger-custom:hover { background: #dc2626; color: #fff; transform: translateY(-1px); }
+.btn-sm-custom { padding: 6px 14px; font-size: 13px; }
+
+/* Cards */
+.card-emerald {
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  height: 100%;
+}
+.card-emerald:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-title-custom {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title-custom i { color: var(--pri); }
+.card-subtitle-custom { font-size: 13px; color: var(--ink-500); margin-bottom: 20px; }
+
+/* Status Cards */
+.status-card {
+  background: var(--surface-elev);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 20px;
+  text-align: center;
+  transition: all 0.2s;
+  height: 100%;
+}
+.status-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.status-card.current { border-color: var(--pri); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+.status-card.locked { opacity: 0.65; }
+.status-icon-lg { font-size: 32px; margin-bottom: 12px; }
+.status-label { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+.status-progress { font-size: 12px; color: var(--ink-500); margin-bottom: 12px; }
+.status-badge-custom {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Progress Bar */
+.progress-custom {
+  height: 12px;
+  background: var(--border);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress-custom-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pri) 0%, var(--pri-light) 100%);
+  border-radius: var(--radius-pill);
+  transition: width 0.5s ease;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.step-item:hover .step-circle { transform: scale(1.1); }
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--surface-2);
+  color: var(--ink-500);
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+  z-index: 1;
+}
+.step-item.active .step-circle { background: var(--pri); color: #fff; border-color: var(--pri); }
+.step-item.done .step-circle { background: var(--pri-bg); color: var(--pri); border-color: var(--pri); }
+.step-label { font-size: 11px; font-weight: 600; color: var(--ink-500); text-align: center; white-space: nowrap; }
+.step-item.active .step-label { color: var(--pri-700); }
+.step-item.done .step-label { color: var(--pri); }
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  min-width: 20px;
+  margin: 0 8px;
+  margin-bottom: 24px;
+}
+.step-connector.done { background: var(--pri); }
+
+/* Benefits Cards */
+.benefit-card {
+  background: var(--surface-elev);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  height: 100%;
+  position: relative;
+  transition: all 0.2s;
+}
+.benefit-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.benefit-card.featured { border-color: var(--pri); box-shadow: var(--shadow-md); }
+.benefit-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pri);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.benefit-level { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-500); margin-bottom: 4px; }
+.benefit-name { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.benefit-features { list-style: none; padding: 0; margin: 16px 0; }
+.benefit-features li { padding: 6px 0; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.benefit-features li i.fa-check { color: var(--pri); font-size: 12px; }
+.benefit-features li i.fa-xmark { color: var(--ink-300); font-size: 12px; }
+
+/* Limits */
+.limit-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  transition: all 0.2s;
+  height: 100%;
+}
+.limit-card.current { background: var(--pri-bg); border-color: var(--pri); }
+.limit-label-custom { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-500); margin-bottom: 8px; }
+.limit-value-custom { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--ink-900); }
+.limit-card.current .limit-value-custom { color: var(--pri-700); }
+
+/* AI Section */
+.ai-section {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+.ai-icon-box {
+  width: 52px;
+  height: 52px;
+  background: var(--pri);
+  color: #fff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.suggestion-item {
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+.suggestion-item:hover { transform: translateX(4px); box-shadow: var(--shadow-sm); }
+.suggestion-priority {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.priority-high { background: var(--danger-bg); color: var(--danger); }
+.priority-medium { background: var(--warning-bg); color: var(--warning); }
+.priority-low { background: var(--info-bg); color: var(--info); }
+.suggestion-content { flex: 1; min-width: 0; }
+.suggestion-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.suggestion-meta { font-size: 12px; color: var(--ink-500); }
+.suggestion-impact {
+  background: var(--pri-bg);
+  color: var(--pri-700);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Checklist */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+.checklist-item:hover { background: var(--surface-elev); }
+.checklist-item.completed { background: var(--pri-bg); border-color: rgba(16,185,129,0.3); }
+.checklist-item.pending { background: var(--warning-bg); border-color: rgba(245,158,11,0.3); }
+.checklist-icon-custom {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.checklist-item.completed .checklist-icon-custom { background: var(--pri); color: #fff; }
+.checklist-item.pending .checklist-icon-custom { background: #fff; color: var(--warning); border: 2px solid var(--warning); }
+.checklist-label-custom { font-size: 14px; font-weight: 500; flex: 1; }
+
+/* Modal Styles */
+.modal-content-emerald {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+.modal-header-emerald {
+  background: linear-gradient(135deg, var(--pri) 0%, var(--pri-600) 100%);
+  color: #fff;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px 24px;
+}
+.modal-header-emerald .btn-close { filter: brightness(0) invert(1); }
+.modal-header-danger {
+  background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+  color: #fff;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px 24px;
+}
+.modal-header-danger .btn-close { filter: brightness(0) invert(1); }
+.modal-body-emerald { padding: 24px; }
+.modal-footer-emerald { padding: 16px 24px; border-top: 1px solid var(--border); }
+
+/* Business Type Cards */
+.biz-type-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 100%;
+  text-align: center;
+}
+.biz-type-card:hover { border-color: var(--pri); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.biz-type-card.selected { border-color: var(--pri); background: var(--pri-bg); }
+.biz-type-icon { font-size: 32px; color: var(--pri); margin-bottom: 12px; }
+.biz-type-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.biz-type-desc { font-size: 12px; color: var(--ink-500); }
+
+/* Document Upload Zone */
+.upload-zone {
+  border: 2px dashed var(--border-2);
+  border-radius: var(--radius-md);
+  padding: 32px 20px;
+  text-align: center;
+  background: var(--surface-2);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.upload-zone:hover { border-color: var(--pri); background: var(--pri-bg); }
+.upload-zone.dragover { border-color: var(--pri); background: var(--pri-bg); transform: scale(1.02); }
+.upload-icon { font-size: 40px; color: var(--pri); margin-bottom: 12px; }
+.upload-text { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.upload-subtext { font-size: 12px; color: var(--ink-500); }
+
+/* File Item */
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+}
+.file-icon { font-size: 20px; color: var(--pri); }
+.file-name { font-size: 13px; font-weight: 500; flex: 1; }
+.file-size { font-size: 11px; color: var(--ink-500); }
+
+/* Toast */
+.toast-emerald {
+  background: var(--surface-elev);
+  border-left: 4px solid var(--pri);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { padding: 12px; }
+  .hero-title { font-size: 24px; }
+  .hero-section { padding: 28px 20px; }
+  .stepper { gap: 0; }
+  .step-label { font-size: 9px; }
+  .step-circle { width: 30px; height: 30px; font-size: 11px; }
+}
+
+@media (max-width: 576px) {
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.4s ease; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.pulse-anim { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="container-fluid" style="max-width: 1280px;">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="font-size: 13px;">
+      <li class="breadcrumb-item"><a href="#" style="color: var(--pri); text-decoration: none;">Home</a></li>
+      <li class="breadcrumb-item"><a href="#" style="color: var(--pri); text-decoration: none;">Transaction Dashboard</a></li>
+      <li class="breadcrumb-item active" style="color: var(--ink-700);">Onboarding</li>
+    </ol>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-section fade-in-up">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="hero-title"><i class="fa-solid fa-rocket me-2"></i>Welcome to Danstack Business Onboarding</h1>
+        <p class="hero-subtitle">Start your business journey in minutes. No heavy paperwork — begin with what you have, grow as you grow. Submit documents progressively and unlock more features.</p>
+        <div class="hero-actions">
+          <button class="btn btn-emerald-white btn-lg" data-bs-toggle="modal" data-bs-target="#wizardModal"><i class="fa-solid fa-play"></i> Start Onboarding</button>
+          <button class="btn btn-ghost-outline btn-lg" data-bs-toggle="modal" data-bs-target="#statusModal"><i class="fa-solid fa-chart-line"></i> View Status</button>
+        </div>
+      </div>
+      <div class="col-lg-4 text-center d-none d-lg-block">
+        <div style="font-size: 120px; opacity: 0.15; position: relative; z-index: 1;"><i class="fa-solid fa-building"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Overview -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="card-emerald">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="card-title-custom"><i class="fa-solid fa-shield-halved"></i>Your Verification Progress</h2>
+            <p class="card-subtitle-custom mb-0">Track your journey from Basic to Certified status</p>
+          </div>
+          <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#checklistModal"><i class="fa-solid fa-clipboard-list"></i> Full Checklist</button>
+        </div>
+        <div class="progress-custom mb-2">
+          <div class="progress-custom-fill" id="mainProgress" style="width: 60%;"></div>
+        </div>
+        <div class="d-flex justify-content-between" style="font-size: 12px; color: var(--ink-500);">
+          <span>6 of 10 documents uploaded</span>
+          <span id="progressPercent">60% Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="status-card">
+        <div class="status-icon-lg">🟢</div>
+        <div class="status-label">Basic</div>
+        <div class="status-progress">40% Complete</div>
+        <div class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Active</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="status-card current">
+        <div class="status-icon-lg pulse-anim">🟡</div>
+        <div class="status-label">Enhanced</div>
+        <div class="status-progress">75% Complete</div>
+        <div class="status-badge-custom" style="background: var(--warning-bg); color: #b45309;">Current Level</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="status-card locked" data-bs-toggle="modal" data-bs-target="#upgradeModal" style="cursor: pointer;">
+        <div class="status-icon-lg">🔵</div>
+        <div class="status-label">Certified</div>
+        <div class="status-progress">100% Complete</div>
+        <div class="status-badge-custom" style="background: var(--info-bg); color: #1d4ed8;">4 docs to unlock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="card-emerald mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="card-title-custom"><i class="fa-solid fa-gift"></i>Unlock Features as You Grow</h2>
+        <p class="card-subtitle-custom mb-0">Progressive verification unlocks more powerful features and higher limits</p>
+      </div>
+      <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#benefitsModal"><i class="fa-solid fa-circle-info"></i> Details</button>
+    </div>
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="benefit-card">
+          <div class="benefit-level">🟢 Basic</div>
+          <div class="benefit-name">Starter</div>
+          <p style="font-size: 12px; color: var(--ink-500); margin-bottom: 16px;">Get started in minutes</p>
+          <ul class="benefit-features">
+            <li><i class="fa-solid fa-check"></i>Create business profile</li>
+            <li><i class="fa-solid fa-check"></i>Accept mobile money</li>
+            <li><i class="fa-solid fa-check"></i>Send up to KES 50K/day</li>
+            <li><i class="fa-solid fa-check"></i>Basic transaction history</li>
+            <li><i class="fa-solid fa-check"></i>3 beneficiaries</li>
+            <li><i class="fa-solid fa-xmark"></i>Bulk payments</li>
+            <li><i class="fa-solid fa-xmark"></i>API access</li>
+          </ul>
+          <button class="btn btn-soft w-100 btn-sm-custom" data-bs-toggle="modal" data-bs-target="#limitsModal">View Limits</button>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="benefit-card featured">
+          <div class="benefit-level">🟡 Enhanced</div>
+          <div class="benefit-name">Growing</div>
+          <p style="font-size: 12px; color: var(--ink-500); margin-bottom: 16px;">For scaling businesses</p>
+          <ul class="benefit-features">
+            <li><i class="fa-solid fa-check"></i>Everything in Basic</li>
+            <li><i class="fa-solid fa-check"></i>Send up to KES 500K/day</li>
+            <li><i class="fa-solid fa-check"></i>Bulk payments (50 recipients)</li>
+            <li><i class="fa-solid fa-check"></i>20 beneficiaries</li>
+            <li><i class="fa-solid fa-check"></i>Basic analytics</li>
+            <li><i class="fa-solid fa-check"></i>Payment links & invoices</li>
+            <li><i class="fa-solid fa-xmark"></i>API access</li>
+          </ul>
+          <button class="btn btn-emerald w-100 btn-sm-custom" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upgrade to Certified</button>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="benefit-card">
+          <div class="benefit-level"> Certified</div>
+          <div class="benefit-name">Professional</div>
+          <p style="font-size: 12px; color: var(--ink-500); margin-bottom: 16px;">Full power unlocked</p>
+          <ul class="benefit-features">
+            <li><i class="fa-solid fa-check"></i>Everything in Enhanced</li>
+            <li><i class="fa-solid fa-check"></i>Send up to KES 5M/day</li>
+            <li><i class="fa-solid fa-check"></i>Unlimited bulk payments</li>
+            <li><i class="fa-solid fa-check"></i>Unlimited beneficiaries</li>
+            <li><i class="fa-solid fa-check"></i>Full analytics & reporting</li>
+            <li><i class="fa-solid fa-check"></i>API access</li>
+            <li><i class="fa-solid fa-check"></i>International transfers</li>
+            <li><i class="fa-solid fa-check"></i>Lower fees (0.8%)</li>
+          </ul>
+          <button class="btn btn-soft w-100 btn-sm-custom" data-bs-toggle="modal" data-bs-target="#limitsModal">View Limits</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Limits Section -->
+  <div class="card-emerald mb-4">
+    <h2 class="card-title-custom"><i class="fa-solid fa-gauge-high"></i>Your Current Limits & Privileges</h2>
+    <p class="card-subtitle-custom">Transaction limits scale with your verification level</p>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="limit-card">
+          <div class="limit-label-custom"> Basic</div>
+          <div class="limit-value-custom">KES 50,000</div>
+          <div style="font-size: 12px; color: var(--ink-500); margin-top: 4px;">Daily Limit</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="limit-card current">
+          <div class="limit-label-custom"> Enhanced (Current)</div>
+          <div class="limit-value-custom">KES 500,000</div>
+          <div style="font-size: 12px; color: var(--pri-700); margin-top: 4px;">Daily Limit</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="limit-card" data-bs-toggle="modal" data-bs-target="#upgradeModal" style="cursor: pointer;">
+          <div class="limit-label-custom">🔵 Certified</div>
+          <div class="limit-value-custom">KES 5,000,000</div>
+          <div style="font-size: 12px; color: var(--ink-500); margin-top: 4px;">Daily Limit</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-3 p-3" style="background: var(--pri-bg); border-radius: var(--radius-md); border: 1px solid rgba(16,185,129,0.2);">
+      <strong>💡 Upgrade to Certified</strong> to unlock <strong>10x higher limits</strong>, <strong>0.8% fees</strong> (save 40%), API access, and international transfers.
+      <button class="btn btn-emerald btn-sm-custom ms-2" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upgrade Now</button>
+    </div>
+  </div>
+
+  <!-- Document Checklist -->
+  <div class="card-emerald mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="card-title-custom"><i class="fa-solid fa-clipboard-check"></i>Document Checklist</h2>
+        <p class="card-subtitle-custom mb-0">Upload what you have now, complete the rest later</p>
+      </div>
+      <button class="btn btn-emerald btn-sm-custom" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fa-solid fa-upload"></i> Upload Documents</button>
+    </div>
+    <div class="progress-custom mb-3">
+      <div class="progress-custom-fill" style="width: 60%;"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Owner's National ID (Front & Back)</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Business Photo / Logo</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">KRA PIN Certificate</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Bank Account Verification</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Business Registration Certificate</div>
+          <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">County Business Permit</div>
+          <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Recent Bank Statement (3 months)</div>
+          <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Utility Bill (Proof of Address)</div>
+          <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Suggestions -->
+  <div class="ai-section mb-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <div class="ai-icon-box"><i class="fa-solid fa-robot"></i></div>
+      <div>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin: 0;">AI Document Recommendations</h2>
+        <p style="font-size: 13px; color: var(--ink-500); margin: 0;">Based on your business type (Small Scale Retail), here's what to get next</p>
+      </div>
+      <button class="btn btn-soft btn-sm-custom ms-auto" data-bs-toggle="modal" data-bs-target="#aiModal"><i class="fa-solid fa-wand-magic-sparkles"></i> Full Analysis</button>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-high">1</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">Business Registration Certificate</div>
+            <div class="suggestion-meta">📍 eCitizen portal • 💰 ~KES 1,000 • ⏱️ 3-5 days</div>
+          </div>
+          <div class="suggestion-impact">+KES 4.5M limit</div>
+        </div>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-high">2</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">KRA PIN Certificate</div>
+            <div class="suggestion-meta"> itax.kra.go.ke • 💰 Free • ⏱️ Instant</div>
+          </div>
+          <div class="suggestion-impact">Tax compliance</div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-medium">3</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">County Business Permit</div>
+            <div class="suggestion-meta">📍 County office • 💰 ~KES 5,000-15,000/yr • ️ 1-2 weeks</div>
+          </div>
+          <div class="suggestion-impact">Physical location</div>
+        </div>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-low">4</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">Recent Bank Statement (3 months)</div>
+            <div class="suggestion-meta">📍 Your bank • 💰 Free • ⏱️ Same day</div>
+          </div>
+          <div class="suggestion-impact">Builds trust</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-3 d-flex gap-2 flex-wrap">
+      <button class="btn btn-emerald btn-sm-custom" data-bs-toggle="modal" data-bs-target="#aiModal"><i class="fa-solid fa-wand-magic-sparkles"></i> Get Started with AI Guide</button>
+      <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#howToModal"><i class="fa-solid fa-graduation-cap"></i> Show Me How</button>
+      <button class="btn btn-soft btn-sm-custom"><i class="fa-regular fa-bell"></i> Remind Me Later</button>
+    </div>
+  </div>
+
+  <!-- Recent Activity Preview -->
+  <div class="card-emerald mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h2 class="card-title-custom"><i class="fa-solid fa-clock-rotate-left"></i>Recent Onboarding Activity</h2>
+        <p class="card-subtitle-custom mb-0">Your progress over the last 7 days</p>
+      </div>
+      <button class="btn btn-soft btn-sm-custom" data-bs-toggle="modal" data-bs-target="#activityModal"><i class="fa-solid fa-list"></i> Full Log</button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover" style="font-size: 14px;">
+        <thead>
+          <tr style="background: var(--surface-2);">
+            <th style="border: none; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500);">Date</th>
+            <th style="border: none; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500);">Action</th>
+            <th style="border: none; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500);">Document</th>
+            <th style="border: none; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500);">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 14px 16px;">Aug 9, 2026</td><td style="padding: 14px 16px;">Upload</td><td style="padding: 14px 16px;"><strong>KRA PIN Certificate</strong></td><td style="padding: 14px 16px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+          <tr><td style="padding: 14px 16px;">Aug 8, 2026</td><td style="padding: 14px 16px;">Upload</td><td style="padding: 14px 16px;"><strong>Business Photo</strong></td><td style="padding: 14px 16px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+          <tr><td style="padding: 14px 16px;">Aug 7, 2026</td><td style="padding: 14px 16px;">Verification</td><td style="padding: 14px 16px;"><strong>Bank Account</strong></td><td style="padding: 14px 16px;"><span class="status-badge-custom" style="background: var(--warning-bg); color: #b45309;">Pending</span></td></tr>
+          <tr><td style="padding: 14px 16px;">Aug 6, 2026</td><td style="padding: 14px 16px;">Upload</td><td style="padding: 14px 16px;"><strong>National ID</strong></td><td style="padding: 14px 16px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="text-center py-5">
+    <h2 class="display-font" style="font-size: 26px; font-weight: 700; margin-bottom: 8px;">Ready to grow your business?</h2>
+    <p style="color: var(--ink-500); margin-bottom: 24px;">Complete your onboarding and start transacting today</p>
+    <button class="btn btn-emerald btn-lg" data-bs-toggle="modal" data-bs-target="#wizardModal" style="padding: 14px 36px; font-size: 16px;">
+      <i class="fa-solid fa-rocket"></i> Continue Onboarding
+    </button>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Modal 1: Onboarding Wizard -->
+<div class="modal fade" id="wizardModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-rocket me-2"></i>Business Onboarding Wizard</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <!-- Stepper -->
+        <div class="stepper" id="wizardStepper">
+          <div class="step-item done" data-step="1"><div class="step-circle"><i class="fa-solid fa-check"></i></div><div class="step-label">Type</div></div>
+          <div class="step-connector done"></div>
+          <div class="step-item done" data-step="2"><div class="step-circle"><i class="fa-solid fa-check"></i></div><div class="step-label">Identity</div></div>
+          <div class="step-connector done"></div>
+          <div class="step-item active" data-step="3"><div class="step-circle">3</div><div class="step-label">Owner</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="4"><div class="step-circle">4</div><div class="step-label">Contact</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="5"><div class="step-circle">5</div><div class="step-label">Docs</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="6"><div class="step-circle">6</div><div class="step-label">Banking</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="7"><div class="step-circle">7</div><div class="step-label">Ops</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="8"><div class="step-circle">8</div><div class="step-label">Compliance</div></div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="9"><div class="step-circle">9</div><div class="step-label">Review</div></div>
+        </div>
+
+        <!-- Step Content -->
+        <div id="wizardContent">
+          <!-- Step 3: Owner Info (Active) -->
+          <div class="wizard-step" data-step="3">
+            <h4 style="font-weight: 700; margin-bottom: 20px;"><i class="fa-solid fa-user me-2" style="color: var(--pri);"></i>Step 3: Owner Information</h4>
+            <div class="mb-3">
+              <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500);">Full Legal Name *</label>
+              <input type="text" class="form-control" value="John Kamau Mwangi" style="padding: 12px 16px; border-radius: var(--radius-sm);">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500);">National ID / Passport Number *</label>
+              <input type="text" class="form-control" value="12345678" style="padding: 12px 16px; border-radius: var(--radius-sm);">
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500);">Phone Number *</label>
+                <div class="input-group">
+                  <span class="input-group-text">+254</span>
+                  <input type="text" class="form-control" value="712 345 890" style="padding: 12px 16px;">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500);">Email Address *</label>
+                <input type="email" class="form-control" value="john@example.com" style="padding: 12px 16px; border-radius: var(--radius-sm);">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500);">Physical Address</label>
+              <input type="text" class="form-control" value="Kawangware, Nairobi" style="padding: 12px 16px; border-radius: var(--radius-sm);">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" id="wizardPrev" onclick="wizardNavigate(-1)"><i class="fa-solid fa-arrow-left me-2"></i>Back</button>
+        <button type="button" class="btn btn-emerald" id="wizardNext" onclick="wizardNavigate(1)">Continue<i class="fa-solid fa-arrow-right ms-2"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Business Type Selection -->
+<div class="modal fade" id="bizTypeModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-store me-2"></i>Select Business Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <p style="color: var(--ink-500); margin-bottom: 20px;">Choose the category that best describes your business</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-store"></i></div>
+              <div class="biz-type-name">Small Scale</div>
+              <div class="biz-type-desc">Unregistered local shop</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-rocket"></i></div>
+              <div class="biz-type-name">Startup</div>
+              <div class="biz-type-desc">Early stage, pre-revenue</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-user"></i></div>
+              <div class="biz-type-name">Solo Proprietor</div>
+              <div class="biz-type-desc">One-person business</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-laptop"></i></div>
+              <div class="biz-type-name">Freelance</div>
+              <div class="biz-type-desc">Remote work, gig economy</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-palette"></i></div>
+              <div class="biz-type-name">Creative</div>
+              <div class="biz-type-desc">Design, writing, consulting</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="biz-type-card" onclick="selectBizType(this)">
+              <div class="biz-type-icon"><i class="fa-solid fa-ellipsis"></i></div>
+              <div class="biz-type-name">Other</div>
+              <div class="biz-type-desc">Something else</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-emerald" onclick="confirmBizType()">Select & Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 3: Document Upload -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-upload me-2"></i>Upload Documents</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <p style="color: var(--ink-500); margin-bottom: 20px;"><i class="fa-solid fa-lightbulb me-2" style="color: var(--warning);"></i>Upload what you have now. You can update these later.</p>
+        
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div class="upload-text">Drag & drop files here or click to browse</div>
+          <div class="upload-subtext">Supports: JPG, PNG, PDF (Max 10MB each)</div>
+          <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileUpload(this.files)">
+        </div>
+
+        <h6 style="font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Uploaded Files</h6>
+        <div id="uploadedFiles">
+          <div class="file-item">
+            <div class="file-icon"><i class="fa-regular fa-file-image"></i></div>
+            <div class="file-name">national_id_front.jpg</div>
+            <div class="file-size">2.4 MB</div>
+            <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+            <button class="btn btn-soft btn-sm-custom" style="padding: 4px 8px;"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="file-item">
+            <div class="file-icon"><i class="fa-regular fa-file-image"></i></div>
+            <div class="file-name">national_id_back.jpg</div>
+            <div class="file-size">2.1 MB</div>
+            <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified</span>
+            <button class="btn btn-soft btn-sm-custom" style="padding: 4px 8px;"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="file-item">
+            <div class="file-icon"><i class="fa-regular fa-file-pdf"></i></div>
+            <div class="file-name">kra_pin_certificate.pdf</div>
+            <div class="file-size">856 KB</div>
+            <span class="status-badge-custom" style="background: var(--warning-bg); color: #b45309; font-size: 10px;">Processing</span>
+            <button class="btn btn-soft btn-sm-custom" style="padding: 4px 8px;"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
+        <div class="mt-3 p-3" style="background: var(--info-bg); border-radius: var(--radius-md); border: 1px solid rgba(59,130,246,0.2); font-size: 13px;">
+          <i class="fa-solid fa-circle-info me-2" style="color: var(--info);"></i>
+          <strong>Don't have all documents?</strong> No problem. Submit what you have and we'll guide you on what to get next.
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" onclick="submitDocuments()"><i class="fa-solid fa-check me-2"></i>Submit Documents</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: AI Suggestions Full -->
+<div class="modal fade" id="aiModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-robot me-2"></i>AI Document Analysis</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="p-3 mb-3" style="background: linear-gradient(135deg, var(--pri-bg), var(--info-bg)); border-radius: var(--radius-md);">
+          <h6 style="font-weight: 700; margin-bottom: 8px;">🎯 Your Path to Certified Status</h6>
+          <p style="font-size: 13px; margin: 0; color: var(--ink-700);">Based on your business type (Small Scale Retail), we've analyzed the fastest path to full certification. Complete these 4 documents to unlock 10x higher limits.</p>
+        </div>
+
+        <h6 style="font-weight: 700; margin-bottom: 12px; color: var(--danger);">🔴 HIGH PRIORITY</h6>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-high">1</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">Business Registration Certificate</div>
+            <div class="suggestion-meta"> eCitizen portal (business.go.ke) • 💰 ~KES 1,000 • ⏱️ 3-5 days</div>
+          </div>
+          <div class="suggestion-impact">+KES 4.5M limit</div>
+        </div>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-high">2</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">KRA PIN Certificate</div>
+            <div class="suggestion-meta">📍 itax.kra.go.ke • 💰 Free • ⏱️ Instant</div>
+          </div>
+          <div class="suggestion-impact">Tax compliance</div>
+        </div>
+
+        <h6 style="font-weight: 700; margin: 20px 0 12px; color: var(--warning);">🟡 MEDIUM PRIORITY</h6>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-medium">3</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">County Business Permit</div>
+            <div class="suggestion-meta">📍 County government office • 💰 ~KES 5,000-15,000/yr • ️ 1-2 weeks</div>
+          </div>
+          <div class="suggestion-impact">Physical location</div>
+        </div>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-medium">4</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">Recent Bank Statement (3 months)</div>
+            <div class="suggestion-meta">📍 Your bank branch/online banking • 💰 Free • ️ Same day</div>
+          </div>
+          <div class="suggestion-impact">Builds trust</div>
+        </div>
+
+        <h6 style="font-weight: 700; margin: 20px 0 12px; color: var(--info);"> NICE TO HAVE</h6>
+        <div class="suggestion-item">
+          <div class="suggestion-priority priority-low">5</div>
+          <div class="suggestion-content">
+            <div class="suggestion-title">Utility Bill (Proof of Address)</div>
+            <div class="suggestion-meta">📍 KPLC/Water bill • 💰 Free • ️ Same day</div>
+          </div>
+          <div class="suggestion-impact">Address verification</div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fa-solid fa-upload me-2"></i>Start Uploading</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Limits Detail -->
+<div class="modal fade" id="limitsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-gauge-high me-2"></i>Transaction Limits</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="table-responsive">
+          <table class="table" style="font-size: 14px;">
+            <thead>
+              <tr style="background: var(--surface-2);">
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Feature</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Basic</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Enhanced</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Certified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding: 12px;"><strong>Daily Limit</strong></td><td style="padding: 12px;">KES 50K</td><td style="padding: 12px;"><strong>KES 500K</strong></td><td style="padding: 12px; color: var(--pri);"><strong>KES 5M</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>Per Transaction</strong></td><td style="padding: 12px;">KES 25K</td><td style="padding: 12px;"><strong>KES 250K</strong></td><td style="padding: 12px; color: var(--pri);"><strong>KES 2.5M</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>Monthly Limit</strong></td><td style="padding: 12px;">KES 500K</td><td style="padding: 12px;"><strong>KES 5M</strong></td><td style="padding: 12px; color: var(--pri);"><strong>KES 50M</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>Fee Rate</strong></td><td style="padding: 12px;">1.5%</td><td style="padding: 12px;"><strong>1.2%</strong></td><td style="padding: 12px; color: var(--pri);"><strong>0.8%</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>Beneficiaries</strong></td><td style="padding: 12px;">3</td><td style="padding: 12px;"><strong>20</strong></td><td style="padding: 12px; color: var(--pri);"><strong>Unlimited</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>Bulk Payments</strong></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><strong>50 recipients</strong></td><td style="padding: 12px; color: var(--pri);"><strong>Unlimited</strong></td></tr>
+              <tr><td style="padding: 12px;"><strong>API Access</strong></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px; color: var(--pri);"><i class="fa-solid fa-check"></i></td></tr>
+              <tr><td style="padding: 12px;"><strong>International</strong></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px; color: var(--pri);"><i class="fa-solid fa-check"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upgrade Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 6: Upgrade to Certified -->
+<div class="modal fade" id="upgradeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-arrow-up me-2"></i>Upgrade to Certified</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="text-center mb-4">
+          <div style="font-size: 64px; color: var(--pri); margin-bottom: 16px;"><i class="fa-solid fa-crown"></i></div>
+          <h3 class="display-font" style="font-weight: 700;">Unlock 10x Higher Limits</h3>
+          <p style="color: var(--ink-500);">Complete 4 more documents to reach Certified status</p>
+        </div>
+
+        <div class="p-3 mb-3" style="background: var(--pri-bg); border-radius: var(--radius-md); border: 1px solid rgba(16,185,129,0.2);">
+          <h6 style="font-weight: 700; margin-bottom: 12px;">🎯 What You'll Unlock:</h6>
+          <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+            <li><strong>KES 5,000,000</strong> daily limit (10x increase)</li>
+            <li><strong>0.8%</strong> transaction fees (save 40%)</li>
+            <li><strong>API access</strong> for integrations</li>
+            <li><strong>International transfers</strong></li>
+            <li><strong>Priority support</strong></li>
+            <li><strong>Unlimited</strong> bulk payments & beneficiaries</li>
+          </ul>
+        </div>
+
+        <h6 style="font-weight: 700; margin-bottom: 12px;">📋 Required Documents:</h6>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Business Registration Certificate</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">County Business Permit</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Bank Statement (3 months)</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Utility Bill</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+
+        <div class="mt-3 p-3" style="background: var(--info-bg); border-radius: var(--radius-md); font-size: 13px;">
+          <i class="fa-solid fa-clock me-2" style="color: var(--info);"></i>
+          <strong>Estimated time:</strong> 2-3 weeks to complete all documents
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Maybe Later</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fa-solid fa-upload me-2"></i>Start Uploading</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 7: Verification Status -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-shield-halved me-2"></i>Verification Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="text-center mb-4">
+          <div style="font-size: 48px; margin-bottom: 12px;">🟡</div>
+          <h3 class="display-font" style="font-weight: 700;">Enhanced Verification</h3>
+          <p style="color: var(--ink-500);">75% Complete • 6 of 10 documents verified</p>
+          <div class="progress-custom" style="max-width: 400px; margin: 0 auto;">
+            <div class="progress-custom-fill" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <h6 style="font-weight: 700; margin-bottom: 16px;">Document Status</h6>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">National ID</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">Business Photo</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">KRA PIN</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">Bank Account</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">Phone Verified</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item completed" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">Email Verified</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item pending" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">Business Registration</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="checklist-item pending" style="margin: 0;">
+              <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+              <div class="checklist-label-custom" style="font-size: 13px;">County Permit</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3" style="background: var(--pri-bg); border-radius: var(--radius-md); border: 1px solid rgba(16,185,129,0.2);">
+          <h6 style="font-weight: 700; margin-bottom: 8px;">📈 Your Current Privileges:</h6>
+          <div class="row g-2" style="font-size: 13px;">
+            <div class="col-6"><i class="fa-solid fa-check me-2" style="color: var(--pri);"></i>Daily limit: KES 500,000</div>
+            <div class="col-6"><i class="fa-solid fa-check me-2" style="color: var(--pri);"></i>20 beneficiaries</div>
+            <div class="col-6"><i class="fa-solid fa-check me-2" style="color: var(--pri);"></i>Bulk payments (50)</div>
+            <div class="col-6"><i class="fa-solid fa-check me-2" style="color: var(--pri);"></i>Payment links</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#wizardModal">Continue Onboarding</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 8: Full Checklist -->
+<div class="modal fade" id="checklistModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-clipboard-list me-2"></i>Full Document Checklist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <h6 style="font-weight: 700; margin-bottom: 12px;">✅ Completed (6)</h6>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Owner's National ID (Front & Back)</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 6</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Business Photo / Logo</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 8</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">KRA PIN Certificate</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 9</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Bank Account Verification</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 7</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Phone Number Verified</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 5</span>
+        </div>
+        <div class="checklist-item completed">
+          <div class="checklist-icon-custom"><i class="fa-solid fa-check"></i></div>
+          <div class="checklist-label-custom">Email Verified</div>
+          <span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700); font-size: 10px;">Verified Aug 5</span>
+        </div>
+
+        <h6 style="font-weight: 700; margin: 24px 0 12px;">⏳ Pending (4)</h6>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Business Registration Certificate</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">County Business Permit</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Recent Bank Statement (3 months)</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+        <div class="checklist-item pending">
+          <div class="checklist-icon-custom"><i class="fa-regular fa-clock"></i></div>
+          <div class="checklist-label-custom">Utility Bill (Proof of Address)</div>
+          <button class="btn btn-emerald btn-sm-custom" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fa-solid fa-upload me-2"></i>Upload All Missing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 9: Benefits Detail -->
+<div class="modal fade" id="benefitsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-gift me-2"></i>Benefits Comparison</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="table-responsive">
+          <table class="table" style="font-size: 14px;">
+            <thead>
+              <tr style="background: var(--surface-2);">
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Feature</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Basic</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Enhanced</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Certified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding: 12px;">Business Profile</td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td></tr>
+              <tr><td style="padding: 12px;">Mobile Money</td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td></tr>
+              <tr><td style="padding: 12px;">Transaction History</td><td style="padding: 12px;">Basic</td><td style="padding: 12px;">Enhanced</td><td style="padding: 12px; color: var(--pri);"><strong>Full</strong></td></tr>
+              <tr><td style="padding: 12px;">Analytics</td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;">Basic</td><td style="padding: 12px; color: var(--pri);"><strong>Full</strong></td></tr>
+              <tr><td style="padding: 12px;">Payment Links</td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-check" style="color: var(--pri);"></i></td></tr>
+              <tr><td style="padding: 12px;">API Access</td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px; color: var(--pri);"><i class="fa-solid fa-check"></i></td></tr>
+              <tr><td style="padding: 12px;">International Transfers</td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px; color: var(--pri);"><i class="fa-solid fa-check"></i></td></tr>
+              <tr><td style="padding: 12px;">Priority Support</td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px;"><i class="fa-solid fa-xmark" style="color: var(--ink-300);"></i></td><td style="padding: 12px; color: var(--pri);"><i class="fa-solid fa-check"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upgrade to Certified</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 10: Activity Log -->
+<div class="modal fade" id="activityModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-clock-rotate-left me-2"></i>Full Activity Log</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="table-responsive">
+          <table class="table table-hover" style="font-size: 14px;">
+            <thead>
+              <tr style="background: var(--surface-2);">
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Date & Time</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Action</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Document</th>
+                <th style="border: none; padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--ink-500);">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding: 12px;">Aug 9, 2026 14:22</td><td style="padding: 12px;">Upload</td><td style="padding: 12px;"><strong>KRA PIN Certificate</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 8, 2026 11:45</td><td style="padding: 12px;">Upload</td><td style="padding: 12px;"><strong>Business Photo</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 7, 2026 09:10</td><td style="padding: 12px;">Verification</td><td style="padding: 12px;"><strong>Bank Account</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--warning-bg); color: #b45309;">Pending</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 6, 2026 16:30</td><td style="padding: 12px;">Upload</td><td style="padding: 12px;"><strong>National ID Front</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 6, 2026 16:31</td><td style="padding: 12px;">Upload</td><td style="padding: 12px;"><strong>National ID Back</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 5, 2026 10:00</td><td style="padding: 12px;">Verification</td><td style="padding: 12px;"><strong>Phone Number</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+              <tr><td style="padding: 12px;">Aug 5, 2026 09:45</td><td style="padding: 12px;">Verification</td><td style="padding: 12px;"><strong>Email Address</strong></td><td style="padding: 12px;"><span class="status-badge-custom" style="background: var(--pri-bg); color: var(--pri-700);">Verified</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald"><i class="fa-solid fa-download me-2"></i>Export Log</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 11: How To Guide -->
+<div class="modal fade" id="howToModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-header modal-header-emerald">
+        <h5 class="modal-title display-font"><i class="fa-solid fa-graduation-cap me-2"></i>How to Get Your Documents</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-emerald">
+        <div class="mb-4">
+          <h6 style="font-weight: 700; margin-bottom: 12px;">📋 Business Registration Certificate</h6>
+          <div class="p-3" style="background: var(--surface-2); border-radius: var(--radius-md);">
+            <ol style="margin: 0; padding-left: 20px; font-size: 14px;">
+              <li>Visit <strong>eCitizen portal</strong> (business.go.ke)</li>
+              <li>Create/login to your account</li>
+              <li>Click "Register Business Name"</li>
+              <li>Fill in business details (KES 150 fee)</li>
+              <li>Wait 3-5 days for approval</li>
+              <li>Download certificate</li>
+            </ol>
+          </div>
+        </div>
+        <div class="mb-4">
+          <h6 style="font-weight: 700; margin-bottom: 12px;">🏛️ County Business Permit</h6>
+          <div class="p-3" style="background: var(--surface-2); border-radius: var(--radius-md);">
+            <ol style="margin: 0; padding-left: 20px; font-size: 14px;">
+              <li>Visit your <strong>county government office</strong></li>
+              <li>Bring: ID, business registration, passport photo</li>
+              <li>Fill application form</li>
+              <li>Pay fee (KES 5,000-15,000 depending on county)</li>
+              <li>Wait 1-2 weeks for inspection & approval</li>
+            </ol>
+          </div>
+        </div>
+        <div class="mb-4">
+          <h6 style="font-weight: 700; margin-bottom: 12px;">🏦 Bank Statement (3 months)</h6>
+          <div class="p-3" style="background: var(--surface-2); border-radius: var(--radius-md);">
+            <ol style="margin: 0; padding-left: 20px; font-size: 14px;">
+              <li>Login to your <strong>online banking</strong> OR visit branch</li>
+              <li>Request statement for last 3 months</li>
+              <li>Download as PDF</li>
+              <li>Ensure it shows your name and account number</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <h6 style="font-weight: 700; margin-bottom: 12px;">💡 Utility Bill</h6>
+          <div class="p-3" style="background: var(--surface-2); border-radius: var(--radius-md);">
+            <ol style="margin: 0; padding-left: 20px; font-size: 14px;">
+              <li>Any recent bill: <strong>KPLC, Water, Internet</strong></li>
+              <li>Must show your name and address</li>
+              <li>Must be less than 3 months old</li>
+              <li>Download from provider's portal or use physical copy</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-emerald">
+        <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="fa-solid fa-upload me-2"></i>Start Uploading</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 12: Success Confirmation -->
+<div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-emerald">
+      <div class="modal-body modal-body-emerald text-center py-5">
+        <div style="width: 80px; height: 80px; background: var(--pri-bg); color: var(--pri); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px;">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h3 class="display-font" style="font-weight: 700; margin-bottom: 8px;">Documents Submitted!</h3>
+        <p style="color: var(--ink-500); margin-bottom: 24px;">Your documents have been received and are being processed. We'll notify you once verification is complete.</p>
+        
+        <div class="p-3 mb-4" style="background: var(--surface-2); border-radius: var(--radius-md); text-align: left;">
+          <div style="font-size: 13px; margin-bottom: 8px;"><strong>Reference:</strong> DOC-20260809-001</div>
+          <div style="font-size: 13px; margin-bottom: 8px;"><strong>Submitted:</strong> Aug 9, 2026 at 14:30</div>
+          <div style="font-size: 13px;"><strong>Expected Review:</strong> 24-48 hours</div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-soft" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-emerald" data-bs-dismiss="modal" onclick="showToast('You will be notified via email when verification is complete.')">Got It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+  <div id="emeraldToast" class="toast toast-emerald" role="alert">
+    <div class="toast-body d-flex align-items-center gap-2" style="padding: 16px;">
+      <i class="fa-solid fa-circle-check" style="color: var(--pri); font-size: 20px;"></i>
+      <span id="toastMessage">Operation successful</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Wizard Navigation
+let currentStep = 3;
+const totalSteps = 9;
+
+function wizardNavigate(direction) {
+  const newStep = currentStep + direction;
+  if (newStep < 1 || newStep > totalSteps) return;
+  
+  currentStep = newStep;
+  updateWizardUI();
+  
+  if (currentStep === totalSteps) {
+    document.getElementById('wizardNext').innerHTML = 'Submit<i class="fa-solid fa-check ms-2"></i>';
+  } else if (currentStep === totalSteps - 1) {
+    document.getElementById('wizardNext').innerHTML = 'Review<i class="fa-solid fa-arrow-right ms-2"></i>';
+  } else {
+    document.getElementById('wizardNext').innerHTML = 'Continue<i class="fa-solid fa-arrow-right ms-2"></i>';
+  }
+}
+
+function updateWizardUI() {
+  const steps = document.querySelectorAll('.step-item');
+  const connectors = document.querySelectorAll('.step-connector');
+  
+  steps.forEach((step, index) => {
+    const stepNum = index + 1;
+    step.classList.remove('active', 'done');
+    if (stepNum < currentStep) {
+      step.classList.add('done');
+      step.querySelector('.step-circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+    } else if (stepNum === currentStep) {
+      step.classList.add('active');
+      step.querySelector('.step-circle').textContent = stepNum;
+    } else {
+      step.querySelector('.step-circle').textContent = stepNum;
+    }
+  });
+  
+  connectors.forEach((connector, index) => {
+    if (index < currentStep - 1) {
+      connector.classList.add('done');
+    } else {
+      connector.classList.remove('done');
+    }
+  });
+  
+  document.getElementById('wizardPrev').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+}
+
+// Business Type Selection
+function selectBizType(element) {
+  document.querySelectorAll('.biz-type-card').forEach(card => card.classList.remove('selected'));
+  element.classList.add('selected');
+}
+
+function confirmBizType() {
+  const selected = document.querySelector('.biz-type-card.selected');
+  if (!selected) {
+    showToast('Please select a business type');
+    return;
+  }
+  bootstrap.Modal.getInstance(document.getElementById('bizTypeModal')).hide();
+  showToast('Business type selected successfully!');
+  setTimeout(() => {
+    new bootstrap.Modal(document.getElementById('wizardModal')).show();
+  }, 500);
+}
+
+// File Upload
+function handleFileUpload(files) {
+  const container = document.getElementById('uploadedFiles');
+  Array.from(files).forEach(file => {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item fade-in-up';
+    fileItem.innerHTML = `
+      <div class="file-icon"><i class="fa-regular fa-file"></i></div>
+      <div class="file-name">${file.name}</div>
+      <div class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+      <span class="status-badge-custom" style="background: var(--warning-bg); color: #b45309; font-size: 10px;">Processing</span>
+      <button class="btn btn-soft btn-sm-custom" style="padding: 4px 8px;" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+    `;
+    container.appendChild(fileItem);
+  });
+  showToast(`${files.length} file(s) uploaded successfully`);
+}
+
+function submitDocuments() {
+  bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+  setTimeout(() => {
+    new bootstrap.Modal(document.getElementById('successModal')).show();
+  }, 300);
+}
+
+// Drag and Drop
+const uploadZone = document.getElementById('uploadZone');
+if (uploadZone) {
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+  });
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    handleFileUpload(e.dataTransfer.files);
+  });
+}
+
+// Toast Notification
+function showToast(message) {
+  document.getElementById('toastMessage').textContent = message;
+  const toast = new bootstrap.Toast(document.getElementById('emeraldToast'), { delay: 3000 });
+  toast.show();
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  updateWizardUI();
+  
+  // Animate progress bar on load
+  setTimeout(() => {
+    document.querySelectorAll('.progress-custom-fill').forEach(bar => {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = width; }, 100);
+    });
+  }, 300);
+});
+</script>
+</body>
+</html>

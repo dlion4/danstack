@@ -1173,20 +1173,7 @@ input[type="date"].fc {
 	}
 }
 
-/* ======================= QUERY STATES ======================= */
-.errorBanner {
-	position: fixed;
-	top: 1rem;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 2100;
-	width: min(680px, calc(100vw - 2rem));
-	background: #fff;
-	border: 1px solid var(--pm-danger);
-	color: #dc2626;
-	border-radius: 14px;
-	box-shadow: var(--pm-shadow-lg);
-}
+
 
 .fxPage :global(.alert) {
 	margin-bottom: 0;

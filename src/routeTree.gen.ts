@@ -79,6 +79,7 @@ import { Route as PmAppSettingsRouteImport } from './routes/pm/app.settings'
 import { Route as PmAppReconciliationRouteImport } from './routes/pm/app.reconciliation'
 import { Route as PmAppPaymentRailsRouteImport } from './routes/pm/app.payment-rails'
 import { Route as PmAppOpsHealthRouteImport } from './routes/pm/app.ops-health'
+import { Route as PmAppOnboardingRouteImport } from './routes/pm/app.onboarding'
 import { Route as PmAppMobileMoneyRouteImport } from './routes/pm/app.mobile-money'
 import { Route as PmAppLiquidityRouteImport } from './routes/pm/app.liquidity'
 import { Route as PmAppKraGovernmentRouteImport } from './routes/pm/app.kra-government'
@@ -573,6 +574,11 @@ const PmAppPaymentRailsRoute = PmAppPaymentRailsRouteImport.update({
 const PmAppOpsHealthRoute = PmAppOpsHealthRouteImport.update({
   id: '/ops-health',
   path: '/ops-health',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppOnboardingRoute = PmAppOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => PmAppRoute,
 } as any)
 const PmAppMobileMoneyRoute = PmAppMobileMoneyRouteImport.update({
@@ -1490,6 +1496,7 @@ export interface FileRoutesByFullPath {
   '/pm/app/kra-government': typeof PmAppKraGovernmentRoute
   '/pm/app/liquidity': typeof PmAppLiquidityRoute
   '/pm/app/mobile-money': typeof PmAppMobileMoneyRoute
+  '/pm/app/onboarding': typeof PmAppOnboardingRoute
   '/pm/app/ops-health': typeof PmAppOpsHealthRoute
   '/pm/app/payment-rails': typeof PmAppPaymentRailsRoute
   '/pm/app/reconciliation': typeof PmAppReconciliationRoute
@@ -1678,6 +1685,7 @@ export interface FileRoutesByTo {
   '/pm/app/kra-government': typeof PmAppKraGovernmentRoute
   '/pm/app/liquidity': typeof PmAppLiquidityRoute
   '/pm/app/mobile-money': typeof PmAppMobileMoneyRoute
+  '/pm/app/onboarding': typeof PmAppOnboardingRoute
   '/pm/app/ops-health': typeof PmAppOpsHealthRoute
   '/pm/app/payment-rails': typeof PmAppPaymentRailsRoute
   '/pm/app/reconciliation': typeof PmAppReconciliationRoute
@@ -1875,6 +1883,7 @@ export interface FileRoutesById {
   '/pm/app/kra-government': typeof PmAppKraGovernmentRoute
   '/pm/app/liquidity': typeof PmAppLiquidityRoute
   '/pm/app/mobile-money': typeof PmAppMobileMoneyRoute
+  '/pm/app/onboarding': typeof PmAppOnboardingRoute
   '/pm/app/ops-health': typeof PmAppOpsHealthRoute
   '/pm/app/payment-rails': typeof PmAppPaymentRailsRoute
   '/pm/app/reconciliation': typeof PmAppReconciliationRoute
@@ -2071,6 +2080,7 @@ export interface FileRouteTypes {
     | '/pm/app/kra-government'
     | '/pm/app/liquidity'
     | '/pm/app/mobile-money'
+    | '/pm/app/onboarding'
     | '/pm/app/ops-health'
     | '/pm/app/payment-rails'
     | '/pm/app/reconciliation'
@@ -2259,6 +2269,7 @@ export interface FileRouteTypes {
     | '/pm/app/kra-government'
     | '/pm/app/liquidity'
     | '/pm/app/mobile-money'
+    | '/pm/app/onboarding'
     | '/pm/app/ops-health'
     | '/pm/app/payment-rails'
     | '/pm/app/reconciliation'
@@ -2455,6 +2466,7 @@ export interface FileRouteTypes {
     | '/pm/app/kra-government'
     | '/pm/app/liquidity'
     | '/pm/app/mobile-money'
+    | '/pm/app/onboarding'
     | '/pm/app/ops-health'
     | '/pm/app/payment-rails'
     | '/pm/app/reconciliation'
@@ -3078,6 +3090,13 @@ declare module '@tanstack/react-router' {
       path: '/ops-health'
       fullPath: '/pm/app/ops-health'
       preLoaderRoute: typeof PmAppOpsHealthRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/onboarding': {
+      id: '/pm/app/onboarding'
+      path: '/onboarding'
+      fullPath: '/pm/app/onboarding'
+      preLoaderRoute: typeof PmAppOnboardingRouteImport
       parentRoute: typeof PmAppRoute
     }
     '/pm/app/mobile-money': {
@@ -4146,6 +4165,7 @@ interface PmAppRouteChildren {
   PmAppKraGovernmentRoute: typeof PmAppKraGovernmentRoute
   PmAppLiquidityRoute: typeof PmAppLiquidityRoute
   PmAppMobileMoneyRoute: typeof PmAppMobileMoneyRoute
+  PmAppOnboardingRoute: typeof PmAppOnboardingRoute
   PmAppOpsHealthRoute: typeof PmAppOpsHealthRoute
   PmAppPaymentRailsRoute: typeof PmAppPaymentRailsRoute
   PmAppReconciliationRoute: typeof PmAppReconciliationRoute
@@ -4170,6 +4190,7 @@ const PmAppRouteChildren: PmAppRouteChildren = {
   PmAppKraGovernmentRoute: PmAppKraGovernmentRoute,
   PmAppLiquidityRoute: PmAppLiquidityRoute,
   PmAppMobileMoneyRoute: PmAppMobileMoneyRoute,
+  PmAppOnboardingRoute: PmAppOnboardingRoute,
   PmAppOpsHealthRoute: PmAppOpsHealthRoute,
   PmAppPaymentRailsRoute: PmAppPaymentRailsRoute,
   PmAppReconciliationRoute: PmAppReconciliationRoute,
@@ -4388,3 +4409,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

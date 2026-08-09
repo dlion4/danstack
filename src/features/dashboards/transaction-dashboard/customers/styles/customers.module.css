@@ -1173,20 +1173,7 @@ input[type="date"].fc {
 	}
 }
 
-/* ======================= QUERY STATES ======================= */
-.errorBanner {
-	position: fixed;
-	top: 1rem;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 2100;
-	width: min(680px, calc(100vw - 2rem));
-	background: #fff;
-	border: 1px solid var(--pm-danger);
-	color: #dc2626;
-	border-radius: 14px;
-	box-shadow: var(--pm-shadow-lg);
-}
+
 
 .customersPage :global(.alert) {
 	margin-bottom: 0;
@@ -1815,6 +1802,19 @@ input[type="date"].fc {
 	height: 100%;
 	border-radius: 999px;
 	background: linear-gradient(90deg, var(--pm-accent), var(--pm-primary-light));
+}
+
+/* wide stat-card breakdown bars (failed payments / refunds) */
+.barTrack {
+	height: 6px;
+	border-radius: 999px;
+	background: var(--pm-bg-2);
+	overflow: hidden;
+}
+.barFill {
+	height: 100%;
+	border-radius: 999px;
+	transition: width 0.4s ease;
 }
 
 .remCard {

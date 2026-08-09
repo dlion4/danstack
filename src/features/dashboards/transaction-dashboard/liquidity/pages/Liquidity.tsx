@@ -704,7 +704,7 @@ export default function Liquidity({
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
 
-	const { data, error, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-liquidity-float"],
 		queryFn: fetchLiquidityFloat,
 		staleTime: 60_000,
@@ -744,31 +744,6 @@ export default function Liquidity({
 
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.qLoading} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading liquidity center…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div className={cx("alert alert-danger", s.qError)} role="alert">
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Liquidity data unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/liquidity-float</code> — {(error as Error).message}.
-						Showing bundled sample data.
-					</div>
-				</div>
-			)}
-
 			<div className={s.stack}>
 				{/* ---------- page bar ---------- */}
 				<div className={s.pageBar}>
@@ -778,11 +753,11 @@ export default function Liquidity({
 							<Link to="/app/transfers">Transactions Hub</Link> /{" "}
 							<strong>Liquidity &amp; Float</strong>
 						</div>
-						<h1 className={s.pageTitle}>Liquidity &amp; Float</h1>
+						{/* <h1 className={s.pageTitle}>Liquidity &amp; Float</h1>
 						<p className={s.pageCopy}>
 							The money-fuel side of your settlements — what's in the tanks,
 							and how you move it so customers can always auto-settle.
-						</p>
+						</p> */}
 						<div className="d-flex align-items-center mt-2" style={{ gap: 10 }}>
 							<span className={cx(s.badge, s.badgeSuccess)}>
 								<i className="bi bi-bank2" /> Total Float {c.totalFloat}

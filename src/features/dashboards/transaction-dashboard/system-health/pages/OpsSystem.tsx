@@ -382,7 +382,7 @@ export default function OpsSystem() {
 		setModals((prev: typeof initialModalsState) => ({ ...prev, [key]: false }));
 	}, []);
 
-	const { data, error } = useQuery<OpsData>({
+	const { data } = useQuery<OpsData>({
 		queryKey: ["paymo-ops-system"],
 		queryFn: fetchOpsData,
 		staleTime: 30_000,
@@ -394,21 +394,6 @@ export default function OpsSystem() {
 
 	return (
 		<div className={s.systemHealthPage}>
-
-			{/* ===== Error Banner ===== */}
-			{error && (
-				<div className={s.errorBanner} role="alert">
-					<div className="d-flex align-items-center gap-2 p-3">
-						<i className="bi bi-exclamation-triangle" />
-						<div>
-							<strong>Failed to load operations data.</strong>
-							<div className={s.mutedSmall}>
-								Using cached data. Check your connection and try again.
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
 
 			<div className={s.content}>
 				{/* ===== HERO STATS ===== */}

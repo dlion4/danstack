@@ -716,8 +716,50 @@ function Ub({
 	);
 }
 
+function RingGauge({
+	pct,
+	color,
+	track,
+}: {
+	pct: number;
+	color: string;
+	track: string;
+}) {
+	const r = 20;
+	const c = 2 * Math.PI * r;
+	return (
+		<svg
+			width="52"
+			height="52"
+			viewBox="0 0 52 52"
+			className={styles.ring}
+			aria-hidden="true"
+		>
+			<circle
+				cx="26"
+				cy="26"
+				r={r}
+				fill="none"
+				stroke={track}
+				strokeWidth="5"
+			/>
+			<circle
+				cx="26"
+				cy="26"
+				r={r}
+				fill="none"
+				stroke={color}
+				strokeWidth="5"
+				strokeLinecap="round"
+				strokeDasharray={`${(pct / 100) * c} ${c}`}
+				transform="rotate(-90 26 26)"
+			/>
+		</svg>
+	);
+}
+
 export default function KraGovernment() {
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-kra-government"],
 		queryFn: fetchKra,
 		retry: 1,
@@ -725,7 +767,6 @@ export default function KraGovernment() {
 	});
 	const config = data ?? initialMockData;
 
-	const [errorDismissed, setErrorDismissed] = useState(false);
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 
 	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
@@ -734,27 +775,6 @@ export default function KraGovernment() {
 
 	return (
 		<div className={styles.kraGovernmentPage}>
-			{/* ---------- query error banner ---------- */}
-			{error && !errorDismissed && (
-				<div
-					className={`alert alert-danger alert-dismissible ${styles.errorBanner}`}
-					role="alert"
-				>
-					<strong>Could not load KRA & government data.</strong> Showing the
-					built-in defaults.{" "}
-					<span className="text-decoration-underline">
-						{String((error as Error).message ?? "")}
-					</span>
-					<button
-						type="button"
-						className="btn-close"
-						aria-label="Close"
-						onClick={() => setErrorDismissed(true)}
-					/>
-				</div>
-			)}
-
-
 			<div className={styles.main}>
 				{/* ======================= PAGE BAR ======================= */}
 				<div className={styles.pageBar}>
@@ -767,10 +787,10 @@ export default function KraGovernment() {
 							))}
 							<strong>{config.breadcrumb.current}</strong>
 						</div>
-						<h2 className={styles.pageH2}>
+						{/* <h2 className={styles.pageH2}>
 							{config.pageTitle}
 						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
+						<p className={styles.pageSub}>{config.pageSub}</p> */}
 					</div>
 					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
 						<button
@@ -804,34 +824,47 @@ export default function KraGovernment() {
 					{/* ======================= HERO STATS ======================= */}
 					<div className="row g-3">
 						<div className="col-lg-4">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff", fontSize: 22 }}
-								>
-									{config.hero.value}
+						<div className={styles.heroClip}>
+							<div className={styles.heroLedger}>
+								<i
+									className={`bi bi-bank2 ${styles.heroMark}`}
+									aria-hidden="true"
+								/>
+								<div className={styles.livePillRow}>
+									<span className={styles.livePill}>
+										<span className={styles.liveDot} />
+										{config.hero.live}
+									</span>
+									<span className={styles.heroEta}>iTax sync · 27 Jun 09:14</span>
 								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
+								<div className={styles.heroValue}>{config.hero.value}</div>
+								<p className={styles.heroDetail}>{config.hero.detail}</p>
+
+								{/* linked KRA PIN chips */}
+								<div className={styles.pinChips}>
+									{config.kraPins.rows.map((r, i) => (
+										<span key={i} className={styles.pinChip}>
+											{String(r[0]).replace("C:", "")}
+										</span>
+									))}
+								</div>
+
+								{/* obligations meter */}
+								<div className={styles.meterWrap}>
+									<div className={styles.meterHead}>
+										<span>Obligations this month</span>
+										<span>5 · 65% met</span>
+									</div>
+									<div className={styles.meter}>
+										{[0, 1, 2, 3, 4].map((i) => (
+											<span
+												key={i}
+												className={i < 3.25 ? styles.meterOn : styles.meterOff}
+											/>
+										))}
+									</div>
+								</div>
+
 								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
 									{config.hero.buttons.map((b) => (
 										<button
@@ -845,68 +878,92 @@ export default function KraGovernment() {
 								</div>
 							</div>
 						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div
-									className={styles.card}
-									style={{
-										minHeight: 170,
-										...(card.bordered
-											? { borderLeft: "3px solid var(--pm-accent)" }
-											: {}),
-									}}
-								>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
-										{card.valueSuffix && (
-											<span style={{ fontSize: 14, color: "var(--pm-muted)" }}>
-												{card.valueSuffix}
-											</span>
-										)}
-									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
+						</div>
+						{config.statCards.map((card) => {
+							const isDial = card.key === "score";
+							const shapeCls = isDial
+								? styles.shapeDial
+								: card.key === "due"
+									? styles.shapeCut
+									: styles.shapeStack;
+							return (
+								<div className={card.colClass} key={card.key}>
+									<div
+										className={`${styles.card} ${styles.statCard} ${shapeCls}`}
+										style={{
+											minHeight: 196,
+											borderTop: `3px solid ${card.labelColor}`,
+										}}
 									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-									{card.progress && (
-										<div className="mt-2">
-											<div className={styles.pmProgress}>
-												<div
-													className={styles.pmProgressBar}
-													style={{
-														width: card.progress.width,
-														background: card.progress.color,
-													}}
+										{isDial && (
+											<div className={styles.dialMedal}>
+												<RingGauge
+													pct={94}
+													color="var(--pm-accent)"
+													track="var(--pm-accent-soft)"
 												/>
 											</div>
-											<div
-												style={{
-													fontSize: 11,
-													color: "var(--pm-muted)",
-													marginTop: 4,
-												}}
-											>
-												{card.progress.note}
+										)}
+										<div className={styles.statTopRow}>
+											<p className={styles.sl} style={{ color: card.labelColor }}>
+												{card.label}
+											</p>
+											<span
+													className={styles.statChip}
+													style={{ background: card.labelColor, color: "#fff" }}
+												>
+													<i className={`bi ${card.badge.icon}`} />
+												</span>
+										</div>
+										<div className={styles.statMainRow}>
+											<div className={styles.sv} style={{ fontSize: 30 }}>
+												{card.value}
+												{card.valueSuffix && (
+													<span className={styles.statSuffix}>
+														{card.valueSuffix}
+													</span>
+												)}
 											</div>
+											{card.key === "savings" && (
+												<div className={styles.spark}>
+													{[30, 45, 40, 62, 55, 74, 90, 82].map((h, i) => (
+														<i key={i} style={{ height: `${h}%` }} />
+													))}
+												</div>
+											)}
 										</div>
-									)}
-									{card.lines.length > 0 && (
-										<div
-											className="mt-2"
-											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+										<span
+											className={`${styles.badge} ${styles[card.badge.tone]}`}
 										>
-											{card.lines.map((li) => (
-												<div key={li}>{li}</div>
-											))}
-										</div>
-									)}
+											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										</span>
+										{card.progress && (
+											<div className={styles.progressBlock}>
+												<div className={styles.pmProgress}>
+													<div
+															className={styles.pmProgressBar}
+															style={{
+																width: card.progress.width,
+																background: card.progress.color,
+															}}
+														/>
+													</div>
+													<div className={styles.progressNote}>
+														{card.progress.note}
+													</div>
+												</div>
+											)}
+										{card.lines.length > 0 && (
+											<div className={styles.statFoot}>
+												{card.lines.map((li) => (
+													<span key={li}>{li}</span>
+												))}
+											</div>
+										)}
+									</div>
 								</div>
-							</div>
-						))}
+							);
+						})}
 					</div>
 
 					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}

@@ -9,7 +9,6 @@
  *     `initialMockData` rendered with .map() — NO innerHTML anywhere;
  *   - data loads through TanStack Query (fetchReconciliationCenter →
  *     GET /api/reconciliation-center) with the bundled mock as fallback;
- *     Bootstrap .spinner-border covers isLoading, .alert-danger covers error;
  *   - the legacy pm-sidebar + pm-header chrome is replaced by the shared
  *     AppShell (this page renders inside routes/app.tsx <Outlet />);
  *   - all 19 Bootstrap-JS modals + flows{} + sw() + doAction() became React
@@ -659,7 +658,7 @@ export default function Reconciliation() {
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
 
-	const { data, error, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["paymo-reconciliation-center"],
 		queryFn: fetchReconciliationCenter,
 		staleTime: 60_000,
@@ -706,31 +705,6 @@ export default function Reconciliation() {
 
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
-			{/* ===== TanStack Query: loading spinner ===== */}
-			{isLoading && (
-				<div className={s.qLoading} role="status" aria-live="polite">
-					<div
-						className="spinner-border"
-						style={{ width: "3rem", height: "3rem" }}
-					/>
-					<span>Loading reconciliation center…</span>
-				</div>
-			)}
-
-			{/* ===== TanStack Query: error banner ===== */}
-			{error && (
-				<div className={cx("alert alert-danger", s.qError)} role="alert">
-					<strong>
-						<i className="bi bi-exclamation-triangle me-2" />
-						Reconciliation data unavailable
-					</strong>
-					<div className="small mt-1">
-						<code>/api/reconciliation-center</code> — {(error as Error).message}
-						. Showing bundled sample data.
-					</div>
-				</div>
-			)}
-
 			<div className={s.stack}>
 				{/* ---------- page bar ---------- */}
 				<div className={s.pageBar}>
