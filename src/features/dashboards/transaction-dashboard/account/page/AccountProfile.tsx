@@ -171,9 +171,136 @@ const activity = [
 	},
 ];
 
+const transactionLimits = [
+	{ id: 1, account: 'PayMo KES Wallet', type: 'Primary', dailyLimit: 500000, dailyUsed: 320000, monthlyLimit: 2000000, monthlyUsed: 1284300, status: 'Active' },
+	{ id: 2, account: 'Utility Account', type: 'Sub-account', dailyLimit: 200000, dailyUsed: 45000, monthlyLimit: 800000, monthlyUsed: 320000, status: 'Active' },
+	{ id: 3, account: 'Services Account', type: 'Sub-account', dailyLimit: 300000, dailyUsed: 180000, monthlyLimit: 1200000, monthlyUsed: 540000, status: 'Active' },
+	{ id: 4, account: 'PayMo USD Account', type: 'Multi-currency', dailyLimit: 10000, dailyUsed: 1200, monthlyLimit: 50000, monthlyUsed: 8500, status: 'Active' },
+];
+
+const businessAccounts = [
+	{ id: 1, name: 'TechVentures Ltd', accountNumber: '•••• 4521', balance: 'KES 2,450,000', dailyLimit: 5000000, dailyUsed: 1200000, status: 'Active', tier: 'Business Plus' },
+	{ id: 2, name: 'GreenGrocery Co', accountNumber: '•••• 8832', balance: 'KES 890,000', dailyLimit: 2000000, dailyUsed: 450000, status: 'Active', tier: 'Business Standard' },
+	{ id: 3, name: 'Swift Logistics', accountNumber: '•••• 2210', balance: 'KES 1,120,000', dailyLimit: 3000000, dailyUsed: 890000, status: 'Active', tier: 'Business Plus' },
+];
+
+const externalAccounts = [
+	{ id: 1, type: 'Bank', name: 'Equity Bank', accountNumber: '•••• 4521', currency: 'KES', status: 'Verified', lastUsed: 'Today, 14:22', isDefault: true },
+	{ id: 2, type: 'Bank', name: 'KCB Bank', accountNumber: '•••• 7782', currency: 'KES', status: 'Verified', lastUsed: '25 Jun 2025', isDefault: false },
+	{ id: 3, type: 'Mobile Money', name: 'M-Pesa', accountNumber: '0712 345 890', currency: 'KES', status: 'Verified', lastUsed: 'Yesterday, 09:10', isDefault: false },
+	{ id: 4, type: 'Mobile Money', name: 'Airtel Money', accountNumber: '0733 456 789', currency: 'KES', status: 'Verified', lastUsed: '20 Jun 2025', isDefault: false },
+	{ id: 5, type: 'Bank', name: 'Standard Chartered', accountNumber: '•••• 9932', currency: 'USD', status: 'Pending', lastUsed: 'Never', isDefault: false },
+];
+
+const autoPayouts = [
+	{ id: 1, name: 'Daily Sweep to Equity', type: 'Daily', amount: 'KES 100,000', destination: 'Equity Bank •••• 4521', status: 'Active', nextRun: 'Today, 18:00' },
+	{ id: 2, name: 'Weekly Business Transfer', type: 'Weekly', amount: 'KES 250,000', destination: 'TechVentures Ltd', status: 'Active', nextRun: 'Monday, 09:00' },
+	{ id: 3, name: 'Instant Client Payouts', type: 'Instant', amount: '100% of collections', destination: 'M-Pesa 0712 345 890', status: 'Active', nextRun: 'Real-time' },
+	{ id: 4, name: 'Monthly Savings', type: 'Monthly', amount: 'KES 50,000', destination: 'PayMo Savings Goal', status: 'Paused', nextRun: 'Paused' },
+];
+
+const securityLimits = [
+	{ id: 1, transferType: 'Internal PayMo Transfer', threshold: 500000, requiresOTP: true, otpMethod: 'WhatsApp', status: 'Active' },
+	{ id: 2, transferType: 'External Bank Transfer', threshold: 100000, requiresOTP: true, otpMethod: 'SMS + WhatsApp', status: 'Active' },
+	{ id: 3, transferType: 'Mobile Money Transfer', threshold: 50000, requiresOTP: true, otpMethod: 'SMS', status: 'Active' },
+	{ id: 4, transferType: 'International Transfer', threshold: 10000, requiresOTP: true, otpMethod: 'SMS + WhatsApp + Email', status: 'Active' },
+	{ id: 5, transferType: 'Bill Payment', threshold: 200000, requiresOTP: false, otpMethod: '—', status: 'Disabled' },
+];
+
+const countryRestrictions = [
+	{ id: 1, country: 'Kenya', code: 'KE', status: 'Allowed', verification: 'None', transferLimit: 'Unlimited' },
+	{ id: 2, country: 'Uganda', code: 'UG', status: 'Allowed', verification: 'KYC Required', transferLimit: 'KES 500,000' },
+	{ id: 3, country: 'Tanzania', code: 'TZ', status: 'Allowed', verification: 'KYC Required', transferLimit: 'KES 500,000' },
+	{ id: 4, country: 'Rwanda', code: 'RW', status: 'Allowed', verification: 'KYC Required', transferLimit: 'KES 300,000' },
+	{ id: 5, country: 'United States', code: 'US', status: 'Restricted', verification: 'Enhanced KYC + KRA', transferLimit: 'KES 1,000,000' },
+	{ id: 6, country: 'United Kingdom', code: 'GB', status: 'Restricted', verification: 'Enhanced KYC + KRA', transferLimit: 'KES 1,000,000' },
+	{ id: 7, country: 'United Arab Emirates', code: 'AE', status: 'Blocked', verification: 'Not permitted', transferLimit: 'KES 0' },
+];
+
+const riskMitigation = [
+	{ id: 1, threshold: 1000000, currency: 'KES', requirement: 'KYC Verification', status: 'Active', appliesTo: 'All transfers' },
+	{ id: 2, threshold: 1000000, currency: 'KES', requirement: 'KRA PIN Verification', status: 'Active', appliesTo: 'Business transfers' },
+	{ id: 3, threshold: 5000000, currency: 'KES', requirement: 'Source of Funds Declaration', status: 'Active', appliesTo: 'International transfers' },
+	{ id: 4, threshold: 10000000, currency: 'KES', requirement: 'Manual Compliance Review', status: 'Active', appliesTo: 'All transfers' },
+];
+
+const transactionNotifications = [
+	{ id: 1, event: 'All Transactions', channels: ['SMS', 'Email', 'WhatsApp', 'Push'], status: 'Enabled' },
+	{ id: 2, event: 'High-Value Transfers (>KES 100,000)', channels: ['SMS', 'WhatsApp', 'Email'], status: 'Enabled' },
+	{ id: 3, event: 'International Transfers', channels: ['SMS', 'Email'], status: 'Enabled' },
+	{ id: 4, event: 'Failed Transactions', channels: ['SMS', 'Email', 'Push'], status: 'Enabled' },
+	{ id: 5, event: 'Limit Reached Warnings', channels: ['Push', 'Email'], status: 'Enabled' },
+	{ id: 6, event: 'Security Alerts', channels: ['SMS', 'WhatsApp', 'Email', 'Push'], status: 'Enabled' },
+];
+
+const feeStructure = [
+	{ id: 1, type: 'PayMo to PayMo', fee: 'FREE', description: 'Instant transfers between PayMo accounts' },
+	{ id: 2, type: 'PayMo to M-Pesa', fee: 'KES 25', description: 'Standard mobile money withdrawal' },
+	{ id: 3, type: 'PayMo to Airtel Money', fee: 'KES 25', description: 'Standard mobile money withdrawal' },
+	{ id: 4, type: 'PayMo to Bank (Local)', fee: 'KES 50', description: 'Instant bank transfer (PesaLink)' },
+	{ id: 5, type: 'PayMo to Bank (International)', fee: '1.5%', description: 'SWIFT transfer (min KES 500)' },
+	{ id: 6, type: 'Bill Payment', fee: 'KES 10', description: 'Utility and service bill payments' },
+	{ id: 7, type: 'Card Purchase', fee: '0.5%', description: 'Virtual/physical card transactions' },
+];
+
+const accountHierarchy = [
+	{ id: 1, name: 'PayMo KES Wallet (Primary)', balance: 'KES 1,284,300', type: 'Primary', children: ['Utility Account', 'Services Account'] },
+	{ id: 2, name: 'Utility Account', balance: 'KES 150,000', type: 'Sub-account', parent: 'PayMo KES Wallet', fundingSource: 'Auto-draw from primary' },
+	{ id: 3, name: 'Services Account', balance: 'KES 85,000', type: 'Sub-account', parent: 'PayMo KES Wallet', fundingSource: 'Auto-draw from primary' },
+	{ id: 4, name: 'PayMo USD Account', balance: 'USD 2,410.80', type: 'Multi-currency', children: [], fundingSource: 'Manual funding' },
+	{ id: 5, name: 'PayMo Business Account', balance: 'KES 6,150,000', type: 'Business', children: [], fundingSource: 'Independent' },
+];
+
+const linkedBusinesses = [
+	{
+		id: 1,
+		name: 'TechVentures Ltd',
+		type: 'Online Business',
+		domain: 'techventures.co.ke',
+		dateRegistered: '15 Jan 2023',
+		documents: ['Certificate of Incorporation', 'KRA PIN Certificate', 'Director IDs', 'Business Permit'],
+		region: 'Nairobi (Westlands)',
+		status: 'Verified',
+		tier: 'Business Plus',
+	},
+	{
+		id: 2,
+		name: 'GreenGrocery Co',
+		type: 'Local Shop',
+		domain: 'N/A',
+		dateRegistered: '08 Mar 2023',
+		documents: ['Business Registration', 'KRA PIN Certificate', 'Trade License', 'Health Certificate'],
+		region: 'Nairobi (Kilimani)',
+		status: 'Verified',
+		tier: 'Business Standard',
+	},
+	{
+		id: 3,
+		name: 'Swift Logistics',
+		type: 'Transport Services',
+		domain: 'swiftlogistics.ke',
+		dateRegistered: '22 May 2023',
+		documents: ['Certificate of Incorporation', 'KRA PIN Certificate', 'NTSA License', 'Insurance Certificate'],
+		region: 'Nairobi (Industrial Area)',
+		status: 'Verified',
+		tier: 'Business Plus',
+	},
+	{
+		id: 4,
+		name: 'All Furniture Kenya',
+		type: 'Local Shop',
+		domain: 'allfurniture.co.ke',
+		dateRegistered: '10 Sep 2023',
+		documents: ['Business Registration', 'KRA PIN Certificate', 'Trade License', 'Fire Safety Certificate'],
+		region: 'Mombasa (Nyali)',
+		status: 'Verified',
+		tier: 'Business Standard',
+	},
+];
+
 const fetchProfileData = async () => {
 	await new Promise((resolve) => setTimeout(resolve, 600));
-	return { profile, accounts, cards, activity };
+	return { profile, accounts, cards, activity, transactionLimits, businessAccounts, externalAccounts, autoPayouts, securityLimits, countryRestrictions, riskMitigation, transactionNotifications, feeStructure, accountHierarchy, linkedBusinesses };
 };
 
 /* ------------------------------------------------------------------ */
@@ -245,10 +372,10 @@ export default function AccountProfile() {
 	const { data } = useQuery({
 		queryKey: ['accountProfileData'],
 		queryFn: fetchProfileData,
-		initialData: { profile, accounts, cards, activity },
+		initialData: { profile, accounts, cards, activity, transactionLimits, businessAccounts, externalAccounts, autoPayouts, securityLimits, countryRestrictions, riskMitigation, transactionNotifications, feeStructure, accountHierarchy, linkedBusinesses },
 	});
 
-	const { profile: p, accounts: accs, cards: cardsList, activity: act } = data;
+	const { profile: p, accounts: accs, cards: cardsList, activity: act, transactionLimits: limits = [], businessAccounts: biz = [], externalAccounts: ext = [], autoPayouts: payouts = [], securityLimits: secLimits = [], countryRestrictions: countries = [], riskMitigation: risks = [], transactionNotifications: notifs = [], feeStructure: fees = [], accountHierarchy: hierarchy = [], linkedBusinesses: businesses = [] } = data;
 
 	return (
 		<div className={styles.pageRoot}>
@@ -384,31 +511,31 @@ export default function AccountProfile() {
 							</div>
 							{[
 								{
+									icon: 'bi bi-exclamation-circle',
+									bg: 'var(--danger-bg)',
+									color: 'var(--danger)',
+									title: 'Daily limit 64% used',
+									desc: 'KES 320,000 / 500,000 • 18:00 reset',
+									action: 'Manage',
+									modal: 'transactionLimitsModal',
+								},
+								{
 									icon: 'bi bi-clock',
 									bg: 'var(--warning-bg)',
 									color: 'var(--warning)',
-									title: 'Password expires in 12 days',
-									desc: 'Last changed 89 days ago',
-									action: 'Update',
-									modal: 'changePasswordModal',
-								},
-								{
-									icon: 'bi bi-phone',
-									bg: 'var(--danger-bg)',
-									color: 'var(--danger)',
-									title: 'Secondary phone not verified',
-									desc: 'Profile completeness at 98%',
+									title: 'External account pending',
+									desc: 'Standard Chartered USD awaiting verification',
 									action: 'Verify',
-									modal: 'editProfileModal',
+									modal: 'externalAccountsModal',
 								},
 								{
-									icon: 'bi bi-laptop',
+									icon: 'bi bi-shield-exclamation',
 									bg: 'var(--info-bg)',
 									color: 'var(--info)',
-									title: 'New login from Windows PC',
-									desc: 'Nairobi • 26 Jun 2025',
-									action: 'Review',
-									modal: 'sessionModal',
+									title: 'OTP threshold review',
+									desc: 'International transfers set at KES 10,000',
+									action: 'Adjust',
+									modal: 'securityLimitsModal',
 								},
 							].map((item) => (
 								<div className={styles.summaryRow} key={item.title}>
@@ -436,7 +563,7 @@ export default function AccountProfile() {
 									</div>
 									<button
 										className={`${styles.button} ${styles.buttonSmall}`}
-										onClick={() => openModal(item.modal)}
+									onClick={() => openModal(item.modal)}
 									>
 										{item.action}
 									</button>
@@ -458,31 +585,31 @@ export default function AccountProfile() {
 							</div>
 							{[
 								{
-									icon: 'bi bi-shield-check',
+									icon: 'bi bi-lightning-charge',
 									bg: 'var(--success-bg)',
 									color: 'var(--success)',
-									title: 'Enable biometric login on mobile',
-									desc: 'Faster & more secure than PIN',
-									action: 'Enable',
-									modal: 'enable2FAModal',
+									title: 'Enable instant client payouts',
+									desc: 'Auto-deposit collections to linked accounts',
+									action: 'Setup',
+									modal: 'autoPayoutsModal',
 								},
 								{
-									icon: 'bi bi-file-earmark',
-									bg: 'var(--purple-bg)',
-									color: 'var(--purple)',
-									title: 'Upload updated proof of address',
-									desc: 'Current document expires in 45 days',
-									action: 'Upload',
-									modal: 'kycModal',
+									icon: 'bi bi-graph-up-arrow',
+									bg: 'var(--pri-bg)',
+									color: 'var(--pri)',
+									title: 'Increase business limits',
+									desc: 'TechVentures at 24% of daily limit',
+									action: 'Upgrade',
+									modal: 'businessLimitsModal',
 								},
 								{
-									icon: 'bi bi-globe',
+									icon: 'bi bi-shield-check',
 									bg: 'var(--warning-bg)',
 									color: 'var(--warning)',
-									title: 'Review data sharing preferences',
-									desc: 'Last updated 11 months ago',
-									action: 'Review',
-									modal: 'privacyModal',
+									title: 'Add OTP for bill payments',
+									desc: 'Currently disabled • recommended for security',
+									action: 'Enable',
+									modal: 'securityLimitsModal',
 								},
 							].map((item) => (
 								<div className={styles.summaryRow} key={item.title}>
@@ -510,7 +637,7 @@ export default function AccountProfile() {
 									</div>
 									<button
 										className={`${styles.button} ${styles.buttonSmall}`}
-										onClick={() => openModal(item.modal)}
+									onClick={() => openModal(item.modal)}
 									>
 										{item.action}
 									</button>
@@ -527,33 +654,33 @@ export default function AccountProfile() {
 										<i className="bi bi-bolt" style={{ color: 'var(--acc)' }}></i>
 										Quick Actions
 									</h3>
-									<p className={styles.sectionSubtitle}>Frequent account tasks</p>
+									<p className={styles.sectionSubtitle}>Money & account tasks</p>
 								</div>
 							</div>
 							<div className={styles.quickGrid}>
-								<button className={styles.quickButton} onClick={() => openModal('editProfileModal')}>
-									<i className="bi bi-person" style={{ color: 'var(--pri)' }}></i> Edit Profile
+								<button className={styles.quickButton} onClick={() => openModal('transactionLimitsModal')}>
+									<i className="bi bi-sliders" style={{ color: 'var(--pri)' }}></i> Limits
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('changePasswordModal')}>
-									<i className="bi bi-key" style={{ color: 'var(--warning)' }}></i> Password
+								<button className={styles.quickButton} onClick={() => openModal('externalAccountsModal')}>
+									<i className="bi bi-link-45deg" style={{ color: 'var(--success)' }}></i> Link Account
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('bankAccountModal')}>
-									<i className="bi bi-bank" style={{ color: 'var(--success)' }}></i> New Account
+								<button className={styles.quickButton} onClick={() => openModal('autoPayoutsModal')}>
+									<i className="bi bi-arrow-repeat" style={{ color: 'var(--info)' }}></i> Auto Payout
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('virtualCardModal')}>
-									<i className="bi bi-credit-card" style={{ color: 'var(--info)' }}></i> New Card
+								<button className={styles.quickButton} onClick={() => openModal('securityLimitsModal')}>
+									<i className="bi bi-shield-lock" style={{ color: 'var(--danger)' }}></i> Security
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('linkedAccountsModal')}>
-									<i className="bi bi-link-45deg" style={{ color: 'var(--purple)' }}></i> Linked
+								<button className={styles.quickButton} onClick={() => openModal('countryRestrictionsModal')}>
+									<i className="bi bi-globe" style={{ color: 'var(--purple)' }}></i> Countries
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('kycModal')}>
-									<i className="bi bi-file-earmark-check" style={{ color: 'var(--acc)' }}></i> KYC
+								<button className={styles.quickButton} onClick={() => openModal('feeStructureModal')}>
+									<i className="bi bi-cash-coin" style={{ color: 'var(--warning)' }}></i> Fees
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('sessionModal')}>
-									<i className="bi bi-laptop" style={{ color: 'var(--danger)' }}></i> Sessions
+								<button className={styles.quickButton} onClick={() => openModal('businessLimitsModal')}>
+									<i className="bi bi-building" style={{ color: 'var(--acc)' }}></i> Business
 								</button>
-								<button className={styles.quickButton} onClick={() => openModal('downloadDataModal')}>
-									<i className="bi bi-download" style={{ color: 'var(--pri)' }}></i> Export
+								<button className={styles.quickButton} onClick={() => openModal('accountHierarchyModal')}>
+									<i className="bi bi-diagram-3" style={{ color: 'var(--pri)' }}></i> Hierarchy
 								</button>
 							</div>
 						</div>
@@ -733,12 +860,6 @@ export default function AccountProfile() {
 							>
 								<i className="bi bi-link-45deg"></i> Linked Accounts
 							</button>
-							<button
-								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
-								onClick={() => openModal('bankAccountModal')}
-							>
-								<i className="bi bi-plus-lg"></i> Open Account
-							</button>
 						</div>
 					</div>
 					<div className={styles.bankAccountGrid}>
@@ -811,12 +932,6 @@ export default function AccountProfile() {
 								Virtual and physical cards linked to your PayMo accounts.
 							</p>
 						</div>
-						<button
-							className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
-							onClick={() => openModal('virtualCardModal')}
-						>
-							<i className="bi bi-plus-lg"></i> Create Virtual Card
-						</button>
 					</div>
 					<div className={styles.cardsGrid}>
 						{cardsList.map((card) => (
@@ -870,81 +985,893 @@ export default function AccountProfile() {
 					</div>
 				</div>
 
-				{/* ---------- 18.2 PERSONAL & CONTACT DETAILS ---------- */}
+				{/* ---------- LINKED BUSINESSES ---------- */}
 				<div className={styles.card}>
 					<div className={styles.cardHeader}>
 						<div>
 							<h3 className={styles.sectionTitle}>
-								<i className="bi bi-person-lines-fill" style={{ color: 'var(--info)' }}></i>
-								Personal & Contact Details
+								<i className="bi bi-building" style={{ color: 'var(--pri)' }}></i> Linked
+								Businesses
 							</h3>
 							<p className={styles.sectionSubtitle}>
-								Update names, addresses, phone numbers, emails and emergency contacts.
+								All verified businesses linked to your account with registration details and documents.
 							</p>
 						</div>
-						<button
-							className={`${styles.button} ${styles.buttonSmall}`}
-							onClick={() => openModal('editProfileModal')}
-						>
-							<i className="bi bi-pencil"></i> Edit All
-						</button>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('linkBusinessModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Link Business
+							</button>
+						</div>
 					</div>
-					<div className={styles.detailsGrid}>
-						<div className={styles.detailBlock}>
-							<div className={styles.detailBlockTitle}>
-								<i className="bi bi-person" style={{ color: 'var(--info)' }}></i> Personal
-								Information
-							</div>
-							{[
-								{ name: 'Full Legal Name', value: 'Amina Grace Kamau' },
-								{ name: 'Preferred Name', value: 'Amina K.' },
-								{ name: 'National ID', value: '32890127', view: 'kycModal' },
-								{ name: 'Passport Number', value: 'AK392184', view: 'kycModal' },
-								{ name: 'Date of Birth', value: '14 March 1992' },
-								{ name: 'Gender', value: 'Female' },
-							].map((item) => (
-								<div className={styles.summaryRow} key={item.name}>
-									<div>
-										<strong style={{ fontSize: 13 }}>{item.name}</strong>
-										<div style={{ fontSize: 11, color: 'var(--ink-500)' }}>{item.value}</div>
-									</div>
-									<button
-										className={`${styles.button} ${styles.buttonSmall}`}
-										onClick={() => (item.view ? openModal(item.view) : openModal('editProfileModal'))}
-									>
-										{item.view ? 'View' : 'Edit'}
-									</button>
-								</div>
-							))}
-						</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Business Name</th>
+									<th>Type</th>
+									<th>Domain</th>
+									<th>Date Registered</th>
+									<th>Documents</th>
+									<th>Region</th>
+									<th>Status</th>
+									<th>Tier</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{businesses.map((business) => (
+									<tr key={business.id}>
+										<td>
+											<strong>{business.name}</strong>
+										</td>
+										<td>
+											<span className={`${styles.badge} ${
+												business.type === 'Online Business' ? styles.badgeInfo :
+												business.type === 'Local Shop' ? styles.badgeSuccess :
+												styles.badgePurple
+											}`}>
+												{business.type}
+											</span>
+										</td>
+										<td>{business.domain}</td>
+										<td>{business.dateRegistered}</td>
+										<td>
+											<div style={{ fontSize: 11, color: 'var(--ink-500)' }}>
+												{business.documents.length} documents
+											</div>
+										</td>
+										<td>{business.region}</td>
+										<td>
+											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+												<i className="bi bi-check-circle"></i> {business.status}
+											</span>
+										</td>
+										<td>{business.tier}</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('businessLimitsModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</div>
 
-						<div className={styles.detailBlock}>
-							<div className={styles.detailBlockTitle}>
-								<i className="bi bi-telephone" style={{ color: 'var(--success)' }}></i> Contact
-								Information
-							</div>
-							{[
-								{ name: 'Primary Phone', value: '+254 712 345 890' },
-								{ name: 'Secondary Phone', value: 'Not added', add: true },
-								{ name: 'Primary Email', value: 'amina.kamau@personal.co.ke' },
-								{ name: 'Work Email', value: 'amina@company.co.ke' },
-								{ name: 'Residential Address', value: 'Apt 3A, Lavington Green, Nairobi' },
-								{ name: 'Postal Address', value: 'P.O. Box 4521-00100, Nairobi' },
-							].map((item) => (
-								<div className={styles.summaryRow} key={item.name}>
-									<div>
-										<strong style={{ fontSize: 13 }}>{item.name}</strong>
-										<div style={{ fontSize: 11, color: 'var(--ink-500)' }}>{item.value}</div>
-									</div>
-									<button
-										className={`${styles.button} ${styles.buttonSmall}`}
-										onClick={() => openModal('editProfileModal')}
-									>
-										{item.add ? 'Add' : 'Edit'}
-									</button>
-								</div>
-							))}
+				{/* ---------- TRANSACTION LIMITS ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-sliders" style={{ color: 'var(--pri)' }}></i>
+								Transaction Limits
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Daily and monthly limits for your PayMo accounts and sub-accounts.
+							</p>
 						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('transactionLimitsModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('transactionLimitsModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Add Limit
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Account</th>
+									<th>Type</th>
+									<th>Daily Limit</th>
+									<th>Daily Used</th>
+									<th>Monthly Limit</th>
+									<th>Monthly Used</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{limits.map((limit) => (
+									<tr key={limit.id}>
+										<td>
+											<strong>{limit.account}</strong>
+										</td>
+										<td>{limit.type}</td>
+										<td>KES {limit.dailyLimit.toLocaleString()}</td>
+										<td>
+											<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+												<div style={{ flex: 1, minWidth: 60 }}>
+													<div className={styles.progressTrack} style={{ height: 6 }}>
+														<div
+															className={styles.progressBar}
+															style={{
+																width: `${(limit.dailyUsed / limit.dailyLimit) * 100}%`,
+																background: (limit.dailyUsed / limit.dailyLimit) > 0.8 ? 'var(--warning)' : 'var(--pri)',
+															}}
+														></div>
+													</div>
+												</div>
+												<span style={{ fontSize: 12, fontWeight: 600 }}>{Math.round((limit.dailyUsed / limit.dailyLimit) * 100)}%</span>
+											</div>
+										</td>
+										<td>KES {limit.monthlyLimit.toLocaleString()}</td>
+										<td>
+											<span style={{ fontSize: 13, fontWeight: 600 }}>KES {limit.monthlyUsed.toLocaleString()}</span>
+										</td>
+										<td>
+											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+												<i className="bi bi-check-circle"></i> {limit.status}
+											</span>
+										</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('transactionLimitsModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--success-bg)', borderRadius: 8, fontSize: 12, color: '#047857' }}>
+						<i className="bi bi-info-circle"></i> PayMo to PayMo transfers are FREE and unlimited. Limits apply to external transfers only.
+					</div>
+				</div>
+
+				{/* ---------- LINKED BUSINESS ACCOUNTS ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-building" style={{ color: 'var(--purple)' }}></i>
+								Linked Business Accounts
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Manage limits and access for your linked business accounts.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('businessLimitsModal')}
+							>
+								<i className="bi bi-sliders"></i> Limits
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('linkBusinessModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Link Business
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Business Name</th>
+									<th>Account Number</th>
+									<th>Balance</th>
+									<th>Daily Limit</th>
+									<th>Daily Used</th>
+									<th>Tier</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{biz.map((business) => (
+									<tr key={business.id}>
+										<td>
+											<strong>{business.name}</strong>
+										</td>
+										<td>{business.accountNumber}</td>
+										<td style={{ fontWeight: 600, color: 'var(--pri)' }}>{business.balance}</td>
+										<td>KES {business.dailyLimit.toLocaleString()}</td>
+										<td>
+											<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+												<div style={{ flex: 1, minWidth: 60 }}>
+													<div className={styles.progressTrack} style={{ height: 6 }}>
+														<div
+															className={styles.progressBar}
+															style={{
+																width: `${(business.dailyUsed / business.dailyLimit) * 100}%`,
+																background: (business.dailyUsed / business.dailyLimit) > 0.8 ? 'var(--warning)' : 'var(--pri)',
+															}}
+														></div>
+													</div>
+												</div>
+												<span style={{ fontSize: 12, fontWeight: 600 }}>{Math.round((business.dailyUsed / business.dailyLimit) * 100)}%</span>
+											</div>
+										</td>
+										<td>{business.tier}</td>
+										<td>
+											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+												<i className="bi bi-check-circle"></i> {business.status}
+											</span>
+										</td>
+										<td>
+											<div className="d-flex" style={{ gap: 6 }}>
+												<button
+													className={`${styles.button} ${styles.buttonSmall}`}
+													onClick={() => openModal('businessLimitsModal')}
+												>
+													<i className="bi bi-sliders"></i>
+												</button>
+												<button
+													className={`${styles.button} ${styles.buttonSmall}`}
+													onClick={() => openModal('unlinkBusinessModal')}
+												>
+													<i className="bi bi-link-unlink"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				{/* ---------- LINKED EXTERNAL ACCOUNTS ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-link-45deg" style={{ color: 'var(--success)' }}></i>
+								Linked External Accounts
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Bank accounts and mobile money wallets for external transfers.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('externalAccountsModal')}
+							>
+								<i className="bi bi-gear"></i> Manage
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('linkExternalModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Link Account
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Type</th>
+									<th>Bank / Wallet</th>
+									<th>Account Number</th>
+									<th>Currency</th>
+									<th>Status</th>
+									<th>Last Used</th>
+									<th>Default</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{ext.map((account) => (
+									<tr key={account.id}>
+										<td>
+											<span className={`${styles.badge} ${account.type === 'Bank' ? styles.badgeInfo : styles.badgePurple}`}>
+												{account.type}
+											</span>
+										</td>
+										<td>
+											<strong>{account.name}</strong>
+										</td>
+										<td>
+											<code style={{ fontSize: 12, background: 'var(--ink-100)', padding: '2px 6px', borderRadius: 4 }}>
+												{account.accountNumber}
+											</code>
+										</td>
+										<td>{account.currency}</td>
+										<td>
+											<span className={`${styles.badge} ${account.status === 'Verified' ? styles.badgeSuccess : styles.badgeWarning}`}>
+												<i className={`bi ${account.status === 'Verified' ? 'bi-check-circle' : 'bi-clock'}`}></i> {account.status}
+											</span>
+										</td>
+										<td style={{ fontSize: 13 }}>{account.lastUsed}</td>
+										<td>
+											{account.isDefault ? (
+												<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+													<i className="bi bi-star-fill"></i> Default
+												</span>
+											) : (
+												<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('externalAccountsModal')}>
+													Set Default
+												</button>
+											)}
+										</td>
+										<td>
+											<div className="d-flex" style={{ gap: 6 }}>
+												<button
+													className={`${styles.button} ${styles.buttonSmall}`}
+													onClick={() => openModal('externalAccountsModal')}
+												>
+													<i className="bi bi-pencil"></i>
+												</button>
+												<button
+													className={`${styles.button} ${styles.buttonSmall} ${styles.buttonDanger}`}
+													onClick={() => openModal('unlinkExternalModal')}
+												>
+													<i className="bi bi-trash"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				{/* ---------- AUTO PAYOUT SCHEDULING ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-arrow-repeat" style={{ color: 'var(--info)' }}></i>
+								Auto Payout Scheduling
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Automate transfers to external accounts on schedule or instantly.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('autoPayoutsModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('createPayoutModal')}
+							>
+								<i className="bi bi-plus-lg"></i> New Schedule
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Schedule Name</th>
+									<th>Type</th>
+									<th>Amount</th>
+									<th>Destination</th>
+									<th>Status</th>
+									<th>Next Run</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{payouts.map((payout) => (
+									<tr key={payout.id}>
+										<td>
+											<strong>{payout.name}</strong>
+										</td>
+										<td>
+											<span className={`${styles.badge} ${payout.type === 'Instant' ? styles.badgeSuccess : styles.badgeInfo}`}>
+												{payout.type}
+											</span>
+										</td>
+										<td style={{ fontWeight: 600, color: 'var(--pri)' }}>{payout.amount}</td>
+										<td>{payout.destination}</td>
+										<td>
+											<span className={`${styles.badge} ${payout.status === 'Active' ? styles.badgeSuccess : styles.badgeWarning}`}>
+												<i className={`bi ${payout.status === 'Active' ? 'bi-check-circle' : 'bi-pause-circle'}`}></i> {payout.status}
+											</span>
+										</td>
+										<td style={{ fontSize: 13 }}>{payout.nextRun}</td>
+										<td>
+											<div className="d-flex" style={{ gap: 6 }}>
+												<button
+													className={`${styles.button} ${styles.buttonSmall}`}
+													onClick={() => openModal('autoPayoutsModal')}
+												>
+													<i className="bi bi-pencil"></i>
+												</button>
+												<button
+													className={`${styles.button} ${styles.buttonSmall} ${payout.status === 'Active' ? styles.buttonDanger : styles.buttonPrimary}`}
+													onClick={() => openModal('autoPayoutsModal')}
+												>
+													<i className={`bi ${payout.status === 'Active' ? 'bi-pause' : 'bi-play'}`}></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--info-bg)', borderRadius: 8, fontSize: 12, color: '#1e40af' }}>
+						<i className="bi bi-lightning-charge"></i> Instant payouts automatically transfer funds when money is collected from clients. Perfect for real-time cash flow management.
+					</div>
+				</div>
+
+				{/* ---------- SECURITY LIMITS & OTP ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-shield-lock" style={{ color: 'var(--danger)' }}></i>
+								Security Limits & OTP Verification
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Protect against unauthorized transfers with OTP thresholds.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('securityLimitsModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('securityLimitsModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Add Rule
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Transfer Type</th>
+									<th>Threshold</th>
+									<th>Requires OTP</th>
+									<th>OTP Method</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{secLimits.map((limit) => (
+									<tr key={limit.id}>
+										<td>
+											<strong>{limit.transferType}</strong>
+										</td>
+										<td style={{ fontWeight: 600, color: 'var(--pri)' }}>KES {limit.threshold.toLocaleString()}</td>
+										<td>
+											<span className={`${styles.badge} ${limit.requiresOTP ? styles.badgeSuccess : styles.badgeWarning}`}>
+												<i className={`bi ${limit.requiresOTP ? 'bi-check-circle' : 'bi-x-circle'}`}></i> {limit.requiresOTP ? 'Yes' : 'No'}
+											</span>
+										</td>
+										<td>{limit.otpMethod}</td>
+										<td>
+											<span className={`${styles.badge} ${limit.status === 'Active' ? styles.badgeSuccess : styles.badgeOutline}`}>
+												{limit.status}
+											</span>
+										</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('securityLimitsModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--danger-bg)', borderRadius: 8, fontSize: 12, color: '#7f1d1d' }}>
+						<i className="bi bi-exclamation-triangle"></i> OTP verification adds an extra layer of security. Transfers above your set threshold will require confirmation via SMS, WhatsApp, or Email.
+					</div>
+				</div>
+
+				{/* ---------- COUNTRY RESTRICTIONS ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-globe" style={{ color: 'var(--purple)' }}></i>
+								Country Restrictions & Verification
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Control which countries you can transfer to and verification requirements.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('countryRestrictionsModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('countryRestrictionsModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Add Country
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Country</th>
+									<th>Code</th>
+									<th>Status</th>
+									<th>Verification Required</th>
+									<th>Transfer Limit</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{countries.map((country) => (
+									<tr key={country.id}>
+										<td>
+											<strong>{country.country}</strong>
+										</td>
+										<td>
+											<code style={{ fontSize: 12, background: 'var(--ink-100)', padding: '2px 6px', borderRadius: 4 }}>
+												{country.code}
+											</code>
+										</td>
+										<td>
+											<span className={`${styles.badge} ${
+												country.status === 'Allowed' ? styles.badgeSuccess :
+												country.status === 'Restricted' ? styles.badgeWarning :
+												styles.badgeDanger
+											}`}>
+												<i className={`bi ${
+													country.status === 'Allowed' ? 'bi-check-circle' :
+													country.status === 'Restricted' ? 'bi-exclamation-circle' :
+													'bi-x-circle'
+												}`}></i> {country.status}
+											</span>
+										</td>
+										<td style={{ fontSize: 13 }}>{country.verification}</td>
+										<td style={{ fontWeight: 600 }}>{country.transferLimit}</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('countryRestrictionsModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--info-bg)', borderRadius: 8, fontSize: 12, color: '#1e40af' }}>
+						<i className="bi bi-info-circle"></i> Transfers to Kenya (your national country) are free and unlimited. International transfers may require enhanced KYC and KRA verification.
+					</div>
+				</div>
+
+				{/* ---------- RISK MITIGATION ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-shield-check" style={{ color: 'var(--warning)' }}></i>
+								Risk Mitigation & High-Value Verification
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Automatic verification requirements for high-value transactions.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('riskMitigationModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Threshold</th>
+									<th>Currency</th>
+									<th>Requirement</th>
+									<th>Applies To</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{risks.map((risk) => (
+									<tr key={risk.id}>
+										<td style={{ fontWeight: 600, color: 'var(--pri)' }}>KES {risk.threshold.toLocaleString()}</td>
+										<td>{risk.currency}</td>
+										<td>
+											<strong>{risk.requirement}</strong>
+										</td>
+										<td style={{ fontSize: 13 }}>{risk.appliesTo}</td>
+										<td>
+											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+												<i className="bi bi-check-circle"></i> {risk.status}
+											</span>
+										</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('riskMitigationModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--warning-bg)', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
+						<i className="bi bi-exclamation-triangle"></i> Transactions above KES 1,000,000 require KYC verification. Business transfers above KES 1,000,000 also require KRA PIN verification.
+					</div>
+				</div>
+
+				{/* ---------- TRANSACTION FEE STRUCTURE ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-cash-coin" style={{ color: 'var(--acc)' }}></i>
+								Transaction Fee Structure
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Fees for different transfer types and payment methods.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('feeStructureModal')}
+							>
+								<i className="bi bi-info-circle"></i> Details
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Transfer Type</th>
+									<th>Fee</th>
+									<th>Description</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{fees.map((fee) => (
+									<tr key={fee.id}>
+										<td>
+											<strong>{fee.type}</strong>
+										</td>
+										<td>
+											<span style={{ fontWeight: 700, color: fee.fee === 'FREE' ? 'var(--success)' : 'var(--pri)' }}>
+												{fee.fee}
+											</span>
+										</td>
+										<td style={{ fontSize: 13 }}>{fee.description}</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('feeStructureModal')}
+											>
+												<i className="bi bi-info-circle"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--success-bg)', borderRadius: 8, fontSize: 12, color: '#047857' }}>
+						<i className="bi bi-check-circle"></i> <strong>PayMo to PayMo transfers are FREE</strong> — Send money instantly between PayMo accounts at no cost.
+					</div>
+				</div>
+
+				{/* ---------- ACCOUNT HIERARCHY & FUND FLOW ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-diagram-3" style={{ color: 'var(--pri)' }}></i>
+								Account Hierarchy & Fund Flow
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Primary wallet, sub-accounts, and automatic funding relationships.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('accountHierarchyModal')}
+							>
+								<i className="bi bi-diagram-3"></i> Visual View
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('createSubAccountModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Sub-Account
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Account Name</th>
+									<th>Balance</th>
+									<th>Type</th>
+									<th>Parent Account</th>
+									<th>Funding Source</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{hierarchy.map((acc) => (
+									<tr key={acc.id}>
+										<td>
+											<strong>{acc.name}</strong>
+											{acc.children && acc.children.length > 0 && (
+												<div style={{ fontSize: 11, color: 'var(--ink-500)', marginTop: 4 }}>
+													<i className="bi bi-diagram-2"></i> Sub-accounts: {acc.children.join(', ')}
+												</div>
+											)}
+										</td>
+										<td style={{ fontWeight: 600, color: 'var(--pri)' }}>{acc.balance}</td>
+										<td>
+											<span className={`${styles.badge} ${
+												acc.type === 'Primary' ? styles.badgeSuccess :
+												acc.type === 'Sub-account' ? styles.badgeInfo :
+												acc.type === 'Multi-currency' ? styles.badgePurple :
+												styles.badgeWarning
+											}`}>
+												{acc.type}
+											</span>
+										</td>
+										<td>{acc.parent || '—'}</td>
+										<td style={{ fontSize: 13 }}>{acc.fundingSource}</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('accountHierarchyModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--info-bg)', borderRadius: 8, fontSize: 12, color: '#1e40af' }}>
+						<i className="bi bi-info-circle"></i> Sub-accounts automatically draw funds from the primary wallet when needed. Set up utility and services accounts for better expense tracking.
+					</div>
+				</div>
+
+				{/* ---------- ADVANCED TRANSACTION NOTIFICATIONS ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-bell" style={{ color: 'var(--info)' }}></i>
+								Advanced Transaction Notifications
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Configure real-time alerts for all transaction events via multiple channels.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonSmall}`}
+								onClick={() => openModal('transactionNotificationsModal')}
+							>
+								<i className="bi bi-gear"></i> Configure
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('transactionNotificationsModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Add Rule
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Event</th>
+									<th>Notification Channels</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{notifs.map((notif) => (
+									<tr key={notif.id}>
+										<td>
+											<strong>{notif.event}</strong>
+										</td>
+										<td>
+											<div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+												{(notif.channels || []).map((channel) => (
+													<span key={channel} className={`${styles.badge} ${styles.badgeInfo}`} style={{ fontSize: 10 }}>
+														{channel}
+													</span>
+												))}
+											</div>
+										</td>
+										<td>
+											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+												<i className="bi bi-check-circle"></i> {notif.status}
+											</span>
+										</td>
+										<td>
+											<button
+												className={`${styles.button} ${styles.buttonSmall}`}
+												onClick={() => openModal('transactionNotificationsModal')}
+											>
+												<i className="bi bi-pencil"></i>
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--success-bg)', borderRadius: 8, fontSize: 12, color: '#047857' }}>
+						<i className="bi bi-check-circle"></i> Receive instant notifications via SMS, Email, WhatsApp, and Push for all transaction activities, security alerts, and limit warnings.
 					</div>
 				</div>
 

@@ -90,9 +90,16 @@ const apiKeys = [
 	{ name: 'Merchant Portal', key: 'pm_merch_3tR8••••••', lastUsed: '20 Jun 2025', status: 'Revoked', variant: 'danger' },
 ];
 
+const beneficiaries = [
+	{ id: '1', name: 'James Kamau', relation: 'Spouse', idNumber: '12345678', kraPin: 'A001234567P', accountType: 'PayMo Wallet', accountNumber: 'PM#31223', age: 35, status: 'Active', variant: 'success' },
+	{ id: '2', name: 'Grace Wanjiku', relation: 'Next of Kin', idNumber: '87654321', kraPin: 'A009876543Q', accountType: 'M-Pesa', accountNumber: '0722 456 789', age: 42, status: 'Active', variant: 'success' },
+	{ id: '3', name: 'David Kamau Jr.', relation: 'Child', idNumber: '—', kraPin: '—', accountType: 'Guardian Account', accountNumber: 'PM#31223 (Guardian)', age: 12, status: 'Minor', variant: 'warning' },
+	{ id: '4', name: 'Red Cross Kenya', relation: 'Charity', idNumber: 'NGO/001/2020', kraPin: '—', accountType: 'Bank Account', accountNumber: 'Equity 0123456789', age: null, status: 'Active', variant: 'success' },
+];
+
 const fetchSettingsData = async () => {
 	await new Promise((resolve) => setTimeout(resolve, 600));
-	return { sessions, auditLog, authMethods, notifications, kycDocs, apiKeys };
+	return { sessions, auditLog, authMethods, notifications, kycDocs, apiKeys, beneficiaries };
 };
 
 /* ------------------------------------------------------------------ */
@@ -122,6 +129,7 @@ function StatusBadge({ label, variant }: { label: string; variant: string }) {
 
 export default function AccountSettings() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [adminTab, setAdminTab] = useState(0);
 
 	const openModal = (id: string) => setModalState((prev) => ({ ...prev, [id]: true }));
 	const closeModal = (id: string) => setModalState((prev) => ({ ...prev, [id]: false }));
@@ -129,10 +137,10 @@ export default function AccountSettings() {
 	const { data } = useQuery({
 		queryKey: ['accountSettingsData'],
 		queryFn: fetchSettingsData,
-		initialData: { sessions, auditLog, authMethods, notifications, kycDocs, apiKeys },
+		initialData: { sessions, auditLog, authMethods, notifications, kycDocs, apiKeys, beneficiaries },
 	});
 
-	const { sessions: sess, auditLog: audit, authMethods: auth, notifications: notifs, kycDocs: kyc, apiKeys: keys } = data;
+	const { sessions: sess, auditLog: audit, authMethods: auth, notifications: notifs, kycDocs: kyc, apiKeys: keys, beneficiaries: benefs } = data;
 
 	return (
 		<div className={styles.pageRoot}>
@@ -794,6 +802,88 @@ export default function AccountSettings() {
 					</div>
 				</div>
 
+				{/* ---------- 18.7.1 BENEFICIARIES MANAGEMENT ---------- */}
+				<div className={styles.card}>
+					<div className={styles.cardHeader}>
+						<div>
+							<h3 className={styles.sectionTitle}>
+								<i className="bi bi-people" style={{ color: 'var(--pri)' }}></i>
+								Beneficiaries & Next of Kin
+							</h3>
+							<p className={styles.sectionSubtitle}>
+								Manage family members, next of kin, and charitable organizations for fund distribution.
+							</p>
+						</div>
+						<div className="d-flex" style={{ gap: 8 }}>
+							<button
+								className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonSmall}`}
+								onClick={() => openModal('addBeneficiaryModal')}
+							>
+								<i className="bi bi-plus-lg"></i> Add Beneficiary
+							</button>
+						</div>
+					</div>
+					<div className={styles.tableWrap}>
+						<table className={styles.table}>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Relation</th>
+									<th>ID / KRA PIN</th>
+									<th>Account Type</th>
+									<th>Account Number</th>
+									<th>Age</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{benefs.map((ben) => (
+									<tr key={ben.id}>
+										<td>
+											<strong>{ben.name}</strong>
+										</td>
+										<td>{ben.relation}</td>
+										<td>
+											<div style={{ fontSize: 13 }}>ID: {ben.idNumber}</div>
+											<div style={{ fontSize: 11, color: 'var(--ink-500)' }}>KRA: {ben.kraPin}</div>
+										</td>
+										<td>{ben.accountType}</td>
+										<td>
+											<code style={{ fontSize: 12, background: 'var(--ink-100)', padding: '2px 6px', borderRadius: 4 }}>
+												{ben.accountNumber}
+											</code>
+										</td>
+										<td>{ben.age ?? '—'}</td>
+										<td>
+											<StatusBadge label={ben.status} variant={ben.variant} />
+										</td>
+										<td>
+											<div className="d-flex" style={{ gap: 6 }}>
+												<button
+													className={`${styles.button} ${styles.buttonSmall}`}
+													onClick={() => openModal('editBeneficiaryModal')}
+												>
+													<i className="bi bi-pencil"></i>
+												</button>
+												<button
+													className={`${styles.button} ${styles.buttonSmall} ${styles.buttonDanger}`}
+													onClick={() => openModal('deleteBeneficiaryModal')}
+												>
+													<i className="bi bi-trash"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--info-bg)', borderRadius: 8, fontSize: 12, color: '#1e40af' }}>
+						<i className="bi bi-info-circle"></i> Beneficiaries are used for account closure fund distribution. Children under 18 require a guardian account setup.
+					</div>
+				</div>
+
 				{/* ---------- 18.8 ACCOUNT ADMINISTRATION ---------- */}
 				<div className={styles.card}>
 					<div className={styles.cardHeader}>
@@ -806,69 +896,183 @@ export default function AccountSettings() {
 								Account status, closure requests, reactivation and full lifecycle management.
 							</p>
 						</div>
-						<button
-							className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`}
-							onClick={() => openModal('closeAccountModal')}
-						>
-							Close Account
-						</button>
 					</div>
-					<div className="row g-3">
-						<div className="col-lg-6">
-							<div className={styles.detailBlock}>
-								<div className={styles.detailBlockTitle}>Account Status</div>
-								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Account Status</span>
-									<span className={`${styles.badge} ${styles.badgeSuccess}`}>Active</span>
+					<div className={styles.pills} style={{ marginBottom: 20 }}>
+						{["Overview", "Close Main Account", "Close Business Accounts"].map((tab, i) => (
+							<button
+								key={tab}
+								className={`${styles.pill} ${adminTab === i ? styles.pillActive : ""}`}
+								onClick={() => setAdminTab(i)}
+							>
+								{tab}
+							</button>
+						))}
+					</div>
+
+					{adminTab === 0 && (
+						<div className="row g-3">
+							<div className="col-lg-6">
+								<div className={styles.detailBlock}>
+									<div className={styles.detailBlockTitle}>Account Status</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Account Status</span>
+										<span className={`${styles.badge} ${styles.badgeSuccess}`}>Active</span>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Verification Level</span>
+										<span className={`${styles.badge} ${styles.badgeSuccess}`}>Full KYC</span>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Account Type</span>
+										<span style={{ fontWeight: 600, fontSize: 13 }}>Individual — Premium</span>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Created</span>
+										<span style={{ fontWeight: 600, fontSize: 13 }}>12 January 2023</span>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Last Login</span>
+										<span style={{ fontWeight: 600, fontSize: 13 }}>Today, 14:22 EAT</span>
+									</div>
 								</div>
+							</div>
+							<div className="col-lg-6">
+								<div className={styles.detailBlock}>
+									<div className={styles.detailBlockTitle}>Lifecycle Actions</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Download full account data</span>
+										<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('downloadDataModal')}>
+											Export
+										</button>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Linked accounts & wallets</span>
+										<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('linkedAccountsModal')}>
+											Manage
+										</button>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Request account reactivation</span>
+										<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('reactivateModal')}>
+											Request
+										</button>
+									</div>
+									<div className={styles.summaryRow}>
+										<span style={{ fontSize: 13 }}>Schedule account closure</span>
+										<button className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`} onClick={() => setAdminTab(1)}>
+											Schedule
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
+
+					{adminTab === 1 && (
+						<div style={{ padding: '20px 0' }}>
+							<div style={{ background: 'var(--danger-bg)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+								<div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+									<i className="bi bi-exclamation-triangle-fill" style={{ color: '#b91c1c', fontSize: 20 }} />
+									<strong style={{ color: '#b91c1c' }}>Close Main Account</strong>
+								</div>
+								<p style={{ fontSize: 13, color: '#b91c1c', margin: 0 }}>
+									Closing your main account is permanent. All balances will be transferred to your designated payout account.
+								</p>
+							</div>
+							<div className={styles.detailBlock}>
+								<div className={styles.detailBlockTitle}>Main Account Details</div>
 								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Verification Level</span>
-									<span className={`${styles.badge} ${styles.badgeSuccess}`}>Full KYC</span>
+									<span style={{ fontSize: 13 }}>Account Name</span>
+									<span style={{ fontWeight: 600, fontSize: 13 }}>Amina Grace Kamau</span>
 								</div>
 								<div className={styles.summaryRow}>
 									<span style={{ fontSize: 13 }}>Account Type</span>
 									<span style={{ fontWeight: 600, fontSize: 13 }}>Individual — Premium</span>
 								</div>
 								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Created</span>
-									<span style={{ fontWeight: 600, fontSize: 13 }}>12 January 2023</span>
+									<span style={{ fontSize: 13 }}>Current Balance</span>
+									<span style={{ fontWeight: 600, fontSize: 13, color: 'var(--pri)' }}>KES 1,284,300</span>
 								</div>
 								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Last Login</span>
-									<span style={{ fontWeight: 600, fontSize: 13 }}>Today, 14:22 EAT</span>
+									<span style={{ fontSize: 13 }}>Linked Business Accounts</span>
+									<span style={{ fontWeight: 600, fontSize: 13 }}>3 active</span>
 								</div>
 							</div>
-						</div>
-						<div className="col-lg-6">
-							<div className={styles.detailBlock}>
-								<div className={styles.detailBlockTitle}>Lifecycle Actions</div>
-								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Download full account data</span>
-									<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('downloadDataModal')}>
-										Export
-									</button>
-								</div>
-								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Linked accounts & wallets</span>
-									<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('linkedAccountsModal')}>
-										Manage
-									</button>
-								</div>
-								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Request account reactivation</span>
-									<button className={`${styles.button} ${styles.buttonSmall}`} onClick={() => openModal('reactivateModal')}>
-										Request
-									</button>
-								</div>
-								<div className={styles.summaryRow}>
-									<span style={{ fontSize: 13 }}>Schedule account closure</span>
-									<button className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`} onClick={() => openModal('closeAccountModal')}>
-										Schedule
-									</button>
-								</div>
+							<div style={{ marginTop: 20 }}>
+								<button
+									className={`${styles.button} ${styles.buttonDanger}`}
+									onClick={() => openModal('closeAccountModal')}
+								>
+									<i className="bi bi-x-circle" /> Close Main Account
+								</button>
+								<button
+									className={`${styles.button}`}
+									onClick={() => setAdminTab(0)}
+									style={{ marginLeft: 8 }}
+								>
+									Cancel
+								</button>
 							</div>
 						</div>
-					</div>
+					)}
+
+					{adminTab === 2 && (
+						<div style={{ padding: '20px 0' }}>
+							<div style={{ background: 'var(--info-bg)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+								<div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+									<i className="bi bi-building" style={{ color: '#1d4ed8', fontSize: 20 }} />
+									<strong style={{ color: '#1d4ed8' }}>Close Business Accounts</strong>
+								</div>
+								<p style={{ fontSize: 13, color: '#1e40af', margin: 0 }}>
+									Close linked business accounts individually. Each closure requires a fund payout destination.
+								</p>
+							</div>
+							{[
+								{ name: "TechVentures Ltd", detail: "Business Account • KES 2,450,000", status: "Active", grad: "linear-gradient(135deg,#7c3aed,#5b21b6)", letter: "T" },
+								{ name: "GreenGrocery Co", detail: "Business Account • KES 890,000", status: "Active", grad: "linear-gradient(135deg,#10b981,#059669)", letter: "G" },
+								{ name: "Swift Logistics", detail: "Business Account • KES 1,120,000", status: "Active", grad: "linear-gradient(135deg,#f59e0b,#d97706)", letter: "S" },
+							].map((biz) => (
+								<div className={styles.summaryRow} key={biz.name}>
+									<div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+										<div
+											style={{
+												width: 40,
+												height: 40,
+												borderRadius: 10,
+												background: biz.grad,
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												color: "#fff",
+												fontSize: 16,
+												fontWeight: 700,
+											}}
+										>
+											{biz.letter}
+										</div>
+										<div style={{ flex: 1 }}>
+											<div style={{ fontWeight: 600, fontSize: 14 }}>{biz.name}</div>
+											<div style={{ fontSize: 12, color: "var(--ink-500)" }}>{biz.detail}</div>
+										</div>
+									</div>
+									<button 
+										className={`${styles.button} ${styles.buttonSmall} ${styles.buttonDanger}`}
+										onClick={() => openModal('closeBusinessAccountModal')}
+									>
+										<i className="bi bi-x-circle" /> Close
+									</button>
+								</div>
+							))}
+							<div style={{ marginTop: 20 }}>
+								<button
+									className={`${styles.button}`}
+									onClick={() => setAdminTab(0)}
+								>
+									Back to Overview
+								</button>
+							</div>
+						</div>
+					)}
 				</div>
 
 				{/* ---------- AUDIT LOG ---------- */}

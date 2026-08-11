@@ -90,7 +90,7 @@
 	background: var(--surface);
 	color: var(--ink-900);
 	min-height: 100vh;
-	padding: calc(24px + var(--header-height)) 24px 24px;
+	padding: calc(24px) 24px 24px;
 	max-width: 100%;
 	overflow-x: hidden;
 }
@@ -916,6 +916,295 @@
 	cursor: not-allowed;
 }
 
+/* ---------- form control (alias for field, used in modals) ---------- */
+.formControl {
+	width: 100%;
+	padding: 12px 16px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	font-size: 14px;
+	transition: all 0.2s;
+	background: #fff;
+	color: var(--ink-900);
+}
+
+.formControl::placeholder {
+	color: var(--ink-300);
+}
+
+.formControl:focus {
+	outline: 0;
+	border-color: var(--pri);
+	box-shadow: var(--shadow-glow);
+}
+
+.formControl option {
+	background: #fff;
+	color: var(--ink-900);
+}
+
+.formControl[disabled] {
+	background: var(--ink-100);
+	color: var(--ink-500);
+	cursor: not-allowed;
+}
+
+/* ---------- form label (alias for fieldLabel, used in modals) ---------- */
+.formLabel {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ink-700);
+	margin-bottom: 8px;
+	display: block;
+}
+
+/* ---------- button variants (used in modals) ---------- */
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
+	border-radius: var(--radius-sm);
+	font-size: 14px;
+	font-weight: 600;
+	border: 1px solid var(--border);
+	background: #fff;
+	cursor: pointer;
+	transition: all 0.2s;
+	color: var(--ink-900);
+	min-height: 42px;
+	white-space: nowrap;
+}
+
+.button:hover {
+	background: var(--surface-2);
+	border-color: var(--pri);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-sm);
+}
+
+.button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.buttonPrimary {
+	background: var(--pri);
+	color: #fff;
+	border-color: transparent;
+	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+}
+
+.buttonPrimary:hover {
+	background: var(--pri-600);
+	color: #fff;
+	border-color: transparent;
+}
+
+.buttonSmall {
+	padding: 6px 14px;
+	font-size: 12px;
+	min-height: 32px;
+}
+
+.buttonDanger {
+	background: var(--danger-bg);
+	color: #dc2626;
+	border-color: rgba(239, 68, 68, 0.3);
+}
+
+.buttonDanger:hover {
+	background: var(--danger);
+	color: #fff;
+}
+
+.buttonAccent {
+	background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);
+	color: #fff;
+	border-color: transparent;
+	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+}
+
+.buttonAccent:hover {
+	background: linear-gradient(135deg, var(--pri-600) 0%, var(--pri-700) 100%);
+	color: #fff;
+	border-color: transparent;
+}
+
+/* ---------- summary row (used in modals) ---------- */
+.summaryRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.summaryRow:last-child {
+	border-bottom: none;
+}
+
+/* ---------- progress track and bar (used in modals) ---------- */
+.progressTrack {
+	width: 100%;
+	height: 8px;
+	background: var(--ink-100);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.progressBar {
+	height: 100%;
+	background: var(--pri);
+	border-radius: 999px;
+	transition: width 0.3s ease;
+}
+
+/* ---------- icon chip (used in modals) ---------- */
+.iconChip {
+	width: 40px;
+	height: 40px;
+	flex: 0 0 40px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	background: var(--surface-2);
+	color: var(--pri);
+}
+
+/* ---------- icon circle (used in modals) ---------- */
+.iconCircle {
+	width: 40px;
+	height: 40px;
+	flex: 0 0 40px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	background: var(--surface-2);
+	color: var(--ink-500);
+}
+
+.iconCircleSm {
+	width: 32px;
+	height: 32px;
+	flex: 0 0 32px;
+	font-size: 14px;
+}
+
+/* ---------- utility block (used in modals) ---------- */
+.utilityBlock {
+	background: var(--surface-2);
+	border-radius: var(--radius-md);
+	padding: 16px;
+}
+
+/* ---------- switch/toggle (used in modals) ---------- */
+.switchRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.switchRow:last-child {
+	border-bottom: none;
+}
+
+.switchLabel {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--ink-900);
+	margin-bottom: 4px;
+}
+
+.switchDescription {
+	font-size: 12px;
+	color: var(--ink-500);
+	line-height: 1.4;
+}
+
+.toggle {
+	width: 48px;
+	height: 28px;
+	flex-shrink: 0;
+	background: var(--ink-300);
+	border-radius: 999px;
+	position: relative;
+	cursor: pointer;
+	transition: background 0.2s;
+	border: none;
+	padding: 0;
+}
+
+.toggleOn {
+	background: var(--pri);
+}
+
+.toggleOnDanger {
+	background: var(--danger);
+}
+
+.toggleKnob {
+	width: 22px;
+	height: 22px;
+	background: #fff;
+	border-radius: 50%;
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	transition: transform 0.2s;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggleOn .toggleKnob,
+.toggleOnDanger .toggleKnob {
+	transform: translateX(20px);
+}
+
+/* ---------- review row (used in modals) ---------- */
+.reviewRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+}
+
+.reviewRowHighlight {
+	background: var(--success-bg);
+	padding: 12px 16px;
+	border-radius: var(--radius-sm);
+	border-bottom: none;
+}
+
+.reviewLabel {
+	font-size: 13px;
+	color: var(--ink-500);
+}
+
+.reviewMuted {
+	color: var(--ink-300);
+}
+
+.reviewValue {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--ink-900);
+}
+
+.reviewValueHighlight {
+	color: var(--success);
+}
+
 .select {
 	appearance: none;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -1015,6 +1304,18 @@ input[type="date"].field {
 	margin: 0 0 8px;
 }
 
+.receiptMsg {
+	font-size: 14px;
+	color: var(--ink-700);
+	margin: 0 0 8px;
+}
+
+.receiptRef {
+	font-size: 12px;
+	color: var(--ink-500);
+	margin: 0;
+}
+
 /* ---------- loading overlay (in-modal) ---------- */
 .loadingOverlay {
 	position: absolute;
@@ -1042,8 +1343,44 @@ input[type="date"].field {
 	color: var(--pri);
 }
 
+/* ---------- modal processing state ---------- */
+.modalProcessing {
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.95);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(4px);
+}
+
+.spinner {
+	width: 40px;
+	height: 40px;
+	border: 3px solid var(--ink-100);
+	border-top-color: var(--pri);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.processingText {
+	margin-top: 16px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--pri);
+}
+
 /* ---------- modal theme ---------- */
-.modalOverlay {
+.overlay {
 	position: fixed;
 	inset: 0;
 	background: rgba(0, 0, 0, 0.5);
@@ -1056,29 +1393,42 @@ input[type="date"].field {
 	overflow-y: auto;
 }
 
-@media (min-width: 1200px) {
-	.modalOverlay {
-		padding-left: calc(16px + var(--sidebar-width));
-	}
-}
-
-.modalWrapper {
+.dialog {
 	width: 100%;
 	max-width: 500px;
 	margin: auto;
 	flex-shrink: 0;
+	background: var(--surface-elev);
+	border: none;
+	border-radius: var(--radius-lg);
+	color: var(--ink-900);
+	box-shadow: var(--shadow-xl);
+	max-height: 90vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 
-.modalWrapper.modal-sm {
+.modalSm {
 	max-width: 400px;
 }
 
-.modalWrapper.modal-lg {
+.modalMd {
+	max-width: 500px;
+}
+
+.modalLg {
 	max-width: 800px;
 }
 
-.modalWrapper.modal-xl {
+.modalXl {
 	max-width: 1140px;
+}
+
+@media (min-width: 1200px) {
+	.overlay {
+		padding-left: calc(16px + var(--sidebar-width));
+	}
 }
 
 .modalContent {
@@ -1129,6 +1479,12 @@ input[type="date"].field {
 	flex: 1;
 	min-width: 0;
 	margin: 0;
+}
+
+.modalIcon {
+	flex: 0 0 auto;
+	color: var(--pri);
+	font-size: 20px;
 }
 
 .modalTitle i {
@@ -1253,7 +1609,7 @@ input[type="date"].field {
 	}
 
 	.pageRoot {
-		padding: calc(20px + var(--header-height)) 20px 20px;
+		padding: calc(20px) 20px 20px;
 	}
 }
 
@@ -1263,7 +1619,7 @@ input[type="date"].field {
 	}
 
 	.pageRoot {
-		padding: calc(16px + var(--header-height)) 16px 16px;
+		padding: calc(16px) 16px 16px;
 	}
 
 	.modalWrapper.modal-lg,
@@ -1274,7 +1630,7 @@ input[type="date"].field {
 
 @media (max-width: 767.98px) {
 	.pageRoot {
-		padding: calc(12px + var(--header-height)) 14px 24px;
+		padding: calc(12px) 14px 24px;
 		overflow-x: hidden;
 	}
 

@@ -1162,7 +1162,8 @@
 	animation: modalSlideIn 0.3s ease-out;
 	width: 100%;
 	max-width: 900px;
-	margin: auto;
+	margin: 60px auto auto auto;
+	
 }
 
 .modalHeaderAdvanced {
@@ -1590,6 +1591,7 @@
 
 	.modalContentAdvanced {
 		max-width: 800px;
+		margin: 50px auto auto auto;
 	}
 }
 
@@ -1604,6 +1606,7 @@
 
 	.modalContentAdvanced {
 		max-width: 700px;
+		margin: 50px auto auto auto;
 	}
 
 	.bizTypeGrid {
@@ -1618,7 +1621,7 @@
 
 	.modalContentAdvanced {
 		max-width: 100%;
-		margin: 0;
+		margin: 50px auto auto auto;
 		max-height: 95vh;
 	}
 

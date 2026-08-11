@@ -556,157 +556,6 @@ export function AccountProfileModals({
     </SimpleModal>
   );
 
-  /* ================= M8. Open / Link Digital Bank Account ================= */
-  const bankAccountModal = (
-    <TabbedModal
-      show={isOpen("bankAccountModal")}
-      onClose={() => close("bankAccountModal")}
-      iconCls="bi bi-bank"
-      title="Digital Bank Accounts"
-      tabs={[
-        {
-          key: "open",
-          label: "Open Account",
-          render: () => (
-            <div>
-              <SelectField
-                label="Account Type"
-                options={[
-                  "PayMo Wallet (KES)",
-                  "PayMo USD Account",
-                  "PayMo Business Account",
-                  "PayMo Savings Account",
-                ]}
-              />
-              <SelectField
-                label="Purpose"
-                options={["Personal use", "Business / merchant", "Savings", "Cross-border"]}
-              />
-              <div className="mb-3">
-                <label className={s.fieldLabel}>Initial Deposit (KES)</label>
-                <input className={s.field} defaultValue="1,000" />
-              </div>
-              <InfoBox variant="info">
-                <i className="bi bi-info-circle" /> Opening a PayMo account is free. No monthly maintenance
-                fees, instant IBAN + account number issued.
-              </InfoBox>
-            </div>
-          ),
-        },
-        {
-          key: "link",
-          label: "Link External",
-          render: () => (
-            <div>
-              <SelectField
-                label="Institution"
-                options={["M-Pesa (Safaricom)", "Equity Bank", "KCB Bank", "Co-operative Bank", "Airtel Money"]}
-              />
-              <div className="mb-3">
-                <label className={s.fieldLabel}>Account / Phone Number</label>
-                <input className={s.field} placeholder="e.g. 0712345678 or account number" />
-              </div>
-              <div className="mb-3">
-                <label className={s.fieldLabel}>Account Name</label>
-                <input className={s.field} defaultValue="Amina Grace Kamau" />
-              </div>
-              <InfoBox variant="success">
-                <i className="bi bi-shield-check" /> We use bank-grade encrypted connections. You control
-                what each account can do.
-              </InfoBox>
-            </div>
-          ),
-        },
-      ]}
-      footer={
-        <>
-          <button className={s.button} onClick={() => close("bankAccountModal")}>
-            Cancel
-          </button>
-          <button className={`${s.button} ${s.buttonPrimary}`} onClick={() => openModal("accountAddedModal")}>
-            {accountTab === 0 ? "Open Account" : "Link Account"}
-          </button>
-        </>
-      }
-    />
-  );
-
-  /* ================= M9. Account added receipt ================= */
-  const accountAddedModal = (
-    <SimpleModal
-      show={isOpen("accountAddedModal")}
-      onClose={() => close("accountAddedModal")}
-      iconCls="bi bi-check-circle"
-      title="Account Created"
-      successTitle="Digital account created!"
-      successMsg="Your new PayMo USD Account ending 8842 is ready. The account number and routing details have been emailed to you."
-      successRef="ACC-20250627-5520"
-    />
-  );
-
-  /* ================= M10. Virtual Card ================= */
-  const virtualCardModal = (
-    <SimpleModal
-      show={isOpen("virtualCardModal")}
-      onClose={() => close("virtualCardModal")}
-      iconCls="bi bi-credit-card"
-      title="Create Virtual Card"
-      footer={
-        <>
-          <button className={s.button} onClick={() => close("virtualCardModal")}>
-            Cancel
-          </button>
-          <button className={`${s.button} ${s.buttonPrimary}`} onClick={() => openModal("cardCreatedModal")}>
-            Generate Card
-          </button>
-        </>
-      }
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <SelectField
-          label="Funded From"
-          options={["PayMo KES Wallet • KES 1,284,300", "PayMo USD Account • USD 2,410"]}
-        />
-        <div style={fieldGrid}>
-          <div>
-            <label className={s.formLabel}>Daily Spend Limit</label>
-            <select className={s.formControl} defaultValue="KES 100,000">
-              <option>KES 20,000</option>
-              <option>KES 50,000</option>
-              <option>KES 100,000</option>
-              <option>KES 500,000</option>
-            </select>
-          </div>
-          <div>
-            <label className={s.formLabel}>Expires</label>
-            <select className={s.formControl} defaultValue="12 months">
-              <option>1 month</option>
-              <option>6 months</option>
-              <option>12 months</option>
-            </select>
-          </div>
-        </div>
-        <InfoBox variant="info">
-          <i className="bi bi-lock" /> A virtual card is instantly generated and can be used for online
-          purchases. You can freeze it at any time.
-        </InfoBox>
-      </div>
-    </SimpleModal>
-  );
-
-  /* ================= M11. Card created receipt ================= */
-  const cardCreatedModal = (
-    <SimpleModal
-      show={isOpen("cardCreatedModal")}
-      onClose={() => close("cardCreatedModal")}
-      iconCls="bi bi-check-circle"
-      title="Card Ready"
-      successTitle="Virtual card generated!"
-      successMsg="Your virtual card **** 4412 is ready for immediate use. Full card details are available in the Card Details modal."
-      successRef="CARD-20250627-7731"
-    />
-  );
-
   /* ================= M12. Card Details ================= */
   const cardDetailsModal = (
     <SimpleModal
@@ -1179,6 +1028,756 @@ export function AccountProfileModals({
     </SimpleModal>
   );
 
+  /* ================= M22. Transaction Limits Modal ================= */
+  const transactionLimitsModal = (
+    <SimpleModal
+      show={isOpen("transactionLimitsModal")}
+      onClose={() => close("transactionLimitsModal")}
+      iconCls="bi bi-sliders"
+      title="Configure Transaction Limits"
+      submitLabel="Save Limits"
+      successTitle="Limits Updated!"
+      successMsg="Your transaction limits have been successfully updated."
+      successRef="TLIM-20250627-7732"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.pills} style={{ marginBottom: 8 }}>
+          {["PayMo KES Wallet", "Utility Account", "Services Account", "USD Account"].map((tab, i) => (
+            <button
+              key={tab}
+              className={`${s.pill} ${editTab === i ? s.pillActive : ""}`}
+              onClick={() => setEditTab(i)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Daily Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="500000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Monthly Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="2000000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Per Transaction Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="100000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Weekly Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="1000000" />
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Limit Reset Time</label>
+            <input className={s.formControl} type="time" defaultValue="18:00" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Timezone</label>
+            <select className={s.formControl} defaultValue="EAT">
+              <option>EAT (Africa/Nairobi)</option>
+              <option>UTC</option>
+              <option>GMT</option>
+            </select>
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Allow limit override with OTP"
+          description="Request OTP confirmation when exceeding limits"
+        />
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> PayMo to PayMo transfers are FREE and unlimited. These limits apply to external transfers only.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M23. Business Limits Modal ================= */
+  const businessLimitsModal = (
+    <SimpleModal
+      show={isOpen("businessLimitsModal")}
+      onClose={() => close("businessLimitsModal")}
+      iconCls="bi bi-building"
+      title="Business Account Limits"
+      submitLabel="Save Changes"
+      successTitle="Business Limits Updated!"
+      successMsg="Your business account limits have been successfully updated."
+      successRef="BLIM-20250627-7733"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.utilityBlock} style={{ background: "var(--surface-2)" }}>
+          <div className={s.summaryRow} style={{ paddingBottom: 0, borderBottom: "none" }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Selected Business</span>
+            <strong>TechVentures Ltd</strong>
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Daily Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="5000000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Monthly Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="15000000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Per Transaction Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="1000000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>International Limit (USD)</label>
+            <input className={s.formControl} type="number" defaultValue="50000" />
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Require approval for high-value transfers"
+          description="Transfers above KES 1,000,000 require secondary approval"
+        />
+
+        <Toggle
+          checked={false}
+          onChange={() => { }}
+          label="Allow employee access"
+          description="Grant limited access to designated employees"
+        />
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M24. Link Business Modal ================= */
+  const linkBusinessModal = (
+    <SimpleModal
+      show={isOpen("linkBusinessModal")}
+      onClose={() => close("linkBusinessModal")}
+      iconCls="bi bi-building"
+      title="Link Business Account"
+      submitLabel="Link Account"
+      successTitle="Business Linked!"
+      successMsg="Your business account has been successfully linked."
+      successRef="BLNK-20250627-7734"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Business Registration Number</label>
+            <input className={s.formControl} placeholder="Enter business registration number" />
+          </div>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Business Name</label>
+            <input className={s.formControl} placeholder="Enter registered business name" />
+          </div>
+          <div>
+            <label className={s.formLabel}>KRA PIN</label>
+            <input className={s.formControl} placeholder="Enter KRA PIN" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Business Type</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select business type...</option>
+              <option>Limited Company</option>
+              <option>Sole Proprietorship</option>
+              <option>Partnership</option>
+              <option>NGO/CBO</option>
+            </select>
+          </div>
+        </div>
+
+        <InfoBox variant="warning">
+          <i className="bi bi-exclamation-triangle" /> You will need to upload business registration documents for verification after linking.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M25. External Accounts Modal ================= */
+  const externalAccountsModal = (
+    <SimpleModal
+      show={isOpen("externalAccountsModal")}
+      onClose={() => close("externalAccountsModal")}
+      iconCls="bi bi-link-45deg"
+      title="Manage External Accounts"
+      submitLabel="Save Changes"
+      successTitle="Accounts Updated!"
+      successMsg="Your external account settings have been successfully updated."
+      successRef="EXTL-20250627-7735"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.pills} style={{ marginBottom: 8 }}>
+          {["Bank Accounts", "Mobile Money", "Crypto Wallets"].map((tab, i) => (
+            <button
+              key={tab}
+              className={`${s.pill} ${editTab === i ? s.pillActive : ""}`}
+              onClick={() => setEditTab(i)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {editTab === 0 && (
+          <div style={fieldGrid}>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Bank Name</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select bank...</option>
+                <option>Equity Bank</option>
+                <option>KCB Bank</option>
+                <option>Standard Chartered</option>
+                <option>Cooperative Bank</option>
+                <option>ABSA Bank</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Account Number</label>
+              <input className={s.formControl} placeholder="Enter account number" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Account Type</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select type...</option>
+                <option>Savings</option>
+                <option>Current</option>
+                <option>Fixed Deposit</option>
+              </select>
+            </div>
+            <div>
+              <label className={s.formLabel}>Currency</label>
+              <select className={s.formControl} defaultValue="KES">
+                <option>KES</option>
+                <option>USD</option>
+                <option>EUR</option>
+                <option>GBP</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {editTab === 1 && (
+          <div style={fieldGrid}>
+            <div>
+              <label className={s.formLabel}>Mobile Money Provider</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select provider...</option>
+                <option>M-Pesa</option>
+                <option>Airtel Money</option>
+                <option>T-Kash</option>
+              </select>
+            </div>
+            <div>
+              <label className={s.formLabel}>Phone Number</label>
+              <input className={s.formControl} placeholder="07XX XXX XXX" />
+            </div>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Account Name</label>
+              <input className={s.formControl} placeholder="Registered account name" />
+            </div>
+          </div>
+        )}
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Set as default payout account"
+          description="This account will be used for automatic payouts"
+        />
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M26. Auto Payouts Modal ================= */
+  const autoPayoutsModal = (
+    <SimpleModal
+      show={isOpen("autoPayoutsModal")}
+      onClose={() => close("autoPayoutsModal")}
+      iconCls="bi bi-arrow-repeat"
+      title="Configure Auto Payout"
+      submitLabel="Save Schedule"
+      successTitle="Payout Configured!"
+      successMsg="Your auto payout schedule has been successfully saved."
+      successRef="APAY-20250627-7736"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Schedule Name</label>
+            <input className={s.formControl} placeholder="e.g., Daily Sweep to Equity" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Payout Type</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select type...</option>
+              <option>Daily</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+              <option>Instant (Real-time)</option>
+              <option>Custom</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>Amount</label>
+            <input className={s.formControl} placeholder="KES amount or %" />
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Destination Account</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select destination...</option>
+              <option>Equity Bank •••• 4521</option>
+              <option>KCB Bank •••• 7782</option>
+              <option>M-Pesa 0712 345 890</option>
+              <option>Airtel Money 0733 456 789</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>Schedule Time</label>
+            <input className={s.formControl} type="time" defaultValue="18:00" />
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Minimum balance threshold"
+          description="Only payout if balance exceeds KES 50,000"
+        />
+
+        <InfoBox variant="info">
+          <i className="bi bi-lightning-charge" /> Instant payouts automatically transfer funds when money is collected from clients in real-time.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M27. Security Limits Modal ================= */
+  const securityLimitsModal = (
+    <SimpleModal
+      show={isOpen("securityLimitsModal")}
+      onClose={() => close("securityLimitsModal")}
+      iconCls="bi bi-shield-lock"
+      title="Security Limits & OTP Verification"
+      submitLabel="Save Security Rules"
+      successTitle="Security Updated!"
+      successMsg="Your security limits have been successfully updated."
+      successRef="SECL-20250627-7737"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.pills} style={{ marginBottom: 8 }}>
+          {["Internal Transfers", "External Bank", "Mobile Money", "International", "Bill Payment"].map((tab, i) => (
+            <button
+              key={tab}
+              className={`${s.pill} ${editTab === i ? s.pillActive : ""}`}
+              onClick={() => setEditTab(i)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>OTP Threshold (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="500000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>OTP Method</label>
+            <select className={s.formControl} defaultValue="WhatsApp">
+              <option>SMS</option>
+              <option>WhatsApp</option>
+              <option>Email</option>
+              <option>SMS + WhatsApp</option>
+              <option>SMS + WhatsApp + Email</option>
+            </select>
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Require OTP for this transfer type"
+          description="Enable OTP verification for transfers above threshold"
+        />
+
+        <Toggle
+          checked={false}
+          onChange={() => { }}
+          label="Biometric verification (mobile only)"
+          description="Use fingerprint or face recognition for additional security"
+        />
+
+        <InfoBox variant="danger">
+          <i className="bi bi-exclamation-triangle" /> OTP verification protects against unauthorized transfers. Set appropriate thresholds based on your risk tolerance.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M28. Country Restrictions Modal ================= */
+  const countryRestrictionsModal = (
+    <SimpleModal
+      show={isOpen("countryRestrictionsModal")}
+      onClose={() => close("countryRestrictionsModal")}
+      iconCls="bi bi-globe"
+      title="Country Restrictions & Verification"
+      submitLabel="Save Restrictions"
+      successTitle="Restrictions Updated!"
+      successMsg="Your country restrictions have been successfully updated."
+      successRef="CNTR-20250627-7738"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Country</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select country...</option>
+              <option>Kenya (KE) - National</option>
+              <option>Uganda (UG)</option>
+              <option>Tanzania (TZ)</option>
+              <option>Rwanda (RW)</option>
+              <option>United States (US)</option>
+              <option>United Kingdom (GB)</option>
+              <option>United Arab Emirates (AE)</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>Status</label>
+            <select className={s.formControl} defaultValue="Allowed">
+              <option>Allowed</option>
+              <option>Restricted</option>
+              <option>Blocked</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>Transfer Limit (KES)</label>
+            <input className={s.formControl} type="number" placeholder="0 for blocked" />
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Verification Required</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select verification level...</option>
+              <option>None</option>
+              <option>KYC Required</option>
+              <option>Enhanced KYC</option>
+              <option>Enhanced KYC + KRA</option>
+              <option>Manual Compliance Review</option>
+            </select>
+          </div>
+        </div>
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> Transfers to Kenya (your national country) are free and unlimited. International transfers may require enhanced verification.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M29. Risk Mitigation Modal ================= */
+  const riskMitigationModal = (
+    <SimpleModal
+      show={isOpen("riskMitigationModal")}
+      onClose={() => close("riskMitigationModal")}
+      iconCls="bi bi-shield-check"
+      title="Risk Mitigation Rules"
+      submitLabel="Save Rules"
+      successTitle="Rules Updated!"
+      successMsg="Your risk mitigation rules have been successfully updated."
+      successRef="RISK-20250627-7739"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Threshold (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="1000000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Requirement</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select requirement...</option>
+              <option>KYC Verification</option>
+              <option>KRA PIN Verification</option>
+              <option>Source of Funds Declaration</option>
+              <option>Manual Compliance Review</option>
+              <option>Enhanced Due Diligence</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Applies To</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select scope...</option>
+              <option>All transfers</option>
+              <option>Business transfers only</option>
+              <option>International transfers only</option>
+              <option>High-risk countries only</option>
+            </select>
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Auto-hold suspicious transactions"
+          description="Transactions requiring review will be held for manual approval"
+        />
+
+        <InfoBox variant="warning">
+          <i className="bi bi-exclamation-triangle" /> Transactions above KES 1,000,000 automatically trigger KYC verification. Business transfers above KES 1,000,000 also require KRA PIN verification.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M30. Fee Structure Modal ================= */
+  const feeStructureModal = (
+    <SimpleModal
+      show={isOpen("feeStructureModal")}
+      onClose={() => close("feeStructureModal")}
+      iconCls="bi bi-cash-coin"
+      title="Transaction Fee Structure"
+      submitLabel="Close"
+      showSubmit={false}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {[
+          { type: "PayMo to PayMo", fee: "FREE", desc: "Instant transfers between PayMo accounts", highlight: true },
+          { type: "PayMo to M-Pesa", fee: "KES 25", desc: "Standard mobile money withdrawal" },
+          { type: "PayMo to Airtel Money", fee: "KES 25", desc: "Standard mobile money withdrawal" },
+          { type: "PayMo to Bank (Local)", fee: "KES 50", desc: "Instant bank transfer (PesaLink)" },
+          { type: "PayMo to Bank (International)", fee: "1.5%", desc: "SWIFT transfer (min KES 500)" },
+          { type: "Bill Payment", fee: "KES 10", desc: "Utility and service bill payments" },
+          { type: "Card Purchase", fee: "0.5%", desc: "Virtual/physical card transactions" },
+        ].map((item) => (
+          <div
+            key={item.type}
+            className={s.summaryRow}
+            style={{
+              background: item.highlight ? "var(--success-bg)" : "var(--surface-2)",
+              padding: "12px 16px",
+              borderRadius: 8,
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <strong style={{ fontSize: 13 }}>{item.type}</strong>
+              <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{item.desc}</div>
+            </div>
+            <span
+              style={{
+                fontWeight: 700,
+                color: item.highlight ? "var(--success)" : "var(--pri)",
+                fontSize: 14,
+              }}
+            >
+              {item.fee}
+            </span>
+          </div>
+        ))}
+
+        <InfoBox variant="success">
+          <i className="bi bi-check-circle" /> <strong>PayMo to PayMo transfers are FREE</strong> — Send money instantly between PayMo accounts at no cost.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M31. Account Hierarchy Modal ================= */
+  const accountHierarchyModal = (
+    <SimpleModal
+      show={isOpen("accountHierarchyModal")}
+      onClose={() => close("accountHierarchyModal")}
+      iconCls="bi bi-diagram-3"
+      title="Account Hierarchy & Fund Flow"
+      submitLabel="Close"
+      showSubmit={false}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ background: "var(--surface-2)", borderRadius: 12, padding: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "var(--pri)" }}>
+            <i className="bi bi-diagram-3"></i> Primary Wallet
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Account</span>
+            <strong>PayMo KES Wallet</strong>
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Balance</span>
+            <strong style={{ color: "var(--pri)" }}>KES 1,284,300</strong>
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 0 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Funds Source</span>
+            <strong>Independent</strong>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+          <i className="bi bi-arrow-down" style={{ fontSize: 20, color: "var(--ink-400)" }}></i>
+        </div>
+
+        <div style={{ background: "var(--surface-2)", borderRadius: 12, padding: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "var(--info)" }}>
+            <i className="bi bi-diagram-2"></i> Sub-Accounts (Auto-draw)
+          </div>
+          {[
+            { name: "Utility Account", balance: "KES 150,000" },
+            { name: "Services Account", balance: "KES 85,000" },
+          ].map((acc) => (
+            <div className={s.summaryRow} key={acc.name} style={{ paddingBottom: 8 }}>
+              <span style={{ fontSize: 13, color: "var(--ink-500)" }}>{acc.name}</span>
+              <strong style={{ color: "var(--pri)" }}>{acc.balance}</strong>
+            </div>
+          ))}
+        </div>
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> Sub-accounts automatically draw funds from the primary wallet when needed. Set up utility and services accounts for better expense tracking.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M32. Transaction Notifications Modal ================= */
+  const transactionNotificationsModal = (
+    <SimpleModal
+      show={isOpen("transactionNotificationsModal")}
+      onClose={() => close("transactionNotificationsModal")}
+      iconCls="bi bi-bell"
+      title="Transaction Notifications"
+      submitLabel="Save Preferences"
+      successTitle="Notifications Updated!"
+      successMsg="Your notification preferences have been successfully saved."
+      successRef="NOTF-20250627-7740"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.pills} style={{ marginBottom: 8 }}>
+          {["All Transactions", "High-Value", "International", "Failed", "Security"].map((tab, i) => (
+            <button
+              key={tab}
+              className={`${s.pill} ${editTab === i ? s.pillActive : ""}`}
+              onClick={() => setEditTab(i)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ background: "var(--surface-2)", borderRadius: 12, padding: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Notification Channels</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[
+              { label: "SMS Notifications", icon: "bi-phone" },
+              { label: "Email Notifications", icon: "bi-envelope" },
+              { label: "WhatsApp Notifications", icon: "bi-whatsapp" },
+              { label: "Push Notifications", icon: "bi-bell" },
+            ].map((channel) => (
+              <Toggle
+                key={channel.label}
+                checked
+                onChange={() => { }}
+                label={channel.label}
+                description={`Receive ${channel.label.toLowerCase()}`}
+                icon={channel.icon}
+              />
+            ))}
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Real-time alerts"
+          description="Receive instant notifications for all transaction activities"
+        />
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> Configure notifications for all transaction events, security alerts, and limit warnings via SMS, Email, WhatsApp, and Push.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= M33. Create Sub-Account Modal ================= */
+  const createSubAccountModal = (
+    <SimpleModal
+      show={isOpen("createSubAccountModal")}
+      onClose={() => close("createSubAccountModal")}
+      iconCls="bi bi-plus-circle"
+      title="Create Sub-Account"
+      submitLabel="Create Account"
+      successTitle="Sub-Account Created!"
+      successMsg="Your sub-account has been successfully created and linked to the primary wallet."
+      successRef="SUBA-20250627-7741"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={fieldGrid}>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Account Name</label>
+            <input className={s.formControl} placeholder="e.g., Utility Account, Services Account" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Account Type</label>
+            <select className={s.formControl} defaultValue="">
+              <option value="">Select type...</option>
+              <option>Utility Account</option>
+              <option>Services Account</option>
+              <option>Expense Account</option>
+              <option>Savings Account</option>
+              <option>Custom</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>Parent Account</label>
+            <select className={s.formControl} defaultValue="PayMo KES Wallet">
+              <option>PayMo KES Wallet</option>
+              <option>PayMo USD Account</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Daily Limit (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="200000" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Initial Balance (KES)</label>
+            <input className={s.formControl} type="number" defaultValue="0" />
+          </div>
+        </div>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="Auto-draw from parent account"
+          description="Automatically transfer funds from parent when balance is low"
+        />
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> Sub-accounts automatically draw funds from the primary wallet when needed. Perfect for expense tracking and budgeting.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
   return (
     <>
       {editProfileModal}
@@ -1188,10 +1787,6 @@ export function AccountProfileModals({
       {docUploadedModal}
       {viewDocModal}
       {attentionModal}
-      {bankAccountModal}
-      {accountAddedModal}
-      {virtualCardModal}
-      {cardCreatedModal}
       {cardDetailsModal}
       {linkedAccountsModal}
       {activityDetailModal}
@@ -1202,6 +1797,18 @@ export function AccountProfileModals({
       {enable2FAModal}
       {downloadDataModal}
       {privacyModal}
+      {transactionLimitsModal}
+      {businessLimitsModal}
+      {linkBusinessModal}
+      {externalAccountsModal}
+      {autoPayoutsModal}
+      {securityLimitsModal}
+      {countryRestrictionsModal}
+      {riskMitigationModal}
+      {feeStructureModal}
+      {accountHierarchyModal}
+      {transactionNotificationsModal}
+      {createSubAccountModal}
     </>
   );
 }

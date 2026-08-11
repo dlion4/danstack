@@ -288,7 +288,7 @@
 .navGroupBlue {
 	background: rgba(59, 130, 246, 0.08);
 	border-radius: var(--sh-radius-sm);
-	padding: 0.5rem;
+	/* padding: 0.5rem; */
 	margin-bottom: 0.5rem;
 }
 
@@ -1731,11 +1731,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.6rem;
+		gap: 2.4rem;
 		width: 100%;
-		padding: 0.85rem 0.75rem;
+		padding: 0.85rem 0.75rem 0.85rem 0.75rem;
 		border: none;
-		border-radius: var(--sh-radius);
+		border-radius: 12px;
 		background: linear-gradient(135deg, #10b981 0%, #059669 40%, #047857 100%);
 		color: #fff;
 		font-family: inherit;
@@ -1748,8 +1748,9 @@
 			0 1px 3px rgba(16, 185, 129, 0.15);
 		position: relative;
 		overflow: hidden;
-		margin: 0.5rem 0.75rem;
+		margin: 0.5rem 0.75rem 0.5rem 0;
 		flex-shrink: 0;
+		text-decoration: none;
 	}
 
 .switchAccountBtn::before {
@@ -2007,9 +2008,9 @@
 		justify-content: center;
 		gap: 0.6rem;
 		width: 100%;
-		padding: 0.85rem 0.75rem;
+		padding: 0.85rem 0.75rem 0.85rem 0.75rem;
 		border: none;
-		border-radius: var(--sh-radius);
+		border-radius: 12px;
 		background: linear-gradient(135deg, #10b981 0%, #059669 40%, #047857 100%);
 		color: #fff;
 		font-family: inherit;
@@ -2022,8 +2023,9 @@
 			0 1px 3px rgba(16, 185, 129, 0.15);
 		position: relative;
 		overflow: hidden;
-		margin: 0.5rem 0.75rem;
+		margin: 0.5rem 0.75rem 0.5rem 0;
 		flex-shrink: 0;
+		text-decoration: none;
 	}
 
 .switchAccountBtn::before {

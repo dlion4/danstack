@@ -850,62 +850,378 @@ export function AccountSettingsModals({
     </SimpleModal>
   );
 
-  /* ================= S13. Close Account (danger flow) ================= */
+  /* ================= S13. Close Account (comprehensive danger flow) ================= */
+  const [closeAccountStep, setCloseAccountStep] = useState(0);
+  const [selectedBeneficiaries, setSelectedBeneficiaries] = useState<string[]>([]);
+  const [allocationType, setAllocationType] = useState<"percentage" | "fixed">("percentage");
+  const [allocations, setAllocations] = useState<Record<string, { type: "percentage" | "fixed"; value: string }>>({});
+  const [scheduleClose, setScheduleClose] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+
+  const walletBalance = 1284300; // KES 1,284,300
+  const transactionCost = 250; // KES 250
+  const distributableAmount = walletBalance - transactionCost;
+
   const closeAccountModal = (
     <FlowModal
       show={isOpen("closeAccountModal")}
       onClose={() => close("closeAccountModal")}
       iconCls="bi bi-exclamation-triangle"
       title="Close Account"
-      steps={["Understand impact", "Confirm identity", "Submit request"]}
+      steps={[
+        "Understand Impact",
+        "Select Beneficiaries",
+        "Allocate Funds",
+        "Verify Identity",
+        "Review & Confirm",
+        "Success",
+      ]}
       confirmLabel="Close Account"
       submitVariant="danger"
+      currentStep={closeAccountStep}
     >
       {(step) => {
         if (step === 1) {
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <div
                 style={{
                   background: "var(--danger-bg)",
                   borderRadius: 12,
-                  padding: "14px 16px",
+                  padding: "16px 20px",
                   display: "flex",
                   alignItems: "center",
-                  gap: 10,
-                  fontSize: 13,
+                  gap: 12,
+                  fontSize: 14,
                   color: "#b91c1c",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
                 }}
               >
-                <i className="bi bi-exclamation-triangle-fill" /> Closing your account is permanent and
-                cannot be undone.
-              </div>
-              {[
-                "All balances are converted and paid out to your linked account",
-                "Recurring payments, standing orders and scheduled transfers are cancelled",
-                "Cards are frozen immediately and virtual cards destroyed",
-                "KYC documents and historical records are retained for 7 years (legal requirement)",
-              ].map((item) => (
-                <div key={item} style={{ display: "flex", gap: 10, fontSize: 13 }}>
-                  <i className="bi bi-x-circle" style={{ color: "var(--danger)", flexShrink: 0 }} />
-                  <span>{item}</span>
+                <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: 20 }} />
+                <div>
+                  <strong>Closing your account is permanent and cannot be undone.</strong>
                 </div>
-              ))}
+              </div>
+
+              <div className={s.utilityBlock}>
+                <h4 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 700, color: "var(--ink-900)" }}>
+                  What happens when you close:
+                </h4>
+                {[
+                  { icon: "bi bi-wallet2", text: "All balances will be distributed to your chosen beneficiaries" },
+                  { icon: "bi bi-x-circle", text: "Recurring payments, standing orders and scheduled transfers are cancelled" },
+                  { icon: "bi bi-credit-card", text: "Cards are frozen immediately and virtual cards destroyed" },
+                  { icon: "bi bi-file-earmark-lock", text: "KYC documents and historical records are retained for 7 years (legal requirement)" },
+                  { icon: "bi bi-bell", text: "You will receive notifications at every stage of the closure process" },
+                  { icon: "bi bi-envelope", text: "Beneficiaries will be notified before funds are delivered" },
+                ].map((item) => (
+                  <div key={item.text} style={{ display: "flex", gap: 12, fontSize: 13, marginBottom: 8 }}>
+                    <i className={item.icon} style={{ color: "var(--danger)", flexShrink: 0, fontSize: 16 }} />
+                    <span style={{ color: "var(--ink-700)" }}>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={s.utilityBlock} style={{ background: "var(--info-bg)", borderColor: "rgba(59, 130, 246, 0.2)" }}>
+                <div style={{ fontSize: 13, color: "var(--info)", fontWeight: 600, marginBottom: 8 }}>
+                  <i className="bi bi-info-circle" /> Your Current Balance
+                </div>
+                <div style={{ fontSize: 24, fontWeight: 700, color: "var(--ink-900)" }}>
+                  KES {walletBalance.toLocaleString()}
+                </div>
+                <div style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 4 }}>
+                  Transaction cost: KES {transactionCost} | Distributable: KES {distributableAmount.toLocaleString()}
+                </div>
+              </div>
+
               <Toggle
                 checked
                 onChange={() => { }}
                 label="I understand my account will be closed permanently"
+                description="I have read and understood all the implications above"
               />
             </div>
           );
         }
+
         if (step === 2) {
+          const beneficiaries = [
+            { id: "1", name: "James Kamau", relation: "Spouse", account: "PayMo Wallet PM#31223", age: 35 },
+            { id: "2", name: "Grace Wanjiku", relation: "Next of Kin", account: "M-Pesa 0722 456 789", age: 42 },
+            { id: "3", name: "David Kamau Jr.", relation: "Child", account: "Guardian Account", age: 12 },
+          ];
+
+          const charities = [
+            { id: "c1", name: "Red Cross Kenya", category: "Humanitarian", reg: "NGO/001/2020" },
+            { id: "c2", name: "St. Jones Children's Home", category: "Children", reg: "CBO/045/2019" },
+            { id: "c3", name: "Kenya Wildlife Fund", category: "Environment", reg: "NGO/089/2021" },
+            { id: "c4", name: "Education for All", category: "Education", reg: "NGO/156/2018" },
+          ];
+
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div className={s.pills} style={{ marginBottom: 8 }}>
+                {["Family", "Charities", "Custom"].map((tab, i) => (
+                  <button
+                    key={tab}
+                    className={`${s.pill} ${closeAccountStep === i ? s.pillActive : ""}`}
+                    onClick={() => setCloseAccountStep(i)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Select Beneficiaries to receive your funds
+                </h4>
+                <p style={{ fontSize: 12, color: "var(--ink-500)", margin: "0 0 16px" }}>
+                  Choose from your saved beneficiaries or add a new one. You can select multiple beneficiaries.
+                </p>
+
+                {beneficiaries.map((ben) => (
+                  <div
+                    key={ben.id}
+                    className={s.summaryRow}
+                    style={{
+                      padding: "12px 16px",
+                      borderRadius: 10,
+                      background: selectedBeneficiaries.includes(ben.id) ? "var(--success-bg)" : "var(--surface-2)",
+                      border: selectedBeneficiaries.includes(ben.id) ? "2px solid var(--success)" : "1px solid var(--border)",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setSelectedBeneficiaries((prev) =>
+                        prev.includes(ben.id) ? prev.filter((id) => id !== ben.id) : [...prev, ben.id]
+                      );
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div className={s.iconCircle}>
+                        <i className={`bi ${ben.age < 18 ? "bi-child" : "bi-person"}`} />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 14 }}>{ben.name}</div>
+                        <div style={{ fontSize: 12, color: "var(--ink-500)" }}>
+                          {ben.relation} • {ben.account} • Age: {ben.age}
+                        </div>
+                      </div>
+                    </div>
+                    <i
+                      className={`bi ${selectedBeneficiaries.includes(ben.id) ? "bi-check-circle-fill" : "bi-circle"}`}
+                      style={{
+                        color: selectedBeneficiaries.includes(ben.id) ? "var(--success)" : "var(--ink-300)",
+                        fontSize: 20,
+                      }}
+                    />
+                  </div>
+                ))}
+
+                <div style={{ marginTop: 16 }}>
+                  <button className={`${s.button} ${s.buttonPrimary}`} style={{ width: "100%" }}>
+                    <i className="bi bi-plus-lg" /> Add New Beneficiary
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Or donate to a charitable organization
+                </h4>
+                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                  <input
+                    className={s.formControl}
+                    placeholder="Search charities..."
+                    style={{ flex: 1 }}
+                  />
+                  <button className={`${s.button} ${s.buttonPrimary}`}>
+                    <i className="bi bi-search" />
+                  </button>
+                </div>
+
+                {charities.map((charity) => (
+                  <div
+                    key={charity.id}
+                    className={s.summaryRow}
+                    style={{
+                      padding: "12px 16px",
+                      borderRadius: 10,
+                      background: selectedBeneficiaries.includes(charity.id) ? "var(--success-bg)" : "var(--surface-2)",
+                      border: selectedBeneficiaries.includes(charity.id) ? "2px solid var(--success)" : "1px solid var(--border)",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setSelectedBeneficiaries((prev) =>
+                        prev.includes(charity.id) ? prev.filter((id) => id !== charity.id) : [...prev, charity.id]
+                      );
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div className={s.iconChip}>
+                        <i className="bi bi-heart" />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 14 }}>{charity.name}</div>
+                        <div style={{ fontSize: 12, color: "var(--ink-500)" }}>
+                          {charity.category} • Reg: {charity.reg}
+                        </div>
+                      </div>
+                    </div>
+                    <i
+                      className={`bi ${selectedBeneficiaries.includes(charity.id) ? "bi-check-circle-fill" : "bi-circle"}`}
+                      style={{
+                        color: selectedBeneficiaries.includes(charity.id) ? "var(--success)" : "var(--ink-300)",
+                        fontSize: 20,
+                      }}
+                    />
+                  </div>
+                ))}
+
+                <div style={{ marginTop: 12 }}>
+                  <button className={`${s.button} ${s.buttonOutline}`} style={{ width: "100%" }}>
+                    <i className="bi bi-plus-lg" /> Add Custom Charity
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (step === 3) {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div className={s.utilityBlock} style={{ background: "var(--info-bg)", borderColor: "rgba(59, 130, 246, 0.2)" }}>
+                <div style={{ fontSize: 13, color: "var(--info)", fontWeight: 600, marginBottom: 8 }}>
+                  <i className="bi bi-info-circle" /> Fund Allocation
+                </div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "var(--ink-900)" }}>
+                  KES {distributableAmount.toLocaleString()}
+                </div>
+                <div style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 4 }}>
+                  Available to distribute (after KES {transactionCost} transaction cost)
+                </div>
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Allocation Type
+                </h4>
+                <div className={s.pills} style={{ marginBottom: 16 }}>
+                  {[
+                    { key: "percentage", label: "Percentage (%)" },
+                    { key: "fixed", label: "Fixed Amount (KES)" },
+                  ].map((type) => (
+                    <button
+                      key={type.key}
+                      className={`${s.pill} ${allocationType === type.key ? s.pillActive : ""}`}
+                      onClick={() => setAllocationType(type.key as "percentage" | "fixed")}
+                    >
+                      {type.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Allocate to Selected Beneficiaries
+                </h4>
+
+                {selectedBeneficiaries.length === 0 ? (
+                  <div
+                    style={{
+                      padding: "20px",
+                      textAlign: "center",
+                      background: "var(--ink-100)",
+                      borderRadius: 10,
+                      color: "var(--ink-500)",
+                      fontSize: 13,
+                    }}
+                  >
+                    <i className="bi bi-person-x" style={{ fontSize: 24, display: "block", marginBottom: 8 }} />
+                    No beneficiaries selected. Go back to select beneficiaries.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {[
+                      { id: "1", name: "James Kamau", relation: "Spouse" },
+                      { id: "2", name: "Grace Wanjiku", relation: "Next of Kin" },
+                      { id: "c1", name: "Red Cross Kenya", relation: "Charity" },
+                    ]
+                      .filter((ben) => selectedBeneficiaries.includes(ben.id))
+                      .map((ben) => {
+                        const alloc = allocations[ben.id] || { type: allocationType, value: "" };
+                        const calculatedValue =
+                          allocationType === "percentage" && alloc.value
+                            ? (parseFloat(alloc.value) / 100) * distributableAmount
+                            : alloc.value
+                            ? parseFloat(alloc.value)
+                            : 0;
+
+                        return (
+                          <div
+                            key={ben.id}
+                            className={s.utilityBlock}
+                            style={{ padding: "16px", background: "var(--surface-2)" }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                              <div>
+                                <div style={{ fontWeight: 600, fontSize: 14 }}>{ben.name}</div>
+                                <div style={{ fontSize: 12, color: "var(--ink-500)" }}>{ben.relation}</div>
+                              </div>
+                              <div style={{ textAlign: "right" }}>
+                                <div style={{ fontWeight: 700, fontSize: 16, color: "var(--pri)" }}>
+                                  KES {calculatedValue.toLocaleString()}
+                                </div>
+                                <div style={{ fontSize: 11, color: "var(--ink-500)" }}>
+                                  {allocationType === "percentage" ? `${alloc.value}%` : `KES ${alloc.value}`}
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <input
+                                className={s.formControl}
+                                type="number"
+                                placeholder={allocationType === "percentage" ? "Enter %" : "Enter amount"}
+                                value={alloc.value}
+                                onChange={(e) => {
+                                  setAllocations((prev) => ({
+                                    ...prev,
+                                    [ben.id]: { type: allocationType, value: e.target.value },
+                                  }));
+                                }}
+                                style={{ flex: 1 }}
+                              />
+                              <span style={{ display: "flex", alignItems: "center", fontSize: 14, color: "var(--ink-500)" }}>
+                                {allocationType === "percentage" ? "%" : "KES"}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
+
+              <div className={s.utilityBlock} style={{ background: "var(--warning-bg)", borderColor: "rgba(245, 158, 11, 0.2)" }}>
+                <div style={{ fontSize: 12, color: "#92400e" }}>
+                  <i className="bi bi-exclamation-triangle" /> Total allocation must equal 100% or the full
+                  distributable amount. Any unallocated funds will be returned to your primary linked account.
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (step === 4) {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <InfoBox variant="warning">
-                <i className="bi bi-shield-lock" /> For your security we need to confirm your identity.
-                A 6-digit code has been sent to +254 712 345 890.
+                <i className="bi bi-shield-lock" /> For your security, we need to verify your identity
+                before proceeding with account closure.
               </InfoBox>
+
               <div>
                 <label className={s.formLabel}>Reason for closing (optional)</label>
                 <select className={s.formControl} defaultValue="">
@@ -915,47 +1231,225 @@ export function AccountSettingsModals({
                   <option>Privacy concerns</option>
                   <option>Business closed</option>
                   <option>Duplicate account</option>
+                  <option>Personal reasons</option>
+                  <option>Other</option>
                 </select>
               </div>
+
               <div>
-                <label className={s.formLabel}>Payout account</label>
-                <select className={s.formControl} defaultValue="M-Pesa 0712 345 890">
-                  <option>M-Pesa 0712 345 890</option>
-                  <option>Equity Bank ****4521</option>
-                </select>
+                <label className={s.formLabel}>Additional comments (optional)</label>
+                <textarea className={s.formControl} rows={3} placeholder="Tell us anything we should know..." />
+              </div>
+
+              <div>
+                <label className={s.formLabel}>Verification Code</label>
+                <p style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 0, marginBottom: 8 }}>
+                  A 6-digit code has been sent to <strong>+254 712 345 890</strong> and{" "}
+                  <strong>amina.kamau@personal.co.ke</strong>
+                </p>
+                <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
+                  {["_", "_", "_", "_", "_", "_"].map((_, i) => (
+                    <input
+                      key={i}
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={1}
+                      style={{
+                        width: 44,
+                        height: 54,
+                        textAlign: "center",
+                        fontSize: 20,
+                        fontWeight: 700,
+                        border: "2px solid var(--border)",
+                        borderRadius: 10,
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ textAlign: "center", marginTop: 12 }}>
+                  <button className={s.button} style={{ fontSize: 12 }}>
+                    <i className="bi bi-arrow-clockwise" /> Resend Code
+                  </button>
+                </div>
               </div>
             </div>
           );
         }
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
-            <p style={{ fontSize: 13, color: "var(--ink-700)", textAlign: "center", maxWidth: 380 }}>
-              A 6-digit code was sent to your registered phone number. Enter it to confirm the closure
-              request.
-            </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
-              {["_", "_", "_", "_", "_", "_"].map((_, i) => (
-                <input
-                  key={i}
-                  type="password"
-                  inputMode="numeric"
-                  maxLength={1}
-                  style={{
-                    width: 44,
-                    height: 54,
-                    textAlign: "center",
-                    fontSize: 20,
-                    fontWeight: 700,
-                    border: "2px solid var(--border)",
-                    borderRadius: 10,
-                  }}
+
+        if (step === 5) {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div className={s.utilityBlock} style={{ background: "var(--danger-bg)", borderColor: "rgba(239, 68, 68, 0.3)" }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#b91c1c", marginBottom: 8 }}>
+                  <i className="bi bi-exclamation-triangle-fill" /> Final Review
+                </div>
+                <div style={{ fontSize: 13, color: "#7f1d1d" }}>
+                  Please review all details carefully. This action cannot be undone.
+                </div>
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Account Details
+                </h4>
+                <div className={s.summaryRow}>
+                  <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Account Holder</span>
+                  <strong>Amina Grace Kamau</strong>
+                </div>
+                <div className={s.summaryRow}>
+                  <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Account Type</span>
+                  <strong>Individual — Premium</strong>
+                </div>
+                <div className={s.summaryRow}>
+                  <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Wallet Balance</span>
+                  <strong style={{ color: "var(--pri)" }}>KES {walletBalance.toLocaleString()}</strong>
+                </div>
+                <div className={s.summaryRow}>
+                  <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Transaction Cost</span>
+                  <strong>KES {transactionCost}</strong>
+                </div>
+                <div className={s.summaryRow} style={{ borderBottom: "none", paddingBottom: 0 }}>
+                  <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Distributable Amount</span>
+                  <strong style={{ color: "var(--success)", fontSize: 16 }}>
+                    KES {distributableAmount.toLocaleString()}
+                  </strong>
+                </div>
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Fund Distribution
+                </h4>
+                {[
+                  { name: "James Kamau", relation: "Spouse", amount: "KES 642,150", percent: "50%" },
+                  { name: "Grace Wanjiku", relation: "Next of Kin", amount: "KES 321,075", percent: "25%" },
+                  { name: "Red Cross Kenya", relation: "Charity", amount: "KES 321,075", percent: "25%" },
+                ].map((ben) => (
+                  <div key={ben.name} className={s.summaryRow}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>{ben.name}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{ben.relation}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{ben.amount}</div>
+                      <div style={{ fontSize: 11, color: "var(--ink-500)" }}>{ben.percent}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                  Timing
+                </h4>
+                <Toggle
+                  checked={scheduleClose}
+                  onChange={(checked) => setScheduleClose(checked)}
+                  label="Schedule closure for a later date"
+                  description="Choose a specific date to close your account instead of immediately"
                 />
-              ))}
+                {scheduleClose && (
+                  <div style={{ marginTop: 12 }}>
+                    <label className={s.formLabel}>Closure Date</label>
+                    <input
+                      type="date"
+                      className={s.formControl}
+                      value={scheduleDate}
+                      onChange={(e) => setScheduleDate(e.target.value)}
+                      min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className={s.utilityBlock} style={{ background: "var(--info-bg)", borderColor: "rgba(59, 130, 246, 0.2)" }}>
+                <div style={{ fontSize: 12, color: "#1e40af" }}>
+                  <i className="bi bi-info-circle" /> You will receive a confirmation email and SMS. All
+                  selected beneficiaries will be notified 24 hours before funds are transferred.
+                </div>
+              </div>
+
+              <Toggle
+                checked
+                onChange={() => { }}
+                label="I confirm I want to close my account"
+                description="I have reviewed all details and understand this action is permanent"
+                danger
+              />
             </div>
-            <InfoBox variant="danger">
-              <i className="bi bi-exclamation-triangle" /> Your request will be processed within 5
-              business days. A final confirmation is sent before any funds are paid out.
-            </InfoBox>
+          );
+        }
+
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, alignItems: "center", textAlign: "center" }}>
+            <div
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                background: "var(--success-bg)",
+                color: "var(--success)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: center,
+                fontSize: 40,
+                marginBottom: 8,
+              }}
+            >
+              <i className="bi bi-check-lg" />
+            </div>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "var(--ink-900)" }}>
+              Account Closure Confirmed
+            </h3>
+            <p style={{ fontSize: 14, color: "var(--ink-700)", maxWidth: 400, margin: "0 auto" }}>
+              Your account closure request has been successfully submitted and is now being processed.
+            </p>
+
+            <div className={s.utilityBlock} style={{ textAlign: "left", width: "100%" }}>
+              <div className={s.summaryRow} style={{ paddingBottom: 0, borderBottom: "none" }}>
+                <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Reference Number</span>
+                <strong style={{ color: "var(--pri)" }}>CLOSE-20250627-8842</strong>
+              </div>
+              <div className={s.summaryRow} style={{ paddingBottom: 0, borderBottom: "none" }}>
+                <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Status</span>
+                <span className={`${s.badge} ${s.badgeSuccess}`}>Processing</span>
+              </div>
+              <div className={s.summaryRow} style={{ paddingBottom: 0, borderBottom: "none" }}>
+                <span style={{ fontSize: 13, color: "var(--ink-700)" }}>Expected Completion</span>
+                <strong>5 business days</strong>
+              </div>
+            </div>
+
+            <div className={s.utilityBlock} style={{ background: "var(--info-bg)", borderColor: "rgba(59, 130, 246, 0.2)", textAlign: "left", width: "100%" }}>
+              <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "var(--ink-900)" }}>
+                Notifications Sent
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ display: "flex", gap: 10, fontSize: 13 }}>
+                  <i className="bi bi-check-circle-fill" style={{ color: "var(--success)" }} />
+                  <span>Confirmation email sent to amina.kamau@personal.co.ke</span>
+                </div>
+                <div style={{ display: "flex", gap: 10, fontSize: 13 }}>
+                  <i className="bi bi-check-circle-fill" style={{ color: "var(--success)" }} />
+                  <span>SMS confirmation sent to +254 712 345 890</span>
+                </div>
+                <div style={{ display: "flex", gap: 10, fontSize: 13 }}>
+                  <i className="bi bi-clock-history" style={{ color: "var(--warning)" }} />
+                  <span>Beneficiaries will be notified 24 hours before fund transfer</span>
+                </div>
+              </div>
+            </div>
+
+            <div className={s.utilityBlock} style={{ background: "var(--warning-bg)", borderColor: "rgba(245, 158, 11, 0.2)", textAlign: "left", width: "100%" }}>
+              <div style={{ fontSize: 12, color: "#92400e" }}>
+                <i className="bi bi-info-circle" /> You can still access your account in read-only mode
+                until the closure is complete. Download any important documents before then.
+              </div>
+            </div>
+
+            <button className={`${s.button} ${s.buttonPrimary}`} onClick={() => close("closeAccountModal")}>
+              Done
+            </button>
           </div>
         );
       }}
@@ -1434,8 +1928,484 @@ export function AccountSettingsModals({
             </div>
           ),
         },
+        {
+          key: "business",
+          label: "Business Accounts",
+          render: () => (
+            <div>
+              <InfoBox variant="info">
+                <i className="bi bi-info-circle" /> Close linked business accounts individually. Each closure requires a fund payout destination.
+              </InfoBox>
+              {[
+                { name: "TechVentures Ltd", detail: "Business Account • KES 2,450,000", status: "Active", grad: "linear-gradient(135deg,#7c3aed,#5b21b6)", letter: "T" },
+                { name: "GreenGrocery Co", detail: "Business Account • KES 890,000", status: "Active", grad: "linear-gradient(135deg,#10b981,#059669)", letter: "G" },
+                { name: "Swift Logistics", detail: "Business Account • KES 1,120,000", status: "Active", grad: "linear-gradient(135deg,#f59e0b,#d97706)", letter: "S" },
+              ].map((biz) => (
+                <div className={s.summaryRow} key={biz.name}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 10,
+                        background: biz.grad,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#fff",
+                        fontSize: 16,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {biz.letter}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 14 }}>{biz.name}</div>
+                      <div style={{ fontSize: 12, color: "var(--ink-500)" }}>{biz.detail}</div>
+                    </div>
+                  </div>
+                  <button 
+                    className={`${s.button} ${s.buttonSmall} ${s.buttonDanger}`}
+                    onClick={() => openModal("closeBusinessAccountModal")}
+                    title="Close this business account"
+                  >
+                    <i className="bi bi-x-circle" /> Close
+                  </button>
+                </div>
+              ))}
+            </div>
+          ),
+        },
       ]}
     />
+  );
+
+  /* ================= S20. Close Business Account (multi-step wizard) ================= */
+  const closeBusinessAccountModal = (
+    <FlowModal
+      show={isOpen("closeBusinessAccountModal")}
+      onClose={() => close("closeBusinessAccountModal")}
+      iconCls="bi bi-building-x"
+      title="Close Business Account"
+      steps={["Review impact", "Fund payout", "Confirm closure"]}
+      confirmLabel="Close Account"
+      submitVariant="danger"
+    >
+      {(step) => {
+        if (step === 1) {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div
+                style={{
+                  background: "var(--danger-bg)",
+                  borderRadius: 12,
+                  padding: "14px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  fontSize: 13,
+                  color: "#b91c1c",
+                }}
+              >
+                <i className="bi bi-exclamation-triangle-fill" /> Closing this business account is permanent and cannot be undone.
+              </div>
+              <div style={{ background: "var(--surface-2)", borderRadius: 12, padding: 16 }}>
+                <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>TechVentures Ltd</div>
+                <div style={{ fontSize: 12, color: "var(--ink-500)", marginBottom: 12 }}>Business Account • KES 2,450,000</div>
+                {[
+                  "All balances must be transferred before closure",
+                  "Recurring payments and standing orders will be cancelled",
+                  "Business cards will be frozen immediately",
+                  "Historical records retained for 7 years (legal requirement)",
+                  "Closed accounts can be reactivated with updated KYC documents",
+                ].map((item) => (
+                  <div key={item} style={{ display: "flex", gap: 10, fontSize: 13, marginBottom: 6 }}>
+                    <i className="bi bi-x-circle" style={{ color: "var(--danger)", flexShrink: 0 }} />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <InfoBox variant="info">
+                <i className="bi bi-info-circle" /> <strong>Reactivation:</strong> Closed business accounts can be reactivated within 90 days by submitting updated KYC documents. After 90 days, a new account application is required.
+              </InfoBox>
+              <Toggle
+                checked
+                onChange={() => { }}
+                label="I understand this account will be closed permanently"
+              />
+            </div>
+          );
+        }
+        if (step === 2) {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <InfoBox variant="warning">
+                <i className="bi bi-wallet2" /> You must specify where to send all funds in this account before closure.
+              </InfoBox>
+              <div>
+                <label className={s.formLabel}>Current Balance</label>
+                <div style={{ fontSize: 24, fontWeight: 700, color: "var(--pri)", marginBottom: 4 }}>KES 2,450,000</div>
+                <div style={{ fontSize: 12, color: "var(--ink-500)" }}>Available for transfer</div>
+              </div>
+              <div>
+                <label className={s.formLabel}>Payout Destination</label>
+                <select className={s.formControl} defaultValue="">
+                  <option value="">Select destination account...</option>
+                  <option>M-Pesa 0712 345 890 (Personal)</option>
+                  <option>Equity Bank ****4521 (Personal)</option>
+                  <option>KCB Bank ****7782 (Personal)</option>
+                  <option>GreenGrocery Co Business Account</option>
+                </select>
+              </div>
+              <div>
+                <label className={s.formLabel}>Transfer Reason (optional)</label>
+                <select className={s.formControl} defaultValue="">
+                  <option value="">Select reason...</option>
+                  <option>Business dissolution</option>
+                  <option>Consolidating accounts</option>
+                  <option>Switching providers</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className={s.formLabel}>Additional Notes</label>
+                <textarea className={s.formControl} rows={3} placeholder="Any additional instructions for the transfer..." />
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <InfoBox variant="warning">
+              <i className="bi bi-shield-lock" /> For security, we need to verify your identity before processing the closure.
+            </InfoBox>
+            <div style={{ background: "var(--surface-2)", borderRadius: 12, padding: 16 }}>
+              <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+                <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Account to close</span>
+                <span style={{ fontWeight: 600, fontSize: 13 }}>TechVentures Ltd</span>
+              </div>
+              <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+                <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Balance to transfer</span>
+                <span style={{ fontWeight: 600, fontSize: 13 }}>KES 2,450,000</span>
+              </div>
+              <div className={s.summaryRow} style={{ paddingBottom: 0 }}>
+                <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Payout destination</span>
+                <span style={{ fontWeight: 600, fontSize: 13 }}>M-Pesa 0712 345 890</span>
+              </div>
+            </div>
+            <div>
+              <label className={s.formLabel}>Enter verification code</label>
+              <p style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 4 }}>
+                A 6-digit code has been sent to +254 712 345 890
+              </p>
+              <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
+                {["_", "_", "_", "_", "_", "_"].map((_, i) => (
+                  <input
+                    key={i}
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={1}
+                    style={{
+                      width: 44,
+                      height: 54,
+                      textAlign: "center",
+                      fontSize: 20,
+                      fontWeight: 700,
+                      border: "2px solid var(--border)",
+                      borderRadius: 10,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            <InfoBox variant="danger">
+              <i className="bi bi-exclamation-triangle" /> Upon confirmation, funds will be transferred within 2 business days and the account will be permanently closed.
+            </InfoBox>
+          </div>
+        );
+      }}
+    </FlowModal>
+  );
+
+  /* ================= S19. Add Beneficiary ================= */
+  const addBeneficiaryModal = (
+    <SimpleModal
+      show={isOpen("addBeneficiaryModal")}
+      onClose={() => close("addBeneficiaryModal")}
+      iconCls="bi bi-person-plus"
+      title="Add New Beneficiary"
+      submitLabel="Add Beneficiary"
+      successTitle="Beneficiary Added!"
+      successMsg="Your beneficiary has been successfully added and is now available for fund distribution."
+      successRef="BENEF-20250627-5532"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.pills} style={{ marginBottom: 8 }}>
+          {["Family", "Charity", "Custom"].map((tab, i) => (
+            <button
+              key={tab}
+              className={`${s.pill} ${editTab === i ? s.pillActive : ""}`}
+              onClick={() => setEditTab(i)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {editTab === 0 && (
+          <div style={fieldGrid}>
+            <div>
+              <label className={s.formLabel}>Full Legal Name *</label>
+              <input className={s.formControl} placeholder="Enter full name" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Relation *</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select relation...</option>
+                <option>Spouse</option>
+                <option>Next of Kin</option>
+                <option>Child</option>
+                <option>Parent</option>
+                <option>Sibling</option>
+                <option>Other Family</option>
+              </select>
+            </div>
+            <div>
+              <label className={s.formLabel}>National ID Number</label>
+              <input className={s.formControl} placeholder="Enter ID number" />
+            </div>
+            <div>
+              <label className={s.formLabel}>KRA PIN</label>
+              <input className={s.formControl} placeholder="Enter KRA PIN (e.g., A001234567P)" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Age *</label>
+              <input className={s.formControl} type="number" placeholder="Enter age" min="0" max="120" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Account Type *</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select account type...</option>
+                <option>PayMo Wallet</option>
+                <option>M-Pesa</option>
+                <option>Airtel Money</option>
+                <option>Bank Account</option>
+                <option>Guardian Account (for minors)</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Account Number *</label>
+              <input className={s.formControl} placeholder="Enter account number or phone number" />
+            </div>
+          </div>
+        )}
+
+        {editTab === 1 && (
+          <div style={fieldGrid}>
+            <div>
+              <label className={s.formLabel}>Organization Name *</label>
+              <input className={s.formControl} placeholder="Enter charity/organization name" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Category *</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select category...</option>
+                <option>Humanitarian</option>
+                <option>Children</option>
+                <option>Education</option>
+                <option>Environment</option>
+                <option>Health</option>
+                <option>Community Development</option>
+                <option>Religious</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label className={s.formLabel}>Registration Number *</label>
+              <input className={s.formControl} placeholder="NGO/CBO registration number" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Account Type *</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select account type...</option>
+                <option>Bank Account</option>
+                <option>M-Pesa Till</option>
+                <option>PayMo Business Wallet</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Account Number *</label>
+              <input className={s.formControl} placeholder="Enter account number" />
+            </div>
+          </div>
+        )}
+
+        {editTab === 2 && (
+          <div style={fieldGrid}>
+            <div>
+              <label className={s.formLabel}>Name *</label>
+              <input className={s.formControl} placeholder="Enter name" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Relation/Type *</label>
+              <input className={s.formControl} placeholder="e.g., Friend, Trust, Foundation" />
+            </div>
+            <div>
+              <label className={s.formLabel}>ID/Registration Number</label>
+              <input className={s.formControl} placeholder="Enter ID or registration number" />
+            </div>
+            <div>
+              <label className={s.formLabel}>Account Type *</label>
+              <select className={s.formControl} defaultValue="">
+                <option value="">Select account type...</option>
+                <option>PayMo Wallet</option>
+                <option>M-Pesa</option>
+                <option>Bank Account</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div style={{ gridColumn: "span 2" }}>
+              <label className={s.formLabel}>Account Number *</label>
+              <input className={s.formControl} placeholder="Enter account number" />
+            </div>
+          </div>
+        )}
+
+        <InfoBox variant="info">
+          <i className="bi bi-info-circle" /> Beneficiaries under 18 years old will require a guardian account setup. Ensure all account details are accurate before adding.
+        </InfoBox>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= S20. Edit Beneficiary ================= */
+  const editBeneficiaryModal = (
+    <SimpleModal
+      show={isOpen("editBeneficiaryModal")}
+      onClose={() => close("editBeneficiaryModal")}
+      iconCls="bi bi-pencil"
+      title="Edit Beneficiary"
+      submitLabel="Save Changes"
+      successTitle="Beneficiary Updated!"
+      successMsg="Your beneficiary information has been successfully updated."
+      successRef="BENEF-20250627-5533"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.utilityBlock} style={{ background: "var(--surface-2)" }}>
+          <div className={s.summaryRow} style={{ paddingBottom: 0, borderBottom: "none" }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Current Beneficiary</span>
+            <strong>James Kamau</strong>
+          </div>
+        </div>
+
+        <div style={fieldGrid}>
+          <div>
+            <label className={s.formLabel}>Full Legal Name *</label>
+            <input className={s.formControl} defaultValue="James Kamau" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Relation *</label>
+            <select className={s.formControl} defaultValue="Spouse">
+              <option>Spouse</option>
+              <option>Next of Kin</option>
+              <option>Child</option>
+              <option>Parent</option>
+              <option>Sibling</option>
+              <option>Other Family</option>
+            </select>
+          </div>
+          <div>
+            <label className={s.formLabel}>National ID Number</label>
+            <input className={s.formControl} defaultValue="12345678" />
+          </div>
+          <div>
+            <label className={s.formLabel}>KRA PIN</label>
+            <input className={s.formControl} defaultValue="A001234567P" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Age *</label>
+            <input className={s.formControl} type="number" defaultValue="35" min="0" max="120" />
+          </div>
+          <div>
+            <label className={s.formLabel}>Account Type *</label>
+            <select className={s.formControl} defaultValue="PayMo Wallet">
+              <option>PayMo Wallet</option>
+              <option>M-Pesa</option>
+              <option>Airtel Money</option>
+              <option>Bank Account</option>
+              <option>Guardian Account (for minors)</option>
+            </select>
+          </div>
+          <div style={{ gridColumn: "span 2" }}>
+            <label className={s.formLabel}>Account Number *</label>
+            <input className={s.formControl} defaultValue="PM#31223" />
+          </div>
+        </div>
+
+        <div className={s.utilityBlock} style={{ background: "var(--warning-bg)", borderColor: "rgba(245, 158, 11, 0.2)" }}>
+          <div style={{ fontSize: 12, color: "#92400e" }}>
+            <i className="bi bi-exclamation-triangle" /> Changes to beneficiary details will affect fund distribution during account closure. Please verify all information before saving.
+          </div>
+        </div>
+      </div>
+    </SimpleModal>
+  );
+
+  /* ================= S21. Delete Beneficiary ================= */
+  const deleteBeneficiaryModal = (
+    <SimpleModal
+      show={isOpen("deleteBeneficiaryModal")}
+      onClose={() => close("deleteBeneficiaryModal")}
+      iconCls="bi bi-trash"
+      title="Remove Beneficiary"
+      submitLabel="Remove Beneficiary"
+      submitVariant="danger"
+      successTitle="Beneficiary Removed"
+      successMsg="The beneficiary has been successfully removed from your list."
+      successRef="BENEF-20250627-5534"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className={s.utilityBlock} style={{ background: "var(--danger-bg)", borderColor: "rgba(239, 68, 68, 0.3)" }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "#b91c1c", marginBottom: 8 }}>
+            <i className="bi bi-exclamation-triangle-fill" /> Confirm Removal
+          </div>
+          <div style={{ fontSize: 13, color: "#7f1d1d" }}>
+            You are about to remove <strong>James Kamau</strong> from your beneficiaries list. This action cannot be undone.
+          </div>
+        </div>
+
+        <div className={s.utilityBlock} style={{ background: "var(--surface-2)" }}>
+          <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Name</span>
+            <strong>James Kamau</strong>
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Relation</span>
+            <strong>Spouse</strong>
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Account</span>
+            <strong>PayMo Wallet PM#31223</strong>
+          </div>
+          <div className={s.summaryRow} style={{ paddingBottom: 0 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-500)" }}>Status</span>
+            <span className={`${s.badge} ${s.badgeSuccess}`}>Active</span>
+          </div>
+        </div>
+
+        <InfoBox variant="warning">
+          <i className="bi bi-exclamation-triangle" /> If this beneficiary is currently selected in any pending fund allocations, you will need to update those allocations before proceeding.
+        </InfoBox>
+
+        <Toggle
+          checked
+          onChange={() => { }}
+          label="I understand this action cannot be undone"
+          description="I confirm I want to remove this beneficiary"
+          danger
+        />
+      </div>
+    </SimpleModal>
   );
 
   return (
@@ -1458,7 +2428,11 @@ export function AccountSettingsModals({
       {webhookModal}
       {preferencesModal}
       {editProfileModal}
+      {addBeneficiaryModal}
+      {editBeneficiaryModal}
+      {deleteBeneficiaryModal}
       {linkedAccountsModal}
+      {closeBusinessAccountModal}
     </>
   );
 }
