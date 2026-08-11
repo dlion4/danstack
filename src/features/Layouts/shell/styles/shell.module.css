@@ -238,7 +238,7 @@
 	width: 36px;
 	height: 36px;
 	flex: 0 0 36px;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface-2);
 	color: var(--sh-text-secondary);
@@ -569,7 +569,7 @@
 
 .searchInput {
 	width: 100%;
-	border-radius: var(--sh-radius-sm);
+	border-radius: 20px;
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface-2);
 	padding: 0.55rem 1rem 0.55rem 2.5rem;
@@ -605,7 +605,7 @@
 	width: 42px;
 	height: 42px;
 	flex: 0 0 42px;
-	border-radius: var(--sh-radius-sm);
+	border-radius: 21px;
 	border: 1px solid var(--sh-border);
 	background: #fff;
 	color: var(--sh-text-secondary);
@@ -667,7 +667,7 @@
 	align-items: center;
 	gap: 0.35rem;
 	padding: 0.35rem 0.7rem;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	background: var(--sh-surface-2);
 	border: 1px dashed var(--sh-border);
 	color: var(--sh-text-secondary);
@@ -704,7 +704,7 @@
 	align-items: center;
 	gap: 0.65rem;
 	padding: 0.35rem 0.6rem 0.35rem 0.35rem;
-	border-radius: var(--sh-radius-sm);
+	border-radius: 21px;
 	border: 1px solid var(--sh-border);
 	background: #fff;
 	cursor: pointer;
@@ -949,6 +949,7 @@
 	transition:
 		background var(--transition-fast),
 		color var(--transition-fast);
+	text-decoration: none !important;
 }
 
 .menuItem:hover {
@@ -1222,7 +1223,7 @@
 	cursor: pointer;
 	padding: 0;
 	font-size: 0.82rem;
-	text-decoration: none;
+	text-decoration: none !important;
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
@@ -1572,7 +1573,7 @@
 	align-items: center;
 	gap: 0.4rem;
 	padding: 0.35rem 0.75rem;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	background: var(--sh-surface-2);
 	border: 1px solid var(--sh-border);
 	color: var(--sh-text-secondary);
@@ -1704,7 +1705,7 @@
 	justify-content: center;
 	gap: 0.4rem;
 	padding: 0.5rem 0.6rem;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	font-size: 0.78rem;
 	font-weight: 600;
 	cursor: pointer;
@@ -1712,7 +1713,7 @@
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface);
 	color: var(--sh-text-secondary);
-	text-decoration: none;
+	text-decoration: none !important;
 }
 
 .btnLinkAccount:hover {
@@ -1750,7 +1751,7 @@
 		overflow: hidden;
 		margin: 0.5rem 0.75rem 0.5rem 0;
 		flex-shrink: 0;
-		text-decoration: none;
+		text-decoration: none !important;
 	}
 
 .switchAccountBtn::before {
@@ -1847,7 +1848,7 @@
 	align-items: center;
 	gap: 0.4rem;
 	padding: 0.35rem 0.75rem;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	background: var(--sh-surface-2);
 	border: 1px solid var(--sh-border);
 	color: var(--sh-text-secondary);
@@ -1979,7 +1980,7 @@
 	justify-content: center;
 	gap: 0.4rem;
 	padding: 0.5rem 0.6rem;
-	border-radius: var(--sh-radius-xs);
+	border-radius: 18px;
 	font-size: 0.78rem;
 	font-weight: 600;
 	cursor: pointer;
@@ -1987,7 +1988,7 @@
 	border: 1px solid var(--sh-border);
 	background: var(--sh-surface);
 	color: var(--sh-text-secondary);
-	text-decoration: none;
+	text-decoration: none !important;
 }
 
 .btnLinkAccount:hover {
@@ -2025,7 +2026,7 @@
 		overflow: hidden;
 		margin: 0.5rem 0.75rem 0.5rem 0;
 		flex-shrink: 0;
-		text-decoration: none;
+		text-decoration: none !important;
 	}
 
 .switchAccountBtn::before {

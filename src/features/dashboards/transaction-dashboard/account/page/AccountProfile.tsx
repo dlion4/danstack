@@ -460,7 +460,7 @@ export default function AccountProfile() {
 						>
 							Missing: Secondary phone
 							<br />
-							Next review: 12 Sep 2025
+							
 						</StatCard>
 					</div>
 					<div className="col-lg-3 col-md-4 col-6">

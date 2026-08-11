@@ -93,10 +93,10 @@ const initialMockData: HubConfig = {
 	user: { name: "Amara Okafor" },
 
 	hero: {
-		pill: "DASHBOARD SELECTION HUB",
+		pill: "DASHBOARD HUB",
 		titlePre: "Choose your ",
-		titleAccent: "financial command center.",
-		copy: "You are signed in as Amara Okafor. Pick the dashboard that matches the job you need to do now. Your choice is remembered and can be changed anytime.",
+		titleAccent: "command center.",
+		copy: "Signed in as Amara Okafor. Select your dashboard below.",
 		metrics: [
 			["6", "Dashboards"],
 			["13", "Unread alerts"],
@@ -128,7 +128,7 @@ const initialMockData: HubConfig = {
 			cat: "money",
 			type: "Core",
 			title: "Transaction Wallet",
-			desc: "Track collections, payouts, refunds, settlement states and dispute queues across all rails.",
+			desc: "Track collections, payouts, refunds and disputes.",
 			icon: "bi-arrow-left-right",
 			emoji: "💸",
 			c1: "#2ee6a0",
@@ -141,9 +141,9 @@ const initialMockData: HubConfig = {
 				["T+0", "settlement"],
 			],
 			features: [
-				"Collections and payouts ledger",
+				"Collections & payouts",
 				"Rail failure and retry visibility",
-				"Reconciliation exports by market",
+				"Reconciliation exports",
 			],
 			actions: ["View transactions", "Export CSV", "Resolve alerts"],
 			url: "/pm/app/transfer-overview",
@@ -154,7 +154,7 @@ const initialMockData: HubConfig = {
 			cat: "admin",
 			type: "Business",
 			title: "Business Wallet",
-			desc: "Run invoices, suppliers, payroll, staff roles, payment links and merchant settlement.",
+			desc: "Manage invoices, suppliers, payroll and payments.",
 			icon: "bi-shop",
 			emoji: "🏪",
 			c1: "#22c55e",
@@ -167,9 +167,9 @@ const initialMockData: HubConfig = {
 				["5", "staff"],
 			],
 			features: [
-				"Invoice and payment link management",
+				"Invoice & payment links",
 				"Supplier and payroll workflows",
-				"Role-based staff permissions",
+				"Role-based permissions",
 			],
 			actions: ["Create invoice", "Approve payroll", "Invite staff"],
 			url: "/business-dashboard/command-center",
@@ -180,7 +180,7 @@ const initialMockData: HubConfig = {
 			cat: "money",
 			type: "Utilities",
 			title: "Utility Wallet",
-			desc: "Pay electricity, water, airtime, internet and other utility bills from one wallet.",
+			desc: "Pay electricity, water, airtime and internet bills.",
 			icon: "bi-lightning-charge",
 			emoji: "💡",
 			c1: "#f59e0b",
@@ -193,9 +193,9 @@ const initialMockData: HubConfig = {
 				["T+0", "confirm"],
 			],
 			features: [
-				"Electricity, water, airtime and internet",
+				"Electricity, water, airtime, internet",
 				"Scheduled payments and reminders",
-				"Receipts and usage history",
+				"Receipts & history",
 			],
 			actions: ["Pay bill", "Schedule", "View history"],
 			url: "/utility/",
@@ -206,7 +206,7 @@ const initialMockData: HubConfig = {
 			cat: "credit",
 			type: "Credit",
 			title: "Loans & Credit",
-			desc: "Access working capital, manage existing loans, repayment schedules and credit options.",
+			desc: "Access capital, manage loans and repayment schedules.",
 			icon: "bi-graph-up-arrow",
 			emoji: "📈",
 			c1: "#fbbf24",
@@ -219,9 +219,9 @@ const initialMockData: HubConfig = {
 				["5 days", "due"],
 			],
 			features: [
-				"Loan application and status tracking",
+				"Loan application & status",
 				"Repayment history and early payoff",
-				"Credit score monitoring where available",
+				"Credit score monitoring",
 			],
 			actions: ["Apply", "Make payment", "View score"],
 			url: "/business/",
@@ -232,7 +232,7 @@ const initialMockData: HubConfig = {
 			cat: "dev",
 			type: "Developer",
 			title: "Developer Wallet",
-			desc: "Manage apps, API keys, webhook delivery, sandbox events, SDKs and production access.",
+			desc: "Manage API keys, webhooks, SDKs and production access.",
 			icon: "bi-code-slash",
 			emoji: "🧩",
 			c1: "#a78bfa",
@@ -245,7 +245,7 @@ const initialMockData: HubConfig = {
 				["2", "apps"],
 			],
 			features: [
-				"API key rotation and scopes",
+				"API key rotation & scopes",
 				"Webhook replay and debugging",
 				"Production access requests",
 			],
@@ -258,7 +258,7 @@ const initialMockData: HubConfig = {
 			cat: "money",
 			type: "Cards",
 			title: "Cards Wallet",
-			desc: "Manage virtual and physical cards, controls, spend limits and card security.",
+			desc: "Manage virtual/physical cards, limits and security.",
 			icon: "bi-credit-card",
 			emoji: "💳",
 			c1: "#60a5fa",
@@ -271,9 +271,9 @@ const initialMockData: HubConfig = {
 				["Active", "program"],
 			],
 			features: [
-				"Virtual and physical card provisioning",
+				"Virtual & physical cards",
 				"Card controls and spend limits",
-				"Fraud alerts and usage analytics",
+				"Fraud alerts & analytics",
 			],
 			actions: ["Issue card", "Freeze card", "View analytics"],
 			url: "/cards/app/card-command-center",
@@ -675,7 +675,7 @@ export default function Hub() {
 											className="h5 mb-0 mt-1"
 											style={{ color: "var(--hb-ink-0)", fontWeight: 800 }}
 										>
-											Search dashboards, transactions, settings or help.
+											Search dashboards, transactions, settings.
 										</h2>
 									</div>
 									<div className="d-flex gap-2 align-items-center">
@@ -689,7 +689,7 @@ export default function Hub() {
 										ref={commandInputRef}
 										className={s.commandInput}
 										autoComplete="off"
-										placeholder="Try: transactions, loan, API keys, export, fraud alert..."
+										placeholder="Try: transactions, loans, API keys, export..."
 										value={query}
 										onChange={(e) => setQuery(e.target.value)}
 									/>
