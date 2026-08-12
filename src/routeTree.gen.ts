@@ -50,6 +50,7 @@ import { Route as BusinessDashboardTreasuryCashRouteImport } from './routes/busi
 import { Route as BusinessDashboardSupportDisputesRouteImport } from './routes/business-dashboard/support-disputes'
 import { Route as BusinessDashboardSettingsAdministrationRouteImport } from './routes/business-dashboard/settings-administration'
 import { Route as BusinessDashboardPayrollHrRouteImport } from './routes/business-dashboard/payroll-hr'
+import { Route as BusinessDashboardOverviewRouteImport } from './routes/business-dashboard/overview'
 import { Route as BusinessDashboardOpenBankingRouteImport } from './routes/business-dashboard/open-banking'
 import { Route as BusinessDashboardMultiCurrencyTreasuryRouteImport } from './routes/business-dashboard/multi-currency-treasury'
 import { Route as BusinessDashboardInvoicingBillingRouteImport } from './routes/business-dashboard/invoicing-billing'
@@ -420,6 +421,12 @@ const BusinessDashboardPayrollHrRoute =
   BusinessDashboardPayrollHrRouteImport.update({
     id: '/payroll-hr',
     path: '/payroll-hr',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardOverviewRoute =
+  BusinessDashboardOverviewRouteImport.update({
+    id: '/overview',
+    path: '/overview',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardOpenBankingRoute =
@@ -1340,6 +1347,7 @@ export interface FileRoutesByFullPath {
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
   '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
   '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
+  '/business-dashboard/overview': typeof BusinessDashboardOverviewRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
   '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
   '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
@@ -1530,6 +1538,7 @@ export interface FileRoutesByTo {
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
   '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
   '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
+  '/business-dashboard/overview': typeof BusinessDashboardOverviewRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
   '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
   '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
@@ -1726,6 +1735,7 @@ export interface FileRoutesById {
   '/business-dashboard/invoicing-billing': typeof BusinessDashboardInvoicingBillingRoute
   '/business-dashboard/multi-currency-treasury': typeof BusinessDashboardMultiCurrencyTreasuryRoute
   '/business-dashboard/open-banking': typeof BusinessDashboardOpenBankingRoute
+  '/business-dashboard/overview': typeof BusinessDashboardOverviewRoute
   '/business-dashboard/payroll-hr': typeof BusinessDashboardPayrollHrRoute
   '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
   '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
@@ -1924,6 +1934,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/invoicing-billing'
     | '/business-dashboard/multi-currency-treasury'
     | '/business-dashboard/open-banking'
+    | '/business-dashboard/overview'
     | '/business-dashboard/payroll-hr'
     | '/business-dashboard/settings-administration'
     | '/business-dashboard/support-disputes'
@@ -2114,6 +2125,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/invoicing-billing'
     | '/business-dashboard/multi-currency-treasury'
     | '/business-dashboard/open-banking'
+    | '/business-dashboard/overview'
     | '/business-dashboard/payroll-hr'
     | '/business-dashboard/settings-administration'
     | '/business-dashboard/support-disputes'
@@ -2309,6 +2321,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/invoicing-billing'
     | '/business-dashboard/multi-currency-treasury'
     | '/business-dashboard/open-banking'
+    | '/business-dashboard/overview'
     | '/business-dashboard/payroll-hr'
     | '/business-dashboard/settings-administration'
     | '/business-dashboard/support-disputes'
@@ -2887,6 +2900,13 @@ declare module '@tanstack/react-router' {
       path: '/payroll-hr'
       fullPath: '/business-dashboard/payroll-hr'
       preLoaderRoute: typeof BusinessDashboardPayrollHrRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/overview': {
+      id: '/business-dashboard/overview'
+      path: '/overview'
+      fullPath: '/business-dashboard/overview'
+      preLoaderRoute: typeof BusinessDashboardOverviewRouteImport
       parentRoute: typeof BusinessDashboardRoute
     }
     '/business-dashboard/open-banking': {
@@ -4007,6 +4027,7 @@ interface BusinessDashboardRouteChildren {
   BusinessDashboardInvoicingBillingRoute: typeof BusinessDashboardInvoicingBillingRoute
   BusinessDashboardMultiCurrencyTreasuryRoute: typeof BusinessDashboardMultiCurrencyTreasuryRoute
   BusinessDashboardOpenBankingRoute: typeof BusinessDashboardOpenBankingRoute
+  BusinessDashboardOverviewRoute: typeof BusinessDashboardOverviewRoute
   BusinessDashboardPayrollHrRoute: typeof BusinessDashboardPayrollHrRoute
   BusinessDashboardSettingsAdministrationRoute: typeof BusinessDashboardSettingsAdministrationRoute
   BusinessDashboardSupportDisputesRoute: typeof BusinessDashboardSupportDisputesRoute
@@ -4032,6 +4053,7 @@ const BusinessDashboardRouteChildren: BusinessDashboardRouteChildren = {
   BusinessDashboardMultiCurrencyTreasuryRoute:
     BusinessDashboardMultiCurrencyTreasuryRoute,
   BusinessDashboardOpenBankingRoute: BusinessDashboardOpenBankingRoute,
+  BusinessDashboardOverviewRoute: BusinessDashboardOverviewRoute,
   BusinessDashboardPayrollHrRoute: BusinessDashboardPayrollHrRoute,
   BusinessDashboardSettingsAdministrationRoute:
     BusinessDashboardSettingsAdministrationRoute,

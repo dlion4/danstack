@@ -8,6 +8,8 @@
 import type { AsideKind } from "../data/businessLayoutData";
 import { cx } from "../data/businessLayoutData";
 import styles from "../styles/businessLayout.module.css";
+import { BUSINESSES, ORDER, shortM } from "@/features/dashboards/business-dashboard/overview/paymoData";
+import type { Tone } from "@/features/dashboards/business-dashboard/overview/paymoData";
 
 const s = styles as Record<string, string>;
 
@@ -18,12 +20,16 @@ interface BusinessAsideProps {
 		message: string,
 		type: "success" | "danger" | "warning" | "info",
 	) => void;
+	onSwitchBiz?: (id: string) => void;
+	currentBusinessKey?: string;
 }
 
 export default function BusinessAside({
 	activePanel,
 	onClose,
 	onToast,
+	onSwitchBiz,
+	currentBusinessKey = "techsol",
 }: BusinessAsideProps) {
 	return (
 		<>
@@ -37,7 +43,7 @@ export default function BusinessAside({
 				aria-label="Context panel"
 				aria-hidden={!activePanel}
 			>
-				{/* ============ COMPLIANCE ============ */}
+				{/* ============ BUSINESS CENTER ============ */}
 				<div
 					className={cx(
 						s["aside-panel-content"],
@@ -46,7 +52,7 @@ export default function BusinessAside({
 				>
 					<div className={s["aside-header"]}>
 						<span className={s["aside-title"]}>
-							<i className="bi bi-shield-check text-primary" /> Compliance
+							<i className="bi bi-diagram-3 text-primary" /> Business
 							Center
 						</span>
 						<button
@@ -59,91 +65,88 @@ export default function BusinessAside({
 						</button>
 					</div>
 					<div className={s["aside-body"]}>
+						<div className={s["business-search"]}>
+							<i className="bi bi-search" />
+							<input type="text" placeholder="Search businesses..." />
+						</div>
 						<div className={s["aside-card"]}>
-							<h6>KYB Status</h6>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="fw-semibold" style={{ fontSize: "0.85rem" }}>
-									Business Registration
+							<h6>Your Businesses</h6>
+							{ORDER.map((id) => {
+								const x = BUSINESSES[id];
+								const cur = id === currentBusinessKey;
+								return (
+									<div
+										key={id}
+										className={`${s["business-card-item"]} ${cur ? s["current"] : ""}`}
+										onClick={() => {
+											if (!cur && onSwitchBiz) {
+												onSwitchBiz(id);
+												onClose();
+												onToast(
+													`Switched to ${x.name}`,
+													"success",
+												);
+											}
+										}}
+									>
+										<div
+											className={s["avatar"]}
+											style={{
+												width: 40,
+												height: 40,
+												fontSize: 14,
+												background: x.color,
+											}}
+										>
+											{x.initials}
+										</div>
+										<div style={{ flex: 1 }}>
+											<div className={s["business-name"]}>
+												{x.name}
+												{cur && (
+													<span className={`${s["viewing-badge"]} ms-2`}>
+														Viewing
+													</span>
+												)}
+											</div>
+											<div className={s["business-meta"]}>
+												{x.sector} ·
+												<span
+													className={`${s["business-type-badge"]} ${s[x.type]} ms-1`}
+												>
+													{x.type}
+												</span>
+												· <span className={s["business-cash"]}>KES {shortM(x.kpi.cash)}</span>
+											</div>
+										</div>
+										{cur ? (
+											<i className={`bi bi-check-circle-fill text-success ${s["business-indicator"]}`} />
+										) : (
+											<i className={`bi bi-chevron-right text-muted ${s["business-indicator"]}`} />
+										)}
+									</div>
+								);
+							})}
+						</div>
+						<div className={`${s["aside-card"]} ${s["group-overview-card"]}`}>
+							<h6>Group Overview</h6>
+							<div className={s["status-row"]}>
+								<span className="text-muted" style={{ fontSize: "0.82rem" }}>
+									Total Businesses
 								</span>
-								<span
-									className="badge"
-									style={{
-										background: "rgba(16,185,129,0.1)",
-										color: "var(--paymo-accent)",
-									}}
-								>
-									Verified
+								<span className="fw-bold" style={{ fontSize: "0.82rem" }}>
+									{ORDER.length}
 								</span>
 							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="fw-semibold" style={{ fontSize: "0.85rem" }}>
-									Tax Compliance
+							<div className={s["status-row"]}>
+								<span className="text-muted" style={{ fontSize: "0.82rem" }}>
+									Consolidated Cash
 								</span>
-								<span
-									className="badge"
-									style={{
-										background: "rgba(16,185,129,0.1)",
-										color: "var(--paymo-accent)",
-									}}
-								>
-									Verified
-								</span>
-							</div>
-							<div className="d-flex justify-content-between">
-								<span className="fw-semibold" style={{ fontSize: "0.85rem" }}>
-									Operating Permit
-								</span>
-								<span
-									className="badge"
-									style={{
-										background: "rgba(245,158,11,0.1)",
-										color: "var(--paymo-warning)",
-									}}
-								>
-									Expiring
+								<span className="fw-bold" style={{ fontSize: "0.82rem" }}>
+									KES 14.6M
 								</span>
 							</div>
 						</div>
-						<div className={s["aside-card"]}>
-							<h6>Audit Trail</h6>
-							<div className={s["status-row"]}>
-								<div>
-									<div className="fw-semibold" style={{ fontSize: "0.82rem" }}>
-										Payroll executed
-									</div>
-									<div className="text-muted" style={{ fontSize: "0.72rem" }}>
-										Martha K. · 09:00 today
-									</div>
-								</div>
-							</div>
-							<div className={s["status-row"]}>
-								<div>
-									<div className="fw-semibold" style={{ fontSize: "0.82rem" }}>
-										Vendor approved
-									</div>
-									<div className="text-muted" style={{ fontSize: "0.72rem" }}>
-										James N. · Yesterday
-									</div>
-								</div>
-							</div>
-							<div className={s["status-row"]}>
-								<div>
-									<div className="fw-semibold" style={{ fontSize: "0.82rem" }}>
-										Limits updated
-									</div>
-									<div className="text-muted" style={{ fontSize: "0.72rem" }}>
-										System · 2 days ago
-									</div>
-								</div>
-							</div>
-						</div>
-						<button
-							type="button"
-							className="btn btn-outline-primary btn-sm w-100"
-							onClick={() => onToast("Opening full audit log", "info")}
-						>
-							View Full Audit Log
-						</button>
 					</div>
 				</div>
 
@@ -221,7 +224,8 @@ export default function BusinessAside({
 				>
 					<div className={s["aside-header"]}>
 						<span className={s["aside-title"]}>
-							<i className="bi bi-people text-primary" /> Payroll Manager
+							<i className="bi bi-people text-primary" /> Payroll
+							Manager
 						</span>
 						<button
 							type="button"
@@ -279,6 +283,7 @@ export default function BusinessAside({
 						</div>
 					</div>
 				</div>
+
 			</aside>
 		</>
 	);

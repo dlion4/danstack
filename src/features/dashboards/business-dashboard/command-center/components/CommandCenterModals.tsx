@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 import styles from "../styles/command-center.module.css";
 
 /* ============================================================================
@@ -99,11 +100,12 @@ const ROLES = [
 	{ label: "Viewer", desc: "Read-only access to reports" },
 ];
 
-/* LEGACY BRIDGE: flow definitions */
+/* LEGACY BRIDGE: flow definitions - matching original HTML exactly */
 const FLOW_DEFS: Record<string, { labels: string[] }> = {
-	payroll: { labels: ["Select", "Review", "Approve"] },
-	transfer: { labels: ["Details", "Amount", "Authorize"] },
-	invite: { labels: ["Details", "Role", "Limits"] },
+	newInvoice: { labels: ["Details", "Line Items", "Schedule", "Review"] },
+	payroll: { labels: ["Employees", "Review", "Deductions", "Funding", "Authorize"] },
+	transfer: { labels: ["From/To", "Amount", "FX & Fees", "Reference", "Confirm"] },
+	invite: { labels: ["Details", "Role", "Limits", "Security", "Review"] },
 };
 
 interface Result {
@@ -122,29 +124,7 @@ function Stepper({ flowKey, current }: { flowKey: string; current: number }) {
 				const done = stepNum < current;
 				const active = stepNum === current;
 				return (
-					<div
-						key={label}
-						style={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: 8,
-							position: "relative",
-							zIndex: 2,
-						}}
-					>
-						{i > 0 && (
-							<div
-								className={s.stepLine}
-								style={{
-									position: "absolute",
-									top: 14,
-									left: "-50%",
-									width: "100%",
-									...(done ? { background: "var(--pm-accent)" } : {}),
-								}}
-							/>
-						)}
+					<React.Fragment key={label}>
 						<div
 							className={`${s.step} ${done ? s.stepDone : ""} ${active ? s.stepActive : ""}`}
 						>
@@ -153,7 +133,15 @@ function Stepper({ flowKey, current }: { flowKey: string; current: number }) {
 							</div>
 							<div className={s.stepL}>{label}</div>
 						</div>
-					</div>
+						{i < def.labels.length - 1 && (
+							<div
+								className={s.stepLine}
+								style={{
+									...(done ? { background: "var(--pm-accent)" } : {}),
+								}}
+							/>
+						)}
+					</React.Fragment>
 				);
 			})}
 		</div>
@@ -172,6 +160,7 @@ export default function CommandCenterModals({
 	const [results, setResults] = useState<Record<string, Result>>({});
 	const [busy, setBusy] = useState<string | null>(null);
 	const [flows, setFlows] = useState<Record<string, number>>({
+		newInvoice: 1,
 		payroll: 1,
 		transfer: 1,
 		invite: 1,
@@ -182,7 +171,7 @@ export default function CommandCenterModals({
 	useEffect(() => {
 		if (active === null) {
 			setResults({});
-			setFlows({ payroll: 1, transfer: 1, invite: 1 });
+			setFlows({ newInvoice: 1, payroll: 1, transfer: 1, invite: 1 });
 			setBusy(null);
 			setTabs({});
 		}
@@ -245,91 +234,191 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M1: New Invoice
+     M1: New Invoice (Multistep, 4 steps)
      ======================================================================== */
-	const renderNewInvoice = () => (
-		<MBox
-			id="newInvoiceModal"
-			active={active}
-			onClose={onClose}
-			title={
-				<>
-					<i className="bi bi-receipt text-primary me-2" />
-					Create Quick Invoice
-				</>
-			}
-			footer={
-				<>
-					<button className={s.btnPm} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						className={cx(s.btnPm, s.btnPmP)}
-						onClick={() =>
-							doAction(
-								"newInvoiceModal",
-								"Invoice #INV-2025-142 created & sent successfully!",
-								"INV-2025-142",
-							)
-						}
-					>
-						Create Invoice
-					</button>
-				</>
-			}
-		>
-			{renderActionBody(
-				"newInvoiceModal",
-				<>
-					<div className="mb-3">
-						<label className={s.formLabel}>Customer</label>
-						<select className={s.formControl}>
-							{CUSTOMERS.map((c) => (
-								<option key={c}>{c}</option>
-							))}
-						</select>
+	const renderNewInvoice = () => {
+		const step = flows.newInvoice;
+		return (
+			<MBox
+				id="newInvoiceModal"
+				active={active}
+				size="lg"
+				onClose={onClose}
+				title={
+					<>
+						<i className="bi bi-receipt text-primary me-2" />
+						Create Quick Invoice
+					</>
+				}
+				footer={
+					<>
+						<button className={s.btnPm} onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className={cx(s.btnPm, s.btnPmP)}
+							onClick={() => nextFlow("newInvoice", 4)}
+						>
+							{step >= 4 ? (
+								"Send Invoice"
+							) : (
+								<>
+									Continue <i className="bi bi-arrow-right" />
+								</>
+							)}
+						</button>
+					</>
+				}
+			>
+				<Stepper flowKey="newInvoice" current={step} />
+				{step === 1 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Customer Details</h6>
+						<div className="mb-3">
+							<label className={s.formLabel}>Customer</label>
+							<select className={s.formControl}>
+								{CUSTOMERS.map((c) => (
+									<option key={c}>{c}</option>
+								))}
+							</select>
+						</div>
+						<div className="mb-3">
+							<label className={s.formLabel}>Invoice Date</label>
+							<input
+								type="date"
+								className={s.formControl}
+								defaultValue="2025-10-28"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className={s.formLabel}>Due Date</label>
+							<input
+								type="date"
+								className={s.formControl}
+								defaultValue="2025-11-15"
+							/>
+						</div>
 					</div>
-					<div className="mb-3">
-						<label className={s.formLabel}>Amount (KES)</label>
-						<input
-							type="number"
-							className={s.formControl}
-							defaultValue="150000"
-						/>
+				)}
+				{step === 2 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Line Items</h6>
+						<div className="mb-3">
+							<label className={s.formLabel}>Description</label>
+							<textarea
+								className={s.formControl}
+								rows={2}
+								defaultValue="IT Consulting Services - October 2025"
+							/>
+						</div>
+						<div className="row g-2 mb-3">
+							<div className="col-6">
+								<label className={s.formLabel}>Quantity</label>
+								<input
+									type="number"
+									className={s.formControl}
+									defaultValue="1"
+								/>
+							</div>
+							<div className="col-6">
+								<label className={s.formLabel}>Unit Price (KES)</label>
+								<input
+									type="number"
+									className={s.formControl}
+									defaultValue="150000"
+								/>
+							</div>
+						</div>
+						<div
+							className="p-3 rounded mb-2"
+							style={{ background: "var(--pm-surface-2)" }}
+						>
+							<div className="d-flex justify-content-between">
+								<span>Subtotal</span>
+								<strong>KES 150,000</strong>
+							</div>
+						</div>
 					</div>
-					<div className="mb-3">
-						<label className={s.formLabel}>Description</label>
-						<textarea
-							className={s.formControl}
-							rows={2}
-							defaultValue="IT Consulting Services - October 2025"
-						/>
+				)}
+				{step === 3 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Schedule & Options</h6>
+						<div className="form-check mb-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label">
+								Send payment link via Email
+							</label>
+						</div>
+						<div className="form-check mb-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label">
+								Send payment link via SMS
+							</label>
+						</div>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+							/>
+							<label className="form-check-label">
+								Enable auto-reminder for overdue invoices
+							</label>
+						</div>
 					</div>
-					<div className="mb-3">
-						<label className={s.formLabel}>Due Date</label>
-						<input
-							type="date"
-							className={s.formControl}
-							defaultValue="2025-11-15"
-						/>
+				)}
+				{step === 4 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Review & Send</h6>
+						<div
+							className="p-3 border rounded mb-3"
+							style={{ background: "var(--pm-surface-2)" }}
+						>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Customer</span>
+								<strong>Acme Corp</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Description</span>
+								<strong>IT Consulting Services</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Due Date</span>
+								<strong>Nov 15, 2025</strong>
+							</div>
+							<hr className={s.divider} />
+							<div className="d-flex justify-content-between">
+								<span>Total Amount</span>
+								<strong style={{ color: "var(--pm-primary)" }}>
+									KES 150,000
+								</strong>
+							</div>
+						</div>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label">
+								I confirm the invoice details are correct
+							</label>
+						</div>
 					</div>
-					<div className="form-check">
-						<input
-							className="form-check-input"
-							type="checkbox"
-							defaultChecked
-						/>
-						<label className="form-check-label">
-							Send payment link via Email/SMS
-						</label>
-					</div>
-				</>,
-			)}
-		</MBox>
-	);
+				)}
+			</MBox>
+		);
+	};
 
 	/* ==========================================================================
-     M2: Run Payroll (Multistep, 3 steps)
+     M2: Run Payroll (Multistep, 5 steps)
      ======================================================================== */
 	const renderRunPayroll = () => {
 		const step = flows.payroll;
@@ -352,10 +441,10 @@ export default function CommandCenterModals({
 						</button>
 						<button
 							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("payroll", 3)}
+							onClick={() => nextFlow("payroll", 5)}
 						>
-							{step >= 3 ? (
-								"Approve & Execute"
+							{step >= 5 ? (
+								"Execute Payroll"
 							) : (
 								<>
 									Continue <i className="bi bi-arrow-right" />
@@ -368,83 +457,149 @@ export default function CommandCenterModals({
 				<Stepper flowKey="payroll" current={step} />
 				{step === 1 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>
-							Step 1: Select Employees for October 2025
-						</h6>
-						<div
-							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<div
-								className="d-flex justify-content-between"
-								style={{ fontSize: 13 }}
-							>
-								<span>24 Employees Selected</span>
-								<strong>Total: KES 450,500</strong>
-							</div>
+						<h6 style={{ fontWeight: 700 }}>Select Employees</h6>
+						<div className="table-responsive">
+							<table className={s.tbl}>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Dept</th>
+										<th>Gross</th>
+										<th>Net</th>
+										<th>Method</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td data-label="Name">Amina D.</td>
+										<td data-label="Dept">Admin</td>
+										<td data-label="Gross">200,000</td>
+										<td data-label="Net">155,000</td>
+										<td data-label="Method">Bank</td>
+									</tr>
+									<tr>
+										<td data-label="Name">Peter K.</td>
+										<td data-label="Dept">Finance</td>
+										<td data-label="Gross">150,000</td>
+										<td data-label="Net">117,500</td>
+										<td data-label="Method">Bank</td>
+									</tr>
+									<tr>
+										<td data-label="Name">Grace M.</td>
+										<td data-label="Dept">Eng</td>
+										<td data-label="Gross">95,000</td>
+										<td data-label="Net">71,200</td>
+										<td data-label="Method">Bank</td>
+									</tr>
+									<tr>
+										<td data-label="Name">David O.</td>
+										<td data-label="Dept">Sales</td>
+										<td data-label="Gross">60,000</td>
+										<td data-label="Net">48,500</td>
+										<td data-label="Method">M-Pesa</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
-						<div className="mb-3">
-							<label className={s.formLabel}>Funding Source</label>
-							<select className={s.formControl}>
-								<option>PayMo Business Wallet (KES 2.45M)</option>
-								<option>Equity Bank ****4521</option>
-							</select>
+						<div
+							className="p-2 rounded mt-2"
+							style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
+						>
+							<i className="bi bi-exclamation-triangle" /> 1 employee missing bank details — will be paid via M-Pesa.
 						</div>
 					</div>
 				)}
 				{step === 2 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Review Payroll Summary</h6>
-						<div className="table-responsive">
-							<table className={s.tbl}>
-								<thead>
-									<tr>
-										<th>Employee</th>
-										<th>Gross</th>
-										<th>Tax (PAYE)</th>
-										<th>Net</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td data-label="Employee">Amina D. (Admin)</td>
-										<td data-label="Gross">200,000</td>
-										<td data-label="Tax (PAYE)">45,000</td>
-										<td data-label="Net">155,000</td>
-									</tr>
-									<tr>
-										<td data-label="Employee">Peter K. (Finance)</td>
-										<td data-label="Gross">150,000</td>
-										<td data-label="Tax (PAYE)">32,500</td>
-										<td data-label="Net">117,500</td>
-									</tr>
-									<tr>
-										<td data-label="Employee">Sarah W. (HR)</td>
-										<td data-label="Gross">120,000</td>
-										<td data-label="Tax (PAYE)">24,000</td>
-										<td data-label="Net">96,000</td>
-									</tr>
-								</tbody>
-							</table>
+						<h6 style={{ fontWeight: 700 }}>Review Payroll Summary</h6>
+						<div
+							className="p-3 border rounded mb-2"
+							style={{ background: "var(--pm-surface-2)" }}
+						>
+							<div className="d-flex justify-content-between mb-2">
+								<span>Gross Pay</span>
+								<strong>KES 620,000</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span>PAYE (Income Tax)</span>
+								<strong className="text-danger">- KES 98,000</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span>NSSF</span>
+								<strong className="text-danger">- KES 2,160</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span>SHIF</span>
+								<strong className="text-danger">- KES 5,400</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span>Other deductions</span>
+								<strong className="text-danger">- KES 63,940</strong>
+							</div>
+							<hr className={s.divider} />
+							<div className="d-flex justify-content-between">
+								<span style={{ fontWeight: 700 }}>Net Disbursement</span>
+								<strong style={{ color: "var(--pm-accent)" }}>
+									KES 450,500
+								</strong>
+							</div>
 						</div>
 					</div>
 				)}
 				{step === 3 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Approve & Execute</h6>
+						<h6 style={{ fontWeight: 700 }}>Statutory & Deductions</h6>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label" style={{ fontSize: 13 }}>
+								Auto-file KRA P10, NSSF & SHIF returns
+							</label>
+						</div>
+					</div>
+				)}
+				{step === 4 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Funding Wallet & FX</h6>
+						<div className="mb-3">
+							<label className={s.formLabel}>Fund from</label>
+							<select className={s.formControl}>
+								<option>PayMo Business Wallet (KES 2.45M)</option>
+								<option>Equity Bank (KES 8.12M)</option>
+							</select>
+						</div>
 						<div
 							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-warning-soft)", fontSize: 13 }}
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
 						>
-							<i className="bi bi-exclamation-triangle text-warning me-1" /> You
-							are authorizing KES 450,500 disbursement to 24 employees. This
-							action is irreversible.
+							This run is in <strong>KES</strong>. No FX conversion required.
+							<br />
+							<span style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+								Balance after run: KES 1.99M
+							</span>
 						</div>
+					</div>
+				)}
+				{step === 5 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Authorize Execution</h6>
+						<div
+							className="p-3 rounded mb-3"
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+						>
+							Disbursing <strong>KES 450,500</strong> to 24 employees. Dual-approval required for amounts over KES 500K.
+						</div>
+						<label className={s.formLabel} style={{ textAlign: "center" }}>
+							Enter Director PIN
+						</label>
 						<div className={s.pinRow}>
 							{[0, 1, 2, 3].map((i) => (
 								<input
 									key={i}
-									type="text"
+									type="password"
 									maxLength={1}
 									className={s.formControl}
 									style={{
@@ -454,9 +609,20 @@ export default function CommandCenterModals({
 										fontSize: 24,
 										fontWeight: 700,
 									}}
-									placeholder="·"
 								/>
 							))}
+						</div>
+						<div
+							className="form-check mt-3 text-center d-flex justify-content-center"
+						>
+							<input
+								className="form-check-input me-2"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label" style={{ fontSize: 12 }}>
+								I authorize this payroll run
+							</label>
 						</div>
 					</div>
 				)}
@@ -465,7 +631,7 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M3: Inter-Company Transfer (Multistep, 3 steps)
+     M3: Inter-Company Transfer (Multistep, 5 steps)
      ======================================================================== */
 	const renderInterCompanyTransfer = () => {
 		const step = flows.transfer;
@@ -491,9 +657,9 @@ export default function CommandCenterModals({
 						</button>
 						<button
 							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("transfer", 3)}
+							onClick={() => nextFlow("transfer", 5)}
 						>
-							{step >= 3 ? "Authorize" : "Continue"}
+							{step >= 5 ? "Confirm Transfer" : "Continue"}
 						</button>
 					</>
 				}
@@ -501,12 +667,13 @@ export default function CommandCenterModals({
 				<Stepper flowKey="transfer" current={step} />
 				{step === 1 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Transfer Details</h6>
+						<h6 style={{ fontWeight: 700 }}>From / To Accounts</h6>
 						<div className="mb-3">
 							<label className={s.formLabel}>From Account</label>
 							<select className={s.formControl}>
 								<option>TechSolutions Ltd (KES 2.45M)</option>
 								<option>TS Logistics (KES 8.10M)</option>
+								<option>TechSolutions Foundation (KES 3.20M)</option>
 							</select>
 						</div>
 						<div className="mb-3">
@@ -514,8 +681,14 @@ export default function CommandCenterModals({
 							<select className={s.formControl}>
 								<option>TS Logistics & Delivery</option>
 								<option>TechSolutions Foundation</option>
+								<option>TechSolutions Retail</option>
 							</select>
 						</div>
+					</div>
+				)}
+				{step === 2 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Amount</h6>
 						<div className="mb-3">
 							<label className={s.formLabel}>Amount (KES)</label>
 							<input
@@ -524,34 +697,36 @@ export default function CommandCenterModals({
 								defaultValue="500000"
 							/>
 						</div>
+						<div
+							className="p-3 rounded mb-2"
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+						>
+							Available in source: <strong>KES 2,450,000</strong>
+						</div>
 					</div>
 				)}
-				{step === 2 && (
+				{step === 3 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Review Transfer</h6>
+						<h6 style={{ fontWeight: 700 }}>FX & Fees</h6>
 						<div
-							className="p-3 rounded mb-3"
-							style={{ background: "var(--pm-surface-2)" }}
+							className="p-3 border rounded mb-2"
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
 						>
-							<div
-								className="d-flex justify-content-between mb-2"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">From</span>
-								<strong>TechSolutions Ltd</strong>
+							<div className="d-flex justify-content-between mb-2">
+								<span>Transfer Amount</span>
+								<strong>KES 500,000</strong>
 							</div>
-							<div
-								className="d-flex justify-content-between mb-2"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">To</span>
-								<strong>TS Logistics & Delivery</strong>
+							<div className="d-flex justify-content-between mb-2">
+								<span>FX Rate</span>
+								<strong>1:1 (Same Currency)</strong>
 							</div>
-							<div
-								className="d-flex justify-content-between"
-								style={{ fontSize: 13 }}
-							>
-								<span className="text-muted">Amount</span>
+							<div className="d-flex justify-content-between mb-2">
+								<span>Processing Fee</span>
+								<strong>KES 0 (Internal)</strong>
+							</div>
+							<hr className={s.divider} />
+							<div className="d-flex justify-content-between">
+								<span>Total Debit</span>
 								<strong style={{ color: "var(--pm-primary)" }}>
 									KES 500,000
 								</strong>
@@ -559,14 +734,61 @@ export default function CommandCenterModals({
 						</div>
 					</div>
 				)}
-				{step === 3 && (
+				{step === 4 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Authorize with PIN</h6>
+						<h6 style={{ fontWeight: 700 }}>Reference & Memo</h6>
+						<div className="mb-3">
+							<label className={s.formLabel}>Reference</label>
+							<input
+								type="text"
+								className={s.formControl}
+								defaultValue="TRF-2025-1028"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className={s.formLabel}>Memo / Description</label>
+							<textarea
+								className={s.formControl}
+								rows={2}
+								defaultValue="Funds for Q4 logistics expansion"
+							/>
+						</div>
+					</div>
+				)}
+				{step === 5 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Confirm Transfer</h6>
+						<div
+							className="p-3 border rounded mb-3"
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+						>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">From</span>
+								<strong>TechSolutions Ltd</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">To</span>
+								<strong>TS Logistics & Delivery</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Amount</span>
+								<strong style={{ color: "var(--pm-primary)" }}>
+									KES 500,000
+								</strong>
+							</div>
+							<div className="d-flex justify-content-between">
+								<span className="text-muted">Reference</span>
+								<strong>TRF-2025-1028</strong>
+							</div>
+						</div>
+						<label className={s.formLabel} style={{ textAlign: "center" }}>
+							Enter Director PIN
+						</label>
 						<div className={s.pinRow}>
 							{[0, 1, 2, 3].map((i) => (
 								<input
 									key={i}
-									type="text"
+									type="password"
 									maxLength={1}
 									className={s.formControl}
 									style={{
@@ -576,7 +798,6 @@ export default function CommandCenterModals({
 										fontSize: 24,
 										fontWeight: 700,
 									}}
-									placeholder="·"
 								/>
 							))}
 						</div>
@@ -587,7 +808,7 @@ export default function CommandCenterModals({
 	};
 
 	/* ==========================================================================
-     M4: Invite User (Multistep, 3 steps)
+     M4: Invite User (Multistep, 5 steps)
      ======================================================================== */
 	const renderInviteUser = () => {
 		const step = flows.invite;
@@ -595,6 +816,7 @@ export default function CommandCenterModals({
 			<MBox
 				id="inviteUserModal"
 				active={active}
+				size="lg"
 				onClose={onClose}
 				title={
 					<>
@@ -609,9 +831,9 @@ export default function CommandCenterModals({
 						</button>
 						<button
 							className={cx(s.btnPm, s.btnPmP)}
-							onClick={() => nextFlow("invite", 3)}
+							onClick={() => nextFlow("invite", 5)}
 						>
-							{step >= 3 ? "Send Invite" : "Continue"}
+							{step >= 5 ? "Send Invite" : "Continue"}
 						</button>
 					</>
 				}
@@ -619,7 +841,7 @@ export default function CommandCenterModals({
 				<Stepper flowKey="invite" current={step} />
 				{step === 1 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Member Details</h6>
+						<h6 style={{ fontWeight: 700 }}>Member Details</h6>
 						<div className="mb-3">
 							<label className={s.formLabel}>Full Name</label>
 							<input className={s.formControl} defaultValue="John Mwangi" />
@@ -629,6 +851,14 @@ export default function CommandCenterModals({
 							<input
 								className={s.formControl}
 								defaultValue="john@techsol.co.ke"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className={s.formLabel}>Phone (Optional)</label>
+							<input
+								type="tel"
+								className={s.formControl}
+								defaultValue="+254 712 345 678"
 							/>
 						</div>
 						<div className="mb-3">
@@ -643,7 +873,7 @@ export default function CommandCenterModals({
 				)}
 				{step === 2 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Assign Role</h6>
+						<h6 style={{ fontWeight: 700 }}>Assign Role</h6>
 						{ROLES.map((r) => (
 							<div
 								key={r.label}
@@ -653,7 +883,7 @@ export default function CommandCenterModals({
 										? {
 												borderColor: "var(--pm-primary)",
 												background: "rgba(79,70,229,.04)",
-											}
+										  }
 										: {}),
 								}}
 							>
@@ -674,9 +904,7 @@ export default function CommandCenterModals({
 				)}
 				{step === 3 && (
 					<div className={s.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>
-							Step 3: Approval Limits & Security
-						</h6>
+						<h6 style={{ fontWeight: 700 }}>Approval Limits</h6>
 						<div className="mb-3">
 							<label className={s.formLabel}>Approval Limit (KES)</label>
 							<input
@@ -685,6 +913,17 @@ export default function CommandCenterModals({
 								defaultValue="1000000"
 							/>
 						</div>
+						<div
+							className="p-3 rounded mb-2"
+							style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
+						>
+							<i className="bi bi-info-circle" /> Limits apply to single transactions. Requires dual-approval for amounts above limit.
+						</div>
+					</div>
+				)}
+				{step === 4 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Security Settings</h6>
 						<div className="form-check mb-2">
 							<input
 								className="form-check-input"
@@ -692,9 +931,58 @@ export default function CommandCenterModals({
 								defaultChecked
 								disabled
 							/>
-							<label className="form-check-label">
+							<label className="form-check-label" style={{ fontSize: 13 }}>
 								Require 2FA/MFA (Enforced for Admin)
 							</label>
+						</div>
+						<div className="form-check mb-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked
+							/>
+							<label className="form-check-label" style={{ fontSize: 13 }}>
+								Allow access to multi-business switcher
+							</label>
+						</div>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+							/>
+							<label className="form-check-label" style={{ fontSize: 13 }}>
+								Require IP whitelist for login
+							</label>
+						</div>
+					</div>
+				)}
+				{step === 5 && (
+					<div className={s.fstepActive}>
+						<h6 style={{ fontWeight: 700 }}>Review & Send Invite</h6>
+						<div
+							className="p-3 border rounded mb-3"
+							style={{ background: "var(--pm-surface-2)", fontSize: 13 }}
+						>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Name</span>
+								<strong>John Mwangi</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Email</span>
+								<strong>john@techsol.co.ke</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Role</span>
+								<strong>Admin</strong>
+							</div>
+							<div className="d-flex justify-content-between mb-2">
+								<span className="text-muted">Approval Limit</span>
+								<strong>KES 1,000,000</strong>
+							</div>
+							<div className="d-flex justify-content-between">
+								<span className="text-muted">MFA</span>
+								<span className={cx(s.badge, s.badgeS)}>Required</span>
+							</div>
 						</div>
 						<div className="form-check">
 							<input
@@ -702,8 +990,8 @@ export default function CommandCenterModals({
 								type="checkbox"
 								defaultChecked
 							/>
-							<label className="form-check-label">
-								Allow access to multi-business switcher
+							<label className="form-check-label" style={{ fontSize: 12 }}>
+								I confirm the invitation details are correct
 							</label>
 						</div>
 					</div>
@@ -1729,60 +2017,218 @@ export default function CommandCenterModals({
 				</>
 			}
 			footer={
-				<button className={s.btnPm} onClick={onClose}>
-					Close
-				</button>
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={() => doAction("savePermissions", "Permissions saved successfully")}
+					>
+						<i className="bi bi-check-lg" /> Save Changes
+					</button>
+				</>
 			}
 		>
-			<div className="table-responsive">
-				<table className={s.tbl}>
-					<thead>
-						<tr>
-							<th>Permission</th>
-							<th>Admin</th>
-							<th>Finance</th>
-							<th>HR</th>
-							<th>Viewer</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td data-label="Permission">Create Invoice</td>
-							<td data-label="Admin">✅</td>
-							<td data-label="Finance">✅</td>
-							<td data-label="HR">❌</td>
-							<td data-label="Viewer">❌</td>
-						</tr>
-						<tr>
-							<td data-label="Permission">Approve Payments</td>
-							<td data-label="Admin">✅</td>
-							<td data-label="Finance">✅ (≤1M)</td>
-							<td data-label="HR">✅ (Payroll only)</td>
-							<td data-label="Viewer">❌</td>
-						</tr>
-						<tr>
-							<td data-label="Permission">Run Payroll</td>
-							<td data-label="Admin">✅</td>
-							<td data-label="Finance">❌</td>
-							<td data-label="HR">✅</td>
-							<td data-label="Viewer">❌</td>
-						</tr>
-						<tr>
-							<td data-label="Permission">View Reports</td>
-							<td data-label="Admin">✅</td>
-							<td data-label="Finance">✅</td>
-							<td data-label="HR">✅</td>
-							<td data-label="Viewer">✅</td>
-						</tr>
-						<tr>
-							<td data-label="Permission">Manage Users</td>
-							<td data-label="Admin">✅</td>
-							<td data-label="Finance">❌</td>
-							<td data-label="HR">❌</td>
-							<td data-label="Viewer">❌</td>
-						</tr>
-					</tbody>
-				</table>
+			<div className="row g-4">
+				<div className="col-lg-8">
+					<div className={s.card} style={{ padding: "16px", marginBottom: "16px" }}>
+						<h5 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 12px" }}>
+							<i className="bi bi-grid-3x3-gap me-2" /> Permission Matrix
+						</h5>
+						<div className="table-responsive">
+							<table className={s.tbl}>
+								<thead>
+									<tr>
+										<th>Permission</th>
+										<th>Admin</th>
+										<th>Finance</th>
+										<th>HR</th>
+										<th>Viewer</th>
+										<th>Custom</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Create Invoice</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Generate and send invoices</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeI)}>Partial</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Approve Payments</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Authorize transactions</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Unlimited</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeW)}>⚠️ ≤1M</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeI)}>Payroll</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeW)}>≤500K</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Run Payroll</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Execute payroll runs</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>View Reports</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Access financial reports</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeI)}>Limited</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeI)}>Limited</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Manage Users</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Add/edit team members</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Configure Roles</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Edit role permissions</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Bank Integration</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Connect bank accounts</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeD)}>❌ None</span></td>
+									</tr>
+									<tr>
+										<td data-label="Permission">
+											<div>
+												<strong>Export Data</strong>
+												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Download statements</div>
+											</div>
+										</td>
+										<td data-label="Admin"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="Finance"><span className={cx(s.badge, s.badgeS)}>✅ Full</span></td>
+										<td data-label="HR"><span className={cx(s.badge, s.badgeI)}>Limited</span></td>
+										<td data-label="Viewer"><span className={cx(s.badge, s.badgeI)}>Limited</span></td>
+										<td data-label="Custom"><span className={cx(s.badge, s.badgeI)}>Limited</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div className="col-lg-4">
+					<div className={s.card} style={{ padding: "16px", marginBottom: "16px" }}>
+						<h5 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 12px" }}>
+							<i className="bi bi-sliders me-2" /> Approval Limits
+						</h5>
+						<div style={{ fontSize: 12, marginBottom: "12px", color: "var(--pm-muted)" }}>
+							Set transaction approval thresholds per role
+						</div>
+						{[
+							{ role: "Admin", limit: "Unlimited", color: "var(--pm-accent)" },
+							{ role: "Finance", limit: "KES 1,000,000", color: "var(--pm-primary)" },
+							{ role: "HR", limit: "KES 500,000", color: "var(--pm-warning)" },
+							{ role: "Viewer", limit: "KES 0", color: "var(--pm-danger)" },
+							{ role: "Custom", limit: "KES 500,000", color: "var(--pm-purple)" },
+						].map((item) => (
+							<div
+								key={item.role}
+								className="d-flex justify-content-between align-items-center p-2 mb-2 rounded"
+								style={{ background: "var(--pm-surface-2)" }}
+							>
+								<span style={{ fontWeight: 600, fontSize: 12 }}>{item.role}</span>
+								<span
+									className={cx(s.badge)}
+									style={{ background: `${item.color}20`, color: item.color }}
+								>
+									{item.limit}
+								</span>
+							</div>
+						))}
+						<button
+							className={cx(s.btnPm, s.btnSm, "w-100 mt-2")}
+							onClick={() => onOpen("inviteUserModal")}
+						>
+							<i className="bi bi-plus-lg" /> Add Custom Role
+						</button>
+					</div>
+
+					<div className={s.card} style={{ padding: "16px" }}>
+						<h5 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 12px" }}>
+							<i className="bi bi-shield-check me-2" /> Security Settings
+						</h5>
+						<div className={s.statusRow}>
+							<div>
+								<div style={{ fontWeight: 600, fontSize: 12 }}>MFA Required</div>
+								<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>For all roles</div>
+							</div>
+							<span className={cx(s.badge, s.badgeS)}>Enabled</span>
+						</div>
+						<div className={s.statusRow}>
+							<div>
+								<div style={{ fontWeight: 600, fontSize: 12 }}>Session Timeout</div>
+								<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Auto-logout after</div>
+							</div>
+							<span className={cx(s.badge, s.badgeI)}>30 min</span>
+						</div>
+						<div className={s.statusRow}>
+							<div>
+								<div style={{ fontWeight: 600, fontSize: 12 }}>IP Whitelist</div>
+								<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Restrict access</div>
+							</div>
+							<span className={cx(s.badge, s.badgeW)}>Optional</span>
+						</div>
+						<div className={s.statusRow}>
+							<div>
+								<div style={{ fontWeight: 600, fontSize: 12 }}>Audit Log</div>
+								<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>Track all actions</div>
+							</div>
+							<span className={cx(s.badge, s.badgeS)}>Active</span>
+						</div>
+					</div>
+				</div>
 			</div>
 		</MBox>
 	);
@@ -1911,7 +2357,937 @@ export default function CommandCenterModals({
 	);
 
 	/* ==========================================================================
-     M21: Connect Bank
+     M21: Transaction Details
+     ======================================================================== */
+	const renderTransactionDetails = () => (
+		<MBox
+			id="transactionDetailsModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-receipt-cutoff me-2" />
+					Transaction Details
+				</>
+			}
+			footer={
+				<button className={s.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div className="text-center mb-3">
+				<div
+					className={cx(s.iconCircle, "mx-auto mb-2 round")}
+					style={{
+						width: 56,
+						height: 56,
+						fontSize: 24,
+						background: "var(--pm-accent-soft)",
+						color: "var(--pm-accent)",
+					}}
+				>
+					<i className="bi bi-arrow-down-left" />
+				</div>
+				<div
+					style={{
+						fontSize: 26,
+						fontWeight: 700,
+						fontFamily: "var(--pm-font-display)",
+					}}
+				>
+					+ KES 85,000
+				</div>
+				<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+					Invoice Payment from Acme Corp
+				</div>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Business</span>
+				<strong>TechSolutions Ltd</strong>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Category</span>
+				<strong>Invoice Payment</strong>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Status</span>
+				<span className={cx(s.badge, s.badgeS)}>Completed</span>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Date</span>
+				<strong>Oct 28, 2025</strong>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Reference</span>
+				<strong style={{ fontFamily: "monospace" }}>TX-2900000</strong>
+			</div>
+			<div className={s.statusRow}>
+				<span className="text-muted">Payment Method</span>
+				<strong>Bank Transfer</strong>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M22: Connect Tool
+     ======================================================================== */
+	const renderConnectTool = () => (
+		<MBox
+			id="connectToolModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-plugin me-2" />
+					Connect External Tool
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={() =>
+							doAction(
+								"connectToolModal",
+								"Tool connection initiated. Check your email for authorization link.",
+								"AUTH-88291",
+							)
+						}
+					>
+						Connect
+					</button>
+				</>
+			}
+		>
+			{renderActionBody(
+				"connectToolModal",
+				<>
+					<div className="mb-3">
+						<label className={s.formLabel}>Select Tool</label>
+						<select className={s.formControl}>
+							<option>QuickBooks Accounting</option>
+							<option>Xero</option>
+							<option>Salesforce CRM</option>
+							<option>HubSpot</option>
+							<option>Shopify</option>
+						</select>
+					</div>
+					<div
+						className="p-3 rounded mb-3"
+						style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
+					>
+						<i className="bi bi-info-circle" /> You will be redirected to the tool's
+						authorization page to grant PayMo access to your data.
+					</div>
+					<div className="form-check">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							defaultChecked
+						/>
+						<label className="form-check-label" style={{ fontSize: 12 }}>
+							Allow automatic data sync (recommended)
+						</label>
+					</div>
+				</>,
+			)}
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M23: Statement Modal
+     ======================================================================== */
+	const renderStatement = () => (
+		<MBox
+			id="statementModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-file-earmark-text me-2" />
+					Download Statement
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmDark)}
+						onClick={() =>
+							doAction(
+								"statementModal",
+								"Statement generated & sent to your email.",
+								"STMT-0091",
+							)
+						}
+					>
+						<i className="bi bi-envelope-arrow-down" /> Email Statement
+					</button>
+				</>
+			}
+		>
+			<div className="mb-3">
+				<label className={s.formLabel}>Account / Wallet</label>
+				<select className={s.formControl}>
+					<option>PayMo Business Wallet</option>
+					<option>Equity Bank (Linked)</option>
+				</select>
+			</div>
+			<div className="row g-2 mb-3">
+				<div className="col-6">
+					<label className={s.formLabel}>From</label>
+					<input type="date" className={s.formControl} />
+				</div>
+				<div className="col-6">
+					<label className={s.formLabel}>To</label>
+					<input type="date" className={s.formControl} />
+				</div>
+			</div>
+			<div className="mb-3">
+				<label className={s.formLabel}>Format</label>
+				<div className="d-flex gap-2">
+					<button className={s.btnPm} style={{ flex: 1 }}>
+						<i className="bi bi-filetype-pdf text-danger" /> PDF
+					</button>
+					<button className={cx(s.btnPm, s.btnPmP)} style={{ flex: 1 }}>
+						<i className="bi bi-filetype-xlsx text-success" /> Excel
+					</button>
+				</div>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M24: Schedule Payment Modal
+     ======================================================================== */
+	const renderSchedulePayment = () => (
+		<MBox
+			id="schedulePaymentModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-calendar-event me-2" />
+					Schedule a Payment
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmP)}
+						onClick={() =>
+							doAction(
+								"schedulePaymentModal",
+								"Payment scheduled successfully!",
+								"SCH-203",
+							)
+						}
+					>
+						<i className="bi bi-check-lg" /> Schedule
+					</button>
+				</>
+			}
+		>
+			<div className="mb-3">
+				<label className={s.formLabel}>Pay To</label>
+				<input
+					className={s.formControl}
+					defaultValue="OfficeMart Supplies Ltd"
+				/>
+			</div>
+			<div className="mb-3">
+				<label className={s.formLabel}>Amount (KES)</label>
+				<input type="number" className={s.formControl} defaultValue="120000" />
+			</div>
+			<div className="row g-2 mb-3">
+				<div className="col-6">
+					<label className={s.formLabel}>Schedule Date</label>
+					<input type="date" className={s.formControl} />
+				</div>
+				<div className="col-6">
+					<label className={s.formLabel}>Recurrence</label>
+					<select className={s.formControl}>
+						<option>One-time</option>
+						<option>Monthly</option>
+						<option>Weekly</option>
+					</select>
+				</div>
+			</div>
+			<div
+				className="p-3 rounded"
+				style={{ background: "var(--pm-accent-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-info-circle" /> Scheduled payments appear in your
+				Upcoming Obligations for easy cash planning.
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M25: Cash Forecast Modal
+     ======================================================================== */
+	const renderCashForecast = () => (
+		<MBox
+			id="cashForecastModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-graph-down me-2" />
+					Cash Flow Forecast <span className={cx(s.badge, s.badgeI)}>AI</span>
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button className={s.btnPm} onClick={() => {}}>
+						<i className="bi bi-download" /> Export
+					</button>
+				</>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-stars" /> Based on your 6-month history and scheduled
+				obligations, PayMo projects a comfortable end-of-month balance with no
+				liquidity risk.
+			</div>
+			<div className="row g-2 text-center mb-3">
+				<div className="col-3">
+					<div
+						className="p-2 rounded"
+						style={{ background: "var(--pm-accent-soft)" }}
+					>
+						<div style={{ fontSize: 11, color: "#047857" }}>Week 1</div>
+						<div style={{ fontWeight: 700, color: "var(--pm-accent)" }}>
+							+KES 280K
+						</div>
+					</div>
+				</div>
+				<div className="col-3">
+					<div
+						className="p-2 rounded"
+						style={{ background: "var(--pm-danger-soft)" }}
+					>
+						<div style={{ fontSize: 11, color: "#991B1B" }}>Week 2</div>
+						<div style={{ fontWeight: 700, color: "var(--pm-danger)" }}>
+							-KES 310K
+						</div>
+					</div>
+				</div>
+				<div className="col-3">
+					<div
+						className="p-2 rounded"
+						style={{ background: "var(--pm-accent-soft)" }}
+					>
+						<div style={{ fontSize: 11, color: "#047857" }}>Week 3</div>
+						<div style={{ fontWeight: 700, color: "var(--pm-accent)" }}>
+							+KES 340K
+						</div>
+					</div>
+				</div>
+				<div className="col-3">
+					<div
+						className="p-2 rounded"
+						style={{ background: "var(--pm-danger-soft)" }}
+					>
+						<div style={{ fontSize: 11, color: "#991B1B" }}>Week 4</div>
+						<div style={{ fontWeight: 700, color: "var(--pm-danger)" }}>
+							-KES 450K
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Week</th>
+							<th>Inflows</th>
+							<th>Outflows</th>
+							<th>End Balance</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Week 1</td>
+							<td>KES 820K</td>
+							<td>KES 540K</td>
+							<td>KES 2.73M</td>
+						</tr>
+						<tr>
+							<td>Week 2</td>
+							<td>KES 510K</td>
+							<td>KES 820K</td>
+							<td>KES 2.42M</td>
+						</tr>
+						<tr>
+							<td>Week 3</td>
+							<td>KES 760K</td>
+							<td>KES 420K</td>
+							<td>KES 2.76M</td>
+						</tr>
+						<tr>
+							<td>Week 4</td>
+							<td>KES 410K</td>
+							<td>KES 860K</td>
+							<td>KES 2.31M</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M26: Statutory Modal
+     ======================================================================== */
+	const renderStatutory = () => (
+		<MBox
+			id="statutoryModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-bank2 text-danger me-2" />
+					Statutory & Tax Obligations
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button className={s.btnPm} onClick={() => {}}>
+						<i className="bi bi-bell" /> Set Reminders
+					</button>
+				</>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-exclamation-triangle" /> 2 obligations due within 7
+				days.
+			</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Obligation</th>
+							<th>Amount</th>
+							<th>Due</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>PAYE (Income Tax)</td>
+							<td>KES 98,000</td>
+							<td>Nov 5, 2025</td>
+							<td>
+								<span className={cx(s.badge, s.badgeW)}>Due Soon</span>
+							</td>
+						</tr>
+						<tr>
+							<td>NSSF Contribution</td>
+							<td>KES 2,160</td>
+							<td>Nov 9, 2025</td>
+							<td>
+								<span className={cx(s.badge, s.badgeW)}>Due Soon</span>
+							</td>
+						</tr>
+						<tr>
+							<td>SHIF Contribution</td>
+							<td>KES 5,400</td>
+							<td>Nov 9, 2025</td>
+							<td>
+								<span className={cx(s.badge, s.badgeW)}>Due Soon</span>
+							</td>
+						</tr>
+						<tr>
+							<td>VAT Return</td>
+							<td>KES 64,000</td>
+							<td>Nov 20, 2025</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>On Track</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M27: Support Modal
+     ======================================================================== */
+	const renderSupport = () => (
+		<MBox
+			id="supportModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-headset me-2" />
+					Help & Support
+				</>
+			}
+			footer={
+				<button className={s.btnPm} onClick={onClose}>
+					Close
+				</button>
+			}
+		>
+			<div
+				className="p-3 border rounded mb-3 d-flex align-items-center gap-3"
+				style={{ cursor: "pointer" }}
+			>
+				<div
+					className={cx(s.iconCircle, "round")}
+					style={{ background: "var(--pm-primary)", color: "#fff" }}
+				>
+					<i className="bi bi-chat-dots" />
+				</div>
+				<div>
+					<strong>Live Chat</strong>
+					<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+						Business support · avg reply 2 min
+					</div>
+				</div>
+			</div>
+			<div
+				className="p-3 border rounded mb-3 d-flex align-items-center gap-3"
+				style={{ cursor: "pointer" }}
+			>
+				<div
+					className={cx(s.iconCircle, "round")}
+					style={{ background: "var(--pm-accent)", color: "#fff" }}
+				>
+					<i className="bi bi-telephone" />
+				</div>
+				<div>
+					<strong>Call Us</strong>
+					<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+						+254 700 000 000 · Mon-Sat 8am-8pm
+					</div>
+				</div>
+			</div>
+			<div
+				className="p-3 border rounded d-flex align-items-center gap-3"
+				style={{ cursor: "pointer" }}
+			>
+				<div
+					className={cx(s.iconCircle, "round")}
+					style={{ background: "var(--pm-info)", color: "#fff" }}
+				>
+					<i className="bi bi-journal-text" />
+				</div>
+				<div>
+					<strong>Help Center</strong>
+					<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
+						Guides, FAQs & API docs
+					</div>
+				</div>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M28: Investment Modal
+     ======================================================================== */
+	const renderInvestment = () => (
+		<MBox
+			id="investmentModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-graph-up-arrow text-success me-2" />
+					Put idle cash to work
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Cancel
+					</button>
+					<button
+						className={cx(s.btnPm, s.btnPmSuccess)}
+						onClick={() =>
+							doAction(
+								"investmentModal",
+								"KES 500,000 swept to Money Market Fund!",
+								"INV-77001",
+							)
+						}
+					>
+						<i className="bi bi-graph-up-arrow" /> Invest 500K
+					</button>
+				</>
+			}
+		>
+			<div
+				className="p-3 rounded mb-2 d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-accent-soft)" }}
+			>
+				<div>
+					<strong>PayMo Money Market Fund</strong>
+					<div style={{ fontSize: 11, color: "#065F46" }}>
+						Liquid · redeem anytime
+					</div>
+				</div>
+				<div className="text-end">
+					<div style={{ fontWeight: 700, color: "var(--pm-accent)" }}>~11% p.a.</div>
+					<div style={{ fontSize: 11, color: "#047857" }}>
+						KES 5,500/mo est.
+					</div>
+				</div>
+			</div>
+			<div
+				className="p-3 rounded mb-2 d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-info-soft)" }}
+			>
+				<div>
+					<strong>90-Day Fixed Deposit</strong>
+					<div style={{ fontSize: 11, color: "#1D4ED8" }}>
+						Locked for higher yield
+					</div>
+				</div>
+				<div className="text-end">
+					<div style={{ fontWeight: 700, color: "var(--pm-info)" }}>~13% p.a.</div>
+					<div style={{ fontSize: 11, color: "#1D4ED8" }}>
+						KES 6,500/mo est.
+					</div>
+				</div>
+			</div>
+			<div
+				className="p-3 rounded d-flex justify-content-between align-items-center"
+				style={{ background: "var(--pm-warning-soft)" }}
+			>
+				<div>
+					<strong>Treasury Bills (T-Bills)</strong>
+					<div style={{ fontSize: 11, color: "#92400E" }}>
+						91-day government paper
+					</div>
+				</div>
+				<div className="text-end">
+					<div style={{ fontWeight: 700, color: "var(--pm-warning)" }}>
+						~12% p.a.
+					</div>
+					<div style={{ fontSize: 11, color: "#92400E" }}>
+						KES 6,000/mo est.
+					</div>
+				</div>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M29: Clients Modal
+     ======================================================================== */
+	const renderClients = () => (
+		<MBox
+			id="clientsModal"
+			active={active}
+			size="lg"
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-people text-primary me-2" />
+					Clients
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button className={s.btnPm} onClick={() => {}}>
+						<i className="bi bi-download" /> Export Clients
+					</button>
+				</>
+			}
+		>
+			<div className="mb-3">
+				<div style={{ position: "relative" }}>
+					<i
+						className="bi bi-search"
+						style={{
+							position: "absolute",
+							left: 14,
+							top: "50%",
+							transform: "translateY(-50%)",
+							color: "var(--pm-muted)",
+						}}
+					/>
+					<input
+						className={s.formControl}
+						style={{ paddingLeft: 40 }}
+						placeholder="Search clients..."
+					/>
+				</div>
+			</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Client</th>
+							<th>Country</th>
+							<th>Outstanding</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Acme Corp</td>
+							<td>KE</td>
+							<td>KES 420,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeD)}>Risky</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>View</button>
+							</td>
+						</tr>
+						<tr>
+							<td>Global Industries</td>
+							<td>UG</td>
+							<td>KES 185,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>View</button>
+							</td>
+						</tr>
+						<tr>
+							<td>StartUp Inc</td>
+							<td>KE</td>
+							<td>KES 145,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>View</button>
+							</td>
+						</tr>
+						<tr>
+							<td>Retail Chain A</td>
+							<td>TZ</td>
+							<td>KES 60,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeI)}>New</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>View</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M30: Currency Modal
+     ======================================================================== */
+	const renderCurrency = () => (
+		<MBox
+			id="currencyModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-cash-coin me-2" />
+					Open a Currency Account
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button className={s.btnPm} onClick={() => {}}>
+						<i className="bi bi-arrow-repeat" /> Refresh Rates
+					</button>
+				</>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-info-circle" /> You hold multi-currency balances for
+				receiving and paying globally. FX auto-converted at live rates.
+			</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Currency</th>
+							<th>Balance</th>
+							<th>Rate (KES)</th>
+							<th>Virtual Acct</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>KES</td>
+							<td>KES 2,450,000</td>
+							<td>1.00</td>
+							<td>VA-88421</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+						</tr>
+						<tr>
+							<td>USD</td>
+							<td>USD 12,400</td>
+							<td>129.50</td>
+							<td>VA-77012</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+						</tr>
+						<tr>
+							<td>UGX</td>
+							<td>UGX 28,000,000</td>
+							<td>0.035</td>
+							<td>VA-55108</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+						</tr>
+						<tr>
+							<td>EUR</td>
+							<td>EUR 9,200</td>
+							<td>142.30</td>
+							<td>VA-44010</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M31: Virtual Account Modal
+     ======================================================================== */
+	const renderVirtualAccount = () => (
+		<MBox
+			id="virtualAccountModal"
+			active={active}
+			onClose={onClose}
+			title={
+				<>
+					<i className="bi bi-credit-card-2-front me-2" />
+					Create Virtual Account
+				</>
+			}
+			footer={
+				<>
+					<button className={s.btnPm} onClick={onClose}>
+						Close
+					</button>
+					<button className={s.btnPm} onClick={() => {}}>
+						<i className="bi bi-share" /> Share Payment Links
+					</button>
+				</>
+			}
+		>
+			<div
+				className="p-3 rounded mb-3"
+				style={{ background: "var(--pm-accent-soft)", fontSize: 12 }}
+			>
+				<i className="bi bi-check-circle" /> These virtual accounts collect
+				payments automatically and settle into your wallet.
+			</div>
+			<div className="table-responsive">
+				<table className={s.tbl}>
+					<thead>
+						<tr>
+							<th>Account</th>
+							<th>Channel</th>
+							<th>Collected (this month)</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>VA-88421</td>
+							<td>KES · M-Pesa Till</td>
+							<td>KES 450,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>Share</button>
+							</td>
+						</tr>
+						<tr>
+							<td>VA-77012</td>
+							<td>USD · Card Gateway</td>
+							<td>USD 8,200</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>Share</button>
+							</td>
+						</tr>
+						<tr>
+							<td>VA-55108</td>
+							<td>UGX · Paybill</td>
+							<td>UGX 12,000,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>Share</button>
+							</td>
+						</tr>
+						<tr>
+							<td>VA-66203</td>
+							<td>KES · Paybill</td>
+							<td>KES 180,000</td>
+							<td>
+								<span className={cx(s.badge, s.badgeS)}>Active</span>
+							</td>
+							<td>
+								<button className={cx(s.btnPm, s.btnSm)}>Share</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</MBox>
+	);
+
+	/* ==========================================================================
+     M32: Connect Bank
      ======================================================================== */
 	const renderConnectBank = () => (
 		<MBox
@@ -1992,6 +3368,17 @@ export default function CommandCenterModals({
 			{renderRolePermissions()}
 			{renderCollectionTarget()}
 			{renderBusinessProfile()}
+			{renderTransactionDetails()}
+			{renderConnectTool()}
+			{renderStatement()}
+			{renderSchedulePayment()}
+			{renderCashForecast()}
+			{renderStatutory()}
+			{renderSupport()}
+			{renderInvestment()}
+			{renderClients()}
+			{renderCurrency()}
+			{renderVirtualAccount()}
 			{renderConnectBank()}
 		</>
 	);

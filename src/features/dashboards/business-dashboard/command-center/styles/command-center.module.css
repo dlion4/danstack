@@ -16,39 +16,35 @@
  * ========================================================================== */
 
 .bizPage {
-	--pm-primary: #4f46e5;
-	--pm-primary-dark: #3730a3;
-	--pm-primary-light: #818cf8;
-	--pm-accent: #10b981;
-	--pm-accent-soft: #d1fae5;
-	--pm-warning: #f59e0b;
-	--pm-warning-soft: #fef3c7;
-	--pm-danger: #ef4444;
-	--pm-danger-soft: #fee2e2;
-	--pm-info: #3b82f6;
-	--pm-info-soft: #dbeafe;
-	--pm-purple: #8b5cf6;
-	--pm-purple-soft: #ede9fe;
-	--pm-bg: #f5f1ec;
-	--pm-bg-2: #eee8df;
-	--pm-surface: #ffffff;
-	--pm-surface-2: #faf7f3;
-	--pm-ink: #1a1f2e;
-	--pm-ink-soft: #4b5563;
-	--pm-muted: #9ca3af;
-	--pm-border: #e5e2dc;
-	--pm-border-2: #d4d0c8;
-	--pm-gradient-biz: linear-gradient(
-		135deg,
-		#1e293b 0%,
-		#334155 50%,
-		#475569 100%
-	);
-	--pm-gradient-slate: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
-	--pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
-	--pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
-	--pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+	--pm-primary: #4F46E5;
+	--pm-primary-dark: #3730A3;
+	--pm-primary-light: #818CF8;
+	--pm-accent: #10B981;
+	--pm-accent-soft: #D1FAE5;
+	--pm-warning: #F59E0B;
+	--pm-warning-soft: #FEF3C7;
+	--pm-danger: #EF4444;
+	--pm-danger-soft: #FEE2E2;
+	--pm-info: #3B82F6;
+	--pm-info-soft: #DBEAFE;
+	--pm-purple: #8B5CF6;
+	--pm-purple-soft: #EDE9FE;
+	--pm-pink: #EC4899;
+	--pm-pink-soft: #FCE7F3;
+	--pm-bg: #F5F1EC;
+	--pm-surface-2: #FAF7F3;
+	--pm-ink: #1A1F2E;
+	--pm-ink-soft: #4B5563;
+	--pm-muted: #9CA3AF;
+	--pm-border: #E7E4DE;
+	--pm-border-2: #D4D0C8;
+	--pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+	--pm-gradient-biz: linear-gradient(135deg, #1E293B 0%, #334155 50%, #475569 100%);
+	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.05);
+	--pm-shadow-md: 0 6px 16px rgba(26, 31, 46, 0.07);
+	--pm-shadow-lg: 0 14px 34px rgba(26, 31, 46, 0.1);
+	--pm-shadow-xl: 0 24px 60px rgba(26, 31, 46, 0.14);
+	--pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 	--pm-r-sm: 8px;
 	--pm-r-md: 14px;
 	--pm-r-lg: 20px;
@@ -56,7 +52,6 @@
 	--pm-r-pill: 999px;
 	--pm-font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 	--pm-font-display: "Space Grotesk", "Inter", sans-serif;
-	--pm-font-mono: "Fira Code", ui-monospace, SFMono-Regular, monospace;
 
 	display: flex;
 	flex-direction: column;
@@ -93,9 +88,9 @@
 	background: #fff;
 	border: 1px solid var(--pm-border);
 	border-radius: var(--pm-r-lg);
-	padding: 20px;
+	padding: 22px;
 	box-shadow: var(--pm-shadow-sm);
-	transition: all 0.2s;
+	transition: all 0.22s;
 }
 .card:hover {
 	box-shadow: var(--pm-shadow-md);
@@ -114,11 +109,7 @@
 	right: -20%;
 	width: 300px;
 	height: 300px;
-	background: radial-gradient(
-		circle,
-		rgba(255, 255, 255, 0.1) 0%,
-		transparent 70%
-	);
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
 	border-radius: 50%;
 }
 .sv {
@@ -143,6 +134,7 @@
 	border-radius: var(--pm-r-pill);
 	font-size: 11px;
 	font-weight: 600;
+	white-space: nowrap;
 }
 .badgeS {
 	background: var(--pm-accent-soft);
@@ -164,6 +156,14 @@
 	background: var(--pm-purple-soft);
 	color: #6d28d9;
 }
+.badgePurple {
+	background: var(--pm-purple-soft);
+	color: #6d28d9;
+}
+.badgePink {
+	background: var(--pm-pink-soft);
+	color: #be185d;
+}
 .badgeDark {
 	background: rgba(0, 0, 0, 0.2);
 	color: #fff;
@@ -174,7 +174,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	padding: 8px 16px;
+	padding: 9px 16px;
 	border-radius: var(--pm-r-sm);
 	font-size: 13px;
 	font-weight: 600;
@@ -683,6 +683,10 @@
 	color: #1d4ed8;
 }
 .badgeP {
+	background: var(--pm-purple-soft);
+	color: #6d28d9;
+}
+.badgePurple {
 	background: var(--pm-purple-soft);
 	color: #6d28d9;
 }

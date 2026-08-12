@@ -88,6 +88,7 @@ export default function BusinessShell() {
         const [mobileOpen, setMobileOpen] = useState(false);
         const [openDropdown, setOpenDropdown] = useState<DropdownName | null>(null);
         const [activePanel, setActivePanel] = useState<AsideKind | null>(null);
+        const [currentBusinessKey, setCurrentBusinessKey] = useState<string>("techsol");
         /* page-bar action buttons published by the active child page (legacy
          * `pm-page-bar` buttons — see useBusinessPageActions). */
         const [pageActions, setPageActions] = useState<BusinessPageAction[]>([]);
@@ -193,6 +194,10 @@ export default function BusinessShell() {
                 closeAside();
                 showToast("Logged out successfully", "success");
         }, [closeAllDropdowns, closeAside, showToast]);
+
+        const handleSwitchBiz = useCallback((businessId: string) => {
+                setCurrentBusinessKey(businessId);
+        }, []);
 
         const handleSearchSubmit = useCallback(
                 (query: string) => {
@@ -336,10 +341,12 @@ export default function BusinessShell() {
 				/>
 
 				<BusinessAside
-                                        activePanel={activePanel}
-                                        onClose={closeAside}
-                                        onToast={showToast}
-                                />
+                                activePanel={activePanel}
+                                onClose={closeAside}
+                                onToast={showToast}
+                                onSwitchBiz={handleSwitchBiz}
+                                currentBusinessKey={currentBusinessKey}
+                        />
 
                                 <BusinessToasts toasts={toasts} onDismiss={dismissToast} />
                         </div>
