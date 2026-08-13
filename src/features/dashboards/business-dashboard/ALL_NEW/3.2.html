@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo Business — Collections & Merchant Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+            --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+            --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+            --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+            --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-xl: 28px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.08), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(236, 72, 153, 0.06), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.06), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pm-pulse 2s infinite
+        }
+
+        @keyframes pm-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px);
+            border-color: var(--pm-primary-light)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-hero);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .pm-card {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .pm-card:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-card-accent {
+            background: var(--pm-gradient-slate);
+            color: #fff;
+            border: none;
+            position: relative;
+            overflow: hidden
+        }
+
+        .pm-card-accent::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%)
+        }
+
+        .pm-stat-value {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em
+        }
+
+        .pm-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .pm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .pm-badge-success {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .pm-badge-warning {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .pm-badge-danger {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .pm-badge-info {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .pm-badge-purple {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .pm-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink);
+            text-decoration: none
+        }
+
+        .pm-btn:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .pm-btn-primary {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .pm-btn-primary:hover {
+            background: var(--pm-primary-dark);
+            border-color: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .pm-btn-accent {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .pm-btn-accent:hover {
+            background: #059669;
+            border-color: #059669;
+            color: #fff
+        }
+
+        .pm-btn-danger {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .pm-btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .pm-progress {
+            height: 6px;
+            background: var(--pm-border);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .pm-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s
+        }
+
+        .pm-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .pm-divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .pm-section-title {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-section-sub {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        .pm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .pm-table th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .pm-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .pm-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .pm-table tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-mini-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px
+        }
+
+        .pm-mini-bar {
+            width: 14px;
+            border-radius: 3px 3px 0 0;
+            background: var(--pm-primary);
+            transition: height .3s
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-action-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .pm-form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .pm-form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-form-control:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .pm-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 90px
+        }
+
+        .pm-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .pm-step.active .pm-step-num {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .pm-step.completed .pm-step-num {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .pm-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .pm-step.active .pm-step-label {
+            color: var(--pm-primary)
+        }
+
+        .pm-step.completed .pm-step-label {
+            color: var(--pm-accent)
+        }
+
+        .pm-step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pm-tab-pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pm-tab-pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-tab-pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .pm-pin-input {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .pm-pin-input input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 2px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-pin-input input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .pm-receipt .receipt-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .pm-amount-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .pm-amount-chip {
+            padding: 8px 16px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-pill);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-amount-chip:hover,
+        .pm-amount-chip.active {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .06);
+            color: var(--pm-primary)
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .feed-item:last-child {
+            border-bottom: none
+        }
+
+        .fade-step {
+            display: none
+        }
+
+        .fade-step.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .pm-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .pm-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 110px;
+            padding: 12px 0 18px
+        }
+
+        .chart-bar {
+            flex: 1;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            min-width: 18px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .chart-bar:hover {
+            opacity: .88
+        }
+
+        .chart-bar .bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--pm-muted)
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .status-row:last-child {
+            border-bottom: none
+        }
+
+        .utility-block {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .method-card {
+            padding: 16px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            transition: all .2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%
+        }
+
+        .method-card:hover {
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md);
+            transform: translateY(-2px)
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-action-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .pm-stat-value {
+                font-size: 22px
+            }
+
+            .pm-step {
+                min-width: unset
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">B</div>
+            <nav class="pm-sidebar-nav">
+                <button class="pm-nav-item"><i class="bi bi-house"></i></button>
+                <button class="pm-nav-item active"><i class="bi bi-shop"></i><span class="badge-dot"></span></button>
+                <button class="pm-nav-item"><i class="bi bi-receipt"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-people"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-cash-coin"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-bar-chart-line"></i></button>
+                <button class="pm-nav-item"><i class="bi bi-gear"></i></button>
+            </nav>
+            <button class="pm-nav-item" style="margin-top:auto"><i class="bi bi-question-circle"></i></button>
+        </aside>
+        <div class="pm-main">
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar"
+                            style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-slate)">AM</div>
+                        <div>
+                            <h1>Collections & Merchant Services</h1>
+                            <p>Omnichannel payments, settlements, customers, and disputes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search transactions, customers, dispute IDs, refunds...">
+                </div>
+                <div class="pm-header-actions">
+                    <button class="pm-header-btn" onclick="openModal('healthCheckModal')"><i
+                            class="bi bi-heart-pulse"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('settlementModal')"><i class="bi bi-bank"></i><span
+                            class="counter">2</span></button>
+                    <button class="pm-header-btn" onclick="openModal('notificationsModal')"><i
+                            class="bi bi-bell"></i><span class="counter">8</span></button>
+                    <div class="pm-profile-btn" onclick="openModal('profileModal')">
+                        <div class="pm-avatar">JD</div>
+                        <div>
+                            <div class="pm-name">Jane Doe</div>
+                            <div class="pm-role">Finance Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Business Portal</a> / <a href="#">Commerce</a> /
+                        <strong>Collections</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        3.2 — Collections & Merchant Services</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Manage your PayBill, Till, Card, and
+                        PesaLink collections. Track real-time settlements, handle refunds, and manage customer payment
+                        data.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px">
+                    <button class="pm-btn" onclick="openModal('generateQRModal')"><i class="bi bi-qr-code"></i> Generate
+                        QR</button>
+                    <button class="pm-btn" onclick="openModal('settlementModal')"><i class="bi bi-clock-history"></i>
+                        Settlements</button>
+                    <button class="pm-btn pm-btn-primary" onclick="openModal('receivePaymentModal')"><i
+                            class="bi bi-plus-lg"></i> Collect Payment</button>
+                </div>
+            </div>
+
+            <div class="pm-content">
+                <!-- Hero Stats Row -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card pm-card-accent" style="min-height:170px">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Collections engine is
+                                        live <span style="color:#86efac">●</span></p>
+                                    <div class="pm-stat-value" style="margin:8px 0;color:#fff">KES 412,500</div>
+                                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,.78)">Collected today
+                                        across 184 transactions.</p>
+                                </div>
+                                <div class="pm-icon-circle" style="background:rgba(255,255,255,0.2);color:#fff"><i
+                                        class="bi bi-wallet2"></i></div>
+                            </div>
+                            <div class="d-flex flex-wrap mt-3" style="gap:8px">
+                                <button class="pm-btn pm-btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openModal('receivePaymentModal')">Collect Now</button>
+                                <button class="pm-btn pm-btn-sm"
+                                    style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff"
+                                    onclick="openModal('refundModal')">Refund</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="pm-card" style="min-height:170px">
+                            <p class="pm-stat-label" style="color:var(--pm-info)">PENDING SETTLEMENT</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 89,200</div>
+                            <span class="pm-badge pm-badge-info"><i class="bi bi-bank"></i> T+1 schedule</span>
+                            <div class="pm-mini-bars mt-3">
+                                <div class="pm-mini-bar" style="height:40%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:70%;background:var(--pm-primary)"></div>
+                                <div class="pm-mini-bar" style="height:50%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:85%;background:var(--pm-primary)"></div>
+                                <div class="pm-mini-bar" style="height:60%;background:var(--pm-info)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="pm-card" style="min-height:170px">
+                            <p class="pm-stat-label" style="color:var(--pm-accent)">SUCCESS RATE (TODAY)</p>
+                            <div class="pm-stat-value" style="margin:6px 0">98.4%</div>
+                            <span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> 181
+                                successful</span>
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Failed (3
+                                        txn)</span><span>1.6%</span></div>
+                                <div class="pm-progress mt-1">
+                                    <div class="pm-progress-bar" style="width:98.4%;background:var(--pm-accent)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="pm-card" style="min-height:170px;border-left:3px solid var(--pm-warning)">
+                            <p class="pm-stat-label" style="color:var(--pm-warning)">DISPUTES & REFUNDS</p>
+                            <div class="pm-stat-value" style="margin:6px 0">4 Active</div>
+                            <span class="pm-badge pm-badge-warning"><i class="bi bi-exclamation-triangle"></i> Needs
+                                attention</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Pending Refunds: <strong>2</strong></div>
+                                <div>Open Disputes: <strong>2</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attention & Quick Actions -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Attention Required</h3><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('attentionDetailModal')">View all</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">CB
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Chargeback received</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Visa ***4112 · KES 12,500</div>
+                                </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                                    onclick="openModal('disputeModal')">Defend</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">RF
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Refund approval needed</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Customer: John Mark · KES 3,400
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('refundModal')">Review</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">KYC</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">PayBill KYC update required</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Upload CR12 for PB 512234</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('paybillConfigModal')">Upload</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">API
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">LNMO API token expires soon</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Rotate keys in 3 days</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('apiConfigModal')">Rotate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Smart Suggestions</h3><span
+                                    class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">QR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Deploy Dynamic QR for delivery</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Reduce manual entry errors by 40%
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('generateQRModal')">Setup</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">PR
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Send reminders to 14 customers</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Invoices due this week · KES 142k
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('sendReminderModal')">Remind</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">TK</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">Enable card tokenization</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Increase repeat purchase checkout
+                                        speed</div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('cardConfigModal')">Enable</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">SG
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-weight:600;font-size:13px">New VIP segment detected</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">24 customers have spent >KES 50k
+                                    </div>
+                                </div><button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('customerSegmentModal')">View</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card">
+                            <div class="mb-3">
+                                <h3 class="pm-section-title">Quick Actions</h3>
+                                <p class="pm-section-sub">Frequent merchant workflows</p>
+                            </div>
+                            <div class="quick-action-grid">
+                                <button class="quick-action-btn" onclick="openModal('receivePaymentModal')"><i
+                                        class="bi bi-wallet2 text-primary me-1"></i> Collect Pay</button>
+                                <button class="quick-action-btn" onclick="openModal('generateQRModal')"><i
+                                        class="bi bi-qr-code text-info me-1"></i> New QR</button>
+                                <button class="quick-action-btn" onclick="openModal('refundModal')"><i
+                                        class="bi bi-arrow-return-left text-warning me-1"></i> Refund</button>
+                                <button class="quick-action-btn" onclick="openModal('disputeModal')"><i
+                                        class="bi bi-shield-exclamation text-danger me-1"></i> Dispute</button>
+                                <button class="quick-action-btn" onclick="openModal('apiConfigModal')"><i
+                                        class="bi bi-code-slash text-purple me-1" style="color:var(--pm-purple)"></i>
+                                    API Keys</button>
+                                <button class="quick-action-btn" onclick="openModal('sendReminderModal')"><i
+                                        class="bi bi-chat-dots text-success me-1"></i> Reminder</button>
+                                <button class="quick-action-btn" onclick="openModal('feeCalculatorModal')"><i
+                                        class="bi bi-calculator text-secondary me-1"></i> Calculate Fees</button>
+                                <button class="quick-action-btn" onclick="openModal('exportReportModal')"><i
+                                        class="bi bi-file-earmark-spreadsheet me-1" style="color:var(--pm-primary)"></i>
+                                    Export Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.2.1 -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-grid-fill" style="color:var(--pm-primary)"></i>
+                                3.2.1 — Payment Collection Methods</h3>
+                            <p class="pm-section-sub">Manage your active payment rails, integrations, and POS channels.
+                            </p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('apiConfigModal')"><i class="bi bi-code"></i> API</button><button
+                                class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('receivePaymentModal')">New
+                                Transaction</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="method-card" onclick="openModal('paybillConfigModal')">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i
+                                            class="bi bi-phone"></i></div><span
+                                        class="pm-badge pm-badge-success">Active</span>
+                                </div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0 0 4px">M-Pesa PayBill</h4>
+                                <p style="font-size:12px;color:var(--pm-muted);margin:0 0 12px;flex:1">Shortcode 512234.
+                                    Supports LNMO, STK Push & account validation.</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-auto">
+                                    <span style="font-size:12px;font-weight:600">MDR: 1.5%</span><i
+                                        class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="method-card" onclick="openModal('tillConfigModal')">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-info-soft);color:var(--pm-info)"><i
+                                            class="bi bi-shop"></i></div><span
+                                        class="pm-badge pm-badge-success">Active</span>
+                                </div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0 0 4px">M-Pesa Till (Buy Goods)</h4>
+                                <p style="font-size:12px;color:var(--pm-muted);margin:0 0 12px;flex:1">Till number
+                                    882001. Ideal for in-person POS transactions.</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-auto">
+                                    <span style="font-size:12px;font-weight:600">MDR: 1.0%</span><i
+                                        class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="method-card" onclick="openModal('cardConfigModal')">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i
+                                            class="bi bi-credit-card"></i></div><span
+                                        class="pm-badge pm-badge-success">Active</span>
+                                </div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0 0 4px">Card Payments</h4>
+                                <p style="font-size:12px;color:var(--pm-muted);margin:0 0 12px;flex:1">Visa/Mastercard
+                                    with 3D Secure. Tokenization ready.</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-auto">
+                                    <span style="font-size:12px;font-weight:600">MDR: 2.9%</span><i
+                                        class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="method-card" onclick="openModal('pesalinkConfigModal')">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="pm-icon-circle"
+                                        style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i
+                                            class="bi bi-bank"></i></div><span
+                                        class="pm-badge pm-badge-warning">Pending</span>
+                                </div>
+                                <h4 style="font-size:15px;font-weight:700;margin:0 0 4px">PesaLink Collections</h4>
+                                <p style="font-size:12px;color:var(--pm-muted);margin:0 0 12px;flex:1">Real-time
+                                    collections from 50+ banks. Awaiting KYC approval.</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-auto">
+                                    <span style="font-size:12px;font-weight:600">MDR: Fixed KES 45</span><i
+                                        class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.2.2 -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-bar-chart-line-fill"
+                                    style="color:var(--pm-info)"></i> 3.2.2 — Collections Dashboard & Settlement</h3>
+                            <p class="pm-section-sub">Monitor live transaction feeds, analyze volume trends, and track
+                                bank settlements.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('analyticsModal')"><i class="bi bi-graph-up"></i> Deep
+                                Analytics</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Live Transaction Feed</h4>
+                                    <div class="pm-tab-pills"><button class="pm-tab-pill active">All</button><button
+                                            class="pm-tab-pill">Successful</button><button
+                                            class="pm-tab-pill">Failed</button></div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Customer</th>
+                                                <th>Ref / ID</th>
+                                                <th>Method</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transactionFeedBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="utility-block mb-3">
+                                <h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Collection Breakdown</h4>
+                                <div class="pm-chart-bar-group"
+                                    style="height:120px;margin-bottom:24px;display:flex;align-items:flex-end;gap:6px">
+                                    <div class="pm-chart-bar"
+                                        style="height:85%;background:var(--pm-accent);flex:1;border-radius:4px 4px 0 0;position:relative">
+                                        <span class="bar-label"
+                                            style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)">PayBill</span>
+                                    </div>
+                                    <div class="pm-chart-bar"
+                                        style="height:60%;background:var(--pm-info);flex:1;border-radius:4px 4px 0 0;position:relative">
+                                        <span class="bar-label"
+                                            style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)">Till</span>
+                                    </div>
+                                    <div class="pm-chart-bar"
+                                        style="height:40%;background:var(--pm-purple);flex:1;border-radius:4px 4px 0 0;position:relative">
+                                        <span class="bar-label"
+                                            style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)">Card</span>
+                                    </div>
+                                    <div class="pm-chart-bar"
+                                        style="height:15%;background:var(--pm-warning);flex:1;border-radius:4px 4px 0 0;position:relative">
+                                        <span class="bar-label"
+                                            style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)">Bank</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-2" style="font-size:11px">
+                                    <span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-accent);margin-right:4px"></span>PayBill:
+                                        62%</span>
+                                    <span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-info);margin-right:4px"></span>Till:
+                                        24%</span>
+                                    <span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-purple);margin-right:4px"></span>Card:
+                                        11%</span>
+                                    <span><span
+                                            style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pm-warning);margin-right:4px"></span>PesaLink:
+                                        3%</span>
+                                </div>
+                            </div>
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Settlement Pipeline</h4>
+                                    <button class="pm-btn pm-btn-sm"
+                                        onclick="openModal('settlementModal')">View</button>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>T+0 (Today)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">M-Pesa balance</div>
+                                    </div><strong>KES 304,100</strong>
+                                </div>
+                                <div class="status-row">
+                                    <div><strong>T+1 (Tomorrow)</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Card & Bank batches</div>
+                                    </div><strong>KES 89,200</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.2.3 -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-people-fill"
+                                    style="color:var(--pm-purple)"></i> 3.2.3 — Customer Management</h3>
+                            <p class="pm-section-sub">Customer directory, lifetime value tracking, communication and
+                                segmentation.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('sendReminderModal')"><i class="bi bi-chat-dots"></i>
+                                Message</button><button class="pm-btn pm-btn-sm pm-btn-primary"
+                                onclick="openModal('addCustomerModal')"><i class="bi bi-person-plus"></i> Add
+                                Customer</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-3">
+                            <div class="utility-block text-center">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);width:48px;height:48px;font-size:20px">
+                                    <i class="bi bi-star"></i></div>
+                                <div style="font-size:24px;font-weight:700">1,204</div>
+                                <div
+                                    style="font-size:11px;font-weight:600;color:var(--pm-muted);text-transform:uppercase;letter-spacing:0.05em">
+                                    Total Customers</div>
+                                <hr class="pm-divider">
+                                <div class="d-flex justify-content-between text-start mb-2" style="font-size:12px">
+                                    <span>VIP (>KES 50k)</span><strong>142</strong></div>
+                                <div class="d-flex justify-content-between text-start mb-2" style="font-size:12px">
+                                    <span>Regular</span><strong>810</strong></div>
+                                <div class="d-flex justify-content-between text-start" style="font-size:12px"><span>New
+                                        (30 days)</span><strong>252</strong></div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-3"
+                                    onclick="openModal('customerSegmentModal')">Manage Segments</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="pm-header-search" style="max-width:300px"><i
+                                            class="bi bi-search"></i><input type="text"
+                                            placeholder="Search customer name or phone"></div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="pm-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Customer Name</th>
+                                                <th>Contact</th>
+                                                <th>Segment</th>
+                                                <th>LTV (Total Spend)</th>
+                                                <th>Last Payment</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="customerTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3.2.4 -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-shield-exclamation"
+                                    style="color:var(--pm-warning)"></i> 3.2.4 — Refund & Dispute Management</h3>
+                            <p class="pm-section-sub">Process full/partial refunds, manage chargebacks, and track
+                                resolution workflows.</p>
+                        </div>
+                        <div class="d-flex" style="gap:8px"><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('refundModal')"><i class="bi bi-arrow-return-left"></i> Process
+                                Refund</button></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Active Disputes (Chargebacks)
+                                    </h4><span class="pm-badge pm-badge-warning">2 Action Required</span>
+                                </div>
+                                <div class="status-row border rounded p-3 mb-2"
+                                    style="background:#fff;border-left:3px solid var(--pm-danger)!important">
+                                    <div><strong>CB-20250627-01</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reason: Fraudulent transaction
+                                            claim</div>
+                                        <div style="font-weight:600;font-size:13px;margin-top:4px">Visa ***4112 · KES
+                                            12,500</div>
+                                    </div>
+                                    <div class="text-end"><span class="pm-badge pm-badge-danger mb-2">Due in 2
+                                            days</span><br><button class="pm-btn pm-btn-sm pm-btn-danger"
+                                            onclick="openModal('disputeModal')">Defend</button></div>
+                                </div>
+                                <div class="status-row border rounded p-3"
+                                    style="background:#fff;border-left:3px solid var(--pm-warning)!important">
+                                    <div><strong>CB-20250625-04</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Reason: Goods not as described
+                                        </div>
+                                        <div style="font-weight:600;font-size:13px;margin-top:4px">M-Pesa · KES 4,200
+                                        </div>
+                                    </div>
+                                    <div class="text-end"><span
+                                            class="pm-badge pm-badge-warning mb-2">Reviewing</span><br><button
+                                            class="pm-btn pm-btn-sm"
+                                            onclick="openModal('disputeModal')">Details</button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 style="font-size:14px;font-weight:700;margin:0">Refund Queue</h4><span
+                                        class="pm-badge pm-badge-info">2 Pending Approval</span>
+                                </div>
+                                <div class="status-row border rounded p-3 mb-2" style="background:#fff">
+                                    <div><strong>RF-20250627-11</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Customer: John Mark · M-Pesa
+                                        </div>
+                                        <div style="font-weight:600;font-size:13px;margin-top:4px">KES 3,400 (Full)
+                                        </div>
+                                    </div>
+                                    <div class="text-end"><span
+                                            class="pm-badge pm-badge-info mb-2">Pending</span><br><button
+                                            class="pm-btn pm-btn-sm" onclick="openModal('refundModal')">Approve</button>
+                                    </div>
+                                </div>
+                                <div class="status-row border rounded p-3" style="background:#fff">
+                                    <div><strong>RF-20250626-09</strong>
+                                        <div style="font-size:11px;color:var(--pm-muted)">Customer: Sarah W. · Visa
+                                            ***1180</div>
+                                        <div style="font-weight:600;font-size:13px;margin-top:4px">KES 1,500 (Partial)
+                                        </div>
+                                    </div>
+                                    <div class="text-end"><span
+                                            class="pm-badge pm-badge-info mb-2">Pending</span><br><button
+                                            class="pm-btn pm-btn-sm" onclick="openModal('refundModal')">Approve</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 25+ MODALS -->
+    <!-- ========================================== -->
+
+    <!-- 1. Receive Payment Modal (Multi-step) -->
+    <div class="modal fade resettable" id="receivePaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-wallet2 text-primary me-2"></i>Receive Payment</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="recvBody">
+                    <div class="pm-stepper" id="recvStepper"></div>
+                    <div id="recvStep1" class="fade-step active">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 1: Transaction Details</h6>
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input
+                                class="pm-form-control" type="number" value="1500" id="recvAmount"></div>
+                        <div class="mb-3"><label class="pm-form-label">Customer Name (Optional)</label><input
+                                class="pm-form-control" placeholder="Enter customer name"></div>
+                        <div class="mb-3"><label class="pm-form-label">Reference / Order ID</label><input
+                                class="pm-form-control" value="ORD-2025-0891"></div>
+                    </div>
+                    <div id="recvStep2" class="fade-step">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 2: Collection Method</h6>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"
+                            style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)"
+                            onclick="selectRadio(this)"><input type="radio" name="rcvm" checked>
+                            <div class="pm-icon-circle"
+                                style="background:var(--pm-accent-soft);color:var(--pm-accent);width:32px;height:32px">
+                                <i class="bi bi-phone"></i></div>
+                            <div><strong>M-Pesa STK Push</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Send prompt to customer's phone</div>
+                            </div>
+                        </div>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"
+                            onclick="selectRadio(this)"><input type="radio" name="rcvm">
+                            <div class="pm-icon-circle"
+                                style="background:var(--pm-info-soft);color:var(--pm-info);width:32px;height:32px"><i
+                                    class="bi bi-qr-code"></i></div>
+                            <div><strong>Dynamic QR Code</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Customer scans to pay</div>
+                            </div>
+                        </div>
+                        <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3"
+                            onclick="selectRadio(this)"><input type="radio" name="rcvm">
+                            <div class="pm-icon-circle"
+                                style="background:var(--pm-purple-soft);color:var(--pm-purple);width:32px;height:32px">
+                                <i class="bi bi-link"></i></div>
+                            <div><strong>Payment Link</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Send link via SMS/WhatsApp</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="recvStep3" class="fade-step">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 3: Execute</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="d-flex justify-content-between mb-1"><span>Amount</span><strong>KES
+                                    1,500</strong></div>
+                            <div class="d-flex justify-content-between"><span>Method</span><strong>M-Pesa STK
+                                    Push</strong></div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Customer Phone Number</label><input
+                                class="pm-form-control" placeholder="07XX XXX XXX" value="0712345678"></div>
+                        <p style="font-size:12px;color:var(--pm-muted)">Clicking submit will trigger an M-Pesa PIN
+                            prompt on the customer's phone.</p>
+                    </div>
+                    <div id="recvStep4" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">STK Push Sent!</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">Awaiting customer to enter PIN.</p>
+                            <div class="spinner-border text-primary my-3" role="status"><span
+                                    class="visually-hidden">Loading...</span></div>
+                            <p style="font-size:12px;color:var(--pm-muted)">Status will update automatically once
+                                payment is received.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="recvFooter"><button class="pm-btn"
+                        data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="recvNextBtn"
+                        onclick="nextRecvStep()">Continue <i class="bi bi-arrow-right"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Generate QR Code Modal -->
+    <div class="modal fade resettable" id="generateQRModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-qr-code text-info me-2"></i>Generate Payment QR</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('qr','dynamic',this)">Dynamic (Specific Amount)</button><button
+                            class="pm-tab-pill" onclick="switchTab('qr','static',this)">Static (Any Amount)</button>
+                    </div>
+                    <div id="qr-dynamic" class="tab-panel active">
+                        <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input
+                                class="pm-form-control" type="number" value="2500"></div>
+                        <div class="mb-3"><label class="pm-form-label">Order Reference</label><input
+                                class="pm-form-control" value="INV-99201"></div>
+                    </div>
+                    <div id="qr-static" class="tab-panel">
+                        <div class="mb-3"><label class="pm-form-label">Till / PayBill Routing</label><select
+                                class="pm-form-control">
+                                <option>Till Number 882001</option>
+                                <option>PayBill 512234</option>
+                            </select></div>
+                        <p style="font-size:12px;color:var(--pm-muted)">Customer will scan and enter the amount
+                            manually.</p>
+                    </div>
+                    <div class="p-3 rounded text-center border mt-3"><img
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=paymo://pay?amount=2500&ref=INV-99201"
+                            alt="QR Code" style="width:150px;height:150px;mix-blend-mode:multiply">
+                        <div class="mt-2" style="font-size:12px;font-weight:600">Scan with PayMo or M-Pesa App</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('generateQRModal','QR Code Generated & Saved to Gallery','')"><i
+                            class="bi bi-download"></i> Download / Print</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. PayBill Config Modal -->
+    <div class="modal fade resettable" id="paybillConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-phone text-accent me-2"></i>M-Pesa PayBill Settings</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Shortcode</label><input class="pm-form-control"
+                            value="512234" disabled style="background:var(--pm-surface-2)"></div>
+                    <div class="mb-3"><label class="pm-form-label">Account Number Validation</label><select
+                            class="pm-form-control">
+                            <option>Enabled (Strict API Lookup)</option>
+                            <option>Regex Pattern matching</option>
+                            <option>Disabled (Accept any)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Customer Fee Configuration</label><select
+                            class="pm-form-control">
+                            <option>Customer pays M-Pesa fee</option>
+                            <option>Merchant absorbs fee (Zero-rated)</option>
+                        </select></div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-warning-soft);font-size:12px"><i
+                            class="bi bi-exclamation-triangle me-1"></i> KYC Update Required: Please upload your latest
+                        CR12 document to avoid service suspension.</div>
+                    <div class="mt-2"><input type="file" class="pm-form-control pm-btn-sm"></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('paybillConfigModal','PayBill configuration saved. KYC document uploaded.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Till Config Modal -->
+    <div class="modal fade resettable" id="tillConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shop text-info me-2"></i>M-Pesa Till Settings</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Till Number</label><input class="pm-form-control"
+                            value="882001" disabled style="background:var(--pm-surface-2)"></div>
+                    <div class="mb-3"><label class="pm-form-label">Store / Branch Name</label><input
+                            class="pm-form-control" value="Nairobi CBD Branch"></div>
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Enable LNMO API for online checkout</label></div>
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Allow staff to initiate reversals</label></div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px">
+                        <div class="d-flex justify-content-between mb-1"><span>Current MDR
+                                Rate</span><strong>1.0%</strong></div>
+                        <div class="d-flex justify-content-between"><span>Settlement</span><strong>Real-time to
+                                Wallet</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('tillConfigModal','Till settings updated successfully.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. PesaLink Config Modal -->
+    <div class="modal fade resettable" id="pesalinkConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank text-warning me-2"></i>PesaLink Collections</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center p-4">
+                        <div class="pm-icon-circle mx-auto mb-3"
+                            style="width:64px;height:64px;background:var(--pm-warning-soft);color:var(--pm-warning);font-size:28px">
+                            <i class="bi bi-hourglass-split"></i></div>
+                        <h5 style="font-weight:700">Awaiting KYC Approval</h5>
+                        <p style="font-size:13px;color:var(--pm-ink-soft)">Your PesaLink merchant account request is
+                            currently under review by the acquiring bank. This usually takes 24-48 hours.</p>
+                    </div>
+                    <div class="p-3 rounded mt-2 border">
+                        <div style="font-size:12px;font-weight:600;margin-bottom:8px">Features once activated:</div>
+                        <ul style="font-size:12px;color:var(--pm-muted);margin:0;padding-left:16px">
+                            <li>Receive funds from 50+ local banks instantly</li>
+                            <li>Alias routing (Pay to phone number/Till)</li>
+                            <li>Fixed KES 45 fee per transaction regardless of amount</li>
+                            <li>Higher transaction limits (up to KES 999,999)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Card Config Modal -->
+    <div class="modal fade resettable" id="cardConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-credit-card text-purple me-2"
+                            style="color:var(--pm-purple)"></i>Card Payment Settings</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Accept Visa / Mastercard</label></div>
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label">Enforce 3D Secure Authentication</label></div>
+                    <div class="p-3 border rounded mb-3" style="background:var(--pm-info-soft)">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div><strong style="font-size:13px">Enable Tokenization</strong>
+                                <div style="font-size:11px;color:var(--pm-ink-soft)">Allow customers to save cards
+                                    securely for 1-click checkout. Recommended by AI.</div>
+                            </div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Accepted Currencies</label>
+                        <div class="d-flex gap-2"><span class="pm-badge pm-badge-success">KES</span><span
+                                class="pm-badge" style="background:var(--pm-surface-2)">USD</span><span class="pm-badge"
+                                style="background:var(--pm-surface-2)">EUR</span><span class="pm-badge"
+                                style="background:var(--pm-surface-2)">GBP</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('cardConfigModal','Card settings updated. Tokenization activated.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. API Config Modal -->
+    <div class="modal fade resettable" id="apiConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-code-slash me-2" style="color:var(--pm-purple)"></i>API
+                        Integration & Keys</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('api','keys',this)">API Keys</button><button class="pm-tab-pill"
+                            onclick="switchTab('api','webhooks',this)">Webhooks</button><button class="pm-tab-pill"
+                            onclick="switchTab('api','logs',this)">Logs</button></div>
+                    <div id="api-keys" class="tab-panel active">
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-purple-soft);font-size:12px"><i
+                                class="bi bi-exclamation-triangle me-1"></i> Your LNMO Production Keys will expire in 3
+                            days. Please rotate them.</div>
+                        <div class="mb-3"><label class="pm-form-label">Consumer Key</label>
+                            <div class="d-flex gap-2"><input class="pm-form-control" type="password"
+                                    value="asdfasdfasdfasdf" readonly><button class="pm-btn pm-btn-sm"><i
+                                        class="bi bi-clipboard"></i></button></div>
+                        </div>
+                        <div class="mb-3"><label class="pm-form-label">Consumer Secret</label>
+                            <div class="d-flex gap-2"><input class="pm-form-control" type="password"
+                                    value="asdfasdfasdfasdf" readonly><button class="pm-btn pm-btn-sm"><i
+                                        class="bi bi-clipboard"></i></button></div>
+                        </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                            onclick="processAction('apiConfigModal','Keys rotated successfully. Update your application.','')"><i
+                                class="bi bi-arrow-repeat"></i> Rotate Keys</button>
+                    </div>
+                    <div id="api-webhooks" class="tab-panel">
+                        <div class="mb-3"><label class="pm-form-label">Validation URL</label><input
+                                class="pm-form-control" value="https://api.yourdomain.com/paymo/validate"></div>
+                        <div class="mb-3"><label class="pm-form-label">Confirmation URL</label><input
+                                class="pm-form-control" value="https://api.yourdomain.com/paymo/confirm"></div><button
+                            class="pm-btn pm-btn-sm pm-btn-primary">Save Endpoints</button>
+                    </div>
+                    <div id="api-logs" class="tab-panel">
+                        <div class="table-responsive">
+                            <table class="pm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Endpoint</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10:41 AM</td>
+                                        <td>/v1/stkpush/process</td>
+                                        <td><span class="pm-badge pm-badge-success">200 OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:35 AM</td>
+                                        <td>/v1/validation</td>
+                                        <td><span class="pm-badge pm-badge-success">200 OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>09:12 AM</td>
+                                        <td>/v1/stkpush/process</td>
+                                        <td><span class="pm-badge pm-badge-danger">500 ERR</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Settlement Modal -->
+    <div class="modal fade resettable" id="settlementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bank me-2 text-info"></i>Settlement Pipeline</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-surface-2)">
+                                <div style="font-size:11px;color:var(--pm-muted);font-weight:600">CLEARED (WALLET)</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-primary)">KES 304,100</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Available for payout</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-info-soft)">
+                                <div style="font-size:11px;color:#1D4ED8;font-weight:600">PENDING (T+1)</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-info)">KES 89,200</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Card & Bank clearing</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background:var(--pm-warning-soft)">
+                                <div style="font-size:11px;color:#B45309;font-weight:600">HELD (RESERVE)</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--pm-warning)">KES 25,000</div>
+                                <div style="font-size:11px;color:var(--pm-muted)">Chargeback rolling reserve</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 style="font-weight:700">Scheduled Bank Payouts</h6>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Batch ID</th>
+                                    <th>Date</th>
+                                    <th>Gross</th>
+                                    <th>Fees</th>
+                                    <th>Net Payout</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SET-8821</td>
+                                    <td>Today 4PM</td>
+                                    <td>KES 142,500</td>
+                                    <td>KES 2,137</td>
+                                    <td>KES 140,363</td>
+                                    <td><span class="pm-badge pm-badge-info">Processing</span></td>
+                                </tr>
+                                <tr>
+                                    <td>SET-8820</td>
+                                    <td>Yesterday</td>
+                                    <td>KES 210,000</td>
+                                    <td>KES 3,150</td>
+                                    <td>KES 206,850</td>
+                                    <td><span class="pm-badge pm-badge-success">Cleared</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3"><button class="pm-btn pm-btn-sm pm-btn-primary"
+                            onclick="processAction('settlementModal','Manual withdrawal of KES 304,100 initiated to Equity Bank.','')">Withdraw
+                            Available Funds to Bank</button></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Analytics Modal -->
+    <div class="modal fade resettable" id="analyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-up me-2"></i>Collection Analytics</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <h6 style="font-size:13px;font-weight:700">Volume Trend (Last 7 Days)</h6>
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height:40%;background:var(--pm-primary-light)"><span
+                                        class="bar-label">Mon</span></div>
+                                <div class="chart-bar" style="height:60%;background:var(--pm-primary-light)"><span
+                                        class="bar-label">Tue</span></div>
+                                <div class="chart-bar" style="height:85%;background:var(--pm-primary)"><span
+                                        class="bar-label">Wed</span></div>
+                                <div class="chart-bar" style="height:55%;background:var(--pm-primary-light)"><span
+                                        class="bar-label">Thu</span></div>
+                                <div class="chart-bar" style="height:95%;background:var(--pm-primary)"><span
+                                        class="bar-label">Fri</span></div>
+                                <div class="chart-bar" style="height:35%;background:var(--pm-primary-light)"><span
+                                        class="bar-label">Sat</span></div>
+                                <div class="chart-bar" style="height:25%;background:var(--pm-primary-light)"><span
+                                        class="bar-label">Sun</span></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <h6 style="font-size:13px;font-weight:700">Key Metrics</h6>
+                            <div class="p-3 border rounded mb-2">
+                                <div style="font-size:11px;color:var(--pm-muted)">Avg Transaction Value</div><strong
+                                    style="font-size:18px">KES 2,240</strong>
+                            </div>
+                            <div class="p-3 border rounded mb-2">
+                                <div style="font-size:11px;color:var(--pm-muted)">Peak Collection Hour</div><strong
+                                    style="font-size:18px">1:00 PM - 2:00 PM</strong>
+                            </div>
+                            <div class="p-3 border rounded">
+                                <div style="font-size:11px;color:var(--pm-muted)">New vs Repeat Customers</div><strong
+                                    style="font-size:18px">32% / 68%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('exportReportModal')">Export Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Refund Modal (Multi-step) -->
+    <div class="modal fade resettable" id="refundModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-return-left text-warning me-2"></i>Process Refund</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-stepper" id="refStepper"></div>
+                    <div id="refStep1" class="fade-step active">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 1: Select Transaction</h6><input
+                            class="pm-form-control mb-3" placeholder="Enter Transaction ID or Phone number">
+                        <div class="p-3 border rounded mb-2"
+                            style="cursor:pointer;border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)">
+                            <div class="d-flex justify-content-between"><strong>John Mark</strong><strong>KES
+                                    3,400</strong></div>
+                            <div style="font-size:11px;color:var(--pm-muted)">TXN-99120 • M-Pesa • Today 11:42 AM</div>
+                        </div>
+                        <div class="p-3 border rounded mb-2" style="cursor:pointer">
+                            <div class="d-flex justify-content-between"><strong>Sarah W.</strong><strong>KES
+                                    1,500</strong></div>
+                            <div style="font-size:11px;color:var(--pm-muted)">TXN-88192 • Visa • Yesterday</div>
+                        </div>
+                    </div>
+                    <div id="refStep2" class="fade-step">
+                        <h6 style="font-weight:700;margin-bottom:16px">Step 2: Refund Details</h6>
+                        <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2);font-size:12px">Original
+                            Transaction: KES 3,400 (John Mark)</div>
+                        <div class="mb-3"><label class="pm-form-label">Refund Type</label><select
+                                class="pm-form-control">
+                                <option>Full Refund (KES 3,400)</option>
+                                <option>Partial Refund</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control">
+                                <option>Customer requested cancellation</option>
+                                <option>Out of stock / Unavailable</option>
+                                <option>Fraudulent transaction</option>
+                                <option>Duplicate charge</option>
+                            </select></div>
+                        <div class="mb-3"><label class="pm-form-label">PIN to authorize</label>
+                            <div class="pm-pin-input"><input type="password" maxlength="1"
+                                    oninput="moveFocus(this)"><input type="password" maxlength="1"
+                                    oninput="moveFocus(this)"><input type="password" maxlength="1"
+                                    oninput="moveFocus(this)"><input type="password" maxlength="1"
+                                    oninput="moveFocus(this)"></div>
+                        </div>
+                    </div>
+                    <div id="refStep3" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Refund Initiated</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">KES 3,400 will be reversed to John Mark's
+                                M-Pesa account.</p>
+                            <p style="font-size:11px;color:var(--pm-muted)">Ref: REF-PM-20250627-011</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="refFooter"><button class="pm-btn"
+                        data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-warning" id="refNextBtn"
+                        onclick="nextRefStep()" style="color:#fff">Continue <i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Dispute Handling Modal -->
+    <div class="modal fade resettable" id="disputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-2"></i>Dispute /
+                        Chargeback Management</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <div class="p-3 border rounded" style="background:var(--pm-surface-2)">
+                                <h6 style="font-size:13px;font-weight:700">Dispute Details</h6>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span
+                                        class="text-muted">ID</span><strong>CB-20250627-01</strong></div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span
+                                        class="text-muted">Amount</span><strong style="color:var(--pm-danger)">KES
+                                        12,500</strong></div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span
+                                        class="text-muted">Method</span><strong>Visa ***4112</strong></div>
+                                <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span
+                                        class="text-muted">Reason</span><strong>Fraud Claim</strong></div>
+                                <div class="d-flex justify-content-between" style="font-size:12px"><span
+                                        class="text-muted">Deadline</span><strong style="color:var(--pm-danger)">2
+                                        days</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h6 style="font-size:13px;font-weight:700">Action: Defend Chargeback</h6>
+                            <div class="mb-3"><label class="pm-form-label">Defense Evidence</label><select
+                                    class="pm-form-control">
+                                    <option>Proof of delivery / receipt</option>
+                                    <option>Customer communication logs</option>
+                                    <option>Digital service access logs</option>
+                                </select></div>
+                            <div class="mb-3"><label class="pm-form-label">Upload Documents</label><input type="file"
+                                    class="pm-form-control" multiple></div>
+                            <div class="mb-3"><label class="pm-form-label">Notes</label><textarea
+                                    class="pm-form-control"
+                                    rows="3">Customer signed for the delivery on 25 Jun. Attached is the signed waybill and GPS logs.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn pm-btn-danger"
+                        onclick="processAction('disputeModal','Chargeback accepted. KES 12,500 reversed.','')">Accept
+                        Chargeback (Refund)</button><button class="pm-btn pm-btn-primary"
+                        onclick="processAction('disputeModal','Evidence submitted to acquiring bank. Status changed to Reviewing.','')">Submit
+                        Evidence</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Transaction Details Modal -->
+    <div class="modal fade resettable" id="txnDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction Details</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div style="font-size:28px;font-weight:700;color:var(--pm-primary)">KES 4,500</div><span
+                            class="pm-badge pm-badge-success">Success</span>
+                    </div>
+                    <div class="p-3 border rounded" style="font-size:13px">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Txn
+                                ID</span><strong>TXN-PM-892110</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Date</span><strong>27
+                                Jun 2025, 14:32</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Customer</span><strong>Alice Wanjiku</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Phone</span><strong>0722 *** 112</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span
+                                class="text-muted">Method</span><strong>M-Pesa PayBill</strong></div>
+                        <div class="d-flex justify-content-between"><span class="text-muted">MDR Fee</span><strong>KES
+                                67.50</strong></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn"
+                        onclick="openModal('refundModal');closeModal('txnDetailModal')">Refund</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('txnDetailModal','Receipt sent to customer via SMS.','')"><i
+                            class="bi bi-send"></i> Send Receipt</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Customer Segment Modal -->
+    <div class="modal fade resettable" id="customerSegmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pie-chart me-2"></i>Customer Segments & VIPs</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded text-center">
+                                <div style="font-size:12px;font-weight:600;color:var(--pm-purple)">VIP (>KES 50k LTV)
+                                </div>
+                                <div style="font-size:24px;font-weight:700">142</div><button
+                                    class="pm-btn pm-btn-sm mt-2" onclick="openModal('sendReminderModal')">Message
+                                    VIPs</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded text-center">
+                                <div style="font-size:12px;font-weight:600;color:var(--pm-info)">REGULAR (Repeat)</div>
+                                <div style="font-size:24px;font-weight:700">810</div><button
+                                    class="pm-btn pm-btn-sm mt-2">View List</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded text-center">
+                                <div style="font-size:12px;font-weight:600;color:var(--pm-danger)">CHURN RISK</div>
+                                <div style="font-size:24px;font-weight:700">45</div><button
+                                    class="pm-btn pm-btn-sm mt-2">Send Promo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Auto-Segmentation Rules</label>
+                        <div class="p-2 border rounded d-flex justify-content-between align-items-center mb-1"><span
+                                style="font-size:12px">Mark as VIP if Lifetime Value > KES 50,000</span><button
+                                class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></div>
+                        <div class="p-2 border rounded d-flex justify-content-between align-items-center"><span
+                                style="font-size:12px">Mark as Churn Risk if no payment in 90 days</span><button
+                                class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Send Reminder / Message Modal -->
+    <div class="modal fade resettable" id="sendReminderModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-chat-dots text-success me-2"></i>Send Message / Reminder
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Target Audience</label><select
+                            class="pm-form-control">
+                            <option>Customers with Pending Invoices (14)</option>
+                            <option>VIP Customers (142)</option>
+                            <option>Churn Risk Customers (45)</option>
+                            <option>Single Customer</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Channel</label><select class="pm-form-control">
+                            <option>SMS</option>
+                            <option>WhatsApp Business</option>
+                            <option>Email</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Message Template</label><select
+                            class="pm-form-control">
+                            <option>Payment Reminder</option>
+                            <option>Promo Offer</option>
+                            <option>Thank You</option>
+                            <option>Custom</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Message Body</label><textarea class="pm-form-control"
+                            rows="4">Hi [Name], this is a reminder that your invoice [Invoice_No] for KES [Amount] is due. Click here to pay: [Pay_Link]</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-success"
+                        onclick="processAction('sendReminderModal','Messages sent successfully to 14 customers.','')"><i
+                            class="bi bi-send"></i> Send Campaign</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Add Customer Modal -->
+    <div class="modal fade resettable" id="addCustomerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Add New Customer</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Full Name</label><input class="pm-form-control"
+                            placeholder="Enter name"></div>
+                    <div class="mb-3"><label class="pm-form-label">Phone Number</label><input class="pm-form-control"
+                            placeholder="07XX XXX XXX"></div>
+                    <div class="mb-3"><label class="pm-form-label">Email (Optional)</label><input
+                            class="pm-form-control" placeholder="email@domain.com"></div>
+                    <div class="mb-3"><label class="pm-form-label">Customer Group</label><select
+                            class="pm-form-control">
+                            <option>Regular</option>
+                            <option>Wholesale</option>
+                            <option>Corporate</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('addCustomerModal','Customer profile created successfully.','')">Save
+                        Customer</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16. Fee Calculator Modal -->
+    <div class="modal fade resettable" id="feeCalculatorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Transaction Fee Calculator</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Transaction Amount (KES)</label><input
+                            class="pm-form-control" type="number" value="10000" id="calcAmt" oninput="calcFees()"></div>
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>MDR Rate</th>
+                                    <th>Fee Deduction</th>
+                                    <th>Net Settlement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>PayBill</td>
+                                    <td>1.5%</td>
+                                    <td>KES <span class="calc-pb-fee">150</span></td>
+                                    <td><strong style="color:var(--pm-primary)">KES <span
+                                                class="calc-pb-net">9,850</span></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Till</td>
+                                    <td>1.0%</td>
+                                    <td>KES <span class="calc-till-fee">100</span></td>
+                                    <td><strong style="color:var(--pm-primary)">KES <span
+                                                class="calc-till-net">9,900</span></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Card (Visa/MC)</td>
+                                    <td>2.9%</td>
+                                    <td>KES <span class="calc-card-fee">290</span></td>
+                                    <td><strong style="color:var(--pm-primary)">KES <span
+                                                class="calc-card-net">9,710</span></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>PesaLink</td>
+                                    <td>Fixed</td>
+                                    <td>KES <span class="calc-pesa-fee">45</span></td>
+                                    <td><strong style="color:var(--pm-primary)">KES <span
+                                                class="calc-pesa-net">9,955</span></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);font-size:12px">All fees are
+                        deducted gross before settlement. No hidden charges.</div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Export Report Modal -->
+    <div class="modal fade resettable" id="exportReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Export Collections Data
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Data Set</label><select class="pm-form-control">
+                            <option>Transaction Ledger</option>
+                            <option>Settlement History</option>
+                            <option>Customer Directory</option>
+                            <option>Disputes & Refunds Log</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="pm-form-label">From</label><input type="date"
+                                class="pm-form-control" value="2025-06-01"></div>
+                        <div class="col-6"><label class="pm-form-label">To</label><input type="date"
+                                class="pm-form-control" value="2025-06-27"></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control">
+                            <option>CSV (For Excel/Accounting)</option>
+                            <option>PDF Summary</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('exportReportModal','Export generated and downloading to your device.','')"><i
+                            class="bi bi-download"></i> Generate Export</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 18. Health Check Modal -->
+    <div class="modal fade resettable" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-heart-pulse text-danger me-2"></i>System Health & Status
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="status-row">
+                        <div><strong>M-Pesa API (PayBill/Till)</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Latency: 120ms</div>
+                        </div><span class="pm-badge pm-badge-success">Operational</span>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Card Gateway</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Latency: 450ms</div>
+                        </div><span class="pm-badge pm-badge-success">Operational</span>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>PesaLink Switch</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Pending KYC</div>
+                        </div><span class="pm-badge pm-badge-warning">Inactive</span>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Settlement Engine</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Next batch at 4:00 PM</div>
+                        </div><span class="pm-badge pm-badge-success">Operational</span>
+                    </div>
+                    <div class="p-3 border rounded mt-3" style="background:var(--pm-surface-2);font-size:12px">All core
+                        payment rails are functioning normally. No major outages reported by PSPs in the last 24 hours.
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. Profile Modal -->
+    <div class="modal fade resettable" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Admin Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3"
+                        style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-slate)">JD</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Jane Doe</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">Finance Admin · J.K. Enterprises</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Full Admin</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Last Login</span><br><strong>Today, 08:15 AM</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn pm-btn-danger w-100" data-bs-dismiss="modal">Sign
+                        Out</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Notifications Modal -->
+    <div class="modal fade resettable" id="notificationsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (8)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:400px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Chargeback Received</strong>
+                        <div style="font-size:11px;color:#7F1D1D">Visa ***4112 KES 12,500. Respond within 2 days.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>Refund Approval Required</strong>
+                        <div style="font-size:11px;color:#92400E">John Mark requested full refund KES 3,400.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>KYC
+                            Document Needed</strong>
+                        <div style="font-size:11px;color:#1E40AF">Upload CR12 for PayBill 512234 to avoid limits.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-purple-soft);font-size:13px"><strong>API
+                            Keys Expiring</strong>
+                        <div style="font-size:11px;color:#4C1D95">Rotate LNMO Production keys in 3 days.</div>
+                    </div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);font-size:13px"><strong>Daily
+                            Settlement Cleared</strong>
+                        <div style="font-size:11px;color:var(--pm-muted)">KES 206,850 deposited to Equity Bank
+                            yesterday.</div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn w-100" data-bs-dismiss="modal">Mark all as read</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Attention Detail Modal -->
+    <div class="modal fade resettable" id="attentionDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>Action Items</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="status-row">
+                        <div><strong>Chargeback CB-01</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Visa ***4112</div>
+                        </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                            onclick="openModal('disputeModal')">Defend</button>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>Refund RF-11</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Pending approval</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="openModal('refundModal')">Review</button>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>KYC Update</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">CR12 required</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="openModal('paybillConfigModal')">Upload</button>
+                    </div>
+                    <div class="status-row">
+                        <div><strong>API Key Rotation</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Expires in 3 days</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="openModal('apiConfigModal')">Rotate</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mock Data
+        const txns = [
+            { time: '14:32', cust: 'Alice W.', ref: 'TXN-892110', method: 'PayBill', amount: 'KES 4,500', status: 'Success' },
+            { time: '14:15', cust: 'John M.', ref: 'TXN-892109', method: 'Till', amount: 'KES 1,200', status: 'Success' },
+            { time: '13:40', cust: 'Sarah K.', ref: 'TXN-892108', method: 'Visa', amount: 'KES 8,500', status: 'Success' },
+            { time: '13:12', cust: 'David O.', ref: 'TXN-892107', method: 'PayBill', amount: 'KES 2,000', status: 'Failed' },
+            { time: '12:55', cust: 'Mary J.', ref: 'TXN-892106', method: 'Till', amount: 'KES 550', status: 'Success' }
+        ];
+        const customers = [
+            { name: 'Alice Wanjiku', phone: '0722 *** 112', seg: 'VIP', ltv: 'KES 142,500', last: 'Today' },
+            { name: 'John Mark', phone: '0711 *** 443', seg: 'Regular', ltv: 'KES 12,400', last: 'Today' },
+            { name: 'Sarah K.', phone: '0733 *** 991', seg: 'VIP', ltv: 'KES 85,000', last: 'Yesterday' },
+            { name: 'David O.', phone: '0721 *** 220', seg: 'Churn Risk', ltv: 'KES 8,000', last: '45 days ago' },
+            { name: 'Mary J.', phone: '0755 *** 881', seg: 'New', ltv: 'KES 550', last: 'Today' }
+        ];
+
+        function openModal(id) { const el = document.getElementById(id); if (el) { closeAllModals(); new bootstrap.Modal(el).show(); } }
+        function closeModal(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function closeAllModals() { document.querySelectorAll('.modal.show').forEach(m => { const inst = bootstrap.Modal.getInstance(m); if (inst) inst.hide(); }); }
+        function selectRadio(card) { card.parentElement.querySelectorAll('.border').forEach(b => { b.style.borderColor = ''; b.style.background = ''; const r = b.querySelector('input[type=radio]'); if (r) r.checked = false }); card.style.borderColor = 'var(--pm-primary)'; card.style.background = 'rgba(79,70,229,.04)'; const radio = card.querySelector('input[type=radio]'); if (radio) radio.checked = true; }
+        function switchTab(prefix, key, btn) { btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function moveFocus(el) { if (el.value.length === 1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+
+        function renderFeeds() {
+            document.getElementById('transactionFeedBody').innerHTML = txns.map(t => `<tr><td>${t.time}</td><td>${t.cust}</td><td><code>${t.ref}</code></td><td>${t.method}</td><td><strong>${t.amount}</strong></td><td><span class="pm-badge ${t.status === 'Success' ? 'pm-badge-success' : 'pm-badge-danger'}">${t.status}</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('txnDetailModal')">View</button></td></tr>`).join('');
+            document.getElementById('customerTableBody').innerHTML = customers.map(c => `<tr><td><strong>${c.name}</strong></td><td>${c.phone}</td><td><span class="pm-badge ${c.seg === 'VIP' ? 'pm-badge-purple' : c.seg === 'Churn Risk' ? 'pm-badge-danger' : c.seg === 'New' ? 'pm-badge-info' : 'pm-badge-success'}">${c.seg}</span></td><td>${c.ltv}</td><td>${c.last}</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('sendReminderModal')">Msg</button></td></tr>`).join('');
+        }
+
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'pm-loading-overlay'; ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1500); }
+        function processAction(modalId, msg, ref) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>` : ''}<div class="mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Done</button></div></div>`; if (footer) footer.innerHTML = ''; }); }
+        function cacheResettable() { document.querySelectorAll('.resettable').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.originalBody = b.innerHTML; if (f) m.dataset.originalFooter = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody; if (m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter; resetFlows(); }); }); }
+
+        let recvStep = 1, refStep = 1;
+        function renderStepper(elId, labels, current) { const wrap = document.getElementById(elId); if (!wrap) return; wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i + 1) < current ? 'completed' : (i + 1) === current ? 'active' : ''}"><div class="pm-step-num">${(i + 1) < current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length - 1 ? '<div class="pm-step-line"></div>' : ''}`).join(''); }
+        function showFlow(prefix, current, total) { for (let i = 1; i <= total; i++) { const el = document.getElementById(prefix + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(prefix + current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+
+        function nextRecvStep() {
+            if (recvStep === 3) { showLoading('#recvBody', () => { recvStep = 4; renderStepper('recvStepper', ['Details', 'Method', 'Execute', 'Done'], 4); showFlow('recvStep', 4, 4); document.getElementById('recvNextBtn').textContent = 'Done'; }); return; }
+            if (recvStep >= 4) { closeModal('receivePaymentModal'); return; }
+            recvStep++; renderStepper('recvStepper', ['Details', 'Method', 'Execute', 'Done'], recvStep); showFlow('recvStep', recvStep, 4);
+            if (recvStep === 3) document.getElementById('recvNextBtn').innerHTML = 'Send Prompt <i class="bi bi-send"></i>';
+        }
+        function nextRefStep() {
+            if (refStep === 2) { showLoading('#refundModal .modal-body', () => { refStep = 3; renderStepper('refStepper', ['Select', 'Details', 'Done'], 3); showFlow('refStep', 3, 3); document.getElementById('refNextBtn').textContent = 'Done'; }); return; }
+            if (refStep >= 3) { closeModal('refundModal'); return; }
+            refStep++; renderStepper('refStepper', ['Select', 'Details', 'Done'], refStep); showFlow('refStep', refStep, 3);
+            if (refStep === 2) document.getElementById('refNextBtn').innerHTML = 'Authorize <i class="bi bi-lock"></i>';
+        }
+        function resetFlows() {
+            recvStep = 1; refStep = 1;
+            renderStepper('recvStepper', ['Details', 'Method', 'Execute', 'Done'], 1); showFlow('recvStep', 1, 4);
+            renderStepper('refStepper', ['Select', 'Details', 'Done'], 1); showFlow('refStep', 1, 3);
+        }
+
+        function calcFees() {
+            let amt = parseFloat(document.getElementById('calcAmt').value) || 0;
+            document.querySelector('.calc-pb-fee').innerText = (amt * 0.015).toFixed(0);
+            document.querySelector('.calc-pb-net').innerText = (amt - (amt * 0.015)).toFixed(0);
+            document.querySelector('.calc-till-fee').innerText = (amt * 0.01).toFixed(0);
+            document.querySelector('.calc-till-net').innerText = (amt - (amt * 0.01)).toFixed(0);
+            document.querySelector('.calc-card-fee').innerText = (amt * 0.029).toFixed(0);
+            document.querySelector('.calc-card-net').innerText = (amt - (amt * 0.029)).toFixed(0);
+            document.querySelector('.calc-pesa-fee').innerText = '45';
+            document.querySelector('.calc-pesa-net').innerText = (amt - 45).toFixed(0);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFeeds();
+            cacheResettable();
+            resetFlows();
+        });
+    </script>
+</body>
+
+</html>

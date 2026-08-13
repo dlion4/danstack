@@ -101,7 +101,7 @@ export const initialMockData: BusinessLayoutContent = {
                         title: "Overview & Insights",
                         items: [
                                 {
-                                        key: "dashboard",
+                                        key: "overview",
                                         label: "Dashboard",
                                         icon: "bi-grid-1x2",
                                 },
@@ -111,11 +111,11 @@ export const initialMockData: BusinessLayoutContent = {
                                         icon: "bi-activity",
                                         badge: "New",
                                 },
-                                {
-                                        key: "command-center",
-                                        label: "Command Center",
-                                        icon: "bi-terminal",
-                                },
+                                // {
+                                //         key: "command-center",
+                                //         label: "Command Center",
+                                //         icon: "bi-terminal",
+                                // },
                         ],
                 },
                 {
@@ -174,6 +174,11 @@ export const initialMockData: BusinessLayoutContent = {
                         title: "Merchant Services & Growth",
                         items: [
                                 {
+                                        key: "get-paid",
+                                        label: "Get Paid",
+                                        icon: "bi-cash-coin",
+                                },
+                                {
                                         key: "collections-merchant",
                                         label: "Collections & Merchant",
                                         icon: "bi-shield-check",
@@ -182,6 +187,11 @@ export const initialMockData: BusinessLayoutContent = {
                                         key: "business-onboarding",
                                         label: "Business Onboarding",
                                         icon: "bi-plug",
+                                },
+                                {
+                                        key: "apps-integrations",
+                                        label: "Apps & Integrations",
+                                        icon: "bi-plug-fill",
                                 },
                         ],
                 },

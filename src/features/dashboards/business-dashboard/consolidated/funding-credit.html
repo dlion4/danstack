@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Funding, Credit & Lending</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paymo-consolidated.css">
+<style>
+/* ===== Funding & Credit page-specific ===== */
+.score-gauge{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
+.score-gauge::after{content:'';position:absolute;inset:12px;background:#fff;border-radius:50%}
+.score-gauge .in{position:relative;z-index:2;text-align:center}
+.loan-card{border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;background:#fff;transition:all .2s;height:100%;position:relative;overflow:hidden}
+.loan-card:hover{box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.loan-card .badge-new{position:absolute;top:12px;right:12px}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:768px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+.sum-item{padding:14px;border-radius:var(--pm-r-md);background:var(--pm-surface-2);border:1px solid var(--pm-border)}
+.sum-item .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.sum-item .val{font-size:20px;font-weight:700;font-family:var(--pm-font-display)}
+.slider-wrap input[type=range]{width:100%;accent-color:var(--pm-primary)}
+.pay-tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pay-tab{padding:7px 14px;border-radius:var(--pm-r-pill);border:1px solid var(--pm-border);background:#fff;font-size:13px;font-weight:600;color:var(--pm-ink-soft);cursor:pointer;transition:all .2s}
+.pay-tab.active{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pay-tab .cnt{margin-left:6px;font-size:11px;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:10px}
+.pay-tab.active .cnt{background:rgba(255,255,255,.25)}
+.factor-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);margin-bottom:8px;background:#fff;cursor:pointer;transition:all .2s}
+.factor-row:hover{box-shadow:var(--pm-shadow-md)}
+.calc-box{background:var(--pm-surface-2);border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px}
+.calc-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid var(--pm-border)}
+.calc-row:last-child{border:none}
+.asset-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}
+.asset-item:last-child{border:none}
+.facility-status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.facility-status.current{background:var(--pm-accent-soft);color:#047857}
+.facility-status.overdue{background:var(--pm-danger-soft);color:#DC2626}
+.facility-status.cleared{background:var(--pm-border);color:var(--pm-muted)}
+.quickbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-lg);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:920px;width:calc(100% - 24px);justify-content:center}
+.quickbar .qb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border-radius:var(--pm-r-sm);border:1px solid transparent;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--pm-ink-soft);transition:all .2s}
+.quickbar .qb:hover{background:var(--pm-surface-2);color:var(--pm-primary);border-color:var(--pm-border)}
+.quickbar .qb i{font-size:18px}
+.quickbar .qb .qbadge{position:absolute;top:2px;right:8px;min-width:16px;height:16px;border-radius:8px;background:var(--pm-danger);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+</style>
+</head>
+<body>
+<div class="pm-app">
+  <aside class="pm-sidebar">
+    <a class="pm-sidebar-logo" href="overview.html">B</a>
+    <nav class="pm-sidebar-nav">
+      <a class="pm-nav-item" href="overview.html" title="Overview"><i class="bi bi-grid-1x2"></i><span class="pm-nav-tip">Overview</span></a>
+      <a class="pm-nav-item" href="get-paid.html" title="Get Paid"><i class="bi bi-cash-coin"></i><span class="pm-nav-tip">Get Paid</span></a>
+      <a class="pm-nav-item" href="pay-suppliers.html" title="Pay Suppliers"><i class="bi bi-send"></i><span class="pm-nav-tip">Pay Suppliers</span></a>
+      <a class="pm-nav-item" href="cash-accounts.html" title="Cash & Accounts"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Cash & Accounts</span></a>
+      <a class="pm-nav-item" href="bookkeeping-taxes.html" title="Bookkeeping & Taxes"><i class="bi bi-journal-check"></i><span class="pm-nav-tip">Bookkeeping & Taxes</span></a>
+      <a class="pm-nav-item" href="portfolio.html" title="Multi-Business / Portfolio"><i class="bi bi-diagram-3"></i><span class="pm-nav-tip">Portfolio</span></a>
+      <a class="pm-nav-item" href="products-store.html" title="Products & Store"><i class="bi bi-bag"></i><span class="pm-nav-tip">Products & Store</span></a>
+      <a class="pm-nav-item" href="inventory-stock.html" title="Inventory & Stock"><i class="bi bi-box-seam"></i><span class="pm-nav-tip">Inventory & Stock</span></a>
+      <a class="pm-nav-item active" href="funding-credit.html" title="Funding & Credit"><i class="bi bi-bank2"></i><span class="badge-dot"></span><span class="pm-nav-tip">Funding & Credit</span></a>
+      <a class="pm-nav-item" href="customers-crm.html" title="Customers & CRM"><i class="bi bi-people"></i><span class="pm-nav-tip">Customers & CRM</span></a>
+      <a class="pm-nav-item" href="settings-security.html" title="Settings & Security"><i class="bi bi-gear"></i><span class="pm-nav-tip">Settings & Security</span></a>
+    </nav>
+    <button class="pm-sidebar-foot" onclick="openModal('supportModal')" title="Help"><i class="bi bi-question-circle"></i></button>
+  </aside>
+
+  <div class="pm-main">
+    <header class="pm-header">
+      <div class="pm-header-title"><div class="d-flex align-items-center gap-3">
+        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-ink)">TS</div>
+        <div><h1>TechSolutions Ltd <span class="pm-badge pm-badge-info">Online</span></h1><p>Credit Score 785 · Pre-approved KES 2M</p></div>
+      </div></div>
+      <div class="pm-header-search"><i class="bi bi-search"></i><input id="globalSearch" placeholder="Search loans, invoices to factor, assets..."></div>
+      <div class="pm-header-actions">
+        <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Health"><i class="bi bi-activity text-success"></i></button>
+        <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter" id="notifCount">4</span></button>
+        <div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-primary)">AD</div><div><div class="pm-name">Amina D.</div><div class="pm-role">Director (Admin)</div></div></div>
+        <div class="pm-clock"><span class="d" id="pmDate">—</span><span class="t" id="pmTime">—</span></div>
+      </div>
+    </header>
+
+    <div class="pm-page-bar">
+      <div><div class="pm-breadcrumb"><a href="overview.html">Business Portal</a> / <strong>Funding & Credit</strong></div>
+        <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">Funding, Credit & Lending</h2>
+        <p class="pm-section-sub">Use your PayMo data to access credit faster and cheaper than a bank.</p></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="pm-btn" onclick="openModal('checkScoreModal')"><i class="bi bi-shield-check"></i> Check Score</button>
+        <button class="pm-btn pm-btn-dark" onclick="openModal('workingCapitalModal')"><i class="bi bi-cash-coin"></i> Borrow Now</button>
+      </div>
+    </div>
+
+    <div class="pm-content">
+      <!-- ==================== SECTION 9.1 CREDIT HEALTH DASHBOARD ==================== -->
+      <div class="row g-3">
+        <div class="col-lg-5"><div class="pm-card h-100 text-center">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-success"><i class="bi bi-graph-up"></i> Credit Health & Score</h3><p class="pm-section-sub">Based on your real PayMo data</p></div></div>
+          <div class="score-gauge mx-auto" style="background:conic-gradient(var(--pm-accent) 0 78%,var(--pm-border) 78% 100%)"><div class="in"><div style="font-size:40px;font-weight:800;color:var(--pm-accent)">785</div><div style="font-size:12px;color:var(--pm-muted)">/ 1000 · GOOD</div></div></div>
+          <div class="p-3 rounded mt-3 text-start" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <div class="calc-row"><span>Revenue consistency</span><span class="text-success">+50 pts</span></div>
+            <div class="calc-row"><span>Low default rate</span><span class="text-success">+40 pts</span></div>
+            <div class="calc-row"><span>Cash reserve</span><span class="text-danger">-20 pts</span></div>
+            <div class="calc-row"><span>Account age (1+ yr)</span><span class="text-success">+30 pts</span></div>
+            <div class="calc-row"><span>Bookkeeping up to date</span><span class="text-success">+20 pts</span></div>
+          </div>
+          <button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('checkScoreModal')"><i class="bi bi-shield-check"></i> View Full Report</button>
+        </div></div>
+        <div class="col-lg-7"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-purple)"><i class="bi bi-stars"></i> Loan Readiness</h3><p class="pm-section-sub">What you can access today</p></div></div>
+          <div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)"><div class="d-flex justify-content-between align-items-center"><div><div style="font-size:12px;color:#047857;font-weight:700">PRE-APPROVED WORKING CAPITAL</div><div style="font-size:24px;font-weight:700;color:var(--pm-primary)">Up to KES 2,000,000</div><div style="font-size:12px;color:#065F46">at 2.5% per month</div></div><button class="pm-btn pm-btn-sm pm-btn-success" onclick="openModal('workingCapitalModal')"><i class="bi bi-cash-coin"></i> Borrow Now</button></div></div>
+          <div class="row g-2">
+            <div class="col-md-6"><div class="calc-box"><div class="d-flex justify-content-between"><strong>Credit Line</strong><span class="facility-status current">Active</span></div><div style="font-size:20px;font-weight:700">KES 1M limit</div><div style="font-size:11px;color:var(--pm-muted)">KES 800K available</div></div></div>
+            <div class="col-md-6"><div class="calc-box"><div class="d-flex justify-content-between"><strong>Invoice Factoring</strong><button class="pm-btn pm-btn-sm" onclick="openModal('factoringModal')">3 eligible</button></div><div style="font-size:20px;font-weight:700">KES 850K</div><div style="font-size:11px;color:var(--pm-muted)">available to advance</div></div></div>
+          </div>
+          <div class="p-3 rounded mt-3" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-info-circle"></i> To unlock higher limits: increase cash reserves or maintain revenue for 3 more months. Link CRB report for a blended score.</div>
+        </div></div>
+      </div>
+
+      <!-- ==================== SECTION 9.2/9.4 CREDIT PRODUCTS ==================== -->
+      <div class="row g-3">
+        <div class="col-lg-4"><div class="loan-card">
+          <div class="pm-badge pm-badge-success badge-new">Instant</div>
+          <div class="pm-icon-circle round mb-2" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-cash-coin"></i></div>
+          <h4 style="font-weight:700;font-size:16px">Working Capital Loan</h4>
+          <p class="pm-section-sub">Short-term, revenue-backed. Up to KES 2M in 5 minutes.</p>
+          <div class="calc-row"><span>Rate</span><strong>2.5%/mo</strong></div>
+          <div class="calc-row"><span>Term</span><strong>1-6 months</strong></div>
+          <button class="pm-btn pm-btn-success w-100 mt-2" onclick="openModal('workingCapitalModal')"><i class="bi bi-cash-coin"></i> Borrow Now</button>
+        </div></div>
+        <div class="col-lg-4"><div class="loan-card">
+          <div class="pm-icon-circle round mb-2" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-receipt"></i></div>
+          <h4 style="font-weight:700;font-size:16px">Invoice Factoring</h4>
+          <p class="pm-section-sub">Get 80-90% of unpaid invoices today.</p>
+          <div class="calc-row"><span>Advance</span><strong>Up to 90%</strong></div>
+          <div class="calc-row"><span>Fee</span><strong>2% per invoice</strong></div>
+          <button class="pm-btn pm-btn-dark w-100 mt-2" onclick="openModal('factoringModal')"><i class="bi bi-receipt"></i> Factor Invoice</button>
+        </div></div>
+        <div class="col-lg-4"><div class="loan-card">
+          <div class="pm-icon-circle round mb-2" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-arrow-repeat"></i></div>
+          <h4 style="font-weight:700;font-size:16px">Business Credit Line</h4>
+          <p class="pm-section-sub">Revolving facility. Pay interest only on what you use.</p>
+          <div class="calc-row"><span>Limit</span><strong>KES 1M</strong></div>
+          <div class="calc-row"><span>Rate</span><strong>2%/mo drawn</strong></div>
+          <button class="pm-btn pm-btn-dark w-100 mt-2" onclick="openModal('creditLineModal')"><i class="bi bi-arrow-repeat"></i> Draw Funds</button>
+        </div></div>
+      </div>
+
+      <!-- ==================== SECTION 9.3 ELIGIBLE INVOICES ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-info"><i class="bi bi-receipt-cutoff"></i> Eligible Invoices for Factoring</h3><p class="pm-section-sub">Unlock cash trapped in unpaid invoices</p></div></div>
+        <div class="factor-row" onclick="openModal('factoringDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-building"></i></div>
+          <div class="flex-1"><div style="font-weight:600">INV-2025-142 · Acme Corp</div><div style="font-size:11px;color:var(--pm-muted)">Due 05 Nov · corporate debtor</div></div>
+          <div class="text-end"><div><strong>KES 150,000</strong></div><div style="font-size:11px;color:var(--pm-muted)">Advance: KES 135K · Fee KES 3K</div></div>
+          <button class="pm-btn pm-btn-sm" onclick="event.stopPropagation();openModal('factoringDetailModal')">Factor</button>
+        </div>
+        <div class="factor-row" onclick="openModal('factoringDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-building"></i></div>
+          <div class="flex-1"><div style="font-weight:600">INV-2025-131 · StartUp Inc</div><div style="font-size:11px;color:var(--pm-muted)">Due 15 Nov</div></div>
+          <div class="text-end"><div><strong>KES 185,000</strong></div><div style="font-size:11px;color:var(--pm-muted)">Advance: KES 166.5K · Fee KES 3.7K</div></div>
+          <button class="pm-btn pm-btn-sm" onclick="event.stopPropagation();openModal('factoringDetailModal')">Factor</button>
+        </div>
+        <div class="factor-row" onclick="openModal('factoringDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-hotel"></i></div>
+          <div class="flex-1"><div style="font-weight:600">INV-2025-140 · Safari Lodges</div><div style="font-size:11px;color:var(--pm-muted)">Due 20 Nov · blue-chip</div></div>
+          <div class="text-end"><div><strong>KES 420,000</strong></div><div style="font-size:11px;color:var(--pm-muted)">Advance: KES 378K · Fee KES 8.4K</div></div>
+          <button class="pm-btn pm-btn-sm" onclick="event.stopPropagation();openModal('factoringDetailModal')">Factor</button>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 9.5 LOAN MANAGEMENT ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-danger"><i class="bi bi-clipboard-data"></i> Active Facilities & Repayments</h3><p class="pm-section-sub">All your debt, one view</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('externalLoanModal')"><i class="bi bi-plus-lg"></i> Add External Loan</button><button class="pm-btn pm-btn-sm" onclick="openModal('repaymentCalendarModal')"><i class="bi bi-calendar-week"></i> Calendar</button></div></div>
+        <div class="table-responsive"><table class="pm-table"><thead><tr><th>Facility</th><th>Principal</th><th>Outstanding</th><th>Rate</th><th>Next Payment</th><th>Status</th><th>Action</th></tr></thead><tbody>
+          <tr><td><strong>Working Capital</strong></td><td>KES 500K</td><td>KES 350K</td><td>2.5%/mo</td><td>15 Nov · KES 179K</td><td><span class="facility-status current">Current</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('loanDetailModal')">Manage</button></td></tr>
+          <tr><td><strong>Credit Line</strong></td><td>KES 200K drawn</td><td>KES 200K</td><td>2%/mo</td><td>Monthly</td><td><span class="facility-status current">Current</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('creditLineModal')">Manage</button></td></tr>
+          <tr><td><strong>Asset Finance — Motorbike</strong></td><td>KES 150K</td><td>KES 120K</td><td>3%/mo</td><td>20 Nov</td><td><span class="facility-status current">Current</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('assetFinanceModal')">Manage</button></td></tr>
+          <tr><td><strong>KCB Bank Loan (external)</strong></td><td>KES 1M</td><td>KES 600K</td><td>13% p.a.</td><td>25 Nov</td><td><span class="facility-status current">Current</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('externalLoanDetailModal')">View</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- ==================== SECTION 9.6 ASSET REGISTER ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-primary"><i class="bi bi-truck"></i> Asset & Equipment Financing</h3><p class="pm-section-sub">Finance assets — PayMo pays the supplier directly</p></div>
+          <button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('assetFinanceModal')"><i class="bi bi-plus-lg"></i> Finance an Asset</button></div>
+        <div class="table-responsive"><table class="pm-table"><thead><tr><th>Asset</th><th>Serial</th><th>Cost</th><th>Financed</th><th>Outstanding</th><th>Action</th></tr></thead><tbody>
+          <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle round" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-bicycle"></i></div><strong>Delivery Motorbike</strong></div></td><td style="font-family:monospace">KME-4412</td><td>KES 150K</td><td>KES 150K</td><td>KES 120K</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('assetFinanceModal')">Manage</button></td></tr>
+          <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-icon-circle round" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-laptop"></i></div><strong>Laptop (3)</strong></div></td><td style="font-family:monospace">SN-88410</td><td>KES 255K</td><td>KES 255K</td><td>KES 200K</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('assetFinanceModal')">Manage</button></td></tr>
+        </tbody></table></div>
+        <div class="p-3 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-info-circle"></i> Assets auto-added to Asset Register → depreciation auto-calculated on the Bookkeeping page. Asset is collateral until repaid.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PERSISTENT QUICK ACTIONS BAR (9.7) ===== -->
+<div class="quickbar">
+  <div class="qb" onclick="openModal('workingCapitalModal')"><i class="bi bi-cash-coin text-success"></i> Borrow</div>
+  <div class="qb" onclick="openModal('factoringModal')"><i class="bi bi-receipt text-info"></i> Factor</div>
+  <div class="qb" onclick="openModal('creditLineDrawModal')"><i class="bi bi-arrow-repeat text-primary"></i> Draw</div>
+  <div class="qb position-relative" onclick="openModal('repaymentModal')"><i class="bi bi-cash-stack text-warning"></i> Repay <span class="qbadge">2</span></div>
+  <div class="qb" onclick="openModal('checkScoreModal')"><i class="bi bi-shield-check text-purple" style="color:var(--pm-purple)"></i> Score</div>
+  <div class="qb" onclick="openModal('externalLoanModal')"><i class="bi bi-bank text-secondary"></i> Add Loan</div>
+  <div class="qb" onclick="openModal('assetFinanceModal')"><i class="bi bi-truck text-danger"></i> Asset</div>
+</div>
+
+<!-- ==================== MODALS (30) ==================== -->
+
+<!-- M1: Working Capital Loan (multistep 5) -->
+<div class="modal fade" id="workingCapitalModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-coin text-success me-2"></i>Working Capital Loan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body" id="wcBody">
+    <div class="pm-stepper" id="wcStepper">
+      <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Amount</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Terms</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Purpose</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Repayment</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">5</div><div class="pm-step-label">Confirm</div></div>
+    </div>
+    <!-- Step 1: Amount slider -->
+    <div id="wcStep1" class="fade-step active">
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-8"><label class="pm-form-label">Loan Amount (KES)</label>
+          <div class="slider-wrap"><input type="range" min="50000" max="2000000" step="50000" value="500000" id="loanAmount" oninput="calcLoan()"></div>
+          <div class="d-flex justify-content-between" style="font-size:11px;color:var(--pm-muted)"><span>KES 50K</span><span class="calc" id="loanAmountVal" style="font-size:20px;font-weight:700;color:var(--pm-primary)">KES 500,000</span><span>KES 2M</span></div>
+        </div>
+        <div class="col-lg-4"><div class="calc-box text-center"><div style="font-size:11px;color:var(--pm-muted)">PRE-APPROVED</div><div style="font-size:20px;font-weight:700;color:var(--pm-accent)">KES 2,000,000</div></div></div>
+      </div>
+    </div>
+    <!-- Step 2: Repayment period -->
+    <div id="wcStep2" class="fade-step">
+      <label class="pm-form-label">Repayment Period</label>
+      <div class="d-flex gap-2 mb-3">
+        <button class="pm-btn flex-1" onclick="selectTerm(this,'1',2.5)">1 month</button>
+        <button class="pm-btn flex-1 pm-btn-primary" onclick="selectTerm(this,'3',2.5)">3 months</button>
+        <button class="pm-btn flex-1" onclick="selectTerm(this,'6',2.0)">6 months</button>
+      </div>
+      <div class="calc-box" id="termCalc">
+        <div class="calc-row"><span>Loan Amount</span><strong id="cAmount">KES 500,000</strong></div>
+        <div class="calc-row"><span>Interest Rate</span><strong id="cRate">2.5% / month</strong></div>
+        <div class="calc-row"><span>Total Interest</span><strong id="cInterest">KES 37,500</strong></div>
+        <div class="calc-row"><span>Disbursement Fee</span><strong>KES 1,000</strong></div>
+        <div class="calc-row"><strong>Total Repayment</strong><strong id="cTotal" style="color:var(--pm-primary)">KES 537,500</strong></div>
+        <div class="calc-row"><strong>Monthly Installment</strong><strong id="cMonthly" style="color:var(--pm-accent)">KES 179,167</strong></div>
+      </div>
+    </div>
+    <!-- Step 3: Purpose -->
+    <div id="wcStep3" class="fade-step">
+      <label class="pm-form-label">Loan Purpose</label>
+      <div class="row g-2">
+        <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important" onclick="selectPurpose(this,'Stock purchase')"><i class="bi bi-box-seam" style="font-size:24px;color:var(--pm-primary)"></i><div style="font-weight:600;margin-top:4px">Buy Stock</div></div></div>
+        <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectPurpose(this,'Salaries')"><i class="bi bi-people" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Salaries</div></div></div>
+        <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectPurpose(this,'Utilities & rent')"><i class="bi bi-lightning" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Utilities</div></div></div>
+        <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectPurpose(this,'Expansion')"><i class="bi bi-graph-up" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Expansion</div></div></div>
+      </div>
+    </div>
+    <!-- Step 4: Repayment mechanism -->
+    <div id="wcStep4" class="fade-step">
+      <label class="pm-form-label">Repayment Mechanism</label>
+      <div class="p-3 border rounded mb-2"><div class="form-check"><input class="form-check-input" type="radio" name="repay" checked><label class="form-check-label"><strong>Auto-deduct from collections</strong> — 20% of every incoming payment routed to loan. Recommended.</label></div></div>
+      <div class="p-3 border rounded mb-2"><div class="form-check"><input class="form-check-input" type="radio" name="repay"><label class="form-check-label"><strong>Bank EFT on due date</strong></label></div></div>
+      <div class="p-3 border rounded mb-3"><div class="form-check"><input class="form-check-input" type="radio" name="repay"><label class="form-check-label"><strong>Manual payment</strong></label></div></div>
+      <div class="mb-3"><label class="pm-form-label">Disburse To</label><select class="pm-form-control"><option>M-Pesa Float</option><option>PayMo Wallet</option><option>Equity Bank</option></select></div>
+    </div>
+    <!-- Step 5: Confirm -->
+    <div id="wcStep5" class="fade-step">
+      <div class="text-center mb-3"><div class="pm-icon-circle round mx-auto mb-2" style="width:56px;height:56px;font-size:24px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-cash-coin"></i></div><h5 style="font-weight:700">Confirm Loan</h5>
+        <div class="calc-box text-start"><div class="calc-row"><span>Amount</span><strong id="fAmount">KES 500,000</strong></div><div class="calc-row"><span>Interest</span><strong id="fInterest">KES 37,500</strong></div><div class="calc-row"><span>Net to account</span><strong style="color:var(--pm-accent)">KES 499,000</strong></div><div class="calc-row"><span>Monthly</span><strong>KES 179,167</strong></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" id="wcNext" onclick="nextStep('wc',5,'wcNext',()=>simulateProcess('workingCapitalModal','LOAN APPROVED! KES 499,000 will be in your M-Pesa float in 5 minutes.','LON-88210'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- M2: Invoice Factoring (multistep 4) -->
+<div class="modal fade" id="factoringModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt text-info me-2"></i>Invoice Factoring</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body" id="fcBody">
+    <div class="pm-stepper" id="fcStepper">
+      <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Select Invoice</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Review Terms</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Disburse</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Done</div></div>
+    </div>
+    <div id="fcStep1" class="fade-step active">
+      <div class="factor-row" onclick="selectInvoice(this,'INV-2025-142','150000',this)"><div class="pm-icon-circle round" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-building"></i></div><div class="flex-1"><strong>INV-2025-142 · Acme Corp</strong><div style="font-size:11px;color:var(--pm-muted)">Due 05 Nov</div></div><strong>KES 150,000</strong></div>
+      <div class="factor-row" onclick="selectInvoice(this,'INV-2025-131','185000',this)"><div class="pm-icon-circle round" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-building"></i></div><div class="flex-1"><strong>INV-2025-131 · StartUp Inc</strong><div style="font-size:11px;color:var(--pm-muted)">Due 15 Nov</div></div><strong>KES 185,000</strong></div>
+    </div>
+    <div id="fcStep2" class="fade-step">
+      <div class="calc-box"><div class="calc-row"><span>Invoice Value</span><strong id="fcValue">KES 150,000</strong></div><div class="calc-row"><span>Advance (90%)</span><strong style="color:var(--pm-accent)">KES 135,000</strong></div><div class="calc-row"><span>Factoring Fee (2%)</span><strong class="text-danger">- KES 3,000</strong></div><div class="calc-row"><strong>Net to you today</strong><strong style="color:var(--pm-primary)">KES 132,000</strong></div><div class="calc-row"><span>Reserve (on collection)</span><strong>KES 15,000</strong></div></div>
+      <div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px">Non-recourse for blue-chip debtors. Debtor notified to pay PayMo-designated account.</div>
+    </div>
+    <div id="fcStep3" class="fade-step"><div class="mb-3"><label class="pm-form-label">Disburse To</label><select class="pm-form-control"><option>PayMo Wallet</option><option>Equity Bank</option></select></div><div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Remaining reserve KES 15,000 remitted to you when Acme Corp pays on 05 Nov.</div></div>
+    <div id="fcStep4" class="fade-step"><div class="text-center"><div class="pm-icon-circle round mx-auto mb-2" style="width:56px;height:56px;font-size:24px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700">Funds Advanced!</h5><p style="font-size:13px;color:var(--pm-muted)">KES 132,000 in your account. Acme notified.</p></div></div>
+  </div>
+  <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="fcNext" onclick="nextStep('fc',4,'fcNext',()=>simulateProcess('factoringModal','Invoice factored! KES 132,000 disbursed.','FAC-5501'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- M3: Credit Line (large, tabbed) -->
+<div class="modal fade" id="creditLineModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Business Credit Line</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="pm-tab-pills"><button class="pm-tab-pill active" onclick="tabSwitch(this,'ov')">Overview</button><button class="pm-tab-pill" onclick="tabSwitch(this,'draw')">Draw</button><button class="pm-tab-pill" onclick="tabSwitch(this,'activity')">Activity</button></div>
+  <div data-tabpanel="ov"><div class="row g-2 mb-3">
+    <div class="col-4"><div class="calc-box"><div class="pm-muted" style="font-size:11px">Limit</div><div style="font-size:20px;font-weight:700">KES 1M</div></div></div>
+    <div class="col-4"><div class="calc-box"><div class="pm-muted" style="font-size:11px">Drawn</div><div style="font-size:20px;font-weight:700;color:var(--pm-warning)">KES 200K</div></div></div>
+    <div class="col-4"><div class="calc-box"><div class="pm-muted" style="font-size:11px">Available</div><div style="font-size:20px;font-weight:700;color:var(--pm-accent)">KES 800K</div></div></div>
+  </div><div class="calc-row"><span>Interest (2%/mo on drawn)</span><strong>KES 4,000/mo</strong></div><div class="calc-row"><span>Min monthly payment</span><strong>5% or KES 10K</strong></div></div>
+  <div data-tabpanel="draw" style="display:none"><div class="mb-3"><label class="pm-form-label">Amount to draw (up to KES 800K)</label><input class="pm-form-control" value="200000"></div><div class="mb-3"><label class="pm-form-label">To</label><select class="pm-form-control"><option>PayMo Wallet</option><option>Equity Bank</option></select></div><button class="pm-btn pm-btn-success w-100" onclick="simulateProcess('creditLineModal','KES 200,000 drawn! Available now: KES 600K.','CRD-3301')"><i class="bi bi-cash-coin"></i> Draw Funds</button></div>
+  <div data-tabpanel="activity" style="display:none"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Balance</th></tr></thead><tbody><tr><td>1 Oct</td><td>Draw</td><td>+KES 200K</td><td>KES 200K</td></tr><tr><td>1 Oct</td><td>Interest</td><td>KES 4K</td><td>KES 204K</td></tr></tbody></table></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('repaymentModal')"><i class="bi bi-cash-stack"></i> Repay</button></div></div></div></div>
+
+<!-- M4: Draw from Line (quick) -->
+<div class="modal fade" id="creditLineDrawModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Draw from Credit Line</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="p-3 rounded mb-3" style="background:var(--pm-accent-soft)"><div class="d-flex justify-content-between"><span>Available</span><strong style="color:var(--pm-accent)">KES 800,000</strong></div></div><div class="mb-3"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="100000"></div><div class="mb-3"><label class="pm-form-label">To</label><select class="pm-form-control"><option>M-Pesa Float</option><option>PayMo Wallet</option></select></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="simulateProcess('creditLineDrawModal','KES 100,000 drawn instantly!','CRD-3302')"><i class="bi bi-cash-coin"></i> Draw</button></div></div></div></div>
+
+<!-- M5: Repayment -->
+<div class="modal fade" id="repaymentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack me-2"></i>Make Repayment</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft)"><div class="d-flex justify-content-between"><span>Due soon</span><strong>KES 179,167 (Working Capital)</strong></div></div>
+  <div class="mb-3"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="179167"></div>
+  <div class="mb-3"><label class="pm-form-label">From</label><select class="pm-form-control"><option>PayMo Wallet</option><option>Equity Bank</option></select></div>
+  <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Paying early saves ~KES 3,125 in interest.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('repaymentModal','Repayment of KES 179,167 made! Balance now KES 170,833.')"><i class="bi bi-check-lg"></i> Repay</button></div></div></div></div>
+
+<!-- M6: Check Score -->
+<div class="modal fade" id="checkScoreModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>Credit Score</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+  <div class="score-gauge mx-auto mb-3" style="background:conic-gradient(var(--pm-accent) 0 78%,var(--pm-border) 78% 100%)"><div class="in"><div style="font-size:36px;font-weight:800;color:var(--pm-accent)">785</div><div style="font-size:11px;color:var(--pm-muted)">GOOD · ▲ +15</div></div></div>
+  <div class="text-start"><div class="calc-row"><span>Score up 15 pts this month</span><span class="text-success">▲</span></div>
+  <div class="p-3 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px"><strong>Top 3 ways to improve:</strong> 1. Reconcile bank account (adds +20). 2. Pay VAT on time (+15). 3. Increase cash reserve (+20).</div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('crbModal')"><i class="bi bi-link-45deg"></i> Link CRB Report</button></div></div></div></div>
+
+<!-- M7: CRB Link -->
+<div class="modal fade" id="crbModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-link-45deg me-2"></i>Link CRB Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);font-size:13px">Authorize PayMo to pull your CRB report from <strong>Metropol / CreditRef</strong> for a blended score.</div>
+  <div class="p-2 rounded" style="background:var(--pm-warning-soft);font-size:12px">Alert: A negative CRB entry was posted by KCB on 12 Jul. Reason: Late loan repayment.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('crbModal','CRB report linked! Blended score: 790 (Excellent).')"><i class="bi bi-check-lg"></i> Authorize</button></div></div></div></div>
+
+<!-- M8: Loan Detail -->
+<div class="modal fade" id="loanDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-coin me-2"></i>Working Capital — LON-88210</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="calc-row"><span>Principal</span><strong>KES 500,000</strong></div>
+  <div class="calc-row"><span>Outstanding</span><strong style="color:var(--pm-warning)">KES 350,000</strong></div>
+  <div class="calc-row"><span>Rate</span><strong>2.5%/mo</strong></div>
+  <div class="calc-row"><span>Monthly installment</span><strong>KES 179,167</strong></div>
+  <div class="calc-row"><span>Next payment</span><strong>15 Nov</strong></div>
+  <div class="calc-row"><span>Repayment method</span><strong>Auto-deduct 20% of collections</strong></div>
+  <div class="p-3 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px">Early repayment saves ~KES 8,750. <button class="pm-btn pm-btn-sm" onclick="openModal('earlyRepayModal')">Calculate</button></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('repaymentModal')"><i class="bi bi-cash-stack"></i> Pay Extra</button></div></div></div></div>
+
+<!-- M9: Early Repayment -->
+<div class="modal fade" id="earlyRepayModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Early Repayment Calculator</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="calc-box"><div class="calc-row"><span>Remaining principal</span><strong>KES 350,000</strong></div><div class="calc-row"><span>Interest saved</span><strong class="text-success">- KES 8,750</strong></div><div class="calc-row"><span>Early fee (0.5%)</span><strong class="text-danger">+ KES 1,750</strong></div><div class="calc-row"><strong>Net savings</strong><strong style="color:var(--pm-accent)">KES 7,000</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="simulateProcess('earlyRepayModal','Loan settled early! You saved KES 7,000.')"><i class="bi bi-check-lg"></i> Settle Loan Early</button></div></div></div></div>
+
+<!-- M10: External Loan -->
+<div class="modal fade" id="externalLoanModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank me-2"></i>Add External Loan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Provider</label><select class="pm-form-control"><option>KCB Bank</option><option>Equity Bank</option><option>Sacco</option><option>Other</option></select></div>
+  <div class="mb-3"><label class="pm-form-label">Principal</label><input class="pm-form-control" value="1000000"></div>
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Rate</label><input class="pm-form-control" value="13% p.a."></div><div class="col-6"><label class="pm-form-label">Term</label><input class="pm-form-control" value="12 months"></div></div>
+  <div class="mb-3"><label class="pm-form-label">Monthly payment</label><input class="pm-form-control" value="89000"></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('externalLoanModal','External loan added! Tracked in repayment schedule.')"><i class="bi bi-check-lg"></i> Add</button></div></div></div></div>
+
+<!-- M11: External Loan Detail -->
+<div class="modal fade" id="externalLoanDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank me-2"></i>KCB Bank Loan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="calc-row"><span>Provider</span><strong>KCB Bank</strong></div><div class="calc-row"><span>Principal</span><strong>KES 1M</strong></div><div class="calc-row"><span>Outstanding</span><strong>KES 600K</strong></div><div class="calc-row"><span>Next payment</span><strong>25 Nov · KES 89K</strong></div><div class="calc-row"><span>Status</span><span class="facility-status current">Current</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('repaymentModal')">Record Payment</button></div></div></div></div>
+
+<!-- M12: Repayment Calendar -->
+<div class="modal fade" id="repaymentCalendarModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-week me-2"></i>Repayment Calendar</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="cal-grid"><div class="cal-h">S</div><div class="cal-h">M</div><div class="cal-h">T</div><div class="cal-h">W</div><div class="cal-h">T</div><div class="cal-h">F</div><div class="cal-h">S</div>
+    <div class="cal-d">1</div><div class="cal-d">2</div><div class="cal-d">3</div><div class="cal-d">4</div><div class="cal-d">5</div><div class="cal-d">6</div><div class="cal-d">7</div>
+    <div class="cal-d">8</div><div class="cal-d">9</div><div class="cal-d">10</div><div class="cal-d">11</div><div class="cal-d">12</div><div class="cal-d">13</div><div class="cal-d">14</div>
+    <div class="cal-d has-event" onclick="toast('15 Nov: WC KES 179K + Credit line KES 10K')">15</div><div class="cal-d">16</div><div class="cal-d">17</div><div class="cal-d">18</div><div class="cal-d">19</div><div class="cal-d has-event" onclick="toast('20 Nov: Asset finance KES 45K')">20</div><div class="cal-d">21</div>
+    <div class="cal-d">22</div><div class="cal-d">23</div><div class="cal-d">24</div><div class="cal-d has-event" onclick="toast('25 Nov: KCB KES 89K')">25</div><div class="cal-d">26</div><div class="cal-d">27</div><div class="cal-d">28</div>
+  </div>
+  <div class="p-3 rounded mt-3" style="background:var(--pm-warning-soft)"><strong>Total due this month: KES 323K</strong><button class="pm-btn pm-btn-sm ms-2" onclick="simulateProcess('repaymentCalendarModal','All due today paid! KES 323K settled.')">Pay All Due</button></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M13: Asset Finance (multistep 5) -->
+<div class="modal fade" id="assetFinanceModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-truck me-2"></i>Asset & Equipment Financing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body" id="afBody">
+    <div class="pm-stepper" id="afStepper">
+      <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Asset</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Cost & Deposit</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Terms</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Quote</div></div>
+      <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+      <div class="pm-step"><div class="pm-step-num">5</div><div class="pm-step-label">Review</div></div>
+    </div>
+    <div id="afStep1" class="fade-step active"><div class="row g-2">
+      <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer;border-color:var(--pm-primary)!important" onclick="selectAsset(this,'Transport')"><i class="bi bi-bicycle" style="font-size:24px;color:var(--pm-primary)"></i><div style="font-weight:600;margin-top:4px">Transport</div></div></div>
+      <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectAsset(this,'Electronics')"><i class="bi bi-laptop" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Electronics</div></div></div>
+      <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectAsset(this,'Machinery')"><i class="bi bi-gear" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Machinery</div></div></div>
+      <div class="col-6"><div class="p-3 border rounded text-center" style="cursor:pointer" onclick="selectAsset(this,'Furniture')"><i class="bi bi-table" style="font-size:24px"></i><div style="font-weight:600;margin-top:4px">Furniture</div></div></div>
+    </div></div>
+    <div id="afStep2" class="fade-step"><div class="row g-3">
+      <div class="col-md-6"><label class="pm-form-label">Asset Description</label><input class="pm-form-control" value="Delivery Motorbike — Boxer 150cc"></div>
+      <div class="col-md-6"><label class="pm-form-label">Supplier</label><select class="pm-form-control"><option>Auto Dealer Ltd</option><option>OfficeMart</option></select></div>
+      <div class="col-md-4"><label class="pm-form-label">Total Cost</label><input class="pm-form-control" value="150000"></div>
+      <div class="col-md-4"><label class="pm-form-label">Deposit (20%)</label><input class="pm-form-control" value="30000"></div>
+      <div class="col-md-4"><label class="pm-form-label">Finance Amount</label><input class="pm-form-control" value="120000" readonly></div>
+    </div></div>
+    <div id="afStep3" class="fade-step"><div class="mb-3"><label class="pm-form-label">Tenure</label><div class="d-flex gap-2"><button class="pm-btn flex-1">6 mo</button><button class="pm-btn flex-1 pm-btn-primary">12 mo</button><button class="pm-btn flex-1">24 mo</button><button class="pm-btn flex-1">36 mo</button></div></div>
+      <div class="calc-box"><div class="calc-row"><span>Finance</span><strong>KES 120,000</strong></div><div class="calc-row"><span>Rate (3%/mo)</span><strong>KES 3,600/mo</strong></div><div class="calc-row"><span>Monthly installment</span><strong style="color:var(--pm-primary)">KES 13,600</strong></div></div>
+      <div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px">PayMo pays the supplier directly — never cash to business. Asset is collateral until repaid.</div></div>
+    <div id="afStep4" class="fade-step"><div class="upload-zone mb-3" onclick="toast('Upload quote (demo)')"><i class="bi bi-file-earmark-text" style="font-size:28px;color:var(--pm-primary)"></i><div style="font-weight:600;margin-top:6px">Upload supplier invoice / quote</div></div>
+      <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Application not instant — PayMo reviews the quote &amp; may verify the asset. Approval ~24-48h.</div></div>
+    <div id="afStep5" class="fade-step"><div class="text-center"><div class="pm-icon-circle round mx-auto mb-2" style="width:56px;height:56px;font-size:24px;background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-truck"></i></div><h5 style="font-weight:700">Submit Application</h5><p style="font-size:13px;color:var(--pm-muted)">Boxer 150cc · Finance KES 120K · 12 mo · KES 13,600/mo</p></div></div>
+  </div>
+  <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="afNext" onclick="nextStep('af',5,'afNext',()=>simulateProcess('assetFinanceModal','Application submitted! Review in 24-48h. Supplier will be paid on approval.','ASF-4401'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- M14-30: Health / Notifications / Profile / Success / Support + small extras -->
+<div class="modal fade" id="factoringDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Factor INV-2025-142</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="calc-box"><div class="calc-row"><span>Invoice value</span><strong>KES 150,000</strong></div><div class="calc-row"><span>Advance (90%)</span><strong style="color:var(--pm-accent)">KES 135,000</strong></div><div class="calc-row"><span>Fee (2%)</span><strong class="text-danger">- KES 3,000</strong></div><div class="calc-row"><strong>Net today</strong><strong style="color:var(--pm-primary)">KES 132,000</strong></div></div><div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px">Acme Corp notified to pay PayMo account. Reserve KES 15K on collection.</div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('factoringDetailModal','Invoice factored! KES 132,000 disbursed.','FAC-5502')"><i class="bi bi-check-lg"></i> Confirm Factor</button></div></div></div></div>
+
+<div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Business Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-center mb-3"><div style="width:110px;height:110px;border-radius:50%;border:7px solid var(--pm-accent);display:flex;align-items:center;justify-content:center;flex-direction:column"><span style="font-size:28px;font-weight:700">92</span><span style="font-size:10px;color:var(--pm-muted)">SCORE</span></div></div><div class="status-row"><span>Credit</span><span class="pm-badge pm-badge-success">785 Good</span></div><div class="status-row"><span>Debt</span><span class="pm-badge pm-badge-info">KES 1.27M</span></div><div class="status-row"><span>Repayments</span><span class="pm-badge pm-badge-success">On track</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Alerts <span class="pm-badge pm-badge-danger">4 new</span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:380px;overflow-y:auto">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-success-soft,var(--pm-accent-soft));font-size:13px"><strong>Score up 15 pts!</strong> — 785 Good</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Repayment due in 3 days</strong> — KES 179K</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Invoice eligible for factoring</strong> — INV-2025-131</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Credit line limit review</strong> — quarterly, next 1 Jan</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary pm-btn-sm" onclick="toast('All marked read')">Mark all read</button></div></div></div></div>
+
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>My Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div><h4 style="font-weight:700">Amina D.</h4><p style="font-size:13px;color:var(--pm-muted)">Director (Admin) · TechSolutions Ltd</p><div class="p-3 border rounded text-start mt-3"><div class="status-row"><span>Approval Limit</span><strong>Unlimited</strong></div><div class="status-row"><span>Security</span><span class="pm-badge pm-badge-success">MFA Active</span></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-danger" data-bs-dismiss="modal">Log Out</button></div></div></div></div>
+
+<div class="modal fade" id="successModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Success</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="successBody"><div class="text-center"><i class="bi bi-check2-circle" style="font-size:48px;color:var(--pm-accent)"></i><p style="margin-top:8px" class="pm-muted">Operation successful.</p></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button></div></div></div></div>
+
+<div class="modal fade" id="supportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2"></i>Help & Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Chat opened (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-primary);color:#fff"><i class="bi bi-chat-dots"></i></div><div><strong>Live Chat</strong><div style="font-size:11px;color:var(--pm-muted)">avg reply 2 min</div></div></div>
+  <div class="p-3 border rounded d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Credit FAQ (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-info);color:#fff"><i class="bi bi-journal-text"></i></div><div><strong>Credit Help Center</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="paymo-common.js"></script>
+<script>
+/* ===== FUNDING & CREDIT page-specific ===== */
+document.addEventListener('DOMContentLoaded',()=>{ initFlow('wc',5); initFlow('fc',4); initFlow('af',5); calcLoan(); });
+var loanTerm=3, loanRate=2.5;
+function calcLoan(){
+  var amt=parseFloat(document.getElementById('loanAmount').value)||0;
+  document.getElementById('loanAmountVal').textContent='KES '+fmt(amt);
+  var interest=amt*loanRate/100*loanTerm;
+  var total=amt+interest+1000;
+  var monthly=Math.round(total/loanTerm);
+  document.getElementById('cAmount').textContent='KES '+fmt(amt);
+  document.getElementById('cRate').textContent=loanRate+'% / month';
+  document.getElementById('cInterest').textContent='KES '+fmt(Math.round(interest));
+  document.getElementById('cTotal').textContent='KES '+fmt(Math.round(total));
+  document.getElementById('cMonthly').textContent='KES '+fmt(monthly);
+  document.getElementById('fAmount').textContent='KES '+fmt(amt);
+  document.getElementById('fInterest').textContent='KES '+fmt(Math.round(interest));
+}
+function selectTerm(btn,term,rate){ loanTerm=parseInt(term); loanRate=rate;
+  btn.closest('div').querySelectorAll('button').forEach(b=>{b.classList.remove('pm-btn-primary');});
+  btn.classList.add('pm-btn-primary'); calcLoan(); }
+function selectPurpose(el,label){ el.closest('.row').querySelectorAll('[onclick*="selectPurpose"]').forEach(x=>x.style.borderColor='var(--pm-border)'); el.style.borderColor='var(--pm-primary)'; }
+function selectInvoice(el,name,val){ el.closest('div').querySelectorAll('.factor-row').forEach(x=>x.style.borderColor='var(--pm-border)'); el.style.borderColor='var(--pm-primary)';
+  document.getElementById('fcValue').textContent='KES '+fmt(parseInt(val));
+}
+function selectAsset(el,cat){ el.closest('.row').querySelectorAll('[onclick*="selectAsset"]').forEach(x=>x.style.borderColor='var(--pm-border)'); el.style.borderColor='var(--pm-primary)'; }
+document.addEventListener('DOMContentLoaded',()=>{
+  var gs=document.getElementById('globalSearch');
+  if(gs) gs.addEventListener('keydown',function(e){ if(e.key==='Enter' && this.value.trim()) openModal('checkScoreModal'); });
+});
+</script>
+</body>
+</html>

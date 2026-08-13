@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Products & Online Store</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paymo-consolidated.css">
+<style>
+/* ===== Products & Online Store page-specific ===== */
+.product-card{border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:14px;background:#fff;transition:all .2s;height:100%;position:relative}
+.product-card:hover{box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.product-img{height:120px;border-radius:var(--pm-r-md);background:var(--pm-surface-2);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--pm-primary-light);margin-bottom:10px}
+.stock-chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.stock-chip.in{background:var(--pm-accent-soft);color:#047857}
+.stock-chip.low{background:var(--pm-warning-soft);color:#B45309}
+.stock-chip.out{background:var(--pm-danger-soft);color:#DC2626}
+.store-preview{border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);overflow:hidden;background:#fff}
+.store-banner{height:110px;background:var(--pm-gradient-hero);display:flex;align-items:center;justify-content:center;color:#fff}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:768px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+.sum-item{padding:14px;border-radius:var(--pm-r-md);background:var(--pm-surface-2);border:1px solid var(--pm-border)}
+.sum-item .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.sum-item .val{font-size:20px;font-weight:700;font-family:var(--pm-font-display)}
+.pay-tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pay-tab{padding:7px 14px;border-radius:var(--pm-r-pill);border:1px solid var(--pm-border);background:#fff;font-size:13px;font-weight:600;color:var(--pm-ink-soft);cursor:pointer;transition:all .2s}
+.pay-tab.active{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pay-tab .cnt{margin-left:6px;font-size:11px;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:10px}
+.pay-tab.active .cnt{background:rgba(255,255,255,.25)}
+.order-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);margin-bottom:8px;background:#fff;cursor:pointer;transition:all .2s}
+.order-item:hover{box-shadow:var(--pm-shadow-md)}
+.promo-code{font-family:monospace;background:var(--pm-surface-2);padding:2px 8px;border-radius:6px;font-weight:700}
+.variant-cell{border:1px solid var(--pm-border);border-radius:6px;padding:6px;text-align:center;font-size:11px}
+.quickbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-lg);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:900px;width:calc(100% - 24px);justify-content:center}
+.quickbar .qb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border-radius:var(--pm-r-sm);border:1px solid transparent;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--pm-ink-soft);transition:all .2s}
+.quickbar .qb:hover{background:var(--pm-surface-2);color:var(--pm-primary);border-color:var(--pm-border)}
+.quickbar .qb i{font-size:18px}
+.quickbar .qb .qbadge{position:absolute;top:2px;right:8px;min-width:16px;height:16px;border-radius:8px;background:var(--pm-danger);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+</style>
+</head>
+<body>
+<div class="pm-app">
+  <aside class="pm-sidebar">
+    <a class="pm-sidebar-logo" href="overview.html">B</a>
+    <nav class="pm-sidebar-nav">
+      <a class="pm-nav-item" href="overview.html" title="Overview"><i class="bi bi-grid-1x2"></i><span class="pm-nav-tip">Overview</span></a>
+      <a class="pm-nav-item" href="get-paid.html" title="Get Paid"><i class="bi bi-cash-coin"></i><span class="pm-nav-tip">Get Paid</span></a>
+      <a class="pm-nav-item" href="pay-suppliers.html" title="Pay Suppliers"><i class="bi bi-send"></i><span class="pm-nav-tip">Pay Suppliers</span></a>
+      <a class="pm-nav-item" href="cash-accounts.html" title="Cash & Accounts"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Cash & Accounts</span></a>
+      <a class="pm-nav-item" href="bookkeeping-taxes.html" title="Bookkeeping & Taxes"><i class="bi bi-journal-check"></i><span class="pm-nav-tip">Bookkeeping & Taxes</span></a>
+      <a class="pm-nav-item" href="portfolio.html" title="Multi-Business / Portfolio"><i class="bi bi-diagram-3"></i><span class="pm-nav-tip">Portfolio</span></a>
+      <a class="pm-nav-item active" href="products-store.html" title="Products & Store"><i class="bi bi-bag"></i><span class="badge-dot"></span><span class="pm-nav-tip">Products & Store</span></a>
+      <a class="pm-nav-item" href="customers-crm.html" title="Customers & CRM"><i class="bi bi-people"></i><span class="pm-nav-tip">Customers & CRM</span></a>
+      <a class="pm-nav-item" href="settings-security.html" title="Settings & Security"><i class="bi bi-gear"></i><span class="pm-nav-tip">Settings & Security</span></a>
+    </nav>
+    <button class="pm-sidebar-foot" onclick="openModal('supportModal')" title="Help"><i class="bi bi-question-circle"></i></button>
+  </aside>
+
+  <div class="pm-main">
+    <header class="pm-header">
+      <div class="pm-header-title"><div class="d-flex align-items-center gap-3">
+        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-ink)">TS</div>
+        <div><h1>TechSolutions Ltd <span class="pm-badge pm-badge-info">Online</span></h1><p>store.paymo.biz/techsol · Live</p></div>
+      </div></div>
+      <div class="pm-header-search"><i class="bi bi-search"></i><input id="globalSearch" placeholder="Search products, SKU, orders..."></div>
+      <div class="pm-header-actions">
+        <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Health"><i class="bi bi-activity text-success"></i></button>
+        <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter" id="notifCount">6</span></button>
+        <div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-primary)">AD</div><div><div class="pm-name">Amina D.</div><div class="pm-role">Director (Admin)</div></div></div>
+        <div class="pm-clock"><span class="d" id="pmDate">—</span><span class="t" id="pmTime">—</span></div>
+      </div>
+    </header>
+
+    <div class="pm-page-bar">
+      <div><div class="pm-breadcrumb"><a href="overview.html">Business Portal</a> / <strong>Products & Online Store</strong></div>
+        <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">Products & Online Store</h2>
+        <p class="pm-section-sub">Your own mini-shop with M-Pesa checkout — no Shopify, no USD fees.</p></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="pm-btn" onclick="toast('Store opened in new tab — store.paymo.biz/techsol')"><i class="bi bi-box-arrow-up-right"></i> View Store</button>
+        <button class="pm-btn pm-btn-dark" onclick="openModal('addProductModal')"><i class="bi bi-plus-lg"></i> Add Product</button>
+      </div>
+    </div>
+
+    <div class="pm-content">
+      <!-- ==================== SECTION 7.6 STORE ANALYTICS (top) ==================== -->
+      <div class="summary-strip">
+        <div class="sum-item"><div class="lab">Visitors (mo)</div><div class="val">1,250</div></div>
+        <div class="sum-item"><div class="lab">Conversion</div><div class="val" style="color:var(--pm-accent)">3.2%</div></div>
+        <div class="sum-item"><div class="lab">Store Revenue</div><div class="val">KES 450K</div></div>
+        <div class="sum-item"><div class="lab">AOV</div><div class="val">KES 1,125</div></div>
+      </div>
+
+      <!-- ==================== SECTION 7.2 STOREFRONT PREVIEW ==================== -->
+      <div class="row g-3">
+        <div class="col-lg-7"><div class="store-preview">
+          <div class="store-banner"><div class="text-center"><div style="font-weight:700;font-size:18px">TechSolutions Store</div><div style="font-size:12px;opacity:.85">Quality IT products &amp; services</div><button class="pm-btn pm-btn-sm mt-2" style="background:#fff;color:var(--pm-primary)" onclick="openModal('storePreviewModal')">Shop Now</button></div></div>
+          <div class="p-3"><div class="d-flex gap-2 mb-3 flex-wrap">
+            <button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('storeBuilderModal')"><i class="bi bi-pencil-square"></i> Customize</button>
+            <button class="pm-btn pm-btn-sm" onclick="openModal('storeSettingsModal')"><i class="bi bi-gear"></i> Settings</button>
+            <button class="pm-btn pm-btn-sm" onclick="toast('Store link copied!')"><i class="bi bi-link-45deg"></i> Copy Link</button>
+            <span class="ms-auto pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Live</span>
+          </div>
+          <div class="row g-2">
+            <div class="col-6 col-md-4"><div class="product-card"><div class="product-img"><i class="bi bi-laptop"></i></div><div style="font-weight:600">Laptop Pro X</div><div style="color:var(--pm-primary);font-weight:700">KES 85,000</div></div></div>
+            <div class="col-6 col-md-4"><div class="product-card"><div class="product-img"><i class="bi bi-cpu"></i></div><div style="font-weight:600">CPU Bundle</div><div style="color:var(--pm-primary);font-weight:700">KES 45,000</div></div></div>
+            <div class="col-6 col-md-4"><div class="product-card"><div class="product-img"><i class="bi bi-headset"></i></div><div style="font-weight:600">Headset Pro</div><div style="color:var(--pm-primary);font-weight:700">KES 8,500</div></div></div>
+          </div>
+        </div></div>
+        <div class="col-lg-5"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-info"><i class="bi bi-magic"></i> Store Builder</h3><p class="pm-section-sub">Set up your store in 30 minutes</p></div></div>
+          <div class="status-row"><span>Template</span><strong>Retail</strong></div>
+          <div class="status-row"><span>Custom domain</span><button class="pm-btn pm-btn-sm" onclick="openModal('customDomainModal')">Connect</button></div>
+          <div class="status-row"><span>Brand color</span><span class="pm-badge pm-badge-info">Indigo</span></div>
+          <button class="pm-btn pm-btn-sm w-100 mt-3" onclick="openModal('storeBuilderModal')"><i class="bi bi-pencil-square"></i> Customize Storefront</button>
+        </div></div>
+      </div>
+
+      <!-- ==================== SECTION 7.1 PRODUCT CATALOG ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-primary"><i class="bi bi-box"></i> Product Catalog</h3><p class="pm-section-sub">What you sell — feeds both the store &amp; invoices</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('categoryModal')"><i class="bi bi-tags"></i> Categories</button><button class="pm-btn pm-btn-sm" onclick="openModal('addProductModal')"><i class="bi bi-plus-lg"></i> New Product</button></div></div>
+        <div class="row g-2 mb-2"><div class="col-6 col-md-3"><div class="product-card"><div class="product-img"><i class="bi bi-laptop"></i></div><div style="font-weight:600">Laptop Pro X</div><div style="color:var(--pm-primary);font-weight:700">KES 85,000</div><span class="stock-chip in">In stock · 24</span><button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('productDetailModal')">Edit</button></div></div>
+          <div class="col-6 col-md-3"><div class="product-card"><div class="product-img"><i class="bi bi-cpu"></i></div><div style="font-weight:600">CPU Bundle</div><div style="color:var(--pm-primary);font-weight:700">KES 45,000</div><span class="stock-chip low">Low · 3</span><button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('productDetailModal')">Edit</button></div></div>
+          <div class="col-6 col-md-3"><div class="product-card"><div class="product-img"><i class="bi bi-headset"></i></div><div style="font-weight:600">Headset Pro</div><div style="color:var(--pm-primary);font-weight:700">KES 8,500</div><span class="stock-chip in">In stock · 40</span><button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('productDetailModal')">Edit</button></div></div>
+          <div class="col-6 col-md-3"><div class="product-card"><div class="product-img"><i class="bi bi-phone"></i></div><div style="font-weight:600">Phone X</div><div style="color:var(--pm-primary);font-weight:700">KES 55,000</div><span class="stock-chip out">Out of stock</span><button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('productDetailModal')">Edit</button></div></div>
+        </div>
+        <div class="table-responsive mt-2"><table class="pm-table"><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody>
+          <tr><td style="font-family:monospace">TS-LPT-01</td><td>Laptop Pro X</td><td>Electronics</td><td>KES 85,000</td><td>24</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+          <tr><td style="font-family:monospace">TS-CPU-02</td><td>CPU Bundle</td><td>Electronics</td><td>KES 45,000</td><td>3</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+          <tr><td style="font-family:monospace">TS-HDS-03</td><td>Headset Pro</td><td>Accessories</td><td>KES 8,500</td><td>40</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+          <tr><td style="font-family:monospace">TS-PHN-04</td><td>Phone X</td><td>Electronics</td><td>KES 55,000</td><td>0</td><td><span class="pm-badge pm-badge-danger">Out of stock</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- ==================== SECTION 7.4 ORDER MANAGEMENT ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-success"><i class="bi bi-bag-check"></i> Order Management</h3><p class="pm-section-sub">Process & fulfill your online orders</p></div></div>
+        <div class="pay-tabbar" id="orderTabs">
+          <button class="pay-tab active" onclick="filterOrder('new',this)">New <span class="cnt">3</span></button>
+          <button class="pay-tab" onclick="filterOrder('process',this)">Processing <span class="cnt">2</span></button>
+          <button class="pay-tab" onclick="filterOrder('ship',this)">Shipped <span class="cnt">1</span></button>
+          <button class="pay-tab" onclick="filterOrder('done',this)">Completed <span class="cnt">12</span></button>
+        </div>
+        <div class="order-item" data-ost="new" onclick="openModal('orderDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-bag"></i></div>
+          <div class="flex-1"><div style="font-weight:600">Order #1042 · John Mwangi</div><div style="font-size:11px;color:var(--pm-muted)">Laptop Pro X ×1 · 10 min ago</div></div>
+          <strong>KES 85,000</strong><span class="pm-badge pm-badge-success">Paid</span>
+        </div>
+        <div class="order-item" data-ost="new" onclick="openModal('orderDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-bag"></i></div>
+          <div class="flex-1"><div style="font-weight:600">Order #1041 · Grace N.</div><div style="font-size:11px;color:var(--pm-muted)">Headset Pro ×2 · 1 hr ago</div></div>
+          <strong>KES 17,000</strong><span class="pm-badge pm-badge-success">Paid</span>
+        </div>
+        <div class="order-item" data-ost="process" onclick="openModal('orderDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-primary);color:#fff"><i class="bi bi-box-seam"></i></div>
+          <div class="flex-1"><div style="font-weight:600">Order #1038 · David O.</div><div style="font-size:11px;color:var(--pm-muted)">CPU Bundle ×1 · 3 hrs ago</div></div>
+          <strong>KES 45,000</strong><span class="pm-badge pm-badge-info">Processing</span>
+        </div>
+        <div class="order-item" data-ost="ship" onclick="openModal('orderDetailModal')">
+          <div class="pm-icon-circle round" style="background:var(--pm-accent);color:#fff"><i class="bi bi-truck"></i></div>
+          <div class="flex-1"><div style="font-weight:600">Order #1035 · Safari Lodges</div><div style="font-size:11px;color:var(--pm-muted)">Laptop Pro X ×2 · on the way</div></div>
+          <strong>KES 170,000</strong><span class="pm-badge pm-badge-success">Shipped</span>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 7.5 DISCOUNT CODES ==================== -->
+      <div class="row g-3">
+        <div class="col-lg-7"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-warning"><i class="bi bi-tag"></i> Discount Codes & Promotions</h3><p class="pm-section-sub">Drive sales with targeted offers</p></div>
+            <button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('discountModal')"><i class="bi bi-plus-lg"></i> New Code</button></div>
+          <div class="table-responsive"><table class="pm-table"><thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Uses</th><th>Valid</th><th>Status</th><th></th></tr></thead><tbody>
+            <tr><td><span class="promo-code">EASTER2025</span></td><td>%</td><td>10% off</td><td>45/100</td><td>20 Nov</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('discountModal')">Edit</button></td></tr>
+            <tr><td><span class="promo-code">WELCOME10</span></td><td>Fixed</td><td>KES 500 off</td><td>23/50</td><td>30 Nov</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('discountModal')">Edit</button></td></tr>
+            <tr><td><span class="promo-code">FREESHIP</span></td><td>Ship</td><td>Free shipping</td><td>8/100</td><td>15 Nov</td><td><span class="pm-badge pm-badge-warning">Scheduled</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('discountModal')">Edit</button></td></tr>
+          </tbody></table></div>
+          <div class="p-3 rounded mt-2" style="background:var(--pm-accent-soft);font-size:12px"><i class="bi bi-lightning-charge"></i> <strong>Flash Sale:</strong> 20% off everything for 4 hours — <button class="pm-btn pm-btn-sm" onclick="openModal('flashSaleModal')">Activate</button></div>
+        </div></div>
+        <div class="col-lg-5"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-purple)"><i class="bi bi-graph-up"></i> Product Performance</h3><p class="pm-section-sub">What's selling</p></div></div>
+          <div class="table-responsive"><table class="pm-table"><thead><tr><th>Product</th><th>Views</th><th>Orders</th><th>Conv</th><th>Revenue</th></tr></thead><tbody>
+            <tr><td>Laptop Pro X</td><td>420</td><td>14</td><td class="text-success">3.3%</td><td>KES 1.19M</td></tr>
+            <tr><td>CPU Bundle</td><td>180</td><td>8</td><td class="text-success">4.4%</td><td>KES 360K</td></tr>
+            <tr><td>Headset Pro</td><td>310</td><td>12</td><td class="text-success">3.9%</td><td>KES 102K</td></tr>
+            <tr><td>Phone X</td><td>150</td><td>0</td><td class="text-danger">0%</td><td>KES 0</td></tr>
+          </tbody></table></div>
+          <div class="p-3 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-info-circle"></i> Cart abandonment: <strong>68%</strong> (target &lt; 60%). Abandoned-cart recovery SMS active.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== PERSISTENT QUICK ACTIONS BAR (7.7) ===== -->
+<div class="quickbar">
+  <div class="qb" onclick="openModal('addProductModal')"><i class="bi bi-box text-primary"></i> Add Product</div>
+  <div class="qb" onclick="toast('Store opened in new tab')"><i class="bi bi-bag text-info"></i> View Store</div>
+  <div class="qb" onclick="openModal('discountModal')"><i class="bi bi-tag text-success"></i> Discount</div>
+  <div class="qb position-relative" onclick="openModal('orderDetailModal')"><i class="bi bi-bag-check text-warning"></i> Orders <span class="qbadge">3</span></div>
+  <div class="qb" onclick="toast('Opening inventory — 2 low stock')"><i class="bi bi-box-seam text-danger"></i> Inventory</div>
+  <div class="qb" onclick="toast('Store link shared to WhatsApp!')"><i class="bi bi-share text-purple" style="color:var(--pm-purple)"></i> Share</div>
+  <div class="qb" onclick="openModal('storeSettingsModal')"><i class="bi bi-toggle-on text-secondary"></i> Publish</div>
+</div>
+
+<!-- ==================== MODALS (26) ==================== -->
+
+<!-- M1: Add Product (multistep) -->
+<div class="modal fade" id="addProductModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-box me-2"></i>Add Product</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body" id="prBody">
+    <div class="pm-stepper" id="prStepper"><div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Basic</div></div><div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div><div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Pricing & Tax</div></div><div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div><div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Variants</div></div><div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div><div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Media</div></div></div>
+    <div id="prStep1" class="fade-step active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Name</label><input class="pm-form-control" value="Laptop Pro X"></div><div class="col-md-6"><label class="pm-form-label">SKU</label><input class="pm-form-control" value="TS-LPT-01"></div><div class="col-12"><label class="pm-form-label">Description</label><textarea class="pm-form-control" rows="2">High-performance laptop for business.</textarea></div><div class="col-md-6"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>Electronics</option><option>Accessories</option><option>Services</option></select></div><div class="col-md-6"><label class="pm-form-label">Tags</label><input class="pm-form-control" placeholder="featured, new"></div></div></div>
+    <div id="prStep2" class="fade-step"><div class="row g-3"><div class="col-md-4"><label class="pm-form-label">Selling Price</label><input class="pm-form-control" value="85000"></div><div class="col-md-4"><label class="pm-form-label">Cost Price</label><input class="pm-form-control" value="60000"></div><div class="col-md-4"><label class="pm-form-label">Compare-at</label><input class="pm-form-control" value="95000"></div><div class="col-md-6"><label class="pm-form-label">Taxable</label><select class="pm-form-control"><option>Yes — 16% VAT</option><option>No</option></select></div><div class="col-md-6"><label class="pm-form-label">Digital product</label><select class="pm-form-control"><option>No (physical)</option><option>Yes (delivery link)</option></select></div></div></div>
+    <div id="prStep3" class="fade-step"><div class="form-check mb-3"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">This product has variations</label></div>
+      <div class="row g-2 mb-2"><div class="col-md-4"><label class="pm-form-label">Option 1</label><select class="pm-form-control"><option>Size</option><option>Color</option></select></div><div class="col-md-4"><input class="pm-form-control" value="S, M, L"></div></div>
+      <div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><h6 style="font-weight:700">Variant Matrix</h6><div class="row g-1"><div class="col-4"><div class="variant-cell"><strong>S</strong><div style="font-size:10px;color:var(--pm-muted)">SKU-01 · 8</div></div></div><div class="col-4"><div class="variant-cell"><strong>M</strong><div style="font-size:10px;color:var(--pm-muted)">SKU-02 · 10</div></div></div><div class="col-4"><div class="variant-cell"><strong>L</strong><div style="font-size:10px;color:var(--pm-muted)">SKU-03 · 6</div></div></div></div></div>
+    </div>
+    <div id="prStep4" class="fade-step"><div class="upload-zone mb-3" onclick="toast('Upload images (demo)')"><i class="bi bi-image" style="font-size:32px;color:var(--pm-primary)"></i><div style="font-weight:600;margin-top:8px">Drag &amp; drop product images</div><div style="font-size:11px;color:var(--pm-muted)">First image is featured · auto-compressed to WebP</div></div></div>
+  </div>
+  <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="prNext" onclick="nextStep('pr',4,'prNext',()=>simulateProcess('addProductModal','Product created & live on store!'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- M2: Product Detail -->
+<div class="modal fade" id="productDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-box me-2"></i>Laptop Pro X</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>SKU</span><strong style="font-family:monospace">TS-LPT-01</strong></div>
+  <div class="status-row"><span>Price</span><strong style="color:var(--pm-primary)">KES 85,000</strong></div>
+  <div class="status-row"><span>Cost</span><strong>KES 60,000 · margin 29%</strong></div>
+  <div class="status-row"><span>Stock</span><span class="stock-chip in">24 in stock</span></div>
+  <div class="status-row"><span>Tax</span><strong>16% VAT</strong></div>
+  <div class="status-row"><span>Status</span><span class="pm-badge pm-badge-success">Active on store</span></div>
+  <div class="d-flex gap-2 mt-3"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="simulateProcess('productDetailModal','Product archived (hidden, history kept)')">Archive</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="simulateProcess('productDetailModal','Product updated!')">Save</button></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M3: Categories -->
+<div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tags me-2"></i>Categories</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-2 border rounded mb-1 d-flex justify-content-between"><span><i class="bi bi-grip-vertical"></i> Electronics</span><button class="pm-btn pm-btn-sm">Edit</button></div>
+  <div class="p-2 border rounded mb-1 d-flex justify-content-between"><span><i class="bi bi-grip-vertical"></i> &nbsp;· Phones</span><button class="pm-btn pm-btn-sm">Edit</button></div>
+  <div class="p-2 border rounded mb-1 d-flex justify-content-between"><span><i class="bi bi-grip-vertical"></i> Accessories</span><button class="pm-btn pm-btn-sm">Edit</button></div>
+  <button class="pm-btn pm-btn-sm w-100 mt-2" onclick="toast('New category (demo)')"><i class="bi bi-plus-lg"></i> Add Category</button>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M4: Store Builder -->
+<div class="modal fade" id="storeBuilderModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Storefront Builder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="pm-tab-pills"><button class="pm-tab-pill active" onclick="tabSwitch(this,'tpl')">Template</button><button class="pm-tab-pill" onclick="tabSwitch(this,'layout')">Layout</button><button class="pm-tab-pill" onclick="tabSwitch(this,'brand')">Branding</button></div>
+  <div data-tabpanel="tpl"><div class="row g-2"><div class="col-md-4"><div class="product-card text-center" style="border-color:var(--pm-primary)!important"><i class="bi bi-window" style="font-size:30px;color:var(--pm-primary)"></i><div style="font-weight:600">Minimal</div><span class="pm-badge pm-badge-success">In use</span></div></div><div class="col-md-4"><div class="product-card text-center" onclick="toast('Retail template selected')"><i class="bi bi-grid" style="font-size:30px"></i><div style="font-weight:600">Retail</div></div></div><div class="col-md-4"><div class="product-card text-center" onclick="toast('Restaurant template selected')"><i class="bi bi-egg-fried" style="font-size:30px"></i><div style="font-weight:600">Restaurant</div></div></div></div></div>
+  <div data-tabpanel="layout" style="display:none"><div class="status-row"><span>Hero banner</span><button class="pm-btn pm-btn-sm" onclick="toast('Hero configured')">Edit</button></div><div class="status-row"><span>Featured products</span><button class="pm-btn pm-btn-sm" onclick="toast('Featured set')">Edit</button></div><div class="status-row"><span>Categories grid</span><button class="pm-btn pm-btn-sm" onclick="toast('Categories set')">Edit</button></div><div class="status-row"><span>Grid columns</span><select class="pm-form-control" style="width:100px"><option>3</option><option>2</option><option>4</option></select></div></div>
+  <div data-tabpanel="brand" style="display:none"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Brand color</label><input type="color" class="pm-form-control" value="#4F46E5"></div><div class="col-md-6"><label class="pm-form-label">Logo</label><button class="pm-btn pm-btn-sm" onclick="toast('Upload logo (demo)')"><i class="bi bi-upload"></i> Upload</button></div></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('storeBuilderModal','Storefront published! Live at store.paymo.biz/techsol')"><i class="bi bi-check-lg"></i> Publish</button></div></div></div></div>
+
+<!-- M5: Store Settings -->
+<div class="modal fade" id="storeSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-gear me-2"></i>Store Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Store URL</span><strong class="promo-code">store.paymo.biz/techsol</strong></div>
+  <div class="status-row"><span>Status</span><span class="pm-badge pm-badge-success">Live</span></div>
+  <div class="mb-3 mt-2"><label class="pm-form-label">Shipping</label><select class="pm-form-control"><option>Flat rate — KES 500</option><option>Free above KES 10K</option><option>Logistics integration (Sendy)</option></select></div>
+  <div class="mb-3"><label class="pm-form-label">Payment methods</label><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">M-Pesa STK Push</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Bank / PesaLink</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Card</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Pay on Delivery</label></div></div>
+</div><div class="modal-footer"><button class="pm-btn pm-btn-danger" onclick="simulateProcess('storeSettingsModal','Store unpublished. Showing We\'ll be back page.')">Unpublish</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('storeSettingsModal','Store settings saved!')">Save</button></div></div></div></div>
+
+<!-- M6: Store Preview -->
+<div class="modal fade" id="storePreviewModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bag me-2"></i>Checkout Preview</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><div class="status-row"><span>Laptop Pro X</span><strong>KES 85,000</strong></div><div class="status-row"><span>Shipping</span><strong>KES 500</strong></div><div class="status-row"><span>VAT</span><strong>KES 13,600</strong></div><hr class="pm-divider"><div class="status-row"><strong>Total</strong><strong style="color:var(--pm-primary);font-size:18px">KES 99,100</strong></div></div>
+  <div class="mb-3"><label class="pm-form-label">M-Pesa Phone</label><input class="pm-form-control" value="0712 345 890"></div>
+  <button class="pm-btn pm-btn-success w-100" onclick="simulateProcess('storePreviewModal','STK push sent! Enter PIN on your phone... Payment Successful! Order #1043 placed.')"><i class="bi bi-phone"></i> Pay KES 99,100 via M-Pesa</button>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M7: Order Detail -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bag me-2"></i>Order #1042 — John Mwangi</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="pm-tab-pills"><button class="pm-tab-pill active" onclick="tabSwitch(this,'items')">Items</button><button class="pm-tab-pill" onclick="tabSwitch(this,'ship')">Shipping</button><button class="pm-tab-pill" onclick="tabSwitch(this,'pay')">Payment</button></div>
+  <div data-tabpanel="items"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead><tbody><tr><td>Laptop Pro X</td><td>1</td><td>KES 85,000</td></tr></tbody></table></div><div class="status-row mt-2"><span>Total</span><strong style="color:var(--pm-primary)">KES 99,100</strong></div></div>
+  <div data-tabpanel="ship" style="display:none"><div class="status-row"><span>Address</span><strong>Westlands, Nairobi</strong></div><div class="status-row"><span>Method</span><strong>Flat rate · KES 500</strong></div><div class="status-row"><span>Fulfilment</span><span class="pm-badge pm-badge-warning">Unfulfilled</span></div>
+    <div class="d-flex gap-2 mt-3"><button class="pm-btn pm-btn-sm" onclick="simulateProcess('orderDetailModal','Order marked Processing — SMS sent to customer!')">Accept &amp; Process</button><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="simulateProcess('orderDetailModal','Pickup requested from Sendy — tracking link sent!')">Request Pickup</button></div></div>
+  <div data-tabpanel="pay" style="display:none"><div class="status-row"><span>Method</span><strong>M-Pesa STK Push</strong></div><div class="status-row"><span>Txn ID</span><strong style="font-family:monospace">MP-881002</strong></div><div class="status-row"><span>Status</span><span class="pm-badge pm-badge-success">Paid</span></div></div>
+</div><div class="modal-footer"><button class="pm-btn pm-btn-danger" onclick="simulateProcess('orderDetailModal','Order cancelled — refund workflow triggered!')">Cancel Order</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('orderDetailModal','Packing slip printed!')"><i class="bi bi-printer"></i> Packing Slip</button></div></div></div></div>
+
+<!-- M8: Discount Code -->
+<div class="modal fade" id="discountModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tag me-2"></i>Discount Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Code</label><input class="pm-form-control" value="EASTER2025"></div>
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Type</label><select class="pm-form-control"><option>Percentage</option><option>Fixed amount</option><option>Free shipping</option></select></div><div class="col-6"><label class="pm-form-label">Value</label><input class="pm-form-control" value="10"></div></div>
+  <div class="mb-3"><label class="pm-form-label">Applies to</label><select class="pm-form-control"><option>Entire order</option><option>Specific products</option><option>Specific categories</option></select></div>
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Min order</label><input class="pm-form-control" value="5000"></div><div class="col-6"><label class="pm-form-label">Usage limit</label><input class="pm-form-control" value="100"></div></div>
+  <div class="mb-3"><label class="pm-form-label">Valid until</label><input type="date" class="pm-form-control"></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('discountModal','Discount code saved!')"><i class="bi bi-check-lg"></i> Save</button></div></div></div></div>
+
+<!-- M9: Flash Sale -->
+<div class="modal fade" id="flashSaleModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i>Activate Flash Sale</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">Discount %</label><input class="pm-form-control" value="20"></div><div class="col-6"><label class="pm-form-label">Duration</label><select class="pm-form-control"><option>4 hours</option><option>24 hours</option><option>48 hours</option></select></div></div>
+  <div class="p-3 rounded" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-bullhorn"></i> Storefront shows banner: <strong>FLASH SALE: 20% OFF — Ends in 3:59:59</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('flashSaleModal','Flash sale activated! 20% off for 4 hours.')"><i class="bi bi-lightning-charge"></i> Start Sale</button></div></div></div></div>
+
+<!-- M10: Custom Domain -->
+<div class="modal fade" id="customDomainModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe me-2"></i>Connect Custom Domain</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Domain</label><input class="pm-form-control" value="shop.techsol.co.ke"></div>
+  <div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);font-size:12px">Point your DNS A record to <strong>198.51.100.10</strong> (CNAME: store.paymo.biz). SSL auto-provisioned via Let's Encrypt.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('customDomainModal','Domain connected! SSL provisioning... shop.techsol.co.ke live.')"><i class="bi bi-check-lg"></i> Verify & Connect</button></div></div></div></div>
+
+<!-- M11: Health / Notifications / Profile / Success / Support -->
+<div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Business Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-center mb-3"><div style="width:110px;height:110px;border-radius:50%;border:7px solid var(--pm-accent);display:flex;align-items:center;justify-content:center;flex-direction:column"><span style="font-size:28px;font-weight:700">92</span><span style="font-size:10px;color:var(--pm-muted)">SCORE</span></div></div><div class="status-row"><span>Store</span><span class="pm-badge pm-badge-success">Live</span></div><div class="status-row"><span>Orders</span><span class="pm-badge pm-badge-success">3 new</span></div><div class="status-row"><span>Inventory</span><span class="pm-badge pm-badge-warning">2 low</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Alerts <span class="pm-badge pm-badge-danger">6 new</span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:380px;overflow-y:auto">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>New order</strong> — #1042 · KES 85K</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Low stock</strong> — CPU Bundle (3)</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Cart abandoned</strong> — recovery SMS sent</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Discount code</strong> — EASTER2025 hit 45%</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary pm-btn-sm" onclick="toast('All marked read')">Mark all read</button></div></div></div></div>
+
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>My Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div><h4 style="font-weight:700">Amina D.</h4><p style="font-size:13px;color:var(--pm-muted)">Director (Admin) · TechSolutions Ltd</p><div class="p-3 border rounded text-start mt-3"><div class="status-row"><span>Approval Limit</span><strong>Unlimited</strong></div><div class="status-row"><span>Security</span><span class="pm-badge pm-badge-success">MFA Active</span></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-danger" data-bs-dismiss="modal">Log Out</button></div></div></div></div>
+
+<div class="modal fade" id="successModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Success</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="successBody"><div class="text-center"><i class="bi bi-check2-circle" style="font-size:48px;color:var(--pm-accent)"></i><p style="margin-top:8px" class="pm-muted">Operation successful.</p></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button></div></div></div></div>
+
+<div class="modal fade" id="supportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2"></i>Help & Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Chat opened (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-primary);color:#fff"><i class="bi bi-chat-dots"></i></div><div><strong>Live Chat</strong><div style="font-size:11px;color:var(--pm-muted)">avg reply 2 min</div></div></div>
+  <div class="p-3 border rounded d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Help center (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-info);color:#fff"><i class="bi bi-journal-text"></i></div><div><strong>Help Center</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="paymo-common.js"></script>
+<script>
+/* ===== PRODUCTS & STORE page-specific ===== */
+document.addEventListener('DOMContentLoaded',()=>{ initFlow('pr',4); });
+function filterOrder(tab,btn){
+  document.querySelectorAll('.order-item').forEach(o=>{ o.style.display=(o.dataset.ost===tab)?'':'none'; });
+  btn.closest('.pay-tabbar').querySelectorAll('.pay-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  var gs=document.getElementById('globalSearch');
+  if(gs) gs.addEventListener('keydown',function(e){ if(e.key==='Enter' && this.value.trim()) openModal('productDetailModal'); });
+});
+</script>
+</body>
+</html>

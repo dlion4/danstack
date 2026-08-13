@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Bulk Disbursements</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pm-primary:#4F46E5;--pm-primary-dark:#3730A3;--pm-primary-light:#818CF8;--pm-accent:#10B981;--pm-accent-soft:#D1FAE5;--pm-warning:#F59E0B;--pm-warning-soft:#FEF3C7;--pm-danger:#EF4444;--pm-danger-soft:#FEE2E2;--pm-info:#3B82F6;--pm-info-soft:#DBEAFE;--pm-purple:#8B5CF6;--pm-purple-soft:#EDE9FE;--pm-bg:#F5F1EC;--pm-bg-2:#EEE8DF;--pm-surface:#FFFFFF;--pm-surface-2:#FAF7F3;--pm-ink:#1A1F2E;--pm-ink-soft:#4B5563;--pm-muted:#9CA3AF;--pm-border:#E5E2DC;--pm-border-2:#D4D0C8;--pm-gradient-hero:linear-gradient(135deg,#4F46E5 0%,#7C3AED 50%,#EC4899 100%);--pm-gradient-warm:linear-gradient(135deg,#FDE68A 0%,#FBBF24 100%);--pm-gradient-mint:linear-gradient(135deg,#A7F3D0 0%,#34D399 100%);--pm-gradient-blue:linear-gradient(135deg,#BFDBFE 0%,#60A5FA 100%);--pm-gradient-rose:linear-gradient(135deg,#FECDD3 0%,#FB7185 100%);--pm-gradient-violet:linear-gradient(135deg,#DDD6FE 0%,#A78BFA 100%);--pm-gradient-slate:linear-gradient(135deg,#1E293B 0%,#334155 100%);--pm-gradient-sunset:linear-gradient(135deg,#FB923C 0%,#EC4899 100%);--pm-shadow-sm:0 1px 2px rgba(26,31,46,0.04);--pm-shadow-md:0 4px 12px rgba(26,31,46,0.06);--pm-shadow-lg:0 10px 30px rgba(26,31,46,0.08);--pm-shadow-xl:0 20px 50px rgba(26,31,46,0.12);--pm-shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--pm-r-sm:8px;--pm-r-md:14px;--pm-r-lg:20px;--pm-r-xl:28px;--pm-r-pill:999px;--pm-font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--pm-font-display:'Space Grotesk','Inter',sans-serif}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;padding:0}
+body{font-family:var(--pm-font-sans);background:var(--pm-bg);color:var(--pm-ink);overflow-x:hidden;font-size:14px;line-height:1.5}
+.pm-app{display:flex;min-height:100vh;background:radial-gradient(1200px 600px at -10% -20%,rgba(79,70,229,0.05),transparent 60%),radial-gradient(1000px 500px at 110% 10%,rgba(236,72,153,0.04),transparent 60%),radial-gradient(800px 400px at 50% 120%,rgba(16,185,129,0.04),transparent 60%),var(--pm-bg)}
+.pm-sidebar{width:88px;flex-shrink:0;background:var(--pm-gradient-slate);display:flex;flex-direction:column;align-items:center;padding:20px 0;position:sticky;top:0;height:100vh;z-index:100;box-shadow:var(--pm-shadow-lg)}
+.pm-sidebar-logo{width:48px;height:48px;background:var(--pm-gradient-hero);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;font-family:var(--pm-font-display);box-shadow:var(--pm-shadow-lg);margin-bottom:24px}
+.pm-sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 12px}
+.pm-nav-item{width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:rgba(255,255,255,0.65);cursor:pointer;background:transparent;border:none;transition:all .2s;position:relative}
+.pm-nav-item:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pm-nav-item.active{color:#fff;background:var(--pm-primary);box-shadow:var(--pm-shadow-md)}
+.pm-nav-item .badge-dot{position:absolute;top:8px;right:10px;width:8px;height:8px;background:var(--pm-danger);border-radius:50%;border:2px solid #334155;animation:pm-pulse 2s infinite}
+@keyframes pm-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.pm-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-x:hidden}
+.pm-header{background:rgba(245,241,236,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--pm-border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:sticky;top:0;z-index:50}
+.pm-header-title h1{font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:0;letter-spacing:-0.02em}
+.pm-header-title p{margin:0;font-size:12px;color:var(--pm-ink-soft)}
+.pm-header-search{flex:1;max-width:440px;position:relative}
+.pm-header-search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--pm-border);border-radius:var(--pm-r-md);background:#fff;font-size:13px;transition:all .2s}
+.pm-header-search input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-header-search .bi{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--pm-muted)}
+.pm-header-actions{display:flex;align-items:center;gap:8px}
+.pm-header-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--pm-border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--pm-ink-soft);position:relative}
+.pm-header-btn:hover{background:var(--pm-surface-2);color:var(--pm-primary);transform:translateY(-1px);border-color:var(--pm-primary-light)}
+.pm-header-btn .counter{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--pm-danger);color:#fff;font-size:10px;font-weight:600;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--pm-bg)}
+.pm-profile-btn{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border:1px solid var(--pm-border);background:#fff;border-radius:12px;cursor:pointer;transition:all .2s}
+.pm-profile-btn:hover{background:var(--pm-surface-2)}
+.pm-avatar{width:32px;height:32px;border-radius:50%;background:var(--pm-gradient-hero);color:#fff;font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--pm-font-display)}
+.pm-profile-btn .pm-name{font-size:13px;font-weight:600}.pm-profile-btn .pm-role{font-size:11px;color:var(--pm-muted)}
+.pm-page-bar{padding:20px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.pm-breadcrumb{font-size:12px;color:var(--pm-muted)}.pm-breadcrumb a{color:var(--pm-primary);text-decoration:none}.pm-breadcrumb a:hover{text-decoration:underline}
+.pm-content{padding:16px 32px 32px;display:flex;flex-direction:column;gap:20px}
+.pm-card{background:var(--pm-surface);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:20px;box-shadow:var(--pm-shadow-sm);transition:all .2s}.pm-card:hover{box-shadow:var(--pm-shadow-md)}
+.pm-card-accent{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4F46E5 100%);color:#fff;border:none}
+.pm-card-dark{background:var(--pm-gradient-slate);color:#fff;border:none}
+.pm-stat-value{font-family:var(--pm-font-display);font-size:28px;font-weight:700;letter-spacing:-0.02em}.pm-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.pm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--pm-r-pill);font-size:11px;font-weight:600}
+.pm-badge-success{background:var(--pm-accent-soft);color:#047857}.pm-badge-warning{background:var(--pm-warning-soft);color:#B45309}.pm-badge-danger{background:var(--pm-danger-soft);color:#DC2626}.pm-badge-info{background:var(--pm-info-soft);color:#1D4ED8}.pm-badge-purple{background:var(--pm-purple-soft);color:#6D28D9}.pm-badge-slate{background:#f1f5f9;color:#334155}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--pm-r-sm);font-size:13px;font-weight:600;border:1px solid var(--pm-border);background:#fff;cursor:pointer;transition:all .2s;color:var(--pm-ink);text-decoration:none}
+.pm-btn:hover{background:var(--pm-surface-2);transform:translateY(-1px);box-shadow:var(--pm-shadow-sm)}.pm-btn-primary{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}.pm-btn-primary:hover{background:var(--pm-primary-dark);border-color:var(--pm-primary-dark);color:#fff}.pm-btn-accent{background:var(--pm-accent);color:#fff;border-color:var(--pm-accent)}.pm-btn-accent:hover{background:#059669;border-color:#059669;color:#fff}.pm-btn-danger{background:var(--pm-danger);color:#fff;border-color:var(--pm-danger)}.pm-btn-sm{padding:5px 12px;font-size:12px}
+.pm-progress{height:6px;background:var(--pm-border);border-radius:3px;overflow:hidden}.pm-progress-bar{height:100%;border-radius:3px;transition:width .4s}
+.pm-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}.pm-divider{border:none;border-top:1px solid var(--pm-border);margin:16px 0}
+.pm-section-title{font-family:var(--pm-font-display);font-size:16px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px}.pm-section-sub{font-size:12px;color:var(--pm-ink-soft);margin:2px 0 0}
+.pm-table{width:100%;border-collapse:collapse;font-size:13px}.pm-table th{text-align:left;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);border-bottom:1px solid var(--pm-border);background:var(--pm-surface-2)}.pm-table td{padding:12px;border-bottom:1px solid var(--pm-border);vertical-align:middle}.pm-table tr:last-child td{border-bottom:none}.pm-table tr:hover td{background:var(--pm-surface-2)}
+.pm-mini-bars{display:flex;align-items:flex-end;gap:4px;height:40px}.pm-mini-bar{width:14px;border-radius:3px 3px 0 0;background:var(--pm-primary);transition:height .3s}
+.quick-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick-action-btn{padding:10px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);background:#fff;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}.quick-action-btn:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.04);transform:translateY(-1px)}
+.modal-content{border:none;border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-xl)}.modal-header{border-bottom:1px solid var(--pm-border);padding:20px 24px}.modal-body{padding:24px}.modal-footer{border-top:1px solid var(--pm-border);padding:16px 24px}.modal-title{font-family:var(--pm-font-display);font-weight:700}
+.pm-form-label{font-size:12px;font-weight:600;color:var(--pm-ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}.pm-form-control{width:100%;padding:10px 14px;border:1px solid var(--pm-border);border-radius:var(--pm-r-sm);font-size:14px;transition:all .2s;background:#fff}.pm-form-control:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}.pm-form-control[disabled]{background:var(--pm-surface-2);color:var(--pm-muted)}
+.pm-stepper{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap}.pm-step{display:flex;align-items:center;gap:8px;flex:1;min-width:90px}.pm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--pm-border);color:var(--pm-muted);transition:all .3s}.pm-step.active .pm-step-num{background:var(--pm-primary);color:#fff}.pm-step.completed .pm-step-num{background:var(--pm-accent);color:#fff}.pm-step-label{font-size:11px;font-weight:600;color:var(--pm-muted)}.pm-step.active .pm-step-label{color:var(--pm-primary)}.pm-step.completed .pm-step-label{color:var(--pm-accent)}.pm-step-line{flex:1;height:2px;background:var(--pm-border);margin:0 8px}
+.pm-tab-pills{display:flex;gap:4px;padding:4px;background:var(--pm-surface-2);border-radius:var(--pm-r-sm);overflow-x:auto}.pm-tab-pill{padding:8px 16px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--pm-ink-soft)}.pm-tab-pill.active{background:#fff;color:var(--pm-primary);box-shadow:var(--pm-shadow-sm);font-weight:600}
+.pm-pin-input{display:flex;gap:8px;justify-content:center}.pm-pin-input input{width:48px;height:56px;text-align:center;font-size:24px;font-weight:700;border:2px solid var(--pm-border);border-radius:var(--pm-r-sm);font-family:var(--pm-font-display)}.pm-pin-input input:focus{outline:none;border-color:var(--pm-primary);box-shadow:var(--pm-shadow-glow)}
+.pm-receipt{background:var(--pm-surface-2);border:1px dashed var(--pm-border-2);border-radius:var(--pm-r-md);padding:20px;text-align:center}.pm-receipt .receipt-icon{width:56px;height:56px;background:var(--pm-accent-soft);color:var(--pm-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--pm-border)}.feed-item:last-child{border-bottom:none}
+.fade-step{display:none}.fade-step.active{display:block;animation:fadeIn .3s}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pm-loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:var(--pm-r-lg)}.pm-spinner{width:40px;height:40px;border:3px solid var(--pm-border);border-top-color:var(--pm-primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding:12px 0 18px}.chart-bar{flex:1;border-radius:5px 5px 0 0;position:relative;min-width:18px;cursor:pointer;transition:all .2s}.chart-bar:hover{opacity:.88}.chart-bar .bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--pm-muted)}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--pm-border)}.status-row:last-child{border-bottom:none}
+.utility-block{background:var(--pm-surface-2);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.upload-zone{border:2px dashed var(--pm-border);border-radius:var(--pm-r-md);padding:30px;text-align:center;background:rgba(255,255,255,.5);cursor:pointer;transition:all .2s}.upload-zone:hover{border-color:var(--pm-primary);background:rgba(79,70,229,.02)}
+.table-execution-row{border-left:3px solid transparent} .table-execution-row.executing{border-left-color:var(--pm-primary);background:rgba(79,70,229,.03)}
+@media(max-width:768px){.pm-sidebar{display:none}.pm-header{padding:12px 16px;flex-wrap:wrap}.pm-header-search{max-width:100%;order:3;flex-basis:100%}.pm-content{padding:12px 16px 24px}.pm-page-bar{padding:12px 16px 0}.quick-action-grid{grid-template-columns:repeat(2,1fr)}.pm-stat-value{font-size:22px}.pm-step{min-width:unset}.modal-body{padding:18px}.modal-header,.modal-footer{padding:16px}}
+</style>
+</head>
+<body>
+<div class="pm-app">
+<!-- SIDEBAR -->
+<aside class="pm-sidebar">
+<div class="pm-sidebar-logo">B</div>
+<nav class="pm-sidebar-nav">
+<button class="pm-nav-item" title="Dashboard"><i class="bi bi-grid-1x2"></i></button>
+<button class="pm-nav-item" title="Collections"><i class="bi bi-arrow-down-left-circle"></i></button>
+<button class="pm-nav-item" title="Invoicing"><i class="bi bi-receipt"></i></button>
+<button class="pm-nav-item" title="Payroll"><i class="bi bi-person-lines-fill"></i></button>
+<button class="pm-nav-item active" title="Bulk Disbursements"><i class="bi bi-send-check"></i><span class="badge-dot"></span></button>
+<button class="pm-nav-item" title="Payables"><i class="bi bi-buildings"></i></button>
+<button class="pm-nav-item" title="Settings"><i class="bi bi-gear"></i></button>
+</nav>
+<button class="pm-nav-item" style="margin-top:auto" title="Help/Support"><i class="bi bi-headset"></i></button>
+</aside>
+
+<div class="pm-main">
+<!-- HEADER -->
+<header class="pm-header">
+<div class="pm-header-title" style="flex-shrink:0">
+<div class="d-flex align-items-center gap-2">
+<div class="pm-avatar" style="width:36px;height:36px;font-size:14px;background:var(--pm-gradient-slate)">SO</div>
+<div>
+<h1>Bulk Disbursements</h1>
+<p>Safiri Operations Ltd · M-Pesa B2C & PesaLink Engine</p>
+</div>
+</div>
+</div>
+<div class="pm-header-search">
+<i class="bi bi-search"></i>
+<input type="text" placeholder="Search batch ID, beneficiary, phone, amount...">
+</div>
+<div class="pm-header-actions">
+<button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="System Health"><i class="bi bi-shield-check"></i></button>
+<button class="pm-header-btn" onclick="openModal('auditLogModal')" title="Audit Log"><i class="bi bi-journal-text"></i></button>
+<button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">4</span></button>
+<div class="pm-profile-btn" onclick="openModal('businessProfileModal')">
+<div class="pm-avatar" style="background:var(--pm-primary)">EK</div>
+<div><div class="pm-name">Edwin K.</div><div class="pm-role">Finance Director</div></div>
+</div>
+</div>
+</header>
+
+<div class="pm-page-bar">
+<div>
+<div class="pm-breadcrumb"><a href="#">Home</a> / <a href="#">Business Portal</a> / <strong>Bulk Disbursements</strong></div>
+<h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE 3.5 — Bulk Disbursements & Payments</h2>
+<p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Execute, track, and manage bulk payouts to employees, suppliers, program beneficiaries, and G2P/NGO recipients.</p>
+</div>
+<div class="d-flex flex-wrap" style="gap:8px">
+<button class="pm-btn" onclick="openModal('fundWalletModal')"><i class="bi bi-plus-circle"></i> Add Float</button>
+<button class="pm-btn" onclick="openModal('beneficiaryDirectoryModal')"><i class="bi bi-people"></i> Directory</button>
+<button class="pm-btn pm-btn-primary" onclick="openModal('newDisbursementModal')"><i class="bi bi-send-plus"></i> New Bulk Payout</button>
+</div>
+</div>
+
+<div class="pm-content">
+
+<!-- HERO STATS ROW -->
+<div class="row g-3">
+<div class="col-lg-3 col-md-6">
+<div class="pm-card pm-card-accent" style="min-height:160px">
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<p class="pm-stat-label" style="color:rgba(255,255,255,.7)">AVAILABLE FLOAT</p>
+<div class="pm-stat-value" style="margin:8px 0;color:#fff;font-size:24px">KES 14.2M</div>
+</div>
+<i class="bi bi-wallet2" style="font-size:24px;color:rgba(255,255,255,.5)"></i>
+</div>
+<p style="margin:0;font-size:12px;color:rgba(255,255,255,.7)">B2C limit: <strong>KES 50M/day</strong></p>
+<button class="pm-btn pm-btn-sm mt-3" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="openModal('fundWalletModal')">Top-up float</button>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px">
+<p class="pm-stat-label" style="color:var(--pm-info)">TOTAL DISBURSED (MTD)</p>
+<div class="pm-stat-value" style="margin:6px 0;font-size:24px">KES 84.5M</div>
+<span class="pm-badge pm-badge-success"><i class="bi bi-graph-up-arrow"></i> +12% vs last month</span>
+<div class="mt-3 d-flex justify-content-between text-muted" style="font-size:11px">
+<span>M-Pesa B2C: 62%</span>
+<span>PesaLink: 38%</span>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-warning)">
+<p class="pm-stat-label" style="color:var(--pm-warning)">PENDING APPROVALS</p>
+<div class="pm-stat-value" style="margin:6px 0;font-size:24px">3 Batches</div>
+<span class="pm-badge pm-badge-warning"><i class="bi bi-shield-lock"></i> Requires Checker</span>
+<div class="mt-3 text-muted" style="font-size:11px">
+Value: <strong>KES 4.2M</strong> awaiting authorization
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-danger)">
+<p class="pm-stat-label" style="color:var(--pm-danger)">FAILED PAYMENTS (MTD)</p>
+<div class="pm-stat-value" style="margin:6px 0;font-size:24px">18 <span style="font-size:14px;color:var(--pm-muted);font-weight:500">/ 14,200</span></div>
+<span class="pm-badge pm-badge-danger"><i class="bi bi-exclamation-triangle"></i> Needs Review</span>
+<div class="mt-3 text-muted" style="font-size:11px">
+Success Rate: <strong style="color:var(--pm-accent)">99.87%</strong>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ATTENTION / SUGGESTIONS / ACTIONS -->
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title">Attention Required</h3>
+<button class="pm-btn pm-btn-sm" onclick="openModal('attentionActionModal')">Review all</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">AP</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">Contractor Payout Batch</div><div style="font-size:11px;color:var(--pm-muted)">Pending your approval · KES 1.2M</div></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approveBatchModal')">Review</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">FL</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">14 Transfers Failed</div><div style="font-size:11px;color:var(--pm-muted)">Invalid numbers in 'Relief Fund' batch</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('failedTransfersModal')">Resolve</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">FL</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">Float dropping low</div><div style="font-size:11px;color:var(--pm-muted)">Est. run out in 2 days based on schedule</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('fundWalletModal')">Top-up</button>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card" style="height:100%">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h3 class="pm-section-title">System Intelligence</h3>
+<span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">OP</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">Optimize Disbursement Path</div><div style="font-size:11px;color:var(--pm-muted)">Route 45 payments via PesaLink to save KES 1,800</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('disbursementSettingsModal')">Apply</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">DD</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">Duplicate Beneficiaries</div><div style="font-size:11px;color:var(--pm-muted)">Found 12 duplicates in directory</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('beneficiaryDirectoryModal')">Merge</button>
+</div>
+<div class="feed-item">
+<div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">AG</div>
+<div style="flex:1"><div style="font-weight:600;font-size:13px">Agri-Subsidy Engagement</div><div style="font-size:11px;color:var(--pm-muted)">Redemption rate is down 15% this week</div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('subsidyVoucherModal')">Analyze</button>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="pm-card" style="height:100%">
+<div class="mb-3"><h3 class="pm-section-title">Quick Actions</h3><p class="pm-section-sub">Frequent business operational flows</p></div>
+<div class="quick-action-grid">
+<button class="quick-action-btn" onclick="openModal('newDisbursementModal')"><i class="bi bi-file-earmark-excel text-success me-1"></i> Upload CSV</button>
+<button class="quick-action-btn" onclick="openModal('beneficiaryDirectoryModal')"><i class="bi bi-person-lines-fill text-primary me-1"></i> Directory</button>
+<button class="quick-action-btn" onclick="openModal('scheduleDisbursementModal')"><i class="bi bi-calendar-check text-warning me-1"></i> Schedule</button>
+<button class="quick-action-btn" onclick="openModal('approvalWorkflowModal')"><i class="bi bi-diagram-3 me-1" style="color:var(--pm-purple)"></i> Workflows</button>
+<button class="quick-action-btn" onclick="openModal('ngoProgramModal')"><i class="bi bi-globe-africa text-info me-1"></i> NGO Programs</button>
+<button class="quick-action-btn" onclick="openModal('apiIntegrationModal')"><i class="bi bi-code-slash text-danger me-1"></i> API Keys</button>
+<button class="quick-action-btn" onclick="openModal('exportAnalyticsModal')"><i class="bi bi-download text-secondary me-1"></i> Reports</button>
+<button class="quick-action-btn" onclick="openModal('disputeDisbursementModal')"><i class="bi bi-arrow-counterclockwise me-1" style="color:var(--pm-ink)"></i> Recall / Reverse</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3.5.1 — Bulk Disbursement Engine -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-engine-fill" style="color:var(--pm-primary)"></i> 3.5.1 — Bulk Disbursement Engine</h3><p class="pm-section-sub">Upload batch files, validate numbers, detect duplicates, and schedule mass payouts.</p></div>
+<div class="d-flex" style="gap:8px">
+<button class="pm-btn pm-btn-sm" onclick="openModal('scheduleDisbursementModal')"><i class="bi bi-clock"></i> Schedule</button>
+<button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('newDisbursementModal')"><i class="bi bi-cloud-upload"></i> New Upload</button>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-lg-7">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Recent Batches & Drafts</h4>
+<div class="table-responsive"><table class="pm-table">
+<thead><tr><th>Batch ID</th><th>Name / Type</th><th>Count</th><th>Total Value</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>BTH-9921</code></td><td><strong>June Contractor Payout</strong><br><span style="font-size:11px;color:var(--pm-muted)">Supplier Payments</span></td><td>42</td><td>KES 1.2M</td><td><span class="pm-badge pm-badge-warning">Draft</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('newDisbursementModal')">Resume</button></td></tr>
+<tr><td><code>BTH-9920</code></td><td><strong>Q2 Sales Commissions</strong><br><span style="font-size:11px;color:var(--pm-muted)">Salary/Wages</span></td><td>118</td><td>KES 4.5M</td><td><span class="pm-badge pm-badge-success">Executed</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('batchDetailsModal')">View</button></td></tr>
+<tr><td><code>BTH-9918</code></td><td><strong>Customer Refunds</strong><br><span style="font-size:11px;color:var(--pm-muted)">Refunds</span></td><td>14</td><td>KES 85K</td><td><span class="pm-badge pm-badge-success">Executed</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('batchDetailsModal')">View</button></td></tr>
+<tr><td><code>BTH-9915</code></td><td><strong>Nairobi Field Agents</strong><br><span style="font-size:11px;color:var(--pm-muted)">Allowances</span></td><td>210</td><td>KES 630K</td><td><span class="pm-badge pm-badge-success">Executed</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('batchDetailsModal')">View</button></td></tr>
+</tbody></table></div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Saved Templates</h4>
+<p style="font-size:12px;color:var(--pm-ink-soft)">Use pre-configured templates for recurring payment lists.</p>
+<div class="status-row">
+<div class="d-flex align-items-center gap-3"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-file-earmark-spreadsheet"></i></div><div><strong>Monthly Field Allowances</strong><div style="font-size:11px;color:var(--pm-muted)">210 beneficiaries · mapped</div></div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('newDisbursementModal')">Use</button>
+</div>
+<div class="status-row">
+<div class="d-flex align-items-center gap-3"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-file-earmark-spreadsheet"></i></div><div><strong>Office Cleaning Staff</strong><div style="font-size:11px;color:var(--pm-muted)">12 beneficiaries · mapped</div></div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('newDisbursementModal')">Use</button>
+</div>
+<div class="status-row">
+<div class="d-flex align-items-center gap-3"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-file-earmark-spreadsheet"></i></div><div><strong>Freelance Writers</strong><div style="font-size:11px;color:var(--pm-muted)">8 beneficiaries · pending updates</div></div></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('newDisbursementModal')">Use</button>
+</div>
+<button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('beneficiaryDirectoryModal')"><i class="bi bi-list"></i> Manage Templates & Directory</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3.5.2 — Approval & Execution -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-shield-check" style="color:var(--pm-accent)"></i> 3.5.2 — Approval & Execution Queue</h3><p class="pm-section-sub">Maker-checker workflows, real-time execution tracking, and failure retry management.</p></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('approvalWorkflowModal')"><i class="bi bi-diagram-3"></i> Approval Settings</button>
+</div>
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Pending Authorization</h4>
+<div class="table-responsive"><table class="pm-table">
+<thead><tr><th>Batch</th><th>Maker</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>BTH-9922</code><br><span style="font-size:10px;color:var(--pm-muted)">Emergency Relief</span></td><td>Sarah N.</td><td>KES 2.5M</td><td><span class="pm-badge pm-badge-warning">Needs Approval</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approveBatchModal')">Review</button></td></tr>
+<tr><td><code>BTH-9923</code><br><span style="font-size:10px;color:var(--pm-muted)">Mombasa Logistics</span></td><td>John O.</td><td>KES 850K</td><td><span class="pm-badge pm-badge-info">Director Auth</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('approveBatchModal')" disabled>Locked</button></td></tr>
+</tbody></table></div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Active Executions</h4>
+<div class="p-3 border rounded mb-3 table-execution-row executing">
+<div class="d-flex justify-content-between mb-2">
+<div><strong>BTH-9921: June Contractor Payout</strong><div style="font-size:11px;color:var(--pm-muted)">Processing via M-Pesa B2C...</div></div>
+<div class="text-end"><strong>64%</strong><div style="font-size:11px;color:var(--pm-muted)">27 / 42 completed</div></div>
+</div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:64%;background:var(--pm-primary)"></div></div>
+</div>
+<div class="d-flex justify-content-between align-items-center p-2 rounded" style="background:var(--pm-danger-soft)">
+<div><strong style="color:var(--pm-danger);font-size:13px">14 Failed Transfers Detected</strong><br><span style="font-size:11px;color:#7F1D1D">From previously executed batches</span></div>
+<button class="pm-btn pm-btn-sm pm-btn-danger" onclick="openModal('failedTransfersModal')">Retry & Resolve</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3.5.3 — Disbursement Analytics -->
+<!-- ============================================================ -->
+<div class="pm-card">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-bar-chart-line" style="color:var(--pm-info)"></i> 3.5.3 — Disbursement Analytics</h3><p class="pm-section-sub">Track success rates, analyze failure reasons, and view historical trends across payment methods.</p></div>
+<button class="pm-btn pm-btn-sm" onclick="openModal('exportAnalyticsModal')"><i class="bi bi-download"></i> Export Data</button>
+</div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Volume Trend (MTD)</h4>
+<div class="chart-bars" style="height:120px">
+<div class="chart-bar" style="height:30%;background:var(--pm-primary-light)"><span class="bar-label">W1</span></div>
+<div class="chart-bar" style="height:45%;background:var(--pm-primary-light)"><span class="bar-label">W2</span></div>
+<div class="chart-bar" style="height:85%;background:var(--pm-primary)"><span class="bar-label">W3</span></div>
+<div class="chart-bar" style="height:60%;background:var(--pm-primary-light)"><span class="bar-label">W4</span></div>
+</div>
+<div class="mt-3 pt-3 border-top d-flex justify-content-between text-muted" style="font-size:12px">
+<span>Peak: Week 3 (KES 45M)</span>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Success vs Failure Rate</h4>
+<div class="d-flex align-items-center gap-4">
+<div style="position:relative;width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--pm-accent) 0 98%, var(--pm-danger) 98% 100%)">
+<div style="position:absolute;inset:15px;background:var(--pm-surface-2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">98%</div>
+</div>
+<div style="flex:1;font-size:12px">
+<div class="d-flex justify-content-between mb-2"><span><i class="bi bi-circle-fill text-success" style="font-size:8px"></i> Success</span><strong>14,182</strong></div>
+<div class="d-flex justify-content-between mb-2"><span><i class="bi bi-circle-fill text-danger" style="font-size:8px"></i> Failed</span><strong>18</strong></div>
+<div class="d-flex justify-content-between border-top pt-2 mt-2"><span>Recovery</span><strong style="color:var(--pm-info)">95%</strong></div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block">
+<h4 style="font-size:14px;font-weight:700;margin:0 0 12px">Top Failure Reasons</h4>
+<div class="mb-2">
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>Invalid Account / Phone</span><span>65%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:65%;background:var(--pm-warning)"></div></div>
+</div>
+<div class="mb-2">
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>Limit Exceeded (User)</span><span>20%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:20%;background:var(--pm-info)"></div></div>
+</div>
+<div class="mb-2">
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>Network Timeout</span><span>10%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:10%;background:var(--pm-purple)"></div></div>
+</div>
+<div class="mb-2">
+<div class="d-flex justify-content-between mb-1" style="font-size:11px"><span>Insufficient Float</span><span>5%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:5%;background:var(--pm-danger)"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3.5.4 — Government & NGO Bulk Disbursements -->
+<!-- ============================================================ -->
+<div class="pm-card pm-card-dark">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div><h3 class="pm-section-title"><i class="bi bi-globe-africa" style="color:var(--pm-accent)"></i> 3.5.4 — Social Protection & NGO Programs</h3><p class="pm-section-sub" style="color:rgba(255,255,255,.7)">Manage G2P/NGO disbursements, agricultural subsidies, and emergency relief with biometric verification & rapid onboarding.</p></div>
+<button class="pm-btn pm-btn-sm pm-btn-accent" onclick="openModal('ngoProgramModal')"><i class="bi bi-plus"></i> New Program</button>
+</div>
+<div class="row g-3">
+<div class="col-lg-4">
+<div class="utility-block" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+<div class="d-flex justify-content-between align-items-center mb-2"><span class="pm-badge" style="background:rgba(255,255,255,.2);color:#fff">Inua Jamii / Elderly</span><i class="bi bi-fingerprint" style="font-size:18px;color:rgba(255,255,255,.5)"></i></div>
+<h4 style="font-size:15px;font-weight:700;margin:0 0 8px;color:#fff">Q2 Stipend Payout</h4>
+<div class="d-flex justify-content-between text-white-50" style="font-size:12px;margin-bottom:12px"><span>Total: KES 12.5M</span><span>4,200 Recipients</span></div>
+<div class="pm-progress mb-2" style="background:rgba(255,255,255,.1)"><div class="pm-progress-bar" style="width:100%;background:var(--pm-accent)"></div></div>
+<button class="pm-btn pm-btn-sm w-100" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.2)" onclick="openModal('biometricVerificationModal')">View Compliance Report</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+<div class="d-flex justify-content-between align-items-center mb-2"><span class="pm-badge pm-badge-danger">Emergency Relief</span><i class="bi bi-water" style="font-size:18px;color:rgba(255,255,255,.5)"></i></div>
+<h4 style="font-size:15px;font-weight:700;margin:0 0 8px;color:#fff">Flood Relief (Tana River)</h4>
+<div class="d-flex justify-content-between text-white-50" style="font-size:12px;margin-bottom:12px"><span>Target: KES 5.0M</span><span>Actively disbursing...</span></div>
+<div class="pm-progress mb-2" style="background:rgba(255,255,255,.1)"><div class="pm-progress-bar" style="width:45%;background:var(--pm-danger)"></div></div>
+<button class="pm-btn pm-btn-sm w-100" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.2)" onclick="openModal('beneficiaryFeedbackModal')">Collection & Feedback</button>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="utility-block" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+<div class="d-flex justify-content-between align-items-center mb-2"><span class="pm-badge pm-badge-warning">Agri-Subsidy</span><i class="bi bi-tree" style="font-size:18px;color:rgba(255,255,255,.5)"></i></div>
+<h4 style="font-size:15px;font-weight:700;margin:0 0 8px;color:#fff">Fertilizer e-Voucher</h4>
+<div class="d-flex justify-content-between text-white-50" style="font-size:12px;margin-bottom:12px"><span>Vouchers Issued: 1,500</span><span>Redeemed: 840</span></div>
+<div class="pm-progress mb-2" style="background:rgba(255,255,255,.1)"><div class="pm-progress-bar" style="width:56%;background:var(--pm-warning)"></div></div>
+<button class="pm-btn pm-btn-sm w-100" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.2)" onclick="openModal('subsidyVoucherModal')">Manage Redemptions</button>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- content -->
+</div><!-- main -->
+</div><!-- app -->
+
+<!-- ============================================================ -->
+<!-- MODALS (25 fully functional modals) -->
+<!-- ============================================================ -->
+
+<!-- 1. New Disbursement Engine (Multi-Step) -->
+<div class="modal fade resettable" id="newDisbursementModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-send-plus text-primary me-2"></i>New Bulk Disbursement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-stepper" id="ndStepper"></div>
+<div id="ndStep1" class="fade-step active">
+<h6 style="font-weight:700;margin-bottom:16px">Step 1: Upload Beneficiaries or Use Template</h6>
+<div class="row g-3">
+<div class="col-md-7">
+<div class="upload-zone" onclick="document.getElementById('csvFile').click()">
+<i class="bi bi-cloud-arrow-up" style="font-size:32px;color:var(--pm-primary)"></i>
+<div style="font-weight:600;margin-top:8px">Click to upload CSV / Excel</div>
+<div style="font-size:11px;color:var(--pm-muted)">Columns: Name, Phone/Account, Amount, Ref</div>
+<input type="file" id="csvFile" style="display:none" onchange="simulateUpload()">
+</div>
+<div id="uploadProgress" style="display:none;margin-top:16px">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Parsing data...</span><span id="upPct">0%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" id="upBar" style="width:0%;background:var(--pm-primary)"></div></div>
+</div>
+</div>
+<div class="col-md-5">
+<label class="pm-form-label">Or select a saved template</label>
+<div class="p-2 border rounded mb-2" style="cursor:pointer;font-size:12px" onclick="selectTemplate(this)"><strong>Monthly Allowances</strong> (210 records)</div>
+<div class="p-2 border rounded mb-2" style="cursor:pointer;font-size:12px" onclick="selectTemplate(this)"><strong>Cleaners Wages</strong> (12 records)</div>
+<div class="p-2 border rounded mb-2" style="cursor:pointer;font-size:12px" onclick="selectTemplate(this)"><strong>Relief Beneficiaries</strong> (1,500 records)</div>
+</div>
+</div>
+</div>
+<div id="ndStep2" class="fade-step">
+<h6 style="font-weight:700;margin-bottom:16px">Step 2: Map Data & Validate</h6>
+<div class="p-3 rounded mb-3" style="background:var(--pm-info-soft);font-size:13px">
+<i class="bi bi-check-circle text-success me-1"></i> Found <strong>42 records</strong>. Please confirm column mapping.
+</div>
+<div class="row g-3 mb-3">
+<div class="col-md-4"><label class="pm-form-label">Beneficiary Name</label><select class="pm-form-control"><option>Col A (Full Name)</option></select></div>
+<div class="col-md-4"><label class="pm-form-label">Phone / Account</label><select class="pm-form-control"><option>Col B (Phone_Number)</option></select></div>
+<div class="col-md-4"><label class="pm-form-label">Amount (KES)</label><select class="pm-form-control"><option>Col C (Amount)</option></select></div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2"><h6 style="font-weight:700;margin:0">Validation Results</h6><span class="pm-badge pm-badge-warning">2 errors found</span></div>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Row</th><th>Name</th><th>Phone/Acc</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+<tr><td>1</td><td>John Doe</td><td>0712345678</td><td>5,000</td><td><i class="bi bi-check-circle-fill text-success"></i></td></tr>
+<tr><td>2</td><td>Jane Smith</td><td><span style="color:var(--pm-danger)">07991</span></td><td>12,000</td><td><span style="color:var(--pm-danger)">Invalid format</span></td></tr>
+<tr><td>3</td><td>Peter Kamau</td><td>0722112233</td><td><span style="color:var(--pm-danger)">-500</span></td><td><span style="color:var(--pm-danger)">Negative amount</span></td></tr>
+</tbody></table></div>
+<button class="pm-btn pm-btn-sm pm-btn-outline mt-2">Auto-remove invalid records</button>
+</div>
+<div id="ndStep3" class="fade-step">
+<h6 style="font-weight:700;margin-bottom:16px">Step 3: Setup & Schedule</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Batch Name / Reference</label><input class="pm-form-control" value="June Contractor Payout"></div>
+<div class="col-md-6"><label class="pm-form-label">Disbursement Type</label><select class="pm-form-control"><option>Supplier Payments</option><option>Salary/Wages</option><option>Commission</option><option>Emergency Relief</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Payment Method</label><select class="pm-form-control"><option>M-Pesa B2C (Phone numbers)</option><option>Bank Transfer (EFT/PesaLink)</option><option>Mixed (Auto-detect)</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Execution Time</label><select class="pm-form-control"><option>Immediate (upon approval)</option><option>Schedule for future</option><option>Drip feed (staggered)</option></select></div>
+<div class="col-12"><label class="pm-form-label">Beneficiary SMS Notification</label><input class="pm-form-control" value="You have received KES {amount} from Safiri Ops for {batch_ref}."></div>
+</div>
+</div>
+<div id="ndStep4" class="fade-step">
+<h6 style="font-weight:700;margin-bottom:16px">Step 4: Review & Submit</h6>
+<div class="row g-3">
+<div class="col-md-6">
+<div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:13px;height:100%">
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Valid Records</span><strong>40</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Total Payout</span><strong>KES 1,200,000</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Est. Fees</span><strong>KES 1,320</strong></div>
+<hr class="pm-divider"><div class="d-flex justify-content-between"><span style="font-weight:700">Total Deduction</span><strong style="color:var(--pm-primary)">KES 1,201,320</strong></div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:13px;height:100%">
+<div style="font-weight:700;margin-bottom:8px">Float Check</div>
+<div class="d-flex justify-content-between mb-1"><span>Current Balance</span><strong>KES 14.2M</strong></div>
+<div class="d-flex justify-content-between mb-1"><span>Required</span><strong>KES 1.2M</strong></div>
+<div class="mt-2"><span class="pm-badge pm-badge-success">Sufficient Float</span></div>
+</div>
+</div>
+</div>
+<div class="mt-4"><label class="pm-form-label">Maker PIN / OTP</label>
+<div class="pm-pin-input"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+</div>
+</div>
+</div>
+<div class="modal-footer" id="ndFooter">
+<button class="pm-btn" data-bs-dismiss="modal">Cancel</button>
+<button class="pm-btn pm-btn-primary" id="ndNextBtn" onclick="nextNdStep()">Continue <i class="bi bi-arrow-right"></i></button>
+</div>
+</div></div></div>
+
+<!-- 2. Approve Batch Modal -->
+<div class="modal fade resettable" id="approveBatchModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-warning me-2"></i>Authorize Batch</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+<h6 style="font-weight:700;margin:0 0 12px">Emergency Relief — BTH-9922</h6>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span class="text-muted">Maker</span><strong>Sarah N. (Operations)</strong></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span class="text-muted">Count</span><strong>245 Beneficiaries</strong></div>
+<div class="d-flex justify-content-between mb-2" style="font-size:13px"><span class="text-muted">Total Value</span><strong style="color:var(--pm-primary)">KES 2,500,000</strong></div>
+<div class="d-flex justify-content-between" style="font-size:13px"><span class="text-muted">Method</span><strong>M-Pesa B2C</strong></div>
+</div>
+<div class="d-flex gap-2 mb-3"><button class="pm-btn pm-btn-sm"><i class="bi bi-download"></i> View Beneficiary List</button><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-file-earmark-check"></i> Audit Log</button></div>
+<label class="pm-form-label">Checker / Approver PIN</label>
+<div class="pm-pin-input mb-2"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"><input type="password" maxlength="1" oninput="moveFocus(this)"></div>
+<p style="font-size:11px;color:var(--pm-muted);text-align:center">By approving, the funds will be immediately disbursed.</p>
+</div>
+<div class="modal-footer">
+<button class="pm-btn pm-btn-danger" onclick="processAction('approveBatchModal','Batch rejected and returned to maker.','BTH-9922')">Reject</button>
+<button class="pm-btn pm-btn-primary" onclick="processAction('approveBatchModal','Batch approved. Execution has started.','BTH-9922')">Approve & Execute</button>
+</div>
+</div></div></div>
+
+<!-- 3. Beneficiary Directory Modal -->
+<div class="modal fade resettable" id="beneficiaryDirectoryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>Beneficiary Directory</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<div class="pm-header-search" style="max-width:250px"><i class="bi bi-search"></i><input type="text" placeholder="Search name, phone, group..."></div>
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('addBeneficiaryModal')"><i class="bi bi-person-plus"></i> Add Single</button><button class="pm-btn pm-btn-sm"><i class="bi bi-upload"></i> Import List</button></div>
+</div>
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active">All (1,482)</button><button class="pm-tab-pill">Employees (118)</button><button class="pm-tab-pill">Suppliers (42)</button><button class="pm-tab-pill">NGO/Relief (1,322)</button></div>
+<div class="table-responsive" style="max-height:350px;overflow-y:auto">
+<table class="pm-table"><thead><tr><th>Name</th><th>Phone/Account</th><th>Group</th><th>KYC Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Jane Nduta</td><td>0712***890 (M-Pesa)</td><td>Employee</td><td><span class="pm-badge pm-badge-success">Verified</span></td><td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+<tr><td>Mark Ochieng</td><td>0733***112 (Airtel)</td><td>Supplier</td><td><span class="pm-badge pm-badge-success">Verified</span></td><td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+<tr><td>Agro Supplies Ltd</td><td>***4521 (Equity)</td><td>Supplier</td><td><span class="pm-badge pm-badge-success">Verified</span></td><td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+<tr><td>Salome Wanjiku</td><td>0700***441 (M-Pesa)</td><td>NGO/Relief</td><td><span class="pm-badge pm-badge-warning">Pending ID</span></td><td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+<tr><td>David Mutiso</td><td>0722***990 (M-Pesa)</td><td>Employee</td><td><span class="pm-badge pm-badge-danger">Failed Check</span></td><td><button class="pm-btn pm-btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('beneficiaryDirectoryModal','Directory exported successfully.','')"><i class="bi bi-download"></i> Export Directory</button></div>
+</div></div></div>
+
+<!-- 4. Add Single Beneficiary Modal -->
+<div class="modal fade resettable" id="addBeneficiaryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Add Beneficiary</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-12"><label class="pm-form-label">Full Name / Business Name</label><input class="pm-form-control" placeholder="Enter name"></div>
+<div class="col-md-6"><label class="pm-form-label">Payment Method</label><select class="pm-form-control"><option>M-Pesa</option><option>Bank Transfer</option><option>Airtel Money</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Account / Phone Number</label><input class="pm-form-control" placeholder="07xx xxx xxx"></div>
+<div class="col-md-6"><label class="pm-form-label">Group / Category</label><select class="pm-form-control"><option>Employee</option><option>Supplier</option><option>NGO Beneficiary</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">ID / Registration No. (Optional)</label><input class="pm-form-control" placeholder="For KYC validation"></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('addBeneficiaryModal','Beneficiary added and verified.','')">Save Beneficiary</button></div>
+</div></div></div>
+
+<!-- 5. Failed Transfers Modal -->
+<div class="modal fade resettable" id="failedTransfersModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Failed Transfers Resolution</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:13px"><i class="bi bi-info-circle me-1"></i> 18 transfers have failed over the last 30 days. You can edit the details and retry, or cancel them and return funds to float.</div>
+<div class="table-responsive" style="max-height:300px;overflow-y:auto">
+<table class="pm-table"><thead><tr><th>Beneficiary</th><th>Amount</th><th>Error Reason</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Alice Kemboi (0799***)</td><td>KES 4,500</td><td><span class="pm-badge pm-badge-danger">Invalid Number</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('retryTransferModal')">Fix & Retry</button></td></tr>
+<tr><td>Brian Wekesa (0712***)</td><td>KES 12,000</td><td><span class="pm-badge pm-badge-warning">Limit Exceeded</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('retryTransferModal')">Fix & Retry</button></td></tr>
+<tr><td>Tech Supplies Ltd</td><td>KES 45,000</td><td><span class="pm-badge pm-badge-info">Network Timeout</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('retryTransferModal')">Fix & Retry</button></td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="processAction('failedTransfersModal','Selected failed transfers have been bulk-retried.','')">Retry All Eligible</button></div>
+</div></div></div>
+
+<!-- 6. Retry Single Transfer Modal -->
+<div class="modal fade resettable" id="retryTransferModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-clockwise me-2"></i>Retry Transfer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Beneficiary Name</label><input class="pm-form-control" value="Alice Kemboi" disabled></div>
+<div class="mb-3"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="4500" disabled></div>
+<div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:12px"><strong>Error:</strong> The destination phone number is not registered on M-Pesa.</div>
+<div class="mb-3"><label class="pm-form-label">Update Phone / Account Number</label><input class="pm-form-control" value="0799 000 111"></div>
+<div class="mb-3"><label class="pm-form-label">Action</label><select class="pm-form-control"><option>Update and retry immediately</option><option>Cancel transfer and return funds</option></select></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('retryTransferModal','Transfer queued for retry.','')">Execute Action</button></div>
+</div></div></div>
+
+<!-- 7. Fund Wallet / Top-up Float Modal -->
+<div class="modal fade resettable" id="fundWalletModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-wallet2 text-success me-2"></i>Top-up Disbursement Float</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between mb-3"><span style="font-size:13px;color:var(--pm-muted)">Current B2C Float</span><strong style="font-size:18px">KES 14,200,000</strong></div>
+<div class="mb-3"><label class="pm-form-label">Top-up Amount (KES)</label><input class="pm-form-control" placeholder="e.g. 5,000,000"></div>
+<div class="mb-3"><label class="pm-form-label">Funding Source</label>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3" style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)" onclick="selectRadioCard(this)"><input type="radio" checked name="fpay"> <i class="bi bi-bank" style="font-size:20px;color:var(--pm-info)"></i><div><strong>Business Bank Account</strong><div style="font-size:11px;color:var(--pm-muted)">Equity ***4521 · RTGS/EFT (T+1)</div></div></div>
+<div class="p-3 border rounded mb-2 d-flex align-items-center gap-3" onclick="selectRadioCard(this)"><input type="radio" name="fpay"> <i class="bi bi-phone" style="font-size:20px;color:var(--pm-accent)"></i><div><strong>C2B Collections Till</strong><div style="font-size:11px;color:var(--pm-muted)">Transfer from inbound collections (Instant)</div></div></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('fundWalletModal','Float top-up initiated. Funds will reflect based on SLA.','')">Initiate Top-up</button></div>
+</div></div></div>
+
+<!-- 8. Schedule Disbursement Modal -->
+<div class="modal fade resettable" id="scheduleDisbursementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-check text-warning me-2"></i>Schedule Future Batch</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Select Draft/Template Batch</label><select class="pm-form-control"><option>Monthly Field Allowances (210)</option><option>June Contractor Payout (Draft)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Execution Strategy</label><select class="pm-form-control"><option>Single bulk run</option><option>Drip feed (Staggered over time)</option><option>Recurring (e.g., Weekly)</option></select></div>
+<div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">Start Date</label><input type="date" class="pm-form-control" value="2025-07-01"></div><div class="col-6"><label class="pm-form-label">Time</label><input type="time" class="pm-form-control" value="08:00"></div></div>
+<div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-info-circle me-1"></i> Float will be reserved at the time of checker approval. If float is insufficient on execution day, the batch will pause.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('scheduleDisbursementModal','Batch scheduled successfully!','')">Schedule Batch</button></div>
+</div></div></div>
+
+<!-- 9. Export Analytics Modal -->
+<div class="modal fade resettable" id="exportAnalyticsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-download me-2"></i>Export Disbursement Reports</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control"><option>Comprehensive Transaction Ledger</option><option>Failed & Reconciled Payments</option><option>Maker-Checker Audit Log</option><option>Beneficiary Payout Summary</option></select></div>
+<div class="row g-3 mb-3"><div class="col-6"><label class="pm-form-label">From Date</label><input type="date" class="pm-form-control" value="2025-06-01"></div><div class="col-6"><label class="pm-form-label">To Date</label><input type="date" class="pm-form-control" value="2025-06-27"></div></div>
+<div class="mb-3"><label class="pm-form-label">Export Format</label><select class="pm-form-control"><option>CSV Spreadsheet</option><option>Excel (.xlsx)</option><option>PDF Summary</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">Include full beneficiary KYC data</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('exportAnalyticsModal','Report generated and downloading...','')">Generate Report</button></div>
+</div></div></div>
+
+<!-- 10. Batch Details Modal -->
+<div class="modal fade resettable" id="batchDetailsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Batch Execution Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3 mb-3">
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted);font-weight:700">BATCH ID</div><div style="font-size:16px;font-weight:700">BTH-9920</div></div></div>
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;color:var(--pm-muted);font-weight:700">VALUE</div><div style="font-size:16px;font-weight:700;color:var(--pm-primary)">KES 4.5M</div></div></div>
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)"><div style="font-size:11px;color:#047857;font-weight:700">STATUS</div><div style="font-size:16px;font-weight:700;color:var(--pm-accent)">100% Executed</div></div></div>
+</div>
+<div class="d-flex justify-content-between text-muted" style="font-size:12px;margin-bottom:8px"><span>Successful: 118</span><span>Failed: 0</span></div>
+<div class="pm-progress mb-3"><div class="pm-progress-bar" style="width:100%;background:var(--pm-accent)"></div></div>
+<h6 style="font-weight:700">Audit Trail</h6>
+<div class="table-responsive"><table class="pm-table"><tbody>
+<tr><td style="width:120px">15 Jun, 09:00</td><td><span class="pm-badge pm-badge-slate">Created</span></td><td>Maker: Edwin K. uploaded file</td></tr>
+<tr><td>15 Jun, 11:30</td><td><span class="pm-badge pm-badge-info">Approved</span></td><td>Checker: Director Board authorized</td></tr>
+<tr><td>15 Jun, 11:35</td><td><span class="pm-badge pm-badge-warning">Processing</span></td><td>API submitted 118 requests to M-Pesa</td></tr>
+<tr><td>15 Jun, 11:42</td><td><span class="pm-badge pm-badge-success">Completed</span></td><td>All callbacks received successfully</td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('bulkReceiptModal')"><i class="bi bi-receipt"></i> Get Receipt</button></div>
+</div></div></div>
+
+<!-- 11. NGO Program Modal -->
+<div class="modal fade resettable" id="ngoProgramModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-globe-africa text-info me-2"></i>Create Social Protection / Relief Program</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="pm-form-label">Program Name</label><input class="pm-form-control" placeholder="e.g. Drought Relief Phase 1"></div>
+<div class="col-md-6"><label class="pm-form-label">Program Type</label><select class="pm-form-control"><option>Cash Transfer (G2P/NGO)</option><option>e-Voucher (Subsidies)</option><option>Emergency Relief</option></select></div>
+<div class="col-md-6"><label class="pm-form-label">Total Funding Allocated (KES)</label><input class="pm-form-control" placeholder="e.g. 50,000,000"></div>
+<div class="col-md-6"><label class="pm-form-label">Target Beneficiary Count</label><input class="pm-form-control" placeholder="e.g. 10,000"></div>
+<div class="col-12"><label class="pm-form-label">Compliance & Security Requirements</label>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Strict KYC matching (Name must match National ID)</label></div>
+<div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:13px">Biometric pre-verification required</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Post-disbursement feedback collection via SMS/USSD</label></div>
+</div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('ngoProgramModal','Program created. Funding vault initialized.','')">Create Program</button></div>
+</div></div></div>
+
+<!-- 12. Beneficiary Feedback Modal -->
+<div class="modal fade resettable" id="beneficiaryFeedbackModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-chat-text me-2"></i>Post-Disbursement Feedback</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Monitor SMS/USSD survey responses from the "Flood Relief" campaign.</p>
+<div class="row g-3 mb-3">
+<div class="col-6"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;font-weight:700">SURVEY SENT</div><div style="font-size:20px;font-weight:700;color:var(--pm-primary)">1,200</div></div></div>
+<div class="col-6"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;font-weight:700">RESPONSES</div><div style="font-size:20px;font-weight:700;color:var(--pm-accent)">842 <span style="font-size:12px;color:var(--pm-muted);font-weight:400">(70%)</span></div></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>"Did you receive the funds?" (YES)</span><span>98%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:98%;background:var(--pm-success)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>"Did you pay a bribe/fee?" (NO)</span><span>99%</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:99%;background:var(--pm-info)"></div></div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-danger-soft);font-size:12px"><i class="bi bi-exclamation-triangle text-danger me-1"></i> 3 beneficiaries reported issues. <a href="#">View exceptions report</a></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportAnalyticsModal')">Export Data</button></div>
+</div></div></div>
+
+<!-- 13. Approval Workflow Modal -->
+<div class="modal fade resettable" id="approvalWorkflowModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-diagram-3 me-2"></i>Maker-Checker Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Tiers & Limits</label>
+<div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:13px"><div><strong>Tier 1: Up to KES 100K</strong><br><span class="text-muted">1 Maker, 1 Checker (Manager)</span></div><button class="pm-btn pm-btn-sm">Edit</button></div>
+<div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:13px"><div><strong>Tier 2: Up to KES 1M</strong><br><span class="text-muted">1 Maker, 1 Checker (Director)</span></div><button class="pm-btn pm-btn-sm">Edit</button></div>
+<div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:13px"><div><strong>Tier 3: Above KES 1M</strong><br><span class="text-muted">1 Maker, 2 Checkers (CFO + Board)</span></div><button class="pm-btn pm-btn-sm">Edit</button></div>
+</div>
+<div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Require OTP/MFA for all approvals</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Auto-reject unapproved batches after 48 hours</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('approvalWorkflowModal','Workflow rules updated successfully.','')">Save Settings</button></div>
+</div></div></div>
+
+<!-- 14. Disbursement Settings Modal -->
+<div class="modal fade resettable" id="disbursementSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-gear me-2"></i>Disbursement Engine Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="pm-form-label">Auto-Routing (Smart Path)</label><select class="pm-form-control"><option>Optimize for Cost (PesaLink where possible)</option><option>Optimize for Speed (B2C instant)</option><option>Strict mapping (Do not override file)</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Daily B2C Limit Warning</label><input class="pm-form-control" type="number" value="45000000" placeholder="Alert when reaching X limit"></div>
+<div class="mb-3"><label class="pm-form-label">Duplicate Detection Window</label><select class="pm-form-control"><option>Check last 24 hours</option><option>Check last 7 days</option><option>Check current batch only</option></select></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:13px">Automatically retry 'Network Timeout' failures</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="processAction('disbursementSettingsModal','Engine settings updated!','')">Save Settings</button></div>
+</div></div></div>
+
+<!-- 15. API Integration Modal -->
+<div class="modal fade resettable" id="apiIntegrationModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-code-slash text-danger me-2"></i>API Keys & Webhooks</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-tab-pills mb-3"><button class="pm-tab-pill active" onclick="switchTab('apiTab','keys',this)">API Keys</button><button class="pm-tab-pill" onclick="switchTab('apiTab','webhooks',this)">Webhooks</button><button class="pm-tab-pill" onclick="switchTab('apiTab','docs',this)">Docs</button></div>
+<div id="apiTab-keys" class="tab-panel active">
+<div class="p-3 border rounded mb-3">
+<div class="d-flex justify-content-between mb-2"><strong style="font-size:13px">Live Production Key</strong><span class="pm-badge pm-badge-success">Active</span></div>
+<div class="d-flex gap-2"><input class="pm-form-control" value="pk_live_8f7d6a5...2b1c" type="password" disabled><button class="pm-btn pm-btn-sm"><i class="bi bi-clipboard"></i></button></div>
+<div style="font-size:11px;color:var(--pm-muted);margin-top:8px">Last used: 15 minutes ago</div>
+</div>
+<button class="pm-btn pm-btn-sm pm-btn-danger"><i class="bi bi-arrow-clockwise"></i> Roll Key</button>
+</div>
+<div id="apiTab-webhooks" class="tab-panel">
+<div class="mb-3"><label class="pm-form-label">Disbursement Callback URL (B2C Result)</label><input class="pm-form-control" value="https://api.safiri.com/webhooks/paymo/b2c"></div>
+<div class="mb-3"><label class="pm-form-label">Secret Hash</label><input class="pm-form-control" value="whsec_991823719" disabled></div>
+<button class="pm-btn pm-btn-sm pm-btn-primary">Update URL</button>
+</div>
+<div id="apiTab-docs" class="tab-panel">
+<p style="font-size:13px;color:var(--pm-ink-soft)">Integrate bulk disbursements directly from your ERP, HRMS, or custom software using the PayMo API.</p>
+<button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-box-arrow-up-right"></i> Open Developer Portal</button>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 16. Audit Log Modal -->
+<div class="modal fade resettable" id="auditLogModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text me-2"></i>Security & Action Audit Log</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<input class="pm-form-control" style="max-width:300px" placeholder="Search logs...">
+<select class="pm-form-control" style="width:auto"><option>All Actions</option><option>Approvals</option><option>File Uploads</option><option>Settings Change</option></select>
+</div>
+<div class="table-responsive" style="max-height:400px;overflow-y:auto"><table class="pm-table">
+<thead><tr><th>Timestamp</th><th>User</th><th>IP Address</th><th>Action Event</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>27 Jun, 14:32</td><td>Edwin K.</td><td>192.168.1.45</td><td>Approved Batch BTH-9920</td><td><span class="pm-badge pm-badge-success">Success</span></td></tr>
+<tr><td>27 Jun, 12:15</td><td>Sarah N.</td><td>192.168.1.60</td><td>Uploaded CSV for BTH-9922</td><td><span class="pm-badge pm-badge-success">Success</span></td></tr>
+<tr><td>26 Jun, 09:10</td><td>System API</td><td>10.0.0.1</td><td>Webhook callback fired (118/118)</td><td><span class="pm-badge pm-badge-success">Success</span></td></tr>
+<tr><td>25 Jun, 16:45</td><td>Edwin K.</td><td>192.168.1.45</td><td>Changed B2C Auto-route settings</td><td><span class="pm-badge pm-badge-warning">Logged</span></td></tr>
+<tr><td>25 Jun, 11:05</td><td>Unknown</td><td>41.220.12.8</td><td>Failed login attempt</td><td><span class="pm-badge pm-badge-danger">Failed</span></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportAnalyticsModal')">Export Logs</button></div>
+</div></div></div>
+
+<!-- 17. Subsidy Voucher Modal -->
+<div class="modal fade resettable" id="subsidyVoucherModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-tree text-warning me-2"></i>Agricultural e-Voucher Management</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3 mb-3">
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2)"><div style="font-size:11px;font-weight:700">TOTAL ISSUED</div><div style="font-size:20px;font-weight:700;color:var(--pm-primary)">1,500</div></div></div>
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-accent-soft)"><div style="font-size:11px;color:#047857;font-weight:700">REDEEMED</div><div style="font-size:20px;font-weight:700;color:var(--pm-accent)">840</div></div></div>
+<div class="col-md-4"><div class="p-3 rounded text-center" style="background:var(--pm-warning-soft)"><div style="font-size:11px;color:#B45309;font-weight:700">EXPIRED</div><div style="font-size:20px;font-weight:700;color:var(--pm-warning)">12</div></div></div>
+</div>
+<h6 style="font-weight:700">Agro-Vet Merchant Redemptions</h6>
+<div class="table-responsive"><table class="pm-table"><thead><tr><th>Merchant / Till</th><th>Location</th><th>Redeemed Today</th><th>Status</th></tr></thead><tbody>
+<tr><td>Rift Valley Agrovets (Till 44102)</td><td>Nakuru</td><td>45 Vouchers</td><td><span class="pm-badge pm-badge-success">Settled</span></td></tr>
+<tr><td>Eldoret Farmers Hub (Till 99182)</td><td>Eldoret</td><td>22 Vouchers</td><td><span class="pm-badge pm-badge-warning">Pending settlement</span></td></tr>
+<tr><td>Nyeri Supply Co (Till 11029)</td><td>Nyeri</td><td>8 Vouchers</td><td><span class="pm-badge pm-badge-success">Settled</span></td></tr>
+</tbody></table></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary">Generate Batch Vouchers</button></div>
+</div></div></div>
+
+<!-- 18. Biometric Verification Modal -->
+<div class="modal fade resettable" id="biometricVerificationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-fingerprint text-purple me-2" style="color:var(--pm-purple)"></i>Compliance & Verification Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<p style="font-size:13px;color:var(--pm-ink-soft)">For the <strong>Inua Jamii Q2 Stipend</strong>, biometric verification via IPRS and mobile agents is required.</p>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Verified & Disbursed</span><span>4,000</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:95%;background:var(--pm-success)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Pending Field Verification</span><span>150</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:4%;background:var(--pm-warning)"></div></div>
+</div>
+<div class="mb-3">
+<div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Flagged (Deceased / Invalid ID)</span><span>50</span></div>
+<div class="pm-progress"><div class="pm-progress-bar" style="width:1%;background:var(--pm-danger)"></div></div>
+</div>
+<div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px"><i class="bi bi-file-earmark-pdf me-1"></i> Funds for flagged beneficiaries have been ring-fenced and returned to the master program float.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('exportAnalyticsModal')">Download Full Roster</button></div>
+</div></div></div>
+
+<!-- 19. Individual Transaction Receipt Modal -->
+<div class="modal fade resettable" id="transactionReceiptModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Disbursement Receipt</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-receipt">
+<div class="receipt-icon"><i class="bi bi-check-lg"></i></div>
+<h5 style="font-weight:700;color:var(--pm-accent)">Transfer Successful</h5>
+<div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Beneficiary</span><strong>Jane Nduta</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Account</span><strong>0712***890</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Amount</span><strong>KES 15,000.00</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Batch Ref</span><strong>BTH-9920</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">M-Pesa ID</span><strong style="font-family:monospace;color:var(--pm-primary)">TK982LMN12</strong></div>
+<div class="d-flex justify-content-between"><span class="text-muted">Date</span><strong>27 Jun 2025, 14:32 EAT</strong></div>
+</div>
+<div class="d-flex gap-2 justify-content-center mt-3"><button class="pm-btn pm-btn-sm"><i class="bi bi-download"></i> PDF</button><button class="pm-btn pm-btn-sm"><i class="bi bi-envelope"></i> Email</button></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 20. Bulk Receipt Modal -->
+<div class="modal fade resettable" id="bulkReceiptModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt-cutoff me-2"></i>Batch Consolidated Receipt</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="pm-receipt">
+<div class="receipt-icon"><i class="bi bi-collection-play"></i></div>
+<h5 style="font-weight:700;color:var(--pm-accent)">Batch BTH-9920 Executed</h5>
+<div class="p-3 rounded text-start mt-3" style="background:#fff;font-size:13px">
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Batch Name</span><strong>Q2 Sales Commissions</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Count</span><strong>118 successful (0 failed)</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Total Paid</span><strong>KES 4,500,000</strong></div>
+<div class="d-flex justify-content-between mb-2"><span class="text-muted">Fees</span><strong>KES 2,596</strong></div>
+<div class="d-flex justify-content-between"><span class="text-muted">Time Completed</span><strong>27 Jun 2025, 14:34 EAT</strong></div>
+</div>
+<div class="d-flex gap-2 justify-content-center mt-3"><button class="pm-btn pm-btn-sm pm-btn-primary"><i class="bi bi-file-earmark-excel"></i> Download Settlement File</button></div>
+</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 21. Dispute / Reversal Modal -->
+<div class="modal fade resettable" id="disputeDisbursementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-counterclockwise me-2"></i>Recall / Reversal Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:13px"><i class="bi bi-exclamation-triangle me-1"></i> Note: Reversals are subject to M-Pesa/Bank guidelines and availability of funds in the recipient's account.</div>
+<div class="mb-3"><label class="pm-form-label">Transaction ID (M-Pesa/Bank Ref)</label><input class="pm-form-control" placeholder="e.g. TK982LMN12"></div>
+<div class="mb-3"><label class="pm-form-label">Reason for Recall</label><select class="pm-form-control"><option>Sent to wrong number</option><option>Wrong amount sent</option><option>Duplicate payment</option><option>Fraud suspected</option></select></div>
+<div class="mb-3"><label class="pm-form-label">Additional Details</label><textarea class="pm-form-control" rows="3"></textarea></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" required><label class="form-check-label" style="font-size:13px">I authorize PayMo to initiate a reversal request on my behalf.</label></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-danger" onclick="processAction('disputeDisbursementModal','Reversal request submitted to PSP. Track status in Audit Log.','REV-1192')">Submit Recall Request</button></div>
+</div></div></div>
+
+<!-- 22. Attention Action Modal -->
+<div class="modal fade resettable" id="attentionActionModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-exclamation-circle text-warning me-2"></i>Action Center</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:400px;overflow-y:auto">
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)">AP</div><div style="flex:1"><div style="font-weight:600">Approve: Contractor Payout Batch</div><div style="font-size:12px;color:var(--pm-muted)">KES 1.2M pending your sign-off</div></div><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('approveBatchModal');closeModal('attentionActionModal')">Review</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger)">FL</div><div style="flex:1"><div style="font-weight:600">14 Failed Transfers</div><div style="font-size:12px;color:var(--pm-muted)">Invalid numbers from last run</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('failedTransfersModal');closeModal('attentionActionModal')">Resolve</button></div>
+<div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-purple-soft);color:var(--pm-purple)">FL</div><div style="flex:1"><div style="font-weight:600">Low Float Warning</div><div style="font-size:12px;color:var(--pm-muted)">Scheduled batches exceed current KES 14.2M float</div></div><button class="pm-btn pm-btn-sm" onclick="openModal('fundWalletModal');closeModal('attentionActionModal')">Top-up</button></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 23. Business Profile / Multi-Business Modal -->
+<div class="modal fade resettable" id="businessProfileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-buildings me-2"></i>Business Accounts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="p-3 border rounded mb-2 d-flex align-items-center justify-content-between" style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.04)">
+<div class="d-flex align-items-center gap-3"><div class="pm-avatar" style="background:var(--pm-gradient-slate)">SO</div><div><strong>Safiri Operations Ltd</strong><div style="font-size:11px;color:var(--pm-muted)">PayBill: 400192</div></div></div>
+<i class="bi bi-check-circle-fill text-success"></i>
+</div>
+<div class="p-3 border rounded mb-3 d-flex align-items-center justify-content-between" style="cursor:pointer" onclick="processAction('businessProfileModal','Switched to Safiri Logistics','Switch')">
+<div class="d-flex align-items-center gap-3"><div class="pm-avatar" style="background:var(--pm-gradient-blue)">SL</div><div><strong>Safiri Logistics (Subsidiary)</strong><div style="font-size:11px;color:var(--pm-muted)">PayBill: 400193</div></div></div>
+<i class="bi bi-arrow-right text-muted"></i>
+</div>
+<hr class="pm-divider">
+<div class="d-flex gap-2"><button class="pm-btn pm-btn-sm"><i class="bi bi-plus"></i> Add New Business</button><button class="pm-btn pm-btn-sm pm-btn-outline"><i class="bi bi-person"></i> My Profile</button></div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 24. Notifications Modal -->
+<div class="modal fade resettable" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Alerts & Notifications</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body" style="max-height:400px;overflow-y:auto">
+<div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);font-size:13px"><strong>Batch Executed</strong><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">BTH-9920 successfully completed. 118 records processed.</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Approval Required</strong><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">BTH-9922 (Emergency Relief) is waiting for checker approval.</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>Float Alert</strong><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">Scheduled payments for next 48h exceed available float by KES 800K.</div></div>
+<div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>System Update</strong><div style="font-size:11px;color:var(--pm-muted);margin-top:4px">PesaLink routing has been optimized for lower fees.</div></div>
+</div>
+<div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<!-- 25. Health Check Modal -->
+<div class="modal fade resettable" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>System Health & APIs</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="status-row"><div><strong>M-Pesa B2C Gateway</strong><div style="font-size:11px;color:var(--pm-muted)">Response time: 120ms</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><div><strong>PesaLink Core</strong><div style="font-size:11px;color:var(--pm-muted)">Response time: 450ms</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<div class="status-row"><div><strong>Airtel Money API</strong><div style="font-size:11px;color:var(--pm-muted)">Intermittent timeouts</div></div><span class="pm-badge pm-badge-warning">Degraded</span></div>
+<div class="status-row"><div><strong>PayMo Webhooks</strong><div style="font-size:11px;color:var(--pm-muted)">100% delivery success</div></div><span class="pm-badge pm-badge-success">Operational</span></div>
+<hr class="pm-divider">
+<div class="p-3 rounded" style="background:var(--pm-surface-2);font-size:12px">All bulk disbursements targeting Airtel Money will automatically retry up to 3 times or fallback to Bank if configured.</div>
+</div>
+<div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openModal(id){const el=document.getElementById(id);if(el)new bootstrap.Modal(el).show();}
+function closeModal(id){const el=document.getElementById(id);if(el){const m=bootstrap.Modal.getInstance(el);if(m)m.hide();}}
+function selectRadioCard(card){card.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background='';const r=b.querySelector('input[type=radio]');if(r)r.checked=false});card.style.borderColor='var(--pm-primary)';card.style.background='rgba(79,70,229,.04)';const radio=card.querySelector('input[type=radio]');if(radio)radio.checked=true;}
+function moveFocus(el){if(el.value.length===1&&el.nextElementSibling)el.nextElementSibling.focus();}
+function switchTab(prefix,key,btn){btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[id^="'+prefix+'-"]').forEach(p=>p.classList.remove('active'));const panel=document.getElementById(prefix+'-'+key);if(panel)panel.classList.add('active');}
+function showLoading(target,cb){const el=typeof target==='string'?document.querySelector(target):target;if(!el)return cb();const ov=document.createElement('div');ov.className='pm-loading-overlay';ov.innerHTML='<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>';el.style.position='relative';el.appendChild(ov);setTimeout(()=>{ov.remove();cb();},1200);}
+function processAction(modalId,msg,ref){const m=document.getElementById(modalId);const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');showLoading(b,()=>{b.innerHTML=`<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref?`<p style="font-size:12px;color:var(--pm-muted)">Ref: ${ref}</p>`:''}<div class="d-flex justify-content-center mt-3"><button class="pm-btn pm-btn-sm" onclick="location.reload()">Done</button></div></div>`;f.innerHTML='<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Close</button>';});}
+function cacheResettable(){document.querySelectorAll('.resettable').forEach(m=>{const b=m.querySelector('.modal-body');const f=m.querySelector('.modal-footer');if(b)m.dataset.b=b.innerHTML;if(f)m.dataset.f=f.innerHTML;m.addEventListener('hidden.bs.modal',()=>{if(m.dataset.b)m.querySelector('.modal-body').innerHTML=m.dataset.b;if(m.dataset.f)m.querySelector('.modal-footer').innerHTML=m.dataset.f;ndStep=1;renderStepper('ndStepper',['Upload','Map','Setup','Submit'],1);showFlow('ndStep',1,4);document.getElementById('uploadProgress').style.display='none';});});}
+
+// New Disbursement Multistep
+let ndStep=1;
+function renderStepper(elId,labels,current){const w=document.getElementById(elId);if(!w)return;w.innerHTML=labels.map((l,i)=>`<div class="pm-step ${(i+1)<current?'completed':(i+1)===current?'active':''}"><div class="pm-step-num">${(i+1)<current?'<i class="bi bi-check"></i>':(i+1)}</div><div class="pm-step-label">${l}</div></div>${i<labels.length-1?'<div class="pm-step-line"></div>':''}`).join('');}
+function showFlow(prefix,current,total){for(let i=1;i<=total;i++){const e=document.getElementById(prefix+i);if(e){e.classList.remove('active');e.style.display='none';}}const a=document.getElementById(prefix+current);if(a){a.classList.add('active');a.style.display='block';}}
+function nextNdStep(){if(ndStep===4){showLoading('#newDisbursementModal .modal-body',()=>{processAction('newDisbursementModal','Batch validated and sent to checker for approval.','BTH-9924');});return;}ndStep++;renderStepper('ndStepper',['Upload','Map','Setup','Submit'],ndStep);showFlow('ndStep',ndStep,4);if(ndStep===4)document.getElementById('ndNextBtn').innerHTML='Submit Batch <i class="bi bi-check2"></i>';}
+function simulateUpload(){const up=document.getElementById('uploadProgress');const bar=document.getElementById('upBar');const pct=document.getElementById('upPct');up.style.display='block';let w=0;const int=setInterval(()=>{w+=20;bar.style.width=w+'%';pct.textContent=w+'%';if(w>=100){clearInterval(int);setTimeout(nextNdStep,400);}},200);}
+function selectTemplate(el){el.parentElement.querySelectorAll('.border').forEach(b=>{b.style.borderColor='';b.style.background=''});el.style.borderColor='var(--pm-primary)';el.style.background='rgba(79,70,229,.04)';setTimeout(nextNdStep,400);}
+
+document.addEventListener('DOMContentLoaded',()=>{cacheResettable();renderStepper('ndStepper',['Upload','Map','Setup','Submit'],1);});
+</script>
+</body>
+</html>

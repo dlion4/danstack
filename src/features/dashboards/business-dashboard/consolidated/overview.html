@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Overview</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paymo-consolidated.css">
+</head>
+<body>
+<div class="pm-app">
+  <aside class="pm-sidebar">
+    <a class="pm-sidebar-logo" href="overview.html">B</a>
+    <nav class="pm-sidebar-nav">
+      <a class="pm-nav-item active" href="overview.html" title="Overview"><i class="bi bi-grid-1x2"></i><span class="badge-dot"></span><span class="pm-nav-tip">Overview</span></a>
+      <a class="pm-nav-item" href="get-paid.html" title="Get Paid"><i class="bi bi-cash-coin"></i><span class="pm-nav-tip">Get Paid</span></a>
+      <a class="pm-nav-item" href="pay-suppliers.html" title="Pay Suppliers"><i class="bi bi-send"></i><span class="pm-nav-tip">Pay Suppliers</span></a>
+      <a class="pm-nav-item" href="cash-accounts.html" title="Cash & Accounts"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Cash & Accounts</span></a>
+      <a class="pm-nav-item" href="bookkeeping-taxes.html" title="Bookkeeping & Taxes"><i class="bi bi-journal-check"></i><span class="pm-nav-tip">Bookkeeping & Taxes</span></a>
+      <a class="pm-nav-item" href="portfolio.html" title="Multi-Business / Portfolio"><i class="bi bi-diagram-3"></i><span class="pm-nav-tip">Portfolio</span></a>
+      <a class="pm-nav-item" href="settings-security.html" title="Settings & Security"><i class="bi bi-gear"></i><span class="pm-nav-tip">Settings & Security</span></a>
+    </nav>
+    <button class="pm-sidebar-foot" onclick="openModal('supportModal')" title="Help"><i class="bi bi-question-circle"></i></button>
+  </aside>
+
+  <div class="pm-main">
+    <header class="pm-header">
+      <div class="pm-header-title"><div class="d-flex align-items-center gap-3">
+        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-ink)">TS</div>
+        <div><h1>TechSolutions Ltd <span class="pm-badge pm-badge-info">Online</span></h1><p>KRA PIN: P051234567M · Reg: PVT-2022/10492</p></div>
+      </div></div>
+      <div class="pm-header-search"><i class="bi bi-search"></i><input placeholder="Search invoices, clients, payments..."></div>
+      <div class="pm-header-actions">
+        <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Health"><i class="bi bi-activity text-success"></i></button>
+        <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter">7</span></button>
+        <div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-primary)">AD</div><div><div class="pm-name">Amina D.</div><div class="pm-role">Director (Admin)</div></div></div>
+        <div class="pm-clock"><span class="d" id="pmDate">—</span><span class="t" id="pmTime">—</span></div>
+      </div>
+    </header>
+
+    <div class="pm-page-bar">
+      <div><div class="pm-breadcrumb"><a href="#">Business Portal</a> / <strong>Overview</strong></div>
+        <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">Business Overview</h2>
+        <p class="pm-section-sub">Your consolidated command center — one view of everything.</p></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <div class="pm-seg"><button data-range="7d">7D</button><button class="active" data-range="30d">30D</button><button data-range="90d">90D</button><button data-range="1y">1Y</button></div>
+      </div>
+    </div>
+
+    <div class="pm-content">
+      <!-- WELCOME -->
+      <div class="pm-welcome">
+        <div><h2>Good morning, Amina</h2><p>Here's what's happening with <strong>TechSolutions Ltd</strong> today.</p></div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <div class="pm-welcome-chip" onclick="openModal('healthCheckModal')"><i class="bi bi-activity"></i> Health <strong>92/100</strong></div>
+          <div class="pm-welcome-chip" onclick="openModal('cashModal')"><i class="bi bi-wallet2"></i> Cash <strong>KES 2.45M</strong></div>
+        </div>
+      </div>
+
+      <!-- KPI ROW -->
+      <div class="row g-3">
+        <div class="col-lg-3 col-md-6"><div class="pm-card pm-card-biz hoverable" onclick="openModal('cashModal')">
+          <div class="d-flex justify-content-between align-items-start"><div class="pm-stat-label" style="color:var(--pm-muted)">CASH POSITION</div><span class="pm-badge pm-badge-dark">+850K transit</span></div>
+          <div class="pm-stat-value">KES 2.45M</div>
+          <div class="mt-2" style="font-size:12px;color:rgba(255,255,255,.8)"><i class="bi bi-bank"></i> Wallet + Equity linked</div>
+        </div></div>
+        <div class="col-lg-3 col-md-6"><div class="pm-card hoverable" onclick="openModal('revenueModal')">
+          <div class="d-flex justify-content-between align-items-start"><div class="pm-stat-label">REVENUE</div><span class="kpi-trend" style="color:var(--pm-accent)"><i class="bi bi-graph-up-arrow"></i> +12%</span></div>
+          <div class="pm-stat-value">KES 1.82M</div><div class="mt-2" style="font-size:11px;color:var(--pm-muted)">This month</div>
+        </div></div>
+        <div class="col-lg-3 col-md-6"><div class="pm-card hoverable" onclick="openModal('expenseModal')">
+          <div class="d-flex justify-content-between align-items-start"><div class="pm-stat-label">EXPENSES</div><span class="kpi-trend" style="color:var(--pm-danger)"><i class="bi bi-graph-down-arrow"></i> +4%</span></div>
+          <div class="pm-stat-value" style="color:var(--pm-danger)">KES 940K</div><div class="mt-2" style="font-size:11px;color:var(--pm-muted)">This month</div>
+        </div></div>
+        <div class="col-lg-3 col-md-6"><div class="pm-card" style="border-left:3px solid var(--pm-warning)">
+          <div class="pm-stat-label" style="color:var(--pm-warning)">PENDING APPROVALS</div><div class="pm-stat-value">5 Actionable</div>
+          <button class="pm-btn pm-btn-sm mt-2 w-100" onclick="openModal('approvalsModal')">Review Queue</button>
+        </div></div>
+      </div>
+
+      <!-- SUPERAPP ZONE LINKS -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-primary)"><i class="bi bi-grid-3x3-gap"></i> Your Superapp — Jump to any zone</h3><p class="pm-section-sub">One login, one balance. Everything interconnected.</p></div></div>
+        <div class="row g-3">
+          <div class="col-lg-4 col-md-6"><a class="pm-card h-100 hoverable" href="get-paid.html" style="display:block"><div class="pm-icon-circle round" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-cash-coin"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Get Paid</h4><p class="pm-section-sub">Collections, invoices, payment links, subscriptions, refunds & disputes.</p><span class="pm-badge pm-badge-success mt-2">Money In</span></a></div>
+          <div class="col-lg-4 col-md-6"><a class="pm-card h-100 hoverable" href="pay-suppliers.html" style="display:block"><div class="pm-icon-circle round" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-send"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Pay Suppliers & Staff</h4><p class="pm-section-sub">Accounts payable, bulk disbursements, payroll, expense claims.</p><span class="pm-badge pm-badge-danger mt-2">Money Out</span></a></div>
+          <div class="col-lg-4 col-md-6"><a class="pm-card h-100 hoverable" href="cash-accounts.html" style="display:block"><div class="pm-icon-circle round" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-bank2"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Cash & Accounts</h4><p class="pm-section-sub">Treasury, multi-currency, open banking, virtual accounts, FX & investment.</p><span class="pm-badge pm-badge-info mt-2">Your Money</span></a></div>
+          <div class="col-lg-4 col-md-6"><a class="pm-card h-100 hoverable" href="bookkeeping-taxes.html" style="display:block"><div class="pm-icon-circle round" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-journal-check"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Bookkeeping & Taxes</h4><p class="pm-section-sub">Financial reporting, profit & loss, KRA tax extracts, audit trails.</p><span class="pm-badge pm-badge-purple mt-2">Insights</span></a></div>
+          <div class="col-lg-4 col-md-6"><a class="pm-card h-100 hoverable" href="settings-security.html" style="display:block"><div class="pm-icon-circle round" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-gear"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Settings & Security</h4><p class="pm-section-sub">KYB, team & roles, multi-business, integrations, support & disputes.</p><span class="pm-badge pm-badge-warning mt-2">Run</span></a></div>
+          <div class="col-lg-4 col-md-6"><div class="pm-card h-100" style="background:var(--pm-gradient-hero);color:#fff;border:none"><div class="pm-icon-circle round" style="background:rgba(255,255,255,.2);color:#fff"><i class="bi bi-stars"></i></div><h4 class="mt-2" style="font-weight:700;font-size:15px">Smart Suggestion</h4><p class="pm-section-sub" style="color:rgba(255,255,255,.85)">You have KES 1.2M idle cash. Invest to earn ~11% p.a.</p><button class="pm-btn pm-btn-sm mt-2" style="background:#fff;color:var(--pm-primary)" onclick="openModal('investmentModal')">View Options</button></div></div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS + ATTENTION -->
+      <div class="row g-3">
+        <div class="col-lg-8"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-warning"><i class="bi bi-exclamation-triangle"></i> Attention & Operations</h3><p class="pm-section-sub">What needs you now</p></div><button class="pm-btn pm-btn-sm" onclick="openModal('notificationsModal')">View all</button></div>
+          <div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-people"></i></div><div class="flex-1"><div style="font-weight:600">Payroll Run — October requires approval</div><div style="font-size:12px;color:var(--pm-muted)">24 employees · KES 450,500 · HR Dept</div></div><a class="pm-btn pm-btn-sm pm-btn-primary" href="pay-suppliers.html">Review & Approve</a></div>
+          <div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-shield-exclamation"></i></div><div class="flex-1"><div style="font-weight:600">KYB Update Required: Annual Returns</div><div style="font-size:12px;color:var(--pm-muted)">Upload 2024 CR12 · Overdue in 5 days</div></div><a class="pm-btn pm-btn-sm pm-btn-danger" href="settings-security.html">Upload Doc</a></div>
+          <div class="feed-item"><div class="pm-icon-circle" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-receipt"></i></div><div class="flex-1"><div style="font-weight:600">3 Invoices Aging &gt; 60 Days</div><div style="font-size:12px;color:var(--pm-muted)">Outstanding KES 145,000</div></div><a class="pm-btn pm-btn-sm" href="get-paid.html">Send Reminders</a></div>
+        </div></div>
+        <div class="col-lg-4"><div class="pm-card h-100">
+          <h3 class="pm-section-title mb-3">Quick Actions</h3>
+          <div class="quick-action-grid">
+            <a class="quick-action-btn" href="get-paid.html"><i class="bi bi-receipt text-primary"></i> Invoice</a>
+            <a class="quick-action-btn" href="pay-suppliers.html"><i class="bi bi-people text-success"></i> Payroll</a>
+            <a class="quick-action-btn" href="pay-suppliers.html"><i class="bi bi-send text-info"></i> Disburse</a>
+            <a class="quick-action-btn" href="cash-accounts.html"><i class="bi bi-arrow-left-right" style="color:var(--pm-purple)"></i> Transfer</a>
+            <a class="quick-action-btn" href="settings-security.html"><i class="bi bi-person-plus text-warning"></i> Add Team</a>
+            <a class="quick-action-btn" href="settings-security.html"><i class="bi bi-shield-check text-secondary"></i> KYB</a>
+          </div>
+          <div class="p-3 mt-3 rounded" style="background:var(--pm-accent-soft);border:1px solid rgba(16,185,129,.2)"><div style="font-size:12px;font-weight:700;color:#047857"><i class="bi bi-stars"></i> Smart Suggestion</div><div style="font-size:12px;color:#065F46;margin-top:4px">Move 500K to Money Market Fund to earn ~KES 5,500/mo.</div></div>
+        </div></div>
+      </div>
+
+      <!-- RECENT TRANSACTIONS + CASH FLOW -->
+      <div class="row g-3">
+        <div class="col-lg-8"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-success"><i class="bi bi-arrow-left-right"></i> Recent Transactions</h3></div><button class="pm-btn pm-btn-sm" onclick="openModal('statementModal')"><i class="bi bi-download"></i> Statement</button></div>
+          <div class="table-responsive"><table class="pm-table"><thead><tr><th>Description</th><th>Category</th><th>Status</th><th>Date</th><th class="text-end">Amount</th></tr></thead><tbody>
+            <tr style="cursor:pointer" onclick="openModal('txnModal')"><td><div class="d-flex align-items-center gap-2"><span class="pm-icon-circle" style="width:30px;height:30px;font-size:14px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-arrow-down-left"></i></span><strong>Acme Corp — INV-2025-142</strong></div></td><td>Invoice</td><td><span class="pm-badge pm-badge-success">Paid</span></td><td>Today</td><td class="text-end"><strong style="color:var(--pm-accent)">+KES 150K</strong></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('txnModal')"><td><div class="d-flex align-items-center gap-2"><span class="pm-icon-circle" style="width:30px;height:30px;font-size:14px;background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-mobile"></i></span><strong>M-Pesa Till (Buy Goods)</strong></div></td><td>Collections</td><td><span class="pm-badge pm-badge-info">Settling</span></td><td>Today</td><td class="text-end"><strong style="color:var(--pm-accent)">+KES 450K</strong></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('txnModal')"><td><div class="d-flex align-items-center gap-2"><span class="pm-icon-circle" style="width:30px;height:30px;font-size:14px;background:var(--pm-danger-soft);color:var(--pm-danger)"><i class="bi bi-arrow-up-right"></i></span><strong>Supplier: AWS Hosting</strong></div></td><td>Expense</td><td><span class="pm-badge pm-badge-warning">Pending</span></td><td>Yesterday</td><td class="text-end"><strong style="color:var(--pm-danger)">-KES 85K</strong></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('txnModal')"><td><div class="d-flex align-items-center gap-2"><span class="pm-icon-circle" style="width:30px;height:30px;font-size:14px;background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-bank"></i></span><strong>Money Market Fund Deposit</strong></div></td><td>Investment</td><td><span class="pm-badge pm-badge-purple">Sweep</span></td><td>Yesterday</td><td class="text-end"><strong style="color:var(--pm-danger)">-KES 500K</strong></td></tr>
+          </tbody></table></div>
+        </div></div>
+        <div class="col-lg-4"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-purple)"><i class="bi bi-pie-chart"></i> Revenue Mix</h3></div></div>
+          <div class="d-flex align-items-center justify-content-center py-3"><div class="donut" style="background:conic-gradient(var(--pm-primary) 0 66%,var(--pm-accent) 66% 89%,var(--pm-warning) 89% 100%)"><div class="center"><span class="v">KES 1.82M</span><span class="l">This Month</span></div></div></div>
+          <div class="px-2">
+            <div class="status-row"><span class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pm-primary)"></span> Invoices Paid</span><strong>1.20M · 66%</strong></div>
+            <div class="status-row"><span class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pm-accent)"></span> M-Pesa Till</span><strong>420K · 23%</strong></div>
+            <div class="status-row"><span class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pm-warning)"></span> Payment Links</span><strong>200K · 11%</strong></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal fade" id="cashModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank me-2"></i>Cash Position</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="row g-3"><div class="col-md-6"><div class="p-3 border rounded"><div style="font-size:11px;color:var(--pm-muted)">PAYMO WALLET</div><div style="font-size:24px;font-weight:700;color:var(--pm-primary)">KES 2,450,000</div><button class="pm-btn pm-btn-sm mt-2 w-100" href="cash-accounts.html" class="pm-btn pm-btn-sm mt-2 w-100">Open Cash & Accounts</a></div></div><div class="col-md-6"><div class="p-3 border rounded"><div style="font-size:11px;color:var(--pm-muted)">LINKED ACCOUNTS</div><div style="font-size:24px;font-weight:700">KES 8,120,500</div></div></div></div>
+  <h6 style="font-weight:700;margin-top:16px">Pending Settlements</h6><div class="status-row"><span>M-Pesa Till</span><strong>KES 450,000 · Tomorrow</strong></div><div class="status-row"><span>Card Gateway</span><strong>KES 400,000 · Tomorrow</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><a class="pm-btn pm-btn-primary" href="cash-accounts.html">Open Cash & Accounts</a></div></div></div></div>
+
+<div class="modal fade" id="revenueModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up me-2"></i>Revenue Breakdown</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="pm-stat-value text-center mb-4">KES 1.82M</div>
+  <div class="table-responsive"><table class="pm-table"><thead><tr><th>Source</th><th>Amount</th><th>%</th></tr></thead><tbody><tr><td>Invoices Paid</td><td>KES 1.20M</td><td>66%</td></tr><tr><td>M-Pesa Till</td><td>KES 420K</td><td>23%</td></tr><tr><td>Payment Links</td><td>KES 200K</td><td>11%</td></tr></tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="expenseModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-down me-2"></i>Expense Breakdown</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="pm-stat-value text-center mb-4 text-danger">KES 940K</div>
+  <div class="table-responsive"><table class="pm-table"><thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead><tbody><tr><td>Payroll</td><td>KES 450K</td><td>48%</td></tr><tr><td>Suppliers</td><td>KES 320K</td><td>34%</td></tr><tr><td>KRA Taxes</td><td>KES 120K</td><td>13%</td></tr><tr><td>Utilities</td><td>KES 50K</td><td>5%</td></tr></tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="approvalsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-warning me-2"></i>Approval Queue</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="table-responsive"><table class="pm-table"><thead><tr><th>Request</th><th>Maker</th><th>Amount</th><th>Action</th></tr></thead><tbody>
+    <tr><td>Payroll Run Oct</td><td>HR</td><td>KES 450,500</td><td><a class="pm-btn pm-btn-sm pm-btn-primary" href="pay-suppliers.html">Review</a></td></tr>
+    <tr><td>Supplier: OfficeMart</td><td>Finance</td><td>KES 120,000</td><td><a class="pm-btn pm-btn-sm pm-btn-primary" href="pay-suppliers.html">Approve</a></td></tr>
+    <tr><td>Vendor: AWS</td><td>Finance</td><td>KES 85,000</td><td><a class="pm-btn pm-btn-sm pm-btn-primary" href="pay-suppliers.html">Approve</a></td></tr>
+  </tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Alerts <span class="pm-badge pm-badge-danger">7 new</span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:400px;overflow-y:auto">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Payroll approval required</strong></div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>KYB expiring</strong> — 5 days</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Settlement completed</strong> — KES 850K</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Business Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="d-flex justify-content-center mb-4"><div style="width:120px;height:120px;border-radius:50%;border:8px solid var(--pm-accent);display:flex;align-items:center;justify-content:center;flex-direction:column"><span style="font-size:32px;font-weight:700">92</span><span style="font-size:11px;color:var(--pm-muted)">SCORE</span></div></div>
+  <div class="status-row"><div><strong>Liquidity</strong></div><span class="pm-badge pm-badge-success">Excellent</span></div>
+  <div class="status-row"><div><strong>Collections</strong></div><span class="pm-badge pm-badge-warning">Needs Focus</span></div>
+  <div class="status-row"><div><strong>Compliance</strong></div><span class="pm-badge pm-badge-danger">Action Reqd</span></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>My Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center">
+  <div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div>
+  <h4 style="font-weight:700">Amina D.</h4><p style="font-size:13px;color:var(--pm-muted)">Director (Admin) · TechSolutions Ltd</p>
+  <div class="p-3 border rounded text-start mt-3"><div class="status-row"><span>Approval Limit</span><strong>Unlimited</strong></div><div class="status-row"><span>Security</span><span class="pm-badge pm-badge-success">MFA Active</span></div><div class="status-row"><span>Entities</span><strong>4 Businesses</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn pm-btn-danger" data-bs-dismiss="modal">Log Out</button></div></div></div></div>
+
+<div class="modal fade" id="supportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2"></i>Help & Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 border rounded mb-3 d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Chat opened (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-primary);color:#fff"><i class="bi bi-chat-dots"></i></div><div><strong>Live Chat</strong><div style="font-size:12px;color:var(--pm-muted)">avg reply 2 min</div></div></div>
+  <div class="p-3 border rounded d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Help center opened (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-info);color:#fff"><i class="bi bi-journal-text"></i></div><div><strong>Help Center</strong><div style="font-size:12px;color:var(--pm-muted)">Guides, FAQs</div></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="statementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Download Statement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Account</label><select class="pm-form-control"><option>PayMo Wallet</option><option>Equity Bank</option></select></div>
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control"></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('statementModal','Statement generated & sent to your email.','STMT-0091')"><i class="bi bi-download"></i> Email Statement</button></div></div></div></div>
+
+<div class="modal fade" id="investmentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up-arrow text-success me-2"></i>Invest idle cash</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-2 d-flex justify-content-between align-items-center" style="background:var(--pm-accent-soft)"><div><strong>Money Market Fund</strong><div style="font-size:11px;color:#065F46">Liquid</div></div><strong style="color:var(--pm-accent)">~11% p.a.</strong></div>
+  <div class="p-3 rounded d-flex justify-content-between align-items-center" style="background:var(--pm-info-soft)"><div><strong>90-Day Fixed Deposit</strong></div><strong style="color:var(--pm-info)">~13% p.a.</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><a class="pm-btn pm-btn-success" href="cash-accounts.html">Open Investments</a></div></div></div></div>
+
+<div class="modal fade" id="txnModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Transaction Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="text-center mb-3"><div class="pm-icon-circle round mx-auto mb-2" style="width:56px;height:56px;font-size:24px;background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-arrow-down-left"></i></div><div style="font-size:24px;font-weight:700">+ KES 150,000</div><div style="font-size:12px;color:var(--pm-muted)">Acme Corp · INV-2025-142</div></div>
+  <div class="status-row"><span class="text-muted">Transaction ID</span><strong style="font-family:monospace">TX-2294801</strong></div>
+  <div class="status-row"><span class="text-muted">Status</span><span class="pm-badge pm-badge-success">Completed</span></div>
+  <div class="status-row"><span class="text-muted">Category</span><strong>Invoice Payment</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="paymo-common.js"></script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Bookkeeping & Taxes</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paymo-consolidated.css">
+<style>
+/* ===== Bookkeeping & Taxes page-specific ===== */
+.ledger-tree{list-style:none;padding-left:0;margin:0}
+.ledger-tree li{padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px}
+.ledger-tree li:hover{background:var(--pm-surface-2)}
+.ledger-tree .grp{font-weight:700;color:var(--pm-ink);display:flex;justify-content:space-between}
+.ledger-tree .acc{display:flex;justify-content:space-between;padding-left:18px;color:var(--pm-ink-soft)}
+.ledger-tree .acc .bal{font-weight:600;color:var(--pm-ink)}
+.tax-score{width:120px;height:120px;border-radius:50%;border:8px solid var(--pm-accent);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.pnl-box{border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;background:var(--pm-surface-2)}
+.pnl-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--pm-border)}
+.pnl-row:last-child{border:none}
+.etims-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.etims-badge.ok{background:var(--pm-accent-soft);color:#047857}
+.etims-badge.warn{background:var(--pm-warning-soft);color:#B45309}
+.etims-badge.err{background:var(--pm-danger-soft);color:#DC2626}
+.pay-tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pay-tab{padding:7px 14px;border-radius:var(--pm-r-pill);border:1px solid var(--pm-border);background:#fff;font-size:13px;font-weight:600;color:var(--pm-ink-soft);cursor:pointer;transition:all .2s}
+.pay-tab.active{background:var(--pm-primary);color:#fff;border-color:var(--pm-primary)}
+.pay-tab .cnt{margin-left:6px;font-size:11px;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:10px}
+.pay-tab.active .cnt{background:rgba(255,255,255,.25)}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:768px){.summary-strip{grid-template-columns:repeat(2,1fr)}}
+.sum-item{padding:14px;border-radius:var(--pm-r-md);background:var(--pm-surface-2);border:1px solid var(--pm-border)}
+.sum-item .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:600}
+.sum-item .val{font-size:20px;font-weight:700;font-family:var(--pm-font-display)}
+.filing-status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.filing-status.filed{background:var(--pm-accent-soft);color:#047857}
+.filing-status.ready{background:var(--pm-warning-soft);color:#B45309}
+.filing-status.overdue{background:var(--pm-danger-soft);color:#DC2626}
+.filing-status.notdue{background:var(--pm-border);color:var(--pm-muted)}
+.close-check{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--pm-border);font-size:13px}
+.close-check:last-child{border:none}
+.close-check .ic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.close-check.done .ic{background:var(--pm-accent-soft);color:var(--pm-accent)}
+.close-check.amber .ic{background:var(--pm-warning-soft);color:var(--pm-warning)}
+.close-check.grey .ic{background:var(--pm-border);color:var(--pm-muted)}
+.quickbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-lg);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:900px;width:calc(100% - 24px);justify-content:center}
+.quickbar .qb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border-radius:var(--pm-r-sm);border:1px solid transparent;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--pm-ink-soft);transition:all .2s}
+.quickbar .qb:hover{background:var(--pm-surface-2);color:var(--pm-primary);border-color:var(--pm-border)}
+.quickbar .qb i{font-size:18px}
+.quickbar .qb .qbadge{position:absolute;top:2px;right:8px;min-width:16px;height:16px;border-radius:8px;background:var(--pm-danger);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+</style>
+</head>
+<body>
+<div class="pm-app">
+  <aside class="pm-sidebar">
+    <a class="pm-sidebar-logo" href="overview.html">B</a>
+    <nav class="pm-sidebar-nav">
+      <a class="pm-nav-item" href="overview.html" title="Overview"><i class="bi bi-grid-1x2"></i><span class="pm-nav-tip">Overview</span></a>
+      <a class="pm-nav-item" href="get-paid.html" title="Get Paid"><i class="bi bi-cash-coin"></i><span class="pm-nav-tip">Get Paid</span></a>
+      <a class="pm-nav-item" href="pay-suppliers.html" title="Pay Suppliers"><i class="bi bi-send"></i><span class="pm-nav-tip">Pay Suppliers</span></a>
+      <a class="pm-nav-item" href="cash-accounts.html" title="Cash & Accounts"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Cash & Accounts</span></a>
+      <a class="pm-nav-item active" href="bookkeeping-taxes.html" title="Bookkeeping & Taxes"><i class="bi bi-journal-check"></i><span class="badge-dot"></span><span class="pm-nav-tip">Bookkeeping & Taxes</span></a>
+      <a class="pm-nav-item" href="portfolio.html" title="Multi-Business / Portfolio"><i class="bi bi-diagram-3"></i><span class="pm-nav-tip">Portfolio</span></a>
+      <a class="pm-nav-item" href="settings-security.html" title="Settings & Security"><i class="bi bi-gear"></i><span class="pm-nav-tip">Settings & Security</span></a>
+    </nav>
+    <button class="pm-sidebar-foot" onclick="openModal('supportModal')" title="Help"><i class="bi bi-question-circle"></i></button>
+  </aside>
+
+  <div class="pm-main">
+    <header class="pm-header">
+      <div class="pm-header-title"><div class="d-flex align-items-center gap-3">
+        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-ink)">TS</div>
+        <div><h1>TechSolutions Ltd <span class="pm-badge pm-badge-info">Online</span></h1><p>KRA PIN: P051234567M · VAT Registered · eTIMS Connected</p></div>
+      </div></div>
+      <div class="pm-header-search"><i class="bi bi-search"></i><input id="globalSearch" placeholder="Search ledger, reports, taxes, receipts..."></div>
+      <div class="pm-header-actions">
+        <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Health"><i class="bi bi-activity text-success"></i></button>
+        <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter" id="notifCount">6</span></button>
+        <div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-primary)">AD</div><div><div class="pm-name">Amina D.</div><div class="pm-role">Director (Admin)</div></div></div>
+        <div class="pm-clock"><span class="d" id="pmDate">—</span><span class="t" id="pmTime">—</span></div>
+      </div>
+    </header>
+
+    <div class="pm-page-bar">
+      <div><div class="pm-breadcrumb"><a href="overview.html">Business Portal</a> / <strong>Bookkeeping & Taxes</strong></div>
+        <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">Bookkeeping, Reports & Taxes</h2>
+        <p class="pm-section-sub">Your books write themselves, and your taxes file automatically. Never worry about KRA again.</p></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="pm-btn" onclick="openModal('receiptCaptureModal')"><i class="bi bi-camera"></i> Capture Receipt</button>
+        <button class="pm-btn pm-btn-dark" onclick="openModal('fileVATModal')"><i class="bi bi-bank2"></i> File VAT</button>
+      </div>
+    </div>
+
+    <div class="pm-content">
+      <!-- ==================== SECTION 4.1 GENERAL LEDGER & CHART OF ACCOUNTS ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-primary"><i class="bi bi-journal-text"></i> General Ledger & Chart of Accounts</h3><p class="pm-section-sub">The engine room — every transaction writes here automatically</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('addAccountModal')"><i class="bi bi-plus-lg"></i> New Account</button><button class="pm-btn pm-btn-sm" onclick="openModal('journalEntryModal')"><i class="bi bi-pencil-square"></i> Manual Entry</button></div></div>
+        <div class="row g-3">
+          <div class="col-lg-5"><div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <h6 style="font-weight:700">Chart of Accounts</h6>
+            <ul class="ledger-tree">
+              <li class="grp" onclick="toggleAcc(this)"><span><i class="bi bi-chevron-right"></i> Assets</span><span class="bal">KES 32.4M</span></li>
+              <li class="acc" style="display:none"><span>· Bank — KCB</span><span class="bal">3.6M</span></li>
+              <li class="acc" style="display:none"><span>· Bank — Equity</span><span class="bal">8.1M</span></li>
+              <li class="acc" style="display:none"><span>· M-Pesa</span><span class="bal">1.85M</span></li>
+              <li class="acc" style="display:none"><span>· Accounts Receivable</span><span class="bal">1.14M</span></li>
+              <li class="grp" onclick="toggleAcc(this)"><span><i class="bi bi-chevron-right"></i> Liabilities</span><span class="bal">KES 1.4M</span></li>
+              <li class="acc" style="display:none"><span>· Accounts Payable</span><span class="bal">687K</span></li>
+              <li class="acc" style="display:none"><span>· VAT Payable</span><span class="bal">240K</span></li>
+              <li class="acc" style="display:none"><span>· PAYE Payable</span><span class="bal">169K</span></li>
+              <li class="grp" onclick="toggleAcc(this)"><span><i class="bi bi-chevron-right"></i> Equity</span><span class="bal">KES 15.2M</span></li>
+              <li class="grp" onclick="toggleAcc(this)"><span><i class="bi bi-chevron-right"></i> Income</span><span class="bal">KES 12.45M</span></li>
+              <li class="acc" style="display:none"><span>· Sales Revenue</span><span class="bal">11.2M</span></li>
+              <li class="acc" style="display:none"><span>· Interest Income</span><span class="bal">245K</span></li>
+              <li class="grp" onclick="toggleAcc(this)"><span><i class="bi bi-chevron-right"></i> Expenses</span><span class="bal">KES 8.55M</span></li>
+              <li class="acc" style="display:none"><span>· COGS</span><span class="bal">4.2M</span></li>
+              <li class="acc" style="display:none"><span>· Salaries</span><span class="bal">2.9M</span></li>
+              <li class="acc" style="display:none"><span>· Rent</span><span class="bal">500K</span></li>
+            </ul>
+            <button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('coaTemplatesModal')"><i class="bi bi-template"></i> CoA Templates</button>
+          </div></div>
+          <div class="col-lg-7"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Journal</th><th>Description</th><th>Debit</th><th>Credit</th><th>By</th></tr></thead><tbody>
+            <tr style="cursor:pointer" onclick="openModal('journalDetailModal')"><td>Today</td><td><strong>J-2025-0456</strong></td><td>Invoice #142 — Acme</td><td class="text-success">+KES 150K</td><td>—</td><td>System</td></tr>
+            <tr style="cursor:pointer" onclick="openModal('journalDetailModal')"><td>Today</td><td><strong>J-2025-0455</strong></td><td>Payroll — Oct</td><td class="text-success">Salaries 275K</td><td class="text-danger">Cash 224K</td><td>System</td></tr>
+            <tr style="cursor:pointer" onclick="openModal('journalDetailModal')"><td>Yesterday</td><td><strong>J-2025-0454</strong></td><td>Bulk disbursement BATCH-8841</td><td class="text-success">AP 4.82M</td><td class="text-danger">Cash 4.82M</td><td>Peter K.</td></tr>
+            <tr style="cursor:pointer" onclick="openModal('journalDetailModal')"><td>Yesterday</td><td><strong>J-2025-0453</strong></td><td>Depreciation — equipment</td><td class="text-success">Dep 120K</td><td class="text-danger">Acc. Dep 120K</td><td>Manual</td></tr>
+          </tbody></table></div></div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.2 AUTOMATED BOOKKEEPING & AI RECEIPT ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-info"><i class="bi bi-magic"></i> Automated Bookkeeping & AI Receipt Capture</h3><p class="pm-section-sub">Raw data → structured ledger, automatically</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('receiptCaptureModal')"><i class="bi bi-camera"></i> Capture</button><button class="pm-btn pm-btn-sm" onclick="openModal('categorizeModal')"><i class="bi bi-tag"></i> Categorize</button></div></div>
+        <div class="row g-3">
+          <div class="col-lg-4"><div class="p-3 rounded text-center" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <div class="d-flex justify-content-around mb-3">
+              <div class="text-center"><div style="font-weight:700;font-size:20px;color:var(--pm-accent)">95</div><div style="font-size:10px;color:var(--pm-muted)">Auto</div></div>
+              <div class="text-center"><div style="font-weight:700;font-size:20px;color:var(--pm-warning)">3</div><div style="font-size:10px;color:var(--pm-muted)">Review</div></div>
+              <div class="text-center"><div style="font-weight:700;font-size:20px;color:var(--pm-danger)">2</div><div style="font-size:10px;color:var(--pm-muted)">Uncat</div></div>
+            </div>
+            <div style="font-size:12px;color:var(--pm-muted)">Last 100 transactions · 94% AI accuracy (improving)</div>
+            <button class="pm-btn pm-btn-sm pm-btn-primary w-100 mt-2" onclick="openModal('categorizeModal')"><i class="bi bi-check2-all"></i> Confirm high-confidence (&gt;85%)</button>
+            <div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:11px">Forward receipts to <strong>receipts@techsol.paymo.biz</strong> or WhatsApp to auto-capture.</div>
+          </div></div>
+          <div class="col-lg-8">
+            <label class="pm-form-label">Categorization Rules</label>
+            <div class="table-responsive"><table class="pm-table"><thead><tr><th>Condition</th><th>Action</th><th>Status</th><th></th></tr></thead><tbody>
+              <tr><td>Description contains "KPLC"</td><td>→ Utilities · Electricity</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('ruleModal')">Edit</button></td></tr>
+              <tr><td>Reference starts "Rent-"</td><td>→ Rent Expense + tag tenant</td><td><span class="pm-badge pm-badge-success">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('ruleModal')">Edit</button></td></tr>
+              <tr><td>Amount &gt; 100K + "Fuel"</td><td>→ Split 80/20 Vehicle/Staff</td><td><span class="pm-badge pm-badge-info">Active</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('ruleModal')">Edit</button></td></tr>
+              <tr><td>Unknown reference</td><td>→ Manual review</td><td><span class="pm-badge pm-badge-warning">Rule</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('ruleModal')">Edit</button></td></tr>
+            </tbody></table></div>
+            <div class="p-3 rounded mt-2" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><h6 style="font-weight:700">Recent AI Categorizations</h6>
+              <div class="status-row" style="font-size:12px"><span><span class="pm-badge pm-badge-success">Auto</span> M-Pesa from John → Accounts Receivable</span><strong>KES 5,000</strong></div>
+              <div class="status-row" style="font-size:12px"><span><span class="pm-badge pm-badge-warning">Review</span> EQUITY BK TCP PAYBILL → Rent? (78%)</span><strong>KES 15,000</strong></div>
+              <div class="status-row" style="font-size:12px"><span><span class="pm-badge pm-badge-danger">Uncat</span> UNKNOWN REF</span><button class="pm-btn pm-btn-sm" onclick="openModal('categorizeModal')">Categorize</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.3 P&L & BALANCE SHEET ==================== -->
+      <div class="row g-3">
+        <div class="col-lg-7"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title text-success"><i class="bi bi-bar-chart-line"></i> Profit & Loss</h3><p class="pm-section-sub">October 2025 · Preliminary until month-end close</p></div>
+            <button class="pm-btn pm-btn-sm" onclick="openModal('pnlModal')"><i class="bi bi-fullscreen"></i> Full P&L</button></div>
+          <div class="pnl-box">
+            <div class="pnl-row"><span>Revenue</span><strong>KES 12,450,800</strong></div>
+            <div class="pnl-row"><span>Cost of Goods Sold</span><strong class="text-danger">- KES 4,200,000</strong></div>
+            <div class="pnl-row"><strong style="color:var(--pm-accent)">Gross Profit</strong><strong style="color:var(--pm-accent)">KES 8,250,800 · 66%</strong></div>
+            <div class="pnl-row"><span>Operating Expenses</span><strong class="text-danger">- KES 4,350,000</strong></div>
+            <div class="pnl-row"><span>Tax</span><strong class="text-danger">- KES 1,240,000</strong></div>
+            <div class="pnl-row"><strong>Net Profit</strong><strong style="color:var(--pm-accent);font-size:18px">KES 2,660,800</strong></div>
+          </div>
+          <div class="chart-wrap mt-3"><svg viewBox="0 0 640 160" preserveAspectRatio="none"><defs><linearGradient id="pn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F46E5" stop-opacity=".25"/><stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/></linearGradient></defs><path d="M0,130 C60,125 90,100 160,90 C230,80 280,60 350,52 C420,44 500,38 640,22 L640,160 L0,160 Z" fill="url(#pn)"/><polyline fill="none" stroke="#4F46E5" stroke-width="2.5" points="0,130 160,90 350,52 640,22"/></svg></div>
+        </div></div>
+        <div class="col-lg-5"><div class="pm-card h-100">
+          <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-purple)"><i class="bi bi-book"></i> Balance Sheet</h3><p class="pm-section-sub">Position as of 31 Oct</p></div><button class="pm-btn pm-btn-sm" onclick="openModal('balanceSheetModal')"><i class="bi bi-fullscreen"></i> Full</button></div>
+          <div class="pnl-box">
+            <div class="pnl-row"><strong>Assets</strong><strong>KES 48.2M</strong></div>
+            <div class="pnl-row"><span style="padding-left:12px">Cash & Bank</span><strong>KES 28.9M</strong></div>
+            <div class="pnl-row"><span style="padding-left:12px">Receivables</span><strong>KES 1.14M</strong></div>
+            <div class="pnl-row"><span style="padding-left:12px">Inventory</span><strong>KES 6.2M</strong></div>
+            <div class="pnl-row"><span style="padding-left:12px">Investments</span><strong>KES 26.9M</strong></div>
+            <hr class="pm-divider" style="margin:8px 0">
+            <div class="pnl-row"><strong>Liabilities</strong><strong>KES 4.2M</strong></div>
+            <div class="pnl-row"><strong>Equity</strong><strong>KES 44M</strong></div>
+          </div>
+          <div class="p-3 rounded mt-2" style="background:var(--pm-accent-soft);font-size:12px"><i class="bi bi-check-circle"></i> <strong>Balanced</strong> — Assets = Liabilities + Equity.</div>
+        </div></div>
+      </div>
+
+      <!-- ==================== SECTION 4.4 TAX DASHBOARD & KRA LIABILITY ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-danger"><i class="bi bi-bank2"></i> Tax Dashboard & KRA Liability Tracker</h3><p class="pm-section-sub">Know what you owe, when, and what's reserved</p></div>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('taxCalendarModal')"><i class="bi bi-calendar-week"></i> Tax Calendar</button></div>
+        <div class="row g-3">
+          <div class="col-lg-3"><div class="text-center p-3"><div class="tax-score mx-auto mb-2"><span style="font-size:30px;font-weight:700">98</span><span style="font-size:10px;color:var(--pm-muted)">READY</span></div><div style="font-size:12px;color:var(--pm-muted)">Tax Readiness Score</div></div></div>
+          <div class="col-lg-9">
+            <div class="table-responsive"><table class="pm-table"><thead><tr><th>Tax</th><th>Liability</th><th>Due</th><th>Reserved</th><th>Status</th><th>Action</th></tr></thead><tbody>
+              <tr><td><strong>VAT (16%)</strong></td><td>KES 240,000</td><td>20 Nov</td><td class="text-success">KES 250K</td><td><span class="filing-status ready">Ready to File</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('fileVATModal')">File</button></td></tr>
+              <tr><td><strong>PAYE (Income Tax)</strong></td><td>KES 169,500</td><td>9 Nov</td><td>—</td><td><span class="filing-status ready">Ready to File</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('filePAYEModal')">File</button></td></tr>
+              <tr><td><strong>NSSF</strong></td><td>KES 153,360</td><td>9 Nov</td><td>—</td><td><span class="filing-status filed">Auto-filed</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('statutoryModal')">View</button></td></tr>
+              <tr><td><strong>SHIF</strong></td><td>KES 76,725</td><td>9 Nov</td><td>—</td><td><span class="filing-status filed">Auto-filed</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('statutoryModal')">View</button></td></tr>
+              <tr><td><strong>Corp Tax Installment</strong></td><td>KES 1.24M</td><td>28 Nov</td><td>—</td><td><span class="filing-status notdue">Not Due</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('taxCalendarModal')">View</button></td></tr>
+            </tbody></table></div>
+            <div class="p-3 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px"><i class="bi bi-info-circle"></i> VAT Output <strong>KES 480K</strong> − Input <strong>KES 240K</strong> = <strong>Net payable KES 240K</strong>. WHT certificates: 4 due this month — <button class="pm-btn pm-btn-sm" onclick="openModal('whtModal')">Generate</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.5 eTIMS INTEGRATION ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-info"><i class="bi bi-wifi"></i> eTIMS Integration & Electronic Invoicing</h3><p class="pm-section-sub">Every invoice filed to KRA automatically</p></div>
+          <div class="d-flex gap-2 align-items-center"><span class="etims-badge ok"><span class="live-dot live" style="background:var(--pm-accent)"></span> Connected</span><button class="pm-btn pm-btn-sm" onclick="openModal('etimsSettingsModal')"><i class="bi bi-gear"></i> Settings</button></div></div>
+        <div class="row g-3">
+          <div class="col-lg-6"><div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <h6 style="font-weight:700">eTIMS Connection</h6>
+            <div class="status-row" style="font-size:12px"><span>KRA PIN</span><strong>P051234567M</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Branch ID</span><strong>BR-001</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Last sync</span><strong>2 min ago · 14 invoices</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Device</span><strong>PayMo virtual device</strong></div>
+            <div class="d-flex gap-2 mt-2"><button class="pm-btn pm-btn-sm" onclick="simulateProcess('successModal','eTIMS connection tested — OK!')"><i class="bi bi-plug"></i> Test</button><button class="pm-btn pm-btn-sm" onclick="openModal('etimsSettingsModal')">Re-auth</button></div>
+          </div></div>
+          <div class="col-lg-6"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Invoice</th><th>eTIMS Serial</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+            <tr><td>INV-2025-142</td><td style="font-family:monospace">ISN-884102</td><td>KES 150K</td><td><span class="pm-badge pm-badge-success">Accepted</span></td></tr>
+            <tr><td>INV-2025-143</td><td style="font-family:monospace">ISN-884103</td><td>KES 300K</td><td><span class="pm-badge pm-badge-success">Accepted</span></td></tr>
+            <tr><td>INV-2025-144</td><td style="font-family:monospace">ISN-884104</td><td>KES 185K</td><td><span class="pm-badge pm-badge-danger">Rejected — PIN</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('etimsFixModal')">Fix</button></td></tr>
+          </tbody></table></div>
+            <div class="p-2 rounded mt-2" style="background:var(--pm-warning-soft);font-size:11px"><i class="bi bi-exclamation-triangle"></i> 1 invoice rejected. Nightly health check at 2 AM.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.6 STATUTORY FILING CENTER ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-success"><i class="bi bi-send-check"></i> Statutory Filing & Remittance Center</h3><p class="pm-section-sub">File & pay KRA, NSSF, SHIF in one click</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('filingHistoryModal')"><i class="bi bi-clock-history"></i> History</button><button class="pm-btn pm-btn-sm" onclick="openModal('autoFileModal')"><i class="bi bi-toggle-on"></i> Auto-Filing</button></div></div>
+        <div class="table-responsive"><table class="pm-table"><thead><tr><th>Tax</th><th>Period</th><th>Amount</th><th>Due</th><th>Status</th><th>Action</th></tr></thead><tbody>
+          <tr><td><strong>VAT Return (Form VAT 3)</strong></td><td>Oct 2025</td><td>KES 240,000</td><td>20 Nov</td><td><span class="filing-status ready">Ready</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('fileVATModal')">File & Pay</button></td></tr>
+          <tr><td><strong>PAYE Return (P9A/P10)</strong></td><td>Oct 2025</td><td>KES 169,500</td><td>9 Nov</td><td><span class="filing-status ready">Ready</span></td><td><button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('filePAYEModal')">File & Pay</button></td></tr>
+          <tr><td><strong>NSSF Return</strong></td><td>Oct 2025</td><td>KES 153,360</td><td>9 Nov</td><td><span class="filing-status filed">Filed & Paid</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('filingHistoryModal')">Receipt</button></td></tr>
+          <tr><td><strong>SHIF Return</strong></td><td>Oct 2025</td><td>KES 76,725</td><td>9 Nov</td><td><span class="filing-status filed">Filed & Paid</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('filingHistoryModal')">Receipt</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- ==================== SECTION 4.7 MONTH-END CLOSE WIZARD ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title" style="color:var(--pm-purple)"><i class="bi bi-calendar-check"></i> Month-End Close Wizard — October 2025</h3><p class="pm-section-sub">Lock the books, finalize the statements</p></div>
+          <button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('monthEndModal')"><i class="bi bi-play"></i> Run Month-End</button></div>
+        <div class="row g-3">
+          <div class="col-lg-7">
+            <div class="close-check done"><div class="ic"><i class="bi bi-check"></i></div><span>All transactions recorded</span><span class="ms-auto pm-badge pm-badge-success">Done</span></div>
+            <div class="close-check amber"><div class="ic"><i class="bi bi-exclamation"></i></div><span>Bank reconciliation completed</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('reconcileModal')">Go</button></div>
+            <div class="close-check done"><div class="ic"><i class="bi bi-check"></i></div><span>All receipts captured & categorized</span><span class="ms-auto pm-badge pm-badge-success">Done</span></div>
+            <div class="close-check grey"><div class="ic"><i class="bi bi-dash"></i></div><span>Depreciation calculated</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('depreciationModal')">Confirm</button></div>
+            <div class="close-check amber"><div class="ic"><i class="bi bi-exclamation"></i></div><span>VAT return filed</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('fileVATModal')">File</button></div>
+            <div class="close-check done"><div class="ic"><i class="bi bi-check"></i></div><span>PAYE / NSSF / SHIF filed</span><span class="ms-auto pm-badge pm-badge-success">Done</span></div>
+          </div>
+          <div class="col-lg-5"><div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <h6 style="font-weight:700">Close Summary</h6>
+            <div class="status-row" style="font-size:12px"><span>Revenue</span><strong>KES 12.45M</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Net Profit</span><strong style="color:var(--pm-accent)">KES 2.66M</strong></div>
+            <div class="status-row" style="font-size:12px"><span>vs. last month</span><strong class="text-success">+25% profit</strong></div>
+            <div class="p-2 rounded mt-2" style="background:var(--pm-warning-soft);font-size:11px"><i class="bi bi-exclamation-triangle"></i> Anomaly: Rent KES 100K vs usual 50K — review before close.</div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.8 CUSTOM REPORTS BUILDER ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-primary"><i class="bi bi-file-earmark-bar-graph"></i> Reports & Analytics Builder</h3><p class="pm-section-sub">Pre-built + custom views of your financials</p></div>
+          <button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('reportBuilderModal')"><i class="bi bi-plus-lg"></i> New Report</button></div>
+        <div class="row g-3">
+          <div class="col-lg-7"><div class="table-responsive"><table class="pm-table"><thead><tr><th>Report</th><th>Type</th><th>Period</th><th>Action</th></tr></thead><tbody>
+            <tr><td><strong>Sales by Customer</strong></td><td>Pre-built</td><td>Oct 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('reportPreviewModal')">View</button></td></tr>
+            <tr><td><strong>Income Statement</strong></td><td>Pre-built</td><td>Oct 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('reportPreviewModal')">View</button></td></tr>
+            <tr><td><strong>Balance Sheet</strong></td><td>Pre-built</td><td>Oct 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('reportPreviewModal')">View</button></td></tr>
+            <tr><td><strong>Cash Flow Statement</strong></td><td>Pre-built</td><td>Oct 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('reportPreviewModal')">View</button></td></tr>
+            <tr><td><strong>VAT Reconciliation</strong></td><td>Pre-built</td><td>Oct 2025</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('reportPreviewModal')">View</button></td></tr>
+          </tbody></table></div></div>
+          <div class="col-lg-5"><div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)">
+            <h6 style="font-weight:700">Analytics Snapshot</h6>
+            <div class="status-row" style="font-size:12px"><span>Gross margin</span><strong style="color:var(--pm-accent)">66%</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Net margin</span><strong style="color:var(--pm-accent)">21%</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Expense ratio</span><strong>35%</strong></div>
+            <div class="status-row" style="font-size:12px"><span>Collections</span><strong>86%</strong></div>
+            <button class="pm-btn pm-btn-sm w-100 mt-2" onclick="openModal('reportBuilderModal')"><i class="bi bi-magic"></i> Build Custom Report</button>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 4.9 AUDIT TRAIL & COMPLIANCE LOG ==================== -->
+      <div class="pm-card">
+        <div class="pm-card-head"><div><h3 class="pm-section-title text-danger"><i class="bi bi-shield-lock"></i> Audit Trail & Compliance Log</h3><p class="pm-section-sub">Immutable, CBK/AML-grade record</p></div>
+          <div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('traceEntityModal')"><i class="bi bi-search"></i> Trace Entity</button><button class="pm-btn pm-btn-sm" onclick="simulateProcess('successModal','Audit log exported (signed)!')"><i class="bi bi-download"></i> Export</button></div></div>
+        <div class="table-responsive"><table class="pm-table"><thead><tr><th>User</th><th>Action</th><th>Entity</th><th>Time</th><th></th></tr></thead><tbody>
+          <tr><td>Amina D.</td><td>Approved payment</td><td>PAY-7731</td><td>Today 09:41</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('auditDetailModal')">View</button></td></tr>
+          <tr><td>Peter K.</td><td>Created invoice</td><td>INV-2025-142</td><td>Today 08:15</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('auditDetailModal')">View</button></td></tr>
+          <tr><td>System</td><td>Auto-filed PAYE</td><td>PAYE-Oct</td><td>Today 07:00</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('auditDetailModal')">View</button></td></tr>
+          <tr style="background:var(--pm-warning-soft)"><td>⚠ Peter K.</td><td>Deleted 5 invoices</td><td>Anomaly flagged</td><td>15 Mar</td><td><button class="pm-btn pm-btn-sm" onclick="openModal('auditDetailModal')">View</button></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PERSISTENT QUICK ACTIONS BAR (4.10) ===== -->
+<div class="quickbar">
+  <div class="qb" onclick="openModal('receiptCaptureModal')"><i class="bi bi-camera text-primary"></i> Capture</div>
+  <div class="qb" onclick="openModal('fileVATModal')"><i class="bi bi-bank2 text-success"></i> File VAT</div>
+  <div class="qb" onclick="openModal('journalEntryModal')"><i class="bi bi-pencil-square text-info"></i> Journal</div>
+  <div class="qb" onclick="openModal('monthEndModal')"><i class="bi bi-calendar-check text-purple" style="color:var(--pm-purple)"></i> Month-End</div>
+  <div class="qb" onclick="openModal('reportBuilderModal')"><i class="bi bi-file-earmark-bar-graph text-warning"></i> Report</div>
+  <div class="qb position-relative" onclick="openModal('categorizeModal')"><i class="bi bi-tag text-danger"></i> Review <span class="qbadge">3</span></div>
+  <div class="qb" onclick="openModal('taxCalendarModal')"><i class="bi bi-calendar-week text-secondary"></i> Tax</div>
+</div>
+
+<!-- ==================== MODALS (32) ==================== -->
+
+<!-- M1: New Account -->
+<div class="modal fade" id="addAccountModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-lg me-2"></i>New Account</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Account Code</label><input class="pm-form-control" value="5010"></div>
+  <div class="mb-3"><label class="pm-form-label">Name</label><input class="pm-form-control" value="Consulting Fees"></div>
+  <div class="mb-3"><label class="pm-form-label">Type</label><select class="pm-form-control"><option>Income</option><option>Expense</option><option>Asset</option><option>Liability</option><option>Equity</option></select></div>
+  <div class="mb-3"><label class="pm-form-label">Parent Account</label><select class="pm-form-control"><option>None (top-level)</option><option>Income</option><option>Expenses</option></select></div>
+  <div class="mb-3"><label class="pm-form-label">Tax Relevance</label><select class="pm-form-control"><option>None</option><option>VAT Output</option><option>VAT Input</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('addAccountModal','Account created!')"><i class="bi bi-check-lg"></i> Create</button></div></div></div></div>
+
+<!-- M2: Manual Journal Entry -->
+<div class="modal fade" id="journalEntryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Manual Journal Entry</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Date</label><input type="date" class="pm-form-control"></div>
+  <div class="mb-3"><label class="pm-form-label">Description</label><input class="pm-form-control" value="Depreciation — equipment"></div>
+  <div class="row g-2 mb-2">
+    <div class="col-7"><label class="pm-form-label">Debit Account</label><select class="pm-form-control"><option>Depreciation Expense</option><option>Salaries</option><option>Rent</option></select></div>
+    <div class="col-5"><label class="pm-form-label">Debit</label><input class="pm-form-control" value="120000"></div>
+  </div>
+  <div class="row g-2 mb-2">
+    <div class="col-7"><label class="pm-form-label">Credit Account</label><select class="pm-form-control"><option>Accumulated Depreciation</option><option>Cash</option><option>Accounts Payable</option></select></div>
+    <div class="col-5"><label class="pm-form-label">Credit</label><input class="pm-form-control" value="120000"></div>
+  </div>
+  <div class="p-2 rounded" style="background:var(--pm-accent-soft);font-size:12px">Debits = Credits ✓ Balanced</div>
+  <div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:11px">Requires approval above KES 500K. Reason &amp; supporting doc required.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('journalEntryModal','Journal entry recorded! J-2025-0457')"><i class="bi bi-check-lg"></i> Post</button></div></div></div></div>
+
+<!-- M3: Journal Detail -->
+<div class="modal fade" id="journalDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text me-2"></i>Journal J-2025-0456</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Description</span><strong>Invoice #142 — Acme Corp</strong></div>
+  <div class="status-row"><span>Debit: Accounts Receivable</span><strong class="text-success">+ KES 150,000</strong></div>
+  <div class="status-row"><span>Credit: Sales Revenue</span><strong class="text-danger">- KES 150,000</strong></div>
+  <div class="status-row"><span>VAT Output</span><strong class="text-danger">- KES 20,690</strong></div>
+  <div class="status-row"><span>Reference</span><strong style="font-family:monospace">INV-2025-142</strong></div>
+  <div class="status-row"><span>Created By</span><strong>System (auto)</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M4: CoA Templates -->
+<div class="modal fade" id="coaTemplatesModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-template me-2"></i>Chart of Accounts Templates</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 border rounded mb-2 d-flex justify-content-between" style="border-color:var(--pm-primary)!important"><div><strong>Standard Trading</strong><div style="font-size:11px;color:var(--pm-muted)">Shops, retail, distribution</div></div><span class="pm-badge pm-badge-success">In use</span></div>
+  <div class="p-3 border rounded mb-2 d-flex justify-content-between" style="cursor:pointer" onclick="toast('Service template preview')"><div><strong>Service Business</strong><div style="font-size:11px;color:var(--pm-muted)">Consultants, SaaS</div></div><button class="pm-btn pm-btn-sm">Preview</button></div>
+  <div class="p-3 border rounded mb-2 d-flex justify-content-between" style="cursor:pointer" onclick="toast('Property template preview')"><div><strong>Property / Rental</strong><div style="font-size:11px;color:var(--pm-muted)">Landlords</div></div><button class="pm-btn pm-btn-sm">Preview</button></div>
+  <div class="p-3 border rounded mb-2 d-flex justify-content-between" style="cursor:pointer" onclick="toast('NGO template preview')"><div><strong>NGO / Non-Profit</strong></div><button class="pm-btn pm-btn-sm">Preview</button></div>
+  <div class="p-3 border rounded" style="cursor:pointer" onclick="toast('Blank CoA')"><div><strong>Blank</strong><div style="font-size:11px;color:var(--pm-muted)">Full control</div></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M5: Receipt Capture -->
+<div class="modal fade" id="receiptCaptureModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-camera me-2"></i>Capture Receipt</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="upload-zone mb-3" onclick="simulateProcess('receiptCaptureModal','Receipt scanned! OCR extracting...')"><i class="bi bi-camera" style="font-size:40px;color:var(--pm-primary)"></i><div style="font-weight:600;margin-top:8px">Take photo or upload receipt</div><div style="font-size:11px;color:var(--pm-muted)">OCR optimized for Kenyan receipts · thermal, handwritten, VAT</div></div>
+  <div class="p-3 rounded" style="background:var(--pm-info-soft);font-size:12px">Or forward to <strong>receipts@techsol.paymo.biz</strong> or WhatsApp for auto-capture.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="openModal('receiptReviewModal')"><i class="bi bi-camera"></i> Take Photo</button></div></div></div></div>
+
+<!-- M6: Receipt Review -->
+<div class="modal fade" id="receiptReviewModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Receipt Review</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><div class="status-row"><span>Vendor</span><strong>Java House</strong></div><div class="status-row"><span>Date</span><strong>08 Oct 2025</strong></div><div class="status-row"><span>Amount</span><strong style="color:var(--pm-primary)">KES 2,400</strong></div><div class="status-row"><span>VAT (16%)</span><strong>KES 331</strong></div><div class="status-row"><span>AI suggests</span><strong>Meals & Entertainment</strong></div></div>
+  <div class="mb-3"><label class="pm-form-label">Category</label><select class="pm-form-control"><option>Meals & Entertainment</option><option>Client Entertainment</option><option>Travel</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('receiptReviewModal','Expense created! VAT Input KES 331 recorded.')"><i class="bi bi-check-lg"></i> Confirm & Create</button></div></div></div></div>
+
+<!-- M7: Categorize -->
+<div class="modal fade" id="categorizeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tag me-2"></i>Categorize Transactions</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-2 border rounded mb-2"><div class="d-flex justify-content-between"><span><strong>EQUITY BK TCP PAYBILL</strong> · KES 15,000</span><select class="pm-form-control" style="width:150px"><option>Rent</option><option>Utilities</option></select></div><div style="font-size:11px;color:var(--pm-muted)">AI confidence: 78%</div></div>
+  <div class="p-2 border rounded mb-2"><div class="d-flex justify-content-between"><span><strong>UNKNOWN REF</strong> · KES 3,500</span><select class="pm-form-control" style="width:150px"><option>— select —</option><option>Supplies</option><option>Travel</option></select></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Skip</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('categorizeModal','2 transactions categorized!')"><i class="bi bi-check-lg"></i> Confirm</button></div></div></div></div>
+
+<!-- M8: Categorization Rule -->
+<div class="modal fade" id="ruleModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders me-2"></i>Categorization Rule</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="row g-2 mb-3"><div class="col-4"><label class="pm-form-label">Field</label><select class="pm-form-control"><option>Description</option><option>Reference</option><option>Amount</option></select></div><div class="col-3"><label class="pm-form-label">Op</label><select class="pm-form-control"><option>contains</option><option>starts with</option><option>&gt;</option></select></div><div class="col-5"><label class="pm-form-label">Value</label><input class="pm-form-control" value="KPLC"></div></div>
+  <div class="mb-3"><label class="pm-form-label">Categorize as</label><select class="pm-form-control"><option>Utilities · Electricity</option><option>Rent</option><option>Meals</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('ruleModal','Rule saved!')">Save</button></div></div></div></div>
+
+<!-- M9: P&L Full -->
+<div class="modal fade" id="pnlModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bar-chart-line me-2"></i>Profit & Loss — October 2025</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Revenue</span><strong>KES 12,450,800</strong></div><div class="status-row"><span>COGS</span><strong class="text-danger">- KES 4,200,000</strong></div><div class="status-row"><span>Gross Profit</span><strong style="color:var(--pm-accent)">KES 8,250,800 · 66%</strong></div><div class="status-row"><span>Operating Expenses</span><strong class="text-danger">- KES 4,350,000</strong></div><div class="status-row"><span>EBITDA</span><strong>KES 3,900,800</strong></div><div class="status-row"><span>Tax</span><strong class="text-danger">- KES 1,240,000</strong></div><hr class="pm-divider"><div class="status-row"><strong>Net Profit</strong><strong style="color:var(--pm-accent);font-size:20px">KES 2,660,800</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('pnlModal','P&L exported as PDF!')"><i class="bi bi-download"></i> Export</button></div></div></div></div>
+
+<!-- M10: Balance Sheet -->
+<div class="modal fade" id="balanceSheetModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-book me-2"></i>Balance Sheet — 31 Oct 2025</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="row g-3"><div class="col-6"><div class="pnl-box"><strong>Assets</strong><div class="pnl-row"><span>Cash & Bank</span><strong>28.9M</strong></div><div class="pnl-row"><span>Receivables</span><strong>1.14M</strong></div><div class="pnl-row"><span>Inventory</span><strong>6.2M</strong></div><div class="pnl-row"><span>Investments</span><strong>26.9M</strong></div><div class="pnl-row"><span>Equipment (net)</span><strong>2.1M</strong></div><div class="pnl-row"><strong>Total</strong><strong>48.2M</strong></div></div></div>
+  <div class="col-6"><div class="pnl-box"><strong>Liabilities</strong><div class="pnl-row"><span>Accounts Payable</span><strong>687K</strong></div><div class="pnl-row"><span>VAT Payable</span><strong>240K</strong></div><div class="pnl-row"><span>PAYE</span><strong>169K</strong></div><div class="pnl-row"><span>Loans</span><strong>2.1M</strong></div><div class="pnl-row"><span>Total Liab</span><strong>4.2M</strong></div><div class="pnl-row"><strong>Equity</strong><strong>44M</strong></div></div></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M11: File VAT -->
+<div class="modal fade" id="fileVATModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bank2 me-2"></i>File & Pay VAT (Form VAT 3)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Standard-rated supplies</span><strong>KES 3.0M</strong></div>
+  <div class="status-row"><span>Zero-rated</span><strong>KES 0</strong></div>
+  <div class="status-row"><span>Exempt</span><strong>KES 0</strong></div>
+  <div class="status-row"><span>VAT Output</span><strong>KES 480,000</strong></div>
+  <div class="status-row"><span>VAT Input (purchases)</span><strong class="text-danger">- KES 240,000</strong></div>
+  <hr class="pm-divider">
+  <div class="status-row"><strong>Net VAT Payable</strong><strong style="color:var(--pm-warning);font-size:18px">KES 240,000</strong></div>
+  <div class="p-2 rounded mt-2" style="background:var(--pm-accent-soft);font-size:12px">Matches Tax Dashboard. Funded from Tax Reserve VA (KES 250K).</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('fileVATModal','VAT return submitted to KRA! Acknowledgment #KRA-220991')"><i class="bi bi-send"></i> File & Pay</button></div></div></div></div>
+
+<!-- M12: File PAYE -->
+<div class="modal fade" id="filePAYEModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-people me-2"></i>File & Pay PAYE</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Total Gross</span><strong>KES 2.75M</strong></div>
+  <div class="status-row"><span>Total PAYE deducted</span><strong>KES 169,500</strong></div>
+  <div class="status-row"><span>Personal relief</span><strong class="text-danger">- KES 28,800</strong></div>
+  <div class="status-row"><strong>Net PAYE</strong><strong style="color:var(--pm-warning);font-size:18px">KES 169,500</strong></div>
+  <div class="p-2 rounded mt-2" style="background:var(--pm-info-soft);font-size:12px">Includes per-employee P9 data. Due 9 Nov.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('filePAYEModal','PAYE return submitted to KRA! Acknowledgment #KRA-220992')"><i class="bi bi-send"></i> File & Pay</button></div></div></div></div>
+
+<!-- M13: Statutory -->
+<div class="modal fade" id="statutoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>Statutory Remittances</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>NSSF (Employee)</span><strong>KES 76,680</strong></div>
+  <div class="status-row"><span>NSSF (Employer)</span><strong>KES 76,680</strong></div>
+  <div class="status-row"><span>SHIF</span><strong>KES 76,725</strong></div>
+  <div class="status-row"><span>Housing Levy</span><strong>KES 41,250</strong></div>
+  <div class="p-2 rounded mt-2" style="background:var(--pm-accent-soft);font-size:12px">Auto-filed &amp; auto-paid on 9 Nov.</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M14: Tax Calendar -->
+<div class="modal fade" id="taxCalendarModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-week me-2"></i>Tax Calendar</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="cal-grid"><div class="cal-h">S</div><div class="cal-h">M</div><div class="cal-h">T</div><div class="cal-h">W</div><div class="cal-h">T</div><div class="cal-h">F</div><div class="cal-h">S</div>
+    <div class="cal-d">1</div><div class="cal-d">2</div><div class="cal-d">3</div><div class="cal-d">4</div><div class="cal-d">5</div><div class="cal-d">6</div><div class="cal-d">7</div>
+    <div class="cal-d">8</div><div class="cal-d has-event" onclick="toast('PAYE/NSSF/SHIF due 9 Nov')">9</div><div class="cal-d">10</div><div class="cal-d">11</div><div class="cal-d">12</div><div class="cal-d">13</div><div class="cal-d">14</div>
+    <div class="cal-d">15</div><div class="cal-d">16</div><div class="cal-d">17</div><div class="cal-d">18</div><div class="cal-d">19</div><div class="cal-d has-event" onclick="toast('VAT due 20 Nov')">20</div><div class="cal-d">21</div>
+    <div class="cal-d">22</div><div class="cal-d">23</div><div class="cal-d">24</div><div class="cal-d">25</div><div class="cal-d">26</div><div class="cal-d">27</div><div class="cal-d has-event" onclick="toast('Corp tax installment due 28 Nov')">28</div>
+  </div>
+  <div class="p-3 rounded mt-3" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><h6 style="font-weight:700">Upcoming</h6><div class="status-row" style="font-size:12px"><span>9 Nov — PAYE/NSSF/SHIF</span><strong>KES 399K</strong></div><div class="status-row" style="font-size:12px"><span>20 Nov — VAT</span><strong>KES 240K</strong></div><div class="status-row" style="font-size:12px"><span>28 Nov — Corp tax</span><strong>KES 1.24M</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M15: WHT -->
+<div class="modal fade" id="whtModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>WHT Certificates</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-2 border rounded mb-1 d-flex justify-content-between"><span>OfficeMart · KES 6,000 WHT</span><button class="pm-btn pm-btn-sm" onclick="simulateProcess('whtModal','WHT certificate for OfficeMart generated!')">Generate</button></div>
+  <div class="p-2 border rounded mb-1 d-flex justify-content-between"><span>AWS · KES 0 WHT</span><span class="pm-muted">Not applicable</span></div>
+  <div class="p-2 border rounded d-flex justify-content-between"><span>Total WHT to remit</span><strong>KES 6,000</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M16: eTIMS Settings -->
+<div class="modal fade" id="etimsSettingsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-wifi me-2"></i>eTIMS Settings</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Status</span><span class="etims-badge ok">Connected</span></div>
+  <div class="status-row"><span>KRA PIN</span><strong>P051234567M</strong></div>
+  <div class="status-row"><span>Token expiry</span><strong style="color:var(--pm-warning)">12 days</strong></div>
+  <div class="mb-3 mt-2"><label class="pm-form-label">Offline retry</label><select class="pm-form-control"><option>Every 15 min</option><option>Every 30 min</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('etimsSettingsModal','eTIMS settings saved!')">Save</button></div></div></div></div>
+
+<!-- M17: eTIMS Fix -->
+<div class="modal fade" id="etimsFixModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-tools me-2"></i>Fix eTIMS Rejection</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 rounded mb-3" style="background:var(--pm-danger-soft);font-size:13px"><strong>Reason:</strong> Invalid customer PIN for INV-2025-144</div>
+  <div class="mb-3"><label class="pm-form-label">Customer KRA PIN</label><input class="pm-form-control" value="P045678901X"></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('etimsFixModal','Invoice resubmitted to eTIMS & accepted! ISN-884104')"><i class="bi bi-check-lg"></i> Fix & Resubmit</button></div></div></div></div>
+
+<!-- M18: Filing History -->
+<div class="modal fade" id="filingHistoryModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Filing History & Receipts</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="table-responsive"><table class="pm-table"><thead><tr><th>Date</th><th>Tax</th><th>Period</th><th>Amount</th><th>Status</th><th></th></tr></thead><tbody>
+    <tr><td>5 Oct</td><td>VAT</td><td>Sep</td><td>KES 210K</td><td><span class="filing-status filed">Filed & Paid</span></td><td><button class="pm-btn pm-btn-sm" onclick="simulateProcess('filingHistoryModal','Receipt downloaded!')"><i class="bi bi-download"></i> Receipt</button></td></tr>
+    <tr><td>8 Oct</td><td>NSSF</td><td>Sep</td><td>KES 150K</td><td><span class="filing-status filed">Auto-filed</span></td><td><button class="pm-btn pm-btn-sm" onclick="simulateProcess('filingHistoryModal','Receipt downloaded!')"><i class="bi bi-download"></i> Receipt</button></td></tr>
+    <tr><td>8 Oct</td><td>SHIF</td><td>Sep</td><td>KES 74K</td><td><span class="filing-status filed">Auto-filed</span></td><td><button class="pm-btn pm-btn-sm" onclick="simulateProcess('filingHistoryModal','Receipt downloaded!')"><i class="bi bi-download"></i> Receipt</button></td></tr>
+  </tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M19: Auto-Filing -->
+<div class="modal fade" id="autoFileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-toggle-on me-2"></i>Auto-Filing</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>VAT auto-file &amp; pay</span><span class="pm-badge pm-badge-success">On</span></div>
+  <div class="status-row"><span>PAYE auto-file &amp; pay</span><span class="pm-badge pm-badge-success">On</span></div>
+  <div class="status-row"><span>NSSF / SHIF auto-file</span><span class="pm-badge pm-badge-success">On</span></div>
+  <div class="mb-3 mt-2"><label class="pm-form-label">Auto-file max threshold</label><select class="pm-form-control"><option>Below KES 500K auto, above requires approval</option><option>Auto-file any amount</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('autoFileModal','Auto-filing settings saved!')">Save</button></div></div></div></div>
+
+<!-- M20: Month-End Wizard (multistep) -->
+<div class="modal fade" id="monthEndModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Month-End Close Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body" id="meBody">
+    <div class="pm-stepper" id="meStepper"><div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Checklist</div></div><div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div><div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Review</div></div><div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div><div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Close</div></div></div>
+    <div id="meStep1" class="fade-step active">
+      <div class="close-check done"><div class="ic"><i class="bi bi-check"></i></div><span>All transactions recorded</span><span class="ms-auto pm-badge pm-badge-success">Done</span></div>
+      <div class="close-check amber"><div class="ic"><i class="bi bi-exclamation"></i></div><span>Bank reconciliation</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('reconcileModal')">Go</button></div>
+      <div class="close-check done"><div class="ic"><i class="bi bi-check"></i></div><span>M-Pesa reconciliation</span><span class="ms-auto pm-badge pm-badge-success">Done</span></div>
+      <div class="close-check grey"><div class="ic"><i class="bi bi-dash"></i></div><span>Depreciation</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('depreciationModal')">Confirm</button></div>
+      <div class="close-check amber"><div class="ic"><i class="bi bi-exclamation"></i></div><span>VAT return filed</span><button class="pm-btn pm-btn-sm ms-auto" onclick="openModal('fileVATModal')">File</button></div>
+    </div>
+    <div id="meStep2" class="fade-step">
+      <div class="row g-3 text-center mb-3"><div class="col-4"><div class="sum-item"><div class="lab">Revenue</div><div class="val">KES 12.45M</div></div></div><div class="col-4"><div class="sum-item"><div class="lab">Expenses</div><div class="val">KES 8.55M</div></div></div><div class="col-4"><div class="sum-item"><div class="lab">Net Profit</div><div class="val" style="color:var(--pm-accent)">KES 2.66M</div></div></div></div>
+      <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:12px"><i class="bi bi-exclamation-triangle"></i> Anomaly: Rent KES 100K vs usual 50K — double payment? Review before closing.</div>
+      <div class="p-3 rounded" style="background:var(--pm-surface-2)"><div class="status-row"><span>vs. last month</span><strong class="text-success">Revenue +12% · Profit +25%</strong></div></div>
+    </div>
+    <div id="meStep3" class="fade-step">
+      <div class="text-center"><div class="pm-icon-circle round mx-auto mb-2" style="width:56px;height:56px;font-size:24px;background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-lock"></i></div><h5 style="font-weight:700">Lock October 2025</h5><p style="font-size:13px;color:var(--pm-muted)">This will lock all October transactions. No changes without an 'Open Period' action (requires approval).</p><div class="form-check d-flex justify-content-center"><input class="form-check-input me-2" type="checkbox" checked><label class="form-check-label">I understand this locks the period</label></div></div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" id="meNext" onclick="nextStep('me',3,'meNext',()=>simulateProcess('monthEndModal','October 2025 closed & locked! P&L now FINAL.'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+</div></div></div>
+
+<!-- M21: Depreciation -->
+<div class="modal fade" id="depreciationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Depreciation — October</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>Equipment (20% p.a.)</span><strong>KES 35,000</strong></div>
+  <div class="status-row"><span>Vehicles (25% p.a.)</span><strong>KES 62,500</strong></div>
+  <div class="status-row"><span>Fixtures (12.5% p.a.)</span><strong>KES 22,500</strong></div>
+  <div class="status-row"><strong>Total Depreciation</strong><strong style="color:var(--pm-primary)">KES 120,000</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('depreciationModal','Depreciation posted! J-2025-0458')"><i class="bi bi-check-lg"></i> Confirm & Post</button></div></div></div></div>
+
+<!-- M22: Reconcile -->
+<div class="modal fade" id="reconcileModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Bank Reconciliation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="recon-panel mb-3"><div class="recon-col"><div style="font-size:11px;color:var(--pm-muted);font-weight:700;margin-bottom:6px">PAYMO LEDGER</div><div class="recon-item"><span>Invoice #142</span><span class="amnt text-success">+150K</span></div><div class="recon-item"><span>Supplier AWS</span><span class="amnt text-danger">-85K</span></div><div class="recon-item"><span>Bank fee</span><span class="amnt text-danger">-500</span></div></div>
+  <div class="recon-col"><div style="font-size:11px;color:var(--pm-muted);font-weight:700;margin-bottom:6px">BANK STATEMENT</div><div class="recon-item matched"><span>M-PESA CR 150K</span><span class="amnt text-success">+150K</span></div><div class="recon-item matched"><span>EFT DR AWS</span><span class="amnt text-danger">-85K</span></div><div class="recon-item"><span>Bank charges</span><span class="amnt text-danger">-500</span></div></div></div>
+  <div class="p-3 rounded" style="background:var(--pm-surface-2);border:1px solid var(--pm-border)"><div class="status-row"><span>PayMo ledger</span><strong>KES 1,000,000</strong></div><div class="status-row"><span>Bank statement</span><strong>KES 998,500</strong></div><div class="status-row"><span>Difference</span><strong style="color:var(--pm-danger)">KES 1,500 (2 fees + 1 cheque)</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('reconcileModal','Reconciliation complete! 3 matched, 0 exceptions.','REC-2201')"><i class="bi bi-check-lg"></i> Mark Reconciled</button></div></div></div></div>
+
+<!-- M23: Report Builder -->
+<div class="modal fade" id="reportBuilderModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-bar-graph me-2"></i>Report Builder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Report Type</label><select class="pm-form-control"><option>Income Statement</option><option>Balance Sheet</option><option>Sales by Customer</option><option>Expense by Category</option><option>Cash Flow</option><option>Custom</option></select></div>
+  <div class="row g-2 mb-3"><div class="col-6"><label class="pm-form-label">From</label><input type="date" class="pm-form-control"></div><div class="col-6"><label class="pm-form-label">To</label><input type="date" class="pm-form-control"></div></div>
+  <div class="mb-3"><label class="pm-form-label">Group by</label><select class="pm-form-control"><option>Month</option><option>Category</option><option>Customer</option><option>Branch</option></select></div>
+  <div class="mb-3"><label class="pm-form-label">Schedule</label><select class="pm-form-control"><option>One-time</option><option>Monthly · email to recipients</option><option>Weekly</option></select></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('reportBuilderModal','Report generated! RPT-2025-100')"><i class="bi bi-download"></i> Generate</button></div></div></div></div>
+
+<!-- M24: Report Preview -->
+<div class="modal fade" id="reportPreviewModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-bar-graph me-2"></i>Report Preview</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="table-responsive"><table class="pm-table"><thead><tr><th>Customer</th><th>Total</th><th>Outstanding</th><th>Behavior</th></tr></thead><tbody>
+    <tr><td>Acme Corp</td><td>KES 2.4M</td><td>KES 420K</td><td>Pays late (avg 45d)</td></tr>
+    <tr><td>Global Industries</td><td>KES 1.8M</td><td>KES 185K</td><td>On time</td></tr>
+    <tr><td>Safari Lodges</td><td>KES 1.2M</td><td>KES 420K</td><td>Fast payer</td></tr>
+  </tbody></table></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('reportPreviewModal','Report exported!')"><i class="bi bi-download"></i> Export</button></div></div></div></div>
+
+<!-- M25: Trace Entity -->
+<div class="modal fade" id="traceEntityModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-search me-2"></i>Trace an Entity</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="mb-3"><label class="pm-form-label">Invoice / Payment / Journal #</label><input class="pm-form-control" placeholder="e.g. INV-2025-142"></div>
+  <button class="pm-btn pm-btn-primary w-100" onclick="simulateProcess('traceEntityModal','Trace: Created by Amina 01 Oct → Sent → Viewed → Paid 05 Oct → Reconciled')"><i class="bi bi-search"></i> Trace</button>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M26: Audit Detail -->
+<div class="modal fade" id="auditDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Audit Detail</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="status-row"><span>User</span><strong>Peter K. · Finance Admin</strong></div>
+  <div class="status-row"><span>Action</span><strong>Created invoice</strong></div>
+  <div class="status-row"><span>Entity</span><strong>INV-2025-142</strong></div>
+  <div class="status-row"><span>Before/After</span><strong style="font-size:11px;font-family:monospace">{draft→sent}</strong></div>
+  <div class="status-row"><span>IP / Device</span><strong>192.168.1.10 · Desktop</strong></div>
+  <div class="status-row"><span>Time</span><strong>Today 08:15</strong></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M27: Tax readiness -->
+<div class="modal fade" id="taxReadinessModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>Tax Readiness</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-center mb-3"><div class="tax-score"><span style="font-size:28px;font-weight:700">98</span><span style="font-size:10px;color:var(--pm-muted)">READY</span></div></div><div class="status-row"><span>Books reconciled</span><span class="pm-badge pm-badge-success">Yes</span></div><div class="status-row"><span>eTIMS synced</span><span class="pm-badge pm-badge-success">Yes</span></div><div class="status-row"><span>Filing on track</span><span class="pm-badge pm-badge-success">Yes</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<!-- M28: Health / Notifications / Profile / Support / Success -->
+<div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Business Health</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex justify-content-center mb-3"><div class="tax-score"><span style="font-size:28px;font-weight:700">92</span><span style="font-size:10px;color:var(--pm-muted)">SCORE</span></div></div><div class="status-row"><span>Books</span><span class="pm-badge pm-badge-success">Clean</span></div><div class="status-row"><span>Tax compliance</span><span class="pm-badge pm-badge-success">On track</span></div><div class="status-row"><span>Reconciliation</span><span class="pm-badge pm-badge-warning">2 behind</span></div></div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<div class="modal fade" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell me-2"></i>Alerts <span class="pm-badge pm-badge-danger">6 new</span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" style="max-height:380px;overflow-y:auto">
+  <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>VAT due in 11 days</strong> — KES 240K</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px"><strong>eTIMS invoice rejected</strong> — INV-2025-144</div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>3 transactions to review</strong></div>
+  <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px"><strong>Month-end anomalies</strong> — rent spike</div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary pm-btn-sm" onclick="toast('All marked read')">Mark all read</button></div></div></div></div>
+
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>My Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><div class="pm-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:24px;background:var(--pm-primary)">AD</div><h4 style="font-weight:700">Amina D.</h4><p style="font-size:13px;color:var(--pm-muted)">Director (Admin) · TechSolutions Ltd</p><div class="p-3 border rounded text-start mt-3"><div class="status-row"><span>Approval Limit</span><strong>Unlimited</strong></div><div class="status-row"><span>Security</span><span class="pm-badge pm-badge-success">MFA Active</span></div></div></div><div class="modal-footer"><button class="pm-btn pm-btn-danger" data-bs-dismiss="modal">Log Out</button></div></div></div></div>
+
+<div class="modal fade" id="successModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Success</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="successBody"><div class="text-center"><i class="bi bi-check2-circle" style="font-size:48px;color:var(--pm-accent)"></i><p style="margin-top:8px" class="pm-muted">Operation successful.</p></div></div><div class="modal-footer"><button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button></div></div></div></div>
+
+<div class="modal fade" id="supportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="bi bi-headset me-2"></i>Help & Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+  <div class="p-3 border rounded mb-2 d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Chat opened (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-primary);color:#fff"><i class="bi bi-chat-dots"></i></div><div><strong>Live Chat</strong><div style="font-size:11px;color:var(--pm-muted)">avg reply 2 min</div></div></div>
+  <div class="p-3 border rounded d-flex align-items-center gap-3" style="cursor:pointer" onclick="toast('Help center (demo)')"><div class="pm-icon-circle round" style="background:var(--pm-info);color:#fff"><i class="bi bi-journal-text"></i></div><div><strong>Help Center</strong></div></div>
+</div><div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="paymo-common.js"></script>
+<script>
+/* ===== BOOKKEEPING & TAXES page-specific ===== */
+document.addEventListener('DOMContentLoaded',()=>{ initFlow('me',3); });
+function toggleAcc(el){
+  var next=el.nextElementSibling;
+  var group=el.closest('.ledger-tree');
+  // toggle all sibling .acc after this grp until next grp
+  var sib=el.nextElementSibling;
+  while(sib && !sib.classList.contains('grp')){
+    if(sib.classList.contains('acc')){ sib.style.display = sib.style.display==='none'?'flex':'none'; }
+    sib=sib.nextElementSibling;
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  var gs=document.getElementById('globalSearch');
+  if(gs) gs.addEventListener('keydown',function(e){ if(e.key==='Enter' && this.value.trim()) openModal('traceEntityModal'); });
+});
+</script>
+</body>
+</html>

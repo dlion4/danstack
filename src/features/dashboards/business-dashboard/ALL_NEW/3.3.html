@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayMo Business — Invoicing & Billing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pm-primary: #4F46E5;
+            --pm-primary-dark: #3730A3;
+            --pm-primary-light: #818CF8;
+            --pm-accent: #10B981;
+            --pm-accent-soft: #D1FAE5;
+            --pm-warning: #F59E0B;
+            --pm-warning-soft: #FEF3C7;
+            --pm-danger: #EF4444;
+            --pm-danger-soft: #FEE2E2;
+            --pm-info: #3B82F6;
+            --pm-info-soft: #DBEAFE;
+            --pm-purple: #8B5CF6;
+            --pm-purple-soft: #EDE9FE;
+            --pm-bg: #F5F1EC;
+            --pm-bg-2: #EEE8DF;
+            --pm-surface: #FFFFFF;
+            --pm-surface-2: #FAF7F3;
+            --pm-ink: #1A1F2E;
+            --pm-ink-soft: #4B5563;
+            --pm-muted: #9CA3AF;
+            --pm-border: #E5E2DC;
+            --pm-border-2: #D4D0C8;
+            --pm-gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            --pm-gradient-warm: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+            --pm-gradient-mint: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%);
+            --pm-gradient-blue: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%);
+            --pm-gradient-rose: linear-gradient(135deg, #FECDD3 0%, #FB7185 100%);
+            --pm-gradient-violet: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 100%);
+            --pm-gradient-slate: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            --pm-gradient-sunset: linear-gradient(135deg, #FB923C 0%, #EC4899 100%);
+            --pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
+            --pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
+            --pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
+            --pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
+            --pm-shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            --pm-r-sm: 8px;
+            --pm-r-md: 14px;
+            --pm-r-lg: 20px;
+            --pm-r-xl: 28px;
+            --pm-r-pill: 999px;
+            --pm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --pm-font-display: 'Space Grotesk', 'Inter', sans-serif
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: var(--pm-font-sans);
+            background: var(--pm-bg);
+            color: var(--pm-ink);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .pm-app {
+            display: flex;
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at -10% -20%, rgba(79, 70, 229, 0.05), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(139, 92, 246, 0.05), transparent 60%), radial-gradient(800px 400px at 50% 120%, rgba(16, 185, 129, 0.05), transparent 60%), var(--pm-bg)
+        }
+
+        .pm-sidebar {
+            width: 88px;
+            flex-shrink: 0;
+            background: var(--pm-gradient-slate);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100
+        }
+
+        .pm-sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--pm-gradient-hero);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            font-family: var(--pm-font-display);
+            box-shadow: var(--pm-shadow-lg);
+            margin-bottom: 24px
+        }
+
+        .pm-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            width: 100%;
+            padding: 0 12px
+        }
+
+        .pm-nav-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all .2s;
+            position: relative
+        }
+
+        .pm-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .pm-nav-item.active {
+            color: #fff;
+            background: var(--pm-primary);
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-nav-item .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--pm-danger);
+            border-radius: 50%;
+            border: 2px solid #334155;
+            animation: pm-pulse 2s infinite
+        }
+
+        @keyframes pm-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.2)
+            }
+        }
+
+        .pm-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden
+        }
+
+        .pm-header {
+            background: rgba(245, 241, 236, .7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--pm-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .pm-header-title h1 {
+            font-family: var(--pm-font-display);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em
+        }
+
+        .pm-header-title p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-header-search {
+            flex: 1;
+            max-width: 440px;
+            position: relative
+        }
+
+        .pm-header-search input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-md);
+            background: #fff;
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .pm-header-search input:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-header-search .bi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pm-muted)
+        }
+
+        .pm-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink-soft);
+            position: relative
+        }
+
+        .pm-header-btn:hover {
+            background: var(--pm-surface-2);
+            color: var(--pm-primary);
+            transform: translateY(-1px);
+            border-color: var(--pm-primary-light)
+        }
+
+        .pm-header-btn .counter {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--pm-danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--pm-bg)
+        }
+
+        .pm-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .pm-profile-btn:hover {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--pm-gradient-violet);
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--pm-font-display)
+        }
+
+        .pm-profile-btn .pm-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .pm-profile-btn .pm-role {
+            font-size: 11px;
+            color: var(--pm-muted)
+        }
+
+        .pm-page-bar {
+            padding: 20px 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .pm-breadcrumb {
+            font-size: 12px;
+            color: var(--pm-muted)
+        }
+
+        .pm-breadcrumb a {
+            color: var(--pm-primary);
+            text-decoration: none
+        }
+
+        .pm-breadcrumb a:hover {
+            text-decoration: underline
+        }
+
+        .pm-content {
+            padding: 16px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px
+        }
+
+        .pm-card {
+            background: var(--pm-surface);
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-lg);
+            padding: 20px;
+            box-shadow: var(--pm-shadow-sm);
+            transition: all .2s
+        }
+
+        .pm-card:hover {
+            box-shadow: var(--pm-shadow-md)
+        }
+
+        .pm-card-accent {
+            background: linear-gradient(135deg, #312e81 0%, #4F46E5 100%);
+            color: #fff;
+            border: none
+        }
+
+        .pm-stat-value {
+            font-family: var(--pm-font-display);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em
+        }
+
+        .pm-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            font-weight: 600
+        }
+
+        .pm-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--pm-r-pill);
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .pm-badge-success {
+            background: var(--pm-accent-soft);
+            color: #047857
+        }
+
+        .pm-badge-warning {
+            background: var(--pm-warning-soft);
+            color: #B45309
+        }
+
+        .pm-badge-danger {
+            background: var(--pm-danger-soft);
+            color: #DC2626
+        }
+
+        .pm-badge-info {
+            background: var(--pm-info-soft);
+            color: #1D4ED8
+        }
+
+        .pm-badge-purple {
+            background: var(--pm-purple-soft);
+            color: #6D28D9
+        }
+
+        .pm-badge-gray {
+            background: var(--pm-bg-2);
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--pm-r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--pm-border);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--pm-ink);
+            text-decoration: none
+        }
+
+        .pm-btn:hover {
+            background: var(--pm-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--pm-shadow-sm)
+        }
+
+        .pm-btn-primary {
+            background: var(--pm-primary);
+            color: #fff;
+            border-color: var(--pm-primary)
+        }
+
+        .pm-btn-primary:hover {
+            background: var(--pm-primary-dark);
+            border-color: var(--pm-primary-dark);
+            color: #fff
+        }
+
+        .pm-btn-accent {
+            background: var(--pm-accent);
+            color: #fff;
+            border-color: var(--pm-accent)
+        }
+
+        .pm-btn-accent:hover {
+            background: #059669;
+            border-color: #059669;
+            color: #fff
+        }
+
+        .pm-btn-danger {
+            background: var(--pm-danger);
+            color: #fff;
+            border-color: var(--pm-danger)
+        }
+
+        .pm-btn-sm {
+            padding: 5px 12px;
+            font-size: 12px
+        }
+
+        .pm-progress {
+            height: 6px;
+            background: var(--pm-border);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .pm-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .4s
+        }
+
+        .pm-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .pm-divider {
+            border: none;
+            border-top: 1px solid var(--pm-border);
+            margin: 16px 0
+        }
+
+        .pm-section-title {
+            font-family: var(--pm-font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .pm-section-sub {
+            font-size: 12px;
+            color: var(--pm-ink-soft);
+            margin: 2px 0 0
+        }
+
+        .pm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .pm-table th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pm-muted);
+            border-bottom: 1px solid var(--pm-border);
+            background: var(--pm-surface-2)
+        }
+
+        .pm-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--pm-border);
+            vertical-align: middle
+        }
+
+        .pm-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .pm-table tr:hover td {
+            background: var(--pm-surface-2)
+        }
+
+        .pm-mini-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px
+        }
+
+        .pm-mini-bar {
+            width: 14px;
+            border-radius: 3px 3px 0 0;
+            background: var(--pm-primary);
+            transition: height .3s
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px
+        }
+
+        .quick-action-btn {
+            padding: 10px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .04);
+            transform: translateY(-1px)
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: var(--pm-r-lg);
+            box-shadow: var(--pm-shadow-xl)
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--pm-border);
+            padding: 20px 24px
+        }
+
+        .modal-body {
+            padding: 24px
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--pm-border);
+            padding: 16px 24px
+        }
+
+        .modal-title {
+            font-family: var(--pm-font-display);
+            font-weight: 700
+        }
+
+        .pm-form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--pm-ink-soft);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+
+        .pm-form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-sm);
+            font-size: 14px;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-form-control:focus {
+            outline: none;
+            border-color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-glow)
+        }
+
+        .pm-stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .pm-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 90px
+        }
+
+        .pm-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--pm-border);
+            color: var(--pm-muted);
+            transition: all .3s
+        }
+
+        .pm-step.active .pm-step-num {
+            background: var(--pm-primary);
+            color: #fff
+        }
+
+        .pm-step.completed .pm-step-num {
+            background: var(--pm-accent);
+            color: #fff
+        }
+
+        .pm-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--pm-muted)
+        }
+
+        .pm-step.active .pm-step-label {
+            color: var(--pm-primary)
+        }
+
+        .pm-step.completed .pm-step-label {
+            color: var(--pm-accent)
+        }
+
+        .pm-step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--pm-border);
+            margin: 0 8px
+        }
+
+        .pm-tab-pills {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-sm);
+            overflow-x: auto
+        }
+
+        .pm-tab-pill {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            color: var(--pm-ink-soft)
+        }
+
+        .pm-tab-pill.active {
+            background: #fff;
+            color: var(--pm-primary);
+            box-shadow: var(--pm-shadow-sm);
+            font-weight: 600
+        }
+
+        .pm-receipt {
+            background: var(--pm-surface-2);
+            border: 1px dashed var(--pm-border-2);
+            border-radius: var(--pm-r-md);
+            padding: 20px;
+            text-align: center
+        }
+
+        .pm-receipt .receipt-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--pm-accent-soft);
+            color: var(--pm-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px
+        }
+
+        .pm-amount-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .pm-amount-chip {
+            padding: 8px 16px;
+            border: 1px solid var(--pm-border);
+            border-radius: var(--pm-r-pill);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s;
+            background: #fff
+        }
+
+        .pm-amount-chip:hover,
+        .pm-amount-chip.active {
+            border-color: var(--pm-primary);
+            background: rgba(79, 70, 229, .06);
+            color: var(--pm-primary)
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .feed-item:last-child {
+            border-bottom: none
+        }
+
+        .fade-step {
+            display: none
+        }
+
+        .fade-step.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn .3s
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .pm-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--pm-r-lg)
+        }
+
+        .pm-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--pm-border);
+            border-top-color: var(--pm-primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--pm-border)
+        }
+
+        .status-row:last-child {
+            border-bottom: none
+        }
+
+        .utility-block {
+            background: var(--pm-surface-2);
+            border-radius: var(--pm-r-md);
+            padding: 16px;
+            height: 100%
+        }
+
+        .invoice-status-bar {
+            display: flex;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0
+        }
+
+        .invoice-status-seg {
+            height: 100%;
+            transition: width .3s
+        }
+
+        .invoice-item-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: flex-end
+        }
+
+        .invoice-item-col {
+            flex: 1
+        }
+
+        @media(max-width:768px) {
+            .pm-sidebar {
+                display: none
+            }
+
+            .pm-header {
+                padding: 12px 16px;
+                flex-wrap: wrap
+            }
+
+            .pm-header-search {
+                max-width: 100%;
+                order: 3;
+                flex-basis: 100%
+            }
+
+            .pm-content {
+                padding: 12px 16px 24px
+            }
+
+            .pm-page-bar {
+                padding: 12px 16px 0
+            }
+
+            .quick-action-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .pm-stat-value {
+                font-size: 22px
+            }
+
+            .pm-step {
+                min-width: unset
+            }
+
+            .modal-body {
+                padding: 18px
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pm-app">
+        <!-- SIDEBAR -->
+        <aside class="pm-sidebar">
+            <div class="pm-sidebar-logo">P</div>
+            <nav class="pm-sidebar-nav">
+                <button class="pm-nav-item" title="Business Home"><i class="bi bi-house"></i></button>
+                <button class="pm-nav-item" title="Collections"><i class="bi bi-cash-stack"></i></button>
+                <button class="pm-nav-item active" title="Invoicing & Billing"><i class="bi bi-receipt"></i><span
+                        class="badge-dot"></span></button>
+                <button class="pm-nav-item" title="Payroll"><i class="bi bi-people"></i></button>
+                <button class="pm-nav-item" title="Disbursements"><i class="bi bi-send"></i></button>
+                <button class="pm-nav-item" title="Business Settings"><i class="bi bi-gear"></i></button>
+            </nav>
+            <button class="pm-nav-item" style="margin-top:auto" title="Help"><i
+                    class="bi bi-question-circle"></i></button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="pm-main">
+            <!-- HEADER -->
+            <header class="pm-header">
+                <div class="pm-header-title" style="flex-shrink:0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="pm-avatar"
+                            style="width:36px;height:36px;font-size:13px;background:var(--pm-gradient-blue)">AP</div>
+                        <div>
+                            <h1>Apex Retail Ltd.</h1>
+                            <p>Business Portal — KRA PIN: P051***49G</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pm-header-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search invoices, clients, payment links, subscriptions...">
+                </div>
+                <div class="pm-header-actions">
+                    <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Billing Health"><i
+                            class="bi bi-activity"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('exportBillingModal')" title="Export"><i
+                            class="bi bi-download"></i></button>
+                    <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Notifications"><i
+                            class="bi bi-bell"></i><span class="counter">4</span></button>
+                    <div class="pm-profile-btn" onclick="openModal('profileModal')">
+                        <div class="pm-avatar" style="background:var(--pm-gradient-sunset)">SA</div>
+                        <div>
+                            <div class="pm-name">Sarah A.</div>
+                            <div class="pm-role">Finance Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGE BAR -->
+            <div class="pm-page-bar">
+                <div>
+                    <div class="pm-breadcrumb"><a href="#">Business Portal</a> / <a href="#">Collections</a> /
+                        <strong>Invoicing & Billing</strong></div>
+                    <h2 style="font-family:var(--pm-font-display);font-size:20px;font-weight:700;margin:8px 0 2px">PAGE
+                        3.3 — Invoicing & Billing</h2>
+                    <p style="font-size:13px;color:var(--pm-ink-soft);margin:0">Create invoices, manage payment links,
+                        automate DSOs, and track recurring subscriptions in real-time.</p>
+                </div>
+                <div class="d-flex flex-wrap" style="gap:8px">
+                    <button class="pm-btn" onclick="openModal('newPaymentLinkModal')"><i class="bi bi-link-45deg"></i>
+                        Payment Link</button>
+                    <button class="pm-btn" onclick="openModal('newSubscriptionModal')"><i
+                            class="bi bi-arrow-repeat"></i> Subscription</button>
+                    <button class="pm-btn-primary pm-btn" onclick="openModal('newInvoiceModal')"><i
+                            class="bi bi-plus-lg"></i> New Invoice</button>
+                </div>
+            </div>
+
+            <div class="pm-content">
+
+                <!-- HERO STATS ROW -->
+                <div class="row g-3">
+                    <!-- Card 1: Outstanding -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card pm-card-accent" style="min-height:160px">
+                            <p
+                                style="margin:0;font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:0.05em;font-weight:600">
+                                TOTAL OUTSTANDING</p>
+                            <div class="pm-stat-value" style="margin:8px 0;color:#fff">KES 482,500</div>
+                            <div class="invoice-status-bar mt-3 mb-2">
+                                <div class="invoice-status-seg" style="width:45%;background:#10B981" title="Not Due">
+                                </div>
+                                <div class="invoice-status-seg" style="width:25%;background:#FBBF24" title="1-30 Days">
+                                </div>
+                                <div class="invoice-status-seg" style="width:20%;background:#F59E0B" title="31-60 Days">
+                                </div>
+                                <div class="invoice-status-seg" style="width:10%;background:#EF4444" title="60+ Days">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between"
+                                style="font-size:11px;color:rgba(255,255,255,.8)">
+                                <span><span style="color:#FCA5A5">●</span> Overdue: <strong>KES 168k</strong></span>
+                                <a href="#" style="color:#fff;text-decoration:underline"
+                                    onclick="openModal('agingReportModal')">Aging Report</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2: Monthly Invoiced -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px">
+                            <p class="pm-stat-label" style="color:var(--pm-primary)">THIS MONTH INVOICED</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 1.2M</div>
+                            <span class="pm-badge pm-badge-success"><i class="bi bi-arrow-up-right"></i> 14% vs last
+                                mo</span>
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between mb-1"
+                                    style="font-size:11px;color:var(--pm-muted)"><span>Collection
+                                        Rate</span><span>82%</span></div>
+                                <div class="pm-progress">
+                                    <div class="pm-progress-bar" style="width:82%;background:var(--pm-primary)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3: MRR -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px">
+                            <p class="pm-stat-label" style="color:var(--pm-info)">MONTHLY RECURRING (MRR)</p>
+                            <div class="pm-stat-value" style="margin:6px 0">KES 345,000</div>
+                            <span class="pm-badge pm-badge-info"><i class="bi bi-arrow-repeat"></i> 124 Active
+                                Subs</span>
+                            <div class="pm-mini-bars mt-3">
+                                <div class="pm-mini-bar" style="height:50%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:60%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:55%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:70%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:85%;background:var(--pm-info)"></div>
+                                <div class="pm-mini-bar" style="height:100%;background:var(--pm-primary)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 4: DSO -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="pm-card" style="min-height:160px;border-left:3px solid var(--pm-warning)">
+                            <p class="pm-stat-label" style="color:var(--pm-warning)">DAYS SALES OUTSTANDING</p>
+                            <div class="pm-stat-value" style="margin:6px 0">28 Days</div>
+                            <span class="pm-badge pm-badge-success"><i class="bi bi-check-circle"></i> Healthy</span>
+                            <div class="mt-2" style="font-size:12px;color:var(--pm-ink-soft)">
+                                <div>Link Conversions: <strong>68% paid</strong></div>
+                                <div>Avg time to pay: <strong>1.2 days</strong> (via Link)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENTION / SUGGESTIONS / QUICK ACTIONS -->
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="pm-card" style="height:100%">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Attention Required</h3>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('attentionModal')">View all</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-danger-soft);color:var(--pm-danger);font-size:12px">INV
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">INV-2025-042 is 14 days overdue</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Nairobi Tech Ltd · KES 85,000
+                                    </div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm pm-btn-danger"
+                                    onclick="openModal('bulkRemindersModal')">Remind</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">SUB
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">Subscription payment failed</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Premium Plan · KES 5,000/mo (Retry
+                                        2)</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('dunningSettingsModal')">Dunning</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-purple-soft);color:var(--pm-purple);font-size:12px">LNK
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">High value link abandoned</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Link LNK-992 · KES 120,000 viewed
+                                        3x</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('linkAnalyticsModal')">Track</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card" style="height:100%">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="pm-section-title">Smart Suggestions</h3>
+                                <span class="pm-badge pm-badge-purple"><i class="bi bi-stars"></i> AI</span>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent);font-size:12px">AR
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">Enable auto-reminders</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">Reduce DSO by approx 4 days</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm"
+                                    onclick="openModal('reminderSettingsModal')">Setup</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-info-soft);color:var(--pm-info);font-size:12px">UP</div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">Offer early payment discount</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">To 3 clients with 60+ days aging
+                                    </div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('suggestionsModal')">Review</button>
+                            </div>
+                            <div class="feed-item">
+                                <div class="pm-icon-circle"
+                                    style="background:var(--pm-warning-soft);color:var(--pm-warning);font-size:12px">TAX
+                                </div>
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:600;font-size:13px">Update Withholding Tax rates</div>
+                                    <div style="font-size:11px;color:var(--pm-muted)">New KRA brackets detected for
+                                        services</div>
+                                </div>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('taxSettingsModal')">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="pm-card" style="height:100%">
+                            <div class="mb-3">
+                                <h3 class="pm-section-title">Quick Actions</h3>
+                                <p class="pm-section-sub">Common billing workflows</p>
+                            </div>
+                            <div class="quick-action-grid">
+                                <button class="quick-action-btn" onclick="openModal('newInvoiceModal')"><i
+                                        class="bi bi-receipt text-primary me-1"></i> New Invoice</button>
+                                <button class="quick-action-btn" onclick="openModal('newPaymentLinkModal')"><i
+                                        class="bi bi-link-45deg text-success me-1"></i> Payment Link</button>
+                                <button class="quick-action-btn" onclick="openModal('newSubscriptionModal')"><i
+                                        class="bi bi-arrow-repeat text-info me-1"></i> Subscription</button>
+                                <button class="quick-action-btn" onclick="openModal('creditNoteModal')"><i
+                                        class="bi bi-file-earmark-minus text-warning me-1"></i> Credit Note</button>
+                                <button class="quick-action-btn" onclick="openModal('recordPaymentModal')"><i
+                                        class="bi bi-cash text-success me-1"></i> Record Pay</button>
+                                <button class="quick-action-btn" onclick="openModal('bulkRemindersModal')"><i
+                                        class="bi bi-bell me-1" style="color:var(--pm-purple)"></i> Reminders</button>
+                                <button class="quick-action-btn" onclick="openModal('customerSelectModal')"><i
+                                        class="bi bi-people text-secondary me-1"></i> Customers</button>
+                                <button class="quick-action-btn" onclick="openModal('invoiceTemplatesModal')"><i
+                                        class="bi bi-palette text-danger me-1"></i> Templates</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- 3.3.1 — INVOICE CREATION & MANAGEMENT -->
+                <!-- ============================================================ -->
+                <div class="pm-card mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-file-earmark-text-fill"
+                                    style="color:var(--pm-primary)"></i> 3.3.1 — Invoice Creation & Management</h3>
+                            <p class="pm-section-sub">Create, send, and track professional invoices. Manage templates,
+                                taxes, and multi-currency billing.</p>
+                        </div>
+                        <div class="d-flex gap-2" style="gap:8px">
+                            <button class="pm-btn pm-btn-sm" onclick="openModal('invoiceTemplatesModal')"><i
+                                    class="bi bi-palette"></i> Templates</button>
+                            <button class="pm-btn pm-btn-sm pm-btn-primary" onclick="openModal('newInvoiceModal')"><i
+                                    class="bi bi-plus-lg"></i> Create Invoice</button>
+                        </div>
+                    </div>
+                    <div class="pm-tab-pills mb-3">
+                        <button class="pm-tab-pill active" onclick="filterTable('invoiceTable','all',this)">All
+                            Invoices</button>
+                        <button class="pm-tab-pill" onclick="filterTable('invoiceTable','draft',this)">Drafts
+                            (2)</button>
+                        <button class="pm-tab-pill" onclick="filterTable('invoiceTable','unpaid',this)">Unpaid
+                            (5)</button>
+                        <button class="pm-tab-pill" onclick="filterTable('invoiceTable','paid',this)">Paid</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="pm-table" id="invoiceTable">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Client</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-status="unpaid">
+                                    <td><strong>INV-2025-042</strong></td>
+                                    <td>Nairobi Tech Ltd</td>
+                                    <td>10 Jun 2025</td>
+                                    <td><span class="text-danger">24 Jun 2025</span></td>
+                                    <td>KES 85,000</td>
+                                    <td><span class="pm-badge pm-badge-danger">Overdue</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('invoiceDetailModal')">View</button><button
+                                                class="pm-btn pm-btn-sm" onclick="openModal('sendInvoiceModal')"><i
+                                                    class="bi bi-send"></i></button></div>
+                                    </td>
+                                </tr>
+                                <tr data-status="unpaid">
+                                    <td><strong>INV-2025-045</strong></td>
+                                    <td>Amina Traders</td>
+                                    <td>20 Jun 2025</td>
+                                    <td>04 Jul 2025</td>
+                                    <td>KES 32,500</td>
+                                    <td><span class="pm-badge pm-badge-warning">Sent</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('invoiceDetailModal')">View</button><button
+                                                class="pm-btn pm-btn-sm" onclick="openModal('recordPaymentModal')"><i
+                                                    class="bi bi-cash"></i></button></div>
+                                    </td>
+                                </tr>
+                                <tr data-status="paid">
+                                    <td><strong>INV-2025-041</strong></td>
+                                    <td>Coast Logistics</td>
+                                    <td>05 Jun 2025</td>
+                                    <td>19 Jun 2025</td>
+                                    <td>KES 140,000</td>
+                                    <td><span class="pm-badge pm-badge-success">Paid</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('invoiceDetailModal')">View</button></div>
+                                    </td>
+                                </tr>
+                                <tr data-status="draft">
+                                    <td><strong>INV-2025-046</strong></td>
+                                    <td>Rift Valley Farms</td>
+                                    <td>27 Jun 2025</td>
+                                    <td>—</td>
+                                    <td>KES 18,000</td>
+                                    <td><span class="pm-badge pm-badge-gray">Draft</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('newInvoiceModal')">Edit</button></div>
+                                    </td>
+                                </tr>
+                                <tr data-status="unpaid">
+                                    <td><strong>INV-2025-047</strong></td>
+                                    <td>Global Exporters (USD)</td>
+                                    <td>26 Jun 2025</td>
+                                    <td>26 Jul 2025</td>
+                                    <td>$ 1,200</td>
+                                    <td><span class="pm-badge pm-badge-info">Viewed</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1"><button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('invoiceDetailModal')">View</button></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- 3.3.2 — PAYMENT LINKS & CHECKOUT -->
+                <!-- ============================================================ -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-link-45deg"
+                                    style="color:var(--pm-success)"></i> 3.3.2 — Payment Links & Checkout</h3>
+                            <p class="pm-section-sub">Generate branded payment links, track views and conversions, and
+                                accept M-Pesa or Cards instantly.</p>
+                        </div>
+                        <button class="pm-btn pm-btn-sm pm-btn-accent" onclick="openModal('newPaymentLinkModal')"><i
+                                class="bi bi-plus-lg"></i> Create Link</button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:600;margin:0 0 12px">Active Payment Links</h4>
+                                <div class="status-row">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2"><strong>Consulting
+                                                Retainer</strong> <span class="pm-badge pm-badge-success">Active</span>
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">pay.apexretail.co.ke/l/ret-01
+                                            · KES 50,000</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div style="font-size:12px"><strong>12</strong> views · <strong>4</strong> paid
+                                        </div>
+                                        <div class="d-flex gap-1 mt-1 justify-content-end">
+                                            <button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('linkAnalyticsModal')"><i
+                                                    class="bi bi-bar-chart"></i></button>
+                                            <button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('paymentLinkShareModal')"><i
+                                                    class="bi bi-share"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="status-row">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2"><strong>Open Donation /
+                                                Harambee</strong> <span class="pm-badge pm-badge-success">Active</span>
+                                        </div>
+                                        <div style="font-size:11px;color:var(--pm-muted)">
+                                            pay.apexretail.co.ke/l/open-don · Any Amount</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div style="font-size:12px"><strong>84</strong> views · <strong>32</strong> paid
+                                        </div>
+                                        <div class="d-flex gap-1 mt-1 justify-content-end">
+                                            <button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('linkAnalyticsModal')"><i
+                                                    class="bi bi-bar-chart"></i></button>
+                                            <button class="pm-btn pm-btn-sm"
+                                                onclick="openModal('paymentLinkShareModal')"><i
+                                                    class="bi bi-share"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="utility-block text-center">
+                                <h4 style="font-size:14px;font-weight:600;margin:0 0 12px text-start">Link Conversions
+                                </h4>
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-accent-soft);color:var(--pm-accent);width:56px;height:56px;font-size:24px">
+                                    <i class="bi bi-cursor"></i></div>
+                                <div class="pm-stat-value" style="font-size:24px">68.4%</div>
+                                <p style="font-size:12px;color:var(--pm-muted)">Avg. Conversion Rate</p>
+                                <div class="d-flex justify-content-around mt-3 border-top pt-3">
+                                    <div>
+                                        <div style="font-size:16px;font-weight:700">1.2s</div>
+                                        <div style="font-size:10px;color:var(--pm-muted)">LOAD TIME</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:16px;font-weight:700">92</div>
+                                        <div style="font-size:10px;color:var(--pm-muted)">TOTAL PAYMENTS</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- 3.3.3 — COLLECTIONS TRACKING & AGING -->
+                <!-- ============================================================ -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-graph-down text-danger me-2"></i> 3.3.3 —
+                                Collections Tracking & Aging</h3>
+                            <p class="pm-section-sub">Monitor accounts receivable, Days Sales Outstanding (DSO), and
+                                automate your reminder sequences.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="pm-btn pm-btn-sm" onclick="openModal('reminderSettingsModal')"><i
+                                    class="bi bi-bell"></i> Reminder Rules</button>
+                            <button class="pm-btn pm-btn-sm pm-btn-danger"
+                                onclick="openModal('bulkRemindersModal')">Send Batch Reminders</button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:600;margin:0 0 12px">Receivables Aging Breakdown
+                                </h4>
+                                <div class="d-flex align-items-end mb-2"
+                                    style="height:120px;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--pm-border)">
+                                    <!-- 0-30 -->
+                                    <div style="flex:1;text-align:center;position:relative">
+                                        <div
+                                            style="height:40%;background:var(--pm-accent);border-radius:4px 4px 0 0;width:40px;margin:0 auto">
+                                        </div>
+                                        <div
+                                            style="position:absolute;bottom:-20px;left:0;right:0;font-size:10px;color:var(--pm-muted)">
+                                            0-30 Days</div>
+                                        <div style="font-size:11px;font-weight:600;margin-bottom:4px">KES 220k</div>
+                                    </div>
+                                    <!-- 31-60 -->
+                                    <div style="flex:1;text-align:center;position:relative">
+                                        <div
+                                            style="height:60%;background:var(--pm-warning);border-radius:4px 4px 0 0;width:40px;margin:0 auto">
+                                        </div>
+                                        <div
+                                            style="position:absolute;bottom:-20px;left:0;right:0;font-size:10px;color:var(--pm-muted)">
+                                            31-60 Days</div>
+                                        <div style="font-size:11px;font-weight:600;margin-bottom:4px">KES 145k</div>
+                                    </div>
+                                    <!-- 61-90 -->
+                                    <div style="flex:1;text-align:center;position:relative">
+                                        <div
+                                            style="height:35%;background:#F97316;border-radius:4px 4px 0 0;width:40px;margin:0 auto">
+                                        </div>
+                                        <div
+                                            style="position:absolute;bottom:-20px;left:0;right:0;font-size:10px;color:var(--pm-muted)">
+                                            61-90 Days</div>
+                                        <div style="font-size:11px;font-weight:600;margin-bottom:4px">KES 85k</div>
+                                    </div>
+                                    <!-- 90+ -->
+                                    <div style="flex:1;text-align:center;position:relative">
+                                        <div
+                                            style="height:15%;background:var(--pm-danger);border-radius:4px 4px 0 0;width:40px;margin:0 auto">
+                                        </div>
+                                        <div
+                                            style="position:absolute;bottom:-20px;left:0;right:0;font-size:10px;color:var(--pm-muted)">
+                                            90+ Days</div>
+                                        <div style="font-size:11px;font-weight:600;margin-bottom:4px">KES 32k</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <button class="pm-btn pm-btn-sm" onclick="openModal('agingReportModal')">View Full
+                                        Aging Report</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="utility-block">
+                                <h4 style="font-size:14px;font-weight:600;margin:0 0 12px">Active Escalations & Promises
+                                    to Pay</h4>
+                                <div class="status-row">
+                                    <div>
+                                        <strong>Nairobi Tech Ltd</strong>
+                                        <div style="font-size:11px;color:var(--pm-danger)">14 days overdue · KES 85,000
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="pm-badge pm-badge-info">Promise: 30 Jun</span>
+                                        <button class="pm-btn pm-btn-sm ms-2"
+                                            onclick="openModal('recordPaymentModal')">Resolve</button>
+                                    </div>
+                                </div>
+                                <div class="status-row">
+                                    <div>
+                                        <strong>Mwangi Hardware</strong>
+                                        <div style="font-size:11px;color:var(--pm-danger)">65 days overdue · KES 42,000
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="pm-badge pm-badge-warning">Escalated: Legal</span>
+                                        <button class="pm-btn pm-btn-sm ms-2"
+                                            onclick="openModal('attentionModal')">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- 3.3.4 — SUBSCRIPTION & RECURRING BILLING -->
+                <!-- ============================================================ -->
+                <div class="pm-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+                        <div>
+                            <h3 class="pm-section-title"><i class="bi bi-arrow-repeat text-info me-2"></i> 3.3.4 —
+                                Subscription & Recurring Billing</h3>
+                            <p class="pm-section-sub">Manage subscription plans, recurring invoices, customer upgrades,
+                                and dunning (failed payment retries).</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="pm-btn pm-btn-sm" onclick="openModal('dunningSettingsModal')"><i
+                                    class="bi bi-shield-exclamation"></i> Dunning Rules</button>
+                            <button class="pm-btn pm-btn-sm pm-btn-info" onclick="openModal('newSubscriptionModal')"><i
+                                    class="bi bi-plus-lg"></i> New Subscription</button>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong style="font-size:14px">Basic Plan</strong>
+                                    <span class="pm-badge pm-badge-gray">Monthly</span>
+                                </div>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-primary)">KES 1,500</div>
+                                <div class="mt-2" style="font-size:12px;color:var(--pm-muted)">85 Active Subscribers
+                                </div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-2"
+                                    onclick="openModal('subscriptionDetailModal')">Manage Plan</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded"
+                                style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.02)">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong style="font-size:14px">Premium Plan</strong>
+                                    <span class="pm-badge pm-badge-gray">Monthly</span>
+                                </div>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-primary)">KES 5,000</div>
+                                <div class="mt-2" style="font-size:12px;color:var(--pm-muted)">32 Active Subscribers
+                                </div>
+                                <button class="pm-btn pm-btn-sm pm-btn-primary w-100 mt-2"
+                                    onclick="openModal('subscriptionDetailModal')">Manage Plan</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong style="font-size:14px">Enterprise</strong>
+                                    <span class="pm-badge pm-badge-gray">Annual</span>
+                                </div>
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-primary)">KES 45,000</div>
+                                <div class="mt-2" style="font-size:12px;color:var(--pm-muted)">7 Active Subscribers
+                                </div>
+                                <button class="pm-btn pm-btn-sm w-100 mt-2"
+                                    onclick="openModal('subscriptionDetailModal')">Manage Plan</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Subscriber</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Next Billing</th>
+                                    <th>MRR</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Sarah Jenkins</strong><br><span
+                                            style="font-size:10px;color:var(--pm-muted)">s.jenkins@email.com</span></td>
+                                    <td>Premium Plan</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td>01 Jul 2025</td>
+                                    <td>KES 5,000</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('subscriptionDetailModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alpha Corp</strong><br><span
+                                            style="font-size:10px;color:var(--pm-muted)">finance@alpha.co.ke</span></td>
+                                    <td>Enterprise</td>
+                                    <td><span class="pm-badge pm-badge-success">Active</span></td>
+                                    <td>15 Aug 2025 (Annual)</td>
+                                    <td>KES 3,750</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('subscriptionDetailModal')">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>James Mwangi</strong><br><span
+                                            style="font-size:10px;color:var(--pm-muted)">j.mwangi@email.com</span></td>
+                                    <td>Basic Plan</td>
+                                    <td><span class="pm-badge pm-badge-warning">Past Due</span></td>
+                                    <td><span class="text-danger">Retrying (2/3)</span></td>
+                                    <td>KES 1,500</td>
+                                    <td><button class="pm-btn pm-btn-sm"
+                                            onclick="openModal('dunningSettingsModal')">Dunning</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODALS (20+) -->
+    <!-- ============================================================ -->
+
+    <!-- 1. New Invoice Modal (Multi-step) -->
+    <div class="modal fade resettable" id="newInvoiceModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2 text-primary"></i>Create New Invoice</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="invModalBody">
+                    <div class="pm-stepper" id="invStepper"></div>
+                    <div id="invStep1" class="fade-step active">
+                        <h6 style="font-weight:700">Client Details</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8"><label class="pm-form-label">Select Client</label>
+                                <div class="d-flex gap-2">
+                                    <select class="pm-form-control">
+                                        <option>Select existing...</option>
+                                        <option>Nairobi Tech Ltd</option>
+                                        <option>Amina Traders</option>
+                                    </select>
+                                    <button class="pm-btn pm-btn-primary" onclick="openModal('customerSelectModal')"><i
+                                            class="bi bi-person-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-md-4"><label class="pm-form-label">Currency</label><select
+                                    class="pm-form-control">
+                                    <option>KES - Kenyan Shilling</option>
+                                    <option>USD - US Dollar</option>
+                                </select></div>
+                            <div class="col-md-6"><label class="pm-form-label">Invoice Date</label><input type="date"
+                                    class="pm-form-control" value="2025-06-27"></div>
+                            <div class="col-md-6"><label class="pm-form-label">Due Date</label><input type="date"
+                                    class="pm-form-control" value="2025-07-11"></div>
+                        </div>
+                    </div>
+                    <div id="invStep2" class="fade-step">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 style="font-weight:700;margin:0">Line Items</h6><button class="pm-btn pm-btn-sm"
+                                onclick="openModal('itemCatalogModal')"><i class="bi bi-list"></i> Catalog</button>
+                        </div>
+                        <div class="p-3 border rounded mb-3" style="background:var(--pm-surface-2)">
+                            <div class="invoice-item-row fw-bold" style="font-size:12px;color:var(--pm-muted)">
+                                <div style="flex:3">Description</div>
+                                <div style="flex:1">Qty</div>
+                                <div style="flex:1">Unit Price</div>
+                                <div style="flex:1">Tax</div>
+                                <div style="flex:1;text-align:right">Amount</div>
+                            </div>
+                            <div class="invoice-item-row">
+                                <div class="invoice-item-col" style="flex:3"><input class="pm-form-control"
+                                        value="Web Development Consulting"></div>
+                                <div class="invoice-item-col"><input class="pm-form-control" type="number" value="40">
+                                </div>
+                                <div class="invoice-item-col"><input class="pm-form-control" type="number" value="2500">
+                                </div>
+                                <div class="invoice-item-col"><select class="pm-form-control">
+                                        <option>VAT 16%</option>
+                                        <option>Exempt</option>
+                                    </select></div>
+                                <div class="invoice-item-col" style="text-align:right;font-weight:700;padding-top:10px">
+                                    100,000</div>
+                            </div>
+                            <button class="pm-btn pm-btn-sm mt-2"><i class="bi bi-plus"></i> Add Item</button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal</span><strong>100,000</strong></div>
+                                <div class="d-flex justify-content-between mb-2"><span>VAT
+                                        (16%)</span><strong>16,000</strong></div>
+                                <hr class="pm-divider">
+                                <div class="d-flex justify-content-between"><span class="fw-bold">Total
+                                        (KES)</span><strong
+                                        style="color:var(--pm-primary);font-size:18px">116,000</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="invStep3" class="fade-step">
+                        <h6 style="font-weight:700">Settings & Attachments</h6>
+                        <div class="mb-3"><label class="pm-form-label">Notes / Terms</label><textarea
+                                class="pm-form-control"
+                                rows="3">Payment due within 14 days. Late payments subject to 2% penalty.</textarea>
+                        </div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Attach PDF Payment Link via PayMo Checkout</label></div>
+                        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Enable automated email reminders</label></div>
+                        <div class="mb-3 mt-3"><label class="pm-form-label">Attachments (PO, Timesheet)</label><input
+                                type="file" class="pm-form-control"></div>
+                    </div>
+                    <div id="invStep4" class="fade-step">
+                        <div class="pm-receipt">
+                            <div class="receipt-icon"><i class="bi bi-check-lg"></i></div>
+                            <h5 style="font-weight:700;color:var(--pm-accent)">Invoice Ready</h5>
+                            <p style="font-size:13px;color:var(--pm-ink-soft)">INV-2025-048 for KES 116,000 has been
+                                created.</p>
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('sendInvoiceModal')"><i
+                                        class="bi bi-send"></i> Send Now</button>
+                                <button class="pm-btn pm-btn-sm" onclick="openModal('invoiceDetailModal')"><i
+                                        class="bi bi-eye"></i> Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="invFooter">
+                    <button class="pm-btn" data-bs-dismiss="modal">Cancel</button>
+                    <button class="pm-btn pm-btn-primary" id="invNextBtn" onclick="nextInvStep()">Next <i
+                            class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. New Payment Link Modal -->
+    <div class="modal fade resettable" id="newPaymentLinkModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-link-45deg text-success me-2"></i>Create Payment Link</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Link Title / Purpose</label><input
+                            class="pm-form-control" placeholder="e.g. Deposit for Project X"></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount Type</label><select class="pm-form-control">
+                            <option>Fixed Amount</option>
+                            <option>Customer decides (Donation/Open)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount (KES)</label><input class="pm-form-control"
+                            type="number" value="10000"></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Collect customer shipping address</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label
+                            class="form-check-label">Limit number of uses</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('newPaymentLinkModal','Payment Link Created!','pay.apex.co.ke/l/dep-10k', 'paymentLinkShareModal')">Generate
+                        Link</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. New Subscription Modal -->
+    <div class="modal fade resettable" id="newSubscriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-info me-2"></i>New Subscription</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Customer</label><select class="pm-form-control">
+                            <option>Select Customer...</option>
+                            <option>Nairobi Tech Ltd</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Select Plan</label><select class="pm-form-control">
+                            <option>Basic Plan - KES 1,500/mo</option>
+                            <option>Premium Plan - KES 5,000/mo</option>
+                            <option>Enterprise - KES 45,000/yr</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Billing Cycle Anchor</label><select
+                            class="pm-form-control">
+                            <option>Start immediately (Today)</option>
+                            <option>1st of the month</option>
+                            <option>Custom date</option>
+                        </select></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Add 14-day free trial</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Send initial payment link via email</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('newSubscriptionModal','Subscription activated and payment link sent.','')">Start
+                        Subscription</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Invoice Detail Modal (Tabs) -->
+    <div class="modal fade resettable" id="invoiceDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Invoice #INV-2025-042</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pm-tab-pills mb-3"><button class="pm-tab-pill active"
+                            onclick="switchTab('invDetail','preview',this)">Preview</button><button class="pm-tab-pill"
+                            onclick="switchTab('invDetail','history',this)">Timeline</button></div>
+                    <div id="invDetail-preview" class="tab-panel active">
+                        <div class="p-4 border rounded" style="background:#fff">
+                            <div class="d-flex justify-content-between mb-4">
+                                <div>
+                                    <h3 style="font-weight:800;color:var(--pm-primary)">Apex Retail Ltd.</h3>
+                                    <p class="text-muted" style="font-size:12px;margin:0">Nairobi, Kenya<br>PIN:
+                                        P051***49G</p>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="text-muted">INVOICE</h4><strong
+                                        style="font-size:16px">INV-2025-042</strong><br><span
+                                        class="pm-badge pm-badge-danger mt-1">Overdue</span>
+                                </div>
+                            </div>
+                            <div class="row mb-4" style="font-size:12px">
+                                <div class="col-6"><span class="text-muted">Billed To:</span><br><strong>Nairobi Tech
+                                        Ltd</strong><br>Westlands, Nairobi</div>
+                                <div class="col-6 text-end"><span class="text-muted">Date:</span> 10 Jun 2025<br><span
+                                        class="text-muted">Due:</span> <span class="text-danger">24 Jun 2025</span>
+                                </div>
+                            </div>
+                            <table class="pm-table mb-3">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Software Licenses</td>
+                                        <td>KES 85,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="text-end"><strong>Total: KES 85,000</strong></div>
+                        </div>
+                    </div>
+                    <div id="invDetail-history" class="tab-panel">
+                        <div class="status-row">
+                            <div><strong>Invoice Created</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">By Sarah A.</div>
+                            </div><span style="font-size:11px">10 Jun, 09:00</span>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Emailed to client</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Delivered to accounts@nairobits.com
+                                </div>
+                            </div><span style="font-size:11px">10 Jun, 09:02</span>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Viewed by client</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">Via Payment Link</div>
+                            </div><span style="font-size:11px">11 Jun, 14:30</span>
+                        </div>
+                        <div class="status-row">
+                            <div><strong>Auto-Reminder Sent</strong>
+                                <div style="font-size:11px;color:var(--pm-muted)">3 days before due</div>
+                            </div><span style="font-size:11px">21 Jun, 08:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="pm-btn pm-btn-danger" onclick="openModal('bulkRemindersModal')">Remind</button>
+                    <button class="pm-btn pm-btn-success" onclick="openModal('recordPaymentModal')">Record
+                        Payment</button>
+                    <button class="pm-btn pm-btn-primary" onclick="openModal('sendInvoiceModal')">Share Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Link Analytics Modal -->
+    <div class="modal fade resettable" id="linkAnalyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bar-chart text-primary me-2"></i>Link Analytics: Consulting
+                        Retainer</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 mb-3 text-center">
+                        <div class="col-4">
+                            <div class="p-2 border rounded">
+                                <div style="font-size:20px;font-weight:700">12</div>
+                                <div style="font-size:10px;color:var(--pm-muted)">VIEWS</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 border rounded">
+                                <div style="font-size:20px;font-weight:700">4</div>
+                                <div style="font-size:10px;color:var(--pm-muted)">PAYMENTS</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 border rounded">
+                                <div style="font-size:20px;font-weight:700;color:var(--pm-success)">33%</div>
+                                <div style="font-size:10px;color:var(--pm-muted)">CONVERSION</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-surface-2)">
+                        <div class="d-flex justify-content-between mb-1"><span>Total Revenue Generated</span><strong
+                                style="color:var(--pm-primary)">KES 200,000</strong></div>
+                        <div class="d-flex justify-content-between"><span>Avg Time to Pay</span><strong>45 mins</strong>
+                        </div>
+                    </div>
+                    <h6 style="font-size:12px;font-weight:700">Recent Activity</h6>
+                    <div class="status-row py-1">
+                        <div><span style="font-size:12px">Payment via M-Pesa (0712***890)</span></div><span
+                            class="pm-badge pm-badge-success">KES 50k</span>
+                    </div>
+                    <div class="status-row py-1">
+                        <div><span style="font-size:12px">Link viewed (Mobile Safari)</span></div><span
+                            style="font-size:11px;color:var(--pm-muted)">2 hrs ago</span>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('paymentLinkShareModal')">Share Link
+                        Again</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Reminder Settings Modal -->
+    <div class="modal fade resettable" id="reminderSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell text-warning me-2"></i>Automated Reminders</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox"
+                            checked><label class="form-check-label fw-bold">Enable Auto-Reminders</label></div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div><strong>Before Due Date</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">3 days before</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div><strong>On Due Date</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Morning of due date</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                        </div>
+                    </div>
+                    <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                        <div><strong>Overdue Reminders</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">3, 7, and 14 days after</div>
+                        </div>
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked>
+                        </div>
+                    </div>
+                    <div class="mt-3"><label class="pm-form-label">Channels</label>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label" style="font-size:12px">Email</label></div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"
+                                checked><label class="form-check-label" style="font-size:12px">SMS</label></div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label" style="font-size:12px">WhatsApp</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('reminderSettingsModal','Reminder settings saved.','')">Save
+                        Settings</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Subscription Detail Modal -->
+    <div class="modal fade resettable" id="subscriptionDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-arrow-repeat text-info me-2"></i>Manage Premium Plan</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="margin:0;font-weight:700">KES 5,000</h3><span
+                                style="font-size:12px;color:var(--pm-muted)">per month</span>
+                        </div>
+                        <span class="pm-badge pm-badge-success">Active</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Active
+                                Subscribers</span><strong>32</strong></div>
+                        <div class="d-flex justify-content-between mb-1" style="font-size:12px">
+                            <span>MRR</span><strong>KES 160,000</strong></div>
+                        <div class="d-flex justify-content-between mb-1" style="font-size:12px"><span>Churn
+                                Rate</span><strong class="text-danger">1.2%</strong></div>
+                    </div>
+                    <div class="d-flex flex-column gap-2">
+                        <button class="pm-btn w-100 justify-content-center"
+                            onclick="openModal('newSubscriptionModal')">Add Subscriber to Plan</button>
+                        <button class="pm-btn w-100 justify-content-center"
+                            onclick="openModal('dunningSettingsModal')">Edit Retry Logic (Dunning)</button>
+                        <button class="pm-btn w-100 justify-content-center text-danger border-danger"
+                            onclick="openModal('cancelSubscriptionModal')">Archive Plan</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Record Payment Modal -->
+    <div class="modal fade resettable" id="recordPaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cash text-success me-2"></i>Record Manual Payment</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Invoice</label><select class="pm-form-control">
+                            <option>INV-2025-042 (KES 85,000)</option>
+                            <option>INV-2025-045 (KES 32,500)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Amount Paid</label><input class="pm-form-control"
+                            type="number" value="85000"></div>
+                    <div class="mb-3"><label class="pm-form-label">Payment Date</label><input type="date"
+                            class="pm-form-control" value="2025-06-27"></div>
+                    <div class="mb-3"><label class="pm-form-label">Payment Method</label><select
+                            class="pm-form-control">
+                            <option>Bank Transfer / RTGS</option>
+                            <option>Cash</option>
+                            <option>Cheque</option>
+                            <option>M-Pesa (External)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Reference / Notes</label><input
+                            class="pm-form-control" placeholder="e.g. Cheque #12345"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:12px">Send "Thank You" receipt to customer</label>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('recordPaymentModal','Payment recorded successfully. Invoice marked as Paid.','')">Record
+                        Payment</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Send Invoice Modal -->
+    <div class="modal fade resettable" id="sendInvoiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-send text-primary me-2"></i>Send Invoice</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;color:var(--pm-ink-soft)">Sending <strong>INV-2025-042</strong> to Nairobi
+                        Tech Ltd.</p>
+                    <div class="mb-3"><label class="pm-form-label">Channels</label>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                                class="form-check-label">Email (accounts@nairobits.com)</label></div>
+                        <div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">WhatsApp (+254 711 222 333)</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label
+                                class="form-check-label">SMS Link</label></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Message Template</label><textarea
+                            class="pm-form-control"
+                            rows="4">Hi Team, attached is invoice INV-2025-042 for KES 85,000. You can pay securely online via the attached link. Thank you!</textarea>
+                    </div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:12px">Attach PDF copy</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('sendInvoiceModal','Invoice sent via selected channels.','')">Send
+                        Invoice</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Credit Note Modal -->
+    <div class="modal fade resettable" id="creditNoteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-minus text-warning me-2"></i>Issue Credit Note
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Against Invoice</label><select
+                            class="pm-form-control">
+                            <option>INV-2025-042 (Nairobi Tech Ltd)</option>
+                            <option>INV-2025-041 (Coast Logistics)</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">Credit Amount (KES)</label><input
+                            class="pm-form-control" type="number" placeholder="Enter amount to refund/credit"></div>
+                    <div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control">
+                            <option>Overcharged</option>
+                            <option>Items returned</option>
+                            <option>Discount applied late</option>
+                            <option>Other</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:12px">Email credit note to client</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('creditNoteModal','Credit note CN-2025-001 issued successfully.','')">Issue
+                        Credit Note</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Dunning Settings Modal -->
+    <div class="modal fade resettable" id="dunningSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-exclamation text-danger me-2"></i>Dunning (Retry)
+                        Rules</h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;color:var(--pm-ink-soft)">What happens when a recurring subscription card
+                        or token fails?</p>
+                    <div class="p-3 border rounded mb-2"><strong style="font-size:13px">First Retry</strong>
+                        <div class="d-flex align-items-center mt-1"><select class="pm-form-control pm-btn-sm w-50 me-2">
+                                <option>1 Day later</option>
+                            </select> <span style="font-size:11px;color:var(--pm-muted)">Send email</span></div>
+                    </div>
+                    <div class="p-3 border rounded mb-2"><strong style="font-size:13px">Second Retry</strong>
+                        <div class="d-flex align-items-center mt-1"><select class="pm-form-control pm-btn-sm w-50 me-2">
+                                <option>3 Days later</option>
+                            </select> <span style="font-size:11px;color:var(--pm-muted)">Send email + SMS</span></div>
+                    </div>
+                    <div class="p-3 border rounded mb-3"><strong style="font-size:13px">Third Retry</strong>
+                        <div class="d-flex align-items-center mt-1"><select class="pm-form-control pm-btn-sm w-50 me-2">
+                                <option>7 Days later</option>
+                            </select> <span style="font-size:11px;color:var(--pm-muted)">Final warning</span></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Action after final failure</label><select
+                            class="pm-form-control">
+                            <option>Cancel subscription automatically</option>
+                            <option>Pause subscription and notify admin</option>
+                            <option>Leave active but mark unpaid</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('dunningSettingsModal','Dunning schedule updated.','')">Save
+                        Logic</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Customer Select Modal -->
+    <div class="modal fade resettable" id="customerSelectModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people text-secondary me-2"></i>Customer Directory</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="pm-form-control mb-3" placeholder="Search customers...">
+                    <div class="status-row py-2" style="cursor:pointer" onclick="closeModal('customerSelectModal')">
+                        <div><strong>Nairobi Tech Ltd</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">info@nairobits.com</div>
+                        </div><button class="pm-btn pm-btn-sm">Select</button>
+                    </div>
+                    <div class="status-row py-2" style="cursor:pointer" onclick="closeModal('customerSelectModal')">
+                        <div><strong>Amina Traders</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">sales@amina.co.ke</div>
+                        </div><button class="pm-btn pm-btn-sm">Select</button>
+                    </div>
+                    <div class="status-row py-2" style="cursor:pointer" onclick="closeModal('customerSelectModal')">
+                        <div><strong>Coast Logistics</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">accounts@coastlog.com</div>
+                        </div><button class="pm-btn pm-btn-sm">Select</button>
+                    </div>
+                    <button class="pm-btn pm-btn-accent w-100 mt-3"><i class="bi bi-plus"></i> Add New Customer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Item Catalog Modal -->
+    <div class="modal fade resettable" id="itemCatalogModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-list text-primary me-2"></i>Product/Service Catalog</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="pm-form-control mb-3" placeholder="Search catalog...">
+                    <div class="status-row py-2">
+                        <div><strong>Consulting Hour</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 5,000 / hr</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="closeModal('itemCatalogModal')">Add</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Software License (Monthly)</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 12,000 / unit</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="closeModal('itemCatalogModal')">Add</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Setup Fee</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 25,000 / flat</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="closeModal('itemCatalogModal')">Add</button>
+                    </div>
+                    <button class="pm-btn pm-btn-primary w-100 mt-3"><i class="bi bi-plus"></i> Create New Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Aging Report Modal -->
+    <div class="modal fade resettable" id="agingReportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-graph-down text-danger me-2"></i>A/R Aging Report</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="pm-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>0-30 Days</th>
+                                    <th>31-60 Days</th>
+                                    <th>61-90 Days</th>
+                                    <th>90+ Days</th>
+                                    <th>Total Due</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nairobi Tech Ltd</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>KES 85,000</td>
+                                    <td>-</td>
+                                    <td><strong>KES 85,000</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Amina Traders</td>
+                                    <td>KES 32,500</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td><strong>KES 32,500</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Mwangi Hardware</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>KES 42,000</td>
+                                    <td><strong class="text-danger">KES 42,000</strong></td>
+                                </tr>
+                                <tr style="background:var(--pm-surface-2)">
+                                    <td><strong>TOTALS</strong></td>
+                                    <td><strong>KES 220k</strong></td>
+                                    <td><strong>KES 145k</strong></td>
+                                    <td><strong>KES 85k</strong></td>
+                                    <td><strong>KES 32k</strong></td>
+                                    <td><strong style="color:var(--pm-primary)">KES 482,000</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('exportBillingModal')">Export CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15. Invoice Templates Modal -->
+    <div class="modal fade resettable" id="invoiceTemplatesModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-palette text-danger me-2"></i>Invoice Templates</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 border rounded text-center"
+                                style="border-color:var(--pm-primary)!important;background:rgba(79,70,229,.05)">
+                                <div class="pm-icon-circle mx-auto mb-2"
+                                    style="background:var(--pm-primary);color:#fff"><i
+                                        class="bi bi-layout-text-window"></i></div><strong>Modern</strong><br><span
+                                    style="font-size:11px;color:var(--pm-primary)">Active Default</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded text-center">
+                                <div class="pm-icon-circle mx-auto mb-2" style="background:var(--pm-surface-2)"><i
+                                        class="bi bi-journal-text"></i></div><strong>Classic</strong><br><span
+                                    style="font-size:11px;color:var(--pm-muted)">Clean B&W</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded text-center">
+                                <div class="pm-icon-circle mx-auto mb-2" style="background:var(--pm-surface-2)"><i
+                                        class="bi bi-building"></i></div><strong>Corporate</strong><br><span
+                                    style="font-size:11px;color:var(--pm-muted)">With Watermark</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4"><label class="pm-form-label">Brand Color</label><input type="color"
+                            class="form-control form-control-color w-100" value="#4F46E5"></div>
+                    <div class="mt-3"><label class="pm-form-label">Logo</label><input type="file"
+                            class="pm-form-control"></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('invoiceTemplatesModal','Template preferences saved!','')">Save
+                        Template</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16. Cancel Subscription Modal -->
+    <div class="modal fade resettable" id="cancelSubscriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-x-circle text-danger me-2"></i>Archive/Cancel Plan</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px">You are about to archive the <strong>Premium Plan</strong>. Existing
+                        subscribers will not be renewed at the end of their current cycle.</p>
+                    <div class="mb-3"><label class="pm-form-label">Reason</label><select class="pm-form-control">
+                            <option>Plan deprecated/replaced</option>
+                            <option>Pricing update</option>
+                            <option>Temporary pause</option>
+                        </select></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:12px">Email notification to all 32 active
+                            subscribers</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-danger"
+                        onclick="processAction('cancelSubscriptionModal','Plan archived successfully.','')">Confirm
+                        Archive</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Duplicate Invoice Modal -->
+    <div class="modal fade resettable" id="duplicateInvoiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-copy text-info me-2"></i>Duplicate Invoice</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px">Duplicate <strong>INV-2025-042</strong>?</p>
+                    <div class="mb-3"><label class="pm-form-label">New Client (Optional)</label><select
+                            class="pm-form-control">
+                            <option>Same as original (Nairobi Tech)</option>
+                            <option>Amina Traders</option>
+                        </select></div>
+                    <div class="mb-3"><label class="pm-form-label">New Date</label><input type="date"
+                            class="pm-form-control" value="2025-06-27"></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('duplicateInvoiceModal','Invoice duplicated as Draft.','', 'newInvoiceModal')">Duplicate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 18. Bulk Reminders Modal -->
+    <div class="modal fade resettable" id="bulkRemindersModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell text-danger me-2"></i>Send Batch Reminders</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 rounded mb-3" style="background:var(--pm-warning-soft);font-size:13px">You are about
+                        to send reminders to <strong>5 clients</strong> with overdue invoices totaling KES 168,000.
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Template</label><select class="pm-form-control">
+                            <option>Gentle Reminder (1-14 days)</option>
+                            <option>Firm Reminder (15-30 days)</option>
+                            <option>Final Notice (30+ days)</option>
+                        </select></div>
+                    <div class="form-check mb-1"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Send via Email</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label">Send via SMS (with payment link)</label></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-danger"
+                        onclick="processAction('bulkRemindersModal','5 Reminders sent successfully.','')">Send
+                        Batch</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. Payment Link Share Modal -->
+    <div class="modal fade resettable" id="paymentLinkShareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-share text-success me-2"></i>Share Link</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pay.apex.co.ke/l/dep-10k"
+                        alt="QR Code" class="mb-3 rounded border p-2">
+                    <input type="text" class="pm-form-control text-center mb-3 fw-bold" value="pay.apex.co.ke/l/dep-10k"
+                        readonly>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="pm-btn pm-btn-primary"><i class="bi bi-clipboard"></i> Copy</button>
+                        <button class="pm-btn pm-btn-success"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+                        <button class="pm-btn"><i class="bi bi-envelope"></i> Email</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Export Billing Modal -->
+    <div class="modal fade resettable" id="exportBillingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-download text-primary me-2"></i>Export Billing Data</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Data Set</label><select class="pm-form-control">
+                            <option>All Invoices</option>
+                            <option>Aging Report</option>
+                            <option>Subscription MRR</option>
+                            <option>Payment Links</option>
+                        </select></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="pm-form-label">From</label><input type="date"
+                                class="pm-form-control" value="2025-01-01"></div>
+                        <div class="col-6"><label class="pm-form-label">To</label><input type="date"
+                                class="pm-form-control" value="2025-06-27"></div>
+                    </div>
+                    <div class="mb-3"><label class="pm-form-label">Format</label><select class="pm-form-control">
+                            <option>CSV Spreadsheet</option>
+                            <option>Excel (.xlsx)</option>
+                            <option>PDF Report</option>
+                            <option>iTax Upload Format (KRA)</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('exportBillingModal','Export generated and downloading.','')">Generate
+                        File</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Tax Settings Modal -->
+    <div class="modal fade resettable" id="taxSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calculator text-info me-2"></i>Tax & Compliance Settings
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="pm-form-label">Value Added Tax (VAT)</label><input
+                            class="pm-form-control" type="number" value="16"></div>
+                    <div class="mb-3"><label class="pm-form-label">Withholding Tax (WHT)</label><input
+                            class="pm-form-control" type="number" value="5"></div>
+                    <div class="mb-3"><label class="pm-form-label">KRA PIN Display</label><input class="pm-form-control"
+                            value="P051***49G"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" checked><label
+                            class="form-check-label" style="font-size:12px">Auto-calculate VAT on new invoices</label>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button
+                        class="pm-btn pm-btn-primary"
+                        onclick="processAction('taxSettingsModal','Tax settings updated to reflect KRA requirements.','')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 22. Health Check Modal -->
+    <div class="modal fade resettable" id="healthCheckModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Billing Health Check</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex gap-3 mb-4">
+                        <div class="p-3 text-center rounded w-50"
+                            style="background:var(--pm-success-soft);border:1px solid var(--pm-success)">
+                            <div style="font-size:32px;font-weight:800;color:var(--pm-success)">A-</div>
+                            <div style="font-size:11px;font-weight:700">SCORE</div>
+                        </div>
+                        <div class="w-50 pt-2">
+                            <div style="font-size:12px;margin-bottom:8px"><i
+                                    class="bi bi-check-circle-fill text-success"></i> 82% Collection Rate</div>
+                            <div style="font-size:12px;margin-bottom:8px"><i
+                                    class="bi bi-check-circle-fill text-success"></i> 28 Days DSO</div>
+                            <div style="font-size:12px"><i class="bi bi-exclamation-circle-fill text-warning"></i> 14%
+                                Aging > 60 days</div>
+                        </div>
+                    </div>
+                    <p style="font-size:12px;color:var(--pm-muted)">Recommendation: Implement early payment discounts to
+                        reduce the 60+ days aging bucket.</p>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button
+                        class="pm-btn pm-btn-primary" onclick="openModal('suggestionsModal')">View Suggestions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 23. Attention Modal -->
+    <div class="modal fade resettable" id="attentionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle text-danger me-2"></i>All Attention Items
+                    </h5><button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="status-row py-2">
+                        <div><strong>INV-2025-042 Overdue</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 85,000 (14 Days)</div>
+                        </div><button class="pm-btn pm-btn-sm pm-btn-danger"
+                            onclick="openModal('bulkRemindersModal')">Remind</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Subscription Failed</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">James Mwangi - Basic Plan</div>
+                        </div><button class="pm-btn pm-btn-sm"
+                            onclick="openModal('dunningSettingsModal')">Dunning</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Link Abandoned</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">LNK-992 (KES 120,000)</div>
+                        </div><button class="pm-btn pm-btn-sm" onclick="openModal('linkAnalyticsModal')">Track</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Mwangi Hardware Escalation</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">KES 42,000 (65 Days Overdue)</div>
+                        </div><button class="pm-btn pm-btn-sm"
+                            onclick="openModal('recordPaymentModal')">Resolve</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 24. Suggestions Modal -->
+    <div class="modal fade resettable" id="suggestionsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-stars text-purple me-2"
+                            style="color:var(--pm-purple)"></i>AI Suggestions</h5><button class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="status-row py-2">
+                        <div><strong>Offer 2% Early Pay Discount</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">To 3 clients > 60 days overdue to
+                                stimulate cashflow.</div>
+                        </div><button class="pm-btn pm-btn-sm pm-btn-primary"
+                            onclick="processAction('suggestionsModal','Discount applied and updated invoices sent.','')">Apply</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Enable Auto-Reminders</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Reduce DSO by ~4 days historically.</div>
+                        </div><button class="pm-btn pm-btn-sm"
+                            onclick="openModal('reminderSettingsModal')">Setup</button>
+                    </div>
+                    <div class="status-row py-2">
+                        <div><strong>Switch Drafts to Links</strong>
+                            <div style="font-size:11px;color:var(--pm-muted)">Send payment links via WhatsApp for 2x
+                                faster pay.</div>
+                        </div><button class="pm-btn pm-btn-sm"
+                            onclick="openModal('newPaymentLinkModal')">Generate</button>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 25. Notifications Modal -->
+    <div class="modal fade resettable" id="notificationsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notifications (4)</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height:400px;overflow-y:auto">
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-success-soft);font-size:13px">
+                        <strong>Payment Received!</strong><br><span style="font-size:11px;color:var(--pm-muted)">Coast
+                            Logistics paid KES 140,000 for INV-2025-041.</span></div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-info-soft);font-size:13px"><strong>Link
+                            Viewed</strong><br><span style="font-size:11px;color:var(--pm-muted)">Global Exporters
+                            viewed their USD invoice.</span></div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-danger-soft);font-size:13px">
+                        <strong>Overdue Alert</strong><br><span
+                            style="font-size:11px;color:var(--pm-muted)">INV-2025-042 is 14 days overdue.</span></div>
+                    <div class="p-3 rounded mb-2" style="background:var(--pm-warning-soft);font-size:13px">
+                        <strong>System Update</strong><br><span style="font-size:11px;color:var(--pm-muted)">New KRA VAT
+                            API integration is live.</span></div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn pm-btn-sm">Mark All Read</button><button class="pm-btn"
+                        data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 26. Profile Modal -->
+    <div class="modal fade resettable" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-building me-2"></i>Business Profile</h5><button
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="pm-avatar mx-auto mb-3"
+                        style="width:64px;height:64px;font-size:24px;background:var(--pm-gradient-blue)">AP</div>
+                    <h5 style="font-weight:700;margin-bottom:2px">Apex Retail Ltd.</h5>
+                    <p style="font-size:13px;color:var(--pm-muted)">KRA PIN: P051***49G · Nairobi, Kenya</p>
+                    <div class="row g-2 text-start mt-3" style="font-size:13px">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Role</span><br><strong>Finance Admin (Sarah A.)</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Active Users</span><br><strong>4 Users</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Subscription</span><br><strong>Enterprise</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:var(--pm-surface-2)"><span
+                                    class="text-muted">Verification</span><br><strong style="color:var(--pm-accent)"><i
+                                        class="bi bi-shield-check"></i> KYB Verified</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Modal Helpers
+        function openModal(id) { const el = document.getElementById(id); if (el) { new bootstrap.Modal(el).show(); } }
+        function closeModal(id) { const el = document.getElementById(id); if (!el) return; const m = bootstrap.Modal.getInstance(el); if (m) m.hide(); }
+        function switchTab(prefix, key, btn) { btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('[id^="' + prefix + '-"]').forEach(p => p.classList.remove('active')); const panel = document.getElementById(prefix + '-' + key); if (panel) panel.classList.add('active'); }
+        function filterTable(tableId, status, btn) { btn.parentElement.querySelectorAll('.pm-tab-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); const rows = document.querySelectorAll('#' + tableId + ' tbody tr'); rows.forEach(r => { if (status === 'all' || r.dataset.status === status) { r.style.display = ''; } else { r.style.display = 'none'; } }); }
+
+        // Processing & Loaders
+        function showLoading(target, cb) { const el = typeof target === 'string' ? document.querySelector(target) : target; if (!el) { cb(); return; } const ov = document.createElement('div'); ov.className = 'pm-loading-overlay'; ov.innerHTML = '<div class="pm-spinner"></div><p style="margin-top:12px;font-size:13px;font-weight:600;color:var(--pm-primary)">Processing...</p>'; el.style.position = 'relative'; el.appendChild(ov); setTimeout(() => { ov.remove(); cb(); }, 1200); }
+        function processAction(modalId, msg, ref, nextModal) { const modal = document.getElementById(modalId); const body = modal.querySelector('.modal-body'); const footer = modal.querySelector('.modal-footer'); showLoading(body, () => { body.innerHTML = `<div class="pm-receipt"><div class="receipt-icon"><i class="bi bi-check-lg"></i></div><h5 style="font-weight:700;color:var(--pm-accent)">${msg}</h5>${ref ? `<p style="font-size:12px;color:var(--pm-muted);word-break:break-all">${ref}</p>` : ''}<div class="d-flex justify-content-center mt-3" style="gap:8px">${nextModal ? `<button class="pm-btn pm-btn-sm" onclick="closeModal('${modalId}');openModal('${nextModal}')">Continue</button>` : `<button class="pm-btn pm-btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>`}</div></div>`; footer.innerHTML = '<button class="pm-btn pm-btn-primary" data-bs-dismiss="modal">Done</button>'; }); }
+
+        // Multi-step Steppers
+        let invStep = 1;
+        function renderStepper(elId, labels, current) { const wrap = document.getElementById(elId); if (!wrap) return; wrap.innerHTML = labels.map((l, i) => `<div class="pm-step ${(i + 1) < current ? 'completed' : (i + 1) === current ? 'active' : ''}"><div class="pm-step-num">${(i + 1) < current ? '<i class="bi bi-check"></i>' : (i + 1)}</div><div class="pm-step-label">${l}</div></div>${i < labels.length - 1 ? '<div class="pm-step-line"></div>' : ''}`).join(''); }
+        function showFlow(prefix, current, total) { for (let i = 1; i <= total; i++) { const el = document.getElementById(prefix + i); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } const a = document.getElementById(prefix + current); if (a) { a.classList.add('active'); a.style.display = 'block'; } }
+
+        function nextInvStep() {
+            if (invStep === 3) { showLoading('#invModalBody', () => { invStep = 4; renderStepper('invStepper', ['Client', 'Items', 'Settings', 'Done'], invStep); showFlow('invStep', invStep, 4); document.getElementById('invNextBtn').style.display = 'none'; }); return; }
+            if (invStep >= 4) return;
+            invStep++; renderStepper('invStepper', ['Client', 'Items', 'Settings', 'Done'], invStep); showFlow('invStep', invStep, 4);
+            if (invStep === 3) document.getElementById('invNextBtn').innerHTML = 'Create Invoice <i class="bi bi-check2"></i>';
+        }
+
+        function resetFlows() { invStep = 1; renderStepper('invStepper', ['Client', 'Items', 'Settings', 'Done'], 1); showFlow('invStep', 1, 4); const btn = document.getElementById('invNextBtn'); if (btn) { btn.style.display = 'inline-flex'; btn.innerHTML = 'Next <i class="bi bi-arrow-right"></i>'; } }
+
+        // Resettable Modals Logic
+        function cacheResettable() { document.querySelectorAll('.resettable').forEach(m => { const b = m.querySelector('.modal-body'); const f = m.querySelector('.modal-footer'); if (b) m.dataset.originalBody = b.innerHTML; if (f) m.dataset.originalFooter = f.innerHTML; m.addEventListener('hidden.bs.modal', () => { if (m.dataset.originalBody) m.querySelector('.modal-body').innerHTML = m.dataset.originalBody; if (m.dataset.originalFooter) m.querySelector('.modal-footer').innerHTML = m.dataset.originalFooter; resetFlows(); }); }); }
+
+        document.addEventListener('DOMContentLoaded', () => { cacheResettable(); resetFlows(); });
+    </script>
+</body>
+
+</html>

@@ -172,7 +172,7 @@ const initialMockData: HubConfig = {
 				"Role-based permissions",
 			],
 			actions: ["Create invoice", "Approve payroll", "Invite staff"],
-			url: "/business-dashboard/command-center",
+			url: "/business-dashboard",
 		},
 		{
 			id: "utility",

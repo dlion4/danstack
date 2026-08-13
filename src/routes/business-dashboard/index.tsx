@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import CommandCenter from "@/features/dashboards/business-dashboard/command-center/pages/CommandCenter";
+import PayMoDashboard from "@/features/dashboards/business-dashboard/overview/PayMoDashboard";
 
-// Business Command Center is the business dashboard overview (/business-dashboard).
+// Business dashboard home (/business-dashboard) — Command Center overview.
 export const Route = createFileRoute("/business-dashboard/")({
-	component: CommandCenter,
+	component: PayMoDashboard,
 });

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayMo Business — Multi-Business / Portfolio</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paymo-consolidated.css">
+<style>
+/* ===== Portfolio page-specific ===== */
+.kpi-hero{background:var(--pm-gradient-hero);border-radius:var(--pm-r-xl);color:#fff;padding:26px;position:relative;overflow:hidden;margin-bottom:16px}
+.kpi-hero::after{content:'';position:absolute;top:-60%;right:-15%;width:420px;height:420px;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%);border-radius:50%}
+.kpi-hero h2{font-family:var(--pm-font-display);font-weight:700;letter-spacing:-.02em}
+.kpi-stat{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:var(--pm-r-lg);padding:16px;backdrop-filter:blur(6px)}
+.kpi-stat .lab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.85;font-weight:600}
+.kpi-stat .val{font-size:22px;font-weight:700;font-family:var(--pm-font-display)}
+.entity-card{border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);padding:16px;background:#fff;cursor:pointer;transition:all .2s;height:100%;position:relative;overflow:hidden}
+.entity-card:hover{box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.entity-card[data-health="green"]{border-left:4px solid var(--pm-accent)}
+.entity-card[data-health="amber"]{border-left:4px solid var(--pm-warning)}
+.entity-card[data-health="red"]{border-left:4px solid var(--pm-danger)}
+.entity-type{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--pm-muted);font-weight:700}
+.entity-card .amt{font-family:var(--pm-font-display);font-weight:700}
+.folder-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--pm-r-sm);cursor:pointer;transition:all .15s}
+.folder-row:hover{background:var(--pm-surface-2)}
+.folder-row .f-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.folder-row.sub{padding-left:30px}
+.group-stat{text-align:center;padding:12px;border-radius:var(--pm-r-md);background:var(--pm-surface-2);border:1px solid var(--pm-border)}
+.group-stat .gv{font-family:var(--pm-font-display);font-weight:700;font-size:18px}
+.unit-tile{border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:12px;cursor:pointer;transition:all .2s;background:#fff;position:relative;min-height:120px}
+.unit-tile:hover{box-shadow:var(--pm-shadow-md);transform:translateY(-2px)}
+.unit-tile.vacant{background:var(--pm-surface-2);opacity:.7}
+.unit-tile.overdue{border-color:var(--pm-danger)}
+.unit-tile .u-no{font-family:var(--pm-font-display);font-weight:700;font-size:16px}
+.matrix-cell{min-width:110px}
+.matrix-cell select{width:100%}
+.mini-matrix{border:1px solid var(--pm-border);border-radius:var(--pm-r-md)}
+.mini-matrix .mm-item{padding:10px 14px;border-bottom:1px solid var(--pm-border);font-size:13px}
+.mini-matrix .mm-item:last-child{border-bottom:none}
+.timeline-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day{border:1px solid var(--pm-border);border-radius:8px;min-height:58px;padding:4px 6px;font-size:11px;background:#fff;position:relative}
+.cal-day .dnum{font-weight:700;font-size:11px}
+.cal-day.due{background:var(--pm-warning-soft);border-color:var(--pm-warning)}
+.cal-day.due::after{content:'!';position:absolute;top:3px;right:5px;color:var(--pm-warning);font-weight:800}
+.cal-day .tag{font-size:9px;font-weight:600;color:var(--pm-ink-soft);white-space:nowrap;overflow:hidden}
+.loan-tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+.tax-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--pm-border);font-size:13px}
+.tax-row:last-child{border-bottom:none}
+.insight-banner{border:1px solid var(--pm-border);border-left:4px solid var(--pm-purple);background:var(--pm-purple-soft);border-radius:var(--pm-r-md);padding:14px 16px}
+.insight-banner.tip{border-left-color:var(--pm-accent);background:var(--pm-accent-soft)}
+.insight-banner.warn{border-left-color:var(--pm-warning);background:var(--pm-warning-soft)}
+.quickbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--pm-border);border-radius:var(--pm-r-lg);box-shadow:var(--pm-shadow-lg);padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;max-width:860px;width:calc(100% - 24px);justify-content:center}
+.quickbar .qb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border-radius:var(--pm-r-sm);border:1px solid transparent;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--pm-ink-soft);transition:all .2s;position:relative}
+.quickbar .qb:hover{background:var(--pm-surface-2);color:var(--pm-primary);border-color:var(--pm-border)}
+.quickbar .qb i{font-size:18px}
+.quickbar .qb .qbadge{position:absolute;top:2px;right:8px;min-width:16px;height:16px;border-radius:8px;background:var(--pm-danger);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.wizard-side{background:var(--pm-surface-2);border:1px solid var(--pm-border);border-radius:var(--pm-r-md);padding:16px;height:100%}
+.elig-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+.caret-cell{cursor:pointer;color:var(--pm-muted)}
+.mx-table .pm-table{width:100%}
+.folder-active{background:var(--pm-primary-soft)}
+</style>
+</head>
+<body>
+<div class="pm-app">
+  <aside class="pm-sidebar">
+    <a class="pm-sidebar-logo" href="overview.html">B</a>
+    <nav class="pm-sidebar-nav">
+      <a class="pm-nav-item" href="overview.html" title="Overview"><i class="bi bi-grid-1x2"></i><span class="pm-nav-tip">Overview</span></a>
+      <a class="pm-nav-item" href="get-paid.html" title="Get Paid"><i class="bi bi-cash-coin"></i><span class="badge-dot"></span><span class="pm-nav-tip">Get Paid</span></a>
+      <a class="pm-nav-item" href="pay-suppliers.html" title="Pay Suppliers"><i class="bi bi-send"></i><span class="pm-nav-tip">Pay Suppliers</span></a>
+      <a class="pm-nav-item" href="cash-accounts.html" title="Cash & Accounts"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Cash & Accounts</span></a>
+      <a class="pm-nav-item" href="bookkeeping-taxes.html" title="Bookkeeping & Taxes"><i class="bi bi-journal-check"></i><span class="pm-nav-tip">Bookkeeping & Taxes</span></a>
+      <a class="pm-nav-item" href="products-store.html" title="Products & Store"><i class="bi bi-bag"></i><span class="pm-nav-tip">Products & Store</span></a>
+      <a class="pm-nav-item" href="inventory-stock.html" title="Inventory & Stock"><i class="bi bi-box-seam"></i><span class="pm-nav-tip">Inventory & Stock</span></a>
+      <a class="pm-nav-item" href="funding-credit.html" title="Funding & Credit"><i class="bi bi-bank2"></i><span class="pm-nav-tip">Funding & Credit</span></a>
+      <a class="pm-nav-item" href="marketing-growth.html" title="Marketing & Growth"><i class="bi bi-megaphone"></i><span class="pm-nav-tip">Marketing & Growth</span></a>
+      <a class="pm-nav-item" href="apps-integrations.html" title="Apps & Integrations"><i class="bi bi-plug"></i><span class="pm-nav-tip">Apps & Integrations</span></a>
+      <a class="pm-nav-item" href="customers-crm.html" title="Customers & CRM"><i class="bi bi-people"></i><span class="pm-nav-tip">Customers & CRM</span></a>
+      <a class="pm-nav-item active" href="portfolio.html" title="Multi-Business / Portfolio"><i class="bi bi-diagram-3"></i><span class="pm-nav-tip">Portfolio</span></a>
+      <a class="pm-nav-item" href="settings-security.html" title="Settings & Security"><i class="bi bi-gear"></i><span class="pm-nav-tip">Settings & Security</span></a>
+    </nav>
+    <button class="pm-sidebar-foot" onclick="openModal('supportModal')" title="Help"><i class="bi bi-question-circle"></i></button>
+  </aside>
+
+  <div class="pm-main">
+    <header class="pm-header">
+      <div class="pm-header-title"><div class="d-flex align-items-center gap-3">
+        <div class="pm-avatar" style="width:40px;height:40px;font-size:16px;background:var(--pm-gradient-hero)">AM</div>
+        <div><h1>My Portfolio <span class="pm-badge pm-badge-purple">Portfolio Owner</span></h1><p>7 entities · 3 groups · Group PIN P051234567M</p></div>
+      </div></div>
+      <div class="pm-header-search"><i class="bi bi-search"></i><input id="globalSearch" placeholder="Search entities, tenants, transfers..."></div>
+      <div class="pm-header-actions">
+        <button class="pm-header-btn" onclick="openModal('healthCheckModal')" title="Health"><i class="bi bi-activity text-success"></i></button>
+        <button class="pm-header-btn" onclick="openModal('notificationsModal')" title="Alerts"><i class="bi bi-bell"></i><span class="counter" id="notifCount">6</span></button>
+        <div class="pm-profile-btn" onclick="openModal('profileModal')"><div class="pm-avatar" style="background:var(--pm-primary)">AM</div><div><div class="pm-name">Amina M.</div><div class="pm-role">Portfolio Owner</div></div></div>
+        <div class="pm-clock"><span class="d" id="pmDate">—</span><span class="t" id="pmTime">—</span></div>
+      </div>
+    </header>
+
+    <div class="pm-page-bar">
+      <div><div class="pm-breadcrumb"><a href="overview.html">Business Portal</a> / <strong>Multi-Business / Portfolio</strong></div>
+        <h2 style="font-family:var(--pm-font-display);font-size:22px;font-weight:700;margin:0">Multi-Business / Portfolio</h2>
+        <p class="pm-section-sub">Your whole empire on one screen — consolidated cash, entity groups, rentals, inter-company money movement, and group tax.</p></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="pm-btn" onclick="openModal('entitySelectorModal')"><i class="bi bi-ui-checks"></i> Entity Selector</button>
+        <button class="pm-btn" onclick="openModal('accessMatrixModal')"><i class="bi bi-shield-lock"></i> Access Matrix</button>
+        <button class="pm-btn pm-btn-dark" onclick="openModal('addEntityModal')"><i class="bi bi-plus-lg"></i> Add Entity</button>
+      </div>
+    </div>
+
+    <div class="pm-content">
+
+      <!-- ==================== SECTION 14.1 CONSOLIDATED COMMAND CENTER ==================== -->
+      <div class="kpi-hero">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <div style="font-size:12px;opacity:.85;font-weight:600;letter-spacing:.05em">CONSOLIDATED COMMAND CENTER</div>
+            <h2 style="margin:2px 0 4px">Your Portfolio at a Glance</h2>
+            <p style="margin:0;opacity:.85;font-size:13px">Read-only consolidation across all 7 entities. No ledger entries are made at portfolio level.</p>
+          </div>
+          <button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff" onclick="openModal('consolidatedReportModal')"><i class="bi bi-bar-chart"></i> Full Report</button>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-6 col-lg"><div class="kpi-stat"><div class="lab">Total Group Cash</div><div class="val">KES 8.42M</div><div style="font-size:11px;opacity:.8"><i class="bi bi-arrow-up"></i> 4.2% vs last mo</div></div></div>
+          <div class="col-6 col-lg"><div class="kpi-stat"><div class="lab">Total Group Revenue</div><div class="val">KES 2.14M</div><div style="font-size:11px;opacity:.8">MTD · all entities</div></div></div>
+          <div class="col-6 col-lg"><div class="kpi-stat"><div class="lab">Total Group Expenses</div><div class="val">KES 1.32M</div><div style="font-size:11px;opacity:.8"><i class="bi bi-arrow-down"></i> 6% lower</div></div></div>
+          <div class="col-6 col-lg"><div class="kpi-stat"><div class="lab">Group Net Profit</div><div class="val">KES 820K</div><div style="font-size:11px;opacity:.8;color:#A7F3D0"><i class="bi bi-graph-up-arrow"></i> margin 38%</div></div></div>
+          <div class="col-12 col-lg"><div class="kpi-stat"><div class="lab">Group Tax Exposure</div><div class="val">KES 348K</div><div style="font-size:11px;opacity:.8;color:#FECACA"><i class="bi bi-exclamation-triangle"></i> 3 due this week</div></div></div>
+        </div>
+      </div>
+
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-grid-3x3-gap text-primary"></i> Entity Performance Grid</h3><p class="pm-section-sub">Click any entity to jump in. Sort to spot your best & worst performers.</p></div>
+          <div class="pm-seg">
+            <button class="active" onclick="sortEntities('cash',this)"><i class="bi bi-sort-numeric-down"></i> By Cash</button>
+            <button onclick="sortEntities('profit',this)"><i class="bi bi-sort-numeric-up"></i> By Net Profit</button>
+          </div></div>
+        <div class="row g-3" id="entityGrid">
+          <!-- TechSolutions Ltd -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="green" data-cash="4200000" data-profit="520000" onclick="openEntity('TechSolutions Ltd')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-buildings me-1"></i>Ltd</div><span class="pm-badge pm-badge-success">Healthy</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">TechSolutions Ltd</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Operating Companies</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 4.20M</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-success">+KES 520K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-info">eTIMS Active</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+          <!-- TS Retail -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="red" data-cash="620000" data-profit="-85000" onclick="openEntity('TS Retail')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-shop me-1"></i>Ltd</div><span class="pm-badge pm-badge-danger">At Risk</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">TS Retail</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Operating Companies</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 620K</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-danger">−KES 85K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-warning">Why losing?</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+          <!-- Kilimani House 1 -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="green" data-cash="960000" data-profit="280000" onclick="openEntity('Kilimani House 1')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-house-door me-1"></i>Rental</div><span class="pm-badge pm-badge-success">Healthy</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">Kilimani House 1</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Rental Properties</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 960K</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-success">+KES 280K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-purple">5 units</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+          <!-- Kilimani House 2 -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="amber" data-cash="310000" data-profit="90000" onclick="openEntity('Kilimani House 2')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-house-door me-1"></i>Rental</div><span class="pm-badge pm-badge-warning">1 Overdue</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">Kilimani House 2</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Rental Properties</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 310K</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-success">+KES 90K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-warning">Rent due</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+          <!-- Westlands Apartment -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="amber" data-cash="780000" data-profit="150000" onclick="openEntity('Westlands Apartment')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-buildings me-1"></i>Rental</div><span class="pm-badge pm-badge-info">1 Vacant</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">Westlands Apartment</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Rental Properties</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 780K</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-success">+KES 150K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-warning">Vacancy loss</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+          <!-- Personal Car Hire -->
+          <div class="col-lg-4 col-md-6"><div class="entity-card" data-health="green" data-cash="2540000" data-profit="610000" onclick="openEntity('Personal Car Hire')">
+            <div class="d-flex justify-content-between"><div class="entity-type"><i class="bi bi-car-front me-1"></i>Sole Prop</div><span class="pm-badge pm-badge-success">Healthy</span></div>
+            <h5 style="margin:8px 0 2px;font-family:var(--pm-font-display)">Personal Car Hire</h5>
+            <div style="font-size:11px;color:var(--pm-muted)">📁 Side Projects</div>
+            <div class="d-flex justify-content-between mt-3"><div><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="amt">KES 2.54M</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="amt text-success">+KES 610K</div></div></div>
+            <div class="d-flex gap-2 mt-3"><span class="pm-badge pm-badge-success">Top performer</span><button class="pm-btn pm-btn-sm ms-auto" onclick="event.stopPropagation();openModal('entityDetailModal')">Details</button></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-shuffle text-warning"></i> Inter-Company Matrix</h3><p class="pm-section-sub">Money movement between your entities this month (automatically eliminated in consolidated P&amp;L).</p></div>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('interCompanyTransferModal')"><i class="bi bi-arrow-left-right"></i> New Transfer</button></div>
+        <div class="mini-matrix">
+          <div class="mm-item d-flex justify-content-between align-items-center"><div><i class="bi bi-arrow-right text-primary me-2"></i><strong>TechSol</strong> <span class="text-muted">→</span> <strong>Kilimani House 3</strong> <span class="pm-badge pm-badge-info ms-1">Maintenance fund</span></div><div class="d-flex align-items-center gap-2"><strong>KES 50,000</strong><button class="pm-btn pm-btn-sm pm-btn-ghost" onclick="openModal('loanDetailModal')"><i class="bi bi-eye"></i></button></div></div>
+          <div class="mm-item d-flex justify-content-between align-items-center"><div><i class="bi bi-arrow-right text-purple me-2" style="color:var(--pm-purple)"></i><strong>TS Retail</strong> <span class="text-muted">→</span> <strong>TechSol</strong> <span class="pm-badge pm-badge-purple ms-1">Management fee</span></div><div class="d-flex align-items-center gap-2"><strong>KES 100,000</strong><button class="pm-btn pm-btn-sm pm-btn-ghost" onclick="openModal('loanDetailModal')"><i class="bi bi-eye"></i></button></div></div>
+          <div class="mm-item d-flex justify-content-between align-items-center"><div><i class="bi bi-arrow-right text-success me-2"></i><strong>Car Hire</strong> <span class="text-muted">→</span> <strong>TechSol</strong> <span class="pm-badge pm-badge-success ms-1">Loan repayment</span></div><div class="d-flex align-items-center gap-2"><strong>KES 25,000</strong><button class="pm-btn pm-btn-sm pm-btn-ghost" onclick="openModal('interCompanyLoanModal')"><i class="bi bi-eye"></i></button></div></div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.2 BUSINESS LIST, GROUPING & FOLDERS ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-folder2-open text-info"></i> Business Groups & Folders</h3><p class="pm-section-sub">Virtual groupings that power consolidated reporting — they never touch the underlying ledgers. A business lives in one folder at a time.</p></div>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('newFolderModal')"><i class="bi bi-plus-lg"></i> New Folder</button></div>
+        <div class="row g-4">
+          <div class="col-lg-5">
+            <div class="wizard-side">
+              <div class="d-flex justify-content-between align-items-center mb-2"><strong>Your Structure</strong><span class="pm-badge pm-badge-info">Drag to move</span></div>
+              <!-- Operating Companies -->
+              <div class="folder-row" onclick="toggleGroup(this)"><div class="f-icon" style="background:var(--pm-purple-soft);color:var(--pm-purple)"><i class="bi bi-folder2-open"></i></div><strong>📁 Operating Companies</strong><span class="pm-badge ms-auto">2</span><i class="bi bi-chevron-down"></i></div>
+              <div class="group-children">
+                <div class="folder-row sub" draggable="true" onclick="openEntity('TechSolutions Ltd')"><div class="f-icon" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-buildings"></i></div><span>TechSolutions Ltd</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+                <div class="folder-row sub" draggable="true" onclick="openEntity('TS Retail')"><div class="f-icon" style="background:var(--pm-info-soft);color:var(--pm-info)"><i class="bi bi-shop"></i></div><span>TS Retail</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+              </div>
+              <!-- Rental Properties -->
+              <div class="folder-row" style="cursor:pointer" onclick="toggleGroup(this)"><div class="f-icon" style="background:var(--pm-pink-soft);color:var(--pm-pink)"><i class="bi bi-folder2-open"></i></div><strong>📁 Rental Properties</strong><span class="pm-badge ms-auto">4</span><i class="bi bi-chevron-down"></i></div>
+              <div class="group-children">
+                <div class="folder-row sub" draggable="true" onclick="openEntity('Kilimani House 1')"><div class="f-icon" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-house-door"></i></div><span>Kilimani House 1</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+                <div class="folder-row sub" draggable="true" onclick="openEntity('Kilimani House 2')"><div class="f-icon" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-house-door"></i></div><span>Kilimani House 2</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+                <div class="folder-row sub" draggable="true" onclick="openEntity('Kilimani House 3')"><div class="f-icon" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-house-door"></i></div><span>Kilimani House 3</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+                <div class="folder-row sub" draggable="true" onclick="openEntity('Westlands Apartment')"><div class="f-icon" style="background:var(--pm-accent-soft);color:var(--pm-accent)"><i class="bi bi-buildings"></i></div><span>Westlands Apartment</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+              </div>
+              <!-- Side Projects -->
+              <div class="folder-row" style="cursor:pointer" onclick="toggleGroup(this)"><div class="f-icon" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-folder2-open"></i></div><strong>📁 Side Projects</strong><span class="pm-badge ms-auto">1</span><i class="bi bi-chevron-down"></i></div>
+              <div class="group-children">
+                <div class="folder-row sub" draggable="true" onclick="openEntity('Personal Car Hire')"><div class="f-icon" style="background:var(--pm-warning-soft);color:var(--pm-warning)"><i class="bi bi-car-front"></i></div><span>Personal Car Hire</span><button class="pm-btn pm-btn-sm pm-btn-ghost ms-auto" onclick="event.stopPropagation();openModal('moveEntityModal')"><i class="bi bi-three-dots"></i></button></div>
+              </div>
+              <div class="insight-banner tip mt-3"><i class="bi bi-lightbulb me-1"></i><strong>Tip:</strong> Drag any business into another folder to reorganize. Folders are pure organization — they never affect your legal structure.</div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <button class="pm-btn pm-btn-sm" onclick="groupMetrics('Operating Companies',this)"><i class="bi bi-buildings"></i> Operating Companies</button>
+              <button class="pm-btn pm-btn-sm" onclick="groupMetrics('Rental Properties',this)"><i class="bi bi-house-door"></i> Rental Properties</button>
+              <button class="pm-btn pm-btn-sm" onclick="groupMetrics('Side Projects',this)"><i class="bi bi-car-front"></i> Side Projects</button>
+            </div>
+            <div class="pm-card-dark pm-card" id="groupMetricsBox" style="padding:18px">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div><h4 style="font-family:var(--pm-font-display);margin:0" id="groupName">Rental Properties</h4><p style="margin:2px 0 0;opacity:.7;font-size:13px">Group-level consolidated metrics</p></div>
+                <button class="pm-btn pm-btn-sm" style="background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff" onclick="openModal('groupPnLModal')"><i class="bi bi-file-earmark-text"></i> View Consolidated P&L</button>
+              </div>
+              <div class="row g-3 mt-1">
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Total Rent Collected</div><div class="gv">KES 450K</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Total Maintenance</div><div class="gv">KES 30K</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Occupancy</div><div class="gv">94%</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Vacancy Loss</div><div class="gv">KES 15K</div></div></div>
+              </div>
+              <div class="row g-3 mt-1">
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Group Cash</div><div class="gv">KES 2.05M</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Group Net Profit</div><div class="gv">KES 520K</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Units</div><div class="gv">17</div></div></div>
+                <div class="col-6 col-lg-3"><div class="group-stat" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)"><div style="font-size:11px;opacity:.8">Tenants</div><div class="gv">16</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.3 ENTITY CREATION & TYPE PRESETS ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-plus-square text-primary"></i> Add an Entity — Type Presets</h3><p class="pm-section-sub">Industry-optimized presets configure chart of accounts, virtual accounts and workflows for you in minutes.</p></div>
+          <button class="pm-btn pm-btn-dark pm-btn-sm" onclick="openModal('addEntityModal')"><i class="bi bi-plus-lg"></i> Add Entity</button></div>
+        <div class="row g-3">
+          <div class="col-md-3 col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="openModal('stdBusinessModal')"><i class="bi bi-buildings" style="font-size:30px;color:var(--pm-primary)"></i><h6 style="margin:10px 0 2px">Limited Company</h6><div style="font-size:11px;color:var(--pm-muted)">Trading / Service CoA</div></div></div>
+          <div class="col-md-3 col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="openModal('stdBusinessModal')"><i class="bi bi-person-badge" style="font-size:30px;color:var(--pm-info)"></i><h6 style="margin:10px 0 2px">Sole Proprietorship</h6><div style="font-size:11px;color:var(--pm-muted)">Personal income</div></div></div>
+          <div class="col-md-3 col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="openModal('saccoModal')"><i class="bi bi-people" style="font-size:30px;color:var(--pm-purple)"></i><h6 style="margin:10px 0 2px">SACCO / NGO</h6><div style="font-size:11px;color:var(--pm-muted)">Membership CoA</div></div></div>
+          <div class="col-md-3 col-6"><div class="entity-card" data-health="green" style="text-align:center;border-left-color:var(--pm-pink);background:linear-gradient(180deg,#fff,#FDF2F8)" onclick="openModal('rentalWizardModal')"><i class="bi bi-house-heart" style="font-size:30px;color:var(--pm-pink)"></i><h6 style="margin:10px 0 2px">🏠 Rental Property</h6><div style="font-size:11px;color:var(--pm-pink)">Rich preset · unlocks Property Suite</div></div></div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6"><div class="insight-banner tip"><i class="bi bi-stars me-1"></i><strong>The Rental Preset</strong> turns a 2-hour setup into a 5-minute wizard: auto-creates a rental chart of accounts, a "Collections" virtual account, recurring rent invoices and a Property Manager role — all in one click.</div></div>
+          <div class="col-md-6"><div class="insight-banner warn"><i class="bi bi-info-circle me-1"></i><strong>New rental entities</strong> get an <code>entity_type = 'rental'</code> flag that unlocks the Property Sub-System and Rent Default Insurance (Page 11).</div></div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.4 PROPERTY / RENTAL SUB-SYSTEM ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-house-door text-pink" style="color:var(--pm-pink)"></i> Property Sub-System — Kilimani House 3</h3><p class="pm-section-sub">A specialized skin over core modules. A rent payment is still a standard M-Pesa collection that hits the General Ledger.</p></div>
+          <div class="d-flex gap-2 flex-wrap"><button class="pm-btn pm-btn-sm" onclick="openModal('collectRentModal')"><i class="bi bi-cash-stack"></i> Collect Rent</button><button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('addTenantModal')"><i class="bi bi-person-plus"></i> Add Tenant</button></div></div>
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="wizard-side" style="height:100%">
+              <strong>Rent Collection Dashboard</strong>
+              <div class="row g-2 mt-2">
+                <div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">This Month's Rent</div><div class="gv" style="font-size:16px">KES 150K</div></div></div>
+                <div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Collected</div><div class="gv text-success" style="font-size:16px">KES 120K</div></div></div>
+                <div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Outstanding</div><div class="gv text-danger" style="font-size:16px">KES 30K</div></div></div>
+              </div>
+              <div class="row g-2 mt-2">
+                <div class="col-6"><div class="unit-tile" onclick="openModal('tenantProfileModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 1A</span><span class="pm-badge pm-badge-success">Paid</span></div><div style="font-size:12px">Grace Otieno</div><div style="font-size:11px;color:var(--pm-muted)">KES 30K · Due 1st</div></div></div>
+                <div class="col-6"><div class="unit-tile overdue" onclick="openModal('tenantProfileModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 1B</span><span class="pm-badge pm-badge-danger">Overdue</span></div><div style="font-size:12px">James Kariuki</div><div style="font-size:11px;color:var(--pm-muted)">KES 30K · 5 days late</div></div></div>
+                <div class="col-6"><div class="unit-tile" onclick="openModal('tenantProfileModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 2A</span><span class="pm-badge pm-badge-success">Paid</span></div><div style="font-size:12px">Faith Wambui</div><div style="font-size:11px;color:var(--pm-muted)">KES 30K · Via M-Pesa</div></div></div>
+                <div class="col-6"><div class="unit-tile" onclick="openModal('tenantProfileModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 2B</span><span class="pm-badge pm-badge-success">Paid</span></div><div style="font-size:12px">Daniel Mwangi</div><div style="font-size:11px;color:var(--pm-muted)">KES 30K · Direct debit</div></div></div>
+                <div class="col-6"><div class="unit-tile" onclick="openModal('tenantProfileModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 3A</span><span class="pm-badge pm-badge-success">Paid</span></div><div style="font-size:12px">Susan Adhiambo</div><div style="font-size:11px;color:var(--pm-muted)">KES 30K · Paid early</div></div></div>
+                <div class="col-6"><div class="unit-tile vacant" onclick="openModal('vacancyModal')"><div class="d-flex justify-content-between"><span class="u-no">Unit 3B</span><span class="pm-badge pm-badge-secondary">Vacant</span></div><div style="font-size:12px;color:var(--pm-muted)">No tenant</div><div style="font-size:11px;color:var(--pm-warning)">Vacancy loss KES 30K/mo</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="pm-tab-pills">
+              <button class="pm-tab-pill active" onclick="tabSwitch(this,'propTenants')"><i class="bi bi-people"></i> Tenant Directory</button>
+              <button class="pm-tab-pill" onclick="tabSwitch(this,'propMaintenance')"><i class="bi bi-wrench-adjustable"></i> Maintenance</button>
+              <button class="pm-tab-pill" onclick="tabSwitch(this,'propDeposits')"><i class="bi bi-shield-check"></i> Deposits</button>
+            </div>
+            <div id="propTenants" class="tab-pane fade-step active">
+              <div class="d-flex justify-content-between align-items-center mb-2"><strong>Tenant Directory</strong><div class="d-flex gap-2"><button class="pm-btn pm-btn-sm" onclick="openModal('addTenantModal')"><i class="bi bi-person-plus"></i> Add Tenant</button></div></div>
+              <table class="pm-table"><thead><tr><th>Tenant</th><th>Unit</th><th>Phone</th><th>Rent</th><th>Deposit</th><th>Status</th></tr></thead><tbody>
+                <tr style="cursor:pointer" onclick="openModal('tenantProfileModal')"><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-primary)">GO</div><strong>Grace Otieno</strong></div></td><td>1A</td><td>+254 712 345 678</td><td>KES 30,000</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+                <tr style="cursor:pointer" onclick="openModal('tenantProfileModal')"><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-danger)">JK</div><strong>James Kariuki</strong></div></td><td>1B</td><td>+254 733 555 214</td><td>KES 30,000</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-danger">Overdue</span></td></tr>
+                <tr style="cursor:pointer" onclick="openModal('tenantProfileModal')"><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-accent)">FW</div><strong>Faith Wambui</strong></div></td><td>2A</td><td>+254 701 889 431</td><td>KES 30,000</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+                <tr style="cursor:pointer" onclick="openModal('tenantProfileModal')"><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-info)">DM</div><strong>Daniel Mwangi</strong></div></td><td>2B</td><td>+254 720 447 912</td><td>KES 30,000</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+                <tr style="cursor:pointer" onclick="openModal('tenantProfileModal')"><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-purple)">SA</div><strong>Susan Adhiambo</strong></div></td><td>3A</td><td>+254 799 112 300</td><td>KES 30,000</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Active</span></td></tr>
+              </tbody></table>
+            </div>
+            <div id="propMaintenance" class="tab-pane fade-step">
+              <div class="d-flex justify-content-between align-items-center mb-2"><strong>Maintenance Request Tracker</strong><button class="pm-btn pm-btn-sm" onclick="openModal('maintenanceRequestModal')"><i class="bi bi-plus-lg"></i> Log Request</button></div>
+              <table class="pm-table"><thead><tr><th>Unit</th><th>Issue</th><th>Priority</th><th>Status</th><th>Cost</th></tr></thead><tbody>
+                <tr style="cursor:pointer" onclick="openModal('maintenanceRequestModal')"><td>2B</td><td>Leaking kitchen tap</td><td><span class="pm-badge pm-badge-warning">Low</span></td><td><span class="pm-badge pm-badge-info">Assigned</span></td><td>—</td></tr>
+                <tr style="cursor:pointer" onclick="openModal('maintenanceRequestModal')"><td>3A</td><td>Water heater not working</td><td><span class="pm-badge pm-badge-danger">High</span></td><td><span class="pm-badge pm-badge-info">Assigned</span></td><td>KES 8,500</td></tr>
+                <tr style="cursor:pointer" onclick="openModal('maintenanceRequestModal')"><td>1A</td><td>Window lock broken</td><td><span class="pm-badge pm-badge-warning">Low</span></td><td><span class="pm-badge pm-badge-success">Resolved</span></td><td>KES 2,000</td></tr>
+                <tr style="cursor:pointer" onclick="openModal('maintenanceRequestModal')"><td>2A</td><td>Roof leak after rains</td><td><span class="pm-badge pm-badge-danger">Emergency</span></td><td><span class="pm-badge pm-badge-danger">Open</span></td><td>—</td></tr>
+              </tbody></table>
+            </div>
+            <div id="propDeposits" class="tab-pane fade-step">
+              <div class="d-flex justify-content-between align-items-center mb-2"><strong>Security Deposits Held</strong><span class="pm-badge pm-badge-purple">Liability Account</span></div>
+              <table class="pm-table"><thead><tr><th>Tenant</th><th>Deposit</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                <tr><td>Grace Otieno</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Held</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('depositStatementModal')">Statement</button></td></tr>
+                <tr><td>James Kariuki</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Held</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('depositStatementModal')">Statement</button></td></tr>
+                <tr><td>Faith Wambui</td><td>KES 60,000</td><td><span class="pm-badge pm-badge-success">Held</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('depositStatementModal')">Statement</button></td></tr>
+                <tr><td>Samuel Njeri (moved out)</td><td>KES 55,000</td><td><span class="pm-badge pm-badge-warning">Refund pending</span></td><td><button class="pm-btn pm-btn-sm" onclick="openModal('depositMoveOutModal')">Process</button></td></tr>
+              </tbody></table>
+              <div class="d-flex gap-2 mt-3"><button class="pm-btn pm-btn-sm" onclick="openModal('depositMoveInModal')"><i class="bi bi-box-arrow-in-right"></i> Record Move-in Deposit</button><button class="pm-btn pm-btn-sm" onclick="openModal('depositMoveOutModal')"><i class="bi bi-box-arrow-right"></i> Record Move-out Refund</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.5 CONSOLIDATED FINANCIALS & ELIMINATIONS ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-journal-text text-success"></i> Consolidated Financials & Eliminations</h3><p class="pm-section-sub">True group accounting, simplified. Pick entities, see the unadjusted and adjusted (eliminated) picture.</p></div>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('entitySelectorModal')"><i class="bi bi-ui-checks"></i> Choose Entities</button></div>
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <div class="insight-banner mb-2"><i class="bi bi-exclamation-triangle me-1"></i><strong>Inter-Company Elimination:</strong> "TechSol paid TS Retail KES 50,000 for goods — revenue for TechSol, expense for TS Retail. To see true group profit we eliminate this KES 50,000."</div>
+            <div class="d-flex align-items-center justify-content-between mb-2"><strong>Consolidated P&amp;L — this month</strong><div class="pm-seg"><button class="active" onclick="pnlMode('unadjusted',this)">Unadjusted</button><button onclick="pnlMode('adjusted',this)">Adjusted (Eliminated)</button></div></div>
+            <table class="pm-table"><thead><tr><th>Line</th><th style="text-align:right">Amount</th></tr></thead><tbody>
+              <tr><td><strong>Revenue</strong></td><td style="text-align:right"><strong id="pnlRev">KES 2,140,000</strong></td></tr>
+              <tr><td class="ps-4">Inter-company elimination</td><td style="text-align:right" id="pnlElimRev" class="text-muted">− KES 150,000</td></tr>
+              <tr><td><strong>Expenses</strong></td><td style="text-align:right"><strong id="pnlExp">KES 1,320,000</strong></td></tr>
+              <tr><td class="ps-4">Inter-company elimination</td><td style="text-align:right" id="pnlElimExp" class="text-muted">− KES 150,000</td></tr>
+              <tr><td class="ps-4">Vacancy loss (rentals)</td><td style="text-align:right" class="text-muted">− KES 15,000</td></tr>
+              <tr><td><strong>Net Profit</strong></td><td style="text-align:right"><strong id="pnlProfit" class="text-success">KES 820,000</strong></td></tr>
+            </tbody></table>
+            <button class="pm-btn pm-btn-sm pm-btn-success mt-2" onclick="openModal('groupPnLModal')"><i class="bi bi-file-earmark-spreadsheet"></i> Full Consolidated P&L</button>
+          </div>
+          <div class="col-lg-6">
+            <div class="d-flex align-items-center justify-content-between mb-2"><strong>Consolidated Balance Sheet</strong><span class="pm-badge pm-badge-info">Group totals</span></div>
+            <table class="pm-table"><thead><tr><th>Item</th><th style="text-align:right">Amount</th></tr></thead><tbody>
+              <tr><td><strong>Assets</strong></td><td style="text-align:right"><strong>KES 18,900,000</strong></td></tr>
+              <tr><td class="ps-4">Cash & bank</td><td style="text-align:right">KES 8,420,000</td></tr>
+              <tr><td class="ps-4">Property & equipment</td><td style="text-align:right">KES 9,100,000</td></tr>
+              <tr><td class="ps-4">Inter-company receivable (eliminated)</td><td style="text-align:right" class="text-muted">0</td></tr>
+              <tr><td><strong>Liabilities</strong></td><td style="text-align:right"><strong>KES 6,300,000</strong></td></tr>
+              <tr><td class="ps-4">Inter-company payable (eliminated)</td><td style="text-align:right" class="text-muted">0</td></tr>
+              <tr><td><strong>Equity</strong></td><td style="text-align:right"><strong>KES 12,600,000</strong></td></tr>
+            </tbody></table>
+            <div class="insight-banner tip mt-2"><i class="bi bi-lightbulb me-1"></i>For complex cases (unrealized profit in inventory) consult your accountant — we provide the raw data export.</div>
+            <button class="pm-btn pm-btn-sm mt-2" onclick="toast('Exporting consolidated report to XLSX...')"><i class="bi bi-download"></i> Export Group Report</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.6 PER-BUSINESS ACCESS CONTROL MATRIX ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-shield-lock text-danger"></i> Per-Business Access Control Matrix</h3><p class="pm-section-sub">"Grandma sees only House A." Strict, legally sound data isolation within a single login.</p></div>
+          <button class="pm-btn pm-btn-sm pm-btn-dark" onclick="openModal('addUserAccessModal')"><i class="bi bi-person-plus"></i> Grant Access</button></div>
+        <div class="table-responsive mx-table">
+          <table class="pm-table" style="min-width:680px"><thead><tr>
+            <th>User</th><th>TechSol</th><th>TS Retail</th><th>Hse 1</th><th>Hse 2</th><th>Hse 3</th><th>Car Hire</th>
+          </tr></thead><tbody>
+            <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-primary)">AM</div><strong>Amina M.</strong> <span class="pm-badge pm-badge-purple">Owner</span></div></td><td colspan="6" style="color:var(--pm-muted);font-style:italic">Admin to everything · cannot be removed</td></tr>
+            <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-info)">CJ</div><strong>Caretaker James</strong></div></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Standard</option><option>Viewer</option><option>Admin</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+            </tr>
+            <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-accent)">FN</div><strong>Group Manager — Rentals</strong></div></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Standard</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Standard</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Standard</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option>No Access</option></select></td>
+            </tr>
+            <tr><td><div class="d-flex align-items-center gap-2"><div class="pm-avatar" style="background:var(--pm-purple)">JK</div><strong>Jane — Accountant</strong></div></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+              <td class="matrix-cell"><select class="pm-form-control"><option selected>Viewer</option></select></td>
+            </tr>
+          </tbody></table>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <button class="pm-btn pm-btn-sm" onclick="openModal('auditLogModal')"><i class="bi bi-clock-history"></i> Audit Log</button>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('inheritanceModal')"><i class="bi bi-diagram-3"></i> Inheritance & Overrides</button>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.7 INTER-COMPANY TRANSFERS ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-arrow-left-right text-warning"></i> Inter-Company Transfers & Loans</h3><p class="pm-section-sub">Move money between your own entities — free, instant, classified internal ledger movements.</p></div>
+          <button class="pm-btn pm-btn-dark pm-btn-sm" onclick="openModal('interCompanyTransferModal')"><i class="bi bi-arrow-left-right"></i> Transfer Funds</button></div>
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <strong>Transfer Rules</strong>
+            <div class="mini-matrix mt-2">
+              <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-shield-check text-success me-1"></i> Transfers &gt; KES 1,000,000</span><span class="pm-badge pm-badge-warning">Require Owner approval</span></div>
+              <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-file-earmark-text text-info me-1"></i> Loans between entities</span><span class="pm-badge pm-badge-info">Repayment schedule required</span></div>
+              <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-cash-coin text-success me-1"></i> Inter-company transfers</span><span class="pm-badge pm-badge-success">Free & instant</span></div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="d-flex justify-content-between align-items-center mb-2"><strong>Inter-Company Loan Tracker</strong><button class="pm-btn pm-btn-sm" onclick="openModal('interCompanyLoanModal')"><i class="bi bi-plus-lg"></i> New Loan</button></div>
+            <div class="mini-matrix">
+              <div class="mm-item d-flex justify-content-between align-items-center"><div><strong>Car Hire → TechSol</strong><div style="font-size:11px;color:var(--pm-muted)">Principal KES 200K · 0% · 12 months</div></div><div class="text-end"><div><span class="pm-badge pm-badge-success">On track</span></div><div style="font-size:11px;color:var(--pm-muted)">Outstanding KES 175K</div></div></div>
+              <div class="mm-item d-flex justify-content-between align-items-center"><div><strong>TechSol → Kilimani Hse 3</strong><div style="font-size:11px;color:var(--pm-muted)">Principal KES 120K · 8% · 6 months</div></div><div class="text-end"><div><span class="pm-badge pm-badge-info">Repaying</span></div><div style="font-size:11px;color:var(--pm-muted)">Outstanding KES 80K</div></div></div>
+            </div>
+            <button class="pm-btn pm-btn-sm mt-2" onclick="openModal('loanDetailModal')"><i class="bi bi-eye"></i> View Full Loan Tracker</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 14.8 GROUP TAX & STATUTORY EXPOSURE ==================== -->
+      <div class="pm-card" style="margin-bottom:16px">
+        <div class="pm-card-head"><div><h3 class="pm-section-title"><i class="bi bi-cash-coin text-danger"></i> Group Tax & Statutory Exposure</h3><p class="pm-section-sub">Your total cash impact across KRA, NSSF & SHIF — and the ultimate defense against penalties.</p></div>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('groupTaxModal')"><i class="bi bi-graph-up"></i> Full Tax Dashboard</button></div>
+        <div class="row g-3">
+          <div class="col-lg-4">
+            <div class="group-stat" style="margin-bottom:10px"><div style="font-size:11px;color:var(--pm-muted)">Total VAT</div><div class="gv">KES 142,000</div><div style="font-size:11px;color:var(--pm-warning)">Due 20 Aug</div></div>
+            <div class="group-stat" style="margin-bottom:10px"><div style="font-size:11px;color:var(--pm-muted)">Total PAYE</div><div class="gv">KES 96,000</div><div style="font-size:11px;color:var(--pm-warning)">Due 9 Aug</div></div>
+            <div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">NSSF / SHIF</div><div class="gv">KES 110,000</div><div style="font-size:11px;color:var(--pm-danger)">Due 9 Aug</div></div>
+            <button class="pm-btn pm-btn-sm mt-2 w-100" onclick="openModal('taxCalendarModal')"><i class="bi bi-calendar3"></i> Consolidated Tax Calendar</button>
+          </div>
+          <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-2"><strong>Consolidated Tax Calendar — next 14 days</strong><button class="pm-btn pm-btn-sm" onclick="openModal('etimsReadinessModal')"><i class="bi bi-shield-check"></i> eTIMS / iTax Readiness</button></div>
+            <div class="cal-grid">
+              <div class="cal-day"><div class="dnum">6</div></div>
+              <div class="cal-day"><div class="dnum">7</div></div>
+              <div class="cal-day"><div class="dnum">8</div></div>
+              <div class="cal-day due"><div class="dnum">9</div><div class="tag">PAYE · NSSF · SHIF</div><div class="tag">TechSol + TS Retail</div></div>
+              <div class="cal-day"><div class="dnum">10</div></div>
+              <div class="cal-day"><div class="dnum">11</div></div>
+              <div class="cal-day"><div class="dnum">12</div></div>
+              <div class="cal-day"><div class="dnum">13</div></div>
+              <div class="cal-day"><div class="dnum">14</div></div>
+              <div class="cal-day"><div class="dnum">15</div></div>
+              <div class="cal-day"><div class="dnum">16</div></div>
+              <div class="cal-day"><div class="dnum">17</div></div>
+              <div class="cal-day"><div class="dnum">18</div></div>
+              <div class="cal-day"><div class="dnum">19</div></div>
+              <div class="cal-day due"><div class="dnum">20</div><div class="tag">VAT return</div><div class="tag">All entities</div></div>
+            </div>
+            <div class="insight-banner mt-3"><i class="bi bi-lightbulb me-1"></i><strong>Optimization:</strong> TechSol has a VAT surplus (Input &gt; Output) of KES 50,000. TS Retail has a VAT deficit of KES 40,000. <em>Note:</em> KRA does not allow inter-entity VAT offsetting, but this highlights cash-flow opportunities.</div>
+            <div class="d-flex flex-wrap gap-2 mt-3"><button class="pm-btn pm-btn-sm" onclick="toast('Exporting consolidated tax data for your accountant (filed separately per entity)...')"><i class="bi bi-download"></i> Export Tax Data</button><button class="pm-btn pm-btn-sm" onclick="toast('Reminder: you cannot file one combined return for two separate Ltd companies.')"><i class="bi bi-exclamation-circle"></i> Why can't I file jointly?</button></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end pm-content -->
+
+    <!-- ===== PERSISTENT QUICK ACTIONS BAR (14.9) ===== -->
+    <div class="quickbar">
+      <div class="qb" onclick="openModal('addEntityModal')"><i class="bi bi-plus-lg text-primary"></i> Add Entity</div>
+      <div class="qb" onclick="openModal('interCompanyTransferModal')"><i class="bi bi-arrow-left-right text-warning"></i> Transfer Funds</div>
+      <div class="qb" onclick="openModal('collectRentModal')"><i class="bi bi-cash-stack text-success"></i> Collect Rent</div>
+      <div class="qb" onclick="openModal('groupPnLModal')"><i class="bi bi-bar-chart text-info"></i> Group P&amp;L</div>
+      <div class="qb" onclick="openModal('addTenantModal')"><i class="bi bi-person-plus text-pink" style="color:var(--pm-pink)"></i> Add Tenant</div>
+      <div class="qb" onclick="openModal('accessMatrixModal')"><i class="bi bi-shield-lock text-secondary"></i> View Matrix</div>
+      <div class="qb position-relative" onclick="openModal('taxCalendarModal')"><i class="bi bi-calendar3 text-danger"></i> Tax Calendar <span class="qbadge">3</span></div>
+    </div>
+
+    <!-- ==================== MODALS (32) ==================== -->
+
+    <!-- M1: Entity Type Picker (14.3) -->
+    <div class="modal fade" id="addEntityModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-square text-primary me-2"></i>What type of entity are you adding?</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="closeModal('addEntityModal');openModal('stdBusinessModal')"><i class="bi bi-buildings" style="font-size:30px;color:var(--pm-primary)"></i><h6 style="margin:10px 0 2px">Limited Company</h6><div style="font-size:11px;color:var(--pm-muted)">Ltd · corporate CoA</div></div></div>
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="closeModal('addEntityModal');openModal('stdBusinessModal')"><i class="bi bi-person-badge" style="font-size:30px;color:var(--pm-info)"></i><h6 style="margin:10px 0 2px">Sole Proprietorship</h6><div style="font-size:11px;color:var(--pm-muted)">Personal business</div></div></div>
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center" onclick="closeModal('addEntityModal');openModal('saccoModal')"><i class="bi bi-people" style="font-size:30px;color:var(--pm-purple)"></i><h6 style="margin:10px 0 2px">SACCO / NGO</h6><div style="font-size:11px;color:var(--pm-muted)">Membership</div></div></div>
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center;border-left-color:var(--pm-pink);background:linear-gradient(180deg,#fff,#FDF2F8)" onclick="closeModal('addEntityModal');openModal('rentalWizardModal')"><i class="bi bi-house-heart" style="font-size:30px;color:var(--pm-pink)"></i><h6 style="margin:10px 0 2px">🏠 Rental Property</h6><div style="font-size:11px;color:var(--pm-pink)">Rich preset</div></div></div>
+        </div>
+        <div class="insight-banner tip mt-3"><i class="bi bi-stars me-1"></i>Rental Property unlocks the full Property Sub-System + Rent Default Insurance automatically.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="toast('Pick an entity type to begin the wizard')">Continue</button></div>
+    </div></div></div>
+
+    <!-- M2: Rental Property Wizard (5-step) -->
+    <div class="modal fade" id="rentalWizardModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-house-heart text-pink me-2" style="color:var(--pm-pink)"></i>Add Rental Property Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="rentStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Property</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Financials</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Auto-Config</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Tenants</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">5</div><div class="pm-step-label">Review</div></div>
+        </div>
+        <div id="rentStep1" class="fade-step active">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="pm-form-label">Property Name</label><input class="pm-form-control" value="Kilimani House 4"></div>
+            <div class="col-md-6"><label class="pm-form-label">Property Type</label><select class="pm-form-control"><option>Apartment</option><option>Standalone House</option><option>Commercial Space</option><option>Airbnb</option></select></div>
+            <div class="col-md-8"><label class="pm-form-label">Address</label><input class="pm-form-control" value="Kilimani Road, Nairobi"></div>
+            <div class="col-md-4"><label class="pm-form-label">Number of Units</label><input class="pm-form-control" value="6"></div>
+            <div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Create units from a template (e.g., 3× 1BR, 3× studio)</span></div></div>
+          </div>
+        </div>
+        <div id="rentStep2" class="fade-step">
+          <div class="row g-3">
+            <div class="col-md-4"><label class="pm-form-label">Monthly Rent (per unit)</label><input class="pm-form-control" value="KES 35,000"></div>
+            <div class="col-md-4"><label class="pm-form-label">Security Deposit (months)</label><input class="pm-form-control" value="2"></div>
+            <div class="col-md-4"><label class="pm-form-label">Payment Terms</label><select class="pm-form-control"><option>Due on 1st of month</option><option>Due on 5th</option><option>Quarterly</option></select></div>
+            <div class="col-md-6"><label class="pm-form-label">Vacancy Loss % (assumption)</label><select class="pm-form-control"><option>5%</option><option selected>10%</option><option>15%</option></select></div>
+            <div class="col-md-6"><label class="pm-form-label">Currency</label><select class="pm-form-control"><option>KES</option><option>USD</option></select></div>
+          </div>
+        </div>
+        <div id="rentStep3" class="fade-step">
+          <div class="insight-banner tip mb-3"><i class="bi bi-magic me-1"></i><strong>Auto-Configuration:</strong> PayMo will create everything below for you instantly.</div>
+          <div class="row g-2">
+            <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-journal-check text-primary"></i> <strong>Chart of Accounts</strong><div class="pm-section-sub">Rent Income · Property Maintenance · Mortgage Interest · Security Deposits Liability</div></div></div>
+            <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-bank2 text-success"></i> <strong>Virtual Account</strong><div class="pm-section-sub">"Kilimani House 4 Collections" in Cash &amp; Accounts</div></div></div>
+            <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-receipt text-info"></i> <strong>Recurring Rent Invoices</strong><div class="pm-section-sub">One per unit, generated on the 1st each month</div></div></div>
+            <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-person-gear text-warning"></i> <strong>Property Manager Role</strong><div class="pm-section-sub">Default role in Team &amp; Roles for this entity</div></div></div>
+          </div>
+        </div>
+        <div id="rentStep4" class="fade-step">
+          <label class="pm-form-label">Add Tenants (optional) — skip to configure later</label>
+          <div class="p-2 border rounded mb-2 d-flex align-items-center gap-2"><input class="pm-form-control" style="flex:1" placeholder="Tenant name"><input class="pm-form-control" style="flex:1" placeholder="Phone"><input class="pm-form-control" style="width:90px" placeholder="Unit"><button class="pm-btn pm-btn-sm pm-btn-success" onclick="addTenantRow(this)"><i class="bi bi-plus"></i></button></div>
+          <div id="tenantRows"></div>
+          <div class="form-check mt-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Apply the standard security deposit policy (2 months rent) to all added tenants</label></div>
+        </div>
+        <div id="rentStep5" class="fade-step">
+          <div class="d-flex align-items-center justify-content-between p-3 border rounded mb-2"><strong>Kilimani House 4</strong><span class="pm-badge pm-badge-pink">Rental Property</span></div>
+          <div class="row g-2">
+            <div class="col-6"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Units</div><div class="gv" style="font-size:16px">6</div></div></div>
+            <div class="col-6"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Monthly Rent Potential</div><div class="gv text-success" style="font-size:16px">KES 210K</div></div></div>
+          </div>
+          <div class="insight-banner warn mt-3"><i class="bi bi-info-circle me-1"></i>This creates a new entity with <code>entity_type='rental'</code> and wires it into the Property Sub-System + Rent Default Insurance.</div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" onclick="closeModal('rentalWizardModal');openModal('addEntityModal')"><i class="bi bi-arrow-left"></i> Back</button><button class="pm-btn pm-btn-primary" id="rentNext" onclick="nextStep('rent',5,'rentNext',()=>toast('Rental property created & configured!'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M3: Standard Business Wizard (4-step) -->
+    <div class="modal fade" id="stdBusinessModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-buildings text-primary me-2"></i>Add Business Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="stdStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Basics</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Industry & CoA</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Banking</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Review</div></div>
+        </div>
+        <div id="stdStep1" class="fade-step active">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="pm-form-label">Business Name</label><input class="pm-form-control" placeholder="e.g. Nala Farms Ltd"></div>
+            <div class="col-md-6"><label class="pm-form-label">KRA PIN</label><input class="pm-form-control" placeholder="P051234567M"></div>
+            <div class="col-md-6"><label class="pm-form-label">Entity Type</label><select class="pm-form-control"><option>Limited Company (Ltd)</option><option>Sole Proprietorship</option><option>Partnership</option></select></div>
+            <div class="col-md-6"><label class="pm-form-label">Folder</label><select class="pm-form-control"><option>Operating Companies</option><option>Rental Properties</option><option>Side Projects</option><option>New folder...</option></select></div>
+          </div>
+        </div>
+        <div id="stdStep2" class="fade-step">
+          <label class="pm-form-label">Industry</label>
+          <div class="row g-2">
+            <div class="col-md-4"><div class="entity-card" data-health="green" style="text-align:center" onclick="pickIndustry(this)"><i class="bi bi-box-seam" style="font-size:26px;color:var(--pm-info)"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Trading</div><div style="font-size:11px;color:var(--pm-muted)">Buy & sell goods</div></div></div>
+            <div class="col-md-4"><div class="entity-card" data-health="green" style="text-align:center" onclick="pickIndustry(this)"><i class="bi bi-laptop" style="font-size:26px;color:var(--pm-accent)"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Service</div><div style="font-size:11px;color:var(--pm-muted)">Billing by time/scope</div></div></div>
+            <div class="col-md-4"><div class="entity-card" data-health="green" style="text-align:center" onclick="pickIndustry(this)"><i class="bi bi-people" style="font-size:26px;color:var(--pm-purple)"></i><div style="font-size:13px;font-weight:600;margin-top:6px">NGO / Non-profit</div><div style="font-size:11px;color:var(--pm-muted)">Grant & donor tracking</div></div></div>
+          </div>
+          <div class="mt-2"><label class="pm-form-label">Default Chart of Accounts</label><select class="pm-form-control"><option>Trading (autoselected)</option><option>Service</option><option>NGO</option></select></div>
+        </div>
+        <div id="stdStep3" class="fade-step">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="pm-form-label">Primary Bank / Wallet</label><select class="pm-form-control"><option>KCB — ...1145</option><option>M-Pesa Business</option><option>Equity — ...2271</option><option>Skip for now</option></select></div>
+            <div class="col-md-6"><label class="pm-form-label">Opening Balance</label><input class="pm-form-control" placeholder="KES 0"></div>
+            <div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Create a linked M-Pesa Paybill for collections</span></div></div>
+            <div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Register for eTIMS VAT invoice numbering</span></div></div>
+          </div>
+        </div>
+        <div id="stdStep4" class="fade-step">
+          <div class="p-3 border rounded mb-2"><strong>Nala Farms Ltd</strong> <span class="pm-badge pm-badge-info">Ltd · Trading</span><div class="pm-section-sub">Folder: Operating Companies · KCB …1145 · eTIMS: on</div></div>
+          <div class="insight-banner tip mt-2"><i class="bi bi-check-circle me-1"></i>Review and confirm. You can change anything later in Settings.</div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" onclick="closeModal('stdBusinessModal');openModal('addEntityModal')"><i class="bi bi-arrow-left"></i> Back</button><button class="pm-btn pm-btn-primary" id="stdNext" onclick="nextStep('std',4,'stdNext',()=>toast('Business added to portfolio!'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M4: SACCO/NGO Wizard -->
+    <div class="modal fade" id="saccoModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-people text-purple me-2" style="color:var(--pm-purple)"></i>Add SACCO / NGO</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="saccoStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Details</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Membership</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Governance</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Review</div></div>
+        </div>
+        <div id="saccoStep1" class="fade-step active"><div class="row g-3"><div class="col-md-8"><label class="pm-form-label">Organization Name</label><input class="pm-form-control" placeholder="e.g. Juja Landlords SACCO"></div><div class="col-md-4"><label class="pm-form-label">Registration No.</label><input class="pm-form-control" placeholder="SACCO/12345"></div></div></div>
+        <div id="saccoStep2" class="fade-step"><label class="pm-form-label">Member contributions</label><select class="pm-form-control"><option>Shares + monthly contributions</option><option>Monthly subscriptions only</option><option>Loan-repayment linked</option></select><div class="mt-2"><label class="pm-form-label">Expected members</label><input class="pm-form-control" value="40"></div></div>
+        <div id="saccoStep3" class="fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Chairperson</label><input class="pm-form-control" placeholder="Name"></div><div class="col-md-6"><label class="pm-form-label">Treasurer</label><input class="pm-form-control" placeholder="Name"></div><div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Require dual approval for withdrawals over KES 50,000</span></div></div></div></div>
+        <div id="saccoStep4" class="fade-step"><div class="p-3 border rounded mb-2"><strong>Juja Landlords SACCO</strong> <span class="pm-badge pm-badge-purple">SACCO</span><div class="pm-section-sub">Shares + contributions · 40 members · dual approval</div></div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" onclick="closeModal('saccoModal');openModal('addEntityModal')"><i class="bi bi-arrow-left"></i> Back</button><button class="pm-btn pm-btn-primary" id="saccoNext" onclick="nextStep('sacco',4,'saccoNext',()=>toast('SACCO added to portfolio!'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M5: Add Tenant Wizard (4-step) -->
+    <div class="modal fade" id="addTenantModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-plus text-pink me-2" style="color:var(--pm-pink)"></i>Add Tenant Wizard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="tenStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Tenant</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Lease</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Deposit</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Rent Setup</div></div>
+        </div>
+        <div id="tenStep1" class="fade-step active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Full Name</label><input class="pm-form-control" placeholder="e.g. Mercy Wangari"></div><div class="col-md-6"><label class="pm-form-label">Phone</label><input class="pm-form-control" placeholder="+254 7XX XXX XXX"></div><div class="col-md-6"><label class="pm-form-label">Email</label><input class="pm-form-control" placeholder="tenant@email.com"></div><div class="col-md-6"><label class="pm-form-label">ID Number</label><input class="pm-form-control" placeholder="ID / Passport"></div></div></div>
+        <div id="tenStep2" class="fade-step"><div class="row g-3"><div class="col-md-4"><label class="pm-form-label">Property</label><select class="pm-form-control"><option>Kilimani House 3</option><option>Kilimani House 1</option></select></div><div class="col-md-4"><label class="pm-form-label">Unit</label><select class="pm-form-control"><option>Unit 3B</option><option>Unit 2B</option></select></div><div class="col-md-4"><label class="pm-form-label">Lease Start</label><input class="pm-form-control" type="date"></div><div class="col-md-4"><label class="pm-form-label">Lease End</label><input class="pm-form-control" type="date"></div><div class="col-md-4"><label class="pm-form-label">Payment Terms</label><select class="pm-form-control"><option>Due on 1st</option><option>Due on 5th</option></select></div><div class="col-md-4"><label class="pm-form-label">Lease Document</label><button class="pm-btn pm-btn-sm w-100"><i class="bi bi-paperclip"></i> Upload PDF</button></div></div></div>
+        <div id="tenStep3" class="fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Security Deposit</label><input class="pm-form-control" value="KES 70,000"></div><div class="col-md-6"><label class="pm-form-label">Deposit Paid</label><select class="pm-form-control"><option>Yes — via M-Pesa</option><option>Yes — bank transfer</option><option>Not yet</option></select></div><div class="col-12"><div class="insight-banner tip"><i class="bi bi-journal-plus me-1"></i>Recording the deposit creates the double entry: Debit Cash (M-Pesa/Bank) → Credit Security Deposits Liability.</div></div></div></div>
+        <div id="tenStep4" class="fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Monthly Rent</label><input class="pm-form-control" value="KES 35,000"></div><div class="col-md-6"><label class="pm-form-label">Recurring invoice</label><select class="pm-form-control"><option>Auto-generate on 1st</option><option>Manual</option></select></div><div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Send M-Pesa STK push each month (tenant registered)</span></div></div></div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn pm-btn-primary" id="tenNext" onclick="nextStep('ten',4,'tenNext',()=>toast('Tenant added & unit assigned!'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M6: Tenant Profile (tabbed, large) -->
+    <div class="modal fade" id="tenantProfileModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle text-primary me-2"></i>Tenant Profile — James Kariuki</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center gap-3 p-3 border rounded mb-3 flex-wrap">
+          <div class="pm-avatar" style="width:54px;height:54px;font-size:20px;background:var(--pm-danger)">JK</div>
+          <div><h5 style="margin:0">James Kariuki</h5><div style="font-size:12px;color:var(--pm-muted)">Unit 1B · Kilimani House 3 · +254 733 555 214</div></div>
+          <span class="pm-badge pm-badge-danger ms-auto">Overdue — 5 days</span>
+          <button class="pm-btn pm-btn-sm" onclick="openModal('rentReminderModal')"><i class="bi bi-envelope"></i> Send Rent Reminder</button>
+        </div>
+        <div class="pm-tab-pills">
+          <button class="pm-tab-pill active" onclick="tabSwitch(this,'tRent')"><i class="bi bi-cash-stack"></i> Payment History</button>
+          <button class="pm-tab-pill" onclick="tabSwitch(this,'tLease')"><i class="bi bi-file-earmark-text"></i> Lease</button>
+          <button class="pm-tab-pill" onclick="tabSwitch(this,'tLog')"><i class="bi bi-chat-dots"></i> Communication Log</button>
+          <button class="pm-tab-pill" onclick="tabSwitch(this,'tMaint')"><i class="bi bi-wrench-adjustable"></i> Maintenance</button>
+        </div>
+        <div id="tRent" class="tab-pane fade-step active">
+          <table class="pm-table"><thead><tr><th>Month</th><th>Rent</th><th>Method</th><th>Status</th></tr></thead><tbody>
+            <tr><td>July 2026</td><td>KES 30,000</td><td>M-Pesa</td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr>
+            <tr><td>June 2026</td><td>KES 30,000</td><td>M-Pesa</td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr>
+            <tr><td>May 2026</td><td>KES 30,000</td><td>Bank</td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr>
+            <tr><td>August 2026</td><td>KES 30,000</td><td>—</td><td><span class="pm-badge pm-badge-danger">Overdue</span></td></tr>
+          </tbody></table>
+        </div>
+        <div id="tLease" class="tab-pane fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Lease Period</label><input class="pm-form-control" value="01 Mar 2026 — 28 Feb 2027"></div><div class="col-md-6"><label class="pm-form-label">Monthly Rent</label><input class="pm-form-control" value="KES 30,000"></div><div class="col-12"><button class="pm-btn pm-btn-sm"><i class="bi bi-file-earmark-pdf"></i> View Lease Agreement PDF</button></div></div></div>
+        <div id="tLog" class="tab-pane fade-step"><div class="mini-matrix"><div class="mm-item"><i class="bi bi-chat text-muted me-2"></i>05 Aug: "Karibu James, water tank maintenance this Friday."</div><div class="mm-item"><i class="bi bi-envelope text-muted me-2"></i>03 Aug: Rent reminder SMS sent (overdue notice).</div><div class="mm-item"><i class="bi bi-telephone text-muted me-2"></i>01 Aug: Moved-in onboarding call completed.</div></div></div>
+        <div id="tMaint" class="tab-pane fade-step"><table class="pm-table"><thead><tr><th>Date</th><th>Issue</th><th>Status</th></tr></thead><tbody><tr><td>20 Jul</td><td>Bathroom sink leaking</td><td><span class="pm-badge pm-badge-success">Resolved</span></td></tr><tr><td>02 Aug</td><td>Kitchen tap</td><td><span class="pm-badge pm-badge-info">Assigned</span></td></tr></tbody></table></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-danger" onclick="toast('James marked as tenant to follow up')">Mark Follow-up</button></div>
+    </div></div></div>
+
+    <!-- M7: Collect Rent -->
+    <div class="modal fade" id="collectRentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-cash-stack text-success me-2"></i>Collect Rent — Kilimani House 3</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <label class="pm-form-label">Select Unit &amp; Tenant</label>
+        <select class="pm-form-control"><option>Unit 1B — James Kariuki · KES 30,000 (overdue)</option><option>Unit 3A — Susan Adhiambo · KES 30,000</option><option>Unit 1A — Grace Otieno · KES 30,000</option></select>
+        <div class="row g-3 mt-1"><div class="col-6"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="KES 30,000"></div><div class="col-6"><label class="pm-form-label">Method</label><select class="pm-form-control"><option>M-Pesa STK Push</option><option>Bank transfer</option><option>Cash</option><option>Paybill</option></select></div></div>
+        <div class="insight-banner tip mt-3"><i class="bi bi-journal-check me-1"></i>Marking rent paid uses the Recurring Invoice engine under the hood — a standard M-Pesa collection that hits the General Ledger.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="simulateProcess('collectRentModal','Rent collected via M-Pesa','MPESA-88412')"><i class="bi bi-check2-circle"></i> Collect Rent</button></div>
+    </div></div></div>
+
+    <!-- M8: Rent Reminder -->
+    <div class="modal fade" id="rentReminderModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-envelope text-warning me-2"></i>Send Rent Reminder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center"><div><strong>James Kariuki</strong><div style="font-size:11px;color:var(--pm-muted)">Unit 1B · +254 733 555 214</div></div><span class="pm-badge pm-badge-danger">Overdue 5 days</span></div>
+        <label class="pm-form-label">Channel</label>
+        <div class="row g-2"><div class="col-4"><div class="entity-card" data-health="green" style="text-align:center;padding:10px" onclick="toast('SMS template selected')"><i class="bi bi-chat-dots" style="font-size:20px;color:var(--pm-accent)"></i><div style="font-size:12px">SMS</div></div></div><div class="col-4"><div class="entity-card" data-health="green" style="text-align:center;padding:10px" onclick="toast('WhatsApp template selected')"><i class="bi bi-whatsapp" style="font-size:20px;color:var(--pm-accent)"></i><div style="font-size:12px">WhatsApp</div></div></div><div class="col-4"><div class="entity-card" data-health="green" style="text-align:center;padding:10px" onclick="toast('Call log selected')"><i class="bi bi-telephone" style="font-size:20px;color:var(--pm-accent)"></i><div style="font-size:12px">Call</div></div></div></div>
+        <label class="pm-form-label mt-2">Message</label><textarea class="pm-form-control" rows="3">Dear James, your rent of KES 30,000 for Unit 1B is 5 days overdue. Kindly pay via M-Pesa Paybill 247247. Thank you.</textarea>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('rentReminderModal','Reminder sent to James Kariuki','SMS-99120')">Send Reminder</button></div>
+    </div></div></div>
+
+    <!-- M9: Deposit Move-in -->
+    <div class="modal fade" id="depositMoveInModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-arrow-in-right text-success me-2"></i>Record Move-in Security Deposit</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="pm-form-label">Tenant</label><select class="pm-form-control"><option>Grace Otieno — Unit 1A</option><option>James Kariuki — Unit 1B</option></select></div>
+          <div class="col-md-6"><label class="pm-form-label">Deposit Amount</label><input class="pm-form-control" value="KES 60,000"></div>
+          <div class="col-md-6"><label class="pm-form-label">Received via</label><select class="pm-form-control"><option>M-Pesa</option><option>Bank transfer</option><option>Cash</option></select></div>
+          <div class="col-md-6"><label class="pm-form-label">Date</label><input class="pm-form-control" type="date"></div>
+          <div class="col-12"><div class="insight-banner tip"><i class="bi bi-journal-plus me-1"></i>Debit Cash (M-Pesa/Bank) → Credit <strong>Security Deposits Liability</strong>.</div></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-success" onclick="simulateProcess('depositMoveInModal','Deposit recorded on the ledger','GL-77123')">Record Deposit</button></div>
+    </div></div></div>
+
+    <!-- M10: Deposit Move-out Wizard (4-step) -->
+    <div class="modal fade" id="depositMoveOutModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-arrow-right text-danger me-2"></i>Move-out Deposit Refund</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="moStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">Move-out</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Damages</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Refund</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Review</div></div>
+        </div>
+        <div id="moStep1" class="fade-step active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Tenant</label><select class="pm-form-control"><option>Samuel Njeri — Unit 2A (moved out)</option></select></div><div class="col-md-6"><label class="pm-form-label">Move-out Date</label><input class="pm-form-control" type="date"></div><div class="col-12"><div class="pm-check"><input type="checkbox" checked><span>Unit inspection completed & documented</span></div></div></div></div>
+        <div id="moStep2" class="fade-step"><label class="pm-form-label">Damage Deductions (with photo evidence)</label><div class="p-2 border rounded mb-2 d-flex gap-2 flex-wrap"><input class="pm-form-control" style="flex:2" placeholder="Damage description (e.g. broken window)"><input class="pm-form-control" style="width:110px" placeholder="KES 5,000"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="addDeduction(this)"><i class="bi bi-plus"></i></button></div><div id="deductions"></div><div class="insight-banner warn mt-2"><i class="bi bi-camera me-1"></i>Damages require photo evidence attached to the deduction workflow.</div></div>
+        <div id="moStep3" class="fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Original Deposit</label><input class="pm-form-control" value="KES 60,000" readonly></div><div class="col-md-6"><label class="pm-form-label">Total Deductions</label><input class="pm-form-control" value="KES 5,000" readonly></div><div class="col-md-6"><label class="pm-form-label">Refund Amount</label><input class="pm-form-control" value="KES 55,000"></div><div class="col-md-6"><label class="pm-form-label">Refund Method</label><select class="pm-form-control"><option>M-Pesa</option><option>Bank transfer</option><option>Cash</option></select></div></div></div>
+        <div id="moStep4" class="fade-step"><div class="p-3 border rounded mb-2 d-flex justify-content-between"><div><strong>Refund Samuel Njeri KES 55,000</strong><div style="font-size:11px;color:var(--pm-muted)">Original 60K − 5K damages (broken window)</div></div><span class="pm-badge pm-badge-warning">Pending</span></div><div class="insight-banner tip"><i class="bi bi-journal-check me-1"></i>Reverse deposit, deduct damages, refund balance — all double-entry logged. Generate the tenant's deposit statement too.</div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn pm-btn-primary" id="moNext" onclick="nextStep('mo',4,'moNext',()=>toast('Deposit refund processed & statement generated'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M11: Deposit Statement -->
+    <div class="modal fade" id="depositStatementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>Deposit Statement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="text-center p-3 border rounded"><div class="pm-avatar mx-auto mb-2" style="background:var(--pm-primary)">GO</div><h5 style="margin:0">Grace Otieno</h5><div style="font-size:12px;color:var(--pm-muted)">Unit 1A · Kilimani House 3</div></div>
+        <table class="pm-table mt-3"><tbody><tr><td>Deposit Received</td><td class="text-end">KES 60,000</td></tr><tr><td>Interest accrued (yield 1.5%)</td><td class="text-end">KES 900</td></tr><tr><td>Total Held</td><td class="text-end"><strong>KES 60,900</strong></td></tr></tbody></table>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Deposit statement PDF generated & sent to tenant')"><i class="bi bi-file-earmark-pdf"></i> Generate PDF</button></div>
+    </div></div></div>
+
+    <!-- M12: Maintenance Request -->
+    <div class="modal fade" id="maintenanceRequestModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-wrench-adjustable text-warning me-2"></i>Maintenance Request</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="pm-form-label">Unit</label><select class="pm-form-control"><option>Unit 2A</option><option>Unit 3A</option><option>Common area</option></select></div>
+          <div class="col-md-6"><label class="pm-form-label">Priority</label><select class="pm-form-control"><option>Low</option><option>High</option><option>Emergency</option></select></div>
+          <div class="col-12"><label class="pm-form-label">Issue</label><textarea class="pm-form-control" rows="2" placeholder="Describe the issue e.g. leaking roof..."></textarea></div>
+          <div class="col-12"><button class="pm-btn pm-btn-sm"><i class="bi bi-camera"></i> Attach Photos</button> <span class="pm-badge pm-badge-info">Tenant portal or manual log</span></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('maintenanceRequestModal','Maintenance request logged','MNT-5521')"><i class="bi bi-check"></i> Log Request</button></div>
+    </div></div></div>
+
+    <!-- M13: Assign Vendor -->
+    <div class="modal fade" id="assignVendorModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-gear text-info me-2"></i>Assign Maintenance Vendor</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <label class="pm-form-label">Issue</label><input class="pm-form-control mb-2" value="Water heater — Unit 3A" readonly>
+        <label class="pm-form-label">Vendor / Service Provider</label><select class="pm-form-control"><option>City Plumbers Ltd</option><option>Fast Fix Electricians</option><option>New vendor...</option></select>
+        <label class="pm-form-label mt-2">Estimated Cost</label><input class="pm-form-control" value="KES 8,500">
+        <div class="insight-banner tip mt-2"><i class="bi bi-arrow-right-circle me-1"></i>Creates a Purchase Order on the Pay Suppliers page. Cost is logged against this Property's P&amp;L.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('assignVendorModal','Vendor assigned & PO created','PO-6642')"><i class="bi bi-check"></i> Assign & Create PO</button></div>
+    </div></div></div>
+
+    <!-- M14: Vacancy -->
+    <div class="modal fade" id="vacancyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-house-x text-warning me-2"></i>Unit 3B — Vacant</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-2"><div class="col-6"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Days vacant</div><div class="gv">34</div></div></div><div class="col-6"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Vacancy loss</div><div class="gv text-danger">KES 34K</div></div></div></div>
+        <div class="insight-banner warn mt-3"><i class="bi bi-exclamation-triangle me-1"></i>Vacancy Loss is auto-calculated on this Property's P&amp;L: (Vacant Units × Monthly Rent) = Lost Revenue.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('addTenantModal')"><i class="bi bi-person-plus"></i> Add Tenant to Fill</button></div>
+    </div></div></div>
+
+    <!-- M15: Consolidated Report (large, tabbed) -->
+    <div class="modal fade" id="consolidatedReportModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-bar-chart text-primary me-2"></i>Consolidated Command Report</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-tab-pills">
+          <button class="pm-tab-pill active" onclick="tabSwitch(this,'crCash')"><i class="bi bi-cash-coin"></i> Group Cash</button>
+          <button class="pm-tab-pill" onclick="tabSwitch(this,'crRev')"><i class="bi bi-graph-up"></i> Revenue</button>
+          <button class="pm-tab-pill" onclick="tabSwitch(this,'crHealth')"><i class="bi bi-heart-pulse"></i> Health</button>
+        </div>
+        <div id="crCash" class="tab-pane fade-step active">
+          <table class="pm-table"><thead><tr><th>Entity</th><th style="text-align:right">Cash Balance</th><th>Share</th></tr></thead><tbody>
+            <tr><td>TechSolutions Ltd</td><td style="text-align:right">KES 4,200,000</td><td>50%</td></tr>
+            <tr><td>Personal Car Hire</td><td style="text-align:right">KES 2,540,000</td><td>30%</td></tr>
+            <tr><td>Kilimani House 1</td><td style="text-align:right">KES 960,000</td><td>11%</td></tr>
+            <tr><td>Westlands Apartment</td><td style="text-align:right">KES 780,000</td><td>9%</td></tr>
+            <tr><td>TS Retail</td><td style="text-align:right">KES 620,000</td><td>7%</td></tr>
+            <tr><td>Kilimani House 2</td><td style="text-align:right">KES 310,000</td><td>4%</td></tr>
+            <tr><td><strong>Total</strong></td><td style="text-align:right"><strong>KES 9,410,000</strong></td><td>—</td></tr>
+          </tbody></table>
+        </div>
+        <div id="crRev" class="tab-pane fade-step"><table class="pm-table"><thead><tr><th>Entity</th><th style="text-align:right">Revenue MTD</th><th style="text-align:right">Expenses</th><th style="text-align:right">Net</th></tr></thead><tbody><tr><td>TechSol</td><td style="text-align:right">KES 900K</td><td style="text-align:right">KES 380K</td><td style="text-align:right" class="text-success">+KES 520K</td></tr><tr><td>TS Retail</td><td style="text-align:right">KES 420K</td><td style="text-align:right">KES 505K</td><td style="text-align:right" class="text-danger">−KES 85K</td></tr><tr><td>Car Hire</td><td style="text-align:right">KES 820K</td><td style="text-align:right">KES 210K</td><td style="text-align:right" class="text-success">+KES 610K</td></tr></tbody></table></div>
+        <div id="crHealth" class="tab-pane fade-step"><div class="row g-3"><div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-exclamation-triangle text-danger"></i> <strong>TS Retail is in the red</strong><div class="pm-section-sub">Cost of goods up 18% MoM. Review pricing & supplier POs.</div></div></div><div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-check-circle text-success"></i> <strong>Car Hire is your top performer</strong><div class="pm-section-sub">38% net margin. Consider scaling fleet.</div></div></div></div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Consolidated report exported to PDF')"><i class="bi bi-download"></i> Export PDF</button></div>
+    </div></div></div>
+
+    <!-- M16: Entity Selector -->
+    <div class="modal fade" id="entitySelectorModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-ui-checks text-primary me-2"></i>Include in Consolidation</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label"><strong>TechSolutions Ltd</strong></label></div>
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label"><strong>TS Retail</strong></label></div>
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label"><strong>Kilimani House 1</strong> <span class="text-muted">(exclude rentals)</span></label></div>
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label"><strong>Kilimani House 2</strong></label></div>
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox"><label class="form-check-label"><strong>Westlands Apartment</strong></label></div>
+        <div class="form-check mb-2"><input class="form-check-input" type="checkbox" checked><label class="form-check-label"><strong>Personal Car Hire</strong></label></div>
+        <button class="pm-btn pm-btn-sm pm-btn-ghost mt-1" onclick="selectGroup('rentals',this)"><i class="bi bi-house-door"></i> Quick-select: only Rentals</button>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="toast('Consolidation selection updated')">Apply Selection</button></div>
+    </div></div></div>
+
+    <!-- M17: Group P&L -->
+    <div class="modal fade" id="groupPnLModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-journal-text text-success me-2"></i>Consolidated P&amp;L — Group</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between align-items-center mb-2"><strong>Operating Companies</strong><div class="pm-seg"><button class="active" onclick="pnlMode('unadjusted',this)">Unadjusted</button><button onclick="pnlMode('adjusted',this)">Adjusted (Eliminated)</button></div></div>
+        <table class="pm-table"><thead><tr><th>Line</th><th style="text-align:right">TechSol</th><th style="text-align:right">TS Retail</th><th style="text-align:right">Total</th></tr></thead><tbody>
+          <tr><td>Revenue</td><td style="text-align:right">KES 900K</td><td style="text-align:right">KES 420K</td><td style="text-align:right"><strong>KES 1,320K</strong></td></tr>
+          <tr><td>Inter-company (eliminated)</td><td style="text-align:right" class="text-muted">−100K</td><td style="text-align:right" class="text-muted">+100K</td><td style="text-align:right" class="text-muted">0</td></tr>
+          <tr><td>Expenses</td><td style="text-align:right">KES 380K</td><td style="text-align:right">KES 505K</td><td style="text-align:right"><strong>KES 885K</strong></td></tr>
+          <tr><td><strong>Net Profit</strong></td><td style="text-align:right" class="text-success">+KES 520K</td><td style="text-align:right" class="text-danger">−KES 85K</td><td style="text-align:right"><strong class="text-success">+KES 435K</strong></td></tr>
+        </tbody></table>
+        <div class="insight-banner mt-3"><i class="bi bi-info-circle me-1"></i>"TechSol paid TS Retail KES 50,000 for goods — revenue for TechSol, expense for TS Retail. To see true group profit we eliminate this KES 50,000."</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success" onclick="toast('Consolidated P&L exported')"><i class="bi bi-download"></i> Export</button></div>
+    </div></div></div>
+
+    <!-- M18: Inter-Company Transfer Wizard (4-step) -->
+    <div class="modal fade" id="interCompanyTransferModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-left-right text-warning me-2"></i>Inter-Company Transfer</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="pm-stepper" id="icStepper">
+          <div class="pm-step active"><div class="pm-step-num">1</div><div class="pm-step-label">From / To</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-label">Amount</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-label">Type & Rules</div></div>
+          <div style="flex:1;height:2px;background:var(--pm-border);margin:0 8px"></div>
+          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-label">Review</div></div>
+        </div>
+        <div id="icStep1" class="fade-step active"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">From</label><select class="pm-form-control"><option>TechSol — Current Account</option><option>TechSol — M-Pesa</option><option>Car Hire — Savings</option></select></div><div class="col-md-6"><label class="pm-form-label">To</label><select class="pm-form-control"><option>Kilimani House 3 — Maintenance VA</option><option>TS Retail — Current Account</option><option>Westlands — Collections</option></select></div></div></div>
+        <div id="icStep2" class="fade-step"><div class="row g-3"><div class="col-md-6"><label class="pm-form-label">Amount</label><input class="pm-form-control" value="KES 20,000"></div><div class="col-md-6"><label class="pm-form-label">Reason / Reference</label><input class="pm-form-control" value="Monthly maintenance fund"></div><div class="col-12"><div class="insight-banner tip"><i class="bi bi-zap me-1"></i>Inter-company transfers are free & instant — money never leaves PayMo's internal ledger.</div></div></div></div>
+        <div id="icStep3" class="fade-step"><label class="pm-form-label">Transfer Type (crucial for consolidation)</label><select class="pm-form-control"><option>Capital Injection</option><option>Loan</option><option>Management Fee</option><option>Expense Reimbursement</option></select><div class="form-check mt-3"><input class="form-check-input" type="checkbox" id="icLoan"><label class="form-check-label">This is an inter-company <strong>loan</strong> — attach a repayment schedule</label></div><div id="icLoanBox" style="display:none"><label class="pm-form-label mt-2">Repayment Schedule</label><select class="pm-form-control"><option>6 monthly installments</option><option>12 monthly installments</option><option>Bullet at maturity</option></select></div></div>
+        <div id="icStep4" class="fade-step"><div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center"><div><strong>KES 20,000</strong><div style="font-size:11px;color:var(--pm-muted)">TechSol Current → Kilimani House 3 Maintenance VA · Management Fee</div></div><span class="pm-badge pm-badge-info">Instant</span></div><div class="insight-banner warn"><i class="bi bi-shield-check me-1"></i>Transfers &gt; KES 1,000,000 require Portfolio Owner approval. This transfer is under the threshold.</div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn pm-btn-primary" id="icNext" onclick="nextStep('ic',4,'icNext',()=>toast('Inter-company transfer executed instantly'))">Continue <i class="bi bi-arrow-right"></i></button></div>
+    </div></div></div>
+
+    <!-- M19: Inter-Company Loan -->
+    <div class="modal fade" id="interCompanyLoanModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text text-info me-2"></i>New Inter-Company Loan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="pm-form-label">Lender Entity</label><select class="pm-form-control"><option>Personal Car Hire</option><option>TechSol</option></select></div>
+          <div class="col-md-6"><label class="pm-form-label">Borrower Entity</label><select class="pm-form-control"><option>TS Retail</option><option>Kilimani House 3</option></select></div>
+          <div class="col-md-4"><label class="pm-form-label">Principal</label><input class="pm-form-control" value="KES 200,000"></div>
+          <div class="col-md-4"><label class="pm-form-label">Interest Rate</label><input class="pm-form-control" value="0%"></div>
+          <div class="col-md-4"><label class="pm-form-label">Term</label><select class="pm-form-control"><option>12 months</option><option>6 months</option><option>24 months</option></select></div>
+          <div class="col-12"><div class="insight-banner tip"><i class="bi bi-journal-plus me-1"></i>Creates a liability on the borrower and an asset on the lender — fully tracked here.</div></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('interCompanyLoanModal','Inter-company loan created & tracked','ICL-2007')">Create Loan</button></div>
+    </div></div></div>
+
+    <!-- M20: Loan Detail -->
+    <div class="modal fade" id="loanDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-eye text-info me-2"></i>Inter-Company Loan Tracker</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3"><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Principal</div><div class="gv" style="font-size:15px">KES 200K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Interest</div><div class="gv" style="font-size:15px">0%</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Repaid</div><div class="gv" style="font-size:15px">KES 25K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Outstanding</div><div class="gv text-warning" style="font-size:15px">KES 175K</div></div></div></div>
+        <table class="pm-table"><thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>05 Aug</td><td>KES 16,667</td><td><span class="pm-badge pm-badge-success">Paid</span></td></tr><tr><td>2</td><td>05 Sep</td><td>KES 16,667</td><td><span class="pm-badge pm-badge-info">Upcoming</span></td></tr><tr><td>3</td><td>05 Oct</td><td>KES 16,667</td><td><span class="pm-badge pm-badge-info">Upcoming</span></td></tr></tbody></table>
+        <div class="d-flex gap-2 mt-3"><button class="pm-btn pm-btn-sm" onclick="toast('Loan payment recorded')"><i class="bi bi-check2-circle"></i> Record Repayment</button><button class="pm-btn pm-btn-sm" onclick="openModal('interCompanyLoanModal')"><i class="bi bi-plus"></i> New Loan</button></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+    </div></div></div>
+
+    <!-- M21: Access Matrix (large) -->
+    <div class="modal fade" id="accessMatrixModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock text-danger me-2"></i>Access Control Matrix</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="table-responsive mx-table"><table class="pm-table" style="min-width:680px"><thead><tr><th>User</th><th>TechSol</th><th>TS Retail</th><th>Hse 1</th><th>Hse 2</th><th>Hse 3</th><th>Car Hire</th></tr></thead><tbody>
+          <tr><td><strong>Amina M.</strong> <span class="pm-badge pm-badge-purple">Owner</span></td><td colspan="6" style="color:var(--pm-muted);font-style:italic">Admin to everything · cannot be removed</td></tr>
+          <tr><td>Caretaker James</td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option selected>Standard</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td></tr>
+          <tr><td>Group Manager — Rentals</td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td><td><select class="pm-form-control"><option selected>Standard</option></select></td><td><select class="pm-form-control"><option selected>Standard</option></select></td><td><select class="pm-form-control"><option selected>Standard</option></select></td><td><select class="pm-form-control"><option>No Access</option></select></td></tr>
+        </tbody></table></div>
+        <div class="insight-banner warn mt-3"><i class="bi bi-shield-exclamation me-1"></i>Access is enforced at the API middleware level — if Caretaker James calls House 2's API, it's rejected with a 403 before any data is queried.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Access matrix changes saved')">Save Changes</button></div>
+    </div></div></div>
+
+    <!-- M22: Add User Access -->
+    <div class="modal fade" id="addUserAccessModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-plus text-primary me-2"></i>Grant Portfolio Access</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <label class="pm-form-label">User / Team Member</label><select class="pm-form-control"><option>Caretaker James</option><option>Jane — Accountant</option><option>New user...</option></select>
+        <label class="pm-form-label mt-2">Grant to Folder</label><select class="pm-form-control"><option>Rental Properties (auto-grants Standard to all)</option><option>Operating Companies</option><option>Side Projects</option><option>Individual entities...</option></select>
+        <label class="pm-form-label mt-2">Role</label><select class="pm-form-control"><option>Viewer (read-only)</option><option>Standard</option><option>Admin</option></select>
+        <div class="insight-banner tip mt-3"><i class="bi bi-diagram-3 me-1"></i>Assigning a folder role auto-grants Standard access to all entities inside it, unless overridden.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('addUserAccessModal','Access granted to James','ACL-118')">Grant Access</button></div>
+    </div></div></div>
+
+    <!-- M23: Audit Log -->
+    <div class="modal fade" id="auditLogModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-clock-history text-info me-2"></i>Audit Log</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body"><div class="mini-matrix">
+        <div class="mm-item"><i class="bi bi-eye text-muted me-2"></i>10:42 — James viewed House 1 ledger</div>
+        <div class="mm-item"><i class="bi bi-x-octagon text-danger me-2"></i>10:15 — Jane was denied access to TechSol P&amp;L</div>
+        <div class="mm-item"><i class="bi bi-cash-stack text-muted me-2"></i>09:58 — Amina recorded rent for Unit 1A</div>
+        <div class="mm-item"><i class="bi bi-arrow-left-right text-muted me-2"></i>09:30 — Transfer TechSol → House 3 (KES 50K)</div>
+      </div></div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+    </div></div></div>
+
+    <!-- M24: Inheritance & Overrides -->
+    <div class="modal fade" id="inheritanceModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-diagram-3 text-purple me-2" style="color:var(--pm-purple)"></i>Inheritance & Overrides</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="p-3 border rounded mb-2"><i class="bi bi-person-fill-check text-success me-1"></i><strong>Portfolio Owner</strong><span class="pm-badge pm-badge-success ms-1">Admin to everything</span><div class="pm-section-sub">Cannot be removed or demoted.</div></div>
+        <div class="p-3 border rounded mb-2"><i class="bi bi-folder2-open text-info me-1"></i><strong>Group Manager — Rentals</strong><div class="pm-section-sub">Standard access inherited by all 4 rental entities. <button class="pm-btn pm-btn-sm pm-btn-ghost" onclick="toast('Override added for House 2')">Override</button></div></div>
+        <div class="insight-banner tip"><i class="bi bi-lightbulb me-1"></i>Overrides let you grant or revoke a specific entity even when it differs from the folder default.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+    </div></div></div>
+
+    <!-- M25: Group Tax Dashboard -->
+    <div class="modal fade" id="groupTaxModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-graph-up text-danger me-2"></i>Group Tax Dashboard</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3"><div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Total VAT</div><div class="gv">KES 142K</div></div></div><div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Total PAYE</div><div class="gv">KES 96K</div></div></div><div class="col-4"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">NSSF/SHIF</div><div class="gv">KES 110K</div></div></div></div>
+        <div class="mini-matrix">
+          <div class="tax-row"><span><strong>TechSol</strong> VAT surplus (Input &gt; Output)</span><span class="pm-badge pm-badge-success">KES 50K surplus</span></div>
+          <div class="tax-row"><span><strong>TS Retail</strong> VAT deficit</span><span class="pm-badge pm-badge-danger">KES 40K deficit</span></div>
+          <div class="tax-row"><span><strong>Corporate tax installments due this month</strong></span><span class="pm-badge pm-badge-warning">KES 300K</span></div>
+        </div>
+        <div class="insight-banner warn mt-3"><i class="bi bi-exclamation-triangle me-1"></i>KRA does not allow inter-entity VAT offsetting. Each legal entity files separately — this view is for liquidity planning only.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="openModal('taxCalendarModal')"><i class="bi bi-calendar3"></i> View Calendar</button></div>
+    </div></div></div>
+
+    <!-- M26: Tax Calendar -->
+    <div class="modal fade" id="taxCalendarModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar3 text-danger me-2"></i>Consolidated Tax Calendar</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="cal-grid">
+          <div class="cal-day"><div class="dnum">6</div></div><div class="cal-day"><div class="dnum">7</div></div><div class="cal-day"><div class="dnum">8</div></div>
+          <div class="cal-day due"><div class="dnum">9</div><div class="tag">PAYE · NSSF · SHIF</div><div class="tag">TechSol + TS Retail</div></div>
+          <div class="cal-day"><div class="dnum">10</div></div><div class="cal-day"><div class="dnum">11</div></div><div class="cal-day"><div class="dnum">12</div></div>
+          <div class="cal-day"><div class="dnum">13</div></div><div class="cal-day"><div class="dnum">14</div></div><div class="cal-day"><div class="dnum">15</div></div>
+          <div class="cal-day"><div class="dnum">16</div></div><div class="cal-day"><div class="dnum">17</div></div><div class="cal-day"><div class="dnum">18</div></div>
+          <div class="cal-day"><div class="dnum">19</div></div><div class="cal-day due"><div class="dnum">20</div><div class="tag">VAT return</div><div class="tag">All entities</div></div><div class="cal-day"><div class="dnum">21</div></div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-3"><span class="pm-badge pm-badge-warning">3 deadlines this week</span><button class="pm-btn pm-btn-sm ms-auto" onclick="toast('Calendar synced to your Google Calendar')"><i class="bi bi-calendar-plus"></i> Sync Calendar</button></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+    </div></div></div>
+
+    <!-- M27: eTIMS Readiness -->
+    <div class="modal fade" id="etimsReadinessModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-check text-success me-2"></i>Consolidated eTIMS / iTax Readiness</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <table class="pm-table"><thead><tr><th>Entity</th><th>eTIMS</th><th>iTax PIN</th><th>VAT Reg.</th><th>Status</th></tr></thead><tbody>
+          <tr><td>TechSolutions Ltd</td><td>Active</td><td>Active</td><td>Yes</td><td><span class="pm-badge pm-badge-success">Compliant</span></td></tr>
+          <tr><td>TS Retail</td><td>Active</td><td><span class="text-danger">Expired</span></td><td>Yes</td><td><span class="pm-badge pm-badge-danger">Attention</span></td></tr>
+          <tr><td>Kilimani House 3</td><td>—</td><td>Active</td><td>Rent exempt</td><td><span class="pm-badge pm-badge-success">OK</span></td></tr>
+          <tr><td>Personal Car Hire</td><td>—</td><td>Active</td><td>No</td><td><span class="pm-badge pm-badge-success">OK</span></td></tr>
+        </tbody></table>
+        <div class="insight-banner warn mt-3"><i class="bi bi-exclamation-triangle me-1"></i><strong>TS Retail's PIN has expired.</strong> Renew via iTax to avoid penalties. We've scheduled a renewal reminder.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-danger" onclick="toast('Reminder scheduled — TS Retail PIN renewal')"><i class="bi bi-bell"></i> Set Renewal Reminder</button></div>
+    </div></div></div>
+
+    <!-- M28: Entity Detail -->
+    <div class="modal fade" id="entityDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-buildings text-primary me-2"></i>Entity Detail — TechSolutions Ltd</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3"><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Cash</div><div class="gv" style="font-size:15px">KES 4.2M</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="gv text-success" style="font-size:15px">+KES 520K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Revenue MTD</div><div class="gv" style="font-size:15px">KES 900K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Health</div><div class="gv text-success" style="font-size:15px">Green</div></div></div></div>
+        <div class="pm-tab-pills"><button class="pm-tab-pill active" onclick="tabSwitch(this,'edCash')">Cash Flow</button><button class="pm-tab-pill" onclick="tabSwitch(this,'edRev')">Revenue</button><button class="pm-tab-pill" onclick="tabSwitch(this,'edTeam')">Team</button></div>
+        <div id="edCash" class="tab-pane fade-step active"><div class="mini-matrix"><div class="mm-item d-flex justify-content-between"><span>M-Pesa Paybill</span><span>KES 2.4M</span></div><div class="mm-item d-flex justify-content-between"><span>Bank (KCB …1145)</span><span>KES 1.3M</span></div><div class="mm-item d-flex justify-content-between"><span>Other</span><span>KES 500K</span></div></div></div>
+        <div id="edRev" class="tab-pane fade-step"><div class="mini-matrix"><div class="mm-item d-flex justify-content-between"><span>Consulting services</span><span>KES 620K</span></div><div class="mm-item d-flex justify-content-between"><span>Software sales</span><span>KES 280K</span></div></div></div>
+        <div id="edTeam" class="tab-pane fade-step"><div class="mini-matrix"><div class="mm-item">3 admins · 5 staff · 2 caretakers</div><div class="mm-item">Role based access: Viewer / Standard / Admin</div></div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-dark" onclick="toast('Switching to TechSolutions Ltd...');setTimeout(()=>location.href='overview.html',400)"><i class="bi bi-box-arrow-in-right"></i> Jump into Entity</button></div>
+    </div></div></div>
+
+    <!-- M29: Group Metrics (folder drilldown) -->
+    <div class="modal fade" id="groupMetricsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-folder2-open text-info me-2"></i>Group Metrics — <span id="gmGroupName">Rental Properties</span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3"><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Rent Collected</div><div class="gv text-success">KES 450K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Maintenance</div><div class="gv text-danger">KES 30K</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Group Cash</div><div class="gv">KES 2.05M</div></div></div><div class="col-3"><div class="group-stat"><div style="font-size:11px;color:var(--pm-muted)">Net Profit</div><div class="gv text-success">KES 520K</div></div></div></div>
+        <div class="mini-matrix"><div class="mm-item d-flex justify-content-between"><span>Kilimani House 1</span><span class="text-success">+KES 280K</span></div><div class="mm-item d-flex justify-content-between"><span>Kilimani House 2</span><span class="text-success">+KES 90K</span></div><div class="mm-item d-flex justify-content-between"><span>Westlands Apartment</span><span class="text-success">+KES 150K</span></div></div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-success" onclick="openModal('groupPnLModal')"><i class="bi bi-journal-text"></i> View Consolidated P&L</button></div>
+    </div></div></div>
+
+    <!-- M30: New Folder -->
+    <div class="modal fade" id="newFolderModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-folder-plus text-primary me-2"></i>New Folder / Group</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <label class="pm-form-label">Folder Name</label><input class="pm-form-control" placeholder="e.g. Farm Projects">
+        <label class="pm-form-label mt-2">Icon</label><select class="pm-form-control"><option>📁 Folder</option><option>🏢 Building</option><option>🏠 House</option><option>🚗 Vehicle</option></select>
+        <label class="pm-form-label mt-2">Assign a Group Manager (optional)</label><select class="pm-form-control"><option>None</option><option>Caretaker James</option><option>Jane — Accountant</option></select>
+        <div class="insight-banner tip mt-3"><i class="bi bi-folder2-open me-1"></i>Folders are virtual groupings — they never affect the underlying ledger or legal structure.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="simulateProcess('newFolderModal','Folder created')">Create Folder</button></div>
+    </div></div></div>
+
+    <!-- M31: Move Entity -->
+    <div class="modal fade" id="moveEntityModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrows-move text-primary me-2"></i>Move Entity to Folder</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="p-2 border rounded mb-2 d-flex justify-content-between align-items-center"><strong>Kilimani House 3</strong><span class="pm-badge pm-badge-info">Currently: Rental Properties</span></div>
+        <label class="pm-form-label">Move to</label>
+        <div class="row g-2">
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center;padding:12px" onclick="toast('Moved to Operating Companies')"><i class="bi bi-buildings" style="font-size:22px;color:var(--pm-purple)"></i><div style="font-size:13px;font-weight:600">Operating Companies</div></div></div>
+          <div class="col-6"><div class="entity-card" data-health="green" style="text-align:center;padding:12px;border-left-color:var(--pm-pink)" onclick="toast('Moved to Side Projects')"><i class="bi bi-car-front" style="font-size:22px;color:var(--pm-warning)"></i><div style="font-size:13px;font-weight:600">Side Projects</div></div></div>
+        </div>
+        <div class="insight-banner tip mt-3"><i class="bi bi-info-circle me-1"></i>A business can only exist in one folder at a time. Moving it re-aggregates its group metrics.</div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Cancel</button><button class="pm-btn pm-btn-primary" onclick="toast('Entity moved')">Move Entity</button></div>
+    </div></div></div>
+
+    <!-- M32: Support -->
+    <div class="modal fade" id="supportModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-question-circle text-primary me-2"></i>Help & Support</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <p class="pm-section-sub">Get help with your multi-business portfolio.</p>
+        <div class="d-grid gap-2">
+          <button class="pm-btn pm-btn-sm" onclick="toast('Opening the Portfolio help guide...')"><i class="bi bi-book"></i> Portfolio Guide</button>
+          <button class="pm-btn pm-btn-sm" onclick="toast('Opening the Rental Property playbook...')"><i class="bi bi-house-door"></i> Landlord Playbook</button>
+          <button class="pm-btn pm-btn-sm" onclick="toast('Loading inter-company consolidation explainer...')"><i class="bi bi-journal-text"></i> Consolidation 101</button>
+          <button class="pm-btn pm-btn-sm" onclick="toast('Chat with support — average reply 2 min')"><i class="bi bi-chat-dots"></i> Live Chat</button>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button></div>
+    </div></div></div>
+
+    <!-- M33: Health Check -->
+    <div class="modal fade" id="healthCheckModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-activity text-success me-2"></i>Portfolio Health Check</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body"><div class="mini-matrix">
+        <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-check-circle text-success me-1"></i> All systems operational</span><span class="pm-badge pm-badge-success">Good</span></div>
+        <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-exclamation-triangle text-warning me-1"></i> 1 entity with PIN expiry</span><span class="pm-badge pm-badge-warning">TS Retail</span></div>
+        <div class="mm-item d-flex justify-content-between"><span><i class="bi bi-exclamation-circle text-danger me-1"></i> 1 tenant overdue</span><span class="pm-badge pm-badge-danger">James Kariuki</span></div>
+      </div></div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Full diagnostics queued')">Run Diagnostics</button></div>
+    </div></div></div>
+
+    <!-- M34: Notifications -->
+    <div class="modal fade" id="notificationsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-bell text-primary me-2"></i>Notifications</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body"><div class="mini-matrix">
+        <div class="mm-item"><i class="bi bi-exclamation-triangle text-danger me-2"></i><strong>TS Retail PIN expired</strong> — renew via iTax</div>
+        <div class="mm-item"><i class="bi bi-cash-stack text-warning me-2"></i><strong>James Kariuki</strong> rent overdue 5 days</div>
+        <div class="mm-item"><i class="bi bi-arrow-left-right text-info me-2"></i>Loan repayment due today (Car Hire → TechSol)</div>
+        <div class="mm-item"><i class="bi bi-calendar3 text-danger me-2"></i>PAYE + NSSF/SHIF due 9 Aug</div>
+      </div></div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Marking all as read')">Mark All Read</button></div>
+    </div></div></div>
+
+    <!-- M35: Profile -->
+    <div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-circle text-primary me-2"></i>Profile</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body"><div class="text-center mb-2"><div class="pm-avatar mx-auto" style="width:60px;height:60px;font-size:22px;background:var(--pm-primary)">AM</div><h5 style="margin:10px 0 0">Amina M.</h5><div style="font-size:12px;color:var(--pm-muted)">Portfolio Owner · amina@paymo.co.ke</div><span class="pm-badge pm-badge-purple mt-1">Admin to all 7 entities</span></div><div class="mini-matrix mt-2"><div class="mm-item d-flex justify-content-between"><span>Two-factor auth</span><span class="pm-badge pm-badge-success">Enabled</span></div><div class="mm-item d-flex justify-content-between"><span>KRA PIN</span><span>P051234567M</span></div></div></div>
+      <div class="modal-footer"><button class="pm-btn" data-bs-dismiss="modal">Close</button><button class="pm-btn pm-btn-primary" onclick="toast('Opening profile settings...')"><i class="bi bi-gear"></i> Manage</button></div>
+    </div></div></div>
+
+  </div><!-- end pm-main -->
+</div><!-- end app -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="paymo-common.js"></script>
+<script>
+/* Portfolio page logic */
+function openEntity(name){
+  toast('Opening '+name+'...');
+  setTimeout(()=>{ openModal('entityDetailModal'); }, 400);
+}
+function sortEntities(by,btn){
+  btn.closest('.pm-seg').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  var grid=document.getElementById('entityGrid');
+  var cards=Array.from(grid.querySelectorAll('.entity-card'));
+  cards.sort(function(a,b){
+    var va=parseFloat(a.dataset[by]), vb=parseFloat(b.dataset[by]);
+    return vb-va;
+  });
+  cards.forEach(c=>c.closest('.col-lg-4').remove());
+  var rows=[];
+  cards.forEach(c=>rows.push(c.closest('.col-lg-4')));
+  // rebuild as 2-per-row safe
+  rows.forEach(function(col){ grid.appendChild(col); });
+  toast('Sorted entities by '+(by==='cash'?'Cash Balance':'Net Profit'));
+}
+function toggleGroup(el){
+  var ch=el.nextElementSibling;
+  if(ch && ch.classList.contains('group-children')){
+    var vis=ch.style.display==='none';
+    ch.style.display=vis?'':'none';
+    el.querySelector('.bi-chevron-down').style.transform=vis?'rotate(0deg)':'rotate(-90deg)';
+  }
+}
+function groupMetrics(name,btn){
+  document.querySelectorAll('.pm-seg, .d-flex.gap-2 button').forEach(()=>{});
+  var gb=document.getElementById('groupMetricsBox');
+  var title=document.getElementById('groupName');
+  if(name==='Rental Properties'){ title.textContent='Rental Properties'; }
+  else if(name==='Operating Companies'){ title.textContent='Operating Companies'; }
+  else { title.textContent='Side Projects'; }
+  // show modal with group metrics for more detail
+  var m=document.getElementById('groupMetricsModal');
+  document.getElementById('gmGroupName').textContent=name;
+  new bootstrap.Modal(m).show();
+}
+function addTenantRow(btn){
+  var wrap=document.createElement('div');
+  wrap.className='p-2 border rounded mb-2 d-flex align-items-center gap-2 tenant-row';
+  wrap.innerHTML='<input class="pm-form-control" style="flex:1" placeholder="Tenant name"><input class="pm-form-control" style="flex:1" placeholder="Phone"><input class="pm-form-control" style="width:90px" placeholder="Unit"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="this.closest(\'.tenant-row\').remove()"><i class="bi bi-trash"></i></button>';
+  document.getElementById('tenantRows').appendChild(wrap);
+}
+function addDeduction(btn){
+  var wrap=document.createElement('div');
+  wrap.className='p-2 border rounded mb-2 d-flex gap-2 flex-wrap deduction-row';
+  wrap.innerHTML='<input class="pm-form-control" style="flex:2" value="Broken window"><input class="pm-form-control" style="width:110px" value="KES 5,000"><button class="pm-btn pm-btn-sm pm-btn-danger" onclick="this.closest(\'.deduction-row\').remove()"><i class="bi bi-trash"></i></button>';
+  document.getElementById('deductions').appendChild(wrap);
+}
+function pickIndustry(el){
+  el.closest('.row').querySelectorAll('.entity-card').forEach(x=>{x.style.borderLeftColor='var(--pm-border)';x.style.boxShadow='none';});
+  el.style.borderLeftColor='var(--pm-primary)'; el.style.boxShadow='var(--pm-shadow-md)';
+  toast('Industry preset selected');
+}
+function selectGroup(type,btn){
+  document.querySelectorAll('#entitySelectorModal .form-check-input').forEach(c=>{ c.checked=false; });
+  if(type==='rentals'){
+    var boxes=document.querySelectorAll('#entitySelectorModal .form-check-label');
+    boxes.forEach(function(l){ if(/House|Westlands/.test(l.textContent)){ l.closest('.form-check').querySelector('input').checked=true; } });
+  }
+  toast('Rentals selected for consolidation');
+}
+function pnlMode(mode,btn){
+  btn.closest('.pm-seg').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  var rev=document.getElementById('pnlRev'), exp=document.getElementById('pnlExp'),
+      pr=document.getElementById('pnlProfit'), er=document.getElementById('pnlElimRev'), ee=document.getElementById('pnlElimExp');
+  if(mode==='unadjusted'){
+    rev.textContent='KES 2,140,000'; exp.textContent='KES 1,320,000'; pr.textContent='KES 820,000';
+    er.textContent='− KES 0'; ee.textContent='− KES 0';
+  } else {
+    rev.textContent='KES 1,990,000'; exp.textContent='KES 1,170,000'; pr.textContent='KES 820,000';
+    er.textContent='− KES 150,000'; ee.textContent='− KES 150,000';
+  }
+  toast('Showing '+(mode==='adjusted'?'Adjusted (eliminated)':'Unadjusted')+' P&L');
+}
+/* global search — no dead end */
+document.addEventListener('DOMContentLoaded',()=>{
+  var gs=document.getElementById('globalSearch');
+  if(gs) gs.addEventListener('keydown',function(e){ if(e.key==='Enter' && this.value.trim()){ openModal('entityDetailModal'); } });
+});
+</script>
+</body>
+</html>
