@@ -125,6 +125,7 @@ const fmt = (n: number) => "KES " + Math.round(n).toLocaleString("en-KE");
 export default function GetPaidModals({ active, onClose, onOpen, onToast }: ModalsProps) {
 	/* ---------- state ---------- */
 	const [results, setResults] = useState<Record<string, string>>({});
+	const [refs, setRefs] = useState<Record<string, string>>({});
 	const [busy, setBusy] = useState<string | null>(null);
 	const [flows, setFlows] = useState<Record<string, number>>({ inv: 1 });
 	const [tabs, setTabs] = useState<Record<string, string>>({ invDetail: "ov", subDetail: "sch" });
@@ -149,11 +150,11 @@ export default function GetPaidModals({ active, onClose, onOpen, onToast }: Moda
 	const [linkDesc, setLinkDesc] = useState("Consulting retainer");
 	const [cardBiz, setCardBiz] = useState("TechSolutions Ltd");
 	const [cardUrl, setCardUrl] = useState("paymo.biz/tsretail");
-	const [qty, setQty] = useState(1);
 
 	useEffect(() => {
 		if (active === null) {
 			setResults({});
+			setRefs({});
 			setBusy(null);
 			setFlows({ inv: 1 });
 			setTabs({ invDetail: "ov", subDetail: "sch" });
@@ -174,15 +175,15 @@ export default function GetPaidModals({ active, onClose, onOpen, onToast }: Moda
 			setLinkDesc("Consulting retainer");
 			setCardBiz("TechSolutions Ltd");
 			setCardUrl("paymo.biz/tsretail");
-			setQty(1);
 		}
 	}, [active]);
 
 	/* ---------- simulate: busy overlay → receipt + toast ---------- */
-	const simulate = (id: string, msg: string) => {
+	const simulate = (id: string, msg: string, ref?: string) => {
 		setBusy(id);
 		window.setTimeout(() => {
 			setResults(prev => ({ ...prev, [id]: msg }));
+			if (ref) setRefs(prev => ({ ...prev, [id]: ref }));
 			setBusy(null);
 			onToast(msg);
 		}, 1200);
@@ -269,7 +270,7 @@ export default function GetPaidModals({ active, onClose, onOpen, onToast }: Moda
 				footer={invFooter}>
 				{overlay("inv")}
 				{results.newInvoiceModal ? (
-					<Receipt msg={results.newInvoiceModal} onClose={onClose} ref="INV-2025-152" />
+					<Receipt msg={results.newInvoiceModal} onClose={onClose} ref={refs.newInvoiceModal} />
 				) : (
 					<>
 						<Stepper labels={["Customer", "Line Items", "Details & Terms", "Review & Send"]} current={flows.inv} />
