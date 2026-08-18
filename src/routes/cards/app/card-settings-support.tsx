@@ -1,12 +1,30 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import {
+	DefaultsSection,
+	FaqSection,
+	ResourcesSection,
+	SettingsDefaultsModal,
+	SettingsOverview,
+	SupportSection,
+} from "@/features/dashboards/card-dashboard/features/card-dashboard/card-settings-support/pages";
 
 /**
- * app.card-settings-support.tsx — Card Settings & Support (Page 5.10)
- * DEPRECATED: Split into /cards/app/account-settings and /cards/app/support
- * Redirects to /cards/app/account-settings for backward compatibility.
+ * app.card-settings-support.tsx — Settings & Support (Module 5.10).
+ * Child of routes/cards/app.tsx, so it renders INSIDE the cards shell.
  */
 export const Route = createFileRoute("/cards/app/card-settings-support")({
-	beforeLoad: () => {
-		throw redirect({ to: "/cards/app/account-settings" });
-	},
+	component: CardSettingsSupport,
 });
+
+function CardSettingsSupport() {
+	return (
+		<>
+			<SettingsOverview />
+			<DefaultsSection />
+			<SupportSection />
+			<FaqSection />
+			<ResourcesSection />
+			<SettingsDefaultsModal />
+		</>
+	);
+}

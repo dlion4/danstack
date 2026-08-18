@@ -21,8 +21,6 @@ import {
   REVENUE_STREAMS,
   TOP_MERCHANTS,
   UPSEL_SEGMENTS,
-  kes,
-  kesShort,
 } from "../../../../lib";
 
 /* ============ 01 · Analytics overview ============ */

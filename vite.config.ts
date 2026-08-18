@@ -11,6 +11,10 @@ const tanstackRouter = Object.assign(
 );
 
 export default defineConfig({
+  server: {
+    // Allow the Arena preview proxy host (and any *.e2b.app subdomain).
+    allowedHosts: [".e2b.app", "localhost", "127.0.0.1"],
+  },
   plugins: [
     tanstackRouter,   // must come first
     tanstackStart(),

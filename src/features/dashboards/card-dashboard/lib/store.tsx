@@ -161,7 +161,17 @@ function loadPersisted(): Persisted | null {
 
 /* ---------------- provider ---------------- */
 
-export function AppProvider({ children }: { children: ReactNode }) {
+export function AppProvider({
+  children,
+  onPageChange,
+}: {
+  children: ReactNode;
+  /**
+   * Called whenever the active module (PageId) changes so the host shell can
+   * keep the URL in sync (e.g. navigate to /cards/app/<module>).
+   */
+  onPageChange?: (page: PageId) => void;
+}) {
   const persisted = useRef(loadPersisted());
 
   const [cards, setCards] = useState<PmCard[]>(() =>
@@ -169,7 +179,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const [txns, setTxns] = useState<Txn[]>(SEED_TXNS);
   const [alerts, setAlerts] = useState<AlertPrefs>(persisted.current?.alerts ?? SEED_ALERTS);
-  const [page, setPage] = useState<PageId>("5.10");
+  const [page, setPageState] = useState<PageId>("5.1");
+
+  const setPage = useCallback(
+    (p: PageId) => {
+      setPageState(p);
+      onPageChange?.(p);
+    },
+    [onPageChange]
+  );
   const [creditLine, setCreditLine] = useState<CreditLine>(SEED_CREDIT_LINE);
   const [creditTxns] = useState<CreditTxn[]>(SEED_CREDIT_TXNS);
   const [repayments, setRepayments] = useState<Repayment[]>(SEED_REPAYMENTS);
@@ -494,7 +512,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       sync,
       lastSync,
     }),
-    [page, creditLine, creditTxns, repayments, repayCredit, setAutoDebit, prepaid, loads, billing, policies, saveBilling, togglePolicy, resolveViolation, violations, cardDefaults, saveDefaults, fraudEvents, audit, resolveFraudEvent, addPrepaid, topupPrepaid, setPrepaidStatus, updatePrepaid, retirePrepaid, cards, txns, alerts, notifs, modal, drawer, toasts, syncing, lastSync, toast, dismissToast, saveAlerts, setCardStatus, freezeAll, unfreezeAll, updateChannels, updateLimits, updateVirtualMeta, fileDispute, blockAndReplace, addCard, markAllRead, markRead, pushNotif, sync]
+    [page, setPage, creditLine, creditTxns, repayments, repayCredit, setAutoDebit, prepaid, loads, billing, policies, saveBilling, togglePolicy, resolveViolation, violations, cardDefaults, saveDefaults, fraudEvents, audit, resolveFraudEvent, addPrepaid, topupPrepaid, setPrepaidStatus, updatePrepaid, retirePrepaid, cards, txns, alerts, notifs, modal, drawer, toasts, syncing, lastSync, toast, dismissToast, saveAlerts, setCardStatus, freezeAll, unfreezeAll, updateChannels, updateLimits, updateVirtualMeta, fileDispute, blockAndReplace, addCard, markAllRead, markRead, pushNotif, sync]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

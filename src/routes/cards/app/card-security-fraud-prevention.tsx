@@ -1,12 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
-import CardSecurityFraudPrevention from "@/features/dashboards/card-dashboard/CardSecurityFraudPrevention/pages/CardSecurityFraudPrevention";
+import {
+	AuditLogSection,
+	FraudEventModal,
+	FraudEventsSection,
+	FraudWizardModal,
+	ReportCardSection,
+	SafeguardsSection,
+	SecurityOverview,
+	SuspiciousSection,
+} from "@/features/dashboards/card-dashboard/features/card-dashboard/card-security-fraud-prevention/pages";
 
 /**
- * app.card-security-fraud-prevention.tsx — Card Security & Fraud Prevention (Page 5.7)
- * Child of routes/app.tsx, so it renders INSIDE the app shell.
+ * app.card-security-fraud-prevention.tsx — Security & Fraud (Module 5.7).
+ * Child of routes/cards/app.tsx, so it renders INSIDE the cards shell.
  */
 export const Route = createFileRoute(
 	"/cards/app/card-security-fraud-prevention",
 )({
 	component: CardSecurityFraudPrevention,
 });
+
+function CardSecurityFraudPrevention() {
+	return (
+		<>
+			<SecurityOverview />
+			<FraudEventsSection />
+			<SafeguardsSection />
+			<ReportCardSection />
+			<SuspiciousSection />
+			<AuditLogSection />
+			<FraudWizardModal />
+			<FraudEventModal />
+		</>
+	);
+}
