@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import UtilitiesCommandCenter from "@/features/dashboards/utility-dashboard/utilities-command-center/pages/UtilitiesCommandCenter";
+import { UtilitiesPage } from "@/features/dashboards/utility-dashboard/features/utility-dashboard/overview/pages";
 
-// 3.1 — Utilities Command Center is the utility layout overview (/utility).
+/**
+ * utility/index.tsx — 3.1 Utilities Command Center (/utility).
+ * Child of routes/utility.tsx, so it renders INSIDE the utility shell.
+ */
 export const Route = createFileRoute("/utility/")({
-	component: UtilitiesCommandCenter,
+	component: UtilitiesPage,
 });

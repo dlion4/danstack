@@ -1,19 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import UtilityModulePage from "@/features/Layouts/dashboard-utility-layout/pages/UtilityModulePage";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 /**
- * utility/$module.tsx — generic /utility/<module> destination.
+ * utility/$module.tsx — catch-all fallback for unknown /utility/<module> slugs.
  * ----------------------------------------------------------------------------
- * Every sidebar entry (Electricity, Water, Cable TV, Auto-Pay, Saved Accounts …)
- * and every overview card links to /utility/$module. The overview is the layout
- * index (/utility). Unknown slugs render a friendly empty state inside
- * UtilityModulePage instead of a broken page.
+ * Every real module has a static route above (overview, electricity, water,
+ * internet, airtime, settings). Any unknown or legacy deep link is redirected
+ * to the Utilities Command Center so no URL ever renders a broken page.
  */
 export const Route = createFileRoute("/utility/$module")({
-	component: UtilityModuleRoute,
+	loader: () => {
+		throw redirect({ to: "/utility" });
+	},
 });
-
-function UtilityModuleRoute() {
-	const { module } = Route.useParams();
-	return <UtilityModulePage module={module} />;
-}

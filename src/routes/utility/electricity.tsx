@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ElectricityManagement from "@/features/dashboards/utility-dashboard/electricity/pages/ElectricityManagement";
+import { ElectricityPage } from "@/features/dashboards/utility-dashboard/features/utility-dashboard/electricity/pages";
 
-// 3.2 — Electricity Management Explore (named route wins over /utility/$module).
+/**
+ * utility/electricity.tsx — 3.2 Electricity Management (/utility/electricity).
+ * Child of routes/utility.tsx, so it renders INSIDE the utility shell.
+ */
 export const Route = createFileRoute("/utility/electricity")({
-	component: ElectricityManagement,
+	component: ElectricityPage,
 });

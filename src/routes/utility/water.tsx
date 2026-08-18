@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import WaterDeepDive from "@/features/dashboards/utility-dashboard/water/pages/WaterDeepDive";
+import { WaterPage } from "@/features/dashboards/utility-dashboard/features/utility-dashboard/water/pages";
 
-// 3.3 — Water Management Explore (named route wins over /utility/$module).
+/**
+ * utility/water.tsx — 3.3 Water Management (/utility/water).
+ * Child of routes/utility.tsx, so it renders INSIDE the utility shell.
+ */
 export const Route = createFileRoute("/utility/water")({
-	component: WaterDeepDive,
+	component: WaterPage,
 });

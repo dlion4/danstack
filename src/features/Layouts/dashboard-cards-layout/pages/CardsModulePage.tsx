@@ -140,7 +140,7 @@ export default function CardsModulePage({ section }: CardsModulePageProps) {
 			{/* ---------- back link ---------- */}
 			<div className={d.actionRow}>
 				<Link
-					to="/pm/app/card-overview"
+					to="/cards/app"
 					className={c.btnLink}
 					style={{ textDecoration: "none" }}
 				>
