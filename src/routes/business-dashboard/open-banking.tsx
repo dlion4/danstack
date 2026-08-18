@@ -1,11 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import OpenBanking from "@/features/dashboards/business-dashboard/open-banking/pages/OpenBanking";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/**
- * business-dashboard/open-banking.tsx — Open Banking & Account Aggregation.
- * Child of routes/business-dashboard.tsx, so it renders INSIDE BusinessShell.
- * Mounts at /business-dashboard/open-banking
- */
 export const Route = createFileRoute("/business-dashboard/open-banking")({
-	component: OpenBanking,
+	loader: () => {
+		throw redirect({ to: "/business-dashboard/cash" });
+	},
 });

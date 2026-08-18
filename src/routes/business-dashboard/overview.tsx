@@ -1,11 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import PayMoDashboard from "@/features/dashboards/business-dashboard/overview/PayMoDashboard";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/**
- * business-dashboard/overview.tsx — PayMo Business Overview (Command Center).
- * Renders inside BusinessShell as a child route.
- * Mounts at /business-dashboard/overview
- */
 export const Route = createFileRoute("/business-dashboard/overview")({
-	component: PayMoDashboard,
+	loader: () => {
+		throw redirect({ to: "/business-dashboard" });
+	},
 });

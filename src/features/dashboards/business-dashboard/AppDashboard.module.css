@@ -1,0 +1,353 @@
+/* ==================================================================
+   PayMo Business — Dashboard Page Scoped Styles
+   Prevents CSS conflicts with other pages
+================================================================== */
+
+:root {
+  --pm-green: #12b76a;
+  --pm-green-dark: #0b8f52;
+  --pm-green-soft: #e7f8ef;
+  --pm-ink: #101828;
+  --pm-muted: #667085;
+  --pm-bg: #f2f4f8;
+  --pm-card: #ffffff;
+  --pm-border: #e6e9f0;
+  --pm-sidebar: #0b1322;
+  --pm-warn: #f79009;
+  --pm-danger: #f04438;
+  --pm-blue: #2e90fa;
+  --pm-violet: #7a5af8;
+  --pm-radius: 16px;
+  --pm-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+  --pm-shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
+}
+
+/* Banner Hero */
+.pm-banner-hero {
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(115deg, #0b1322 0%, #123a2c 55%, #0d5c38 100%);
+  color: #fff;
+  border-radius: var(--pm-radius);
+  border: 1px solid var(--pm-border);
+  overflow: hidden;
+  box-shadow: var(--pm-shadow);
+}
+
+.pm-zone {
+  background: rgba(255, 255, 255, 0.12);
+  color: #cfe8db;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.badge-soft {
+  background: rgba(255, 255, 255, 0.12);
+  color: #cfe8db;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+
+/* KPI Cards */
+.pm-card {
+  background: var(--pm-card);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius);
+  box-shadow: var(--pm-shadow);
+  padding: 1.25rem;
+}
+
+.pm-kpi-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--pm-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pm-kpi-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  font-family: "Sora", sans-serif;
+  letter-spacing: -0.03em;
+  margin: 0.2rem 0;
+}
+
+.pm-kpi-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  flex: none;
+}
+
+.pm-delta {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.16rem 0.5rem;
+  border-radius: 99px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.pm-delta.up {
+  color: #067647;
+  background: #e7f8ef;
+}
+
+.pm-delta.down {
+  color: #b42318;
+  background: #fee4e2;
+}
+
+.pm-delta.flat {
+  color: #475467;
+  background: #f2f4f8;
+}
+
+/* Section Headers */
+.pm-sec {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.1rem 0 1rem;
+  flex-wrap: wrap;
+}
+
+.pm-sec:first-of-type {
+  margin-top: 0.4rem;
+}
+
+.pm-sec-no {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--pm-ink);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.pm-sec h2 {
+  font-size: 1.12rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.pm-sec-sub {
+  width: 100%;
+  color: var(--pm-muted);
+  font-size: 0.82rem;
+  margin: -0.5rem 0 0 2.6rem;
+}
+
+/* Chips */
+.pm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  border: 1px solid var(--pm-border);
+  background: #fff;
+  color: #475467;
+  font-weight: 600;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.pm-chip:hover {
+  border-color: #c4c9d4;
+}
+
+.pm-chip.on {
+  background: var(--pm-ink);
+  color: #fff;
+  border-color: var(--pm-ink);
+}
+
+/* Product Meta */
+.pm-prod-meta {
+  font-size: 0.72rem;
+  color: var(--pm-muted);
+}
+
+/* Badge */
+.pm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.pm-badge-success {
+  background: #e7f8ef;
+  color: #067647;
+}
+
+.pm-badge-warning {
+  background: #fef0c7;
+  color: #93370d;
+}
+
+.pm-badge-danger {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.pm-badge-info {
+  background: #e8f1fe;
+  color: #175cd3;
+}
+
+.pm-badge-muted {
+  background: #f2f4f8;
+  color: #475467;
+}
+
+.pm-badge-violet {
+  background: #f0ebfe;
+  color: #5925dc;
+}
+
+/* Note */
+.pm-note {
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  border: 1px solid var(--pm-border);
+  background: #fafbfd;
+}
+
+.pm-note.soft {
+  background: #f8fafc;
+  border-color: var(--pm-border);
+  color: var(--pm-muted);
+}
+
+/* Keyboard shortcut */
+.pm-kbd {
+  padding: 0.15rem 0.35rem;
+  background: #f2f4f8;
+  border: 1px solid var(--pm-border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+/* WhatsApp Preview */
+.pm-wa-preview {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.pm-wa-head {
+  font-size: 0.7rem;
+  color: #16a34a;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pm-wa-bubble {
+  background: #d9fdd3;
+  color: #111b21;
+  border-radius: 8px;
+  margin: 0.55rem 0.7rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.78rem;
+  max-width: 92%;
+}
+
+/* Live Dot */
+.pm-dot-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pm-green);
+  box-shadow: 0 0 0 0 rgba(18,183,106,.5);
+  animation: pmPulse 2s infinite;
+  display: inline-block;
+}
+
+@keyframes pmPulse {
+  0% { box-shadow: 0 0 0 0 rgba(18,183,106,.5); }
+  70% { box-shadow: 0 0 0 7px rgba(18,183,106,0); }
+  100% { box-shadow: 0 0 0 0 rgba(18,183,106,0); }
+}
+
+/* Footer */
+.pm-footer {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--pm-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--pm-shadow);
+}
+
+/* Theme Card */
+.pm-theme-card {
+  background: #fff;
+  border: 1px solid var(--pm-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pm-theme-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Progress */
+.pm-progress {
+  height: 5px;
+  background: #eef0f4;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.pm-progress-bar {
+  height: 100%;
+  border-radius: 99px;
+  background-color: var(--pm-green);
+  transition: width 0.3s ease;
+}
+
+/* Content wrapper */
+.pm-content {
+  flex: 1;
+  padding: 1.5rem 1.5rem 7rem;
+  max-width: 1500px;
+  width: 100%;
+  margin: 0 auto;
+}

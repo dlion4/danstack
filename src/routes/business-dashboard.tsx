@@ -1,19 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import BusinessShell from "@/features/Layouts/dashboard-business-layout/components/BusinessShell";
+import BusinessAppLayout from "@/features/dashboards/business-dashboard/components/layout/BusinessAppLayout";
 
 /**
- * business-dashboard.tsx — LAYOUT route for the Business Dashboard shell.
+ * business-dashboard.tsx — LAYOUT route for the designed PayMo Business pages.
  * ----------------------------------------------------------------------------
- * Mirrors routes/utility.tsx and routes/cards/app.tsx: this route adds the
- * "/business-dashboard" prefix and renders the designed BusinessShell
- * (sidebar + header + page bar + toasts + drawers), whose <Outlet /> hosts
- * every /business-dashboard/<module> page below.
+ * Mirrors routes/utility.tsx: this route adds the "/business-dashboard" prefix
+ * and hosts every designed module page below. Each page keeps its own designed
+ * shell (sidebar + topbar) so the original theme is not wrapped or restyled.
  */
 export const Route = createFileRoute("/business-dashboard")({
-	component: BusinessDashboardLayout,
+	component: BusinessAppLayout,
 });
-
-function BusinessDashboardLayout() {
-	// BusinessShell renders its own <Outlet /> for the child module pages.
-	return <BusinessShell />;
-}
