@@ -10,8 +10,6 @@ import {
   RISK_METRICS,
   SEED_SECURITY_RULES,
   SEED_SUSPICIOUS,
-  kes,
-  kesShort,
 } from "../../../../lib";
 
 const severityMeta = (s: string): { tone: "danger" | "warning" | "info" | "muted"; label: string; icon: IconName } =>

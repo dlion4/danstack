@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "../../../../lib";
-import { Icon, type IconName } from "../../../../components/ui/icons";
+import { Icon, NetworkMark, type IconName } from "../../../../components/ui/icons";
 import { Badge, Btn, Chip, FieldLabel, Modal, Progress, Reveal, SectionHead, Spark, Toggle, Empty } from "../../../../components/ui";
 import { useApp, scrollToId } from "../../../../lib";
 import { kes, kesShort, type PmCard, type Txn } from "../../../../lib";
@@ -11,8 +11,6 @@ import {
   PREPAID_FUNDING_SOURCES,
   PREPAID_ISSUANCE_FEE,
   PREPAID_USES,
-  kes,
-  kesShort,
   type PrepaidCard,
   type PrepaidForm,
   type PrepaidUse,

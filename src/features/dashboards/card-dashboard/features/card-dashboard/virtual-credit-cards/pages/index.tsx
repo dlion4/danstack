@@ -1,28 +1,22 @@
 import { useEffect, useState } from "react";
 import { cn } from "../../../../lib";
 import { Icon, type IconName } from "../../../../components/ui/icons";
-import { Badge, Btn, Chip, FieldLabel, Modal, Progress, Reveal, SectionHead, Spark, Toggle, Empty } from "../../../../components/ui";
-import { useApp, scrollToId } from "../../../../lib";
-import { kes, kesShort, type PmCard, type Txn } from "../../../../lib";
-import { CardVisual } from "../../../../components/modals/modalsA";
+import { Badge, Btn, Chip, Drawer, FieldLabel, Modal, Progress, Reveal, SectionHead, Spark, Toggle, Empty } from "../../../../components/ui";
+import { useApp } from "../../../../lib";
 import {
   COLOR_THEMES,
   CREDIT_FEES,
   CREDIT_FUNDING_SOURCES,
+  CREDIT_PURPOSES,
   SEED_STATEMENTS,
   UTILISATION_TREND,
   kes,
   kesShort,
   type ColorTheme,
-} from "../../../../lib";
-import { 
-  CREDIT_FEES,
-  CREDIT_FUNDING_SOURCES,
-  CREDIT_PURPOSES,
-  COLOR_THEMES,
   type CreditPurpose,
   type PmCard,
 } from "../../../../lib";
+import { CardVisual } from "../../../../components/modals/modalsA";
 
 /* helpers */
 

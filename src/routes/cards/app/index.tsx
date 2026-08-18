@@ -14,10 +14,10 @@ import {
 } from "@/features/dashboards/card-dashboard/features/card-dashboard/card-command-center/pages";
 
 /**
- * app.card-command-center.tsx — Card Command Center (Module 5.1).
+ * index.tsx — /cards/app landing page: Card Command Center (Module 5.1).
  * Child of routes/cards/app.tsx, so it renders INSIDE the cards shell.
  */
-export const Route = createFileRoute("/cards/app/card-command-center")({
+export const Route = createFileRoute("/cards/app/")({
 	component: CardCommandCenter,
 });
 

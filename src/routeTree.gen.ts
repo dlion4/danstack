@@ -64,6 +64,7 @@ import { Route as AuthHubRouteImport } from './routes/auth/hub'
 import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
 import { Route as PmAppIndexRouteImport } from './routes/pm/app.index'
+import { Route as CardsAppIndexRouteImport } from './routes/cards/app/index'
 import { Route as PmAppTransfersRouteImport } from './routes/pm/app.transfers'
 import { Route as PmAppTransferOverviewRouteImport } from './routes/pm/app.transfer-overview'
 import { Route as PmAppTransferManagementRouteImport } from './routes/pm/app.transfer-management'
@@ -187,7 +188,6 @@ import { Route as ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImp
 import { Route as ErrorAdvancedErrorsDev40001PayloadValidationRouteImport } from './routes/error/advanced-errors/dev-400-01-payload-validation'
 import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
 import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
-import { Route as CardsAppSupportRouteImport } from './routes/cards/app/support'
 import { Route as CardsAppPrepaidCardManagementRouteImport } from './routes/cards/app/prepaid-card-management'
 import { Route as CardsAppPhysicalDebitCardsRouteImport } from './routes/cards/app/physical-debit-cards'
 import { Route as CardsAppCorporateBusinessCardsRouteImport } from './routes/cards/app/corporate-business-cards'
@@ -196,7 +196,6 @@ import { Route as CardsAppCardSecurityFraudPreventionRouteImport } from './route
 import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/cards/app/card-program-administration'
 import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
 import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
-import { Route as CardsAppAccountSettingsRouteImport } from './routes/cards/app/account-settings'
 
 const WalletActivationRoute = WalletActivationRouteImport.update({
   id: '/wallet-activation',
@@ -486,6 +485,11 @@ const PmAppIndexRoute = PmAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PmAppRoute,
+} as any)
+const CardsAppIndexRoute = CardsAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CardsAppRoute,
 } as any)
 const PmAppTransfersRoute = PmAppTransfersRouteImport.update({
   id: '/transfers',
@@ -1204,11 +1208,6 @@ const CardsAppVirtualCreditCardsRoute =
     path: '/virtual-credit-cards',
     getParentRoute: () => CardsAppRoute,
   } as any)
-const CardsAppSupportRoute = CardsAppSupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => CardsAppRoute,
-} as any)
 const CardsAppPrepaidCardManagementRoute =
   CardsAppPrepaidCardManagementRouteImport.update({
     id: '/prepaid-card-management',
@@ -1257,11 +1256,6 @@ const CardsAppCardAnalyticsReportingRoute =
     path: '/card-analytics-reporting',
     getParentRoute: () => CardsAppRoute,
   } as any)
-const CardsAppAccountSettingsRoute = CardsAppAccountSettingsRouteImport.update({
-  id: '/account-settings',
-  path: '/account-settings',
-  getParentRoute: () => CardsAppRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
@@ -1316,7 +1310,6 @@ export interface FileRoutesByFullPath {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
-  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
   '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
@@ -1325,7 +1318,6 @@ export interface FileRoutesByFullPath {
   '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
   '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
   '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
-  '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
@@ -1449,6 +1441,7 @@ export interface FileRoutesByFullPath {
   '/pm/app/transfer-management': typeof PmAppTransferManagementRoute
   '/pm/app/transfer-overview': typeof PmAppTransferOverviewRoute
   '/pm/app/transfers': typeof PmAppTransfersRoute
+  '/cards/app/': typeof CardsAppIndexRoute
   '/pm/app/': typeof PmAppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -1473,7 +1466,6 @@ export interface FileRoutesByTo {
   '/business-dashboard/settings-administration': typeof BusinessDashboardSettingsAdministrationRoute
   '/business-dashboard/support-disputes': typeof BusinessDashboardSupportDisputesRoute
   '/business/$module': typeof BusinessModuleRoute
-  '/cards/app': typeof CardsAppRouteWithChildren
   '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
   '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
   '/dev-dashboard/compliance-audit': typeof DevDashboardComplianceAuditRoute
@@ -1498,7 +1490,6 @@ export interface FileRoutesByTo {
   '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
-  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
   '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
@@ -1507,7 +1498,6 @@ export interface FileRoutesByTo {
   '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
   '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
   '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
-  '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
@@ -1631,6 +1621,7 @@ export interface FileRoutesByTo {
   '/pm/app/transfer-management': typeof PmAppTransferManagementRoute
   '/pm/app/transfer-overview': typeof PmAppTransferOverviewRoute
   '/pm/app/transfers': typeof PmAppTransfersRoute
+  '/cards/app': typeof CardsAppIndexRoute
   '/pm/app': typeof PmAppIndexRoute
 }
 export interface FileRoutesById {
@@ -1689,7 +1680,6 @@ export interface FileRoutesById {
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
-  '/cards/app/account-settings': typeof CardsAppAccountSettingsRoute
   '/cards/app/card-analytics-reporting': typeof CardsAppCardAnalyticsReportingRoute
   '/cards/app/card-command-center': typeof CardsAppCardCommandCenterRoute
   '/cards/app/card-program-administration': typeof CardsAppCardProgramAdministrationRoute
@@ -1698,7 +1688,6 @@ export interface FileRoutesById {
   '/cards/app/corporate-business-cards': typeof CardsAppCorporateBusinessCardsRoute
   '/cards/app/physical-debit-cards': typeof CardsAppPhysicalDebitCardsRoute
   '/cards/app/prepaid-card-management': typeof CardsAppPrepaidCardManagementRoute
-  '/cards/app/support': typeof CardsAppSupportRoute
   '/cards/app/virtual-credit-cards': typeof CardsAppVirtualCreditCardsRoute
   '/cards/app/virtual-debit-cards': typeof CardsAppVirtualDebitCardsRoute
   '/error/advanced-errors/dev-400-01-payload-validation': typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
@@ -1822,6 +1811,7 @@ export interface FileRoutesById {
   '/pm/app/transfer-management': typeof PmAppTransferManagementRoute
   '/pm/app/transfer-overview': typeof PmAppTransferOverviewRoute
   '/pm/app/transfers': typeof PmAppTransfersRoute
+  '/cards/app/': typeof CardsAppIndexRoute
   '/pm/app/': typeof PmAppIndexRoute
 }
 export interface FileRouteTypes {
@@ -1879,7 +1869,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
-    | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
     | '/cards/app/card-program-administration'
@@ -1888,7 +1877,6 @@ export interface FileRouteTypes {
     | '/cards/app/corporate-business-cards'
     | '/cards/app/physical-debit-cards'
     | '/cards/app/prepaid-card-management'
-    | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/error/advanced-errors/dev-400-01-payload-validation'
@@ -2012,6 +2000,7 @@ export interface FileRouteTypes {
     | '/pm/app/transfer-management'
     | '/pm/app/transfer-overview'
     | '/pm/app/transfers'
+    | '/cards/app/'
     | '/pm/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2036,7 +2025,6 @@ export interface FileRouteTypes {
     | '/business-dashboard/settings-administration'
     | '/business-dashboard/support-disputes'
     | '/business/$module'
-    | '/cards/app'
     | '/dev-dashboard/api-governance'
     | '/dev-dashboard/api-reference'
     | '/dev-dashboard/compliance-audit'
@@ -2061,7 +2049,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard'
     | '/dev'
     | '/utility'
-    | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
     | '/cards/app/card-program-administration'
@@ -2070,7 +2057,6 @@ export interface FileRouteTypes {
     | '/cards/app/corporate-business-cards'
     | '/cards/app/physical-debit-cards'
     | '/cards/app/prepaid-card-management'
-    | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/error/advanced-errors/dev-400-01-payload-validation'
@@ -2194,6 +2180,7 @@ export interface FileRouteTypes {
     | '/pm/app/transfer-management'
     | '/pm/app/transfer-overview'
     | '/pm/app/transfers'
+    | '/cards/app'
     | '/pm/app'
   id:
     | '__root__'
@@ -2251,7 +2238,6 @@ export interface FileRouteTypes {
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
-    | '/cards/app/account-settings'
     | '/cards/app/card-analytics-reporting'
     | '/cards/app/card-command-center'
     | '/cards/app/card-program-administration'
@@ -2260,7 +2246,6 @@ export interface FileRouteTypes {
     | '/cards/app/corporate-business-cards'
     | '/cards/app/physical-debit-cards'
     | '/cards/app/prepaid-card-management'
-    | '/cards/app/support'
     | '/cards/app/virtual-credit-cards'
     | '/cards/app/virtual-debit-cards'
     | '/error/advanced-errors/dev-400-01-payload-validation'
@@ -2384,6 +2369,7 @@ export interface FileRouteTypes {
     | '/pm/app/transfer-management'
     | '/pm/app/transfer-overview'
     | '/pm/app/transfers'
+    | '/cards/app/'
     | '/pm/app/'
   fileRoutesById: FileRoutesById
 }
@@ -2895,6 +2881,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pm/app/'
       preLoaderRoute: typeof PmAppIndexRouteImport
       parentRoute: typeof PmAppRoute
+    }
+    '/cards/app/': {
+      id: '/cards/app/'
+      path: '/'
+      fullPath: '/cards/app/'
+      preLoaderRoute: typeof CardsAppIndexRouteImport
+      parentRoute: typeof CardsAppRoute
     }
     '/pm/app/transfers': {
       id: '/pm/app/transfers'
@@ -3757,13 +3750,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardsAppVirtualCreditCardsRouteImport
       parentRoute: typeof CardsAppRoute
     }
-    '/cards/app/support': {
-      id: '/cards/app/support'
-      path: '/support'
-      fullPath: '/cards/app/support'
-      preLoaderRoute: typeof CardsAppSupportRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
     '/cards/app/prepaid-card-management': {
       id: '/cards/app/prepaid-card-management'
       path: '/prepaid-card-management'
@@ -3818,13 +3804,6 @@ declare module '@tanstack/react-router' {
       path: '/card-analytics-reporting'
       fullPath: '/cards/app/card-analytics-reporting'
       preLoaderRoute: typeof CardsAppCardAnalyticsReportingRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/account-settings': {
-      id: '/cards/app/account-settings'
-      path: '/account-settings'
-      fullPath: '/cards/app/account-settings'
-      preLoaderRoute: typeof CardsAppAccountSettingsRouteImport
       parentRoute: typeof CardsAppRoute
     }
   }
@@ -3960,7 +3939,6 @@ const UtilityRouteWithChildren =
   UtilityRoute._addFileChildren(UtilityRouteChildren)
 
 interface CardsAppRouteChildren {
-  CardsAppAccountSettingsRoute: typeof CardsAppAccountSettingsRoute
   CardsAppCardAnalyticsReportingRoute: typeof CardsAppCardAnalyticsReportingRoute
   CardsAppCardCommandCenterRoute: typeof CardsAppCardCommandCenterRoute
   CardsAppCardProgramAdministrationRoute: typeof CardsAppCardProgramAdministrationRoute
@@ -3969,13 +3947,12 @@ interface CardsAppRouteChildren {
   CardsAppCorporateBusinessCardsRoute: typeof CardsAppCorporateBusinessCardsRoute
   CardsAppPhysicalDebitCardsRoute: typeof CardsAppPhysicalDebitCardsRoute
   CardsAppPrepaidCardManagementRoute: typeof CardsAppPrepaidCardManagementRoute
-  CardsAppSupportRoute: typeof CardsAppSupportRoute
   CardsAppVirtualCreditCardsRoute: typeof CardsAppVirtualCreditCardsRoute
   CardsAppVirtualDebitCardsRoute: typeof CardsAppVirtualDebitCardsRoute
+  CardsAppIndexRoute: typeof CardsAppIndexRoute
 }
 
 const CardsAppRouteChildren: CardsAppRouteChildren = {
-  CardsAppAccountSettingsRoute: CardsAppAccountSettingsRoute,
   CardsAppCardAnalyticsReportingRoute: CardsAppCardAnalyticsReportingRoute,
   CardsAppCardCommandCenterRoute: CardsAppCardCommandCenterRoute,
   CardsAppCardProgramAdministrationRoute:
@@ -3986,9 +3963,9 @@ const CardsAppRouteChildren: CardsAppRouteChildren = {
   CardsAppCorporateBusinessCardsRoute: CardsAppCorporateBusinessCardsRoute,
   CardsAppPhysicalDebitCardsRoute: CardsAppPhysicalDebitCardsRoute,
   CardsAppPrepaidCardManagementRoute: CardsAppPrepaidCardManagementRoute,
-  CardsAppSupportRoute: CardsAppSupportRoute,
   CardsAppVirtualCreditCardsRoute: CardsAppVirtualCreditCardsRoute,
   CardsAppVirtualDebitCardsRoute: CardsAppVirtualDebitCardsRoute,
+  CardsAppIndexRoute: CardsAppIndexRoute,
 }
 
 const CardsAppRouteWithChildren = CardsAppRoute._addFileChildren(
