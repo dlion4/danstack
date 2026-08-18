@@ -363,7 +363,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (st) => st.location.pathname });
 
   /* ---------- active nav derived from the URL (deep links stay in sync) ---------- */
-  const active = pathname === "/utility/settings" ? "utilities" : "home";
+  const active = pathname === "/utility/settings" ? "utilities" : pathname.replace("/utility/", "") || "home";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -376,12 +376,11 @@ export function Shell({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [setPaletteOpen]);
 
-  /* ---------- route-aware navigation (legacy onNav bridge -> TanStack Router) ---------- */
+  /* ---------- route-aware navigation ---------- */
   const go = (to: string, section?: string) => {
     setNavOpen(false);
     navigate({ to });
     if (section) {
-      // wait for the routed page to render, then scroll to the section
       setTimeout(() => {
         const el = document.getElementById(section);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -397,34 +396,18 @@ export function Shell({ children }: { children: ReactNode }) {
       go("/utility");
       return;
     }
-    switch (key) {
-      case "home":
-        go("/utility");
+    // find the nav item to check for a route
+    const item = NAV_GROUPS.flatMap((g) => g.items).find((it) => it.key === key);
+    if (item?.to) {
+      go(item.to, target);
+      return;
+    }
+    if (target) {
+      const el = document.getElementById(target);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
-      case "utilities":
-        go("/utility/settings");
-        return;
-      case "insights":
-        go("/utility", "sec-insights");
-        return;
-      case "history":
-        go("/utility", "sec-history");
-        return;
-      case "autopay":
-        go("/utility", "sec-autopay");
-        return;
-      case "bills":
-        go("/utility", "sec-alerts");
-        return;
-      // modules without a routed page yet keep their original behaviour
-      case "wallet":
-      case "cards":
-      case "bank":
-      case "team":
-      case "invoices":
-      case "support":
-      default:
-        open({ kind: "module", moduleKey: key });
+      }
     }
   };
 

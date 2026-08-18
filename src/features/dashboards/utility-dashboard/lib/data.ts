@@ -464,34 +464,32 @@ export const NOTICES: Notice[] = [
 
 /* ============================ module registry (sidebar) ============================ */
 
-export type NavItem = { key: string; label: string; icon: IconName; badge?: string; target?: string };
+export type NavItem = { key: string; label: string; icon: IconName; badge?: string; target?: string; to?: string };
 
 export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
   {
     title: "Overview",
     items: [
-      { key: "home", label: "Dashboard", icon: "home", target: "top" },
-      { key: "utilities", label: "Settings", icon: "settings", badge: "3.6" },
-      { key: "insights", label: "Spend insights", icon: "chart", target: "sec-insights" },
-      { key: "history", label: "Transactions", icon: "receipt", target: "sec-history" },
+      { key: "home", label: "Dashboard", icon: "home", to: "/utility" },
+      { key: "insights", label: "Spend insights", icon: "chart", to: "/utility", target: "sec-insights" },
+      { key: "history", label: "Transactions", icon: "receipt", to: "/utility", target: "sec-history" },
+      { key: "autopay", label: "Autopay rules", icon: "repeat", to: "/utility", target: "sec-autopay" },
+      { key: "bills", label: "Bill reminders", icon: "bell", to: "/utility", target: "sec-alerts" },
     ],
   },
   {
-    title: "Money",
+    title: "Utilities",
     items: [
-      { key: "wallet", label: "Wallet & top-up", icon: "wallet" },
-      { key: "cards", label: "Cards", icon: "card", badge: "3.2" },
-      { key: "bank", label: "Bank accounts", icon: "bank", badge: "3.3" },
-      { key: "autopay", label: "Autopay rules", icon: "repeat", target: "sec-autopay" },
+      { key: "electricity", label: "Electricity", icon: "bolt", to: "/utility/electricity" },
+      { key: "water", label: "Water", icon: "droplet", to: "/utility/water" },
+      { key: "internet", label: "Internet", icon: "wifi", to: "/utility/internet" },
+      { key: "mobile-money", label: "Mobile Money", icon: "phone", to: "/utility/mobile-money" },
     ],
   },
   {
-    title: "Business",
+    title: "Settings",
     items: [
-      { key: "team", label: "Team & roles", icon: "users", badge: "5.9" },
-      { key: "invoices", label: "Invoices", icon: "file" },
-      { key: "bills", label: "Bill reminders", icon: "bell", target: "sec-alerts" },
-      { key: "support", label: "Help centre", icon: "lifebuoy" },
+      { key: "utilities", label: "Settings", icon: "settings", to: "/utility/settings", badge: "3.6" },
     ],
   },
 ];
