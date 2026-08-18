@@ -18,6 +18,29 @@ import {
 } from "../data/businessLayoutData";
 import c from "../styles/businessLayout.module.css";
 
+/* Home module cards -> the real routed BAAS workspaces. */
+const HOME_PATH = {
+	dashboard: "/business-dashboard",
+	insights: "/business-dashboard/financial-reporting",
+	cash: "/business-dashboard/treasury-cash",
+	movements: "/business-dashboard/bulk-disbursements",
+	billing: "/business-dashboard/invoicing-billing",
+	vendors: "/business-dashboard/accounts-payable",
+	payroll: "/business-dashboard/payroll-hr",
+	forecast: "/business-dashboard/financial-reporting",
+	tax: "/business-dashboard/financial-reporting",
+	compliance: "/business-dashboard/business-onboarding",
+	integrations: "/business-dashboard/apps-integrations",
+	team: "/business-dashboard/settings-administration",
+	settings: "/business-dashboard/settings-administration",
+} as const;
+
+type HomePath = (typeof HOME_PATH)[keyof typeof HOME_PATH];
+
+function homePath(key: string): HomePath {
+	return HOME_PATH[key as keyof typeof HOME_PATH] ?? "/business-dashboard";
+}
+
 export default function BusinessHome() {
 	const { showToast } = useBusinessShell();
 
@@ -110,8 +133,7 @@ export default function BusinessHome() {
 					{quickLinks.map((mod) => (
 						<Link
 							key={mod.key}
-							to="/business-dashboard/$module"
-							params={{ module: mod.key }}
+							to={homePath(mod.key)}
 							className={d.moduleCard}
 						>
 							<span

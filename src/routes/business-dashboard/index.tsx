@@ -1,7 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PayMoDashboard from "@/features/dashboards/business-dashboard/overview/PayMoDashboard";
+import AppDashboard from "@/features/dashboards/business-dashboard/AppDashboard";
+import { useBusinessNavigate } from "@/features/dashboards/business-dashboard/lib/routes";
 
-// Business dashboard home (/business-dashboard) — Command Center overview.
+/**
+ * /business-dashboard — designed Dashboard Overview (Page 0).
+ * Child of routes/business-dashboard.tsx.
+ */
 export const Route = createFileRoute("/business-dashboard/")({
-	component: PayMoDashboard,
+	component: DashboardRoute,
 });
+
+function DashboardRoute() {
+	const go = useBusinessNavigate();
+	return <AppDashboard onNavigate={go} />;
+}

@@ -8,8 +8,46 @@
 import type { AsideKind } from "../data/businessLayoutData";
 import { cx } from "../data/businessLayoutData";
 import styles from "../styles/businessLayout.module.css";
-import { BUSINESSES, ORDER, shortM } from "@/features/dashboards/business-dashboard/overview/paymoData";
-import type { Tone } from "@/features/dashboards/business-dashboard/overview/paymoData";
+
+const ORDER = ["techsol", "java", "savannah"] as const;
+const BUSINESSES: Record<
+	string,
+	{
+		name: string;
+		initials: string;
+		color: string;
+		sector: string;
+		type: string;
+		kpi: { cash: number };
+	}
+> = {
+	techsol: {
+		name: "TS Retail Ltd",
+		initials: "TS",
+		color: "#10b981",
+		sector: "Retail",
+		type: "online",
+		kpi: { cash: 1245000 },
+	},
+	java: {
+		name: "Nairobi Java Roasters",
+		initials: "JR",
+		color: "#f59e0b",
+		sector: "F&B",
+		type: "physical",
+		kpi: { cash: 810000 },
+	},
+	savannah: {
+		name: "Savannah Crafts Ltd",
+		initials: "SC",
+		color: "#6366f1",
+		sector: "Export",
+		type: "hybrid",
+		kpi: { cash: 2250000 },
+	},
+};
+const shortM = (n: number) =>
+	n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : `${Math.round(n / 1000)}K`;
 
 const s = styles as Record<string, string>;
 

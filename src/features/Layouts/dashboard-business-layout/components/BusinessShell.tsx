@@ -32,8 +32,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import type {
         BusinessPageAction,
         BusinessShellContextValue,
+        ToastInput,
 } from "../data/businessLayoutContext";
 import { BusinessShellContext } from "../data/businessLayoutContext";
+import type { AsideKind, ToastTone } from "../data/businessLayoutData";
 import {
         cx,
         fetchBusinessLayoutContent,
@@ -103,8 +105,11 @@ export default function BusinessShell() {
         const pathname = useRouterState({ select: (st) => st.location.pathname });
         const activeSection = useMemo(() => {
                 const segments = pathname.split("/").filter(Boolean);
-                // base path is /business  -> the module slug (if any) is segments[1]
-                return segments.length >= 2 ? segments[1] : "dashboard";
+                const base = segments[0] === "business-dashboard" ? 1 : segments[0] === "business" ? 1 : -1;
+                const slug = base >= 0 ? segments[base] : undefined;
+                if (!slug || slug === "overview" || slug === "command-center") return "overview";
+                if (slug === "get-paid") return "get-paid";
+                return slug;
         }, [pathname]);
 
         /* ---------- shell-owned page bar (breadcrumb + title) for child routes ---- */

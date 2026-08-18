@@ -1,13 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import BusinessOnboarding from "@/features/dashboards/business-dashboard/business-onboarding/pages/BusinessOnboarding";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/**
- * business-dashboard/business-onboarding.tsx — Business Onboarding & KYB/KYC (Page 3.12).
- * Renders inside BusinessShell.
- * Mounts at /business-dashboard/business-onboarding
- */
-export const Route = createFileRoute("/business-dashboard/business-onboarding")(
-	{
-		component: BusinessOnboarding,
+export const Route = createFileRoute("/business-dashboard/business-onboarding")({
+	loader: () => {
+		throw redirect({ to: "/business-dashboard/profile" });
 	},
-);
+});

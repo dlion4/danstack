@@ -33,6 +33,23 @@ export const BUSINESS_PAGE_META: Record<string, BusinessPageMeta> = {
 		heading: "Business Command Center",
 		subtitle: "Consolidated overview of collections, payroll, invoices, and business health.",
 	},
+	overview: {
+		title: "Command Center",
+		heading: "Business Command Center",
+		subtitle: "Consolidated overview of collections, payroll, invoices, and business health.",
+	},
+	"get-paid": {
+		section: "Collections",
+		title: "Get Paid",
+		heading: "Get Paid",
+		subtitle: "Everything about how money comes into the business — PayBill, Till, Card, PesaLink, invoices and collections.",
+	},
+	"apps-integrations": {
+		section: "Growth",
+		title: "Apps & Integrations",
+		heading: "Apps & Integrations",
+		subtitle: "Connect accounting, ERP, commerce and banking tools with scoped tokens and a full audit trail.",
+	},
 	"command-center": {
 		title: "Command Center",
 		heading: "Business Command Center",

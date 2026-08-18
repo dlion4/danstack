@@ -17,6 +17,34 @@ import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
+/* Module key -> static route (mirrors src/routes/business-dashboard/*). */
+const MODULE_PATH = {
+	overview: "/business-dashboard",
+	dashboard: "/business-dashboard",
+	"command-center": "/business-dashboard/command-center",
+	"financial-reporting": "/business-dashboard/financial-reporting",
+	"accounts-payable": "/business-dashboard/accounts-payable",
+	"bulk-disbursements": "/business-dashboard/bulk-disbursements",
+	"invoicing-billing": "/business-dashboard/invoicing-billing",
+	"payroll-hr": "/business-dashboard/payroll-hr",
+	"treasury-cash": "/business-dashboard/treasury-cash",
+	"multi-currency-treasury": "/business-dashboard/multi-currency-treasury",
+	"open-banking": "/business-dashboard/open-banking",
+	"virtual-accounts": "/business-dashboard/virtual-accounts",
+	"get-paid": "/business-dashboard/get-paid",
+	"collections-merchant": "/business-dashboard/collections-merchant",
+	"business-onboarding": "/business-dashboard/business-onboarding",
+	"apps-integrations": "/business-dashboard/apps-integrations",
+	"settings-administration": "/business-dashboard/settings-administration",
+	"support-disputes": "/business-dashboard/support-disputes",
+} as const;
+
+type ModulePath = (typeof MODULE_PATH)[keyof typeof MODULE_PATH];
+
+function modulePath(key: string): ModulePath {
+	return MODULE_PATH[key as keyof typeof MODULE_PATH] ?? "/business-dashboard";
+}
+
 interface BusinessSidebarProps {
 	content: BusinessLayoutContent;
 	isDesktop: boolean;
@@ -111,26 +139,17 @@ export default function BusinessSidebar({
 									);
 								}
 
-								return (
-									<Link
-										key={item.key}
-										to={
-											item.key === "dashboard"
-												? "/business-dashboard"
-												: "/business-dashboard/$module"
-										}
-										params={
-											item.key === "dashboard"
-												? undefined
-												: { module: item.key }
-										}
-										className={className}
-										title={item.label}
-										onClick={() => handleItemClick(item)}
-									>
-										{inner}
-									</Link>
-								);
+				return (
+					<Link
+						key={item.key}
+						to={modulePath(item.key)}
+						className={className}
+						title={item.label}
+						onClick={() => handleItemClick(item)}
+					>
+						{inner}
+					</Link>
+				);
 							})}
 						</nav>
 					</div>
