@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import MobileAirtimeHub from "@/features/dashboards/utility-dashboard/mobile-airtime/pages/MobileAirtimeHub";
+import { MobileMoneyPage } from "@/features/dashboards/utility-dashboard/features/utility-dashboard/mobile-money/pages";
 
-// 3.5 — Mobile Money & Airtime Hub (named route wins over /utility/$module; nav key = 'airtime').
+/**
+ * utility/airtime.tsx — 3.5 Mobile Money & Airtime Hub (/utility/airtime).
+ * Child of routes/utility.tsx, so it renders INSIDE the utility shell.
+ */
 export const Route = createFileRoute("/utility/airtime")({
-	component: MobileAirtimeHub,
+	component: MobileMoneyPage,
 });

@@ -13,12 +13,35 @@ import { useCardsShell } from "../data/cardsLayoutContext";
 import {
 	cx,
 	fetchCardsLayoutContent,
+	findModule,
 	initialMockData,
 } from "../data/cardsLayoutData";
 import cardsPage from "../styles/cardsLayout.module.css";
 
 const c = cardsPage as Record<string, string>;
 const d = shellDash as Record<string, string>;
+
+/* Module key -> static route (the cards shell routes one static page per module,
+   mirroring src/routes/cards/app/*). Unknown keys fall back to the overview. */
+const MODULE_PATH = {
+	"card-overview": "/cards/app",
+	"card-command-center": "/cards/app/card-command-center",
+	"virtual-debit-cards": "/cards/app/virtual-debit-cards",
+	"virtual-credit-cards": "/cards/app/virtual-credit-cards",
+	"physical-debit-cards": "/cards/app/physical-debit-cards",
+	"prepaid-card-management": "/cards/app/prepaid-card-management",
+	"corporate-business-cards": "/cards/app/corporate-business-cards",
+	"card-security-fraud-prevention": "/cards/app/card-security-fraud-prevention",
+	"card-analytics-reporting": "/cards/app/card-analytics-reporting",
+	"card-program-administration": "/cards/app/card-program-administration",
+	"card-settings-support": "/cards/app/card-settings-support",
+} as const;
+
+type ModulePath = (typeof MODULE_PATH)[keyof typeof MODULE_PATH];
+
+function modulePath(key: string): ModulePath {
+	return MODULE_PATH[key as keyof typeof MODULE_PATH] ?? "/cards/app";
+}
 
 export default function CardsHome() {
 	const { showToast } = useCardsShell();
@@ -30,7 +53,7 @@ export default function CardsHome() {
 	});
 	const content = data ?? initialMockData;
 
-	const home = content.modules[0];
+	const home = findModule(content, "card-overview");
 	const quickLinks = content.modules.filter((m) => m.key !== "card-overview");
 
 	const handleAction = (label: string) =>
@@ -110,8 +133,7 @@ export default function CardsHome() {
 					{quickLinks.map((mod) => (
 						<Link
 							key={mod.key}
-							to="/cards/app/$section"
-							params={{ section: mod.key }}
+							to={modulePath(mod.key)}
 							className={d.moduleCard}
 						>
 							<span

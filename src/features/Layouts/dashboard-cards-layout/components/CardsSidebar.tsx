@@ -14,6 +14,21 @@ import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
+/* Module key -> static route (mirrors src/routes/cards/app/*). */
+const MODULE_PATH: Record<string, string> = {
+	"card-overview": "/cards/app",
+	"card-command-center": "/cards/app/card-command-center",
+	"virtual-debit-cards": "/cards/app/virtual-debit-cards",
+	"virtual-credit-cards": "/cards/app/virtual-credit-cards",
+	"physical-debit-cards": "/cards/app/physical-debit-cards",
+	"prepaid-card-management": "/cards/app/prepaid-card-management",
+	"corporate-business-cards": "/cards/app/corporate-business-cards",
+	"card-security-fraud-prevention": "/cards/app/card-security-fraud-prevention",
+	"card-analytics-reporting": "/cards/app/card-analytics-reporting",
+	"card-program-administration": "/cards/app/card-program-administration",
+	"account-settings": "/cards/app/card-settings-support",
+};
+
 interface CardsSidebarProps {
 	content: CardsLayoutContent;
 	isDesktop: boolean;
@@ -122,11 +137,7 @@ export default function CardsSidebar({
 								return (
 									<Link
 										key={item.key}
-										to={
-											item.key === "card-overview"
-												? "/cards/app"
-												: `/cards/app/${item.key}`
-										}
+										to={MODULE_PATH[item.key] ?? "/cards/app"}
 										className={className}
 										title={item.label}
 										onClick={() => handleItemClick(item)}

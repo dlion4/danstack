@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import InternetManagement from "@/features/dashboards/utility-dashboard/internet/pages/InternetManagement";
+import { InternetPage } from "@/features/dashboards/utility-dashboard/features/utility-dashboard/internet/pages";
 
-// 3.4 — Internet & Connectivity Management (named route wins over /utility/$module).
+/**
+ * utility/internet.tsx — 3.4 Internet & Connectivity (/utility/internet).
+ * Child of routes/utility.tsx, so it renders INSIDE the utility shell.
+ */
 export const Route = createFileRoute("/utility/internet")({
-	component: InternetManagement,
+	component: InternetPage,
 });
