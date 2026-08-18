@@ -9,7 +9,6 @@ import type { AsideKind } from "../data/businessLayoutData";
 import { cx } from "../data/businessLayoutData";
 import styles from "../styles/businessLayout.module.css";
 import { BUSINESSES, ORDER, shortM } from "@/features/dashboards/business-dashboard/overview/paymoData";
-import type { Tone } from "@/features/dashboards/business-dashboard/overview/paymoData";
 
 const s = styles as Record<string, string>;
 

@@ -1,20 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import BusinessModulePage from "@/features/Layouts/dashboard-business-layout/pages/BusinessModulePage";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 /**
- * business-dashboard/$module.tsx — generic /business-dashboard/<module> destination.
+ * business-dashboard/$module.tsx — catch-all for unknown /business-dashboard/<slug>.
  * ----------------------------------------------------------------------------
- * Every sidebar entry resolves here. It reads the module param, finds the
- * matching module def, and renders a hero + stats + features + actions.
- * Static routes (e.g. business-dashboard/command-center) win over this
- * dynamic segment, so only not-yet-built modules land here and render
- * the friendly BusinessModulePage instead of a broken page.
+ * Every real module has a static route above (overview, get-paid, payroll-hr,
+ * treasury-cash, …). Any unknown or legacy deep link is redirected to the
+ * Command Center so no URL ever renders a broken page.
  */
 export const Route = createFileRoute("/business-dashboard/$module")({
-	component: BusinessModuleRoute,
+	loader: () => {
+		throw redirect({ to: "/business-dashboard" });
+	},
 });
-
-function BusinessModuleRoute() {
-	const { module } = Route.useParams();
-	return <BusinessModulePage module={module} />;
-}
