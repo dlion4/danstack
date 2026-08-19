@@ -9,248 +9,225 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WalletActivationRouteImport } from './routes/wallet-activation'
-import { Route as UtilityRouteImport } from './routes/utility'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DevDashboardRouteImport } from './routes/dev-dashboard'
-import { Route as DevRouteImport } from './routes/dev'
-import { Route as BusinessDashboardRouteImport } from './routes/business-dashboard'
-import { Route as BusinessRouteImport } from './routes/business'
 import { Route as HomeRouteImport } from './routes/_home'
-import { Route as UtilityIndexRouteImport } from './routes/utility/index'
-import { Route as DevIndexRouteImport } from './routes/dev/index'
-import { Route as DevDashboardIndexRouteImport } from './routes/dev-dashboard/index'
-import { Route as BusinessIndexRouteImport } from './routes/business/index'
-import { Route as BusinessDashboardIndexRouteImport } from './routes/business-dashboard/index'
+import { Route as BusinessRouteImport } from './routes/business'
+import { Route as BusinessDashboardRouteImport } from './routes/business-dashboard'
+import { Route as CardsShellRouteImport } from './routes/cards-shell'
+import { Route as DevRouteImport } from './routes/dev'
+import { Route as DevDashboardRouteImport } from './routes/dev-dashboard'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as UtilityRouteImport } from './routes/utility'
+import { Route as WalletActivationRouteImport } from './routes/wallet-activation'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
-import { Route as UtilityWaterRouteImport } from './routes/utility/water'
-import { Route as UtilitySettingsRouteImport } from './routes/utility/settings'
-import { Route as UtilityInternetRouteImport } from './routes/utility/internet'
-import { Route as UtilityElectricityRouteImport } from './routes/utility/electricity'
-import { Route as UtilityAirtimeRouteImport } from './routes/utility/airtime'
-import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
-import { Route as PmAppRouteImport } from './routes/pm/app'
-import { Route as DevModuleRouteImport } from './routes/dev/$module'
-import { Route as DevDashboardWebhooksEventsRouteImport } from './routes/dev-dashboard/webhooks-events'
-import { Route as DevDashboardSupportSlasRouteImport } from './routes/dev-dashboard/support-slas'
-import { Route as DevDashboardSecurityRouteImport } from './routes/dev-dashboard/security'
-import { Route as DevDashboardSdksRouteImport } from './routes/dev-dashboard/sdks'
-import { Route as DevDashboardPlaygroundRouteImport } from './routes/dev-dashboard/playground'
-import { Route as DevDashboardPartnerMarketplaceRouteImport } from './routes/dev-dashboard/partner-marketplace'
-import { Route as DevDashboardMonitoringIncidentsRouteImport } from './routes/dev-dashboard/monitoring-incidents'
-import { Route as DevDashboardIntegrationArchitectureRouteImport } from './routes/dev-dashboard/integration-architecture'
-import { Route as DevDashboardDeveloperDashboardRouteImport } from './routes/dev-dashboard/developer-dashboard'
-import { Route as DevDashboardComplianceAuditRouteImport } from './routes/dev-dashboard/compliance-audit'
-import { Route as DevDashboardApiReferenceRouteImport } from './routes/dev-dashboard/api-reference'
-import { Route as DevDashboardApiGovernanceRouteImport } from './routes/dev-dashboard/api-governance'
-import { Route as CardsAppRouteImport } from './routes/cards/app'
-import { Route as BusinessModuleRouteImport } from './routes/business/$module'
-import { Route as BusinessDashboardVirtualAccountsRouteImport } from './routes/business-dashboard/virtual-accounts'
-import { Route as BusinessDashboardTreasuryCashRouteImport } from './routes/business-dashboard/treasury-cash'
-import { Route as BusinessDashboardTeamRouteImport } from './routes/business-dashboard/team'
-import { Route as BusinessDashboardSupportDisputesRouteImport } from './routes/business-dashboard/support-disputes'
-import { Route as BusinessDashboardSettingsAdministrationRouteImport } from './routes/business-dashboard/settings-administration'
-import { Route as BusinessDashboardProfileRouteImport } from './routes/business-dashboard/profile'
-import { Route as BusinessDashboardProductsRouteImport } from './routes/business-dashboard/products'
-import { Route as BusinessDashboardPortfolioRouteImport } from './routes/business-dashboard/portfolio'
-import { Route as BusinessDashboardPayrollHrRouteImport } from './routes/business-dashboard/payroll-hr'
-import { Route as BusinessDashboardPaySuppliersRouteImport } from './routes/business-dashboard/pay-suppliers'
-import { Route as BusinessDashboardOverviewRouteImport } from './routes/business-dashboard/overview'
-import { Route as BusinessDashboardOpenBankingRouteImport } from './routes/business-dashboard/open-banking'
-import { Route as BusinessDashboardNotificationsRouteImport } from './routes/business-dashboard/notifications'
-import { Route as BusinessDashboardMultiCurrencyTreasuryRouteImport } from './routes/business-dashboard/multi-currency-treasury'
-import { Route as BusinessDashboardMarketingRouteImport } from './routes/business-dashboard/marketing'
-import { Route as BusinessDashboardInvoicingBillingRouteImport } from './routes/business-dashboard/invoicing-billing'
-import { Route as BusinessDashboardInventoryRouteImport } from './routes/business-dashboard/inventory'
-import { Route as BusinessDashboardIntegrationsRouteImport } from './routes/business-dashboard/integrations'
-import { Route as BusinessDashboardInsuranceRouteImport } from './routes/business-dashboard/insurance'
-import { Route as BusinessDashboardGetPaidRouteImport } from './routes/business-dashboard/get-paid'
-import { Route as BusinessDashboardFundingRouteImport } from './routes/business-dashboard/funding'
-import { Route as BusinessDashboardFinancialReportingRouteImport } from './routes/business-dashboard/financial-reporting'
-import { Route as BusinessDashboardDisputesRouteImport } from './routes/business-dashboard/disputes'
-import { Route as BusinessDashboardDataRouteImport } from './routes/business-dashboard/data'
-import { Route as BusinessDashboardCrmRouteImport } from './routes/business-dashboard/crm'
-import { Route as BusinessDashboardCommandCenterRouteImport } from './routes/business-dashboard/command-center'
-import { Route as BusinessDashboardCollectionsMerchantRouteImport } from './routes/business-dashboard/collections-merchant'
-import { Route as BusinessDashboardCashRouteImport } from './routes/business-dashboard/cash'
-import { Route as BusinessDashboardBusinessOnboardingRouteImport } from './routes/business-dashboard/business-onboarding'
-import { Route as BusinessDashboardBulkDisbursementsRouteImport } from './routes/business-dashboard/bulk-disbursements'
-import { Route as BusinessDashboardBooksRouteImport } from './routes/business-dashboard/books'
-import { Route as BusinessDashboardAppsIntegrationsRouteImport } from './routes/business-dashboard/apps-integrations'
-import { Route as BusinessDashboardAccountsPayableRouteImport } from './routes/business-dashboard/accounts-payable'
-import { Route as BusinessDashboardModuleRouteImport } from './routes/business-dashboard/$module'
-import { Route as AuthSecurityRouteImport } from './routes/auth/security'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
-import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
-import { Route as AuthPasskeysRouteImport } from './routes/auth/passkeys'
-import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
-import { Route as AuthHubRouteImport } from './routes/auth/hub'
-import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
 import { Route as HomeBusinessRouteImport } from './routes/_home/business'
-import { Route as PmAppIndexRouteImport } from './routes/pm/app.index'
+import { Route as AuthAccountStatusRouteImport } from './routes/auth/account-status'
+import { Route as AuthHubRouteImport } from './routes/auth/hub'
+import { Route as AuthIdentityRouteImport } from './routes/auth/identity'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
+import { Route as AuthPasskeysRouteImport } from './routes/auth/passkeys'
+import { Route as AuthRecoveryRouteImport } from './routes/auth/recovery'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthSecurityRouteImport } from './routes/auth/security'
+import { Route as BusinessDashboardIndexRouteImport } from './routes/business-dashboard/index'
+import { Route as BusinessDashboardModuleRouteImport } from './routes/business-dashboard/$module'
+import { Route as BusinessDashboardAccountsPayableRouteImport } from './routes/business-dashboard/accounts-payable'
+import { Route as BusinessDashboardAppsIntegrationsRouteImport } from './routes/business-dashboard/apps-integrations'
+import { Route as BusinessDashboardBooksRouteImport } from './routes/business-dashboard/books'
+import { Route as BusinessDashboardBulkDisbursementsRouteImport } from './routes/business-dashboard/bulk-disbursements'
+import { Route as BusinessDashboardBusinessOnboardingRouteImport } from './routes/business-dashboard/business-onboarding'
+import { Route as BusinessDashboardCashRouteImport } from './routes/business-dashboard/cash'
+import { Route as BusinessDashboardCollectionsMerchantRouteImport } from './routes/business-dashboard/collections-merchant'
+import { Route as BusinessDashboardCommandCenterRouteImport } from './routes/business-dashboard/command-center'
+import { Route as BusinessDashboardCrmRouteImport } from './routes/business-dashboard/crm'
+import { Route as BusinessDashboardDataRouteImport } from './routes/business-dashboard/data'
+import { Route as BusinessDashboardDisputesRouteImport } from './routes/business-dashboard/disputes'
+import { Route as BusinessDashboardFinancialReportingRouteImport } from './routes/business-dashboard/financial-reporting'
+import { Route as BusinessDashboardFundingRouteImport } from './routes/business-dashboard/funding'
+import { Route as BusinessDashboardGetPaidRouteImport } from './routes/business-dashboard/get-paid'
+import { Route as BusinessDashboardInsuranceRouteImport } from './routes/business-dashboard/insurance'
+import { Route as BusinessDashboardIntegrationsRouteImport } from './routes/business-dashboard/integrations'
+import { Route as BusinessDashboardInventoryRouteImport } from './routes/business-dashboard/inventory'
+import { Route as BusinessDashboardInvoicingBillingRouteImport } from './routes/business-dashboard/invoicing-billing'
+import { Route as BusinessDashboardMarketingRouteImport } from './routes/business-dashboard/marketing'
+import { Route as BusinessDashboardMultiCurrencyTreasuryRouteImport } from './routes/business-dashboard/multi-currency-treasury'
+import { Route as BusinessDashboardNotificationsRouteImport } from './routes/business-dashboard/notifications'
+import { Route as BusinessDashboardOpenBankingRouteImport } from './routes/business-dashboard/open-banking'
+import { Route as BusinessDashboardOverviewRouteImport } from './routes/business-dashboard/overview'
+import { Route as BusinessDashboardPaySuppliersRouteImport } from './routes/business-dashboard/pay-suppliers'
+import { Route as BusinessDashboardPayrollHrRouteImport } from './routes/business-dashboard/payroll-hr'
+import { Route as BusinessDashboardPortfolioRouteImport } from './routes/business-dashboard/portfolio'
+import { Route as BusinessDashboardProductsRouteImport } from './routes/business-dashboard/products'
+import { Route as BusinessDashboardProfileRouteImport } from './routes/business-dashboard/profile'
+import { Route as BusinessDashboardSettingsAdministrationRouteImport } from './routes/business-dashboard/settings-administration'
+import { Route as BusinessDashboardSupportDisputesRouteImport } from './routes/business-dashboard/support-disputes'
+import { Route as BusinessDashboardTeamRouteImport } from './routes/business-dashboard/team'
+import { Route as BusinessDashboardTreasuryCashRouteImport } from './routes/business-dashboard/treasury-cash'
+import { Route as BusinessDashboardVirtualAccountsRouteImport } from './routes/business-dashboard/virtual-accounts'
+import { Route as BusinessIndexRouteImport } from './routes/business/index'
+import { Route as BusinessModuleRouteImport } from './routes/business/$module'
+import { Route as CardsShellIndexRouteImport } from './routes/cards-shell/index'
+import { Route as CardsShellSectionRouteImport } from './routes/cards-shell/$section'
+import { Route as CardsAppRouteImport } from './routes/cards/app'
+import { Route as DevDashboardIndexRouteImport } from './routes/dev-dashboard/index'
+import { Route as DevDashboardApiGovernanceRouteImport } from './routes/dev-dashboard/api-governance'
+import { Route as DevDashboardApiReferenceRouteImport } from './routes/dev-dashboard/api-reference'
+import { Route as DevDashboardComplianceAuditRouteImport } from './routes/dev-dashboard/compliance-audit'
+import { Route as DevDashboardDeveloperDashboardRouteImport } from './routes/dev-dashboard/developer-dashboard'
+import { Route as DevDashboardIntegrationArchitectureRouteImport } from './routes/dev-dashboard/integration-architecture'
+import { Route as DevDashboardMonitoringIncidentsRouteImport } from './routes/dev-dashboard/monitoring-incidents'
+import { Route as DevDashboardPartnerMarketplaceRouteImport } from './routes/dev-dashboard/partner-marketplace'
+import { Route as DevDashboardPlaygroundRouteImport } from './routes/dev-dashboard/playground'
+import { Route as DevDashboardSdksRouteImport } from './routes/dev-dashboard/sdks'
+import { Route as DevDashboardSecurityRouteImport } from './routes/dev-dashboard/security'
+import { Route as DevDashboardSupportSlasRouteImport } from './routes/dev-dashboard/support-slas'
+import { Route as DevDashboardWebhooksEventsRouteImport } from './routes/dev-dashboard/webhooks-events'
+import { Route as DevIndexRouteImport } from './routes/dev/index'
+import { Route as DevModuleRouteImport } from './routes/dev/$module'
+import { Route as PmAppRouteImport } from './routes/pm/app'
+import { Route as UtilityIndexRouteImport } from './routes/utility/index'
+import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
+import { Route as UtilityAirtimeRouteImport } from './routes/utility/airtime'
+import { Route as UtilityElectricityRouteImport } from './routes/utility/electricity'
+import { Route as UtilityInternetRouteImport } from './routes/utility/internet'
+import { Route as UtilitySettingsRouteImport } from './routes/utility/settings'
+import { Route as UtilityWaterRouteImport } from './routes/utility/water'
 import { Route as CardsAppIndexRouteImport } from './routes/cards/app/index'
-import { Route as PmAppTransfersRouteImport } from './routes/pm/app.transfers'
-import { Route as PmAppTransferOverviewRouteImport } from './routes/pm/app.transfer-overview'
-import { Route as PmAppTransferManagementRouteImport } from './routes/pm/app.transfer-management'
-import { Route as PmAppSettlementRouteImport } from './routes/pm/app.settlement'
-import { Route as PmAppSettingsRouteImport } from './routes/pm/app.settings'
-import { Route as PmAppReconciliationRouteImport } from './routes/pm/app.reconciliation'
-import { Route as PmAppPaymentRailsRouteImport } from './routes/pm/app.payment-rails'
-import { Route as PmAppOpsHealthRouteImport } from './routes/pm/app.ops-health'
-import { Route as PmAppOnboardingRouteImport } from './routes/pm/app.onboarding'
-import { Route as PmAppMobileMoneyRouteImport } from './routes/pm/app.mobile-money'
-import { Route as PmAppLiquidityRouteImport } from './routes/pm/app.liquidity'
-import { Route as PmAppKraGovernmentRouteImport } from './routes/pm/app.kra-government'
-import { Route as PmAppInitiateTransferRouteImport } from './routes/pm/app.initiate-transfer'
-import { Route as PmAppFxRouteImport } from './routes/pm/app.fx'
-import { Route as PmAppFeesRouteImport } from './routes/pm/app.fees'
-import { Route as PmAppDisputesRouteImport } from './routes/pm/app.disputes'
-import { Route as PmAppCustomersRouteImport } from './routes/pm/app.customers'
-import { Route as PmAppComplianceRouteImport } from './routes/pm/app.compliance'
-import { Route as PmAppAnalyticsRouteImport } from './routes/pm/app.analytics'
-import { Route as PmAppAccountRouteImport } from './routes/pm/app.account'
-import { Route as PmAppSectionRouteImport } from './routes/pm/app.$section'
-import { Route as ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport } from './routes/error/utility-errors/util-500-01-token-gen-failed'
-import { Route as ErrorUtilityErrorsUtil42901RateLimitedRouteImport } from './routes/error/utility-errors/util-429-01-rate-limited'
-import { Route as ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport } from './routes/error/utility-errors/util-410-01-provider-maintenance'
-import { Route as ErrorUtilityErrorsUtil40902AutomationConflictRouteImport } from './routes/error/utility-errors/util-409-02-automation-conflict'
-import { Route as ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport } from './routes/error/utility-errors/util-409-01-bill-already-paid'
-import { Route as ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport } from './routes/error/utility-errors/util-408-01-pending-confirmation'
-import { Route as ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport } from './routes/error/utility-errors/util-404-03-airtime-unreachable'
-import { Route as ErrorUtilityErrorsUtil40402InternetInvalidRouteImport } from './routes/error/utility-errors/util-404-02-internet-invalid'
-import { Route as ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport } from './routes/error/utility-errors/util-404-01-meter-not-found'
-import { Route as ErrorUtilityErrorsUtil40301AutomationFailedRouteImport } from './routes/error/utility-errors/util-403-01-automation-failed'
-import { Route as ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport } from './routes/error/utility-errors/util-402-03-provider-not-supported'
-import { Route as ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport } from './routes/error/utility-errors/util-402-02-insufficient-balance-utility'
-import { Route as ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport } from './routes/error/utility-errors/util-402-01-amount-below-min'
-import { Route as ErrorUtilityErrorsUtil40001NameMismatchRouteImport } from './routes/error/utility-errors/util-400-01-name-mismatch'
-import { Route as ErrorTransactionErrorsTx50002LiquidityFailedRouteImport } from './routes/error/transaction-errors/tx-500-02-liquidity-failed'
-import { Route as ErrorTransactionErrorsTx50001SettlementDelayedRouteImport } from './routes/error/transaction-errors/tx-500-01-settlement-delayed'
-import { Route as ErrorTransactionErrorsTx42901ThrottledRouteImport } from './routes/error/transaction-errors/tx-429-01-throttled'
-import { Route as ErrorTransactionErrorsTx42301RtgsCutoffRouteImport } from './routes/error/transaction-errors/tx-423-01-rtgs-cutoff'
-import { Route as ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport } from './routes/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
-import { Route as ErrorTransactionErrorsTx42201NameMismatchRouteImport } from './routes/error/transaction-errors/tx-422-01-name-mismatch'
-import { Route as ErrorTransactionErrorsTx41001TxnExpiredRouteImport } from './routes/error/transaction-errors/tx-410-01-txn-expired'
-import { Route as ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport } from './routes/error/transaction-errors/tx-409-03-reconciliation-mismatch'
-import { Route as ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport } from './routes/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
-import { Route as ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport } from './routes/error/transaction-errors/tx-409-01-duplicate-transaction'
-import { Route as ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport } from './routes/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
-import { Route as ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport } from './routes/error/transaction-errors/tx-404-02-purpose-code-missing'
-import { Route as ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport } from './routes/error/transaction-errors/tx-404-01-mpesa-not-registered'
-import { Route as ErrorTransactionErrorsTx40303AccountFrozenRouteImport } from './routes/error/transaction-errors/tx-403-03-account-frozen'
-import { Route as ErrorTransactionErrorsTx40302KraTaxFailedRouteImport } from './routes/error/transaction-errors/tx-403-02-kra-tax-failed'
-import { Route as ErrorTransactionErrorsTx40301AmlHoldRouteImport } from './routes/error/transaction-errors/tx-403-01-aml-hold'
-import { Route as ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport } from './routes/error/transaction-errors/tx-402-05-fee-calculation-failed'
-import { Route as ErrorTransactionErrorsTx40204PerTxnLimitRouteImport } from './routes/error/transaction-errors/tx-402-04-per-txn-limit'
-import { Route as ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport } from './routes/error/transaction-errors/tx-402-03-daily-limit-reached'
-import { Route as ErrorTransactionErrorsTx40202AmountMinMaxRouteImport } from './routes/error/transaction-errors/tx-402-02-amount-min-max'
-import { Route as ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport } from './routes/error/transaction-errors/tx-402-01-insufficient-balance'
-import { Route as ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport } from './routes/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
-import { Route as ErrorTransactionErrorsTx40101Pin3xLockedRouteImport } from './routes/error/transaction-errors/tx-401-01-pin-3x-locked'
-import { Route as ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport } from './routes/error/transaction-errors/tx-400-05-currency-not-allowed'
-import { Route as ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport } from './routes/error/transaction-errors/tx-400-04-invalid-mobile-network'
-import { Route as ErrorTransactionErrorsTx40003BankOfflineRouteImport } from './routes/error/transaction-errors/tx-400-03-bank-offline'
-import { Route as ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport } from './routes/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
-import { Route as ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport } from './routes/error/transaction-errors/tx-400-01-recipient-not-found'
-import { Route as ErrorCardCard50001ProcessorDownRouteImport } from './routes/error/card/card-500-01-processor-down'
-import { Route as ErrorCardCard41001ExpiredRouteImport } from './routes/error/card/card-410-01-expired'
-import { Route as ErrorCardCard40901AlreadyExistsEmployeeRouteImport } from './routes/error/card/card-409-01-already-exists-employee'
-import { Route as ErrorCardCard40801PersonalizationFailedRouteImport } from './routes/error/card/card-408-01-personalization-failed'
-import { Route as ErrorCardCard40402EmployeeNotWhitelistedRouteImport } from './routes/error/card/card-404-02-employee-not-whitelisted'
-import { Route as ErrorCardCard40401DeliveryAddressInvalidRouteImport } from './routes/error/card/card-404-01-delivery-address-invalid'
-import { Route as ErrorCardCard40307SettingsConflictRouteImport } from './routes/error/card/card-403-07-settings-conflict'
-import { Route as ErrorCardCard40306NotActivatedRouteImport } from './routes/error/card/card-403-06-not-activated'
-import { Route as ErrorCardCard40305ProgramInactiveRouteImport } from './routes/error/card/card-403-05-program-inactive'
-import { Route as ErrorCardCard40304FrozenFraudRouteImport } from './routes/error/card/card-403-04-frozen-fraud'
-import { Route as ErrorCardCard40303InternationalBlockedRouteImport } from './routes/error/card/card-403-03-international-blocked'
-import { Route as ErrorCardCard40302MerchantBlockedRouteImport } from './routes/error/card/card-403-02-merchant-blocked'
-import { Route as ErrorCardCard40301KycTierInsufficientRouteImport } from './routes/error/card/card-403-01-kyc-tier-insufficient'
-import { Route as ErrorCardCard40204MinTopupFailedRouteImport } from './routes/error/card/card-402-04-min-topup-failed'
-import { Route as ErrorCardCard40203ChargebackDisputedRouteImport } from './routes/error/card/card-402-03-chargeback-disputed'
-import { Route as ErrorCardCard40202LimitExceededRouteImport } from './routes/error/card/card-402-02-limit-exceeded'
-import { Route as ErrorCardCard40201FundingFailedRouteImport } from './routes/error/card/card-402-01-funding-failed'
-import { Route as ErrorCardCard40103CvvAttemptsExceededRouteImport } from './routes/error/card/card-401-03-cvv-attempts-exceeded'
-import { Route as ErrorCardCard40102Pin3xBlockedRouteImport } from './routes/error/card/card-401-02-pin-3x-blocked'
-import { Route as ErrorCardCard401013dsFailedRouteImport } from './routes/error/card/card-401-01-3ds-failed'
-import { Route as ErrorCardCard40002ProgramLimitHighRouteImport } from './routes/error/card/card-400-02-program-limit-high'
-import { Route as ErrorCardCard40001VirtualLimitReachedRouteImport } from './routes/error/card/card-400-01-virtual-limit-reached'
-import { Route as ErrorAdvancedErrorsErrorSessionExpiredRouteImport } from './routes/error/advanced-errors/error-session-expired'
-import { Route as ErrorAdvancedErrorsErrorProcessingHoldRouteImport } from './routes/error/advanced-errors/error-processing-hold'
-import { Route as ErrorAdvancedErrorsErrorPaymentFailedRouteImport } from './routes/error/advanced-errors/error-payment-failed'
-import { Route as ErrorAdvancedErrorsErrorMaintenanceRouteImport } from './routes/error/advanced-errors/error-maintenance'
-import { Route as ErrorAdvancedErrorsErrorKycFailedRouteImport } from './routes/error/advanced-errors/error-kyc-failed'
-import { Route as ErrorAdvancedErrorsErrorAccountSuspendedRouteImport } from './routes/error/advanced-errors/error-account-suspended'
-import { Route as ErrorAdvancedErrorsError500RouteImport } from './routes/error/advanced-errors/error-500'
-import { Route as ErrorAdvancedErrorsError429RouteImport } from './routes/error/advanced-errors/error-429'
-import { Route as ErrorAdvancedErrorsError410RouteImport } from './routes/error/advanced-errors/error-410'
-import { Route as ErrorAdvancedErrorsError409RouteImport } from './routes/error/advanced-errors/error-409'
-import { Route as ErrorAdvancedErrorsError408RouteImport } from './routes/error/advanced-errors/error-408'
-import { Route as ErrorAdvancedErrorsError404RouteImport } from './routes/error/advanced-errors/error-404'
-import { Route as ErrorAdvancedErrorsError403RouteImport } from './routes/error/advanced-errors/error-403'
-import { Route as ErrorAdvancedErrorsError402RouteImport } from './routes/error/advanced-errors/error-402'
-import { Route as ErrorAdvancedErrorsError401RouteImport } from './routes/error/advanced-errors/error-401'
-import { Route as ErrorAdvancedErrorsError400RouteImport } from './routes/error/advanced-errors/error-400'
-import { Route as ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport } from './routes/error/advanced-errors/dev-500-03-elevated-error-rate'
-import { Route as ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport } from './routes/error/advanced-errors/dev-500-02-test-suite-failed'
-import { Route as ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport } from './routes/error/advanced-errors/dev-500-01-webhook-delivery-failed'
-import { Route as ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport } from './routes/error/advanced-errors/dev-429-02-webhook-queue-full'
-import { Route as ErrorAdvancedErrorsDev42901RateLimit100RouteImport } from './routes/error/advanced-errors/dev-429-01-rate-limit-100'
-import { Route as ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport } from './routes/error/advanced-errors/dev-410-01-version-deprecated'
-import { Route as ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport } from './routes/error/advanced-errors/dev-409-01-duplicate-idempotency'
-import { Route as ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport } from './routes/error/advanced-errors/dev-408-01-webhook-timeout'
-import { Route as ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport } from './routes/error/advanced-errors/dev-404-01-endpoint-not-found'
-import { Route as ErrorAdvancedErrorsDev40304MissingWebhookRouteImport } from './routes/error/advanced-errors/dev-403-04-missing-webhook'
-import { Route as ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport } from './routes/error/advanced-errors/dev-403-03-partner-approval-pending'
-import { Route as ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport } from './routes/error/advanced-errors/dev-403-02-ip-whitelist-violation'
-import { Route as ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport } from './routes/error/advanced-errors/dev-403-01-scope-forbidden'
-import { Route as ErrorAdvancedErrorsDev40201OverageBillingRouteImport } from './routes/error/advanced-errors/dev-402-01-overage-billing'
-import { Route as ErrorAdvancedErrorsDev40102OauthRevokedRouteImport } from './routes/error/advanced-errors/dev-401-02-oauth-revoked'
-import { Route as ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport } from './routes/error/advanced-errors/dev-401-01-api-key-invalid'
-import { Route as ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport } from './routes/error/advanced-errors/dev-400-04-sdk-outdated'
-import { Route as ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport } from './routes/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
-import { Route as ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport } from './routes/error/advanced-errors/dev-400-02-signature-verification-failed'
-import { Route as ErrorAdvancedErrorsDev40001PayloadValidationRouteImport } from './routes/error/advanced-errors/dev-400-01-payload-validation'
-import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
-import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
-import { Route as CardsAppPrepaidCardManagementRouteImport } from './routes/cards/app/prepaid-card-management'
-import { Route as CardsAppPhysicalDebitCardsRouteImport } from './routes/cards/app/physical-debit-cards'
-import { Route as CardsAppCorporateBusinessCardsRouteImport } from './routes/cards/app/corporate-business-cards'
-import { Route as CardsAppCardSettingsSupportRouteImport } from './routes/cards/app/card-settings-support'
-import { Route as CardsAppCardSecurityFraudPreventionRouteImport } from './routes/cards/app/card-security-fraud-prevention'
-import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/cards/app/card-program-administration'
-import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
 import { Route as CardsAppCardAnalyticsReportingRouteImport } from './routes/cards/app/card-analytics-reporting'
+import { Route as CardsAppCardCommandCenterRouteImport } from './routes/cards/app/card-command-center'
+import { Route as CardsAppCardProgramAdministrationRouteImport } from './routes/cards/app/card-program-administration'
+import { Route as CardsAppCardSecurityFraudPreventionRouteImport } from './routes/cards/app/card-security-fraud-prevention'
+import { Route as CardsAppCardSettingsSupportRouteImport } from './routes/cards/app/card-settings-support'
+import { Route as CardsAppCorporateBusinessCardsRouteImport } from './routes/cards/app/corporate-business-cards'
+import { Route as CardsAppPhysicalDebitCardsRouteImport } from './routes/cards/app/physical-debit-cards'
+import { Route as CardsAppPrepaidCardManagementRouteImport } from './routes/cards/app/prepaid-card-management'
+import { Route as CardsAppVirtualCreditCardsRouteImport } from './routes/cards/app/virtual-credit-cards'
+import { Route as CardsAppVirtualDebitCardsRouteImport } from './routes/cards/app/virtual-debit-cards'
+import { Route as ErrorAdvancedErrorsDev40001PayloadValidationRouteImport } from './routes/error/advanced-errors/dev-400-01-payload-validation'
+import { Route as ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport } from './routes/error/advanced-errors/dev-400-02-signature-verification-failed'
+import { Route as ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport } from './routes/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+import { Route as ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport } from './routes/error/advanced-errors/dev-400-04-sdk-outdated'
+import { Route as ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport } from './routes/error/advanced-errors/dev-401-01-api-key-invalid'
+import { Route as ErrorAdvancedErrorsDev40102OauthRevokedRouteImport } from './routes/error/advanced-errors/dev-401-02-oauth-revoked'
+import { Route as ErrorAdvancedErrorsDev40201OverageBillingRouteImport } from './routes/error/advanced-errors/dev-402-01-overage-billing'
+import { Route as ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport } from './routes/error/advanced-errors/dev-403-01-scope-forbidden'
+import { Route as ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport } from './routes/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+import { Route as ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport } from './routes/error/advanced-errors/dev-403-03-partner-approval-pending'
+import { Route as ErrorAdvancedErrorsDev40304MissingWebhookRouteImport } from './routes/error/advanced-errors/dev-403-04-missing-webhook'
+import { Route as ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport } from './routes/error/advanced-errors/dev-404-01-endpoint-not-found'
+import { Route as ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport } from './routes/error/advanced-errors/dev-408-01-webhook-timeout'
+import { Route as ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport } from './routes/error/advanced-errors/dev-409-01-duplicate-idempotency'
+import { Route as ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport } from './routes/error/advanced-errors/dev-410-01-version-deprecated'
+import { Route as ErrorAdvancedErrorsDev42901RateLimit100RouteImport } from './routes/error/advanced-errors/dev-429-01-rate-limit-100'
+import { Route as ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport } from './routes/error/advanced-errors/dev-429-02-webhook-queue-full'
+import { Route as ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport } from './routes/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+import { Route as ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport } from './routes/error/advanced-errors/dev-500-02-test-suite-failed'
+import { Route as ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport } from './routes/error/advanced-errors/dev-500-03-elevated-error-rate'
+import { Route as ErrorAdvancedErrorsError400RouteImport } from './routes/error/advanced-errors/error-400'
+import { Route as ErrorAdvancedErrorsError401RouteImport } from './routes/error/advanced-errors/error-401'
+import { Route as ErrorAdvancedErrorsError402RouteImport } from './routes/error/advanced-errors/error-402'
+import { Route as ErrorAdvancedErrorsError403RouteImport } from './routes/error/advanced-errors/error-403'
+import { Route as ErrorAdvancedErrorsError404RouteImport } from './routes/error/advanced-errors/error-404'
+import { Route as ErrorAdvancedErrorsError408RouteImport } from './routes/error/advanced-errors/error-408'
+import { Route as ErrorAdvancedErrorsError409RouteImport } from './routes/error/advanced-errors/error-409'
+import { Route as ErrorAdvancedErrorsError410RouteImport } from './routes/error/advanced-errors/error-410'
+import { Route as ErrorAdvancedErrorsError429RouteImport } from './routes/error/advanced-errors/error-429'
+import { Route as ErrorAdvancedErrorsError500RouteImport } from './routes/error/advanced-errors/error-500'
+import { Route as ErrorAdvancedErrorsErrorAccountSuspendedRouteImport } from './routes/error/advanced-errors/error-account-suspended'
+import { Route as ErrorAdvancedErrorsErrorKycFailedRouteImport } from './routes/error/advanced-errors/error-kyc-failed'
+import { Route as ErrorAdvancedErrorsErrorMaintenanceRouteImport } from './routes/error/advanced-errors/error-maintenance'
+import { Route as ErrorAdvancedErrorsErrorPaymentFailedRouteImport } from './routes/error/advanced-errors/error-payment-failed'
+import { Route as ErrorAdvancedErrorsErrorProcessingHoldRouteImport } from './routes/error/advanced-errors/error-processing-hold'
+import { Route as ErrorAdvancedErrorsErrorSessionExpiredRouteImport } from './routes/error/advanced-errors/error-session-expired'
+import { Route as ErrorCardCard40001VirtualLimitReachedRouteImport } from './routes/error/card/card-400-01-virtual-limit-reached'
+import { Route as ErrorCardCard40002ProgramLimitHighRouteImport } from './routes/error/card/card-400-02-program-limit-high'
+import { Route as ErrorCardCard401013dsFailedRouteImport } from './routes/error/card/card-401-01-3ds-failed'
+import { Route as ErrorCardCard40102Pin3xBlockedRouteImport } from './routes/error/card/card-401-02-pin-3x-blocked'
+import { Route as ErrorCardCard40103CvvAttemptsExceededRouteImport } from './routes/error/card/card-401-03-cvv-attempts-exceeded'
+import { Route as ErrorCardCard40201FundingFailedRouteImport } from './routes/error/card/card-402-01-funding-failed'
+import { Route as ErrorCardCard40202LimitExceededRouteImport } from './routes/error/card/card-402-02-limit-exceeded'
+import { Route as ErrorCardCard40203ChargebackDisputedRouteImport } from './routes/error/card/card-402-03-chargeback-disputed'
+import { Route as ErrorCardCard40204MinTopupFailedRouteImport } from './routes/error/card/card-402-04-min-topup-failed'
+import { Route as ErrorCardCard40301KycTierInsufficientRouteImport } from './routes/error/card/card-403-01-kyc-tier-insufficient'
+import { Route as ErrorCardCard40302MerchantBlockedRouteImport } from './routes/error/card/card-403-02-merchant-blocked'
+import { Route as ErrorCardCard40303InternationalBlockedRouteImport } from './routes/error/card/card-403-03-international-blocked'
+import { Route as ErrorCardCard40304FrozenFraudRouteImport } from './routes/error/card/card-403-04-frozen-fraud'
+import { Route as ErrorCardCard40305ProgramInactiveRouteImport } from './routes/error/card/card-403-05-program-inactive'
+import { Route as ErrorCardCard40306NotActivatedRouteImport } from './routes/error/card/card-403-06-not-activated'
+import { Route as ErrorCardCard40307SettingsConflictRouteImport } from './routes/error/card/card-403-07-settings-conflict'
+import { Route as ErrorCardCard40401DeliveryAddressInvalidRouteImport } from './routes/error/card/card-404-01-delivery-address-invalid'
+import { Route as ErrorCardCard40402EmployeeNotWhitelistedRouteImport } from './routes/error/card/card-404-02-employee-not-whitelisted'
+import { Route as ErrorCardCard40801PersonalizationFailedRouteImport } from './routes/error/card/card-408-01-personalization-failed'
+import { Route as ErrorCardCard40901AlreadyExistsEmployeeRouteImport } from './routes/error/card/card-409-01-already-exists-employee'
+import { Route as ErrorCardCard41001ExpiredRouteImport } from './routes/error/card/card-410-01-expired'
+import { Route as ErrorCardCard50001ProcessorDownRouteImport } from './routes/error/card/card-500-01-processor-down'
+import { Route as ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport } from './routes/error/transaction-errors/tx-400-01-recipient-not-found'
+import { Route as ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport } from './routes/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+import { Route as ErrorTransactionErrorsTx40003BankOfflineRouteImport } from './routes/error/transaction-errors/tx-400-03-bank-offline'
+import { Route as ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport } from './routes/error/transaction-errors/tx-400-04-invalid-mobile-network'
+import { Route as ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport } from './routes/error/transaction-errors/tx-400-05-currency-not-allowed'
+import { Route as ErrorTransactionErrorsTx40101Pin3xLockedRouteImport } from './routes/error/transaction-errors/tx-401-01-pin-3x-locked'
+import { Route as ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport } from './routes/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+import { Route as ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport } from './routes/error/transaction-errors/tx-402-01-insufficient-balance'
+import { Route as ErrorTransactionErrorsTx40202AmountMinMaxRouteImport } from './routes/error/transaction-errors/tx-402-02-amount-min-max'
+import { Route as ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport } from './routes/error/transaction-errors/tx-402-03-daily-limit-reached'
+import { Route as ErrorTransactionErrorsTx40204PerTxnLimitRouteImport } from './routes/error/transaction-errors/tx-402-04-per-txn-limit'
+import { Route as ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport } from './routes/error/transaction-errors/tx-402-05-fee-calculation-failed'
+import { Route as ErrorTransactionErrorsTx40301AmlHoldRouteImport } from './routes/error/transaction-errors/tx-403-01-aml-hold'
+import { Route as ErrorTransactionErrorsTx40302KraTaxFailedRouteImport } from './routes/error/transaction-errors/tx-403-02-kra-tax-failed'
+import { Route as ErrorTransactionErrorsTx40303AccountFrozenRouteImport } from './routes/error/transaction-errors/tx-403-03-account-frozen'
+import { Route as ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport } from './routes/error/transaction-errors/tx-404-01-mpesa-not-registered'
+import { Route as ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport } from './routes/error/transaction-errors/tx-404-02-purpose-code-missing'
+import { Route as ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport } from './routes/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+import { Route as ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport } from './routes/error/transaction-errors/tx-409-01-duplicate-transaction'
+import { Route as ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport } from './routes/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+import { Route as ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport } from './routes/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+import { Route as ErrorTransactionErrorsTx41001TxnExpiredRouteImport } from './routes/error/transaction-errors/tx-410-01-txn-expired'
+import { Route as ErrorTransactionErrorsTx42201NameMismatchRouteImport } from './routes/error/transaction-errors/tx-422-01-name-mismatch'
+import { Route as ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport } from './routes/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+import { Route as ErrorTransactionErrorsTx42301RtgsCutoffRouteImport } from './routes/error/transaction-errors/tx-423-01-rtgs-cutoff'
+import { Route as ErrorTransactionErrorsTx42901ThrottledRouteImport } from './routes/error/transaction-errors/tx-429-01-throttled'
+import { Route as ErrorTransactionErrorsTx50001SettlementDelayedRouteImport } from './routes/error/transaction-errors/tx-500-01-settlement-delayed'
+import { Route as ErrorTransactionErrorsTx50002LiquidityFailedRouteImport } from './routes/error/transaction-errors/tx-500-02-liquidity-failed'
+import { Route as ErrorUtilityErrorsUtil40001NameMismatchRouteImport } from './routes/error/utility-errors/util-400-01-name-mismatch'
+import { Route as ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport } from './routes/error/utility-errors/util-402-01-amount-below-min'
+import { Route as ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport } from './routes/error/utility-errors/util-402-02-insufficient-balance-utility'
+import { Route as ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport } from './routes/error/utility-errors/util-402-03-provider-not-supported'
+import { Route as ErrorUtilityErrorsUtil40301AutomationFailedRouteImport } from './routes/error/utility-errors/util-403-01-automation-failed'
+import { Route as ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport } from './routes/error/utility-errors/util-404-01-meter-not-found'
+import { Route as ErrorUtilityErrorsUtil40402InternetInvalidRouteImport } from './routes/error/utility-errors/util-404-02-internet-invalid'
+import { Route as ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport } from './routes/error/utility-errors/util-404-03-airtime-unreachable'
+import { Route as ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport } from './routes/error/utility-errors/util-408-01-pending-confirmation'
+import { Route as ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport } from './routes/error/utility-errors/util-409-01-bill-already-paid'
+import { Route as ErrorUtilityErrorsUtil40902AutomationConflictRouteImport } from './routes/error/utility-errors/util-409-02-automation-conflict'
+import { Route as ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport } from './routes/error/utility-errors/util-410-01-provider-maintenance'
+import { Route as ErrorUtilityErrorsUtil42901RateLimitedRouteImport } from './routes/error/utility-errors/util-429-01-rate-limited'
+import { Route as ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport } from './routes/error/utility-errors/util-500-01-token-gen-failed'
+import { Route as PmAppIndexRouteImport } from './routes/pm/app.index'
+import { Route as PmAppSectionRouteImport } from './routes/pm/app.$section'
+import { Route as PmAppAccountRouteImport } from './routes/pm/app.account'
+import { Route as PmAppAnalyticsRouteImport } from './routes/pm/app.analytics'
+import { Route as PmAppComplianceRouteImport } from './routes/pm/app.compliance'
+import { Route as PmAppCustomersRouteImport } from './routes/pm/app.customers'
+import { Route as PmAppDisputesRouteImport } from './routes/pm/app.disputes'
+import { Route as PmAppFeesRouteImport } from './routes/pm/app.fees'
+import { Route as PmAppFxRouteImport } from './routes/pm/app.fx'
+import { Route as PmAppInitiateTransferRouteImport } from './routes/pm/app.initiate-transfer'
+import { Route as PmAppKraGovernmentRouteImport } from './routes/pm/app.kra-government'
+import { Route as PmAppLiquidityRouteImport } from './routes/pm/app.liquidity'
+import { Route as PmAppMobileMoneyRouteImport } from './routes/pm/app.mobile-money'
+import { Route as PmAppOnboardingRouteImport } from './routes/pm/app.onboarding'
+import { Route as PmAppOpsHealthRouteImport } from './routes/pm/app.ops-health'
+import { Route as PmAppPaymentRailsRouteImport } from './routes/pm/app.payment-rails'
+import { Route as PmAppReconciliationRouteImport } from './routes/pm/app.reconciliation'
+import { Route as PmAppSettingsRouteImport } from './routes/pm/app.settings'
+import { Route as PmAppSettlementRouteImport } from './routes/pm/app.settlement'
+import { Route as PmAppTransferManagementRouteImport } from './routes/pm/app.transfer-management'
+import { Route as PmAppTransferOverviewRouteImport } from './routes/pm/app.transfer-overview'
+import { Route as PmAppTransfersRouteImport } from './routes/pm/app.transfers'
 
-const WalletActivationRoute = WalletActivationRouteImport.update({
-  id: '/wallet-activation',
-  path: '/wallet-activation',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UtilityRoute = UtilityRouteImport.update({
-  id: '/utility',
-  path: '/utility',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DevDashboardRoute = DevDashboardRouteImport.update({
-  id: '/dev-dashboard',
-  path: '/dev-dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DevRoute = DevRouteImport.update({
-  id: '/dev',
-  path: '/dev',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessDashboardRoute = BusinessDashboardRouteImport.update({
-  id: '/business-dashboard',
-  path: '/business-dashboard',
+const HomeRoute = HomeRouteImport.update({
+  id: '/_home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessRoute = BusinessRouteImport.update({
@@ -258,281 +235,166 @@ const BusinessRoute = BusinessRouteImport.update({
   path: '/business',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/_home',
+const BusinessDashboardRoute = BusinessDashboardRouteImport.update({
+  id: '/business-dashboard',
+  path: '/business-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UtilityIndexRoute = UtilityIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UtilityRoute,
+const CardsShellRoute = CardsShellRouteImport.update({
+  id: '/cards-shell',
+  path: '/cards-shell',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DevIndexRoute = DevIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DevRoute,
+const DevRoute = DevRouteImport.update({
+  id: '/dev',
+  path: '/dev',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DevDashboardIndexRoute = DevDashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DevDashboardRoute,
+const DevDashboardRoute = DevDashboardRouteImport.update({
+  id: '/dev-dashboard',
+  path: '/dev-dashboard',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const BusinessIndexRoute = BusinessIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BusinessRoute,
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const BusinessDashboardIndexRoute = BusinessDashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BusinessDashboardRoute,
+const UtilityRoute = UtilityRouteImport.update({
+  id: '/utility',
+  path: '/utility',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletActivationRoute = WalletActivationRouteImport.update({
+  id: '/wallet-activation',
+  path: '/wallet-activation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => HomeRoute,
 } as any)
-const UtilityWaterRoute = UtilityWaterRouteImport.update({
-  id: '/water',
-  path: '/water',
-  getParentRoute: () => UtilityRoute,
+const HomeBusinessRoute = HomeBusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => HomeRoute,
 } as any)
-const UtilitySettingsRoute = UtilitySettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const UtilityInternetRoute = UtilityInternetRouteImport.update({
-  id: '/internet',
-  path: '/internet',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const UtilityElectricityRoute = UtilityElectricityRouteImport.update({
-  id: '/electricity',
-  path: '/electricity',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const UtilityAirtimeRoute = UtilityAirtimeRouteImport.update({
-  id: '/airtime',
-  path: '/airtime',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const UtilityModuleRoute = UtilityModuleRouteImport.update({
-  id: '/$module',
-  path: '/$module',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const PmAppRoute = PmAppRouteImport.update({
-  id: '/pm/app',
-  path: '/pm/app',
+const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
+  id: '/auth/account-status',
+  path: '/auth/account-status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DevModuleRoute = DevModuleRouteImport.update({
-  id: '/$module',
-  path: '/$module',
-  getParentRoute: () => DevRoute,
-} as any)
-const DevDashboardWebhooksEventsRoute =
-  DevDashboardWebhooksEventsRouteImport.update({
-    id: '/webhooks-events',
-    path: '/webhooks-events',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardSupportSlasRoute = DevDashboardSupportSlasRouteImport.update({
-  id: '/support-slas',
-  path: '/support-slas',
-  getParentRoute: () => DevDashboardRoute,
-} as any)
-const DevDashboardSecurityRoute = DevDashboardSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => DevDashboardRoute,
-} as any)
-const DevDashboardSdksRoute = DevDashboardSdksRouteImport.update({
-  id: '/sdks',
-  path: '/sdks',
-  getParentRoute: () => DevDashboardRoute,
-} as any)
-const DevDashboardPlaygroundRoute = DevDashboardPlaygroundRouteImport.update({
-  id: '/playground',
-  path: '/playground',
-  getParentRoute: () => DevDashboardRoute,
-} as any)
-const DevDashboardPartnerMarketplaceRoute =
-  DevDashboardPartnerMarketplaceRouteImport.update({
-    id: '/partner-marketplace',
-    path: '/partner-marketplace',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardMonitoringIncidentsRoute =
-  DevDashboardMonitoringIncidentsRouteImport.update({
-    id: '/monitoring-incidents',
-    path: '/monitoring-incidents',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardIntegrationArchitectureRoute =
-  DevDashboardIntegrationArchitectureRouteImport.update({
-    id: '/integration-architecture',
-    path: '/integration-architecture',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardDeveloperDashboardRoute =
-  DevDashboardDeveloperDashboardRouteImport.update({
-    id: '/developer-dashboard',
-    path: '/developer-dashboard',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardComplianceAuditRoute =
-  DevDashboardComplianceAuditRouteImport.update({
-    id: '/compliance-audit',
-    path: '/compliance-audit',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardApiReferenceRoute =
-  DevDashboardApiReferenceRouteImport.update({
-    id: '/api-reference',
-    path: '/api-reference',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const DevDashboardApiGovernanceRoute =
-  DevDashboardApiGovernanceRouteImport.update({
-    id: '/api-governance',
-    path: '/api-governance',
-    getParentRoute: () => DevDashboardRoute,
-  } as any)
-const CardsAppRoute = CardsAppRouteImport.update({
-  id: '/cards/app',
-  path: '/cards/app',
+const AuthHubRoute = AuthHubRouteImport.update({
+  id: '/auth/hub',
+  path: '/auth/hub',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BusinessModuleRoute = BusinessModuleRouteImport.update({
-  id: '/$module',
-  path: '/$module',
-  getParentRoute: () => BusinessRoute,
+const AuthIdentityRoute = AuthIdentityRouteImport.update({
+  id: '/auth/identity',
+  path: '/auth/identity',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const BusinessDashboardVirtualAccountsRoute =
-  BusinessDashboardVirtualAccountsRouteImport.update({
-    id: '/virtual-accounts',
-    path: '/virtual-accounts',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardTreasuryCashRoute =
-  BusinessDashboardTreasuryCashRouteImport.update({
-    id: '/treasury-cash',
-    path: '/treasury-cash',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardTeamRoute = BusinessDashboardTeamRouteImport.update({
-  id: '/team',
-  path: '/team',
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthMfaRoute = AuthMfaRouteImport.update({
+  id: '/auth/mfa',
+  path: '/auth/mfa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthPasskeysRoute = AuthPasskeysRouteImport.update({
+  id: '/auth/passkeys',
+  path: '/auth/passkeys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
+  id: '/auth/recovery',
+  path: '/auth/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSecurityRoute = AuthSecurityRouteImport.update({
+  id: '/auth/security',
+  path: '/auth/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessDashboardIndexRoute = BusinessDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => BusinessDashboardRoute,
 } as any)
-const BusinessDashboardSupportDisputesRoute =
-  BusinessDashboardSupportDisputesRouteImport.update({
-    id: '/support-disputes',
-    path: '/support-disputes',
+const BusinessDashboardModuleRoute = BusinessDashboardModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
+const BusinessDashboardAccountsPayableRoute =
+  BusinessDashboardAccountsPayableRouteImport.update({
+    id: '/accounts-payable',
+    path: '/accounts-payable',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardSettingsAdministrationRoute =
-  BusinessDashboardSettingsAdministrationRouteImport.update({
-    id: '/settings-administration',
-    path: '/settings-administration',
+const BusinessDashboardAppsIntegrationsRoute =
+  BusinessDashboardAppsIntegrationsRouteImport.update({
+    id: '/apps-integrations',
+    path: '/apps-integrations',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardProfileRoute =
-  BusinessDashboardProfileRouteImport.update({
-    id: '/profile',
-    path: '/profile',
+const BusinessDashboardBooksRoute = BusinessDashboardBooksRouteImport.update({
+  id: '/books',
+  path: '/books',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
+const BusinessDashboardBulkDisbursementsRoute =
+  BusinessDashboardBulkDisbursementsRouteImport.update({
+    id: '/bulk-disbursements',
+    path: '/bulk-disbursements',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardProductsRoute =
-  BusinessDashboardProductsRouteImport.update({
-    id: '/products',
-    path: '/products',
+const BusinessDashboardBusinessOnboardingRoute =
+  BusinessDashboardBusinessOnboardingRouteImport.update({
+    id: '/business-onboarding',
+    path: '/business-onboarding',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardPortfolioRoute =
-  BusinessDashboardPortfolioRouteImport.update({
-    id: '/portfolio',
-    path: '/portfolio',
+const BusinessDashboardCashRoute = BusinessDashboardCashRouteImport.update({
+  id: '/cash',
+  path: '/cash',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
+const BusinessDashboardCollectionsMerchantRoute =
+  BusinessDashboardCollectionsMerchantRouteImport.update({
+    id: '/collections-merchant',
+    path: '/collections-merchant',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardPayrollHrRoute =
-  BusinessDashboardPayrollHrRouteImport.update({
-    id: '/payroll-hr',
-    path: '/payroll-hr',
+const BusinessDashboardCommandCenterRoute =
+  BusinessDashboardCommandCenterRouteImport.update({
+    id: '/command-center',
+    path: '/command-center',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardPaySuppliersRoute =
-  BusinessDashboardPaySuppliersRouteImport.update({
-    id: '/pay-suppliers',
-    path: '/pay-suppliers',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardOverviewRoute =
-  BusinessDashboardOverviewRouteImport.update({
-    id: '/overview',
-    path: '/overview',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardOpenBankingRoute =
-  BusinessDashboardOpenBankingRouteImport.update({
-    id: '/open-banking',
-    path: '/open-banking',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardNotificationsRoute =
-  BusinessDashboardNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardMultiCurrencyTreasuryRoute =
-  BusinessDashboardMultiCurrencyTreasuryRouteImport.update({
-    id: '/multi-currency-treasury',
-    path: '/multi-currency-treasury',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardMarketingRoute =
-  BusinessDashboardMarketingRouteImport.update({
-    id: '/marketing',
-    path: '/marketing',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardInvoicingBillingRoute =
-  BusinessDashboardInvoicingBillingRouteImport.update({
-    id: '/invoicing-billing',
-    path: '/invoicing-billing',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardInventoryRoute =
-  BusinessDashboardInventoryRouteImport.update({
-    id: '/inventory',
-    path: '/inventory',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardIntegrationsRoute =
-  BusinessDashboardIntegrationsRouteImport.update({
-    id: '/integrations',
-    path: '/integrations',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardInsuranceRoute =
-  BusinessDashboardInsuranceRouteImport.update({
-    id: '/insurance',
-    path: '/insurance',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardGetPaidRoute =
-  BusinessDashboardGetPaidRouteImport.update({
-    id: '/get-paid',
-    path: '/get-paid',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardFundingRoute =
-  BusinessDashboardFundingRouteImport.update({
-    id: '/funding',
-    path: '/funding',
+const BusinessDashboardCrmRoute = BusinessDashboardCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
+const BusinessDashboardDataRoute = BusinessDashboardDataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => BusinessDashboardRoute,
+} as any)
+const BusinessDashboardDisputesRoute =
+  BusinessDashboardDisputesRouteImport.update({
+    id: '/disputes',
+    path: '/disputes',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
 const BusinessDashboardFinancialReportingRoute =
@@ -541,884 +403,288 @@ const BusinessDashboardFinancialReportingRoute =
     path: '/financial-reporting',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardDisputesRoute =
-  BusinessDashboardDisputesRouteImport.update({
-    id: '/disputes',
-    path: '/disputes',
+const BusinessDashboardFundingRoute =
+  BusinessDashboardFundingRouteImport.update({
+    id: '/funding',
+    path: '/funding',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardDataRoute = BusinessDashboardDataRouteImport.update({
-  id: '/data',
-  path: '/data',
+const BusinessDashboardGetPaidRoute =
+  BusinessDashboardGetPaidRouteImport.update({
+    id: '/get-paid',
+    path: '/get-paid',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardInsuranceRoute =
+  BusinessDashboardInsuranceRouteImport.update({
+    id: '/insurance',
+    path: '/insurance',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardIntegrationsRoute =
+  BusinessDashboardIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardInventoryRoute =
+  BusinessDashboardInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardInvoicingBillingRoute =
+  BusinessDashboardInvoicingBillingRouteImport.update({
+    id: '/invoicing-billing',
+    path: '/invoicing-billing',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardMarketingRoute =
+  BusinessDashboardMarketingRouteImport.update({
+    id: '/marketing',
+    path: '/marketing',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardMultiCurrencyTreasuryRoute =
+  BusinessDashboardMultiCurrencyTreasuryRouteImport.update({
+    id: '/multi-currency-treasury',
+    path: '/multi-currency-treasury',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardNotificationsRoute =
+  BusinessDashboardNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardOpenBankingRoute =
+  BusinessDashboardOpenBankingRouteImport.update({
+    id: '/open-banking',
+    path: '/open-banking',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardOverviewRoute =
+  BusinessDashboardOverviewRouteImport.update({
+    id: '/overview',
+    path: '/overview',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardPaySuppliersRoute =
+  BusinessDashboardPaySuppliersRouteImport.update({
+    id: '/pay-suppliers',
+    path: '/pay-suppliers',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardPayrollHrRoute =
+  BusinessDashboardPayrollHrRouteImport.update({
+    id: '/payroll-hr',
+    path: '/payroll-hr',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardPortfolioRoute =
+  BusinessDashboardPortfolioRouteImport.update({
+    id: '/portfolio',
+    path: '/portfolio',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardProductsRoute =
+  BusinessDashboardProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardProfileRoute =
+  BusinessDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardSettingsAdministrationRoute =
+  BusinessDashboardSettingsAdministrationRouteImport.update({
+    id: '/settings-administration',
+    path: '/settings-administration',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardSupportDisputesRoute =
+  BusinessDashboardSupportDisputesRouteImport.update({
+    id: '/support-disputes',
+    path: '/support-disputes',
+    getParentRoute: () => BusinessDashboardRoute,
+  } as any)
+const BusinessDashboardTeamRoute = BusinessDashboardTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => BusinessDashboardRoute,
 } as any)
-const BusinessDashboardCrmRoute = BusinessDashboardCrmRouteImport.update({
-  id: '/crm',
-  path: '/crm',
-  getParentRoute: () => BusinessDashboardRoute,
-} as any)
-const BusinessDashboardCommandCenterRoute =
-  BusinessDashboardCommandCenterRouteImport.update({
-    id: '/command-center',
-    path: '/command-center',
+const BusinessDashboardTreasuryCashRoute =
+  BusinessDashboardTreasuryCashRouteImport.update({
+    id: '/treasury-cash',
+    path: '/treasury-cash',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardCollectionsMerchantRoute =
-  BusinessDashboardCollectionsMerchantRouteImport.update({
-    id: '/collections-merchant',
-    path: '/collections-merchant',
+const BusinessDashboardVirtualAccountsRoute =
+  BusinessDashboardVirtualAccountsRouteImport.update({
+    id: '/virtual-accounts',
+    path: '/virtual-accounts',
     getParentRoute: () => BusinessDashboardRoute,
   } as any)
-const BusinessDashboardCashRoute = BusinessDashboardCashRouteImport.update({
-  id: '/cash',
-  path: '/cash',
-  getParentRoute: () => BusinessDashboardRoute,
-} as any)
-const BusinessDashboardBusinessOnboardingRoute =
-  BusinessDashboardBusinessOnboardingRouteImport.update({
-    id: '/business-onboarding',
-    path: '/business-onboarding',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardBulkDisbursementsRoute =
-  BusinessDashboardBulkDisbursementsRouteImport.update({
-    id: '/bulk-disbursements',
-    path: '/bulk-disbursements',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardBooksRoute = BusinessDashboardBooksRouteImport.update({
-  id: '/books',
-  path: '/books',
-  getParentRoute: () => BusinessDashboardRoute,
-} as any)
-const BusinessDashboardAppsIntegrationsRoute =
-  BusinessDashboardAppsIntegrationsRouteImport.update({
-    id: '/apps-integrations',
-    path: '/apps-integrations',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardAccountsPayableRoute =
-  BusinessDashboardAccountsPayableRouteImport.update({
-    id: '/accounts-payable',
-    path: '/accounts-payable',
-    getParentRoute: () => BusinessDashboardRoute,
-  } as any)
-const BusinessDashboardModuleRoute = BusinessDashboardModuleRouteImport.update({
-  id: '/$module',
-  path: '/$module',
-  getParentRoute: () => BusinessDashboardRoute,
-} as any)
-const AuthSecurityRoute = AuthSecurityRouteImport.update({
-  id: '/auth/security',
-  path: '/auth/security',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
-  id: '/auth/recovery',
-  path: '/auth/recovery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthPasskeysRoute = AuthPasskeysRouteImport.update({
-  id: '/auth/passkeys',
-  path: '/auth/passkeys',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthMfaRoute = AuthMfaRouteImport.update({
-  id: '/auth/mfa',
-  path: '/auth/mfa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthIdentityRoute = AuthIdentityRouteImport.update({
-  id: '/auth/identity',
-  path: '/auth/identity',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthHubRoute = AuthHubRouteImport.update({
-  id: '/auth/hub',
-  path: '/auth/hub',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthAccountStatusRoute = AuthAccountStatusRouteImport.update({
-  id: '/auth/account-status',
-  path: '/auth/account-status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeBusinessRoute = HomeBusinessRouteImport.update({
-  id: '/business',
-  path: '/business',
-  getParentRoute: () => HomeRoute,
-} as any)
-const PmAppIndexRoute = PmAppIndexRouteImport.update({
+const BusinessIndexRoute = BusinessIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PmAppRoute,
+  getParentRoute: () => BusinessRoute,
+} as any)
+const BusinessModuleRoute = BusinessModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => BusinessRoute,
+} as any)
+const CardsShellIndexRoute = CardsShellIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CardsShellRoute,
+} as any)
+const CardsShellSectionRoute = CardsShellSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => CardsShellRoute,
+} as any)
+const CardsAppRoute = CardsAppRouteImport.update({
+  id: '/cards/app',
+  path: '/cards/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevDashboardIndexRoute = DevDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardApiGovernanceRoute =
+  DevDashboardApiGovernanceRouteImport.update({
+    id: '/api-governance',
+    path: '/api-governance',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardApiReferenceRoute =
+  DevDashboardApiReferenceRouteImport.update({
+    id: '/api-reference',
+    path: '/api-reference',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardComplianceAuditRoute =
+  DevDashboardComplianceAuditRouteImport.update({
+    id: '/compliance-audit',
+    path: '/compliance-audit',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardDeveloperDashboardRoute =
+  DevDashboardDeveloperDashboardRouteImport.update({
+    id: '/developer-dashboard',
+    path: '/developer-dashboard',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardIntegrationArchitectureRoute =
+  DevDashboardIntegrationArchitectureRouteImport.update({
+    id: '/integration-architecture',
+    path: '/integration-architecture',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardMonitoringIncidentsRoute =
+  DevDashboardMonitoringIncidentsRouteImport.update({
+    id: '/monitoring-incidents',
+    path: '/monitoring-incidents',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardPartnerMarketplaceRoute =
+  DevDashboardPartnerMarketplaceRouteImport.update({
+    id: '/partner-marketplace',
+    path: '/partner-marketplace',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevDashboardPlaygroundRoute = DevDashboardPlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardSdksRoute = DevDashboardSdksRouteImport.update({
+  id: '/sdks',
+  path: '/sdks',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardSecurityRoute = DevDashboardSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardSupportSlasRoute = DevDashboardSupportSlasRouteImport.update({
+  id: '/support-slas',
+  path: '/support-slas',
+  getParentRoute: () => DevDashboardRoute,
+} as any)
+const DevDashboardWebhooksEventsRoute =
+  DevDashboardWebhooksEventsRouteImport.update({
+    id: '/webhooks-events',
+    path: '/webhooks-events',
+    getParentRoute: () => DevDashboardRoute,
+  } as any)
+const DevIndexRoute = DevIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DevRoute,
+} as any)
+const DevModuleRoute = DevModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => DevRoute,
+} as any)
+const PmAppRoute = PmAppRouteImport.update({
+  id: '/pm/app',
+  path: '/pm/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilityIndexRoute = UtilityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityModuleRoute = UtilityModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityAirtimeRoute = UtilityAirtimeRouteImport.update({
+  id: '/airtime',
+  path: '/airtime',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityElectricityRoute = UtilityElectricityRouteImport.update({
+  id: '/electricity',
+  path: '/electricity',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityInternetRoute = UtilityInternetRouteImport.update({
+  id: '/internet',
+  path: '/internet',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilitySettingsRoute = UtilitySettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityWaterRoute = UtilityWaterRouteImport.update({
+  id: '/water',
+  path: '/water',
+  getParentRoute: () => UtilityRoute,
 } as any)
 const CardsAppIndexRoute = CardsAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CardsAppRoute,
 } as any)
-const PmAppTransfersRoute = PmAppTransfersRouteImport.update({
-  id: '/transfers',
-  path: '/transfers',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppTransferOverviewRoute = PmAppTransferOverviewRouteImport.update({
-  id: '/transfer-overview',
-  path: '/transfer-overview',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppTransferManagementRoute = PmAppTransferManagementRouteImport.update({
-  id: '/transfer-management',
-  path: '/transfer-management',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppSettlementRoute = PmAppSettlementRouteImport.update({
-  id: '/settlement',
-  path: '/settlement',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppSettingsRoute = PmAppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppReconciliationRoute = PmAppReconciliationRouteImport.update({
-  id: '/reconciliation',
-  path: '/reconciliation',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppPaymentRailsRoute = PmAppPaymentRailsRouteImport.update({
-  id: '/payment-rails',
-  path: '/payment-rails',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppOpsHealthRoute = PmAppOpsHealthRouteImport.update({
-  id: '/ops-health',
-  path: '/ops-health',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppOnboardingRoute = PmAppOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppMobileMoneyRoute = PmAppMobileMoneyRouteImport.update({
-  id: '/mobile-money',
-  path: '/mobile-money',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppLiquidityRoute = PmAppLiquidityRouteImport.update({
-  id: '/liquidity',
-  path: '/liquidity',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppKraGovernmentRoute = PmAppKraGovernmentRouteImport.update({
-  id: '/kra-government',
-  path: '/kra-government',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppInitiateTransferRoute = PmAppInitiateTransferRouteImport.update({
-  id: '/initiate-transfer',
-  path: '/initiate-transfer',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppFxRoute = PmAppFxRouteImport.update({
-  id: '/fx',
-  path: '/fx',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppFeesRoute = PmAppFeesRouteImport.update({
-  id: '/fees',
-  path: '/fees',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppDisputesRoute = PmAppDisputesRouteImport.update({
-  id: '/disputes',
-  path: '/disputes',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppCustomersRoute = PmAppCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppComplianceRoute = PmAppComplianceRouteImport.update({
-  id: '/compliance',
-  path: '/compliance',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppAnalyticsRoute = PmAppAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppAccountRoute = PmAppAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const PmAppSectionRoute = PmAppSectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
-  getParentRoute: () => PmAppRoute,
-} as any)
-const ErrorUtilityErrorsUtil50001TokenGenFailedRoute =
-  ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport.update({
-    id: '/error/utility-errors/util-500-01-token-gen-failed',
-    path: '/error/utility-errors/util-500-01-token-gen-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil42901RateLimitedRoute =
-  ErrorUtilityErrorsUtil42901RateLimitedRouteImport.update({
-    id: '/error/utility-errors/util-429-01-rate-limited',
-    path: '/error/utility-errors/util-429-01-rate-limited',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute =
-  ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport.update({
-    id: '/error/utility-errors/util-410-01-provider-maintenance',
-    path: '/error/utility-errors/util-410-01-provider-maintenance',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40902AutomationConflictRoute =
-  ErrorUtilityErrorsUtil40902AutomationConflictRouteImport.update({
-    id: '/error/utility-errors/util-409-02-automation-conflict',
-    path: '/error/utility-errors/util-409-02-automation-conflict',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute =
-  ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport.update({
-    id: '/error/utility-errors/util-409-01-bill-already-paid',
-    path: '/error/utility-errors/util-409-01-bill-already-paid',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40801PendingConfirmationRoute =
-  ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport.update({
-    id: '/error/utility-errors/util-408-01-pending-confirmation',
-    path: '/error/utility-errors/util-408-01-pending-confirmation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute =
-  ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport.update({
-    id: '/error/utility-errors/util-404-03-airtime-unreachable',
-    path: '/error/utility-errors/util-404-03-airtime-unreachable',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40402InternetInvalidRoute =
-  ErrorUtilityErrorsUtil40402InternetInvalidRouteImport.update({
-    id: '/error/utility-errors/util-404-02-internet-invalid',
-    path: '/error/utility-errors/util-404-02-internet-invalid',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40401MeterNotFoundRoute =
-  ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport.update({
-    id: '/error/utility-errors/util-404-01-meter-not-found',
-    path: '/error/utility-errors/util-404-01-meter-not-found',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40301AutomationFailedRoute =
-  ErrorUtilityErrorsUtil40301AutomationFailedRouteImport.update({
-    id: '/error/utility-errors/util-403-01-automation-failed',
-    path: '/error/utility-errors/util-403-01-automation-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute =
-  ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport.update({
-    id: '/error/utility-errors/util-402-03-provider-not-supported',
-    path: '/error/utility-errors/util-402-03-provider-not-supported',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute =
-  ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport.update({
-    id: '/error/utility-errors/util-402-02-insufficient-balance-utility',
-    path: '/error/utility-errors/util-402-02-insufficient-balance-utility',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40201AmountBelowMinRoute =
-  ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport.update({
-    id: '/error/utility-errors/util-402-01-amount-below-min',
-    path: '/error/utility-errors/util-402-01-amount-below-min',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorUtilityErrorsUtil40001NameMismatchRoute =
-  ErrorUtilityErrorsUtil40001NameMismatchRouteImport.update({
-    id: '/error/utility-errors/util-400-01-name-mismatch',
-    path: '/error/utility-errors/util-400-01-name-mismatch',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx50002LiquidityFailedRoute =
-  ErrorTransactionErrorsTx50002LiquidityFailedRouteImport.update({
-    id: '/error/transaction-errors/tx-500-02-liquidity-failed',
-    path: '/error/transaction-errors/tx-500-02-liquidity-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx50001SettlementDelayedRoute =
-  ErrorTransactionErrorsTx50001SettlementDelayedRouteImport.update({
-    id: '/error/transaction-errors/tx-500-01-settlement-delayed',
-    path: '/error/transaction-errors/tx-500-01-settlement-delayed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx42901ThrottledRoute =
-  ErrorTransactionErrorsTx42901ThrottledRouteImport.update({
-    id: '/error/transaction-errors/tx-429-01-throttled',
-    path: '/error/transaction-errors/tx-429-01-throttled',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx42301RtgsCutoffRoute =
-  ErrorTransactionErrorsTx42301RtgsCutoffRouteImport.update({
-    id: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
-    path: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute =
-  ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport.update({
-    id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
-    path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx42201NameMismatchRoute =
-  ErrorTransactionErrorsTx42201NameMismatchRouteImport.update({
-    id: '/error/transaction-errors/tx-422-01-name-mismatch',
-    path: '/error/transaction-errors/tx-422-01-name-mismatch',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx41001TxnExpiredRoute =
-  ErrorTransactionErrorsTx41001TxnExpiredRouteImport.update({
-    id: '/error/transaction-errors/tx-410-01-txn-expired',
-    path: '/error/transaction-errors/tx-410-01-txn-expired',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40903ReconciliationMismatchRoute =
-  ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport.update({
-    id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
-    path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute =
-  ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport.update({
-    id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
-    path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40901DuplicateTransactionRoute =
-  ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport.update({
-    id: '/error/transaction-errors/tx-409-01-duplicate-transaction',
-    path: '/error/transaction-errors/tx-409-01-duplicate-transaction',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute =
-  ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport.update({
-    id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
-    path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40402PurposeCodeMissingRoute =
-  ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport.update({
-    id: '/error/transaction-errors/tx-404-02-purpose-code-missing',
-    path: '/error/transaction-errors/tx-404-02-purpose-code-missing',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute =
-  ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport.update({
-    id: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
-    path: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40303AccountFrozenRoute =
-  ErrorTransactionErrorsTx40303AccountFrozenRouteImport.update({
-    id: '/error/transaction-errors/tx-403-03-account-frozen',
-    path: '/error/transaction-errors/tx-403-03-account-frozen',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40302KraTaxFailedRoute =
-  ErrorTransactionErrorsTx40302KraTaxFailedRouteImport.update({
-    id: '/error/transaction-errors/tx-403-02-kra-tax-failed',
-    path: '/error/transaction-errors/tx-403-02-kra-tax-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40301AmlHoldRoute =
-  ErrorTransactionErrorsTx40301AmlHoldRouteImport.update({
-    id: '/error/transaction-errors/tx-403-01-aml-hold',
-    path: '/error/transaction-errors/tx-403-01-aml-hold',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40205FeeCalculationFailedRoute =
-  ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport.update({
-    id: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
-    path: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40204PerTxnLimitRoute =
-  ErrorTransactionErrorsTx40204PerTxnLimitRouteImport.update({
-    id: '/error/transaction-errors/tx-402-04-per-txn-limit',
-    path: '/error/transaction-errors/tx-402-04-per-txn-limit',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40203DailyLimitReachedRoute =
-  ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport.update({
-    id: '/error/transaction-errors/tx-402-03-daily-limit-reached',
-    path: '/error/transaction-errors/tx-402-03-daily-limit-reached',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40202AmountMinMaxRoute =
-  ErrorTransactionErrorsTx40202AmountMinMaxRouteImport.update({
-    id: '/error/transaction-errors/tx-402-02-amount-min-max',
-    path: '/error/transaction-errors/tx-402-02-amount-min-max',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40201InsufficientBalanceRoute =
-  ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport.update({
-    id: '/error/transaction-errors/tx-402-01-insufficient-balance',
-    path: '/error/transaction-errors/tx-402-01-insufficient-balance',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute =
-  ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport.update({
-    id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
-    path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40101Pin3xLockedRoute =
-  ErrorTransactionErrorsTx40101Pin3xLockedRouteImport.update({
-    id: '/error/transaction-errors/tx-401-01-pin-3x-locked',
-    path: '/error/transaction-errors/tx-401-01-pin-3x-locked',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute =
-  ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport.update({
-    id: '/error/transaction-errors/tx-400-05-currency-not-allowed',
-    path: '/error/transaction-errors/tx-400-05-currency-not-allowed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute =
-  ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport.update({
-    id: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
-    path: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40003BankOfflineRoute =
-  ErrorTransactionErrorsTx40003BankOfflineRouteImport.update({
-    id: '/error/transaction-errors/tx-400-03-bank-offline',
-    path: '/error/transaction-errors/tx-400-03-bank-offline',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute =
-  ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport.update({
-    id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
-    path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorTransactionErrorsTx40001RecipientNotFoundRoute =
-  ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport.update({
-    id: '/error/transaction-errors/tx-400-01-recipient-not-found',
-    path: '/error/transaction-errors/tx-400-01-recipient-not-found',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard50001ProcessorDownRoute =
-  ErrorCardCard50001ProcessorDownRouteImport.update({
-    id: '/error/card/card-500-01-processor-down',
-    path: '/error/card/card-500-01-processor-down',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard41001ExpiredRoute =
-  ErrorCardCard41001ExpiredRouteImport.update({
-    id: '/error/card/card-410-01-expired',
-    path: '/error/card/card-410-01-expired',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40901AlreadyExistsEmployeeRoute =
-  ErrorCardCard40901AlreadyExistsEmployeeRouteImport.update({
-    id: '/error/card/card-409-01-already-exists-employee',
-    path: '/error/card/card-409-01-already-exists-employee',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40801PersonalizationFailedRoute =
-  ErrorCardCard40801PersonalizationFailedRouteImport.update({
-    id: '/error/card/card-408-01-personalization-failed',
-    path: '/error/card/card-408-01-personalization-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40402EmployeeNotWhitelistedRoute =
-  ErrorCardCard40402EmployeeNotWhitelistedRouteImport.update({
-    id: '/error/card/card-404-02-employee-not-whitelisted',
-    path: '/error/card/card-404-02-employee-not-whitelisted',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40401DeliveryAddressInvalidRoute =
-  ErrorCardCard40401DeliveryAddressInvalidRouteImport.update({
-    id: '/error/card/card-404-01-delivery-address-invalid',
-    path: '/error/card/card-404-01-delivery-address-invalid',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40307SettingsConflictRoute =
-  ErrorCardCard40307SettingsConflictRouteImport.update({
-    id: '/error/card/card-403-07-settings-conflict',
-    path: '/error/card/card-403-07-settings-conflict',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40306NotActivatedRoute =
-  ErrorCardCard40306NotActivatedRouteImport.update({
-    id: '/error/card/card-403-06-not-activated',
-    path: '/error/card/card-403-06-not-activated',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40305ProgramInactiveRoute =
-  ErrorCardCard40305ProgramInactiveRouteImport.update({
-    id: '/error/card/card-403-05-program-inactive',
-    path: '/error/card/card-403-05-program-inactive',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40304FrozenFraudRoute =
-  ErrorCardCard40304FrozenFraudRouteImport.update({
-    id: '/error/card/card-403-04-frozen-fraud',
-    path: '/error/card/card-403-04-frozen-fraud',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40303InternationalBlockedRoute =
-  ErrorCardCard40303InternationalBlockedRouteImport.update({
-    id: '/error/card/card-403-03-international-blocked',
-    path: '/error/card/card-403-03-international-blocked',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40302MerchantBlockedRoute =
-  ErrorCardCard40302MerchantBlockedRouteImport.update({
-    id: '/error/card/card-403-02-merchant-blocked',
-    path: '/error/card/card-403-02-merchant-blocked',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40301KycTierInsufficientRoute =
-  ErrorCardCard40301KycTierInsufficientRouteImport.update({
-    id: '/error/card/card-403-01-kyc-tier-insufficient',
-    path: '/error/card/card-403-01-kyc-tier-insufficient',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40204MinTopupFailedRoute =
-  ErrorCardCard40204MinTopupFailedRouteImport.update({
-    id: '/error/card/card-402-04-min-topup-failed',
-    path: '/error/card/card-402-04-min-topup-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40203ChargebackDisputedRoute =
-  ErrorCardCard40203ChargebackDisputedRouteImport.update({
-    id: '/error/card/card-402-03-chargeback-disputed',
-    path: '/error/card/card-402-03-chargeback-disputed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40202LimitExceededRoute =
-  ErrorCardCard40202LimitExceededRouteImport.update({
-    id: '/error/card/card-402-02-limit-exceeded',
-    path: '/error/card/card-402-02-limit-exceeded',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40201FundingFailedRoute =
-  ErrorCardCard40201FundingFailedRouteImport.update({
-    id: '/error/card/card-402-01-funding-failed',
-    path: '/error/card/card-402-01-funding-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40103CvvAttemptsExceededRoute =
-  ErrorCardCard40103CvvAttemptsExceededRouteImport.update({
-    id: '/error/card/card-401-03-cvv-attempts-exceeded',
-    path: '/error/card/card-401-03-cvv-attempts-exceeded',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40102Pin3xBlockedRoute =
-  ErrorCardCard40102Pin3xBlockedRouteImport.update({
-    id: '/error/card/card-401-02-pin-3x-blocked',
-    path: '/error/card/card-401-02-pin-3x-blocked',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard401013dsFailedRoute =
-  ErrorCardCard401013dsFailedRouteImport.update({
-    id: '/error/card/card-401-01-3ds-failed',
-    path: '/error/card/card-401-01-3ds-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40002ProgramLimitHighRoute =
-  ErrorCardCard40002ProgramLimitHighRouteImport.update({
-    id: '/error/card/card-400-02-program-limit-high',
-    path: '/error/card/card-400-02-program-limit-high',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorCardCard40001VirtualLimitReachedRoute =
-  ErrorCardCard40001VirtualLimitReachedRouteImport.update({
-    id: '/error/card/card-400-01-virtual-limit-reached',
-    path: '/error/card/card-400-01-virtual-limit-reached',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorSessionExpiredRoute =
-  ErrorAdvancedErrorsErrorSessionExpiredRouteImport.update({
-    id: '/error/advanced-errors/error-session-expired',
-    path: '/error/advanced-errors/error-session-expired',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorProcessingHoldRoute =
-  ErrorAdvancedErrorsErrorProcessingHoldRouteImport.update({
-    id: '/error/advanced-errors/error-processing-hold',
-    path: '/error/advanced-errors/error-processing-hold',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorPaymentFailedRoute =
-  ErrorAdvancedErrorsErrorPaymentFailedRouteImport.update({
-    id: '/error/advanced-errors/error-payment-failed',
-    path: '/error/advanced-errors/error-payment-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorMaintenanceRoute =
-  ErrorAdvancedErrorsErrorMaintenanceRouteImport.update({
-    id: '/error/advanced-errors/error-maintenance',
-    path: '/error/advanced-errors/error-maintenance',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorKycFailedRoute =
-  ErrorAdvancedErrorsErrorKycFailedRouteImport.update({
-    id: '/error/advanced-errors/error-kyc-failed',
-    path: '/error/advanced-errors/error-kyc-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsErrorAccountSuspendedRoute =
-  ErrorAdvancedErrorsErrorAccountSuspendedRouteImport.update({
-    id: '/error/advanced-errors/error-account-suspended',
-    path: '/error/advanced-errors/error-account-suspended',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError500Route =
-  ErrorAdvancedErrorsError500RouteImport.update({
-    id: '/error/advanced-errors/error-500',
-    path: '/error/advanced-errors/error-500',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError429Route =
-  ErrorAdvancedErrorsError429RouteImport.update({
-    id: '/error/advanced-errors/error-429',
-    path: '/error/advanced-errors/error-429',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError410Route =
-  ErrorAdvancedErrorsError410RouteImport.update({
-    id: '/error/advanced-errors/error-410',
-    path: '/error/advanced-errors/error-410',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError409Route =
-  ErrorAdvancedErrorsError409RouteImport.update({
-    id: '/error/advanced-errors/error-409',
-    path: '/error/advanced-errors/error-409',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError408Route =
-  ErrorAdvancedErrorsError408RouteImport.update({
-    id: '/error/advanced-errors/error-408',
-    path: '/error/advanced-errors/error-408',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError404Route =
-  ErrorAdvancedErrorsError404RouteImport.update({
-    id: '/error/advanced-errors/error-404',
-    path: '/error/advanced-errors/error-404',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError403Route =
-  ErrorAdvancedErrorsError403RouteImport.update({
-    id: '/error/advanced-errors/error-403',
-    path: '/error/advanced-errors/error-403',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError402Route =
-  ErrorAdvancedErrorsError402RouteImport.update({
-    id: '/error/advanced-errors/error-402',
-    path: '/error/advanced-errors/error-402',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError401Route =
-  ErrorAdvancedErrorsError401RouteImport.update({
-    id: '/error/advanced-errors/error-401',
-    path: '/error/advanced-errors/error-401',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsError400Route =
-  ErrorAdvancedErrorsError400RouteImport.update({
-    id: '/error/advanced-errors/error-400',
-    path: '/error/advanced-errors/error-400',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute =
-  ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport.update({
-    id: '/error/advanced-errors/dev-500-03-elevated-error-rate',
-    path: '/error/advanced-errors/dev-500-03-elevated-error-rate',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev50002TestSuiteFailedRoute =
-  ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport.update({
-    id: '/error/advanced-errors/dev-500-02-test-suite-failed',
-    path: '/error/advanced-errors/dev-500-02-test-suite-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute =
-  ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport.update({
-    id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
-    path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev42902WebhookQueueFullRoute =
-  ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport.update({
-    id: '/error/advanced-errors/dev-429-02-webhook-queue-full',
-    path: '/error/advanced-errors/dev-429-02-webhook-queue-full',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev42901RateLimit100Route =
-  ErrorAdvancedErrorsDev42901RateLimit100RouteImport.update({
-    id: '/error/advanced-errors/dev-429-01-rate-limit-100',
-    path: '/error/advanced-errors/dev-429-01-rate-limit-100',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev41001VersionDeprecatedRoute =
-  ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport.update({
-    id: '/error/advanced-errors/dev-410-01-version-deprecated',
-    path: '/error/advanced-errors/dev-410-01-version-deprecated',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute =
-  ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport.update({
-    id: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
-    path: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40801WebhookTimeoutRoute =
-  ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport.update({
-    id: '/error/advanced-errors/dev-408-01-webhook-timeout',
-    path: '/error/advanced-errors/dev-408-01-webhook-timeout',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40401EndpointNotFoundRoute =
-  ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport.update({
-    id: '/error/advanced-errors/dev-404-01-endpoint-not-found',
-    path: '/error/advanced-errors/dev-404-01-endpoint-not-found',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40304MissingWebhookRoute =
-  ErrorAdvancedErrorsDev40304MissingWebhookRouteImport.update({
-    id: '/error/advanced-errors/dev-403-04-missing-webhook',
-    path: '/error/advanced-errors/dev-403-04-missing-webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute =
-  ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport.update({
-    id: '/error/advanced-errors/dev-403-03-partner-approval-pending',
-    path: '/error/advanced-errors/dev-403-03-partner-approval-pending',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute =
-  ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport.update({
-    id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
-    path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40301ScopeForbiddenRoute =
-  ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport.update({
-    id: '/error/advanced-errors/dev-403-01-scope-forbidden',
-    path: '/error/advanced-errors/dev-403-01-scope-forbidden',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40201OverageBillingRoute =
-  ErrorAdvancedErrorsDev40201OverageBillingRouteImport.update({
-    id: '/error/advanced-errors/dev-402-01-overage-billing',
-    path: '/error/advanced-errors/dev-402-01-overage-billing',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40102OauthRevokedRoute =
-  ErrorAdvancedErrorsDev40102OauthRevokedRouteImport.update({
-    id: '/error/advanced-errors/dev-401-02-oauth-revoked',
-    path: '/error/advanced-errors/dev-401-02-oauth-revoked',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute =
-  ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport.update({
-    id: '/error/advanced-errors/dev-401-01-api-key-invalid',
-    path: '/error/advanced-errors/dev-401-01-api-key-invalid',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40004SdkOutdatedRoute =
-  ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport.update({
-    id: '/error/advanced-errors/dev-400-04-sdk-outdated',
-    path: '/error/advanced-errors/dev-400-04-sdk-outdated',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute =
-  ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport.update({
-    id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
-    path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute =
-  ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport.update({
-    id: '/error/advanced-errors/dev-400-02-signature-verification-failed',
-    path: '/error/advanced-errors/dev-400-02-signature-verification-failed',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ErrorAdvancedErrorsDev40001PayloadValidationRoute =
-  ErrorAdvancedErrorsDev40001PayloadValidationRouteImport.update({
-    id: '/error/advanced-errors/dev-400-01-payload-validation',
-    path: '/error/advanced-errors/dev-400-01-payload-validation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const CardsAppVirtualDebitCardsRoute =
-  CardsAppVirtualDebitCardsRouteImport.update({
-    id: '/virtual-debit-cards',
-    path: '/virtual-debit-cards',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppVirtualCreditCardsRoute =
-  CardsAppVirtualCreditCardsRouteImport.update({
-    id: '/virtual-credit-cards',
-    path: '/virtual-credit-cards',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppPrepaidCardManagementRoute =
-  CardsAppPrepaidCardManagementRouteImport.update({
-    id: '/prepaid-card-management',
-    path: '/prepaid-card-management',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppPhysicalDebitCardsRoute =
-  CardsAppPhysicalDebitCardsRouteImport.update({
-    id: '/physical-debit-cards',
-    path: '/physical-debit-cards',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppCorporateBusinessCardsRoute =
-  CardsAppCorporateBusinessCardsRouteImport.update({
-    id: '/corporate-business-cards',
-    path: '/corporate-business-cards',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppCardSettingsSupportRoute =
-  CardsAppCardSettingsSupportRouteImport.update({
-    id: '/card-settings-support',
-    path: '/card-settings-support',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppCardSecurityFraudPreventionRoute =
-  CardsAppCardSecurityFraudPreventionRouteImport.update({
-    id: '/card-security-fraud-prevention',
-    path: '/card-security-fraud-prevention',
-    getParentRoute: () => CardsAppRoute,
-  } as any)
-const CardsAppCardProgramAdministrationRoute =
-  CardsAppCardProgramAdministrationRouteImport.update({
-    id: '/card-program-administration',
-    path: '/card-program-administration',
+const CardsAppCardAnalyticsReportingRoute =
+  CardsAppCardAnalyticsReportingRouteImport.update({
+    id: '/card-analytics-reporting',
+    path: '/card-analytics-reporting',
     getParentRoute: () => CardsAppRoute,
   } as any)
 const CardsAppCardCommandCenterRoute =
@@ -1427,17 +693,770 @@ const CardsAppCardCommandCenterRoute =
     path: '/card-command-center',
     getParentRoute: () => CardsAppRoute,
   } as any)
-const CardsAppCardAnalyticsReportingRoute =
-  CardsAppCardAnalyticsReportingRouteImport.update({
-    id: '/card-analytics-reporting',
-    path: '/card-analytics-reporting',
+const CardsAppCardProgramAdministrationRoute =
+  CardsAppCardProgramAdministrationRouteImport.update({
+    id: '/card-program-administration',
+    path: '/card-program-administration',
     getParentRoute: () => CardsAppRoute,
   } as any)
+const CardsAppCardSecurityFraudPreventionRoute =
+  CardsAppCardSecurityFraudPreventionRouteImport.update({
+    id: '/card-security-fraud-prevention',
+    path: '/card-security-fraud-prevention',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCardSettingsSupportRoute =
+  CardsAppCardSettingsSupportRouteImport.update({
+    id: '/card-settings-support',
+    path: '/card-settings-support',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppCorporateBusinessCardsRoute =
+  CardsAppCorporateBusinessCardsRouteImport.update({
+    id: '/corporate-business-cards',
+    path: '/corporate-business-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppPhysicalDebitCardsRoute =
+  CardsAppPhysicalDebitCardsRouteImport.update({
+    id: '/physical-debit-cards',
+    path: '/physical-debit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppPrepaidCardManagementRoute =
+  CardsAppPrepaidCardManagementRouteImport.update({
+    id: '/prepaid-card-management',
+    path: '/prepaid-card-management',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppVirtualCreditCardsRoute =
+  CardsAppVirtualCreditCardsRouteImport.update({
+    id: '/virtual-credit-cards',
+    path: '/virtual-credit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const CardsAppVirtualDebitCardsRoute =
+  CardsAppVirtualDebitCardsRouteImport.update({
+    id: '/virtual-debit-cards',
+    path: '/virtual-debit-cards',
+    getParentRoute: () => CardsAppRoute,
+  } as any)
+const ErrorAdvancedErrorsDev40001PayloadValidationRoute =
+  ErrorAdvancedErrorsDev40001PayloadValidationRouteImport.update({
+    id: '/error/advanced-errors/dev-400-01-payload-validation',
+    path: '/error/advanced-errors/dev-400-01-payload-validation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute =
+  ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-400-02-signature-verification-failed',
+    path: '/error/advanced-errors/dev-400-02-signature-verification-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute =
+  ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport.update({
+    id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
+    path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40004SdkOutdatedRoute =
+  ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport.update({
+    id: '/error/advanced-errors/dev-400-04-sdk-outdated',
+    path: '/error/advanced-errors/dev-400-04-sdk-outdated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40101ApiKeyInvalidRoute =
+  ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport.update({
+    id: '/error/advanced-errors/dev-401-01-api-key-invalid',
+    path: '/error/advanced-errors/dev-401-01-api-key-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40102OauthRevokedRoute =
+  ErrorAdvancedErrorsDev40102OauthRevokedRouteImport.update({
+    id: '/error/advanced-errors/dev-401-02-oauth-revoked',
+    path: '/error/advanced-errors/dev-401-02-oauth-revoked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40201OverageBillingRoute =
+  ErrorAdvancedErrorsDev40201OverageBillingRouteImport.update({
+    id: '/error/advanced-errors/dev-402-01-overage-billing',
+    path: '/error/advanced-errors/dev-402-01-overage-billing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40301ScopeForbiddenRoute =
+  ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport.update({
+    id: '/error/advanced-errors/dev-403-01-scope-forbidden',
+    path: '/error/advanced-errors/dev-403-01-scope-forbidden',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40302IpWhitelistViolationRoute =
+  ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport.update({
+    id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
+    path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40303PartnerApprovalPendingRoute =
+  ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport.update({
+    id: '/error/advanced-errors/dev-403-03-partner-approval-pending',
+    path: '/error/advanced-errors/dev-403-03-partner-approval-pending',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40304MissingWebhookRoute =
+  ErrorAdvancedErrorsDev40304MissingWebhookRouteImport.update({
+    id: '/error/advanced-errors/dev-403-04-missing-webhook',
+    path: '/error/advanced-errors/dev-403-04-missing-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40401EndpointNotFoundRoute =
+  ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport.update({
+    id: '/error/advanced-errors/dev-404-01-endpoint-not-found',
+    path: '/error/advanced-errors/dev-404-01-endpoint-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40801WebhookTimeoutRoute =
+  ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport.update({
+    id: '/error/advanced-errors/dev-408-01-webhook-timeout',
+    path: '/error/advanced-errors/dev-408-01-webhook-timeout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev40901DuplicateIdempotencyRoute =
+  ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport.update({
+    id: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
+    path: '/error/advanced-errors/dev-409-01-duplicate-idempotency',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev41001VersionDeprecatedRoute =
+  ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport.update({
+    id: '/error/advanced-errors/dev-410-01-version-deprecated',
+    path: '/error/advanced-errors/dev-410-01-version-deprecated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev42901RateLimit100Route =
+  ErrorAdvancedErrorsDev42901RateLimit100RouteImport.update({
+    id: '/error/advanced-errors/dev-429-01-rate-limit-100',
+    path: '/error/advanced-errors/dev-429-01-rate-limit-100',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev42902WebhookQueueFullRoute =
+  ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport.update({
+    id: '/error/advanced-errors/dev-429-02-webhook-queue-full',
+    path: '/error/advanced-errors/dev-429-02-webhook-queue-full',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRoute =
+  ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
+    path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50002TestSuiteFailedRoute =
+  ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport.update({
+    id: '/error/advanced-errors/dev-500-02-test-suite-failed',
+    path: '/error/advanced-errors/dev-500-02-test-suite-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsDev50003ElevatedErrorRateRoute =
+  ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport.update({
+    id: '/error/advanced-errors/dev-500-03-elevated-error-rate',
+    path: '/error/advanced-errors/dev-500-03-elevated-error-rate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError400Route =
+  ErrorAdvancedErrorsError400RouteImport.update({
+    id: '/error/advanced-errors/error-400',
+    path: '/error/advanced-errors/error-400',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError401Route =
+  ErrorAdvancedErrorsError401RouteImport.update({
+    id: '/error/advanced-errors/error-401',
+    path: '/error/advanced-errors/error-401',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError402Route =
+  ErrorAdvancedErrorsError402RouteImport.update({
+    id: '/error/advanced-errors/error-402',
+    path: '/error/advanced-errors/error-402',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError403Route =
+  ErrorAdvancedErrorsError403RouteImport.update({
+    id: '/error/advanced-errors/error-403',
+    path: '/error/advanced-errors/error-403',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError404Route =
+  ErrorAdvancedErrorsError404RouteImport.update({
+    id: '/error/advanced-errors/error-404',
+    path: '/error/advanced-errors/error-404',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError408Route =
+  ErrorAdvancedErrorsError408RouteImport.update({
+    id: '/error/advanced-errors/error-408',
+    path: '/error/advanced-errors/error-408',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError409Route =
+  ErrorAdvancedErrorsError409RouteImport.update({
+    id: '/error/advanced-errors/error-409',
+    path: '/error/advanced-errors/error-409',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError410Route =
+  ErrorAdvancedErrorsError410RouteImport.update({
+    id: '/error/advanced-errors/error-410',
+    path: '/error/advanced-errors/error-410',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError429Route =
+  ErrorAdvancedErrorsError429RouteImport.update({
+    id: '/error/advanced-errors/error-429',
+    path: '/error/advanced-errors/error-429',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsError500Route =
+  ErrorAdvancedErrorsError500RouteImport.update({
+    id: '/error/advanced-errors/error-500',
+    path: '/error/advanced-errors/error-500',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorAccountSuspendedRoute =
+  ErrorAdvancedErrorsErrorAccountSuspendedRouteImport.update({
+    id: '/error/advanced-errors/error-account-suspended',
+    path: '/error/advanced-errors/error-account-suspended',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorKycFailedRoute =
+  ErrorAdvancedErrorsErrorKycFailedRouteImport.update({
+    id: '/error/advanced-errors/error-kyc-failed',
+    path: '/error/advanced-errors/error-kyc-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorMaintenanceRoute =
+  ErrorAdvancedErrorsErrorMaintenanceRouteImport.update({
+    id: '/error/advanced-errors/error-maintenance',
+    path: '/error/advanced-errors/error-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorPaymentFailedRoute =
+  ErrorAdvancedErrorsErrorPaymentFailedRouteImport.update({
+    id: '/error/advanced-errors/error-payment-failed',
+    path: '/error/advanced-errors/error-payment-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorProcessingHoldRoute =
+  ErrorAdvancedErrorsErrorProcessingHoldRouteImport.update({
+    id: '/error/advanced-errors/error-processing-hold',
+    path: '/error/advanced-errors/error-processing-hold',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorAdvancedErrorsErrorSessionExpiredRoute =
+  ErrorAdvancedErrorsErrorSessionExpiredRouteImport.update({
+    id: '/error/advanced-errors/error-session-expired',
+    path: '/error/advanced-errors/error-session-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40001VirtualLimitReachedRoute =
+  ErrorCardCard40001VirtualLimitReachedRouteImport.update({
+    id: '/error/card/card-400-01-virtual-limit-reached',
+    path: '/error/card/card-400-01-virtual-limit-reached',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40002ProgramLimitHighRoute =
+  ErrorCardCard40002ProgramLimitHighRouteImport.update({
+    id: '/error/card/card-400-02-program-limit-high',
+    path: '/error/card/card-400-02-program-limit-high',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard401013dsFailedRoute =
+  ErrorCardCard401013dsFailedRouteImport.update({
+    id: '/error/card/card-401-01-3ds-failed',
+    path: '/error/card/card-401-01-3ds-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40102Pin3xBlockedRoute =
+  ErrorCardCard40102Pin3xBlockedRouteImport.update({
+    id: '/error/card/card-401-02-pin-3x-blocked',
+    path: '/error/card/card-401-02-pin-3x-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40103CvvAttemptsExceededRoute =
+  ErrorCardCard40103CvvAttemptsExceededRouteImport.update({
+    id: '/error/card/card-401-03-cvv-attempts-exceeded',
+    path: '/error/card/card-401-03-cvv-attempts-exceeded',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40201FundingFailedRoute =
+  ErrorCardCard40201FundingFailedRouteImport.update({
+    id: '/error/card/card-402-01-funding-failed',
+    path: '/error/card/card-402-01-funding-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40202LimitExceededRoute =
+  ErrorCardCard40202LimitExceededRouteImport.update({
+    id: '/error/card/card-402-02-limit-exceeded',
+    path: '/error/card/card-402-02-limit-exceeded',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40203ChargebackDisputedRoute =
+  ErrorCardCard40203ChargebackDisputedRouteImport.update({
+    id: '/error/card/card-402-03-chargeback-disputed',
+    path: '/error/card/card-402-03-chargeback-disputed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40204MinTopupFailedRoute =
+  ErrorCardCard40204MinTopupFailedRouteImport.update({
+    id: '/error/card/card-402-04-min-topup-failed',
+    path: '/error/card/card-402-04-min-topup-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40301KycTierInsufficientRoute =
+  ErrorCardCard40301KycTierInsufficientRouteImport.update({
+    id: '/error/card/card-403-01-kyc-tier-insufficient',
+    path: '/error/card/card-403-01-kyc-tier-insufficient',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40302MerchantBlockedRoute =
+  ErrorCardCard40302MerchantBlockedRouteImport.update({
+    id: '/error/card/card-403-02-merchant-blocked',
+    path: '/error/card/card-403-02-merchant-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40303InternationalBlockedRoute =
+  ErrorCardCard40303InternationalBlockedRouteImport.update({
+    id: '/error/card/card-403-03-international-blocked',
+    path: '/error/card/card-403-03-international-blocked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40304FrozenFraudRoute =
+  ErrorCardCard40304FrozenFraudRouteImport.update({
+    id: '/error/card/card-403-04-frozen-fraud',
+    path: '/error/card/card-403-04-frozen-fraud',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40305ProgramInactiveRoute =
+  ErrorCardCard40305ProgramInactiveRouteImport.update({
+    id: '/error/card/card-403-05-program-inactive',
+    path: '/error/card/card-403-05-program-inactive',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40306NotActivatedRoute =
+  ErrorCardCard40306NotActivatedRouteImport.update({
+    id: '/error/card/card-403-06-not-activated',
+    path: '/error/card/card-403-06-not-activated',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40307SettingsConflictRoute =
+  ErrorCardCard40307SettingsConflictRouteImport.update({
+    id: '/error/card/card-403-07-settings-conflict',
+    path: '/error/card/card-403-07-settings-conflict',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40401DeliveryAddressInvalidRoute =
+  ErrorCardCard40401DeliveryAddressInvalidRouteImport.update({
+    id: '/error/card/card-404-01-delivery-address-invalid',
+    path: '/error/card/card-404-01-delivery-address-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40402EmployeeNotWhitelistedRoute =
+  ErrorCardCard40402EmployeeNotWhitelistedRouteImport.update({
+    id: '/error/card/card-404-02-employee-not-whitelisted',
+    path: '/error/card/card-404-02-employee-not-whitelisted',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40801PersonalizationFailedRoute =
+  ErrorCardCard40801PersonalizationFailedRouteImport.update({
+    id: '/error/card/card-408-01-personalization-failed',
+    path: '/error/card/card-408-01-personalization-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard40901AlreadyExistsEmployeeRoute =
+  ErrorCardCard40901AlreadyExistsEmployeeRouteImport.update({
+    id: '/error/card/card-409-01-already-exists-employee',
+    path: '/error/card/card-409-01-already-exists-employee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard41001ExpiredRoute =
+  ErrorCardCard41001ExpiredRouteImport.update({
+    id: '/error/card/card-410-01-expired',
+    path: '/error/card/card-410-01-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorCardCard50001ProcessorDownRoute =
+  ErrorCardCard50001ProcessorDownRouteImport.update({
+    id: '/error/card/card-500-01-processor-down',
+    path: '/error/card/card-500-01-processor-down',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40001RecipientNotFoundRoute =
+  ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport.update({
+    id: '/error/transaction-errors/tx-400-01-recipient-not-found',
+    path: '/error/transaction-errors/tx-400-01-recipient-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRoute =
+  ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport.update({
+    id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
+    path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40003BankOfflineRoute =
+  ErrorTransactionErrorsTx40003BankOfflineRouteImport.update({
+    id: '/error/transaction-errors/tx-400-03-bank-offline',
+    path: '/error/transaction-errors/tx-400-03-bank-offline',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40004InvalidMobileNetworkRoute =
+  ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport.update({
+    id: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
+    path: '/error/transaction-errors/tx-400-04-invalid-mobile-network',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40005CurrencyNotAllowedRoute =
+  ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport.update({
+    id: '/error/transaction-errors/tx-400-05-currency-not-allowed',
+    path: '/error/transaction-errors/tx-400-05-currency-not-allowed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40101Pin3xLockedRoute =
+  ErrorTransactionErrorsTx40101Pin3xLockedRouteImport.update({
+    id: '/error/transaction-errors/tx-401-01-pin-3x-locked',
+    path: '/error/transaction-errors/tx-401-01-pin-3x-locked',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40102WrongPinOtpExpiredRoute =
+  ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport.update({
+    id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
+    path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40201InsufficientBalanceRoute =
+  ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport.update({
+    id: '/error/transaction-errors/tx-402-01-insufficient-balance',
+    path: '/error/transaction-errors/tx-402-01-insufficient-balance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40202AmountMinMaxRoute =
+  ErrorTransactionErrorsTx40202AmountMinMaxRouteImport.update({
+    id: '/error/transaction-errors/tx-402-02-amount-min-max',
+    path: '/error/transaction-errors/tx-402-02-amount-min-max',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40203DailyLimitReachedRoute =
+  ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport.update({
+    id: '/error/transaction-errors/tx-402-03-daily-limit-reached',
+    path: '/error/transaction-errors/tx-402-03-daily-limit-reached',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40204PerTxnLimitRoute =
+  ErrorTransactionErrorsTx40204PerTxnLimitRouteImport.update({
+    id: '/error/transaction-errors/tx-402-04-per-txn-limit',
+    path: '/error/transaction-errors/tx-402-04-per-txn-limit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40205FeeCalculationFailedRoute =
+  ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
+    path: '/error/transaction-errors/tx-402-05-fee-calculation-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40301AmlHoldRoute =
+  ErrorTransactionErrorsTx40301AmlHoldRouteImport.update({
+    id: '/error/transaction-errors/tx-403-01-aml-hold',
+    path: '/error/transaction-errors/tx-403-01-aml-hold',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40302KraTaxFailedRoute =
+  ErrorTransactionErrorsTx40302KraTaxFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-403-02-kra-tax-failed',
+    path: '/error/transaction-errors/tx-403-02-kra-tax-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40303AccountFrozenRoute =
+  ErrorTransactionErrorsTx40303AccountFrozenRouteImport.update({
+    id: '/error/transaction-errors/tx-403-03-account-frozen',
+    path: '/error/transaction-errors/tx-403-03-account-frozen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40401MpesaNotRegisteredRoute =
+  ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport.update({
+    id: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
+    path: '/error/transaction-errors/tx-404-01-mpesa-not-registered',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40402PurposeCodeMissingRoute =
+  ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport.update({
+    id: '/error/transaction-errors/tx-404-02-purpose-code-missing',
+    path: '/error/transaction-errors/tx-404-02-purpose-code-missing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40801MpesaStkTimeoutRoute =
+  ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport.update({
+    id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
+    path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40901DuplicateTransactionRoute =
+  ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport.update({
+    id: '/error/transaction-errors/tx-409-01-duplicate-transaction',
+    path: '/error/transaction-errors/tx-409-01-duplicate-transaction',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40902FxQuoteExpiredMidRoute =
+  ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport.update({
+    id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
+    path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx40903ReconciliationMismatchRoute =
+  ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport.update({
+    id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
+    path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx41001TxnExpiredRoute =
+  ErrorTransactionErrorsTx41001TxnExpiredRouteImport.update({
+    id: '/error/transaction-errors/tx-410-01-txn-expired',
+    path: '/error/transaction-errors/tx-410-01-txn-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42201NameMismatchRoute =
+  ErrorTransactionErrorsTx42201NameMismatchRouteImport.update({
+    id: '/error/transaction-errors/tx-422-01-name-mismatch',
+    path: '/error/transaction-errors/tx-422-01-name-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRoute =
+  ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport.update({
+    id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
+    path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42301RtgsCutoffRoute =
+  ErrorTransactionErrorsTx42301RtgsCutoffRouteImport.update({
+    id: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
+    path: '/error/transaction-errors/tx-423-01-rtgs-cutoff',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx42901ThrottledRoute =
+  ErrorTransactionErrorsTx42901ThrottledRouteImport.update({
+    id: '/error/transaction-errors/tx-429-01-throttled',
+    path: '/error/transaction-errors/tx-429-01-throttled',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx50001SettlementDelayedRoute =
+  ErrorTransactionErrorsTx50001SettlementDelayedRouteImport.update({
+    id: '/error/transaction-errors/tx-500-01-settlement-delayed',
+    path: '/error/transaction-errors/tx-500-01-settlement-delayed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorTransactionErrorsTx50002LiquidityFailedRoute =
+  ErrorTransactionErrorsTx50002LiquidityFailedRouteImport.update({
+    id: '/error/transaction-errors/tx-500-02-liquidity-failed',
+    path: '/error/transaction-errors/tx-500-02-liquidity-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40001NameMismatchRoute =
+  ErrorUtilityErrorsUtil40001NameMismatchRouteImport.update({
+    id: '/error/utility-errors/util-400-01-name-mismatch',
+    path: '/error/utility-errors/util-400-01-name-mismatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40201AmountBelowMinRoute =
+  ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport.update({
+    id: '/error/utility-errors/util-402-01-amount-below-min',
+    path: '/error/utility-errors/util-402-01-amount-below-min',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRoute =
+  ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport.update({
+    id: '/error/utility-errors/util-402-02-insufficient-balance-utility',
+    path: '/error/utility-errors/util-402-02-insufficient-balance-utility',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40203ProviderNotSupportedRoute =
+  ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport.update({
+    id: '/error/utility-errors/util-402-03-provider-not-supported',
+    path: '/error/utility-errors/util-402-03-provider-not-supported',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40301AutomationFailedRoute =
+  ErrorUtilityErrorsUtil40301AutomationFailedRouteImport.update({
+    id: '/error/utility-errors/util-403-01-automation-failed',
+    path: '/error/utility-errors/util-403-01-automation-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40401MeterNotFoundRoute =
+  ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport.update({
+    id: '/error/utility-errors/util-404-01-meter-not-found',
+    path: '/error/utility-errors/util-404-01-meter-not-found',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40402InternetInvalidRoute =
+  ErrorUtilityErrorsUtil40402InternetInvalidRouteImport.update({
+    id: '/error/utility-errors/util-404-02-internet-invalid',
+    path: '/error/utility-errors/util-404-02-internet-invalid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40403AirtimeUnreachableRoute =
+  ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport.update({
+    id: '/error/utility-errors/util-404-03-airtime-unreachable',
+    path: '/error/utility-errors/util-404-03-airtime-unreachable',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40801PendingConfirmationRoute =
+  ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport.update({
+    id: '/error/utility-errors/util-408-01-pending-confirmation',
+    path: '/error/utility-errors/util-408-01-pending-confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40901BillAlreadyPaidRoute =
+  ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport.update({
+    id: '/error/utility-errors/util-409-01-bill-already-paid',
+    path: '/error/utility-errors/util-409-01-bill-already-paid',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil40902AutomationConflictRoute =
+  ErrorUtilityErrorsUtil40902AutomationConflictRouteImport.update({
+    id: '/error/utility-errors/util-409-02-automation-conflict',
+    path: '/error/utility-errors/util-409-02-automation-conflict',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil41001ProviderMaintenanceRoute =
+  ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport.update({
+    id: '/error/utility-errors/util-410-01-provider-maintenance',
+    path: '/error/utility-errors/util-410-01-provider-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil42901RateLimitedRoute =
+  ErrorUtilityErrorsUtil42901RateLimitedRouteImport.update({
+    id: '/error/utility-errors/util-429-01-rate-limited',
+    path: '/error/utility-errors/util-429-01-rate-limited',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorUtilityErrorsUtil50001TokenGenFailedRoute =
+  ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport.update({
+    id: '/error/utility-errors/util-500-01-token-gen-failed',
+    path: '/error/utility-errors/util-500-01-token-gen-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PmAppIndexRoute = PmAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppSectionRoute = PmAppSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppAccountRoute = PmAppAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppAnalyticsRoute = PmAppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppComplianceRoute = PmAppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppCustomersRoute = PmAppCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppDisputesRoute = PmAppDisputesRouteImport.update({
+  id: '/disputes',
+  path: '/disputes',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppFeesRoute = PmAppFeesRouteImport.update({
+  id: '/fees',
+  path: '/fees',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppFxRoute = PmAppFxRouteImport.update({
+  id: '/fx',
+  path: '/fx',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppInitiateTransferRoute = PmAppInitiateTransferRouteImport.update({
+  id: '/initiate-transfer',
+  path: '/initiate-transfer',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppKraGovernmentRoute = PmAppKraGovernmentRouteImport.update({
+  id: '/kra-government',
+  path: '/kra-government',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppLiquidityRoute = PmAppLiquidityRouteImport.update({
+  id: '/liquidity',
+  path: '/liquidity',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppMobileMoneyRoute = PmAppMobileMoneyRouteImport.update({
+  id: '/mobile-money',
+  path: '/mobile-money',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppOnboardingRoute = PmAppOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppOpsHealthRoute = PmAppOpsHealthRouteImport.update({
+  id: '/ops-health',
+  path: '/ops-health',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppPaymentRailsRoute = PmAppPaymentRailsRouteImport.update({
+  id: '/payment-rails',
+  path: '/payment-rails',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppReconciliationRoute = PmAppReconciliationRouteImport.update({
+  id: '/reconciliation',
+  path: '/reconciliation',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppSettingsRoute = PmAppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppSettlementRoute = PmAppSettlementRouteImport.update({
+  id: '/settlement',
+  path: '/settlement',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppTransferManagementRoute = PmAppTransferManagementRouteImport.update({
+  id: '/transfer-management',
+  path: '/transfer-management',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppTransferOverviewRoute = PmAppTransferOverviewRouteImport.update({
+  id: '/transfer-overview',
+  path: '/transfer-overview',
+  getParentRoute: () => PmAppRoute,
+} as any)
+const PmAppTransfersRoute = PmAppTransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
+  getParentRoute: () => PmAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
   '/business': typeof HomeBusinessRoute
   '/business-dashboard': typeof BusinessDashboardRouteWithChildren
+  '/cards-shell': typeof CardsShellRouteWithChildren
   '/dev': typeof DevRouteWithChildren
   '/dev-dashboard': typeof DevDashboardRouteWithChildren
   '/login': typeof LoginRoute
@@ -1487,6 +1506,7 @@ export interface FileRoutesByFullPath {
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
+  '/cards-shell/$section': typeof CardsShellSectionRoute
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
   '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
@@ -1510,6 +1530,7 @@ export interface FileRoutesByFullPath {
   '/utility/water': typeof UtilityWaterRoute
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
+  '/cards-shell/': typeof CardsShellIndexRoute
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
@@ -1695,6 +1716,7 @@ export interface FileRoutesByTo {
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
+  '/cards-shell/$section': typeof CardsShellSectionRoute
   '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
   '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
   '/dev-dashboard/compliance-audit': typeof DevDashboardComplianceAuditRoute
@@ -1716,6 +1738,7 @@ export interface FileRoutesByTo {
   '/utility/water': typeof UtilityWaterRoute
   '/': typeof HomeIndexRoute
   '/business-dashboard': typeof BusinessDashboardIndexRoute
+  '/cards-shell': typeof CardsShellIndexRoute
   '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
@@ -1858,6 +1881,7 @@ export interface FileRoutesById {
   '/_home': typeof HomeRouteWithChildren
   '/business': typeof BusinessRouteWithChildren
   '/business-dashboard': typeof BusinessDashboardRouteWithChildren
+  '/cards-shell': typeof CardsShellRouteWithChildren
   '/dev': typeof DevRouteWithChildren
   '/dev-dashboard': typeof DevDashboardRouteWithChildren
   '/login': typeof LoginRoute
@@ -1908,6 +1932,7 @@ export interface FileRoutesById {
   '/business-dashboard/treasury-cash': typeof BusinessDashboardTreasuryCashRoute
   '/business-dashboard/virtual-accounts': typeof BusinessDashboardVirtualAccountsRoute
   '/business/$module': typeof BusinessModuleRoute
+  '/cards-shell/$section': typeof CardsShellSectionRoute
   '/cards/app': typeof CardsAppRouteWithChildren
   '/dev-dashboard/api-governance': typeof DevDashboardApiGovernanceRoute
   '/dev-dashboard/api-reference': typeof DevDashboardApiReferenceRoute
@@ -1932,6 +1957,7 @@ export interface FileRoutesById {
   '/_home/': typeof HomeIndexRoute
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
+  '/cards-shell/': typeof CardsShellIndexRoute
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
@@ -2075,6 +2101,7 @@ export interface FileRouteTypes {
     | '/'
     | '/business'
     | '/business-dashboard'
+    | '/cards-shell'
     | '/dev'
     | '/dev-dashboard'
     | '/login'
@@ -2124,6 +2151,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/treasury-cash'
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
+    | '/cards-shell/$section'
     | '/cards/app'
     | '/dev-dashboard/api-governance'
     | '/dev-dashboard/api-reference'
@@ -2147,6 +2175,7 @@ export interface FileRouteTypes {
     | '/utility/water'
     | '/business-dashboard/'
     | '/business/'
+    | '/cards-shell/'
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
@@ -2332,6 +2361,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/treasury-cash'
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
+    | '/cards-shell/$section'
     | '/dev-dashboard/api-governance'
     | '/dev-dashboard/api-reference'
     | '/dev-dashboard/compliance-audit'
@@ -2353,6 +2383,7 @@ export interface FileRouteTypes {
     | '/utility/water'
     | '/'
     | '/business-dashboard'
+    | '/cards-shell'
     | '/dev-dashboard'
     | '/dev'
     | '/utility'
@@ -2494,6 +2525,7 @@ export interface FileRouteTypes {
     | '/_home'
     | '/business'
     | '/business-dashboard'
+    | '/cards-shell'
     | '/dev'
     | '/dev-dashboard'
     | '/login'
@@ -2544,6 +2576,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/treasury-cash'
     | '/business-dashboard/virtual-accounts'
     | '/business/$module'
+    | '/cards-shell/$section'
     | '/cards/app'
     | '/dev-dashboard/api-governance'
     | '/dev-dashboard/api-reference'
@@ -2568,6 +2601,7 @@ export interface FileRouteTypes {
     | '/_home/'
     | '/business-dashboard/'
     | '/business/'
+    | '/cards-shell/'
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
@@ -2710,6 +2744,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
   BusinessRoute: typeof BusinessRouteWithChildren
   BusinessDashboardRoute: typeof BusinessDashboardRouteWithChildren
+  CardsShellRoute: typeof CardsShellRouteWithChildren
   DevRoute: typeof DevRouteWithChildren
   DevDashboardRoute: typeof DevDashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -2830,46 +2865,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wallet-activation': {
-      id: '/wallet-activation'
-      path: '/wallet-activation'
-      fullPath: '/wallet-activation'
-      preLoaderRoute: typeof WalletActivationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/utility': {
-      id: '/utility'
-      path: '/utility'
-      fullPath: '/utility'
-      preLoaderRoute: typeof UtilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev-dashboard': {
-      id: '/dev-dashboard'
-      path: '/dev-dashboard'
-      fullPath: '/dev-dashboard'
-      preLoaderRoute: typeof DevDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev': {
-      id: '/dev'
-      path: '/dev'
-      fullPath: '/dev'
-      preLoaderRoute: typeof DevRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business-dashboard': {
-      id: '/business-dashboard'
-      path: '/business-dashboard'
-      fullPath: '/business-dashboard'
-      preLoaderRoute: typeof BusinessDashboardRouteImport
+    '/_home': {
+      id: '/_home'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business': {
@@ -2879,47 +2879,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_home': {
-      id: '/_home'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof HomeRouteImport
+    '/business-dashboard': {
+      id: '/business-dashboard'
+      path: '/business-dashboard'
+      fullPath: '/business-dashboard'
+      preLoaderRoute: typeof BusinessDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/utility/': {
-      id: '/utility/'
-      path: '/'
-      fullPath: '/utility/'
-      preLoaderRoute: typeof UtilityIndexRouteImport
-      parentRoute: typeof UtilityRoute
+    '/cards-shell': {
+      id: '/cards-shell'
+      path: '/cards-shell'
+      fullPath: '/cards-shell'
+      preLoaderRoute: typeof CardsShellRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dev/': {
-      id: '/dev/'
-      path: '/'
-      fullPath: '/dev/'
-      preLoaderRoute: typeof DevIndexRouteImport
-      parentRoute: typeof DevRoute
+    '/dev': {
+      id: '/dev'
+      path: '/dev'
+      fullPath: '/dev'
+      preLoaderRoute: typeof DevRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dev-dashboard/': {
-      id: '/dev-dashboard/'
-      path: '/'
-      fullPath: '/dev-dashboard/'
-      preLoaderRoute: typeof DevDashboardIndexRouteImport
-      parentRoute: typeof DevDashboardRoute
+    '/dev-dashboard': {
+      id: '/dev-dashboard'
+      path: '/dev-dashboard'
+      fullPath: '/dev-dashboard'
+      preLoaderRoute: typeof DevDashboardRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/business/': {
-      id: '/business/'
-      path: '/'
-      fullPath: '/business/'
-      preLoaderRoute: typeof BusinessIndexRouteImport
-      parentRoute: typeof BusinessRoute
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/business-dashboard/': {
-      id: '/business-dashboard/'
-      path: '/'
-      fullPath: '/business-dashboard/'
-      preLoaderRoute: typeof BusinessDashboardIndexRouteImport
-      parentRoute: typeof BusinessDashboardRoute
+    '/utility': {
+      id: '/utility'
+      path: '/utility'
+      fullPath: '/utility'
+      preLoaderRoute: typeof UtilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet-activation': {
+      id: '/wallet-activation'
+      path: '/wallet-activation'
+      fullPath: '/wallet-activation'
+      preLoaderRoute: typeof WalletActivationRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_home/': {
       id: '/_home/'
@@ -2928,445 +2935,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRoute
     }
-    '/utility/water': {
-      id: '/utility/water'
-      path: '/water'
-      fullPath: '/utility/water'
-      preLoaderRoute: typeof UtilityWaterRouteImport
-      parentRoute: typeof UtilityRoute
+    '/_home/business': {
+      id: '/_home/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof HomeBusinessRouteImport
+      parentRoute: typeof HomeRoute
     }
-    '/utility/settings': {
-      id: '/utility/settings'
-      path: '/settings'
-      fullPath: '/utility/settings'
-      preLoaderRoute: typeof UtilitySettingsRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/utility/internet': {
-      id: '/utility/internet'
-      path: '/internet'
-      fullPath: '/utility/internet'
-      preLoaderRoute: typeof UtilityInternetRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/utility/electricity': {
-      id: '/utility/electricity'
-      path: '/electricity'
-      fullPath: '/utility/electricity'
-      preLoaderRoute: typeof UtilityElectricityRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/utility/airtime': {
-      id: '/utility/airtime'
-      path: '/airtime'
-      fullPath: '/utility/airtime'
-      preLoaderRoute: typeof UtilityAirtimeRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/utility/$module': {
-      id: '/utility/$module'
-      path: '/$module'
-      fullPath: '/utility/$module'
-      preLoaderRoute: typeof UtilityModuleRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/pm/app': {
-      id: '/pm/app'
-      path: '/pm/app'
-      fullPath: '/pm/app'
-      preLoaderRoute: typeof PmAppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev/$module': {
-      id: '/dev/$module'
-      path: '/$module'
-      fullPath: '/dev/$module'
-      preLoaderRoute: typeof DevModuleRouteImport
-      parentRoute: typeof DevRoute
-    }
-    '/dev-dashboard/webhooks-events': {
-      id: '/dev-dashboard/webhooks-events'
-      path: '/webhooks-events'
-      fullPath: '/dev-dashboard/webhooks-events'
-      preLoaderRoute: typeof DevDashboardWebhooksEventsRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/support-slas': {
-      id: '/dev-dashboard/support-slas'
-      path: '/support-slas'
-      fullPath: '/dev-dashboard/support-slas'
-      preLoaderRoute: typeof DevDashboardSupportSlasRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/security': {
-      id: '/dev-dashboard/security'
-      path: '/security'
-      fullPath: '/dev-dashboard/security'
-      preLoaderRoute: typeof DevDashboardSecurityRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/sdks': {
-      id: '/dev-dashboard/sdks'
-      path: '/sdks'
-      fullPath: '/dev-dashboard/sdks'
-      preLoaderRoute: typeof DevDashboardSdksRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/playground': {
-      id: '/dev-dashboard/playground'
-      path: '/playground'
-      fullPath: '/dev-dashboard/playground'
-      preLoaderRoute: typeof DevDashboardPlaygroundRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/partner-marketplace': {
-      id: '/dev-dashboard/partner-marketplace'
-      path: '/partner-marketplace'
-      fullPath: '/dev-dashboard/partner-marketplace'
-      preLoaderRoute: typeof DevDashboardPartnerMarketplaceRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/monitoring-incidents': {
-      id: '/dev-dashboard/monitoring-incidents'
-      path: '/monitoring-incidents'
-      fullPath: '/dev-dashboard/monitoring-incidents'
-      preLoaderRoute: typeof DevDashboardMonitoringIncidentsRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/integration-architecture': {
-      id: '/dev-dashboard/integration-architecture'
-      path: '/integration-architecture'
-      fullPath: '/dev-dashboard/integration-architecture'
-      preLoaderRoute: typeof DevDashboardIntegrationArchitectureRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/developer-dashboard': {
-      id: '/dev-dashboard/developer-dashboard'
-      path: '/developer-dashboard'
-      fullPath: '/dev-dashboard/developer-dashboard'
-      preLoaderRoute: typeof DevDashboardDeveloperDashboardRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/compliance-audit': {
-      id: '/dev-dashboard/compliance-audit'
-      path: '/compliance-audit'
-      fullPath: '/dev-dashboard/compliance-audit'
-      preLoaderRoute: typeof DevDashboardComplianceAuditRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/api-reference': {
-      id: '/dev-dashboard/api-reference'
-      path: '/api-reference'
-      fullPath: '/dev-dashboard/api-reference'
-      preLoaderRoute: typeof DevDashboardApiReferenceRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/dev-dashboard/api-governance': {
-      id: '/dev-dashboard/api-governance'
-      path: '/api-governance'
-      fullPath: '/dev-dashboard/api-governance'
-      preLoaderRoute: typeof DevDashboardApiGovernanceRouteImport
-      parentRoute: typeof DevDashboardRoute
-    }
-    '/cards/app': {
-      id: '/cards/app'
-      path: '/cards/app'
-      fullPath: '/cards/app'
-      preLoaderRoute: typeof CardsAppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/$module': {
-      id: '/business/$module'
-      path: '/$module'
-      fullPath: '/business/$module'
-      preLoaderRoute: typeof BusinessModuleRouteImport
-      parentRoute: typeof BusinessRoute
-    }
-    '/business-dashboard/virtual-accounts': {
-      id: '/business-dashboard/virtual-accounts'
-      path: '/virtual-accounts'
-      fullPath: '/business-dashboard/virtual-accounts'
-      preLoaderRoute: typeof BusinessDashboardVirtualAccountsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/treasury-cash': {
-      id: '/business-dashboard/treasury-cash'
-      path: '/treasury-cash'
-      fullPath: '/business-dashboard/treasury-cash'
-      preLoaderRoute: typeof BusinessDashboardTreasuryCashRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/team': {
-      id: '/business-dashboard/team'
-      path: '/team'
-      fullPath: '/business-dashboard/team'
-      preLoaderRoute: typeof BusinessDashboardTeamRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/support-disputes': {
-      id: '/business-dashboard/support-disputes'
-      path: '/support-disputes'
-      fullPath: '/business-dashboard/support-disputes'
-      preLoaderRoute: typeof BusinessDashboardSupportDisputesRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/settings-administration': {
-      id: '/business-dashboard/settings-administration'
-      path: '/settings-administration'
-      fullPath: '/business-dashboard/settings-administration'
-      preLoaderRoute: typeof BusinessDashboardSettingsAdministrationRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/profile': {
-      id: '/business-dashboard/profile'
-      path: '/profile'
-      fullPath: '/business-dashboard/profile'
-      preLoaderRoute: typeof BusinessDashboardProfileRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/products': {
-      id: '/business-dashboard/products'
-      path: '/products'
-      fullPath: '/business-dashboard/products'
-      preLoaderRoute: typeof BusinessDashboardProductsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/portfolio': {
-      id: '/business-dashboard/portfolio'
-      path: '/portfolio'
-      fullPath: '/business-dashboard/portfolio'
-      preLoaderRoute: typeof BusinessDashboardPortfolioRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/payroll-hr': {
-      id: '/business-dashboard/payroll-hr'
-      path: '/payroll-hr'
-      fullPath: '/business-dashboard/payroll-hr'
-      preLoaderRoute: typeof BusinessDashboardPayrollHrRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/pay-suppliers': {
-      id: '/business-dashboard/pay-suppliers'
-      path: '/pay-suppliers'
-      fullPath: '/business-dashboard/pay-suppliers'
-      preLoaderRoute: typeof BusinessDashboardPaySuppliersRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/overview': {
-      id: '/business-dashboard/overview'
-      path: '/overview'
-      fullPath: '/business-dashboard/overview'
-      preLoaderRoute: typeof BusinessDashboardOverviewRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/open-banking': {
-      id: '/business-dashboard/open-banking'
-      path: '/open-banking'
-      fullPath: '/business-dashboard/open-banking'
-      preLoaderRoute: typeof BusinessDashboardOpenBankingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/notifications': {
-      id: '/business-dashboard/notifications'
-      path: '/notifications'
-      fullPath: '/business-dashboard/notifications'
-      preLoaderRoute: typeof BusinessDashboardNotificationsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/multi-currency-treasury': {
-      id: '/business-dashboard/multi-currency-treasury'
-      path: '/multi-currency-treasury'
-      fullPath: '/business-dashboard/multi-currency-treasury'
-      preLoaderRoute: typeof BusinessDashboardMultiCurrencyTreasuryRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/marketing': {
-      id: '/business-dashboard/marketing'
-      path: '/marketing'
-      fullPath: '/business-dashboard/marketing'
-      preLoaderRoute: typeof BusinessDashboardMarketingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/invoicing-billing': {
-      id: '/business-dashboard/invoicing-billing'
-      path: '/invoicing-billing'
-      fullPath: '/business-dashboard/invoicing-billing'
-      preLoaderRoute: typeof BusinessDashboardInvoicingBillingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/inventory': {
-      id: '/business-dashboard/inventory'
-      path: '/inventory'
-      fullPath: '/business-dashboard/inventory'
-      preLoaderRoute: typeof BusinessDashboardInventoryRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/integrations': {
-      id: '/business-dashboard/integrations'
-      path: '/integrations'
-      fullPath: '/business-dashboard/integrations'
-      preLoaderRoute: typeof BusinessDashboardIntegrationsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/insurance': {
-      id: '/business-dashboard/insurance'
-      path: '/insurance'
-      fullPath: '/business-dashboard/insurance'
-      preLoaderRoute: typeof BusinessDashboardInsuranceRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/get-paid': {
-      id: '/business-dashboard/get-paid'
-      path: '/get-paid'
-      fullPath: '/business-dashboard/get-paid'
-      preLoaderRoute: typeof BusinessDashboardGetPaidRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/funding': {
-      id: '/business-dashboard/funding'
-      path: '/funding'
-      fullPath: '/business-dashboard/funding'
-      preLoaderRoute: typeof BusinessDashboardFundingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/financial-reporting': {
-      id: '/business-dashboard/financial-reporting'
-      path: '/financial-reporting'
-      fullPath: '/business-dashboard/financial-reporting'
-      preLoaderRoute: typeof BusinessDashboardFinancialReportingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/disputes': {
-      id: '/business-dashboard/disputes'
-      path: '/disputes'
-      fullPath: '/business-dashboard/disputes'
-      preLoaderRoute: typeof BusinessDashboardDisputesRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/data': {
-      id: '/business-dashboard/data'
-      path: '/data'
-      fullPath: '/business-dashboard/data'
-      preLoaderRoute: typeof BusinessDashboardDataRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/crm': {
-      id: '/business-dashboard/crm'
-      path: '/crm'
-      fullPath: '/business-dashboard/crm'
-      preLoaderRoute: typeof BusinessDashboardCrmRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/command-center': {
-      id: '/business-dashboard/command-center'
-      path: '/command-center'
-      fullPath: '/business-dashboard/command-center'
-      preLoaderRoute: typeof BusinessDashboardCommandCenterRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/collections-merchant': {
-      id: '/business-dashboard/collections-merchant'
-      path: '/collections-merchant'
-      fullPath: '/business-dashboard/collections-merchant'
-      preLoaderRoute: typeof BusinessDashboardCollectionsMerchantRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/cash': {
-      id: '/business-dashboard/cash'
-      path: '/cash'
-      fullPath: '/business-dashboard/cash'
-      preLoaderRoute: typeof BusinessDashboardCashRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/business-onboarding': {
-      id: '/business-dashboard/business-onboarding'
-      path: '/business-onboarding'
-      fullPath: '/business-dashboard/business-onboarding'
-      preLoaderRoute: typeof BusinessDashboardBusinessOnboardingRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/bulk-disbursements': {
-      id: '/business-dashboard/bulk-disbursements'
-      path: '/bulk-disbursements'
-      fullPath: '/business-dashboard/bulk-disbursements'
-      preLoaderRoute: typeof BusinessDashboardBulkDisbursementsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/books': {
-      id: '/business-dashboard/books'
-      path: '/books'
-      fullPath: '/business-dashboard/books'
-      preLoaderRoute: typeof BusinessDashboardBooksRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/apps-integrations': {
-      id: '/business-dashboard/apps-integrations'
-      path: '/apps-integrations'
-      fullPath: '/business-dashboard/apps-integrations'
-      preLoaderRoute: typeof BusinessDashboardAppsIntegrationsRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/accounts-payable': {
-      id: '/business-dashboard/accounts-payable'
-      path: '/accounts-payable'
-      fullPath: '/business-dashboard/accounts-payable'
-      preLoaderRoute: typeof BusinessDashboardAccountsPayableRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/business-dashboard/$module': {
-      id: '/business-dashboard/$module'
-      path: '/$module'
-      fullPath: '/business-dashboard/$module'
-      preLoaderRoute: typeof BusinessDashboardModuleRouteImport
-      parentRoute: typeof BusinessDashboardRoute
-    }
-    '/auth/security': {
-      id: '/auth/security'
-      path: '/auth/security'
-      fullPath: '/auth/security'
-      preLoaderRoute: typeof AuthSecurityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/auth/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/recovery': {
-      id: '/auth/recovery'
-      path: '/auth/recovery'
-      fullPath: '/auth/recovery'
-      preLoaderRoute: typeof AuthRecoveryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/passkeys': {
-      id: '/auth/passkeys'
-      path: '/auth/passkeys'
-      fullPath: '/auth/passkeys'
-      preLoaderRoute: typeof AuthPasskeysRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/mfa': {
-      id: '/auth/mfa'
-      path: '/auth/mfa'
-      fullPath: '/auth/mfa'
-      preLoaderRoute: typeof AuthMfaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/identity': {
-      id: '/auth/identity'
-      path: '/auth/identity'
-      fullPath: '/auth/identity'
-      preLoaderRoute: typeof AuthIdentityRouteImport
+    '/auth/account-status': {
+      id: '/auth/account-status'
+      path: '/auth/account-status'
+      fullPath: '/auth/account-status'
+      preLoaderRoute: typeof AuthAccountStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/hub': {
@@ -3376,26 +2956,495 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthHubRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/account-status': {
-      id: '/auth/account-status'
-      path: '/auth/account-status'
-      fullPath: '/auth/account-status'
-      preLoaderRoute: typeof AuthAccountStatusRouteImport
+    '/auth/identity': {
+      id: '/auth/identity'
+      path: '/auth/identity'
+      fullPath: '/auth/identity'
+      preLoaderRoute: typeof AuthIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_home/business': {
-      id: '/_home/business'
-      path: '/business'
-      fullPath: '/business'
-      preLoaderRoute: typeof HomeBusinessRouteImport
-      parentRoute: typeof HomeRoute
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/pm/app/': {
-      id: '/pm/app/'
+    '/auth/mfa': {
+      id: '/auth/mfa'
+      path: '/auth/mfa'
+      fullPath: '/auth/mfa'
+      preLoaderRoute: typeof AuthMfaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/passkeys': {
+      id: '/auth/passkeys'
+      path: '/auth/passkeys'
+      fullPath: '/auth/passkeys'
+      preLoaderRoute: typeof AuthPasskeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/recovery': {
+      id: '/auth/recovery'
+      path: '/auth/recovery'
+      fullPath: '/auth/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/security': {
+      id: '/auth/security'
+      path: '/auth/security'
+      fullPath: '/auth/security'
+      preLoaderRoute: typeof AuthSecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-dashboard/': {
+      id: '/business-dashboard/'
       path: '/'
-      fullPath: '/pm/app/'
-      preLoaderRoute: typeof PmAppIndexRouteImport
-      parentRoute: typeof PmAppRoute
+      fullPath: '/business-dashboard/'
+      preLoaderRoute: typeof BusinessDashboardIndexRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/$module': {
+      id: '/business-dashboard/$module'
+      path: '/$module'
+      fullPath: '/business-dashboard/$module'
+      preLoaderRoute: typeof BusinessDashboardModuleRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/accounts-payable': {
+      id: '/business-dashboard/accounts-payable'
+      path: '/accounts-payable'
+      fullPath: '/business-dashboard/accounts-payable'
+      preLoaderRoute: typeof BusinessDashboardAccountsPayableRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/apps-integrations': {
+      id: '/business-dashboard/apps-integrations'
+      path: '/apps-integrations'
+      fullPath: '/business-dashboard/apps-integrations'
+      preLoaderRoute: typeof BusinessDashboardAppsIntegrationsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/books': {
+      id: '/business-dashboard/books'
+      path: '/books'
+      fullPath: '/business-dashboard/books'
+      preLoaderRoute: typeof BusinessDashboardBooksRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/bulk-disbursements': {
+      id: '/business-dashboard/bulk-disbursements'
+      path: '/bulk-disbursements'
+      fullPath: '/business-dashboard/bulk-disbursements'
+      preLoaderRoute: typeof BusinessDashboardBulkDisbursementsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/business-onboarding': {
+      id: '/business-dashboard/business-onboarding'
+      path: '/business-onboarding'
+      fullPath: '/business-dashboard/business-onboarding'
+      preLoaderRoute: typeof BusinessDashboardBusinessOnboardingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/cash': {
+      id: '/business-dashboard/cash'
+      path: '/cash'
+      fullPath: '/business-dashboard/cash'
+      preLoaderRoute: typeof BusinessDashboardCashRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/collections-merchant': {
+      id: '/business-dashboard/collections-merchant'
+      path: '/collections-merchant'
+      fullPath: '/business-dashboard/collections-merchant'
+      preLoaderRoute: typeof BusinessDashboardCollectionsMerchantRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/command-center': {
+      id: '/business-dashboard/command-center'
+      path: '/command-center'
+      fullPath: '/business-dashboard/command-center'
+      preLoaderRoute: typeof BusinessDashboardCommandCenterRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/crm': {
+      id: '/business-dashboard/crm'
+      path: '/crm'
+      fullPath: '/business-dashboard/crm'
+      preLoaderRoute: typeof BusinessDashboardCrmRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/data': {
+      id: '/business-dashboard/data'
+      path: '/data'
+      fullPath: '/business-dashboard/data'
+      preLoaderRoute: typeof BusinessDashboardDataRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/disputes': {
+      id: '/business-dashboard/disputes'
+      path: '/disputes'
+      fullPath: '/business-dashboard/disputes'
+      preLoaderRoute: typeof BusinessDashboardDisputesRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/financial-reporting': {
+      id: '/business-dashboard/financial-reporting'
+      path: '/financial-reporting'
+      fullPath: '/business-dashboard/financial-reporting'
+      preLoaderRoute: typeof BusinessDashboardFinancialReportingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/funding': {
+      id: '/business-dashboard/funding'
+      path: '/funding'
+      fullPath: '/business-dashboard/funding'
+      preLoaderRoute: typeof BusinessDashboardFundingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/get-paid': {
+      id: '/business-dashboard/get-paid'
+      path: '/get-paid'
+      fullPath: '/business-dashboard/get-paid'
+      preLoaderRoute: typeof BusinessDashboardGetPaidRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/insurance': {
+      id: '/business-dashboard/insurance'
+      path: '/insurance'
+      fullPath: '/business-dashboard/insurance'
+      preLoaderRoute: typeof BusinessDashboardInsuranceRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/integrations': {
+      id: '/business-dashboard/integrations'
+      path: '/integrations'
+      fullPath: '/business-dashboard/integrations'
+      preLoaderRoute: typeof BusinessDashboardIntegrationsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/inventory': {
+      id: '/business-dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/business-dashboard/inventory'
+      preLoaderRoute: typeof BusinessDashboardInventoryRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/invoicing-billing': {
+      id: '/business-dashboard/invoicing-billing'
+      path: '/invoicing-billing'
+      fullPath: '/business-dashboard/invoicing-billing'
+      preLoaderRoute: typeof BusinessDashboardInvoicingBillingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/marketing': {
+      id: '/business-dashboard/marketing'
+      path: '/marketing'
+      fullPath: '/business-dashboard/marketing'
+      preLoaderRoute: typeof BusinessDashboardMarketingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/multi-currency-treasury': {
+      id: '/business-dashboard/multi-currency-treasury'
+      path: '/multi-currency-treasury'
+      fullPath: '/business-dashboard/multi-currency-treasury'
+      preLoaderRoute: typeof BusinessDashboardMultiCurrencyTreasuryRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/notifications': {
+      id: '/business-dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/business-dashboard/notifications'
+      preLoaderRoute: typeof BusinessDashboardNotificationsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/open-banking': {
+      id: '/business-dashboard/open-banking'
+      path: '/open-banking'
+      fullPath: '/business-dashboard/open-banking'
+      preLoaderRoute: typeof BusinessDashboardOpenBankingRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/overview': {
+      id: '/business-dashboard/overview'
+      path: '/overview'
+      fullPath: '/business-dashboard/overview'
+      preLoaderRoute: typeof BusinessDashboardOverviewRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/pay-suppliers': {
+      id: '/business-dashboard/pay-suppliers'
+      path: '/pay-suppliers'
+      fullPath: '/business-dashboard/pay-suppliers'
+      preLoaderRoute: typeof BusinessDashboardPaySuppliersRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/payroll-hr': {
+      id: '/business-dashboard/payroll-hr'
+      path: '/payroll-hr'
+      fullPath: '/business-dashboard/payroll-hr'
+      preLoaderRoute: typeof BusinessDashboardPayrollHrRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/portfolio': {
+      id: '/business-dashboard/portfolio'
+      path: '/portfolio'
+      fullPath: '/business-dashboard/portfolio'
+      preLoaderRoute: typeof BusinessDashboardPortfolioRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/products': {
+      id: '/business-dashboard/products'
+      path: '/products'
+      fullPath: '/business-dashboard/products'
+      preLoaderRoute: typeof BusinessDashboardProductsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/profile': {
+      id: '/business-dashboard/profile'
+      path: '/profile'
+      fullPath: '/business-dashboard/profile'
+      preLoaderRoute: typeof BusinessDashboardProfileRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/settings-administration': {
+      id: '/business-dashboard/settings-administration'
+      path: '/settings-administration'
+      fullPath: '/business-dashboard/settings-administration'
+      preLoaderRoute: typeof BusinessDashboardSettingsAdministrationRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/support-disputes': {
+      id: '/business-dashboard/support-disputes'
+      path: '/support-disputes'
+      fullPath: '/business-dashboard/support-disputes'
+      preLoaderRoute: typeof BusinessDashboardSupportDisputesRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/team': {
+      id: '/business-dashboard/team'
+      path: '/team'
+      fullPath: '/business-dashboard/team'
+      preLoaderRoute: typeof BusinessDashboardTeamRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/treasury-cash': {
+      id: '/business-dashboard/treasury-cash'
+      path: '/treasury-cash'
+      fullPath: '/business-dashboard/treasury-cash'
+      preLoaderRoute: typeof BusinessDashboardTreasuryCashRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business-dashboard/virtual-accounts': {
+      id: '/business-dashboard/virtual-accounts'
+      path: '/virtual-accounts'
+      fullPath: '/business-dashboard/virtual-accounts'
+      preLoaderRoute: typeof BusinessDashboardVirtualAccountsRouteImport
+      parentRoute: typeof BusinessDashboardRoute
+    }
+    '/business/': {
+      id: '/business/'
+      path: '/'
+      fullPath: '/business/'
+      preLoaderRoute: typeof BusinessIndexRouteImport
+      parentRoute: typeof BusinessRoute
+    }
+    '/business/$module': {
+      id: '/business/$module'
+      path: '/$module'
+      fullPath: '/business/$module'
+      preLoaderRoute: typeof BusinessModuleRouteImport
+      parentRoute: typeof BusinessRoute
+    }
+    '/cards-shell/': {
+      id: '/cards-shell/'
+      path: '/'
+      fullPath: '/cards-shell/'
+      preLoaderRoute: typeof CardsShellIndexRouteImport
+      parentRoute: typeof CardsShellRoute
+    }
+    '/cards-shell/$section': {
+      id: '/cards-shell/$section'
+      path: '/$section'
+      fullPath: '/cards-shell/$section'
+      preLoaderRoute: typeof CardsShellSectionRouteImport
+      parentRoute: typeof CardsShellRoute
+    }
+    '/cards/app': {
+      id: '/cards/app'
+      path: '/cards/app'
+      fullPath: '/cards/app'
+      preLoaderRoute: typeof CardsAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev-dashboard/': {
+      id: '/dev-dashboard/'
+      path: '/'
+      fullPath: '/dev-dashboard/'
+      preLoaderRoute: typeof DevDashboardIndexRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/api-governance': {
+      id: '/dev-dashboard/api-governance'
+      path: '/api-governance'
+      fullPath: '/dev-dashboard/api-governance'
+      preLoaderRoute: typeof DevDashboardApiGovernanceRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/api-reference': {
+      id: '/dev-dashboard/api-reference'
+      path: '/api-reference'
+      fullPath: '/dev-dashboard/api-reference'
+      preLoaderRoute: typeof DevDashboardApiReferenceRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/compliance-audit': {
+      id: '/dev-dashboard/compliance-audit'
+      path: '/compliance-audit'
+      fullPath: '/dev-dashboard/compliance-audit'
+      preLoaderRoute: typeof DevDashboardComplianceAuditRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/developer-dashboard': {
+      id: '/dev-dashboard/developer-dashboard'
+      path: '/developer-dashboard'
+      fullPath: '/dev-dashboard/developer-dashboard'
+      preLoaderRoute: typeof DevDashboardDeveloperDashboardRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/integration-architecture': {
+      id: '/dev-dashboard/integration-architecture'
+      path: '/integration-architecture'
+      fullPath: '/dev-dashboard/integration-architecture'
+      preLoaderRoute: typeof DevDashboardIntegrationArchitectureRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/monitoring-incidents': {
+      id: '/dev-dashboard/monitoring-incidents'
+      path: '/monitoring-incidents'
+      fullPath: '/dev-dashboard/monitoring-incidents'
+      preLoaderRoute: typeof DevDashboardMonitoringIncidentsRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/partner-marketplace': {
+      id: '/dev-dashboard/partner-marketplace'
+      path: '/partner-marketplace'
+      fullPath: '/dev-dashboard/partner-marketplace'
+      preLoaderRoute: typeof DevDashboardPartnerMarketplaceRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/playground': {
+      id: '/dev-dashboard/playground'
+      path: '/playground'
+      fullPath: '/dev-dashboard/playground'
+      preLoaderRoute: typeof DevDashboardPlaygroundRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/sdks': {
+      id: '/dev-dashboard/sdks'
+      path: '/sdks'
+      fullPath: '/dev-dashboard/sdks'
+      preLoaderRoute: typeof DevDashboardSdksRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/security': {
+      id: '/dev-dashboard/security'
+      path: '/security'
+      fullPath: '/dev-dashboard/security'
+      preLoaderRoute: typeof DevDashboardSecurityRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/support-slas': {
+      id: '/dev-dashboard/support-slas'
+      path: '/support-slas'
+      fullPath: '/dev-dashboard/support-slas'
+      preLoaderRoute: typeof DevDashboardSupportSlasRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev-dashboard/webhooks-events': {
+      id: '/dev-dashboard/webhooks-events'
+      path: '/webhooks-events'
+      fullPath: '/dev-dashboard/webhooks-events'
+      preLoaderRoute: typeof DevDashboardWebhooksEventsRouteImport
+      parentRoute: typeof DevDashboardRoute
+    }
+    '/dev/': {
+      id: '/dev/'
+      path: '/'
+      fullPath: '/dev/'
+      preLoaderRoute: typeof DevIndexRouteImport
+      parentRoute: typeof DevRoute
+    }
+    '/dev/$module': {
+      id: '/dev/$module'
+      path: '/$module'
+      fullPath: '/dev/$module'
+      preLoaderRoute: typeof DevModuleRouteImport
+      parentRoute: typeof DevRoute
+    }
+    '/pm/app': {
+      id: '/pm/app'
+      path: '/pm/app'
+      fullPath: '/pm/app'
+      preLoaderRoute: typeof PmAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utility/': {
+      id: '/utility/'
+      path: '/'
+      fullPath: '/utility/'
+      preLoaderRoute: typeof UtilityIndexRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/$module': {
+      id: '/utility/$module'
+      path: '/$module'
+      fullPath: '/utility/$module'
+      preLoaderRoute: typeof UtilityModuleRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/airtime': {
+      id: '/utility/airtime'
+      path: '/airtime'
+      fullPath: '/utility/airtime'
+      preLoaderRoute: typeof UtilityAirtimeRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/electricity': {
+      id: '/utility/electricity'
+      path: '/electricity'
+      fullPath: '/utility/electricity'
+      preLoaderRoute: typeof UtilityElectricityRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/internet': {
+      id: '/utility/internet'
+      path: '/internet'
+      fullPath: '/utility/internet'
+      preLoaderRoute: typeof UtilityInternetRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/settings': {
+      id: '/utility/settings'
+      path: '/settings'
+      fullPath: '/utility/settings'
+      preLoaderRoute: typeof UtilitySettingsRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/water': {
+      id: '/utility/water'
+      path: '/water'
+      fullPath: '/utility/water'
+      preLoaderRoute: typeof UtilityWaterRouteImport
+      parentRoute: typeof UtilityRoute
     }
     '/cards/app/': {
       id: '/cards/app/'
@@ -3404,907 +3453,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardsAppIndexRouteImport
       parentRoute: typeof CardsAppRoute
     }
-    '/pm/app/transfers': {
-      id: '/pm/app/transfers'
-      path: '/transfers'
-      fullPath: '/pm/app/transfers'
-      preLoaderRoute: typeof PmAppTransfersRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/transfer-overview': {
-      id: '/pm/app/transfer-overview'
-      path: '/transfer-overview'
-      fullPath: '/pm/app/transfer-overview'
-      preLoaderRoute: typeof PmAppTransferOverviewRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/transfer-management': {
-      id: '/pm/app/transfer-management'
-      path: '/transfer-management'
-      fullPath: '/pm/app/transfer-management'
-      preLoaderRoute: typeof PmAppTransferManagementRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/settlement': {
-      id: '/pm/app/settlement'
-      path: '/settlement'
-      fullPath: '/pm/app/settlement'
-      preLoaderRoute: typeof PmAppSettlementRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/settings': {
-      id: '/pm/app/settings'
-      path: '/settings'
-      fullPath: '/pm/app/settings'
-      preLoaderRoute: typeof PmAppSettingsRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/reconciliation': {
-      id: '/pm/app/reconciliation'
-      path: '/reconciliation'
-      fullPath: '/pm/app/reconciliation'
-      preLoaderRoute: typeof PmAppReconciliationRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/payment-rails': {
-      id: '/pm/app/payment-rails'
-      path: '/payment-rails'
-      fullPath: '/pm/app/payment-rails'
-      preLoaderRoute: typeof PmAppPaymentRailsRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/ops-health': {
-      id: '/pm/app/ops-health'
-      path: '/ops-health'
-      fullPath: '/pm/app/ops-health'
-      preLoaderRoute: typeof PmAppOpsHealthRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/onboarding': {
-      id: '/pm/app/onboarding'
-      path: '/onboarding'
-      fullPath: '/pm/app/onboarding'
-      preLoaderRoute: typeof PmAppOnboardingRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/mobile-money': {
-      id: '/pm/app/mobile-money'
-      path: '/mobile-money'
-      fullPath: '/pm/app/mobile-money'
-      preLoaderRoute: typeof PmAppMobileMoneyRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/liquidity': {
-      id: '/pm/app/liquidity'
-      path: '/liquidity'
-      fullPath: '/pm/app/liquidity'
-      preLoaderRoute: typeof PmAppLiquidityRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/kra-government': {
-      id: '/pm/app/kra-government'
-      path: '/kra-government'
-      fullPath: '/pm/app/kra-government'
-      preLoaderRoute: typeof PmAppKraGovernmentRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/initiate-transfer': {
-      id: '/pm/app/initiate-transfer'
-      path: '/initiate-transfer'
-      fullPath: '/pm/app/initiate-transfer'
-      preLoaderRoute: typeof PmAppInitiateTransferRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/fx': {
-      id: '/pm/app/fx'
-      path: '/fx'
-      fullPath: '/pm/app/fx'
-      preLoaderRoute: typeof PmAppFxRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/fees': {
-      id: '/pm/app/fees'
-      path: '/fees'
-      fullPath: '/pm/app/fees'
-      preLoaderRoute: typeof PmAppFeesRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/disputes': {
-      id: '/pm/app/disputes'
-      path: '/disputes'
-      fullPath: '/pm/app/disputes'
-      preLoaderRoute: typeof PmAppDisputesRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/customers': {
-      id: '/pm/app/customers'
-      path: '/customers'
-      fullPath: '/pm/app/customers'
-      preLoaderRoute: typeof PmAppCustomersRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/compliance': {
-      id: '/pm/app/compliance'
-      path: '/compliance'
-      fullPath: '/pm/app/compliance'
-      preLoaderRoute: typeof PmAppComplianceRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/analytics': {
-      id: '/pm/app/analytics'
-      path: '/analytics'
-      fullPath: '/pm/app/analytics'
-      preLoaderRoute: typeof PmAppAnalyticsRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/account': {
-      id: '/pm/app/account'
-      path: '/account'
-      fullPath: '/pm/app/account'
-      preLoaderRoute: typeof PmAppAccountRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/pm/app/$section': {
-      id: '/pm/app/$section'
-      path: '/$section'
-      fullPath: '/pm/app/$section'
-      preLoaderRoute: typeof PmAppSectionRouteImport
-      parentRoute: typeof PmAppRoute
-    }
-    '/error/utility-errors/util-500-01-token-gen-failed': {
-      id: '/error/utility-errors/util-500-01-token-gen-failed'
-      path: '/error/utility-errors/util-500-01-token-gen-failed'
-      fullPath: '/error/utility-errors/util-500-01-token-gen-failed'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-429-01-rate-limited': {
-      id: '/error/utility-errors/util-429-01-rate-limited'
-      path: '/error/utility-errors/util-429-01-rate-limited'
-      fullPath: '/error/utility-errors/util-429-01-rate-limited'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil42901RateLimitedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-410-01-provider-maintenance': {
-      id: '/error/utility-errors/util-410-01-provider-maintenance'
-      path: '/error/utility-errors/util-410-01-provider-maintenance'
-      fullPath: '/error/utility-errors/util-410-01-provider-maintenance'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-409-02-automation-conflict': {
-      id: '/error/utility-errors/util-409-02-automation-conflict'
-      path: '/error/utility-errors/util-409-02-automation-conflict'
-      fullPath: '/error/utility-errors/util-409-02-automation-conflict'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40902AutomationConflictRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-409-01-bill-already-paid': {
-      id: '/error/utility-errors/util-409-01-bill-already-paid'
-      path: '/error/utility-errors/util-409-01-bill-already-paid'
-      fullPath: '/error/utility-errors/util-409-01-bill-already-paid'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-408-01-pending-confirmation': {
-      id: '/error/utility-errors/util-408-01-pending-confirmation'
-      path: '/error/utility-errors/util-408-01-pending-confirmation'
-      fullPath: '/error/utility-errors/util-408-01-pending-confirmation'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-404-03-airtime-unreachable': {
-      id: '/error/utility-errors/util-404-03-airtime-unreachable'
-      path: '/error/utility-errors/util-404-03-airtime-unreachable'
-      fullPath: '/error/utility-errors/util-404-03-airtime-unreachable'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-404-02-internet-invalid': {
-      id: '/error/utility-errors/util-404-02-internet-invalid'
-      path: '/error/utility-errors/util-404-02-internet-invalid'
-      fullPath: '/error/utility-errors/util-404-02-internet-invalid'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40402InternetInvalidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-404-01-meter-not-found': {
-      id: '/error/utility-errors/util-404-01-meter-not-found'
-      path: '/error/utility-errors/util-404-01-meter-not-found'
-      fullPath: '/error/utility-errors/util-404-01-meter-not-found'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-403-01-automation-failed': {
-      id: '/error/utility-errors/util-403-01-automation-failed'
-      path: '/error/utility-errors/util-403-01-automation-failed'
-      fullPath: '/error/utility-errors/util-403-01-automation-failed'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40301AutomationFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-402-03-provider-not-supported': {
-      id: '/error/utility-errors/util-402-03-provider-not-supported'
-      path: '/error/utility-errors/util-402-03-provider-not-supported'
-      fullPath: '/error/utility-errors/util-402-03-provider-not-supported'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-402-02-insufficient-balance-utility': {
-      id: '/error/utility-errors/util-402-02-insufficient-balance-utility'
-      path: '/error/utility-errors/util-402-02-insufficient-balance-utility'
-      fullPath: '/error/utility-errors/util-402-02-insufficient-balance-utility'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-402-01-amount-below-min': {
-      id: '/error/utility-errors/util-402-01-amount-below-min'
-      path: '/error/utility-errors/util-402-01-amount-below-min'
-      fullPath: '/error/utility-errors/util-402-01-amount-below-min'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/utility-errors/util-400-01-name-mismatch': {
-      id: '/error/utility-errors/util-400-01-name-mismatch'
-      path: '/error/utility-errors/util-400-01-name-mismatch'
-      fullPath: '/error/utility-errors/util-400-01-name-mismatch'
-      preLoaderRoute: typeof ErrorUtilityErrorsUtil40001NameMismatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-500-02-liquidity-failed': {
-      id: '/error/transaction-errors/tx-500-02-liquidity-failed'
-      path: '/error/transaction-errors/tx-500-02-liquidity-failed'
-      fullPath: '/error/transaction-errors/tx-500-02-liquidity-failed'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx50002LiquidityFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-500-01-settlement-delayed': {
-      id: '/error/transaction-errors/tx-500-01-settlement-delayed'
-      path: '/error/transaction-errors/tx-500-01-settlement-delayed'
-      fullPath: '/error/transaction-errors/tx-500-01-settlement-delayed'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx50001SettlementDelayedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-429-01-throttled': {
-      id: '/error/transaction-errors/tx-429-01-throttled'
-      path: '/error/transaction-errors/tx-429-01-throttled'
-      fullPath: '/error/transaction-errors/tx-429-01-throttled'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx42901ThrottledRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-423-01-rtgs-cutoff': {
-      id: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
-      path: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
-      fullPath: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx42301RtgsCutoffRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': {
-      id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
-      path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
-      fullPath: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-422-01-name-mismatch': {
-      id: '/error/transaction-errors/tx-422-01-name-mismatch'
-      path: '/error/transaction-errors/tx-422-01-name-mismatch'
-      fullPath: '/error/transaction-errors/tx-422-01-name-mismatch'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx42201NameMismatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-410-01-txn-expired': {
-      id: '/error/transaction-errors/tx-410-01-txn-expired'
-      path: '/error/transaction-errors/tx-410-01-txn-expired'
-      fullPath: '/error/transaction-errors/tx-410-01-txn-expired'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx41001TxnExpiredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-409-03-reconciliation-mismatch': {
-      id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
-      path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
-      fullPath: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': {
-      id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
-      path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
-      fullPath: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-409-01-duplicate-transaction': {
-      id: '/error/transaction-errors/tx-409-01-duplicate-transaction'
-      path: '/error/transaction-errors/tx-409-01-duplicate-transaction'
-      fullPath: '/error/transaction-errors/tx-409-01-duplicate-transaction'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': {
-      id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
-      path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
-      fullPath: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-404-02-purpose-code-missing': {
-      id: '/error/transaction-errors/tx-404-02-purpose-code-missing'
-      path: '/error/transaction-errors/tx-404-02-purpose-code-missing'
-      fullPath: '/error/transaction-errors/tx-404-02-purpose-code-missing'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-404-01-mpesa-not-registered': {
-      id: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
-      path: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
-      fullPath: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-403-03-account-frozen': {
-      id: '/error/transaction-errors/tx-403-03-account-frozen'
-      path: '/error/transaction-errors/tx-403-03-account-frozen'
-      fullPath: '/error/transaction-errors/tx-403-03-account-frozen'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40303AccountFrozenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-403-02-kra-tax-failed': {
-      id: '/error/transaction-errors/tx-403-02-kra-tax-failed'
-      path: '/error/transaction-errors/tx-403-02-kra-tax-failed'
-      fullPath: '/error/transaction-errors/tx-403-02-kra-tax-failed'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40302KraTaxFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-403-01-aml-hold': {
-      id: '/error/transaction-errors/tx-403-01-aml-hold'
-      path: '/error/transaction-errors/tx-403-01-aml-hold'
-      fullPath: '/error/transaction-errors/tx-403-01-aml-hold'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40301AmlHoldRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-402-05-fee-calculation-failed': {
-      id: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
-      path: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
-      fullPath: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-402-04-per-txn-limit': {
-      id: '/error/transaction-errors/tx-402-04-per-txn-limit'
-      path: '/error/transaction-errors/tx-402-04-per-txn-limit'
-      fullPath: '/error/transaction-errors/tx-402-04-per-txn-limit'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40204PerTxnLimitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-402-03-daily-limit-reached': {
-      id: '/error/transaction-errors/tx-402-03-daily-limit-reached'
-      path: '/error/transaction-errors/tx-402-03-daily-limit-reached'
-      fullPath: '/error/transaction-errors/tx-402-03-daily-limit-reached'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-402-02-amount-min-max': {
-      id: '/error/transaction-errors/tx-402-02-amount-min-max'
-      path: '/error/transaction-errors/tx-402-02-amount-min-max'
-      fullPath: '/error/transaction-errors/tx-402-02-amount-min-max'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40202AmountMinMaxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-402-01-insufficient-balance': {
-      id: '/error/transaction-errors/tx-402-01-insufficient-balance'
-      path: '/error/transaction-errors/tx-402-01-insufficient-balance'
-      fullPath: '/error/transaction-errors/tx-402-01-insufficient-balance'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': {
-      id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
-      path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
-      fullPath: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-401-01-pin-3x-locked': {
-      id: '/error/transaction-errors/tx-401-01-pin-3x-locked'
-      path: '/error/transaction-errors/tx-401-01-pin-3x-locked'
-      fullPath: '/error/transaction-errors/tx-401-01-pin-3x-locked'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40101Pin3xLockedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-400-05-currency-not-allowed': {
-      id: '/error/transaction-errors/tx-400-05-currency-not-allowed'
-      path: '/error/transaction-errors/tx-400-05-currency-not-allowed'
-      fullPath: '/error/transaction-errors/tx-400-05-currency-not-allowed'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-400-04-invalid-mobile-network': {
-      id: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
-      path: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
-      fullPath: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-400-03-bank-offline': {
-      id: '/error/transaction-errors/tx-400-03-bank-offline'
-      path: '/error/transaction-errors/tx-400-03-bank-offline'
-      fullPath: '/error/transaction-errors/tx-400-03-bank-offline'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40003BankOfflineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': {
-      id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
-      path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
-      fullPath: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/transaction-errors/tx-400-01-recipient-not-found': {
-      id: '/error/transaction-errors/tx-400-01-recipient-not-found'
-      path: '/error/transaction-errors/tx-400-01-recipient-not-found'
-      fullPath: '/error/transaction-errors/tx-400-01-recipient-not-found'
-      preLoaderRoute: typeof ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-500-01-processor-down': {
-      id: '/error/card/card-500-01-processor-down'
-      path: '/error/card/card-500-01-processor-down'
-      fullPath: '/error/card/card-500-01-processor-down'
-      preLoaderRoute: typeof ErrorCardCard50001ProcessorDownRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-410-01-expired': {
-      id: '/error/card/card-410-01-expired'
-      path: '/error/card/card-410-01-expired'
-      fullPath: '/error/card/card-410-01-expired'
-      preLoaderRoute: typeof ErrorCardCard41001ExpiredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-409-01-already-exists-employee': {
-      id: '/error/card/card-409-01-already-exists-employee'
-      path: '/error/card/card-409-01-already-exists-employee'
-      fullPath: '/error/card/card-409-01-already-exists-employee'
-      preLoaderRoute: typeof ErrorCardCard40901AlreadyExistsEmployeeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-408-01-personalization-failed': {
-      id: '/error/card/card-408-01-personalization-failed'
-      path: '/error/card/card-408-01-personalization-failed'
-      fullPath: '/error/card/card-408-01-personalization-failed'
-      preLoaderRoute: typeof ErrorCardCard40801PersonalizationFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-404-02-employee-not-whitelisted': {
-      id: '/error/card/card-404-02-employee-not-whitelisted'
-      path: '/error/card/card-404-02-employee-not-whitelisted'
-      fullPath: '/error/card/card-404-02-employee-not-whitelisted'
-      preLoaderRoute: typeof ErrorCardCard40402EmployeeNotWhitelistedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-404-01-delivery-address-invalid': {
-      id: '/error/card/card-404-01-delivery-address-invalid'
-      path: '/error/card/card-404-01-delivery-address-invalid'
-      fullPath: '/error/card/card-404-01-delivery-address-invalid'
-      preLoaderRoute: typeof ErrorCardCard40401DeliveryAddressInvalidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-07-settings-conflict': {
-      id: '/error/card/card-403-07-settings-conflict'
-      path: '/error/card/card-403-07-settings-conflict'
-      fullPath: '/error/card/card-403-07-settings-conflict'
-      preLoaderRoute: typeof ErrorCardCard40307SettingsConflictRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-06-not-activated': {
-      id: '/error/card/card-403-06-not-activated'
-      path: '/error/card/card-403-06-not-activated'
-      fullPath: '/error/card/card-403-06-not-activated'
-      preLoaderRoute: typeof ErrorCardCard40306NotActivatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-05-program-inactive': {
-      id: '/error/card/card-403-05-program-inactive'
-      path: '/error/card/card-403-05-program-inactive'
-      fullPath: '/error/card/card-403-05-program-inactive'
-      preLoaderRoute: typeof ErrorCardCard40305ProgramInactiveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-04-frozen-fraud': {
-      id: '/error/card/card-403-04-frozen-fraud'
-      path: '/error/card/card-403-04-frozen-fraud'
-      fullPath: '/error/card/card-403-04-frozen-fraud'
-      preLoaderRoute: typeof ErrorCardCard40304FrozenFraudRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-03-international-blocked': {
-      id: '/error/card/card-403-03-international-blocked'
-      path: '/error/card/card-403-03-international-blocked'
-      fullPath: '/error/card/card-403-03-international-blocked'
-      preLoaderRoute: typeof ErrorCardCard40303InternationalBlockedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-02-merchant-blocked': {
-      id: '/error/card/card-403-02-merchant-blocked'
-      path: '/error/card/card-403-02-merchant-blocked'
-      fullPath: '/error/card/card-403-02-merchant-blocked'
-      preLoaderRoute: typeof ErrorCardCard40302MerchantBlockedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-403-01-kyc-tier-insufficient': {
-      id: '/error/card/card-403-01-kyc-tier-insufficient'
-      path: '/error/card/card-403-01-kyc-tier-insufficient'
-      fullPath: '/error/card/card-403-01-kyc-tier-insufficient'
-      preLoaderRoute: typeof ErrorCardCard40301KycTierInsufficientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-402-04-min-topup-failed': {
-      id: '/error/card/card-402-04-min-topup-failed'
-      path: '/error/card/card-402-04-min-topup-failed'
-      fullPath: '/error/card/card-402-04-min-topup-failed'
-      preLoaderRoute: typeof ErrorCardCard40204MinTopupFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-402-03-chargeback-disputed': {
-      id: '/error/card/card-402-03-chargeback-disputed'
-      path: '/error/card/card-402-03-chargeback-disputed'
-      fullPath: '/error/card/card-402-03-chargeback-disputed'
-      preLoaderRoute: typeof ErrorCardCard40203ChargebackDisputedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-402-02-limit-exceeded': {
-      id: '/error/card/card-402-02-limit-exceeded'
-      path: '/error/card/card-402-02-limit-exceeded'
-      fullPath: '/error/card/card-402-02-limit-exceeded'
-      preLoaderRoute: typeof ErrorCardCard40202LimitExceededRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-402-01-funding-failed': {
-      id: '/error/card/card-402-01-funding-failed'
-      path: '/error/card/card-402-01-funding-failed'
-      fullPath: '/error/card/card-402-01-funding-failed'
-      preLoaderRoute: typeof ErrorCardCard40201FundingFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-401-03-cvv-attempts-exceeded': {
-      id: '/error/card/card-401-03-cvv-attempts-exceeded'
-      path: '/error/card/card-401-03-cvv-attempts-exceeded'
-      fullPath: '/error/card/card-401-03-cvv-attempts-exceeded'
-      preLoaderRoute: typeof ErrorCardCard40103CvvAttemptsExceededRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-401-02-pin-3x-blocked': {
-      id: '/error/card/card-401-02-pin-3x-blocked'
-      path: '/error/card/card-401-02-pin-3x-blocked'
-      fullPath: '/error/card/card-401-02-pin-3x-blocked'
-      preLoaderRoute: typeof ErrorCardCard40102Pin3xBlockedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-401-01-3ds-failed': {
-      id: '/error/card/card-401-01-3ds-failed'
-      path: '/error/card/card-401-01-3ds-failed'
-      fullPath: '/error/card/card-401-01-3ds-failed'
-      preLoaderRoute: typeof ErrorCardCard401013dsFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-400-02-program-limit-high': {
-      id: '/error/card/card-400-02-program-limit-high'
-      path: '/error/card/card-400-02-program-limit-high'
-      fullPath: '/error/card/card-400-02-program-limit-high'
-      preLoaderRoute: typeof ErrorCardCard40002ProgramLimitHighRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/card/card-400-01-virtual-limit-reached': {
-      id: '/error/card/card-400-01-virtual-limit-reached'
-      path: '/error/card/card-400-01-virtual-limit-reached'
-      fullPath: '/error/card/card-400-01-virtual-limit-reached'
-      preLoaderRoute: typeof ErrorCardCard40001VirtualLimitReachedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-session-expired': {
-      id: '/error/advanced-errors/error-session-expired'
-      path: '/error/advanced-errors/error-session-expired'
-      fullPath: '/error/advanced-errors/error-session-expired'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorSessionExpiredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-processing-hold': {
-      id: '/error/advanced-errors/error-processing-hold'
-      path: '/error/advanced-errors/error-processing-hold'
-      fullPath: '/error/advanced-errors/error-processing-hold'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorProcessingHoldRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-payment-failed': {
-      id: '/error/advanced-errors/error-payment-failed'
-      path: '/error/advanced-errors/error-payment-failed'
-      fullPath: '/error/advanced-errors/error-payment-failed'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorPaymentFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-maintenance': {
-      id: '/error/advanced-errors/error-maintenance'
-      path: '/error/advanced-errors/error-maintenance'
-      fullPath: '/error/advanced-errors/error-maintenance'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorMaintenanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-kyc-failed': {
-      id: '/error/advanced-errors/error-kyc-failed'
-      path: '/error/advanced-errors/error-kyc-failed'
-      fullPath: '/error/advanced-errors/error-kyc-failed'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorKycFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-account-suspended': {
-      id: '/error/advanced-errors/error-account-suspended'
-      path: '/error/advanced-errors/error-account-suspended'
-      fullPath: '/error/advanced-errors/error-account-suspended'
-      preLoaderRoute: typeof ErrorAdvancedErrorsErrorAccountSuspendedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-500': {
-      id: '/error/advanced-errors/error-500'
-      path: '/error/advanced-errors/error-500'
-      fullPath: '/error/advanced-errors/error-500'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError500RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-429': {
-      id: '/error/advanced-errors/error-429'
-      path: '/error/advanced-errors/error-429'
-      fullPath: '/error/advanced-errors/error-429'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError429RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-410': {
-      id: '/error/advanced-errors/error-410'
-      path: '/error/advanced-errors/error-410'
-      fullPath: '/error/advanced-errors/error-410'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError410RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-409': {
-      id: '/error/advanced-errors/error-409'
-      path: '/error/advanced-errors/error-409'
-      fullPath: '/error/advanced-errors/error-409'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError409RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-408': {
-      id: '/error/advanced-errors/error-408'
-      path: '/error/advanced-errors/error-408'
-      fullPath: '/error/advanced-errors/error-408'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError408RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-404': {
-      id: '/error/advanced-errors/error-404'
-      path: '/error/advanced-errors/error-404'
-      fullPath: '/error/advanced-errors/error-404'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError404RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-403': {
-      id: '/error/advanced-errors/error-403'
-      path: '/error/advanced-errors/error-403'
-      fullPath: '/error/advanced-errors/error-403'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError403RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-402': {
-      id: '/error/advanced-errors/error-402'
-      path: '/error/advanced-errors/error-402'
-      fullPath: '/error/advanced-errors/error-402'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError402RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-401': {
-      id: '/error/advanced-errors/error-401'
-      path: '/error/advanced-errors/error-401'
-      fullPath: '/error/advanced-errors/error-401'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError401RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/error-400': {
-      id: '/error/advanced-errors/error-400'
-      path: '/error/advanced-errors/error-400'
-      fullPath: '/error/advanced-errors/error-400'
-      preLoaderRoute: typeof ErrorAdvancedErrorsError400RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-500-03-elevated-error-rate': {
-      id: '/error/advanced-errors/dev-500-03-elevated-error-rate'
-      path: '/error/advanced-errors/dev-500-03-elevated-error-rate'
-      fullPath: '/error/advanced-errors/dev-500-03-elevated-error-rate'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-500-02-test-suite-failed': {
-      id: '/error/advanced-errors/dev-500-02-test-suite-failed'
-      path: '/error/advanced-errors/dev-500-02-test-suite-failed'
-      fullPath: '/error/advanced-errors/dev-500-02-test-suite-failed'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-500-01-webhook-delivery-failed': {
-      id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
-      path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
-      fullPath: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-429-02-webhook-queue-full': {
-      id: '/error/advanced-errors/dev-429-02-webhook-queue-full'
-      path: '/error/advanced-errors/dev-429-02-webhook-queue-full'
-      fullPath: '/error/advanced-errors/dev-429-02-webhook-queue-full'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-429-01-rate-limit-100': {
-      id: '/error/advanced-errors/dev-429-01-rate-limit-100'
-      path: '/error/advanced-errors/dev-429-01-rate-limit-100'
-      fullPath: '/error/advanced-errors/dev-429-01-rate-limit-100'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev42901RateLimit100RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-410-01-version-deprecated': {
-      id: '/error/advanced-errors/dev-410-01-version-deprecated'
-      path: '/error/advanced-errors/dev-410-01-version-deprecated'
-      fullPath: '/error/advanced-errors/dev-410-01-version-deprecated'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-409-01-duplicate-idempotency': {
-      id: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
-      path: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
-      fullPath: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-408-01-webhook-timeout': {
-      id: '/error/advanced-errors/dev-408-01-webhook-timeout'
-      path: '/error/advanced-errors/dev-408-01-webhook-timeout'
-      fullPath: '/error/advanced-errors/dev-408-01-webhook-timeout'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-404-01-endpoint-not-found': {
-      id: '/error/advanced-errors/dev-404-01-endpoint-not-found'
-      path: '/error/advanced-errors/dev-404-01-endpoint-not-found'
-      fullPath: '/error/advanced-errors/dev-404-01-endpoint-not-found'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-403-04-missing-webhook': {
-      id: '/error/advanced-errors/dev-403-04-missing-webhook'
-      path: '/error/advanced-errors/dev-403-04-missing-webhook'
-      fullPath: '/error/advanced-errors/dev-403-04-missing-webhook'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40304MissingWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-403-03-partner-approval-pending': {
-      id: '/error/advanced-errors/dev-403-03-partner-approval-pending'
-      path: '/error/advanced-errors/dev-403-03-partner-approval-pending'
-      fullPath: '/error/advanced-errors/dev-403-03-partner-approval-pending'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-403-02-ip-whitelist-violation': {
-      id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
-      path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
-      fullPath: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-403-01-scope-forbidden': {
-      id: '/error/advanced-errors/dev-403-01-scope-forbidden'
-      path: '/error/advanced-errors/dev-403-01-scope-forbidden'
-      fullPath: '/error/advanced-errors/dev-403-01-scope-forbidden'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-402-01-overage-billing': {
-      id: '/error/advanced-errors/dev-402-01-overage-billing'
-      path: '/error/advanced-errors/dev-402-01-overage-billing'
-      fullPath: '/error/advanced-errors/dev-402-01-overage-billing'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40201OverageBillingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-401-02-oauth-revoked': {
-      id: '/error/advanced-errors/dev-401-02-oauth-revoked'
-      path: '/error/advanced-errors/dev-401-02-oauth-revoked'
-      fullPath: '/error/advanced-errors/dev-401-02-oauth-revoked'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40102OauthRevokedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-401-01-api-key-invalid': {
-      id: '/error/advanced-errors/dev-401-01-api-key-invalid'
-      path: '/error/advanced-errors/dev-401-01-api-key-invalid'
-      fullPath: '/error/advanced-errors/dev-401-01-api-key-invalid'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-400-04-sdk-outdated': {
-      id: '/error/advanced-errors/dev-400-04-sdk-outdated'
-      path: '/error/advanced-errors/dev-400-04-sdk-outdated'
-      fullPath: '/error/advanced-errors/dev-400-04-sdk-outdated'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': {
-      id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
-      path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
-      fullPath: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-400-02-signature-verification-failed': {
-      id: '/error/advanced-errors/dev-400-02-signature-verification-failed'
-      path: '/error/advanced-errors/dev-400-02-signature-verification-failed'
-      fullPath: '/error/advanced-errors/dev-400-02-signature-verification-failed'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error/advanced-errors/dev-400-01-payload-validation': {
-      id: '/error/advanced-errors/dev-400-01-payload-validation'
-      path: '/error/advanced-errors/dev-400-01-payload-validation'
-      fullPath: '/error/advanced-errors/dev-400-01-payload-validation'
-      preLoaderRoute: typeof ErrorAdvancedErrorsDev40001PayloadValidationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cards/app/virtual-debit-cards': {
-      id: '/cards/app/virtual-debit-cards'
-      path: '/virtual-debit-cards'
-      fullPath: '/cards/app/virtual-debit-cards'
-      preLoaderRoute: typeof CardsAppVirtualDebitCardsRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/virtual-credit-cards': {
-      id: '/cards/app/virtual-credit-cards'
-      path: '/virtual-credit-cards'
-      fullPath: '/cards/app/virtual-credit-cards'
-      preLoaderRoute: typeof CardsAppVirtualCreditCardsRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/prepaid-card-management': {
-      id: '/cards/app/prepaid-card-management'
-      path: '/prepaid-card-management'
-      fullPath: '/cards/app/prepaid-card-management'
-      preLoaderRoute: typeof CardsAppPrepaidCardManagementRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/physical-debit-cards': {
-      id: '/cards/app/physical-debit-cards'
-      path: '/physical-debit-cards'
-      fullPath: '/cards/app/physical-debit-cards'
-      preLoaderRoute: typeof CardsAppPhysicalDebitCardsRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/corporate-business-cards': {
-      id: '/cards/app/corporate-business-cards'
-      path: '/corporate-business-cards'
-      fullPath: '/cards/app/corporate-business-cards'
-      preLoaderRoute: typeof CardsAppCorporateBusinessCardsRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/card-settings-support': {
-      id: '/cards/app/card-settings-support'
-      path: '/card-settings-support'
-      fullPath: '/cards/app/card-settings-support'
-      preLoaderRoute: typeof CardsAppCardSettingsSupportRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/card-security-fraud-prevention': {
-      id: '/cards/app/card-security-fraud-prevention'
-      path: '/card-security-fraud-prevention'
-      fullPath: '/cards/app/card-security-fraud-prevention'
-      preLoaderRoute: typeof CardsAppCardSecurityFraudPreventionRouteImport
-      parentRoute: typeof CardsAppRoute
-    }
-    '/cards/app/card-program-administration': {
-      id: '/cards/app/card-program-administration'
-      path: '/card-program-administration'
-      fullPath: '/cards/app/card-program-administration'
-      preLoaderRoute: typeof CardsAppCardProgramAdministrationRouteImport
+    '/cards/app/card-analytics-reporting': {
+      id: '/cards/app/card-analytics-reporting'
+      path: '/card-analytics-reporting'
+      fullPath: '/cards/app/card-analytics-reporting'
+      preLoaderRoute: typeof CardsAppCardAnalyticsReportingRouteImport
       parentRoute: typeof CardsAppRoute
     }
     '/cards/app/card-command-center': {
@@ -4314,12 +3467,915 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardsAppCardCommandCenterRouteImport
       parentRoute: typeof CardsAppRoute
     }
-    '/cards/app/card-analytics-reporting': {
-      id: '/cards/app/card-analytics-reporting'
-      path: '/card-analytics-reporting'
-      fullPath: '/cards/app/card-analytics-reporting'
-      preLoaderRoute: typeof CardsAppCardAnalyticsReportingRouteImport
+    '/cards/app/card-program-administration': {
+      id: '/cards/app/card-program-administration'
+      path: '/card-program-administration'
+      fullPath: '/cards/app/card-program-administration'
+      preLoaderRoute: typeof CardsAppCardProgramAdministrationRouteImport
       parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-security-fraud-prevention': {
+      id: '/cards/app/card-security-fraud-prevention'
+      path: '/card-security-fraud-prevention'
+      fullPath: '/cards/app/card-security-fraud-prevention'
+      preLoaderRoute: typeof CardsAppCardSecurityFraudPreventionRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/card-settings-support': {
+      id: '/cards/app/card-settings-support'
+      path: '/card-settings-support'
+      fullPath: '/cards/app/card-settings-support'
+      preLoaderRoute: typeof CardsAppCardSettingsSupportRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/corporate-business-cards': {
+      id: '/cards/app/corporate-business-cards'
+      path: '/corporate-business-cards'
+      fullPath: '/cards/app/corporate-business-cards'
+      preLoaderRoute: typeof CardsAppCorporateBusinessCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/physical-debit-cards': {
+      id: '/cards/app/physical-debit-cards'
+      path: '/physical-debit-cards'
+      fullPath: '/cards/app/physical-debit-cards'
+      preLoaderRoute: typeof CardsAppPhysicalDebitCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/prepaid-card-management': {
+      id: '/cards/app/prepaid-card-management'
+      path: '/prepaid-card-management'
+      fullPath: '/cards/app/prepaid-card-management'
+      preLoaderRoute: typeof CardsAppPrepaidCardManagementRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/virtual-credit-cards': {
+      id: '/cards/app/virtual-credit-cards'
+      path: '/virtual-credit-cards'
+      fullPath: '/cards/app/virtual-credit-cards'
+      preLoaderRoute: typeof CardsAppVirtualCreditCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/cards/app/virtual-debit-cards': {
+      id: '/cards/app/virtual-debit-cards'
+      path: '/virtual-debit-cards'
+      fullPath: '/cards/app/virtual-debit-cards'
+      preLoaderRoute: typeof CardsAppVirtualDebitCardsRouteImport
+      parentRoute: typeof CardsAppRoute
+    }
+    '/error/advanced-errors/dev-400-01-payload-validation': {
+      id: '/error/advanced-errors/dev-400-01-payload-validation'
+      path: '/error/advanced-errors/dev-400-01-payload-validation'
+      fullPath: '/error/advanced-errors/dev-400-01-payload-validation'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40001PayloadValidationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-02-signature-verification-failed': {
+      id: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      path: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      fullPath: '/error/advanced-errors/dev-400-02-signature-verification-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch': {
+      id: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      path: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      fullPath: '/error/advanced-errors/dev-400-03-sandbox-prod-mismatch'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-400-04-sdk-outdated': {
+      id: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      path: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      fullPath: '/error/advanced-errors/dev-400-04-sdk-outdated'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40004SdkOutdatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-401-01-api-key-invalid': {
+      id: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      path: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      fullPath: '/error/advanced-errors/dev-401-01-api-key-invalid'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40101ApiKeyInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-401-02-oauth-revoked': {
+      id: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      path: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      fullPath: '/error/advanced-errors/dev-401-02-oauth-revoked'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40102OauthRevokedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-402-01-overage-billing': {
+      id: '/error/advanced-errors/dev-402-01-overage-billing'
+      path: '/error/advanced-errors/dev-402-01-overage-billing'
+      fullPath: '/error/advanced-errors/dev-402-01-overage-billing'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40201OverageBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-01-scope-forbidden': {
+      id: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      path: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      fullPath: '/error/advanced-errors/dev-403-01-scope-forbidden'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40301ScopeForbiddenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-02-ip-whitelist-violation': {
+      id: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      path: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      fullPath: '/error/advanced-errors/dev-403-02-ip-whitelist-violation'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40302IpWhitelistViolationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-03-partner-approval-pending': {
+      id: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      path: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      fullPath: '/error/advanced-errors/dev-403-03-partner-approval-pending'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40303PartnerApprovalPendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-403-04-missing-webhook': {
+      id: '/error/advanced-errors/dev-403-04-missing-webhook'
+      path: '/error/advanced-errors/dev-403-04-missing-webhook'
+      fullPath: '/error/advanced-errors/dev-403-04-missing-webhook'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40304MissingWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-404-01-endpoint-not-found': {
+      id: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      path: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      fullPath: '/error/advanced-errors/dev-404-01-endpoint-not-found'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40401EndpointNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-408-01-webhook-timeout': {
+      id: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      path: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      fullPath: '/error/advanced-errors/dev-408-01-webhook-timeout'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40801WebhookTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-409-01-duplicate-idempotency': {
+      id: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      path: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      fullPath: '/error/advanced-errors/dev-409-01-duplicate-idempotency'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev40901DuplicateIdempotencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-410-01-version-deprecated': {
+      id: '/error/advanced-errors/dev-410-01-version-deprecated'
+      path: '/error/advanced-errors/dev-410-01-version-deprecated'
+      fullPath: '/error/advanced-errors/dev-410-01-version-deprecated'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev41001VersionDeprecatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-429-01-rate-limit-100': {
+      id: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      path: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      fullPath: '/error/advanced-errors/dev-429-01-rate-limit-100'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev42901RateLimit100RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-429-02-webhook-queue-full': {
+      id: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      path: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      fullPath: '/error/advanced-errors/dev-429-02-webhook-queue-full'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev42902WebhookQueueFullRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-01-webhook-delivery-failed': {
+      id: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      path: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      fullPath: '/error/advanced-errors/dev-500-01-webhook-delivery-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50001WebhookDeliveryFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-02-test-suite-failed': {
+      id: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      path: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      fullPath: '/error/advanced-errors/dev-500-02-test-suite-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50002TestSuiteFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/dev-500-03-elevated-error-rate': {
+      id: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      path: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      fullPath: '/error/advanced-errors/dev-500-03-elevated-error-rate'
+      preLoaderRoute: typeof ErrorAdvancedErrorsDev50003ElevatedErrorRateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-400': {
+      id: '/error/advanced-errors/error-400'
+      path: '/error/advanced-errors/error-400'
+      fullPath: '/error/advanced-errors/error-400'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError400RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-401': {
+      id: '/error/advanced-errors/error-401'
+      path: '/error/advanced-errors/error-401'
+      fullPath: '/error/advanced-errors/error-401'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-402': {
+      id: '/error/advanced-errors/error-402'
+      path: '/error/advanced-errors/error-402'
+      fullPath: '/error/advanced-errors/error-402'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError402RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-403': {
+      id: '/error/advanced-errors/error-403'
+      path: '/error/advanced-errors/error-403'
+      fullPath: '/error/advanced-errors/error-403'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError403RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-404': {
+      id: '/error/advanced-errors/error-404'
+      path: '/error/advanced-errors/error-404'
+      fullPath: '/error/advanced-errors/error-404'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-408': {
+      id: '/error/advanced-errors/error-408'
+      path: '/error/advanced-errors/error-408'
+      fullPath: '/error/advanced-errors/error-408'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError408RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-409': {
+      id: '/error/advanced-errors/error-409'
+      path: '/error/advanced-errors/error-409'
+      fullPath: '/error/advanced-errors/error-409'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError409RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-410': {
+      id: '/error/advanced-errors/error-410'
+      path: '/error/advanced-errors/error-410'
+      fullPath: '/error/advanced-errors/error-410'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError410RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-429': {
+      id: '/error/advanced-errors/error-429'
+      path: '/error/advanced-errors/error-429'
+      fullPath: '/error/advanced-errors/error-429'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError429RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-500': {
+      id: '/error/advanced-errors/error-500'
+      path: '/error/advanced-errors/error-500'
+      fullPath: '/error/advanced-errors/error-500'
+      preLoaderRoute: typeof ErrorAdvancedErrorsError500RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-account-suspended': {
+      id: '/error/advanced-errors/error-account-suspended'
+      path: '/error/advanced-errors/error-account-suspended'
+      fullPath: '/error/advanced-errors/error-account-suspended'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorAccountSuspendedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-kyc-failed': {
+      id: '/error/advanced-errors/error-kyc-failed'
+      path: '/error/advanced-errors/error-kyc-failed'
+      fullPath: '/error/advanced-errors/error-kyc-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorKycFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-maintenance': {
+      id: '/error/advanced-errors/error-maintenance'
+      path: '/error/advanced-errors/error-maintenance'
+      fullPath: '/error/advanced-errors/error-maintenance'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-payment-failed': {
+      id: '/error/advanced-errors/error-payment-failed'
+      path: '/error/advanced-errors/error-payment-failed'
+      fullPath: '/error/advanced-errors/error-payment-failed'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorPaymentFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-processing-hold': {
+      id: '/error/advanced-errors/error-processing-hold'
+      path: '/error/advanced-errors/error-processing-hold'
+      fullPath: '/error/advanced-errors/error-processing-hold'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorProcessingHoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/advanced-errors/error-session-expired': {
+      id: '/error/advanced-errors/error-session-expired'
+      path: '/error/advanced-errors/error-session-expired'
+      fullPath: '/error/advanced-errors/error-session-expired'
+      preLoaderRoute: typeof ErrorAdvancedErrorsErrorSessionExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-400-01-virtual-limit-reached': {
+      id: '/error/card/card-400-01-virtual-limit-reached'
+      path: '/error/card/card-400-01-virtual-limit-reached'
+      fullPath: '/error/card/card-400-01-virtual-limit-reached'
+      preLoaderRoute: typeof ErrorCardCard40001VirtualLimitReachedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-400-02-program-limit-high': {
+      id: '/error/card/card-400-02-program-limit-high'
+      path: '/error/card/card-400-02-program-limit-high'
+      fullPath: '/error/card/card-400-02-program-limit-high'
+      preLoaderRoute: typeof ErrorCardCard40002ProgramLimitHighRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-01-3ds-failed': {
+      id: '/error/card/card-401-01-3ds-failed'
+      path: '/error/card/card-401-01-3ds-failed'
+      fullPath: '/error/card/card-401-01-3ds-failed'
+      preLoaderRoute: typeof ErrorCardCard401013dsFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-02-pin-3x-blocked': {
+      id: '/error/card/card-401-02-pin-3x-blocked'
+      path: '/error/card/card-401-02-pin-3x-blocked'
+      fullPath: '/error/card/card-401-02-pin-3x-blocked'
+      preLoaderRoute: typeof ErrorCardCard40102Pin3xBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-401-03-cvv-attempts-exceeded': {
+      id: '/error/card/card-401-03-cvv-attempts-exceeded'
+      path: '/error/card/card-401-03-cvv-attempts-exceeded'
+      fullPath: '/error/card/card-401-03-cvv-attempts-exceeded'
+      preLoaderRoute: typeof ErrorCardCard40103CvvAttemptsExceededRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-01-funding-failed': {
+      id: '/error/card/card-402-01-funding-failed'
+      path: '/error/card/card-402-01-funding-failed'
+      fullPath: '/error/card/card-402-01-funding-failed'
+      preLoaderRoute: typeof ErrorCardCard40201FundingFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-02-limit-exceeded': {
+      id: '/error/card/card-402-02-limit-exceeded'
+      path: '/error/card/card-402-02-limit-exceeded'
+      fullPath: '/error/card/card-402-02-limit-exceeded'
+      preLoaderRoute: typeof ErrorCardCard40202LimitExceededRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-03-chargeback-disputed': {
+      id: '/error/card/card-402-03-chargeback-disputed'
+      path: '/error/card/card-402-03-chargeback-disputed'
+      fullPath: '/error/card/card-402-03-chargeback-disputed'
+      preLoaderRoute: typeof ErrorCardCard40203ChargebackDisputedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-402-04-min-topup-failed': {
+      id: '/error/card/card-402-04-min-topup-failed'
+      path: '/error/card/card-402-04-min-topup-failed'
+      fullPath: '/error/card/card-402-04-min-topup-failed'
+      preLoaderRoute: typeof ErrorCardCard40204MinTopupFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-01-kyc-tier-insufficient': {
+      id: '/error/card/card-403-01-kyc-tier-insufficient'
+      path: '/error/card/card-403-01-kyc-tier-insufficient'
+      fullPath: '/error/card/card-403-01-kyc-tier-insufficient'
+      preLoaderRoute: typeof ErrorCardCard40301KycTierInsufficientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-02-merchant-blocked': {
+      id: '/error/card/card-403-02-merchant-blocked'
+      path: '/error/card/card-403-02-merchant-blocked'
+      fullPath: '/error/card/card-403-02-merchant-blocked'
+      preLoaderRoute: typeof ErrorCardCard40302MerchantBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-03-international-blocked': {
+      id: '/error/card/card-403-03-international-blocked'
+      path: '/error/card/card-403-03-international-blocked'
+      fullPath: '/error/card/card-403-03-international-blocked'
+      preLoaderRoute: typeof ErrorCardCard40303InternationalBlockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-04-frozen-fraud': {
+      id: '/error/card/card-403-04-frozen-fraud'
+      path: '/error/card/card-403-04-frozen-fraud'
+      fullPath: '/error/card/card-403-04-frozen-fraud'
+      preLoaderRoute: typeof ErrorCardCard40304FrozenFraudRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-05-program-inactive': {
+      id: '/error/card/card-403-05-program-inactive'
+      path: '/error/card/card-403-05-program-inactive'
+      fullPath: '/error/card/card-403-05-program-inactive'
+      preLoaderRoute: typeof ErrorCardCard40305ProgramInactiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-06-not-activated': {
+      id: '/error/card/card-403-06-not-activated'
+      path: '/error/card/card-403-06-not-activated'
+      fullPath: '/error/card/card-403-06-not-activated'
+      preLoaderRoute: typeof ErrorCardCard40306NotActivatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-403-07-settings-conflict': {
+      id: '/error/card/card-403-07-settings-conflict'
+      path: '/error/card/card-403-07-settings-conflict'
+      fullPath: '/error/card/card-403-07-settings-conflict'
+      preLoaderRoute: typeof ErrorCardCard40307SettingsConflictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-404-01-delivery-address-invalid': {
+      id: '/error/card/card-404-01-delivery-address-invalid'
+      path: '/error/card/card-404-01-delivery-address-invalid'
+      fullPath: '/error/card/card-404-01-delivery-address-invalid'
+      preLoaderRoute: typeof ErrorCardCard40401DeliveryAddressInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-404-02-employee-not-whitelisted': {
+      id: '/error/card/card-404-02-employee-not-whitelisted'
+      path: '/error/card/card-404-02-employee-not-whitelisted'
+      fullPath: '/error/card/card-404-02-employee-not-whitelisted'
+      preLoaderRoute: typeof ErrorCardCard40402EmployeeNotWhitelistedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-408-01-personalization-failed': {
+      id: '/error/card/card-408-01-personalization-failed'
+      path: '/error/card/card-408-01-personalization-failed'
+      fullPath: '/error/card/card-408-01-personalization-failed'
+      preLoaderRoute: typeof ErrorCardCard40801PersonalizationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-409-01-already-exists-employee': {
+      id: '/error/card/card-409-01-already-exists-employee'
+      path: '/error/card/card-409-01-already-exists-employee'
+      fullPath: '/error/card/card-409-01-already-exists-employee'
+      preLoaderRoute: typeof ErrorCardCard40901AlreadyExistsEmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-410-01-expired': {
+      id: '/error/card/card-410-01-expired'
+      path: '/error/card/card-410-01-expired'
+      fullPath: '/error/card/card-410-01-expired'
+      preLoaderRoute: typeof ErrorCardCard41001ExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/card/card-500-01-processor-down': {
+      id: '/error/card/card-500-01-processor-down'
+      path: '/error/card/card-500-01-processor-down'
+      fullPath: '/error/card/card-500-01-processor-down'
+      preLoaderRoute: typeof ErrorCardCard50001ProcessorDownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-01-recipient-not-found': {
+      id: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      path: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      fullPath: '/error/transaction-errors/tx-400-01-recipient-not-found'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40001RecipientNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-02-invalid-account-checkdigit': {
+      id: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      path: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      fullPath: '/error/transaction-errors/tx-400-02-invalid-account-checkdigit'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40002InvalidAccountCheckdigitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-03-bank-offline': {
+      id: '/error/transaction-errors/tx-400-03-bank-offline'
+      path: '/error/transaction-errors/tx-400-03-bank-offline'
+      fullPath: '/error/transaction-errors/tx-400-03-bank-offline'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40003BankOfflineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-04-invalid-mobile-network': {
+      id: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      path: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      fullPath: '/error/transaction-errors/tx-400-04-invalid-mobile-network'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40004InvalidMobileNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-400-05-currency-not-allowed': {
+      id: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      path: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      fullPath: '/error/transaction-errors/tx-400-05-currency-not-allowed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40005CurrencyNotAllowedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-401-01-pin-3x-locked': {
+      id: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      path: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      fullPath: '/error/transaction-errors/tx-401-01-pin-3x-locked'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40101Pin3xLockedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired': {
+      id: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      path: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      fullPath: '/error/transaction-errors/tx-401-02-wrong-pin-otp-expired'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40102WrongPinOtpExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-01-insufficient-balance': {
+      id: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      path: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      fullPath: '/error/transaction-errors/tx-402-01-insufficient-balance'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40201InsufficientBalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-02-amount-min-max': {
+      id: '/error/transaction-errors/tx-402-02-amount-min-max'
+      path: '/error/transaction-errors/tx-402-02-amount-min-max'
+      fullPath: '/error/transaction-errors/tx-402-02-amount-min-max'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40202AmountMinMaxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-03-daily-limit-reached': {
+      id: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      path: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      fullPath: '/error/transaction-errors/tx-402-03-daily-limit-reached'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40203DailyLimitReachedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-04-per-txn-limit': {
+      id: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      path: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      fullPath: '/error/transaction-errors/tx-402-04-per-txn-limit'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40204PerTxnLimitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-402-05-fee-calculation-failed': {
+      id: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      path: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      fullPath: '/error/transaction-errors/tx-402-05-fee-calculation-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40205FeeCalculationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-01-aml-hold': {
+      id: '/error/transaction-errors/tx-403-01-aml-hold'
+      path: '/error/transaction-errors/tx-403-01-aml-hold'
+      fullPath: '/error/transaction-errors/tx-403-01-aml-hold'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40301AmlHoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-02-kra-tax-failed': {
+      id: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      path: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      fullPath: '/error/transaction-errors/tx-403-02-kra-tax-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40302KraTaxFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-403-03-account-frozen': {
+      id: '/error/transaction-errors/tx-403-03-account-frozen'
+      path: '/error/transaction-errors/tx-403-03-account-frozen'
+      fullPath: '/error/transaction-errors/tx-403-03-account-frozen'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40303AccountFrozenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-404-01-mpesa-not-registered': {
+      id: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      path: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      fullPath: '/error/transaction-errors/tx-404-01-mpesa-not-registered'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40401MpesaNotRegisteredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-404-02-purpose-code-missing': {
+      id: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      path: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      fullPath: '/error/transaction-errors/tx-404-02-purpose-code-missing'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40402PurposeCodeMissingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-408-01-mpesa-stk-timeout': {
+      id: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      path: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      fullPath: '/error/transaction-errors/tx-408-01-mpesa-stk-timeout'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40801MpesaStkTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-01-duplicate-transaction': {
+      id: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      path: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      fullPath: '/error/transaction-errors/tx-409-01-duplicate-transaction'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40901DuplicateTransactionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-02-fx-quote-expired-mid': {
+      id: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      path: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      fullPath: '/error/transaction-errors/tx-409-02-fx-quote-expired-mid'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40902FxQuoteExpiredMidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-409-03-reconciliation-mismatch': {
+      id: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      path: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      fullPath: '/error/transaction-errors/tx-409-03-reconciliation-mismatch'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx40903ReconciliationMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-410-01-txn-expired': {
+      id: '/error/transaction-errors/tx-410-01-txn-expired'
+      path: '/error/transaction-errors/tx-410-01-txn-expired'
+      fullPath: '/error/transaction-errors/tx-410-01-txn-expired'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx41001TxnExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-422-01-name-mismatch': {
+      id: '/error/transaction-errors/tx-422-01-name-mismatch'
+      path: '/error/transaction-errors/tx-422-01-name-mismatch'
+      fullPath: '/error/transaction-errors/tx-422-01-name-mismatch'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42201NameMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-422-02-beneficiary-blacklisted': {
+      id: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      path: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      fullPath: '/error/transaction-errors/tx-422-02-beneficiary-blacklisted'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42202BeneficiaryBlacklistedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-423-01-rtgs-cutoff': {
+      id: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      path: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      fullPath: '/error/transaction-errors/tx-423-01-rtgs-cutoff'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42301RtgsCutoffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-429-01-throttled': {
+      id: '/error/transaction-errors/tx-429-01-throttled'
+      path: '/error/transaction-errors/tx-429-01-throttled'
+      fullPath: '/error/transaction-errors/tx-429-01-throttled'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx42901ThrottledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-500-01-settlement-delayed': {
+      id: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      path: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      fullPath: '/error/transaction-errors/tx-500-01-settlement-delayed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx50001SettlementDelayedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/transaction-errors/tx-500-02-liquidity-failed': {
+      id: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      path: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      fullPath: '/error/transaction-errors/tx-500-02-liquidity-failed'
+      preLoaderRoute: typeof ErrorTransactionErrorsTx50002LiquidityFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-400-01-name-mismatch': {
+      id: '/error/utility-errors/util-400-01-name-mismatch'
+      path: '/error/utility-errors/util-400-01-name-mismatch'
+      fullPath: '/error/utility-errors/util-400-01-name-mismatch'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40001NameMismatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-01-amount-below-min': {
+      id: '/error/utility-errors/util-402-01-amount-below-min'
+      path: '/error/utility-errors/util-402-01-amount-below-min'
+      fullPath: '/error/utility-errors/util-402-01-amount-below-min'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40201AmountBelowMinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-02-insufficient-balance-utility': {
+      id: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      path: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      fullPath: '/error/utility-errors/util-402-02-insufficient-balance-utility'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40202InsufficientBalanceUtilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-402-03-provider-not-supported': {
+      id: '/error/utility-errors/util-402-03-provider-not-supported'
+      path: '/error/utility-errors/util-402-03-provider-not-supported'
+      fullPath: '/error/utility-errors/util-402-03-provider-not-supported'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40203ProviderNotSupportedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-403-01-automation-failed': {
+      id: '/error/utility-errors/util-403-01-automation-failed'
+      path: '/error/utility-errors/util-403-01-automation-failed'
+      fullPath: '/error/utility-errors/util-403-01-automation-failed'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40301AutomationFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-01-meter-not-found': {
+      id: '/error/utility-errors/util-404-01-meter-not-found'
+      path: '/error/utility-errors/util-404-01-meter-not-found'
+      fullPath: '/error/utility-errors/util-404-01-meter-not-found'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40401MeterNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-02-internet-invalid': {
+      id: '/error/utility-errors/util-404-02-internet-invalid'
+      path: '/error/utility-errors/util-404-02-internet-invalid'
+      fullPath: '/error/utility-errors/util-404-02-internet-invalid'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40402InternetInvalidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-404-03-airtime-unreachable': {
+      id: '/error/utility-errors/util-404-03-airtime-unreachable'
+      path: '/error/utility-errors/util-404-03-airtime-unreachable'
+      fullPath: '/error/utility-errors/util-404-03-airtime-unreachable'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40403AirtimeUnreachableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-408-01-pending-confirmation': {
+      id: '/error/utility-errors/util-408-01-pending-confirmation'
+      path: '/error/utility-errors/util-408-01-pending-confirmation'
+      fullPath: '/error/utility-errors/util-408-01-pending-confirmation'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40801PendingConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-409-01-bill-already-paid': {
+      id: '/error/utility-errors/util-409-01-bill-already-paid'
+      path: '/error/utility-errors/util-409-01-bill-already-paid'
+      fullPath: '/error/utility-errors/util-409-01-bill-already-paid'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40901BillAlreadyPaidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-409-02-automation-conflict': {
+      id: '/error/utility-errors/util-409-02-automation-conflict'
+      path: '/error/utility-errors/util-409-02-automation-conflict'
+      fullPath: '/error/utility-errors/util-409-02-automation-conflict'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil40902AutomationConflictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-410-01-provider-maintenance': {
+      id: '/error/utility-errors/util-410-01-provider-maintenance'
+      path: '/error/utility-errors/util-410-01-provider-maintenance'
+      fullPath: '/error/utility-errors/util-410-01-provider-maintenance'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil41001ProviderMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-429-01-rate-limited': {
+      id: '/error/utility-errors/util-429-01-rate-limited'
+      path: '/error/utility-errors/util-429-01-rate-limited'
+      fullPath: '/error/utility-errors/util-429-01-rate-limited'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil42901RateLimitedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error/utility-errors/util-500-01-token-gen-failed': {
+      id: '/error/utility-errors/util-500-01-token-gen-failed'
+      path: '/error/utility-errors/util-500-01-token-gen-failed'
+      fullPath: '/error/utility-errors/util-500-01-token-gen-failed'
+      preLoaderRoute: typeof ErrorUtilityErrorsUtil50001TokenGenFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pm/app/': {
+      id: '/pm/app/'
+      path: '/'
+      fullPath: '/pm/app/'
+      preLoaderRoute: typeof PmAppIndexRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/$section': {
+      id: '/pm/app/$section'
+      path: '/$section'
+      fullPath: '/pm/app/$section'
+      preLoaderRoute: typeof PmAppSectionRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/account': {
+      id: '/pm/app/account'
+      path: '/account'
+      fullPath: '/pm/app/account'
+      preLoaderRoute: typeof PmAppAccountRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/analytics': {
+      id: '/pm/app/analytics'
+      path: '/analytics'
+      fullPath: '/pm/app/analytics'
+      preLoaderRoute: typeof PmAppAnalyticsRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/compliance': {
+      id: '/pm/app/compliance'
+      path: '/compliance'
+      fullPath: '/pm/app/compliance'
+      preLoaderRoute: typeof PmAppComplianceRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/customers': {
+      id: '/pm/app/customers'
+      path: '/customers'
+      fullPath: '/pm/app/customers'
+      preLoaderRoute: typeof PmAppCustomersRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/disputes': {
+      id: '/pm/app/disputes'
+      path: '/disputes'
+      fullPath: '/pm/app/disputes'
+      preLoaderRoute: typeof PmAppDisputesRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/fees': {
+      id: '/pm/app/fees'
+      path: '/fees'
+      fullPath: '/pm/app/fees'
+      preLoaderRoute: typeof PmAppFeesRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/fx': {
+      id: '/pm/app/fx'
+      path: '/fx'
+      fullPath: '/pm/app/fx'
+      preLoaderRoute: typeof PmAppFxRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/initiate-transfer': {
+      id: '/pm/app/initiate-transfer'
+      path: '/initiate-transfer'
+      fullPath: '/pm/app/initiate-transfer'
+      preLoaderRoute: typeof PmAppInitiateTransferRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/kra-government': {
+      id: '/pm/app/kra-government'
+      path: '/kra-government'
+      fullPath: '/pm/app/kra-government'
+      preLoaderRoute: typeof PmAppKraGovernmentRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/liquidity': {
+      id: '/pm/app/liquidity'
+      path: '/liquidity'
+      fullPath: '/pm/app/liquidity'
+      preLoaderRoute: typeof PmAppLiquidityRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/mobile-money': {
+      id: '/pm/app/mobile-money'
+      path: '/mobile-money'
+      fullPath: '/pm/app/mobile-money'
+      preLoaderRoute: typeof PmAppMobileMoneyRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/onboarding': {
+      id: '/pm/app/onboarding'
+      path: '/onboarding'
+      fullPath: '/pm/app/onboarding'
+      preLoaderRoute: typeof PmAppOnboardingRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/ops-health': {
+      id: '/pm/app/ops-health'
+      path: '/ops-health'
+      fullPath: '/pm/app/ops-health'
+      preLoaderRoute: typeof PmAppOpsHealthRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/payment-rails': {
+      id: '/pm/app/payment-rails'
+      path: '/payment-rails'
+      fullPath: '/pm/app/payment-rails'
+      preLoaderRoute: typeof PmAppPaymentRailsRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/reconciliation': {
+      id: '/pm/app/reconciliation'
+      path: '/reconciliation'
+      fullPath: '/pm/app/reconciliation'
+      preLoaderRoute: typeof PmAppReconciliationRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/settings': {
+      id: '/pm/app/settings'
+      path: '/settings'
+      fullPath: '/pm/app/settings'
+      preLoaderRoute: typeof PmAppSettingsRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/settlement': {
+      id: '/pm/app/settlement'
+      path: '/settlement'
+      fullPath: '/pm/app/settlement'
+      preLoaderRoute: typeof PmAppSettlementRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/transfer-management': {
+      id: '/pm/app/transfer-management'
+      path: '/transfer-management'
+      fullPath: '/pm/app/transfer-management'
+      preLoaderRoute: typeof PmAppTransferManagementRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/transfer-overview': {
+      id: '/pm/app/transfer-overview'
+      path: '/transfer-overview'
+      fullPath: '/pm/app/transfer-overview'
+      preLoaderRoute: typeof PmAppTransferOverviewRouteImport
+      parentRoute: typeof PmAppRoute
+    }
+    '/pm/app/transfers': {
+      id: '/pm/app/transfers'
+      path: '/transfers'
+      fullPath: '/pm/app/transfers'
+      preLoaderRoute: typeof PmAppTransfersRouteImport
+      parentRoute: typeof PmAppRoute
     }
   }
 }
@@ -4436,6 +4492,20 @@ const BusinessDashboardRouteChildren: BusinessDashboardRouteChildren = {
 
 const BusinessDashboardRouteWithChildren =
   BusinessDashboardRoute._addFileChildren(BusinessDashboardRouteChildren)
+
+interface CardsShellRouteChildren {
+  CardsShellSectionRoute: typeof CardsShellSectionRoute
+  CardsShellIndexRoute: typeof CardsShellIndexRoute
+}
+
+const CardsShellRouteChildren: CardsShellRouteChildren = {
+  CardsShellSectionRoute: CardsShellSectionRoute,
+  CardsShellIndexRoute: CardsShellIndexRoute,
+}
+
+const CardsShellRouteWithChildren = CardsShellRoute._addFileChildren(
+  CardsShellRouteChildren,
+)
 
 interface DevRouteChildren {
   DevModuleRoute: typeof DevModuleRoute
@@ -4599,6 +4669,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
   BusinessRoute: BusinessRouteWithChildren,
   BusinessDashboardRoute: BusinessDashboardRouteWithChildren,
+  CardsShellRoute: CardsShellRouteWithChildren,
   DevRoute: DevRouteWithChildren,
   DevDashboardRoute: DevDashboardRouteWithChildren,
   LoginRoute: LoginRoute,
@@ -4800,3 +4871,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

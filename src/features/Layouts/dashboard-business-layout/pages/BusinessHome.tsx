@@ -2,14 +2,13 @@
  * BusinessHome.tsx — the /business home rendered inside the BusinessShell outlet.
  * ----------------------------------------------------------------------------
  * Surfaces the business overview (hero + key stats) and a grid of every
- * navigable business module. Reuses the shared shell dashboard.module.css
- * visuals (the `d.*` classes) exactly like the cards layout's CardsHome.
+ * navigable business module. Page visuals live in the local
+ * businessLayout.module.css (PayMo Business theme) under the `c.*` classes.
  * ========================================================================== */
 
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
-import d from "@/features/Layouts/shell/styles/dashboard.module.css";
 import { useBusinessShell } from "../data/businessLayoutContext";
 import {
 	cx,
@@ -64,23 +63,23 @@ export default function BusinessHome() {
 	if (!home) return null;
 
 	return (
-		<div className={d.pageWrap}>
+		<div className={c.pageWrap}>
 			{/* ---------- hero ---------- */}
 			<section
-				className={d.hero}
+				className={c.hero}
 				style={{ "--mod-c1": home.c1, "--mod-c2": home.c2 } as CSSProperties}
 			>
-				<div className={d.heroAccent} />
-				<div className={d.heroInner}>
-					<span className={d.pill}>
-						<span className={d.pillDot} /> {home.pill}
+				<div className={c.heroAccent} />
+				<div className={c.heroInner}>
+					<span className={c.pill}>
+						<span className={c.pillDot} /> {home.pill}
 					</span>
-					<h1 className={d.heroTitle}>
+					<h1 className={c.heroTitle}>
 						{home.titlePre}
 						<span className={c.textGradient}>{home.titleAccent}</span>
 					</h1>
-					<p className={d.heroCopy}>{home.copy}</p>
-					<div className={d.heroActions}>
+					<p className={c.heroCopy}>{home.copy}</p>
+					<div className={c.heroActions}>
 						{home.actions.map((action) => (
 							<button
 								key={action.label}
@@ -98,13 +97,13 @@ export default function BusinessHome() {
 			</section>
 
 			{/* ---------- stats ---------- */}
-			<div className={d.statsGrid}>
+			<div className={c.statsGrid}>
 				{home.stats.map((stat) => (
-					<div className={d.statCard} key={stat.label}>
-						<div className={d.statLabel}>{stat.label}</div>
-						<div className={d.statValue}>{stat.value}</div>
+					<div className={c.statCard} key={stat.label}>
+						<div className={c.statLabel}>{stat.label}</div>
+						<div className={c.statValue}>{stat.value}</div>
 						{stat.delta && (
-							<div className={cx(d.statDelta, stat.up ? d.up : d.down)}>
+							<div className={cx(c.statDelta, stat.up ? c.up : c.down)}>
 								<i
 									className={
 										stat.up ? "bi bi-arrow-up-right" : "bi bi-arrow-down-right"
@@ -118,42 +117,42 @@ export default function BusinessHome() {
 			</div>
 
 			{/* ---------- module grid ---------- */}
-			<section className={d.sectionCard}>
-				<div className={d.sectionHead}>
+			<section className={c.sectionCard}>
+				<div className={c.sectionHead}>
 					<div>
-						<h2 className={d.sectionTitle}>
+						<h2 className={c.sectionTitle}>
 							<i className="bi bi-grid-1x2" /> Your workspaces
 						</h2>
-						<p className={d.sectionSub}>
+						<p className={c.sectionSub}>
 							Jump straight into any business module.
 						</p>
 					</div>
 				</div>
-				<div className={d.moduleGrid}>
+				<div className={c.moduleGrid}>
 					{quickLinks.map((mod) => (
 						<Link
 							key={mod.key}
 							to={homePath(mod.key)}
-							className={d.moduleCard}
+							className={c.moduleCard}
 						>
 							<span
-								className={d.moduleIcon}
+								className={c.moduleIcon}
 								style={{
 									background: `linear-gradient(135deg, ${mod.c1}, ${mod.c2})`,
 								}}
 							>
 								<i className={`bi ${mod.icon}`} />
 							</span>
-							<h3 className={d.moduleTitle}>{mod.label}</h3>
-							<p className={d.moduleDesc}>{mod.copy}</p>
-							<div className={d.moduleFoot}>
+							<h3 className={c.moduleTitle}>{mod.label}</h3>
+							<p className={c.moduleDesc}>{mod.copy}</p>
+							<div className={c.moduleFoot}>
 								<span
 									className={cx(c.badgeMini, c.badgeSoft)}
 									style={{ fontSize: "0.68rem" }}
 								>
 									{mod.pill}
 								</span>
-								<i className={cx("bi bi-arrow-right", d.moduleArrow)} />
+								<i className={cx("bi bi-arrow-right", c.moduleArrow)} />
 							</div>
 						</Link>
 					))}

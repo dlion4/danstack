@@ -9,7 +9,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
-import d from "@/features/Layouts/shell/styles/dashboard.module.css";
 import { useBusinessShell } from "../data/businessLayoutContext";
 import type { AsideKind } from "../data/businessLayoutData";
 import {
@@ -53,15 +52,15 @@ export default function BusinessModulePage({
 
 	if (!known || !mod) {
 		return (
-			<div className={d.pageWrap}>
-				<section className={d.sectionCard}>
-					<div className={d.emptyState}>
+			<div className={c.pageWrap}>
+				<section className={c.sectionCard}>
+					<div className={c.emptyState}>
 						<i className="bi bi-cone-striped" />
 						<h3>Workspace not found</h3>
 						<p style={{ color: "var(--sh-ink-2)" }}>
 							There is no business module at <code>/{module}</code>.
 						</p>
-						<div className={d.actionRow} style={{ justifyContent: "center" }}>
+						<div className={c.actionRow} style={{ justifyContent: "center" }}>
 							<Link
 								to="/business-dashboard"
 								className={c.btnPrimary}
@@ -77,23 +76,23 @@ export default function BusinessModulePage({
 	}
 
 	return (
-		<div className={d.pageWrap}>
+		<div className={c.pageWrap}>
 			{/* ---------- hero ---------- */}
 			<section
-				className={d.hero}
+				className={c.hero}
 				style={{ "--mod-c1": mod.c1, "--mod-c2": mod.c2 } as CSSProperties}
 			>
-				<div className={d.heroAccent} />
-				<div className={d.heroInner}>
-					<span className={d.pill}>
-						<span className={d.pillDot} /> {mod.pill}
+				<div className={c.heroAccent} />
+				<div className={c.heroInner}>
+					<span className={c.pill}>
+						<span className={c.pillDot} /> {mod.pill}
 					</span>
-					<h1 className={d.heroTitle}>
+					<h1 className={c.heroTitle}>
 						{mod.titlePre}
 						<span className={c.textGradient}>{mod.titleAccent}</span>
 					</h1>
-					<p className={d.heroCopy}>{mod.copy}</p>
-					<div className={d.heroActions}>
+					<p className={c.heroCopy}>{mod.copy}</p>
+					<div className={c.heroActions}>
 						{mod.actions.map((action) => (
 							<button
 								key={action.label}
@@ -120,13 +119,13 @@ export default function BusinessModulePage({
 			</section>
 
 			{/* ---------- stats ---------- */}
-			<div className={d.statsGrid}>
+			<div className={c.statsGrid}>
 				{mod.stats.map((stat) => (
-					<div className={d.statCard} key={stat.label}>
-						<div className={d.statLabel}>{stat.label}</div>
-						<div className={d.statValue}>{stat.value}</div>
+					<div className={c.statCard} key={stat.label}>
+						<div className={c.statLabel}>{stat.label}</div>
+						<div className={c.statValue}>{stat.value}</div>
 						{stat.delta && (
-							<div className={cx(d.statDelta, stat.up ? d.up : d.down)}>
+							<div className={cx(c.statDelta, stat.up ? c.up : c.down)}>
 								<i
 									className={
 										stat.up ? "bi bi-arrow-up-right" : "bi bi-arrow-down-right"
@@ -140,19 +139,19 @@ export default function BusinessModulePage({
 			</div>
 
 			{/* ---------- features ---------- */}
-			<section className={d.sectionCard}>
-				<div className={d.sectionHead}>
+			<section className={c.sectionCard}>
+				<div className={c.sectionHead}>
 					<div>
-						<h2 className={d.sectionTitle}>
+						<h2 className={c.sectionTitle}>
 							<i className={`bi ${mod.icon}`} /> {mod.label} capabilities
 						</h2>
-						<p className={d.sectionSub}>What you can do from here.</p>
+						<p className={c.sectionSub}>What you can do from here.</p>
 					</div>
 				</div>
-				<div className={d.featureList}>
+				<div className={c.featureList}>
 					{mod.features.map((feat) => (
-						<div className={d.featureItem} key={feat.text}>
-							<span className={d.featureIcon}>
+						<div className={c.featureItem} key={feat.text}>
+							<span className={c.featureIcon}>
 								<i className={`bi ${feat.icon}`} />
 							</span>
 							<span>{feat.text}</span>
@@ -162,7 +161,7 @@ export default function BusinessModulePage({
 			</section>
 
 			{/* ---------- back link ---------- */}
-			<div className={d.actionRow}>
+			<div className={c.actionRow}>
 				<Link
 					to="/business-dashboard"
 					className={c.btnLink}
