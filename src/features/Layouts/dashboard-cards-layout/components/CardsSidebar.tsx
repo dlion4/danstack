@@ -14,20 +14,14 @@ import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
-/* Module key -> static route (mirrors src/routes/cards/app/*). */
-const MODULE_PATH: Record<string, string> = {
-	"card-overview": "/cards/app",
-	"card-command-center": "/cards/app/card-command-center",
-	"virtual-debit-cards": "/cards/app/virtual-debit-cards",
-	"virtual-credit-cards": "/cards/app/virtual-credit-cards",
-	"physical-debit-cards": "/cards/app/physical-debit-cards",
-	"prepaid-card-management": "/cards/app/prepaid-card-management",
-	"corporate-business-cards": "/cards/app/corporate-business-cards",
-	"card-security-fraud-prevention": "/cards/app/card-security-fraud-prevention",
-	"card-analytics-reporting": "/cards/app/card-analytics-reporting",
-	"card-program-administration": "/cards/app/card-program-administration",
-	"account-settings": "/cards/app/card-settings-support",
-};
+/* The sidebar navigates the /cards-shell workspace: the overview item points at
+   the index route, everything else at /cards-shell/$section (see
+   src/routes/cards-shell/*). */
+const OVERVIEW_KEYS = new Set(["card-overview", "support"]);
+
+function sectionSlug(key: string): string {
+	return key === "account-settings" ? "card-settings-support" : key;
+}
 
 interface CardsSidebarProps {
 	content: CardsLayoutContent;
@@ -69,7 +63,7 @@ export default function CardsSidebar({
 		<aside className={classes} aria-label="Cards navigation">
 			<div className={s.brandRow}>
 				<Link
-					to="/cards/app"
+					to="/cards-shell"
 					className={s.brandLink}
 					aria-label="Go to card overview"
 				>
@@ -134,17 +128,32 @@ export default function CardsSidebar({
 									);
 								}
 
-								return (
-									<Link
-										key={item.key}
-										to={MODULE_PATH[item.key] ?? "/cards/app"}
-										className={className}
-										title={item.label}
-										onClick={() => handleItemClick(item)}
-									>
-										{inner}
-									</Link>
-								);
+									if (OVERVIEW_KEYS.has(item.key)) {
+										return (
+											<Link
+												key={item.key}
+												to="/cards-shell"
+												className={className}
+												title={item.label}
+												onClick={() => handleItemClick(item)}
+											>
+												{inner}
+											</Link>
+										);
+									}
+
+									return (
+										<Link
+											key={item.key}
+											to="/cards-shell/$section"
+											params={{ section: sectionSlug(item.key) }}
+											className={className}
+											title={item.label}
+											onClick={() => handleItemClick(item)}
+										>
+											{inner}
+										</Link>
+									);
 							})}
 						</nav>
 					</div>

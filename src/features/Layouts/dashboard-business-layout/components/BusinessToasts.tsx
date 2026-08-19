@@ -20,23 +20,23 @@ export interface BusinessToastRecord {
 
 const TONE: Record<ToastTone, { bg: string; color: string; icon: string }> = {
 	success: {
-		bg: "rgba(16,185,129,0.1)",
-		color: "var(--paymo-accent)",
+		bg: "rgba(18,183,106,0.12)",
+		color: "var(--pm-green-dark)",
 		icon: "bi-check-lg",
 	},
 	danger: {
-		bg: "rgba(239,68,68,0.1)",
-		color: "var(--paymo-danger)",
+		bg: "rgba(240,68,56,0.1)",
+		color: "var(--pm-danger)",
 		icon: "bi-x-lg",
 	},
 	warning: {
-		bg: "rgba(245,158,11,0.1)",
-		color: "var(--paymo-warning)",
+		bg: "rgba(247,144,9,0.12)",
+		color: "var(--pm-warn)",
 		icon: "bi-exclamation-triangle",
 	},
 	info: {
-		bg: "rgba(91,77,219,0.1)",
-		color: "var(--paymo-primary)",
+		bg: "rgba(46,144,250,0.12)",
+		color: "var(--pm-blue)",
 		icon: "bi-bell",
 	},
 };

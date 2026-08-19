@@ -24,26 +24,26 @@ const TONE: Record<
 	{ bg: string; color: string; icon: string; title: string }
 > = {
 	success: {
-		bg: "rgba(46,230,160,0.14)",
-		color: "#2ee6a0",
+		bg: "rgba(18,183,106,0.12)",
+		color: "#067647",
 		icon: "bi-check-lg",
 		title: "Success",
 	},
 	danger: {
-		bg: "rgba(248,113,113,0.14)",
-		color: "#f87171",
+		bg: "rgba(240,68,56,0.1)",
+		color: "#b42318",
 		icon: "bi-x-lg",
 		title: "Error",
 	},
 	warning: {
-		bg: "rgba(251,191,36,0.14)",
-		color: "#fbbf24",
+		bg: "rgba(247,144,9,0.12)",
+		color: "#93370d",
 		icon: "bi-exclamation-triangle",
 		title: "Warning",
 	},
 	info: {
-		bg: "rgba(167,139,250,0.14)",
-		color: "#a78bfa",
+		bg: "rgba(46,144,250,0.12)",
+		color: "#175cd3",
 		icon: "bi-bell",
 		title: "Info",
 	},

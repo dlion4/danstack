@@ -9,7 +9,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
-import shellDash from "../../shell/styles/dashboard.module.css";
 import { useCardsShell } from "../data/cardsLayoutContext";
 import {
 	cx,
@@ -20,7 +19,6 @@ import {
 import cardsPage from "../styles/cardsLayout.module.css";
 
 const c = cardsPage as Record<string, string>;
-const d = shellDash as Record<string, string>;
 
 interface CardsModulePageProps {
 	section: string;
@@ -44,23 +42,23 @@ export default function CardsModulePage({ section }: CardsModulePageProps) {
 		showToast({ message: `"${label}" opened.`, type: "info", title: "Action" });
 
 	return (
-		<div className={d.pageWrap}>
+		<div className={c.pageWrap}>
 			{/* ---------- hero ---------- */}
 			<section
-				className={d.hero}
+				className={c.hero}
 				style={{ "--mod-c1": mod.c1, "--mod-c2": mod.c2 } as CSSProperties}
 			>
-				<div className={d.heroAccent} />
-				<div className={d.heroInner}>
-					<span className={d.pill}>
-						<span className={d.pillDot} /> {mod.pill}
+				<div className={c.heroAccent} />
+				<div className={c.heroInner}>
+					<span className={c.pill}>
+						<span className={c.pillDot} /> {mod.pill}
 					</span>
-					<h1 className={d.heroTitle}>
+					<h1 className={c.heroTitle}>
 						{mod.titlePre}
 						<span className={c.textGradient}>{mod.titleAccent}</span>
 					</h1>
-					<p className={d.heroCopy}>{mod.copy}</p>
-					<div className={d.heroActions}>
+					<p className={c.heroCopy}>{mod.copy}</p>
+					<div className={c.heroActions}>
 						{mod.actions.map((action) => (
 							<button
 								key={action.label}
@@ -96,13 +94,13 @@ export default function CardsModulePage({ section }: CardsModulePageProps) {
 			</section>
 
 			{/* ---------- stats ---------- */}
-			<div className={d.statsGrid}>
+			<div className={c.statsGrid}>
 				{mod.stats.map((stat) => (
-					<div className={d.statCard} key={stat.label}>
-						<div className={d.statLabel}>{stat.label}</div>
-						<div className={d.statValue}>{stat.value}</div>
+					<div className={c.statCard} key={stat.label}>
+						<div className={c.statLabel}>{stat.label}</div>
+						<div className={c.statValue}>{stat.value}</div>
 						{stat.delta && (
-							<div className={cx(d.statDelta, stat.up ? d.up : d.down)}>
+							<div className={cx(c.statDelta, stat.up ? c.up : c.down)}>
 								<i
 									className={
 										stat.up ? "bi bi-arrow-up-right" : "bi bi-arrow-down-right"
@@ -116,19 +114,19 @@ export default function CardsModulePage({ section }: CardsModulePageProps) {
 			</div>
 
 			{/* ---------- features ---------- */}
-			<section className={d.sectionCard}>
-				<div className={d.sectionHead}>
+			<section className={c.sectionCard}>
+				<div className={c.sectionHead}>
 					<div>
-						<h2 className={d.sectionTitle}>
+						<h2 className={c.sectionTitle}>
 							<i className={`bi ${mod.icon}`} /> {mod.label} capabilities
 						</h2>
-						<p className={d.sectionSub}>What you can do from here.</p>
+						<p className={c.sectionSub}>What you can do from here.</p>
 					</div>
 				</div>
-				<div className={d.featureList}>
+				<div className={c.featureList}>
 					{mod.features.map((feat) => (
-						<div className={d.featureItem} key={feat.text}>
-							<span className={d.featureIcon}>
+						<div className={c.featureItem} key={feat.text}>
+							<span className={c.featureIcon}>
 								<i className={`bi ${feat.icon}`} />
 							</span>
 							<span>{feat.text}</span>
@@ -138,9 +136,9 @@ export default function CardsModulePage({ section }: CardsModulePageProps) {
 			</section>
 
 			{/* ---------- back link ---------- */}
-			<div className={d.actionRow}>
+			<div className={c.actionRow}>
 				<Link
-					to="/cards/app"
+					to="/cards-shell"
 					className={c.btnLink}
 					style={{ textDecoration: "none" }}
 				>
