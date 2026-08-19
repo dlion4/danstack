@@ -16,7 +16,7 @@ import styles from "../styles/businessLayout.module.css";
 
 const s = styles as Record<string, string>;
 
-export type DropdownName = "accounts" | "notifications" | "user";
+export type DropdownName = "accounts" | "notifications" | "user" | "business";
 
 interface BusinessHeaderProps {
         content: BusinessLayoutContent;
@@ -140,6 +140,47 @@ export default function BusinessHeader({
                                                                         </Link>
                                                                 </div>
                                                         </div>
+                                                </div>
+                                        )}
+                                </div>
+
+                                {/* Business Switcher */}
+                                <div className="position-relative" data-dropdown="business">
+                                        <button
+                                                type="button"
+                                                className={s["business-chip"]}
+                                                aria-expanded={isDropdownOpen("business")}
+                                                aria-haspopup="menu"
+                                                aria-label="Switch business"
+                                                onClick={() => onToggleDropdown("business")}
+                                        >
+                                                <span style={{ fontSize: "0.95rem" }}>🛍️</span>
+                                                <span className="d-none d-sm-inline">{content.business.name}</span>
+                                                <i
+                                                        className={cx("bi bi-chevron-down", s.chev)}
+                                                        style={{ fontSize: "0.65rem", color: "var(--pm-muted)" }}
+                                                />
+                                        </button>
+                                        {isDropdownOpen("business") && (
+                                                <div className={cx(s["dropdown-panel"], s.show)} role="menu" style={{ width: 260, right: 0 }}>
+                                                        <div className="px-2 py-1" style={{ fontSize: "0.66rem", color: "var(--pm-muted)", fontWeight: 700, letterSpacing: "0.08em" }}>
+                                                                SWITCH BUSINESS
+                                                        </div>
+                                                        {content.businesses.map((b) => (
+                                                                <button
+                                                                        key={b.id}
+                                                                        type="button"
+                                                                        className={s.menuItem}
+                                                                        onClick={() => onToggleDropdown("business")}
+                                                                >
+                                                                        <span>{b.emoji}</span>
+                                                                        <span className="flex-grow-1">
+                                                                                <span className="d-block fw-semibold" style={{ fontSize: "0.8rem" }}>{b.name}</span>
+                                                                                <span style={{ fontSize: "0.66rem", color: "var(--pm-muted)" }}>{b.type}</span>
+                                                                        </span>
+                                                                        {b.current && <i className="bi bi-check-lg text-primary" />}
+                                                                </button>
+                                                        ))}
                                                 </div>
                                         )}
                                 </div>

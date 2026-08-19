@@ -552,7 +552,7 @@ export interface CardOrder {
   holderName: string;
   status: OrderStatus;
   orderedOn: string;
-  trackingNo: string;
+  tracking
   courier: string;
   deliveryMethod: DeliveryMethod;
   addressLabel: string;

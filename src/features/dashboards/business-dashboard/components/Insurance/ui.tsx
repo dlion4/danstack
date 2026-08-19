@@ -152,11 +152,11 @@ export function Chip({ on, onClick, children }: { on?: boolean; onClick?: () => 
 }
 
 /* ============ Section header ============ */
-export function Section({ no, title, sub, actions }: { no: string; title: string; sub?: string; actions?: ReactNode }) {
+export function Section({  title, sub, actions }: {  title: string; sub?: string; actions?: ReactNode }) {
   return (
     <>
       <div className="pm-sec">
-        <span className="pm-sec-no">{no}</span>
+        {/* <span className="pm-sec-no">{no}</span> */}
         <h2>{title}</h2>
         {actions && <div className="ms-auto d-flex align-items-center gap-2 flex-wrap">{actions}</div>}
       </div>

@@ -22,21 +22,18 @@ const MODULE_PATH = {
 	overview: "/business-dashboard",
 	dashboard: "/business-dashboard",
 	"command-center": "/business-dashboard/command-center",
-	"financial-reporting": "/business-dashboard/financial-reporting",
-	"accounts-payable": "/business-dashboard/accounts-payable",
-	"bulk-disbursements": "/business-dashboard/bulk-disbursements",
-	"invoicing-billing": "/business-dashboard/invoicing-billing",
-	"payroll-hr": "/business-dashboard/payroll-hr",
-	"treasury-cash": "/business-dashboard/treasury-cash",
-	"multi-currency-treasury": "/business-dashboard/multi-currency-treasury",
-	"open-banking": "/business-dashboard/open-banking",
-	"virtual-accounts": "/business-dashboard/virtual-accounts",
-	"get-paid": "/business-dashboard/get-paid",
-	"collections-merchant": "/business-dashboard/collections-merchant",
-	"business-onboarding": "/business-dashboard/business-onboarding",
-	"apps-integrations": "/business-dashboard/apps-integrations",
-	"settings-administration": "/business-dashboard/settings-administration",
-	"support-disputes": "/business-dashboard/support-disputes",
+	"marketing": "/business-dashboard/marketing",
+	"products": "/business-dashboard/products",
+	"inventory": "/business-dashboard/inventory",
+	"portfolio": "/business-dashboard/portfolio",
+	"funding": "/business-dashboard/funding",
+	"insurance": "/business-dashboard/insurance",
+	"integrations": "/business-dashboard/integrations",
+	"team": "/business-dashboard/team",
+	"notifications": "/business-dashboard/notifications",
+	"profile": "/business-dashboard/profile",
+	"data": "/business-dashboard/data",
+	"disputes": "/business-dashboard/disputes",
 } as const;
 
 type ModulePath = (typeof MODULE_PATH)[keyof typeof MODULE_PATH];
@@ -155,6 +152,29 @@ export default function BusinessSidebar({
 					</div>
 				))}
 			</div>
+
+{/* PayMo Pro Upgrade Section */}
+			
+				{/* <div className={s.upgradeCard}>
+					<div className="d-flex align-items-center gap-2 mb-1">
+						<i className="bi bi-stars" style={{ color: "#ffd66b" }} />
+						<span className="fw-bold">PayMo Pro</span>
+					</div>
+					<div style={{ fontSize: "0.72rem", color: "#7b8aa3", lineHeight: 1.3 }}>
+						Pro trial — 14 days left. Unlock KES 5M/day limits and priority support.
+					</div>
+				</div> */}
+
+{/* User Row */}
+				{/* <div className={s.userRow}>
+					<div className={s.userAvatar}>{content.user.initials}</div>
+					<div className="flex-grow-1" style={{ lineHeight: 1.2 }}>
+						<div className="fw-semibold" style={{ fontSize: "0.78rem" }}>{content.user.name}</div>
+						<div style={{ fontSize: "0.66rem", color: "#7b8aa3" }}>{content.user.role}</div>
+					</div>
+					<i className="bi bi-box-arrow-right" style={{ fontSize: "0.8rem", color: "#7b8aa3", cursor: "pointer" }} onClick={onLogout} />
+				</div> */}
+			
 
 {/* Switch Account button */}
 				<Link

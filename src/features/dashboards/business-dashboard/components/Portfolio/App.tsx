@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost } from "./ui";
 import {
   ConsolidationSection, EntityCreationSection, FoldersSection, GroupTaxSection, MatrixSection,
@@ -82,46 +81,31 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="portfolio" data={store} brandSub="Page 14 · Multi-Business Portfolio" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="portfolio" data={store} searchId="pf-search" searchPlaceholder="Search entities, tenants, transfers…" />
-        <main className="pm-content">
-          <PageHeader />
-          <PortfolioOverview />
-          <FoldersSection />
-          <EntityCreationSection />
-          <RentalSystemSection />
-          <ConsolidationSection />
-          <MatrixSection />
-          <TransfersSection />
-          <GroupTaxSection />
-          <WizardsBanner />
+      <PageHeader />
+      <PortfolioOverview />
+      <EntityCreationSection />
+      <ConsolidationSection />
+      <TransfersSection />
+      <GroupTaxSection />
+      <MatrixSection />
+      <FoldersSection />
+      <RentalSystemSection />
+      <WizardsBanner />
 
-          {/* footer */}
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 14: Multi-Business Portfolio</div>
-              <div className="pm-prod-meta">
-                The superapp spine is complete · central ledger · multi-business aware · Kenya-first rails
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-buildings me-1" />5 entities</span>
-              <span className="badge-soft blue"><i className="bi bi-shield-lock me-1" />API-enforced matrix</span>
-              <span className="badge-soft amber"><i className="bi bi-house me-1" />2 rental properties</span>
-              <span className="badge-soft violet"><i className="bi bi-arrow-left-right me-1" />Free inter-company</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-plus-lg", label: "New Entity", primary: true, onClick: () => store.openModal("entityWizard") },
-        { icon: "bi-arrow-left-right", label: "Transfer Funds", onClick: () => store.openModal("transferWizard") },
-        { icon: "bi-person-plus", label: "Add Tenant", onClick: () => store.openModal("tenantWizard") },
-        { icon: "bi-cash-stack", label: "Record Loan", onClick: () => store.openModal("loanWizard") },
-        { icon: "bi-tools", label: "Maintenance Job", onClick: () => store.openModal("maintenanceWizard") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 14: Multi-Business Portfolio</div>
+          <div className="pm-prod-meta">
+            Consolidated view · Entity management · Inter-entity transfers · Group tax
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-buildings me-1" />4 entities</span>
+          <span className="badge-soft blue"><i className="bi bi-currency-dollar me-1" />KES 12.4M total</span>
+          <span className="badge-soft amber"><i className="bi bi-arrow-left-right me-1" />2 pending transfers</span>
+          <span className="badge-soft violet"><i className="bi bi-file-earmark-text me-1" />Group tax ready</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

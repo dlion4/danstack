@@ -20,7 +20,9 @@ export default defineConfig({
     tanstackStart(),
     react(),
     tailwindcss(),
-    devtools(),
+    devtools({
+      ssr: false,
+    }),
   ],
   resolve: {
     tsconfigPaths: true, // Vite 8 supports this natively

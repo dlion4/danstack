@@ -75,6 +75,8 @@ export interface BusinessLayoutContent {
         brand: { name: string; tag: string; initials: string; icon: string };
         user: { name: string; role: string; email: string; initials: string };
         accountId: string;
+        business: { name: string; emoji: string };
+        businesses: { id: string; name: string; emoji: string; type: string; current: boolean }[];
         navGroups: NavGroup[];
         notifications: NotificationItem[];
         modules: ModuleDef[];
@@ -96,117 +98,97 @@ export const initialMockData: BusinessLayoutContent = {
 
         accountId: "ACC-3942-019",
 
+        business: { name: "TS Retail Ltd", emoji: "🛍️" },
+
+        businesses: [
+                { id: "1", name: "TS Retail Ltd", emoji: "🛍️", type: "Retail & E-commerce", current: true },
+                { id: "2", name: "Nairobi Java Roasters", emoji: "☕", type: "F&B / Cafe", current: false },
+                { id: "3", name: "Savannah Crafts Ltd", emoji: "🧺", type: "Handicrafts & Export", current: false },
+        ],
+
         navGroups: [
                 {
-                        title: "Overview & Insights",
+                        title: "Overview",
                         items: [
                                 {
                                         key: "overview",
                                         label: "Dashboard",
                                         icon: "bi-grid-1x2",
                                 },
-                                {
-                                        key: "financial-reporting",
-                                        label: "Financial Reporting",
-                                        icon: "bi-activity",
-                                        badge: "New",
-                                },
-                                // {
-                                //         key: "command-center",
-                                //         label: "Command Center",
-                                //         icon: "bi-terminal",
-                                // },
                         ],
                 },
                 {
-                        title: "Core Workflows",
+                        title: "Commerce & Growth",
                         items: [
                                 {
-                                        key: "accounts-payable",
-                                        label: "Accounts Payable",
-                                        icon: "bi-people",
+                                        key: "marketing",
+                                        label: "Marketing",
+                                        icon: "bi-megaphone",
                                 },
                                 {
-                                        key: "bulk-disbursements",
-                                        label: "Bulk Disbursements",
-                                        icon: "bi-arrow-left-right",
+                                        key: "products",
+                                        label: "Products & Store",
+                                        icon: "bi-box-seam",
                                 },
                                 {
-                                        key: "invoicing-billing",
-                                        label: "Invoicing & Billing",
-                                        icon: "bi-receipt",
-                                },
-                                {
-                                        key: "payroll-hr",
-                                        label: "Payroll & HR",
-                                        icon: "bi-cash-stack",
+                                        key: "inventory",
+                                        label: "Inventory",
+                                        icon: "bi-clipboard-data",
                                 },
                         ],
                 },
                 {
-                        title: "Treasury & Open Finance",
+                        title: "Finance & Operations",
                         items: [
                                 {
-                                        key: "treasury-cash",
-                                        label: "Treasury & Cash",
-                                        icon: "bi-wallet2",
+                                        key: "portfolio",
+                                        label: "Portfolio",
+                                        icon: "bi-briefcase",
                                 },
                                 {
-                                        key: "multi-currency-treasury",
-                                        label: "Multi-Currency Treasury",
-                                        icon: "bi-pie-chart",
-                                },
-                                {
-                                        key: "open-banking",
-                                        label: "Open Banking",
-                                        icon: "bi-file-earmark-bar-graph",
-                                        badge: "Beta",
-                                },
-                                {
-                                        key: "virtual-accounts",
-                                        label: "Virtual Accounts",
-                                        icon: "bi-credit-card",
-                                        badge: "Beta",
-                                },
-                        ],
-                },
-                {
-                        title: "Merchant Services & Growth",
-                        items: [
-                                {
-                                        key: "get-paid",
-                                        label: "Get Paid",
+                                        key: "funding",
+                                        label: "Funding",
                                         icon: "bi-cash-coin",
                                 },
                                 {
-                                        key: "collections-merchant",
-                                        label: "Collections & Merchant",
+                                        key: "insurance",
+                                        label: "Insurance",
                                         icon: "bi-shield-check",
                                 },
                                 {
-                                        key: "business-onboarding",
-                                        label: "Business Onboarding",
-                                        icon: "bi-plug",
-                                },
-                                {
-                                        key: "apps-integrations",
-                                        label: "Apps & Integrations",
-                                        icon: "bi-plug-fill",
+                                        key: "disputes",
+                                        label: "Disputes",
+                                        icon: "bi-exclamation-octagon",
                                 },
                         ],
                 },
                 {
-                        title: "Administration & Support",
+                        title: "Team & Settings",
                         items: [
                                 {
-                                        key: "settings-administration",
-                                        label: "Settings & Admin",
-                                        icon: "bi-gear",
+                                        key: "team",
+                                        label: "Team",
+                                        icon: "bi-people-fill",
                                 },
                                 {
-                                        key: "support-disputes",
-                                        label: "Support & Disputes",
-                                        icon: "bi-people-fill",
+                                        key: "notifications",
+                                        label: "Notifications",
+                                        icon: "bi-bell",
+                                },
+                                {
+                                        key: "profile",
+                                        label: "Profile",
+                                        icon: "bi-person",
+                                },
+                                {
+                                        key: "data",
+                                        label: "Data & Privacy",
+                                        icon: "bi-database",
+                                },
+                                {
+                                        key: "integrations",
+                                        label: "Integrations",
+                                        icon: "bi-plug",
                                 },
                         ],
                 },

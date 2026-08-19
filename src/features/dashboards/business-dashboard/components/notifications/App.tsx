@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost, Modal } from "./ui";
 import {
   DeliverySection, InboxSection, NotifCommandCenter, PageHeader, PreferencesSection,
@@ -120,44 +119,30 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="notifications" data={store} brandSub="Page 8 · Notifications Center" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="notifications" data={store} searchId="notif-search" searchPlaceholder="Search notifications, rules…" />
-        <main className="pm-content">
-          <PageHeader />
-          <NotifCommandCenter />
-          <InboxSection />
-          <PreferencesSection />
-          <RulesSection />
-          <QuietHoursSection />
-          <DeliverySection />
-          <TemplatesSection />
-          <WizardsBanner />
+      <PageHeader />
+      <NotifCommandCenter />
+      <InboxSection />
+      <DeliverySection />
+      <RulesSection />
+      <TemplatesSection />
+      <QuietHoursSection />
+      <PreferencesSection />
+      <WizardsBanner />
 
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 8: Notifications Center</div>
-              <div className="pm-prod-meta">
-                The control room · alert routing · quiet hours · delivery reliability · audit-logged changes
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-whatsapp me-1" />85% open</span>
-              <span className="badge-soft blue"><i className="bi bi-lightning-charge me-1" />6 alert rules</span>
-              <span className="badge-soft amber"><i className="bi bi-moon me-1" />Quiet 22:00–07:00</span>
-              <span className="badge-soft violet"><i className="bi bi-bell me-1" />5 unread</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-sliders", label: "Preferences", primary: true, onClick: () => store.openModal("preferencesWizard") },
-        { icon: "bi-bell-plus", label: "Alert Rule", onClick: () => store.openModal("alertRuleWizard") },
-        { icon: "bi-moon", label: "Quiet Hours", onClick: () => store.openModal("quietHours") },
-        { icon: "bi-calendar3", label: "Digest Schedule", onClick: () => store.openModal("digestSchedule") },
-        { icon: "bi-pencil-square", label: "Edit Template", onClick: () => store.openModal("templateEditor") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 8: Notifications Center</div>
+          <div className="pm-prod-meta">
+            Notification inbox · Delivery rules · Templates · Quiet hours · Preferences
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-bell me-1" />24 unread</span>
+          <span className="badge-soft blue"><i className="bi bi-check-circle me-1" />98% delivered</span>
+          <span className="badge-soft amber"><i className="bi bi-gear me-1" />12 rules</span>
+          <span className="badge-soft violet"><i className="bi bi-file-earmark-text me-1" />8 templates</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

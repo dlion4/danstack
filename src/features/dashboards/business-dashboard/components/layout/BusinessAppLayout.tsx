@@ -1,10 +1,13 @@
-/* ============================================================================\n * BusinessAppLayout.tsx — layout route host for the designed PayMo Business
+/* ============================================================================
+ * BusinessAppLayout.tsx — layout route host for the designed PayMo Business
  * pages. Mirrors UtilityShell / CardsShell: the layout owns the theme CSS and
  * an <Outlet />. Each child route renders one designed App (its own sidebar /
  * topbar / store) so fonts, colours and behaviour stay untouched.
  * ========================================================================== */
 
 import { Outlet } from "@tanstack/react-router";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
 
 export default function BusinessAppLayout() {

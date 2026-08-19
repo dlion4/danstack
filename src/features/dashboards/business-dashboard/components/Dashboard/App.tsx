@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, BarController, BarElement, DoughnutController, ArcElement, Tooltip, Legend } from "chart.js";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost, Badge, Modal, Section, Spark } from "./ui";
 import { ACTIVITY_FEED, CASH_SPLIT, EXPENSES_30D, EXPENSES_90D, fmtK, HEALTH_SCORE, MODULES, REVENUE_30D, REVENUE_90D } from "./data";
 
@@ -71,7 +70,7 @@ function FinancialPulse() {
   const trendTone = (k: typeof kpis[number]) => (k.id === "paidOut" || k.id === "receivables" || k.id === "payables" ? (k.trend.includes("+") && k.id === "paidOut" ? "down" : k.trend.includes("+KES") || k.trend.includes("due") ? "down" : k.trend.startsWith("-") ? "up" : "flat") : (k.trend.includes("+") ? "up" : "flat"));
   return (
     <>
-      <Section no="0.1" title="Financial Pulse" sub="Six numbers that answer every question you have about money today." />
+      <Section title="Financial Pulse" sub="Six numbers that answer every question you have about money today." />
       <div className="row g-3">
         {/* HERO CASH CARD */}
         <div className="col-lg-4 col-md-6">
@@ -155,7 +154,7 @@ function AttentionHub() {
   const tierIcon: Record<string, string> = { urgent: "bi-fire", important: "bi-clock", informational: "bi-check2-circle" };
   return (
     <>
-      <Section no="0.2" title="Attention Hub" sub="What needs you — every item shows the money or impact at stake." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("allAttention")}><i className="bi bi-list-check me-1" /> View all</button>} />
+      <Section title="Attention Hub" sub="What needs you — every item shows the money or impact at stake." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("allAttention")}><i className="bi bi-list-check me-1" /> View all</button>} />
       {(["urgent", "important", "informational"] as const).map((tier) => {
         const items = visible.filter((a) => a.tier === tier);
         if (items.length === 0) return null;
@@ -254,7 +253,7 @@ function Performance() {
 
   return (
     <>
-      <Section no="0.3" title="Performance" sub={`Last ${period} · revenue ${fmtK(revTotal)} vs expenses ${fmtK(expTotal)} · ${margin}% margin.`} actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("analytics")}>Full analytics →</button>} />
+      <Section title="Performance" sub={`Last ${period} · revenue ${fmtK(revTotal)} vs expenses ${fmtK(expTotal)} · ${margin}% margin.`} actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("analytics")}>Full analytics →</button>} />
       <div className="row g-3">
         <div className="col-lg-8">
           <div className="pm-card h-100">
@@ -307,7 +306,7 @@ function HealthScore() {
   const trend = [68, 70, 72, 71, 74, 76, 75, 78, 80, 82];
   return (
     <>
-      <Section no="0.4" title="Business Health" sub="A composite of cash, receivables, inventory, compliance and growth — recomputed nightly." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("healthDetail")}>Full breakdown →</button>} />
+      <Section title="Business Health" sub="A composite of cash, receivables, inventory, compliance and growth — recomputed nightly." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("healthDetail")}>Full breakdown →</button>} />
       <div className="row g-3">
         <div className="col-lg-4">
           <div className="pm-card h-100 text-center" style={{ background: "linear-gradient(180deg, #e7f8ef, #fff)" }}>
@@ -365,7 +364,7 @@ function ActivityAndModules() {
   const filtered = filter === "All" ? activity : activity.filter((a) => a.module === filter);
   return (
     <>
-      <Section no="0.5" title="Live Activity &amp; System Health" sub="What just happened — and whether every module is behaving." />
+      <Section title="Live Activity &amp; System Health" sub="What just happened — and whether every module is behaving." />
       <div className="row g-3">
         <div className="col-lg-7">
           <div className="pm-card h-100">
@@ -428,7 +427,7 @@ function QuickActions() {
   ];
   return (
     <>
-      <Section no="0.7" title="Quick Actions" sub="One tap to do the thing — every action posts to the ledger." />
+      <Section title="Quick Actions" sub="One tap to do the thing — every action posts to the ledger." />
       <div className="pm-card d-flex flex-wrap gap-2" style={{ padding: "0.75rem" }}>
         {actions.map((a) => (
           <button key={a.label} type="button" className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" style={{ borderRadius: 99, padding: "0.4rem 0.9rem" }} onClick={() => openModal(a.modal)}>
@@ -730,48 +729,31 @@ function ModalHost() {
 function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
   const store = useStore();
   const { modal, closeModal } = store;
-  const [sideOpen, setSideOpen] = useState(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") { closeModal(); return; }
-      if (e.key === "/" && !modal) { const el = document.getElementById("dash-search"); if (el) { e.preventDefault(); el.focus(); } }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [modal, closeModal]);
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="dashboard" data={store} brandSub="Page 0 · Dashboard Overview" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="dashboard" data={store} searchId="dash-search" searchPlaceholder="Search invoices, products, reports…" />
-        <main className="pm-content">
-          <PageHeader />
-          <FinancialPulse />
-          <AttentionHub />
-          <Performance />
-          <HealthScore />
-          <ActivityAndModules />
-          <QuickActions />
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1"><div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Dashboard Overview</div><div className="pm-prod-meta">The decision engine · Kenya-first · M-Pesa · eTIMS · KRA compliant</div></div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-shield-check me-1" />Score 82</span>
-              <span className="badge-soft blue"><i className="bi bi-cash-stack me-1" />KES 3.45M</span>
-              <span className="badge-soft amber"><i className="bi bi-exclamation-triangle me-1" />5 alerts</span>
-              <span className="badge-soft violet"><i className="bi bi-activity me-1" />12 modules</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-plus-lg", label: "New Invoice", primary: true, onClick: () => store.openModal("quickInvoice") },
-        { icon: "bi-cash-coin", label: "Record Payment", onClick: () => store.openModal("recordPayment") },
-        { icon: "bi-bag-plus", label: "New Order", onClick: () => store.openModal("quickOrder") },
-        { icon: "bi-box-seam", label: "Add Product", onClick: () => store.openModal("addProduct") },
-        { icon: "bi-truck", label: "Dispatch", onClick: () => store.openModal("dispatchOrder") },
-        { icon: "bi-download", label: "Export", onClick: () => store.openModal("exportData") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <PageHeader />
+      <FinancialPulse />
+      <AttentionHub />
+      <Performance />
+      <HealthScore />
+      <ActivityAndModules />
+      <QuickActions />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1"><div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Dashboard Overview</div><div className="pm-prod-meta">The decision engine · Kenya-first · M-Pesa · eTIMS · KRA compliant</div></div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-shield-check me-1" />Score 82</span>
+          <span className="badge-soft blue"><i className="bi bi-cash-stack me-1" />KES 3.45M</span>
+          <span className="badge-soft amber"><i className="bi bi-exclamation-triangle me-1" />5 alerts</span>
+          <span className="badge-soft violet"><i className="bi bi-activity me-1" />12 modules</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

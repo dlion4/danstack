@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost } from "./ui";
 import { BusinessProfileSection, PageHeader, PortfolioSection, WizardsBanner } from "./profileSections";
 import {
@@ -73,39 +72,25 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="profile" data={store} brandSub="Page 5 · Business Profile &amp; KYB" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="profile" data={store} searchId="pf-search" searchPlaceholder="Search profile, KYB docs, businesses…" />
-        <main className="pm-content">
-          <PageHeader />
-          <BusinessProfileSection />
-          <PortfolioSection />
-          <WizardsBanner />
+      <PageHeader />
+      <BusinessProfileSection />
+      <PortfolioSection />
+      <WizardsBanner />
 
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 5: Business Profile &amp; KYB</div>
-              <div className="pm-prod-meta">
-                The control room · KYB compliance · portfolio management · Kenya-first (KRA/CBK) rails
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-shield-fill-check me-1" />Level 2 KYB</span>
-              <span className="badge-soft blue"><i className="bi bi-buildings me-1" />7 businesses</span>
-              <span className="badge-soft amber"><i className="bi bi-people me-1" />3 directors</span>
-              <span className="badge-soft violet"><i className="bi bi-magic me-1" />Sector presets</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-pencil-square", label: "Edit Profile", primary: true, onClick: () => store.openModal("editProfile") },
-        { icon: "bi-file-earmark-arrow-up", label: "Upload Document", onClick: () => store.openModal("uploadDoc") },
-        { icon: "bi-plus-lg", label: "New Business", onClick: () => store.openModal("newBusiness") },
-        { icon: "bi-magic", label: "Sector Preset", onClick: () => store.openModal("sectorPresets") },
-        { icon: "bi-receipt", label: "Tax Registration", onClick: () => store.openModal("taxReg") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 5: Business Profile &amp; KYB</div>
+          <div className="pm-prod-meta">
+            Business details · KYB verification · Portfolio management · Compliance
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-shield-check me-1" />KYB verified</span>
+          <span className="badge-soft blue"><i className="bi bi-building me-1" />2 businesses</span>
+          <span className="badge-soft amber"><i className="bi bi-file-earmark-text me-1" />3 docs pending</span>
+          <span className="badge-soft violet"><i className="bi bi-check-circle me-1" />Compliance OK</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

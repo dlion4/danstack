@@ -80,7 +80,7 @@ export function SectionHead({
   id,
   children,
 }: {
-  // no: string;
+  // 
   title: string;
   sub?: string;
   id?: string;

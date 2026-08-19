@@ -1,13 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import BusinessAppLayout from "@/features/dashboards/business-dashboard/components/layout/BusinessAppLayout";
+import BusinessShell from "@/features/Layouts/dashboard-business-layout/components/BusinessShell";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "@/features/dashboards/business-dashboard/index.css";
 
 /**
- * business-dashboard.tsx — LAYOUT route for the designed PayMo Business pages.
+ * business-dashboard.tsx — LAYOUT route for the PayMo Business pages.
  * ----------------------------------------------------------------------------
- * Mirrors routes/utility.tsx: this route adds the "/business-dashboard" prefix
- * and hosts every designed module page below. Each page keeps its own designed
- * shell (sidebar + topbar) so the original theme is not wrapped or restyled.
+ * Uses BusinessShell (the themed layout shell) with Bootstrap and business
+ * dashboard CSS imported at the route level. This ensures:
+ * - Business pages have access to Bootstrap utilities
+ * - Business pages retain their original styles via index.css
+ * - The layout shell (sidebar, header) is themed to match new design
+ * - No style conflicts between shell and page content (Bootstrap overrides are scoped)
  */
 export const Route = createFileRoute("/business-dashboard")({
-	component: BusinessAppLayout,
+	component: BusinessShell,
 });

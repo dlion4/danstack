@@ -37,43 +37,44 @@ body {
 }
 h1, h2, h3, h4, h5 { font-family: "Sora", "Inter", sans-serif; letter-spacing: -0.02em; }
 
-/* ---------------- Bootstrap overrides ---------------- */
-:root { --bs-primary: var(--pm-green); --bs-primary-rgb: 18, 183, 106; }
-.btn-primary { background: var(--pm-green); border-color: var(--pm-green); box-shadow: 0 1px 2px rgba(16,24,40,.12); }
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active { background: var(--pm-green-dark) !important; border-color: var(--pm-green-dark) !important; }
-.btn-outline-primary { color: var(--pm-green-dark); border-color: #b7e6cf; background: #fff; }
-.btn-outline-primary:hover { background: var(--pm-green-soft); color: var(--pm-green-dark); border-color: var(--pm-green); }
-.btn-outline-secondary { border-color: var(--pm-border); color: #475467; background: #fff; }
-.btn-outline-secondary:hover { background: #f2f4f8; color: var(--pm-ink); border-color: #d5d9e2; }
-.btn { font-weight: 600; border-radius: 10px; }
-.btn-sm { border-radius: 8px; font-size: 0.8rem; }
-.btn-lg { border-radius: 12px; }
-.btn-link { text-decoration: none; }
-.form-control, .form-select { border-radius: 10px; border-color: var(--pm-border); font-size: 0.9rem; padding: 0.5rem 0.75rem; }
-.form-control:focus, .form-select:focus { border-color: var(--pm-green); box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14); }
-.form-check-input:checked { background-color: var(--pm-green); border-color: var(--pm-green); }
-.form-check-input:focus { border-color: var(--pm-green); box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14); }
-.form-switch .form-check-input:checked { background-color: var(--pm-green); border-color: var(--pm-green); }
-.input-group-text { background: #f8fafc; border-color: var(--pm-border); color: var(--pm-muted); font-size: 0.85rem; }
-.form-label { font-weight: 600; font-size: 0.8rem; color: #344054; margin-bottom: 0.3rem; }
-.text-primary { color: var(--pm-green) !important; }
-.bg-primary { background-color: var(--pm-green) !important; }
-.nav-pills .nav-link { color: var(--pm-muted); font-weight: 600; }
-.nav-pills .nav-link.active { background: var(--pm-ink); color: #fff; }
-.nav-tabs .nav-link { color: var(--pm-muted); font-weight: 600; border: none; padding: 0.6rem 1rem; }
-.nav-tabs .nav-link.active { color: var(--pm-ink); border-bottom: 2px solid var(--pm-green); background: transparent; }
-.progress { background-color: #eef0f4; border-radius: 99px; }
-.progress-bar { background-color: var(--pm-green); border-radius: 99px; }
-.dropdown-menu { border-radius: 12px; border-color: var(--pm-border); box-shadow: var(--pm-shadow-lg); padding: 0.4rem; font-size: 0.875rem; }
-.dropdown-item { border-radius: 8px; padding: 0.45rem 0.7rem; font-weight: 500; }
-.dropdown-item:hover { background: #f2f4f8; }
-.badge { font-weight: 600; letter-spacing: 0.01em; }
-.table { --bs-table-bg: transparent; }
-.modal-backdrop { opacity: 0.45; background: #0b1322; }
-.modal-content { border: none; border-radius: 18px; box-shadow: var(--pm-shadow-lg); }
-.modal-header { border-bottom: 1px solid var(--pm-border); padding: 1rem 1.4rem; }
-.modal-footer { border-top: 1px solid var(--pm-border); padding: 0.9rem 1.4rem; }
-.modal-title { font-size: 1.05rem; }
+/* ---------------- Bootstrap overrides (scoped to page content only) ---------------- */
+/* These overrides apply to business page content, NOT the layout shell */
+.pm-page-content :root { --bs-primary: var(--pm-green); --bs-primary-rgb: 18, 183, 106; }
+.pm-page-content .btn-primary { background: var(--pm-green); border-color: var(--pm-green); box-shadow: 0 1px 2px rgba(16,24,40,.12); }
+.pm-page-content .btn-primary:hover, .pm-page-content .btn-primary:focus, .pm-page-content .btn-primary:active { background: var(--pm-green-dark) !important; border-color: var(--pm-green-dark) !important; }
+.pm-page-content .btn-outline-primary { color: var(--pm-green-dark); border-color: #b7e6cf; background: #fff; }
+.pm-page-content .btn-outline-primary:hover { background: var(--pm-green-soft); color: var(--pm-green-dark); border-color: var(--pm-green); }
+.pm-page-content .btn-outline-secondary { border-color: var(--pm-border); color: #475467; background: #fff; }
+.pm-page-content .btn-outline-secondary:hover { background: #f2f4f8; color: var(--pm-ink); border-color: #d5d9e2; }
+.pm-page-content .btn { font-weight: 600; border-radius: 10px; }
+.pm-page-content .btn-sm { border-radius: 8px; font-size: 0.8rem; }
+.pm-page-content .btn-lg { border-radius: 12px; }
+.pm-page-content .btn-link { text-decoration: none; }
+.pm-page-content .form-control, .pm-page-content .form-select { border-radius: 10px; border-color: var(--pm-border); font-size: 0.9rem; padding: 0.5rem 0.75rem; }
+.pm-page-content .form-control:focus, .pm-page-content .form-select:focus { border-color: var(--pm-green); box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14); }
+.pm-page-content .form-check-input:checked { background-color: var(--pm-green); border-color: var(--pm-green); }
+.pm-page-content .form-check-input:focus { border-color: var(--pm-green); box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14); }
+.pm-page-content .form-switch .form-check-input:checked { background-color: var(--pm-green); border-color: var(--pm-green); }
+.pm-page-content .input-group-text { background: #f8fafc; border-color: var(--pm-border); color: var(--pm-muted); font-size: 0.85rem; }
+.pm-page-content .form-label { font-weight: 600; font-size: 0.8rem; color: #344054; margin-bottom: 0.3rem; }
+.pm-page-content .text-primary { color: var(--pm-green) !important; }
+.pm-page-content .bg-primary { background-color: var(--pm-green) !important; }
+.pm-page-content .nav-pills .nav-link { color: var(--pm-muted); font-weight: 600; }
+.pm-page-content .nav-pills .nav-link.active { background: var(--pm-ink); color: #fff; }
+.pm-page-content .nav-tabs .nav-link { color: var(--pm-muted); font-weight: 600; border: none; padding: 0.6rem 1rem; }
+.pm-page-content .nav-tabs .nav-link.active { color: var(--pm-ink); border-bottom: 2px solid var(--pm-green); background: transparent; }
+.pm-page-content .progress { background-color: #eef0f4; border-radius: 99px; }
+.pm-page-content .progress-bar { background-color: var(--pm-green); border-radius: 99px; }
+.pm-page-content .dropdown-menu { border-radius: 12px; border-color: var(--pm-border); box-shadow: var(--pm-shadow-lg); padding: 0.4rem; font-size: 0.875rem; }
+.pm-page-content .dropdown-item { border-radius: 8px; padding: 0.45rem 0.7rem; font-weight: 500; }
+.pm-page-content .dropdown-item:hover { background: #f2f4f8; }
+.pm-page-content .badge { font-weight: 600; letter-spacing: 0.01em; }
+.pm-page-content .table { --bs-table-bg: transparent; }
+.pm-page-content .modal-backdrop { opacity: 0.45; background: #0b1322; }
+.pm-page-content .modal-content { border: none; border-radius: 18px; box-shadow: var(--pm-shadow-lg); }
+.pm-page-content .modal-header { border-bottom: 1px solid var(--pm-border); padding: 1rem 1.4rem; }
+.pm-page-content .modal-footer { border-top: 1px solid var(--pm-border); padding: 0.9rem 1.4rem; }
+.pm-page-content .modal-title { font-size: 1.05rem; }
 
 /* ---------------- Layout shell ---------------- */
 .pm-sidebar {

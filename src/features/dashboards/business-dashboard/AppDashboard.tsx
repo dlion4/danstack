@@ -1,33 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ChevronDown, Search, Bell, User, Settings, Building2, LogOut, Sparkles, Wallet, LayoutGrid, Zap, Package, Megaphone, Users, Shield, Database, Puzzle } from "lucide-react";
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, BarController, BarElement, DoughnutController, ArcElement, Tooltip, Legend } from "chart.js";
 import { StoreProvider, useStore } from "./components/Dashboard/store";
 import { ToastHost, Badge, Modal, Section, Spark } from "./components/Dashboard/ui";
-import { ACTIVITY_FEED, BUSINESSES, CASH_SPLIT, EXPENSES_30D, EXPENSES_90D, fmtK, HEALTH_SCORE, MODULES, REVENUE_30D, REVENUE_90D } from "./dataDashboard";
-import { cls } from "./lib";
-import { Avatar } from "./components/Getpaid/ui";
-import { NAVIGATION, ZONES, type NavZone } from "./lib/navigation";
+import { ACTIVITY_FEED, CASH_SPLIT, EXPENSES_30D, EXPENSES_90D, fmtK, HEALTH_SCORE, MODULES, REVENUE_30D, REVENUE_90D } from "./dataDashboard";
+
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, BarController, BarElement, DoughnutController, ArcElement, Tooltip, Legend);
 
-type NavPage = "dashboard" | "getpaid" | "paysuppliers" | "cash" | "books" | "crm" | "productstore" | "inventory" | "marketing" | "profile" | "team" | "disputes" | "notifications" | "data" | "integrations" | "portfolio" | "funding" | "insurance";
-
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
-  LayoutGrid,
-  Wallet,
-  User,
-  Building2,
-  Zap,
-  Sparkles,
-  Settings,
-  Package,
-  Megaphone,
-  Users,
-  Shield,
-  Bell,
-  Database,
-  Puzzle,
-};
 
 /* ==================================================================
    HERO — dynamic morning briefing
@@ -93,7 +72,7 @@ function FinancialPulse() {
   const trendTone = (k: typeof kpis[number]) => (k.id === "paidOut" || k.id === "receivables" || k.id === "payables" ? (k.trend.includes("+") && k.id === "paidOut" ? "down" : k.trend.includes("+KES") || k.trend.includes("due") ? "down" : k.trend.startsWith("-") ? "up" : "flat") : (k.trend.includes("+") ? "up" : "flat"));
   return (
     <>
-      <Section no="0.1" title="Financial Pulse" sub="Six numbers that answer every question you have about money today." />
+      <Section title="Financial Pulse" sub="Six numbers that answer every question you have about money today." />
       <div className="row g-3">
         {/* HERO CASH CARD */}
         <div className="col-lg-4 col-md-6">
@@ -177,7 +156,7 @@ function AttentionHub() {
   const tierIcon: Record<string, string> = { urgent: "bi-fire", important: "bi-clock", informational: "bi-check2-circle" };
   return (
     <>
-      <Section no="0.2" title="Attention Hub" sub="What needs you — every item shows the money or impact at stake." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("allAttention")}><i className="bi bi-list-check me-1" /> View all</button>} />
+      <Section  title="Attention Hub" sub="What needs you — every item shows the money or impact at stake." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("allAttention")}><i className="bi bi-list-check me-1" /> View all</button>} />
       {(["urgent", "important", "informational"] as const).map((tier) => {
         const items = visible.filter((a) => a.tier === tier);
         if (items.length === 0) return null;
@@ -276,7 +255,7 @@ function Performance() {
 
   return (
     <>
-      <Section no="0.3" title="Performance" sub={`Last ${period} · revenue ${fmtK(revTotal)} vs expenses ${fmtK(expTotal)} · ${margin}% margin.`} actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("analytics")}>Full analytics →</button>} />
+      <Section title="Performance" sub={`Last ${period} · revenue ${fmtK(revTotal)} vs expenses ${fmtK(expTotal)} · ${margin}% margin.`} actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("analytics")}>Full analytics →</button>} />
       <div className="row g-3">
         <div className="col-lg-8">
           <div className="pm-card h-100">
@@ -329,7 +308,7 @@ function HealthScore() {
   const trend = [68, 70, 72, 71, 74, 76, 75, 78, 80, 82];
   return (
     <>
-      <Section no="0.4" title="Business Health" sub="A composite of cash, receivables, inventory, compliance and growth — recomputed nightly." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("healthDetail")}>Full breakdown →</button>} />
+      <Section title="Business Health" sub="A composite of cash, receivables, inventory, compliance and growth — recomputed nightly." actions={<button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => openModal("healthDetail")}>Full breakdown →</button>} />
       <div className="row g-3">
         <div className="col-lg-4">
           <div className="pm-card h-100 text-center" style={{ background: "linear-gradient(180deg, #e7f8ef, #fff)" }}>
@@ -387,7 +366,7 @@ function ActivityAndModules() {
   const filtered = filter === "All" ? activity : activity.filter((a) => a.module === filter);
   return (
     <>
-      <Section no="0.5" title="Live Activity &amp; System Health" sub="What just happened — and whether every module is behaving." />
+      <Section title="Live Activity &amp; System Health" sub="What just happened — and whether every module is behaving." />
       <div className="row g-3">
         <div className="col-lg-7">
           <div className="pm-card h-100">
@@ -450,7 +429,7 @@ function QuickActions() {
   ];
   return (
     <>
-      <Section no="0.7" title="Quick Actions" sub="One tap to do the thing — every action posts to the ledger." />
+      <Section title="Quick Actions" sub="One tap to do the thing — every action posts to the ledger." />
       <div className="pm-card d-flex flex-wrap gap-2" style={{ padding: "0.75rem" }}>
         {actions.map((a) => (
           <button key={a.label} type="button" className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" style={{ borderRadius: 99, padding: "0.4rem 0.9rem" }} onClick={() => openModal(a.modal)}>
@@ -781,222 +760,40 @@ function PageContent() {
   );
 }
 
-export default function AppDashboard({ onNavigate }: { onNavigate?: (p: NavPage) => void }) {
+/* ==================================================================
+   DEFAULT EXPORT — page shell wrapper
+================================================================== */
+export default function AppDashboard() {
   return (
     <StoreProvider>
-      <Shell onNavigate={onNavigate} currentPage="dashboard" />
+    <div className="pm-content">
+      <PageHeader />
+      <FinancialPulse />
+      <AttentionHub />
+      <Performance />
+      <HealthScore />
+      <ActivityAndModules />
+      <QuickActions />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1"><div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Dashboard Overview</div><div className="pm-prod-meta">The decision engine · Kenya-first · M-Pesa · eTIMS · KRA compliant</div></div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-shield-check me-1" />Score 82</span>
+          <span className="badge-soft blue"><i className="bi bi-cash-stack me-1" />KES 3.45M</span>
+          <span className="badge-soft amber"><i className="bi bi-exclamation-triangle me-1" />5 alerts</span>
+          <span className="badge-soft violet"><i className="bi bi-activity me-1" />12 modules</span>
+        </div>
+      </footer>
+      <ModalHost />
+      <ToastHost />
+    </div>
     </StoreProvider>
   );
 }
 
-function Shell({ onNavigate, currentPage }: { onNavigate?: (p: NavPage, anchor?: string) => void; currentPage?: NavPage }) {
-  const { business, setBusiness, notifications, markNotifsRead, dismissNotif, toast } = useStore();
-  const [sideOpen, setSideOpen] = useState(false);
-  const [bizSwitch, setBizSwitch] = useState(false);
-  const [bellOpen, setBellOpen] = useState(false);
-  const [userMenu, setUserMenu] = useState(false);
-  const [search, setSearch] = useState("");
 
-  const unread = notifications.filter((n) => !n.unread).length;
 
-  const getNavigationWithActiveState = (): NavZone => {
-    return Object.fromEntries(
-      Object.entries(NAVIGATION).map(([zone, items]) => [
-        zone,
-        items.map((item) => ({
-          ...item,
-          active: item.id === currentPage,
-        })),
-      ])
-    );
-  };
 
-  const navigation = getNavigationWithActiveState();
 
-  const getIconComponent = (iconName: string) => {
-    const IconComp = ICON_MAP[iconName];
-    return IconComp ? <IconComp size={16} /> : null;
-  };
 
-  return (
-    <div className="pm-shell">
-      {/* ══════════ SIDEBAR ══════════ */}
-      {sideOpen && <div className="pm-side-backdrop" onClick={() => setSideOpen(false)} />}
-      <aside className={cls("pm-side", sideOpen && "pm-side-open")}>
-        <div className="pm-brand">
-          <span className="pm-logo">P</span>
-          <div>
-            <div className="pm-brand-name">PayMo<span>Business</span></div>
-            <div className="pm-brand-zone">Dashboard · Overview</div>
-          </div>
-          <button className="pm-side-x" onClick={() => setSideOpen(false)}><X size={18} /></button>
-        </div>
 
-        <button className="pm-biz-switch" onClick={() => setBizSwitch(true)}>
-          <span className="pm-biz-avatar">{business[0]}</span>
-          <span className="flex-grow-1 text-start">
-            <b>{business}</b>
-            <span className="d-block pm-fs-11 pm-muted">Operating · Retail</span>
-          </span>
-          <ChevronDown size={14} />
-        </button>
 
-        <nav className="pm-nav">
-          {Object.entries(navigation).map(([zone, items]) => (
-            <div className="pm-nav-zone" key={zone}>
-              <div className="pm-nav-zone-label" style={{ color: ZONES[zone] }}>{zone}</div>
-              {items.map((it) => (
-                <button
-                  key={it.id}
-                  className={cls("pm-nav-item", it.active && "pm-nav-active")}
-                  onClick={() => {
-                    setSideOpen(false);
-                    if (it.id === "dashboard") onNavigate?.("dashboard");
-                    else if (it.id === "paysuppliers") onNavigate?.("paysuppliers");
-                    else if (it.id === "payroll") onNavigate?.("paysuppliers", "sec-payroll");
-                    else if (it.id === "cash") onNavigate?.("cash");
-                    else if (it.id === "books") onNavigate?.("books");
-                    else if (it.id === "customers") onNavigate?.("crm");
-                    else if (it.id === "getpaid") onNavigate?.("getpaid");
-                    else if (it.id === "productstore") onNavigate?.("productstore");
-                    else if (it.id === "inventory") onNavigate?.("inventory");
-                    else if (it.id === "marketing") onNavigate?.("marketing");
-                    else if (it.id === "integrations") onNavigate?.("integrations");
-                    else if (it.id === "portfolio") onNavigate?.("portfolio");
-                    else if (it.id === "profile") onNavigate?.("profile");
-                    else if (it.id === "team") onNavigate?.("team");
-                    else if (it.id === "disputes") onNavigate?.("disputes");
-                    else if (it.id === "notifications") onNavigate?.("notifications");
-                    else if (it.id === "data") onNavigate?.("data");
-                    else if (it.id === "funding") onNavigate?.("funding");
-                    else if (it.id === "insurance") onNavigate?.("insurance");
-                    else toast(`${it.label} coming soon`, "info");
-                  }}
-                >
-                  <span className="pm-nav-ic">{getIconComponent(it.iconName)}</span>
-                  {it.label}
-                </button>
-              ))}
-            </div>
-          ))}
-        </nav>
-
-        <div className="pm-side-foot">
-          <div className="pm-upgrade">
-            <Sparkles size={14} /> <span>PayMo Pro — 14 days left in trial</span>
-          </div>
-          <button className="pm-nav-item" onClick={() => toast("Help centre coming soon", "info")}>
-            <span className="pm-nav-ic"><Zap size={16} /></span> Help & Support
-          </button>
-        </div>
-      </aside>
-
-      {/* ══════════ MAIN ══════════ */}
-      <div className="pm-main">
-        {/* topbar */}
-        <header className="pm-topbar">
-          <button className="pm-burger" onClick={() => setSideOpen(true)}><Menu size={19} /></button>
-          <div className="pm-crumb">
-            <span className="pm-muted">PayMo Business /</span> <b>Dashboard</b>
-          </div>
-          <div className="pm-top-search">
-            <Search size={15} />
-            <input
-              placeholder="Search…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="ms-auto d-flex align-items-center gap-2">
-            <div className="pm-bell-wrap">
-              <button className="pm-bell" onClick={() => { setBellOpen(!bellOpen); setUserMenu(false); }}>
-                <Bell size={18} />
-                {unread > 0 && <span className="pm-bell-badge">{unread}</span>}
-              </button>
-              {bellOpen && (
-                <>
-                  <div className="pm-pop-backdrop" onClick={() => setBellOpen(false)} />
-                  <div className="pm-pop pm-notif-pop">
-                    <div className="pm-pop-head">
-                      <b>Notifications</b>
-                      <button className="pm-link-btn pm-fs-12" onClick={() => { markNotifsRead(); toast("All notifications marked as read", "info"); }}>Mark all read</button>
-                    </div>
-                    {notifications.map((n) => (
-                      <button key={n.id} className="pm-notif-row" onClick={() => { dismissNotif(n.id); setBellOpen(false); }}>
-                        <span className={`pm-notif-dot pm-notif-dot-${n.unread ? "info" : "muted"}`} />
-                        <span className="flex-grow-1 text-start">
-                          <b className="pm-fs-13">{n.text}</b>
-                          <span className="pm-fs-11 pm-muted">{n.time}</span>
-                        </span>
-                      </button>
-                    ))}
-                    <div className="pm-pop-foot">Showing {notifications.length} · eTIMS auto-filing ON</div>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="pm-user-wrap">
-              <button className="pm-user" onClick={() => { setUserMenu(!userMenu); setBellOpen(false); }}>
-                <Avatar name="Wanjiru K." size={34} />
-                <span className="d-none d-md-block text-start">
-                  <b className="pm-fs-13 d-block">Wanjiru K.</b>
-                  <span className="pm-fs-11 pm-muted">Owner · {business}</span>
-                </span>
-                <ChevronDown size={13} className="pm-muted" />
-              </button>
-              {userMenu && (
-                <>
-                  <div className="pm-pop-backdrop" onClick={() => setUserMenu(false)} />
-                  <div className="pm-pop pm-menu-pop">
-                    <button className="pm-dd-row" onClick={() => { setUserMenu(false); toast("Profile coming soon", "info"); }}><User size={14} /> My profile</button>
-                    <button className="pm-dd-row" onClick={() => { setUserMenu(false); toast("Settings coming soon", "info"); }}><Settings size={14} /> Settings & Security</button>
-                    <button className="pm-dd-row" onClick={() => { setUserMenu(false); setBizSwitch(true); }}><Building2 size={14} /> Switch business</button>
-                    <div className="pm-dd-sep" />
-                    <button className="pm-dd-row pm-dd-danger" onClick={() => { setUserMenu(false); toast("Signed out (demo)", "info"); }}><LogOut size={14} /> Sign out</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-
-        {/* content */}
-        <PageContent />
-      </div>
-
-      {/* ══════════ Business Switcher ══════════ */}
-      {bizSwitch && (
-        <>
-          <div className="pm-pop-backdrop" onClick={() => setBizSwitch(false)} />
-          <div className="pm-pop pm-biz-pop">
-            <div className="pm-pop-head">
-              <b>Switch Business</b>
-              <button className="pm-link-btn pm-fs-12" onClick={() => setBizSwitch(false)}>Cancel</button>
-            </div>
-            <div className="pm-biz-list">
-              {BUSINESSES.map((b) => (
-                <button
-                  key={b.name}
-                  className={cls("pm-biz-row", business === b.name && "pm-biz-row-active")}
-                  onClick={() => {
-                    setBusiness(b.name);
-                    setBizSwitch(false);
-                    toast(`Switched to ${b.name}`, "success");
-                  }}
-                >
-                  <span className="pm-biz-avatar">{b.emoji}</span>
-                  <span className="flex-grow-1 text-start">
-                    <b className="pm-fs-13">{b.name}</b>
-                    <span className="pm-muted pm-fs-11 d-block">{b.type}</span>
-                  </span>
-                  <span className="pm-fs-12 pm-muted">{fmtK(b.cash)}K</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-      <ToastHost />
-    </div>
-  );
-}

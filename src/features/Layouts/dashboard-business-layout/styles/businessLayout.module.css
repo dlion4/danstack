@@ -356,6 +356,51 @@
 	}
 }
 
+/* Sidebar footer with upgrade and user sections */
+.sidebarFooter {
+	padding: 0.85rem 0.75rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.upgradeCard {
+	background: linear-gradient(135deg, #123a2c, #0d2b21);
+	border: 1px solid rgba(18, 183, 106, 0.4);
+	border-radius: 14px;
+	padding: 0.85rem;
+	color: #d6f5e6;
+	font-size: 0.78rem;
+	margin-bottom: 0.7rem;
+}
+
+.userRow {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	color: #cbd5e1;
+	padding: 0.3rem 0.4rem;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background var(--transition-fast);
+}
+
+.userRow:hover {
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.userAvatar {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #ffb020, #f79009);
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 0.7rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
 /* --------------------------------------------------------------------------
    Header / topbar
    ------------------------------------------------------------------------ */
@@ -510,6 +555,32 @@
 }
 
 .account-id-chip[aria-expanded="true"] .chev {
+	transform: rotate(180deg);
+}
+
+.business-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	border: 1px solid var(--pm-border);
+	background: #ffffff;
+	border-radius: 10px;
+	padding: 0.3rem 0.65rem;
+	font-weight: 600;
+	font-size: 0.82rem;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.business-chip:hover {
+	border-color: #c4c9d4;
+}
+
+.business-chip .chev {
+	transition: transform var(--transition-fast);
+}
+
+.business-chip[aria-expanded="true"] .chev {
 	transform: rotate(180deg);
 }
 
@@ -1799,6 +1870,27 @@
 	transition: color var(--transition-fast);
 }
 
+.menuItem {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0.45rem 0.65rem;
+	border-radius: 8px;
+	font-size: 0.82rem;
+	font-weight: 500;
+	color: #344054;
+	cursor: pointer;
+	border: none;
+	background: none;
+	width: 100%;
+	text-align: left;
+	transition: background var(--transition-fast);
+}
+
+.menuItem:hover {
+	background: #f2f4f8;
+}
+
 .btnLink:hover {
 	color: var(--pm-green-dark);
 }
@@ -2223,99 +2315,185 @@
 }
 
 /* --------------------------------------------------------------------------
-   Bootstrap harmony (scoped to the business shell)
+   Bootstrap harmony (scoped to shell components only, NOT page content)
    ------------------------------------------------------------------------ */
-.businessRoot :global(.text-primary) {
+/* Exclude main-content to prevent style bleeding into business pages */
+.businessRoot :not(.main-content) :global(.text-primary),
+.businessRoot .sidebar :global(.text-primary),
+.businessRoot .top-header :global(.text-primary),
+.businessRoot .dropdown-panel :global(.text-primary),
+.businessRoot .right-drawer :global(.text-primary),
+.businessRoot .aside :global(.text-primary) {
 	color: var(--pm-green) !important;
 }
 
-.businessRoot :global(.bg-primary) {
+.businessRoot :not(.main-content) :global(.bg-primary),
+.businessRoot .sidebar :global(.bg-primary),
+.businessRoot .top-header :global(.bg-primary),
+.businessRoot .dropdown-panel :global(.bg-primary),
+.businessRoot .right-drawer :global(.bg-primary),
+.businessRoot .aside :global(.bg-primary) {
 	background-color: var(--pm-green) !important;
 }
 
-.businessRoot :global(.btn) {
+.businessRoot :not(.main-content) :global(.btn),
+.businessRoot .sidebar :global(.btn),
+.businessRoot .top-header :global(.btn),
+.businessRoot .dropdown-panel :global(.btn),
+.businessRoot .right-drawer :global(.btn),
+.businessRoot .aside :global(.btn) {
 	font-weight: 600;
 	border-radius: 10px;
 }
 
-.businessRoot :global(.btn-primary) {
+.businessRoot :not(.main-content) :global(.btn-primary),
+.businessRoot .sidebar :global(.btn-primary),
+.businessRoot .top-header :global(.btn-primary),
+.businessRoot .dropdown-panel :global(.btn-primary),
+.businessRoot .right-drawer :global(.btn-primary),
+.businessRoot .aside :global(.btn-primary) {
 	background: var(--pm-green);
 	border-color: var(--pm-green);
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
 }
 
-.businessRoot :global(.btn-primary):hover,
-.businessRoot :global(.btn-primary):focus,
-.businessRoot :global(.btn-primary):active {
+.businessRoot :not(.main-content) :global(.btn-primary):hover,
+.businessRoot :not(.main-content) :global(.btn-primary):focus,
+.businessRoot :not(.main-content) :global(.btn-primary):active,
+.businessRoot .sidebar :global(.btn-primary):hover,
+.businessRoot .top-header :global(.btn-primary):hover,
+.businessRoot .dropdown-panel :global(.btn-primary):hover,
+.businessRoot .right-drawer :global(.btn-primary):hover,
+.businessRoot .aside :global(.btn-primary):hover {
 	background: var(--pm-green-dark) !important;
 	border-color: var(--pm-green-dark) !important;
 }
 
-.businessRoot :global(.btn-outline-primary) {
+.businessRoot :not(.main-content) :global(.btn-outline-primary),
+.businessRoot .sidebar :global(.btn-outline-primary),
+.businessRoot .top-header :global(.btn-outline-primary),
+.businessRoot .dropdown-panel :global(.btn-outline-primary),
+.businessRoot .right-drawer :global(.btn-outline-primary),
+.businessRoot .aside :global(.btn-outline-primary) {
 	color: var(--pm-green-dark);
 	border-color: #b7e6cf;
 	background: #ffffff;
 }
 
-.businessRoot :global(.btn-outline-primary):hover {
+.businessRoot :not(.main-content) :global(.btn-outline-primary):hover,
+.businessRoot .sidebar :global(.btn-outline-primary):hover,
+.businessRoot .top-header :global(.btn-outline-primary):hover,
+.businessRoot .dropdown-panel :global(.btn-outline-primary):hover,
+.businessRoot .right-drawer :global(.btn-outline-primary):hover,
+.businessRoot .aside :global(.btn-outline-primary):hover {
 	background: var(--pm-green-soft);
 	color: var(--pm-green-dark);
 	border-color: var(--pm-green);
 }
 
-.businessRoot :global(.btn-outline-secondary) {
+.businessRoot :not(.main-content) :global(.btn-outline-secondary),
+.businessRoot .sidebar :global(.btn-outline-secondary),
+.businessRoot .top-header :global(.btn-outline-secondary),
+.businessRoot .dropdown-panel :global(.btn-outline-secondary),
+.businessRoot .right-drawer :global(.btn-outline-secondary),
+.businessRoot .aside :global(.btn-outline-secondary) {
 	border-color: var(--pm-border);
 	color: #475467;
 	background: #ffffff;
 }
 
-.businessRoot :global(.btn-outline-secondary):hover {
+.businessRoot :not(.main-content) :global(.btn-outline-secondary):hover,
+.businessRoot .sidebar :global(.btn-outline-secondary):hover,
+.businessRoot .top-header :global(.btn-outline-secondary):hover,
+.businessRoot .dropdown-panel :global(.btn-outline-secondary):hover,
+.businessRoot .right-drawer :global(.btn-outline-secondary):hover,
+.businessRoot .aside :global(.btn-outline-secondary):hover {
 	background: #f2f4f8;
 	color: var(--pm-ink);
 	border-color: #d5d9e2;
 }
 
-.businessRoot :global(.btn-link) {
+.businessRoot :not(.main-content) :global(.btn-link),
+.businessRoot .sidebar :global(.btn-link),
+.businessRoot .top-header :global(.btn-link),
+.businessRoot .dropdown-panel :global(.btn-link),
+.businessRoot .right-drawer :global(.btn-link),
+.businessRoot .aside :global(.btn-link) {
 	color: var(--pm-green-dark);
 	text-decoration: none;
 }
 
-.businessRoot :global(.form-control):focus,
-.businessRoot :global(.form-select):focus {
+.businessRoot :not(.main-content) :global(.form-control):focus,
+.businessRoot :not(.main-content) :global(.form-select):focus,
+.businessRoot .sidebar :global(.form-control):focus,
+.businessRoot .top-header :global(.form-control):focus,
+.businessRoot .dropdown-panel :global(.form-control):focus,
+.businessRoot .right-drawer :global(.form-control):focus,
+.businessRoot .aside :global(.form-control):focus {
 	border-color: var(--pm-green);
 	box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14);
 }
 
-.businessRoot :global(.nav-tabs .nav-link.active) {
+.businessRoot :not(.main-content) :global(.nav-tabs .nav-link.active),
+.businessRoot .sidebar :global(.nav-tabs .nav-link.active),
+.businessRoot .top-header :global(.nav-tabs .nav-link.active),
+.businessRoot .dropdown-panel :global(.nav-tabs .nav-link.active),
+.businessRoot .right-drawer :global(.nav-tabs .nav-link.active),
+.businessRoot .aside :global(.nav-tabs .nav-link.active) {
 	color: var(--pm-ink);
 	border-bottom: 2px solid var(--pm-green);
 	background: transparent;
 }
 
-.businessRoot :global(.dropdown-menu) {
+.businessRoot :not(.main-content) :global(.dropdown-menu),
+.businessRoot .sidebar :global(.dropdown-menu),
+.businessRoot .top-header :global(.dropdown-menu),
+.businessRoot .dropdown-panel :global(.dropdown-menu),
+.businessRoot .right-drawer :global(.dropdown-menu),
+.businessRoot .aside :global(.dropdown-menu) {
 	border-radius: 12px;
 	border-color: var(--pm-border);
 	box-shadow: var(--pm-shadow-lg);
 	padding: 0.4rem;
 }
 
-.businessRoot :global(.dropdown-item) {
+.businessRoot :not(.main-content) :global(.dropdown-item),
+.businessRoot .sidebar :global(.dropdown-item),
+.businessRoot .top-header :global(.dropdown-item),
+.businessRoot .dropdown-panel :global(.dropdown-item),
+.businessRoot .right-drawer :global(.dropdown-item),
+.businessRoot .aside :global(.dropdown-item) {
 	border-radius: 8px;
 	padding: 0.45rem 0.7rem;
 	font-weight: 500;
 }
 
-.businessRoot :global(.dropdown-item):hover {
+.businessRoot :not(.main-content) :global(.dropdown-item):hover,
+.businessRoot .sidebar :global(.dropdown-item):hover,
+.businessRoot .top-header :global(.dropdown-item):hover,
+.businessRoot .dropdown-panel :global(.dropdown-item):hover,
+.businessRoot .right-drawer :global(.dropdown-item):hover,
+.businessRoot .aside :global(.dropdown-item):hover {
 	background: #f2f4f8;
 }
 
-.businessRoot :global(.modal-content) {
+.businessRoot :not(.main-content) :global(.modal-content),
+.businessRoot .sidebar :global(.modal-content),
+.businessRoot .top-header :global(.modal-content),
+.businessRoot .dropdown-panel :global(.modal-content),
+.businessRoot .right-drawer :global(.modal-content),
+.businessRoot .aside :global(.modal-content) {
 	border: none;
 	border-radius: 18px;
 	box-shadow: var(--pm-shadow-lg);
 }
 
-.businessRoot :global(.modal-backdrop) {
+.businessRoot :not(.main-content) :global(.modal-backdrop),
+.businessRoot .sidebar :global(.modal-backdrop),
+.businessRoot .top-header :global(.modal-backdrop),
+.businessRoot .dropdown-panel :global(.modal-backdrop),
+.businessRoot .right-drawer :global(.modal-backdrop),
+.businessRoot .aside :global(.modal-backdrop) {
 	opacity: 0.45;
 	background: #0b1322;
 }

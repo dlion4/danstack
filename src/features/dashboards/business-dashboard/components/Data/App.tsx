@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost, Modal } from "./ui";
 import {
   AccountSection, AuditSection, ConsentSection, DataCommandCenter, ExportSection,
@@ -102,44 +101,30 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="data" data={store} brandSub="Page 9 · Data, Privacy &amp; Account Management" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="data" data={store} searchId="data-search" searchPlaceholder="Search data, exports, requests…" />
-        <main className="pm-content">
-          <PageHeader />
-          <DataCommandCenter />
-          <ExportSection />
-          <ConsentSection />
-          <PrivacySection />
-          <AuditSection />
-          <SharingSection />
-          <AccountSection />
-          <WizardsBanner />
+      <PageHeader />
+      <DataCommandCenter />
+      <ExportSection />
+      <ConsentSection />
+      <PrivacySection />
+      <AuditSection />
+      <SharingSection />
+      <AccountSection />
+      <WizardsBanner />
 
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 9: Data, Privacy &amp; Account Management</div>
-              <div className="pm-prod-meta">
-                Kenya DPA 2019 compliant · GDPR-compatible · CBK data retention rules · append-only audit trail
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-shield-lock me-1" />AES-256 encrypted</span>
-              <span className="badge-soft blue"><i className="bi bi-clipboard-data me-1" />7-yr audit</span>
-              <span className="badge-soft amber"><i className="bi bi-clock-history me-1" />KRA retention</span>
-              <span className="badge-soft violet"><i className="bi bi-shield-check me-1" />DPA 2019</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-download", label: "Export Data", primary: true, onClick: () => store.openModal("exportWizard") },
-        { icon: "bi-trash", label: "Deletion Request", onClick: () => store.openModal("deletionWizard") },
-        { icon: "bi-toggle-on", label: "Consent Manager", onClick: () => store.openModal("consentManager") },
-        { icon: "bi-door-closed", label: "Account Closure", onClick: () => store.openModal("accountClosure") },
-        { icon: "bi-clipboard-data", label: "Audit Log", onClick: () => store.openModal("auditLog") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 9: Data, Privacy &amp; Account Management</div>
+          <div className="pm-prod-meta">
+            Kenya DPA 2019 compliant · GDPR-compatible · CBK data retention rules · append-only audit trail
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-shield-lock me-1" />AES-256 encrypted</span>
+          <span className="badge-soft blue"><i className="bi bi-clipboard-data me-1" />7-yr audit</span>
+          <span className="badge-soft amber"><i className="bi bi-clock-history me-1" />KRA retention</span>
+          <span className="badge-soft violet"><i className="bi bi-shield-check me-1" />DPA 2019</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

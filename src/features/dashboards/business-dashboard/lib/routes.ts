@@ -8,15 +8,10 @@
 
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import type { QAction } from "../lib.ts";
+import type { QAction } from "../lib";
 
 export type BusinessPageId =
 	| "dashboard"
-	| "getpaid"
-	| "paysuppliers"
-	| "cash"
-	| "books"
-	| "crm"
 	| "productstore"
 	| "inventory"
 	| "marketing"
@@ -32,11 +27,6 @@ export type BusinessPageId =
 
 export const PAGE_PATH: Record<BusinessPageId, string> = {
 	dashboard: "/business-dashboard",
-	getpaid: "/business-dashboard/get-paid",
-	paysuppliers: "/business-dashboard/pay-suppliers",
-	cash: "/business-dashboard/cash",
-	books: "/business-dashboard/books",
-	crm: "/business-dashboard/crm",
 	productstore: "/business-dashboard/products",
 	inventory: "/business-dashboard/inventory",
 	marketing: "/business-dashboard/marketing",
@@ -52,11 +42,7 @@ export const PAGE_PATH: Record<BusinessPageId, string> = {
 };
 
 /** Nav ids from lib/navigation.ts that don't match a PageId 1:1. */
-const NAV_ALIAS: Record<string, { page: BusinessPageId; anchor?: string }> = {
-	customers: { page: "crm" },
-	payroll: { page: "paysuppliers", anchor: "sec-payroll" },
-	expenses: { page: "paysuppliers", anchor: "sec-expenses" },
-};
+const NAV_ALIAS: Record<string, { page: BusinessPageId; anchor?: string }> = {};
 
 let pendingAction: QAction = null;
 

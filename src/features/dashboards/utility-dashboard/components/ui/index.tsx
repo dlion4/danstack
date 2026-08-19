@@ -157,7 +157,7 @@ export function Toggle({ on, onChange, disabled, label }: { on: boolean; onChang
 
 /* ============================== Section head ============================== */
 
-export function SectionHead({ no, title, sub, id, children }: { no: string; title: string; sub?: string; id?: string; children?: ReactNode }) {
+export function SectionHead({ no, title, sub, id, children }: {  title: string; sub?: string; id?: string; children?: ReactNode }) {
   return (
     <div id={id} className="mb-4 flex scroll-mt-24 flex-wrap items-center gap-3">
       <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-ink font-display text-[12px] font-bold text-white">{no}</span>

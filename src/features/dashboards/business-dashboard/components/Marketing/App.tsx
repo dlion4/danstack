@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./marketing.css";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost } from "./ui";
 import {
   CampaignsSection, GrowthAnalytics, LoyaltySection, MarketingCommandCenter, PageHeader,
@@ -87,46 +86,30 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="marketing" data={store} brandSub="Page 12 · Marketing &amp; Growth" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="marketing" data={store} searchId="mkt-search" searchPlaceholder="Search campaigns, audience, codes…" />
-        <main className="pm-content">
-          <PageHeader />
-          <MarketingCommandCenter />
-          <CampaignsSection />
-          <LoyaltySection />
-          <SocialCommerce />
-          <PromotionsSection />
-          <ReviewsSection />
-          <GrowthAnalytics />
-          <WizardsBanner />
+      <PageHeader />
+      <MarketingCommandCenter />
+      <CampaignsSection />
+      <PromotionsSection />
+      <LoyaltySection />
+      <SocialCommerce />
+      <GrowthAnalytics />
+      <ReviewsSection />
+      <WizardsBanner />
 
-          {/* footer */}
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 12: Marketing &amp; Growth</div>
-              <div className="pm-prod-meta">
-                Built on the PayMo superapp pattern · central ledger · multi-business aware · Kenya-first rails
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-whatsapp me-1" />WhatsApp Business</span>
-              <span className="badge-soft violet"><i className="bi bi-instagram me-1" />Instagram Shopping</span>
-              <span className="badge-soft amber"><i className="bi bi-stars me-1" />1,284 members</span>
-              <span className="badge-soft blue"><i className="bi bi-graph-up-arrow me-1" />ROI 21.4×</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-plus-lg", label: "New Campaign", primary: true, onClick: () => store.openModal("campaignWizard") },
-        { icon: "bi-lightning-charge", label: "Flash Sale", onClick: () => store.openModal("flashsaleWizard") },
-        { icon: "bi-star", label: "Loyalty Program", onClick: () => store.openModal("loyaltyWizard") },
-        { icon: "bi-pencil-square", label: "Social Post", onClick: () => store.openModal("socialComposer") },
-        { icon: "bi-gift", label: "Redeem Points", onClick: () => store.openModal("redeemPoints") },
-        { icon: "bi-download", label: "Export ROI", onClick: () => store.openModal("exportAnalytics") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 12: Marketing &amp; Growth</div>
+          <div className="pm-prod-meta">
+            Multi-channel campaigns · Loyalty programs · Social commerce · Analytics
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-megaphone me-1" />8 active campaigns</span>
+          <span className="badge-soft blue"><i className="bi bi-people me-1" />2.4K engaged</span>
+          <span className="badge-soft amber"><i className="bi bi-star me-1" />4.8 avg rating</span>
+          <span className="badge-soft violet"><i className="bi bi-graph-up-arrow me-1" />+34% conversion</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

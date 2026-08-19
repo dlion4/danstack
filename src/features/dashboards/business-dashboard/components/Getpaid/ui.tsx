@@ -251,10 +251,10 @@ export function PillTabs({
 }
 
 export function Section({
-  no, sub, title, right, children, id,
+  title, right, children, id,
 }: {
-  no: string;
-  sub: string;
+  // 
+  // sub: string;
   title: string;
   right?: ReactNode;
   children: ReactNode;
@@ -264,9 +264,9 @@ export function Section({
     <section id={id} className="pm-section">
       <div className="d-flex align-items-end justify-content-between gap-3 mb-3 flex-wrap">
         <div>
-          <div className="pm-kicker">
+          {/* <div className="pm-kicker">
             <span className="pm-secno">{no}</span> {sub}
-          </div>
+          </div> */}
           <h3 className="pm-section-title">{title}</h3>
         </div>
         {right && <div className="d-flex gap-2 align-items-center flex-wrap">{right}</div>}

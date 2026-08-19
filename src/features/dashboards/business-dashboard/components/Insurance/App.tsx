@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost } from "./ui";
 import { BeneficiariesSection, ClaimsSection, CoverCommandCenter, PageHeader, PoliciesSection, WizardsBanner } from "./insuranceSections";
 import {
@@ -57,40 +56,27 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="insurance" data={store} brandSub="Page 11 · Insurance &amp; Protection" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="insurance" data={store} searchId="ins-search" searchPlaceholder="Search policies, claims, beneficiaries…" />
-        <main className="pm-content">
-          <PageHeader />
-          <CoverCommandCenter />
-          <PoliciesSection />
-          <ClaimsSection />
-          <BeneficiariesSection />
-          <WizardsBanner />
+      <PageHeader />
+      <CoverCommandCenter />
+      <PoliciesSection />
+      <ClaimsSection />
+      <BeneficiariesSection />
+      <WizardsBanner />
 
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 11: Insurance &amp; Protection</div>
-              <div className="pm-prod-meta">
-                The protection engine · 5 underwriters · WIBA compliant · Kenya-first rails
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-shield-fill-check me-1" />KES 24.5M cover</span>
-              <span className="badge-soft blue"><i className="bi bi-bank me-1" />6 policies</span>
-              <span className="badge-soft amber"><i className="bi bi-shield-exclamation me-1" />1 claim in review</span>
-              <span className="badge-soft violet"><i className="bi bi-people me-1" />3 beneficiaries</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-shield-exclamation", label: "File a Claim", primary: true, onClick: () => store.openModal("claim") },
-        { icon: "bi-shield-plus", label: "Get a Quote", onClick: () => store.openModal("policy") },
-        { icon: "bi-calendar-event", label: `${store.policies.filter((p) => p.status === "Expiring soon").length} Renewals Due`, onClick: () => store.openModal("renewals") },
-        { icon: "bi-people", label: "Beneficiaries", onClick: () => store.openModal("beneficiaries") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 11: Insurance &amp; Protection</div>
+          <div className="pm-prod-meta">
+            Embedded insurance · Instant claims · AI underwriting · Kenya-first carriers
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-shield-check me-1" />3 active policies</span>
+          <span className="badge-soft blue"><i className="bi bi-cash-stack me-1" />KES 4.2M covered</span>
+          <span className="badge-soft amber"><i className="bi bi-lightning-charge me-1" />0 claims pending</span>
+          <span className="badge-soft violet"><i className="bi bi-people me-1" />5 beneficiaries</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

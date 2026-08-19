@@ -124,7 +124,7 @@ export function Sidebar({ open, onClose, onNavigate, current, data, brandSub, fo
             </div>
           ))}
         </div>
-        <div className="pm-sidebar-foot">
+        {/* <div className="pm-sidebar-foot">
           {footer ?? (
             <div className="pm-upgrade">
               <div className="d-flex align-items-center gap-2 mb-1">
@@ -142,7 +142,7 @@ export function Sidebar({ open, onClose, onNavigate, current, data, brandSub, fo
             </div>
             <i className="bi bi-box-arrow-right" style={{ fontSize: "0.8rem", color: "#7b8aa3" }} />
           </div>
-        </div>
+        </div> */}
       </aside>
     </>
   );

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StoreProvider, useStore } from "./store";
-import { QuickBar, Sidebar, Topbar } from "../../lib/AppShell";
 import { ToastHost, Modal } from "./ui";
 import {
   ActiveDisputesSection, ChargebackRiskSection, DisputeCommandCenter, EvidenceVaultSection,
@@ -139,43 +138,29 @@ function Page({ onNavigate }: { onNavigate?: (p: string) => void }) {
 
   return (
     <>
-      <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} onNavigate={onNavigate} current="disputes" data={store} brandSub="Page 7 · Disputes &amp; Support" />
-      <div className="pm-main">
-        <Topbar onMenu={() => setSideOpen(true)} current="disputes" data={store} searchId="dispute-search" searchPlaceholder="Search disputes, tickets, evidence…" />
-        <main className="pm-content">
-          <PageHeader />
-          <DisputeCommandCenter />
-          <ActiveDisputesSection />
-          <EvidenceVaultSection />
-          <PreDisputeSettlementSection />
-          <SupportTicketsSection />
-          <ChargebackRiskSection />
-          <WizardsBanner />
+      <PageHeader />
+      <DisputeCommandCenter />
+      <ActiveDisputesSection />
+      <PreDisputeSettlementSection />
+      <ChargebackRiskSection />
+      <EvidenceVaultSection />
+      <SupportTicketsSection />
+      <WizardsBanner />
 
-          <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
-            <div className="flex-grow-1">
-              <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Dispute Management &amp; Support Desk</div>
-              <div className="pm-prod-meta">
-                M-Pesa 234 Reversal Protections · DPO Visa Arbitration · KRA eTIMS Verification · CBK Financial Ombudsman
-              </div>
-            </div>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-soft green"><i className="bi bi-shield-check me-1" />75% Win Rate</span>
-              <span className="badge-soft blue"><i className="bi bi-activity me-1" />0.28% CBK Ratio</span>
-              <span className="badge-soft amber"><i className="bi bi-lock me-1" />Dispute Reserve</span>
-              <span className="badge-soft violet"><i className="bi bi-truck me-1" />Sendy Integrated</span>
-            </div>
-          </footer>
-        </main>
-      </div>
-      <QuickBar actions={[
-        { icon: "bi-shield-exclamation", label: "File Dispute", primary: true, onClick: () => store.openModal("fileDisputeWizard") },
-        { icon: "bi-file-earmark-arrow-up", label: "Defend Claim", onClick: () => store.openModal("evidenceWizard") },
-        { icon: "bi-life-preserver", label: "Support Ticket", onClick: () => store.openModal("openTicketWizard") },
-        { icon: "bi-arrow-left-right", label: "Settle Pre-Dispute", onClick: () => store.openModal("settlementWizard") },
-        { icon: "bi-gavel", label: "Escalate to Arbiter", onClick: () => store.openModal("arbitrationWizard") },
-        { icon: "bi-question-circle", label: "Help", onClick: () => store.openModal("help") },
-      ]} />
+      <footer className="pm-footer mt-4 rounded-3 d-flex flex-wrap align-items-center gap-3" style={{ boxShadow: "var(--pm-shadow)" }}>
+        <div className="flex-grow-1">
+          <div className="fw-bold" style={{ fontSize: "0.84rem" }}>PayMo Business — Page 7: Disputes &amp; Support</div>
+          <div className="pm-prod-meta">
+            Dispute management · Pre-dispute settlement · Chargeback protection · Support tickets
+          </div>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <span className="badge-soft green"><i className="bi bi-check-circle me-1" />2 active disputes</span>
+          <span className="badge-soft blue"><i className="bi bi-shield-check me-1" />95% win rate</span>
+          <span className="badge-soft amber"><i className="bi bi-exclamation-triangle me-1" />1 high risk</span>
+          <span className="badge-soft violet"><i className="bi bi-headset me-1" />5 open tickets</span>
+        </div>
+      </footer>
       <ModalHost />
       <ToastHost />
     </>

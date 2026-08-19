@@ -17,17 +17,12 @@ import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /* ---------------------------------------------------------------------------
- * Bootstrap + Bootstrap Icons — imported ONCE here in the shell so that every
- * child route under /business-dashboard (15 pages + all modals) shares the
- * grid, utility classes (row / col-lg-4 / d-flex / btn / modal / etc.) and the
- * ~690 bi-* icons used throughout the migrated pages. The legacy BAAS business
- * HTML loads these from CDN; in the React shell we bundle them once instead of
- * re-importing per page (which would duplicate CSS in dev HMR).
- * JS bundle is loaded async on mount so modals (new bootstrap.Modal(...)) work
- * without each page having to ship its own <script>.
+ * Bootstrap + Bootstrap Icons — NOT imported here to prevent style conflicts
+ * with business pages. Each business page imports its own CSS (index.css) which
+ * includes Bootstrap and page-specific styling. This allows business pages to
+ * retain their original theme and styles without interference from the shell.
+ * JS bundle is loaded async on mount so modals (new bootstrap.Modal(...)) work.
  * ------------------------------------------------------------------------- */
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 
 import type {
         BusinessPageAction,
@@ -108,7 +103,6 @@ export default function BusinessShell() {
                 const base = segments[0] === "business-dashboard" ? 1 : segments[0] === "business" ? 1 : -1;
                 const slug = base >= 0 ? segments[base] : undefined;
                 if (!slug || slug === "overview" || slug === "command-center") return "overview";
-                if (slug === "get-paid") return "get-paid";
                 return slug;
         }, [pathname]);
 
@@ -336,7 +330,9 @@ export default function BusinessShell() {
                                         {pageMeta && (
                                                 <BusinessPageBar meta={pageMeta} actions={pageActions} />
                                         )}
-                                        <Outlet />
+                                        <div className="pm-page-content">
+                                                <Outlet />
+                                        </div>
                                 </main>
 
                                 <BusinessRightDrawer
