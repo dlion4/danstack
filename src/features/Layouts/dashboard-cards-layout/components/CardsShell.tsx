@@ -25,6 +25,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+/* ---------------------------------------------------------------------------
+ * Bootstrap + Bootstrap Icons — imported ONCE here in the shell so every child
+ * page under the cards layout shares the grid / utility classes (d-flex /
+ * form-check / form-switch / btn / etc.) and the ~bi-* icons used throughout
+ * the chrome (mirrors the BusinessShell pattern).
+ * ------------------------------------------------------------------------- */
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 import type {
 	CardsShellContextValue,
 	ToastInput,
@@ -79,7 +89,9 @@ export default function CardsShell() {
 	const pathname = useRouterState({ select: (st) => st.location.pathname });
 	const activeSection = useMemo(() => {
 		const segments = pathname.split("/").filter(Boolean);
-		return segments.length >= 3 ? segments[2] : "card-overview";
+		// Works for both the legacy /cards/app/<section> shape and the
+		// /cards-shell/<section> shape: the final path segment is the slug.
+		return segments.length >= 2 ? segments[segments.length - 1] : "card-overview";
 	}, [pathname]);
 
 	/* ======================================================================

@@ -8,7 +8,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
-import shellDash from "../../shell/styles/dashboard.module.css";
 import { useCardsShell } from "../data/cardsLayoutContext";
 import {
 	cx,
@@ -19,29 +18,6 @@ import {
 import cardsPage from "../styles/cardsLayout.module.css";
 
 const c = cardsPage as Record<string, string>;
-const d = shellDash as Record<string, string>;
-
-/* Module key -> static route (the cards shell routes one static page per module,
-   mirroring src/routes/cards/app/*). Unknown keys fall back to the overview. */
-const MODULE_PATH = {
-	"card-overview": "/cards/app",
-	"card-command-center": "/cards/app/card-command-center",
-	"virtual-debit-cards": "/cards/app/virtual-debit-cards",
-	"virtual-credit-cards": "/cards/app/virtual-credit-cards",
-	"physical-debit-cards": "/cards/app/physical-debit-cards",
-	"prepaid-card-management": "/cards/app/prepaid-card-management",
-	"corporate-business-cards": "/cards/app/corporate-business-cards",
-	"card-security-fraud-prevention": "/cards/app/card-security-fraud-prevention",
-	"card-analytics-reporting": "/cards/app/card-analytics-reporting",
-	"card-program-administration": "/cards/app/card-program-administration",
-	"card-settings-support": "/cards/app/card-settings-support",
-} as const;
-
-type ModulePath = (typeof MODULE_PATH)[keyof typeof MODULE_PATH];
-
-function modulePath(key: string): ModulePath {
-	return MODULE_PATH[key as keyof typeof MODULE_PATH] ?? "/cards/app";
-}
 
 export default function CardsHome() {
 	const { showToast } = useCardsShell();
@@ -64,23 +40,23 @@ export default function CardsHome() {
 		});
 
 	return (
-		<div className={d.pageWrap}>
+		<div className={c.pageWrap}>
 			{/* ---------- hero ---------- */}
 			<section
-				className={d.hero}
+				className={c.hero}
 				style={{ "--mod-c1": home.c1, "--mod-c2": home.c2 } as CSSProperties}
 			>
-				<div className={d.heroAccent} />
-				<div className={d.heroInner}>
-					<span className={d.pill}>
-						<span className={d.pillDot} /> {home.pill}
+				<div className={c.heroAccent} />
+				<div className={c.heroInner}>
+					<span className={c.pill}>
+						<span className={c.pillDot} /> {home.pill}
 					</span>
-					<h1 className={d.heroTitle}>
+					<h1 className={c.heroTitle}>
 						{home.titlePre}
 						<span className={c.textGradient}>{home.titleAccent}</span>
 					</h1>
-					<p className={d.heroCopy}>{home.copy}</p>
-					<div className={d.heroActions}>
+					<p className={c.heroCopy}>{home.copy}</p>
+					<div className={c.heroActions}>
 						<button
 							type="button"
 							className={c.btnPrimary}
@@ -100,13 +76,13 @@ export default function CardsHome() {
 			</section>
 
 			{/* ---------- stats ---------- */}
-			<div className={d.statsGrid}>
+			<div className={c.statsGrid}>
 				{home.stats.map((stat) => (
-					<div className={d.statCard} key={stat.label}>
-						<div className={d.statLabel}>{stat.label}</div>
-						<div className={d.statValue}>{stat.value}</div>
+					<div className={c.statCard} key={stat.label}>
+						<div className={c.statLabel}>{stat.label}</div>
+						<div className={c.statValue}>{stat.value}</div>
 						{stat.delta && (
-							<div className={cx(d.statDelta, stat.up ? d.up : d.down)}>
+							<div className={cx(c.statDelta, stat.up ? c.up : c.down)}>
 								<i
 									className={
 										stat.up ? "bi bi-arrow-up-right" : "bi bi-arrow-down-right"
@@ -120,40 +96,41 @@ export default function CardsHome() {
 			</div>
 
 			{/* ---------- module grid ---------- */}
-			<section className={d.sectionCard}>
-				<div className={d.sectionHead}>
+			<section className={c.sectionCard}>
+				<div className={c.sectionHead}>
 					<div>
-						<h2 className={d.sectionTitle}>
+						<h2 className={c.sectionTitle}>
 							<i className="bi bi-grid-1x2" /> Your workspaces
 						</h2>
-						<p className={d.sectionSub}>Jump straight into any card module.</p>
+						<p className={c.sectionSub}>Jump straight into any card module.</p>
 					</div>
 				</div>
-				<div className={d.moduleGrid}>
+				<div className={c.moduleGrid}>
 					{quickLinks.map((mod) => (
 						<Link
 							key={mod.key}
-							to={modulePath(mod.key)}
-							className={d.moduleCard}
+							to="/cards-shell/$section"
+							params={{ section: mod.key }}
+							className={c.moduleCard}
 						>
 							<span
-								className={d.moduleIcon}
+								className={c.moduleIcon}
 								style={{
 									background: `linear-gradient(135deg, ${mod.c1}, ${mod.c2})`,
 								}}
 							>
 								<i className={`bi ${mod.icon}`} />
 							</span>
-							<h3 className={d.moduleTitle}>{mod.label}</h3>
-							<p className={d.moduleDesc}>{mod.copy}</p>
-							<div className={d.moduleFoot}>
+							<h3 className={c.moduleTitle}>{mod.label}</h3>
+							<p className={c.moduleDesc}>{mod.copy}</p>
+							<div className={c.moduleFoot}>
 								<span
 									className={cx(c.badgeMini, c.badgeSoft)}
 									style={{ fontSize: "0.68rem" }}
 								>
 									{mod.pill}
 								</span>
-								<i className={cx("bi bi-arrow-right", d.moduleArrow)} />
+								<i className={cx("bi bi-arrow-right", c.moduleArrow)} />
 							</div>
 						</Link>
 					))}
