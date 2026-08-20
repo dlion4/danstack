@@ -18,6 +18,8 @@ import { useEffect } from "react";
 import { AppProvider, scrollToId, ToastViewport, useApp } from "../../store";
 import { MobileNav, QuickBar, SidebarContent, Topbar } from "../../Shell";
 import { Icon, Logo } from "../../icons";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
 
 /* ---- Modals (shared across all pages) ---- */
