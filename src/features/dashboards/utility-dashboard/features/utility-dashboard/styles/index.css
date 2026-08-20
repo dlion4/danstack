@@ -16,6 +16,14 @@
  *      font/background on all other pages.
  * ========================================================================== */
 
+/* ---------- Google Fonts (Manrope + Sora) ----------
+   The standalone utility app loaded these via its own HTML <link>.  In the
+   integrated app the global __root.tsx already loads Sora, but Manrope is
+   only declared in this scoped sheet's --font-sans token.  Importing the
+   font here ensures the water/electricity/internet pages don't fall back to
+   system fonts, which makes everything look washed out.                      */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap");
+
 /* ---------- Tailwind theme tokens (global, but namespaced — pm*) ----------
    These only add --color-pm* variables; no element selector, so they do NOT
    repaint other pages. They let Tailwind generate utilities like bg-pmgreen,
@@ -88,8 +96,8 @@
   min-height: 100vh;
 }
 
-/* scroll is scoped — no global html rule */
-.pm-utility-shell html {
+/* scroll-behavior is set on the shell itself — never target html directly */
+.pm-utility-shell {
   scroll-behavior: smooth;
 }
 
@@ -313,19 +321,13 @@
   margin: 0;
 }
 
-/* ---------- Tailwind color bridging ----------
-   Tailwind JIT arbitrary values like bg-pmgreen, text-ink, border-line resolve
-   via @theme. Since we removed the global @theme, we bridge them here as
-   utilities scoped to the shell so existing className="bg-pmgreen" etc keep
-   working without leaking global CSS variables. */
-.pm-utility-shell .bg-pmgreen { background-color: var(--color-pmgreen) !important; }
-.pm-utility-shell .bg-pmgreen-soft { background-color: var(--color-pmgreen-soft) !important; }
-.pm-utility-shell .bg-side, .pm-utility-shell .bg-\[var\(--color-side\)\] { background-color: var(--color-side) !important; }
-.pm-utility-shell .bg-canvas { background-color: var(--color-canvas) !important; }
-.pm-utility-shell .bg-paper { background-color: var(--color-paper) !important; }
-.pm-utility-shell .text-ink { color: var(--color-ink) !important; }
-.pm-utility-shell .text-ink-2 { color: var(--color-ink-2) !important; }
-.pm-utility-shell .text-muted { color: var(--color-muted) !important; }
-.pm-utility-shell .text-faint { color: var(--color-faint) !important; }
-.pm-utility-shell .border-line { border-color: var(--color-line) !important; }
-.pm-utility-shell .text-pmgreen { color: var(--color-pmgreen) !important; }
+/*
+ * Colour bridging removed.
+ * --------------------------------------------
+ * The @theme block at the top of this file already generates every Tailwind
+ * utility class (bg-pmgreen, text-ink, border-line, ...) WITH opacity-modifier
+ * support.  The old `!important` bridges shadowed those generated classes so
+ * that `bg-white/[0.06]` inside .pm-hero (glassy KPI cards) and
+ * `bg-pmgreen/50` on badges could not override the hard-coded colour.
+ * Tailwind v4 + @theme handles opacity correctly — no bridges needed.
+ */
