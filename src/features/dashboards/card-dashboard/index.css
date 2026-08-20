@@ -565,13 +565,17 @@
 }
 
 /* ---------- section headings ---------- */
+.pmc-scroll-mt { scroll-margin-top: 96px; }
 .pmc-section-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: 12px;
+  margin-top: 40px;
   margin-bottom: 16px;
 }
+.pmc-section-head:first-child { margin-top: 0; }
+.pmc-section-sub { flex-basis: 100%; margin: -6px 0 0 46px; font-size: 12.5px; line-height: 1.6; color: var(--pmc-muted); }
 .pmc-section-no {
   display: inline-grid;
   place-items: center;
@@ -587,7 +591,6 @@
 }
 .pmc-section-title { font-family: var(--pmc-font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--pmc-ink); margin: 0; }
 @media (min-width: 576px) { .pmc-section-title { font-size: 19px; } }
-.pmc-section-sub { margin: 2px 0 0; font-size: 12px; color: var(--pmc-muted); }
 .pmc-section-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto; }
 
 /* ---------- chips ---------- */
@@ -606,7 +609,7 @@
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 .pmc-chip:hover { border-color: #c4c9d4; }
-.pmc-chip.on { border-color: var(--pmc-green); background: var(--pmc-green-soft); color: var(--pmc-green-ink); }
+.pmc-chip.on { border-color: var(--pmc-ink); background: var(--pmc-ink); color: #fff; }
 .pmc-chip-count {
   border-radius: 99px;
   background: var(--pmc-canvas);
@@ -616,7 +619,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.pmc-chip.on .pmc-chip-count { background: rgba(18, 183, 106, 0.16); color: var(--pmc-green-ink); }
+.pmc-chip.on .pmc-chip-count { background: rgba(255, 255, 255, 0.2); color: #fff; }
 
 /* ---------- badges (scoped Bootstrap) ---------- */
 .pmc-page-content .badge { font-weight: 700; font-size: 10.5px; padding: 4px 8px; border-radius: 7px; letter-spacing: 0.01em; }
@@ -656,6 +659,8 @@
 .pmc-btn-ghost:hover { background: rgba(255, 255, 255, 0.18); color: #fff; border-color: rgba(255, 255, 255, 0.28); }
 .pmc-btn-danger-ghost { background: #fff; border: 1px solid #fecdca; color: var(--pmc-danger-ink); }
 .pmc-btn-danger-ghost:hover { background: var(--pmc-danger-soft); border-color: #fecdca; color: var(--pmc-danger-ink); }
+.pmc-btn-dark { background: var(--pmc-ink); border: 1px solid var(--pmc-ink); color: #fff; }
+.pmc-btn-dark:hover { background: var(--pmc-side-2); border-color: var(--pmc-side-2); color: #fff; }
 
 /* ---------- forms ---------- */
 .pmc-page-content .form-control, .pmc-page-content .form-select {
@@ -928,7 +933,7 @@
 .pmc-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1055;
+  z-index: 0;
   background: rgba(11, 19, 34, 0.55);
   backdrop-filter: blur(2px);
   animation: pmcFadeIn 0.2s ease both;
@@ -951,17 +956,31 @@
 .pmc-spin { animation: pmcSpin 1s linear infinite; }
 
 /* ---------- modals & drawers (React-controlled Bootstrap markup) ---------- */
-.pmc-modal.modal { --bs-modal-bg: transparent; }
-.pmc-modal .modal-dialog { margin: 12px; }
-@media (min-width: 576px) { .pmc-modal .modal-dialog { margin: 28px auto; } }
+.pmc-modal.modal {
+  --bs-modal-bg: transparent;
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  overflow-y: auto;
+}
+@media (min-width: 576px) {
+  .pmc-modal.modal { align-items: center; padding: 24px; }
+}
+.pmc-modal .modal-dialog { margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+@media (min-width: 576px) { .pmc-modal .modal-dialog { margin: auto; } }
 .pmc-modal .modal-content {
   border: 0;
-  border-radius: 18px;
+  border-radius: 18px 18px 0 0;
   box-shadow: var(--pmc-shadow-lg);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
   animation: pmcPopIn 0.22s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
-.pmc-modal-head { display: flex; align-items: flex-start; gap: 12px; padding: 20px 20px 0; }
+@media (min-width: 576px) { .pmc-modal .modal-content { border-radius: 18px; } }
+.pmc-modal-head { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--pmc-line); }
+.pmc-modal-head-danger { background: rgba(254, 228, 226, 0.4); }
 .pmc-modal-icon { display: grid; place-items: center; width: 42px; height: 42px; flex: none; border-radius: 12px; }
 .pmc-modal-title { font-family: var(--pmc-font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--pmc-ink); margin: 0; }
 .pmc-modal-sub { font-size: 12px; color: var(--pmc-muted); margin: 3px 0 0; line-height: 1.55; }
@@ -979,7 +998,7 @@
   transition: background 0.12s ease, color 0.12s ease;
 }
 .pmc-modal-close:hover { background: var(--pmc-canvas); color: var(--pmc-ink); }
-.pmc-modal-body { padding: 16px 20px; }
+.pmc-modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
 .pmc-modal-footer {
   display: flex;
   flex-wrap: wrap;
@@ -990,8 +1009,20 @@
   padding: 14px 20px;
 }
 
-.pmc-drawer.offcanvas { border: 0; box-shadow: var(--pmc-shadow-lg); }
+.pmc-drawer.offcanvas { border: 0; box-shadow: var(--pmc-shadow-lg); background: #fff; }
 .pmc-drawer .offcanvas-body { padding: 0; display: flex; flex-direction: column; }
+@keyframes pmcDrawerInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes pmcDrawerInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.pmc-drawer.offcanvas-end.show { animation: pmcDrawerInRight 0.28s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+.pmc-drawer.offcanvas-start.show { animation: pmcDrawerInLeft 0.28s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+.pmc-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1044;
+  background: rgba(11, 19, 34, 0.45);
+  backdrop-filter: blur(2px);
+  animation: pmcFadeIn 0.2s ease both;
+}
 
 /* ---------- range inputs ---------- */
 .pmc-shell input[type="range"] {
@@ -1024,6 +1055,9 @@
   border: 2px solid var(--pmc-green);
   cursor: pointer;
 }
+
+/* toast stack sits above quickbar/modals (store.tsx markup is untouchable) */
+.pmc-shell [class*="z-[95]"] { z-index: 1075; }
 
 /* ---------- scrollbars ---------- */
 .pmc-thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
