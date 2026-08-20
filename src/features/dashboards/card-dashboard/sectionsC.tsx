@@ -1,3 +1,12 @@
+/* ============================================================================
+ * Card Dashboard — page 5.1 sections C (Bootstrap 5 edition)
+ * ----------------------------------------------------------------------------
+ * 05 · Security & Fraud, 06 · Analytics & Reporting, 07 · Programme & System
+ * Health (+ embedded 08 · Settings & Support block). Behavior and copy
+ * identical to the Tailwind original; markup uses Bootstrap utilities +
+ * scoped .pmc-* classes.
+ * ========================================================================== */
+
 import { useState } from "react";
 import { cn } from "./utils/cn";
 import { Icon } from "./icons";
@@ -26,26 +35,26 @@ export function SecuritySection() {
   ];
 
   return (
-    <section id="security" className="scroll-mt-24">
+    <section id="security" className="pmc-scroll-mt">
       <SectionHead no="05" title="Security & Fraud Prevention" sub="Containment tools act instantly across Visa and Mastercard rails." />
 
       {/* Fraud alert banner */}
       <Reveal>
-        <div className="relative overflow-hidden rounded-2xl border border-warn/40 bg-gradient-to-r from-warn-soft to-[#fff8ec] p-4 sm:p-5">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-warn/15 text-[#93370d]">
+        <div className="pmc-radius pmc-p-4 pmc-sm-p-5 position-relative overflow-hidden" style={{ border: "1px solid rgba(247,144,9,0.4)", background: "linear-gradient(90deg, var(--pmc-warn-soft), #fff8ec)" }}>
+          <div className="d-flex flex-wrap align-items-center pmc-gap-4">
+            <span className="pmc-icon-sq-xl d-grid" style={{ background: "rgba(247,144,9,0.15)", color: "var(--pmc-warn-ink)" }}>
               <Icon name="alertTri" size={20} />
             </span>
-            <div className="min-w-0 flex-1 basis-[260px]">
-              <p className="flex items-center gap-2 font-display text-[14.5px] font-bold text-[#93370d]">
-                Fraud spike detected <span className="live-dot amber" />
+            <div className="flex-grow-1" style={{ minWidth: 0, flexBasis: 260 }}>
+              <p className="d-flex align-items-center pmc-gap-2 pmc-display pmc-fs-145 fw-bold pmc-warn-ink mb-0">
+                Fraud spike detected <span className="pmc-live-dot amber" />
               </p>
-              <p className="mt-0.5 text-[12.5px] leading-relaxed text-[#93370d]/75">
+              <p className="pmc-mt-05 pmc-fs-125 mb-0" style={{ lineHeight: 1.65, color: "rgba(147,55,13,0.75)" }}>
                 Card-not-present attempts in Eastern Europe are elevated <strong>400%</strong> in the last 6 hours.
                 Two transactions on Founder Card •• 8821 are flagged for review.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="d-flex pmc-gap-2">
               <Btn variant="dark" icon="shield" onClick={() => openModal({ type: "fraud" })}>Review & Secure</Btn>
               <Btn
                 variant="outline"
@@ -60,20 +69,24 @@ export function SecuritySection() {
         </div>
       </Reveal>
 
-      <div className="mt-3 grid gap-3 lg:grid-cols-5">
+      <div className="row pmc-g-3 pmc-mt-3">
         {/* Safeguards */}
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Portfolio safeguards</p>
-            <ul className="space-y-2">
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Portfolio safeguards</p>
+            <ul className="d-flex flex-column pmc-gap-2" style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {guardList.map((g) => (
-                <li key={g.key} className={cn("flex items-center gap-3 rounded-xl border p-3 transition", guards[g.key] ? "border-pmgreen/40 bg-pmgreen-soft/40" : "border-line bg-white")}>
-                  <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", guards[g.key] ? "bg-white text-[#067647] shadow-sm" : "bg-canvas text-faint")}>
+                <li
+                  key={g.key}
+                  className="d-flex align-items-center pmc-gap-3 pmc-radius p-3"
+                  style={guards[g.key] ? { border: "1px solid rgba(18,183,106,0.4)", background: "rgba(231,248,239,0.4)" } : { border: "1px solid var(--pmc-line)", background: "#fff" }}
+                >
+                  <span className={cn("pmc-icon-sq d-grid", guards[g.key] ? "pmc-green-ink" : "pmc-tone-muted pmc-faint")} style={guards[g.key] ? { background: "#fff", boxShadow: "0 1px 2px rgba(16,24,40,0.06)" } : undefined}>
                     <Icon name={g.icon} size={16} />
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[12.5px] font-bold text-ink">{g.title}</p>
-                    <p className="text-[11px] leading-snug text-muted">{g.desc}</p>
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="pmc-fs-125 fw-bold pmc-ink mb-0">{g.title}</p>
+                    <p className="pmc-fs-11 lh-sm pmc-muted mb-0">{g.desc}</p>
                   </div>
                   <Toggle
                     on={guards[g.key]}
@@ -90,40 +103,40 @@ export function SecuritySection() {
         </Reveal>
 
         {/* Recent containment + blocked */}
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="flex h-full flex-col gap-3">
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2.5 text-[13.5px] font-bold text-ink">30-day containment</p>
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="d-flex flex-column pmc-gap-3 h-100">
+            <div className="pmc-card p-4">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-25">30-day containment</p>
               {[
-                ["Authorisations challenged", "312", "bg-pmblue", 78],
-                ["Blocked pre-emptively", "46", "bg-danger", 34],
-                ["Value protected", "KES 412k", "bg-pmgreen", 62],
-              ].map(([label, val, color, w]) => (
-                <div key={label as string} className="mb-2.5 last:mb-0">
-                  <div className="mb-1 flex justify-between text-[11.5px] font-bold">
-                    <span className="text-muted">{label}</span>
-                    <span className="num font-display text-ink">{val}</span>
+                ["Authorisations challenged", "312", "var(--pmc-blue)", 78],
+                ["Blocked pre-emptively", "46", "var(--pmc-danger)", 34],
+                ["Value protected", "KES 412k", "var(--pmc-green)", 62],
+              ].map(([label, val, color, w], i) => (
+                <div key={label as string} className={i < 2 ? "pmc-mb-25" : undefined}>
+                  <div className="pmc-mb-1 d-flex justify-content-between pmc-fs-115 fw-bold">
+                    <span className="pmc-muted">{label}</span>
+                    <span className="pmc-num pmc-display pmc-ink">{val}</span>
                   </div>
-                  <div className="h-[5px] overflow-hidden rounded-full bg-[#eef0f4]">
-                    <div className={cn("h-full rounded-full", color as string)} style={{ width: `${w}%` }} />
+                  <div className="overflow-hidden" style={{ height: 5, borderRadius: 99, background: "#eef0f4" }}>
+                    <div className="h-100" style={{ width: `${w}%`, borderRadius: 99, background: color as string }} />
                   </div>
                 </div>
               ))}
             </div>
-            <div className="flex-1 rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2.5 text-[13.5px] font-bold text-ink">Blocked cards</p>
+            <div className="pmc-card flex-grow-1 p-4">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-25">Blocked cards</p>
               {blocked.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-line bg-canvas/50 p-3.5 text-center text-[11.5px] font-semibold text-faint">
+                <p className="pmc-radius pmc-p-35 text-center pmc-fs-115 fw-semibold pmc-faint mb-0" style={{ border: "1px dashed var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}>
                   No permanently blocked cards. Blocks appear here with replacement links.
                 </p>
               ) : (
-                <ul className="space-y-2">
+                <ul className="d-flex flex-column pmc-gap-2 mb-0" style={{ listStyle: "none", padding: 0 }}>
                   {blocked.map((c) => (
-                    <li key={c.id} className="flex items-center gap-2.5 rounded-xl border border-danger/25 bg-danger-soft/40 p-3">
-                      <Icon name="lock" size={15} className="text-[#b42318]" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[12.5px] font-bold text-ink">{c.nickname}</p>
-                        <p className="text-[10.5px] font-semibold text-faint">•• {c.last4} · blocked {c.issuedOn === "Today" ? "today" : c.issuedOn}</p>
+                    <li key={c.id} className="d-flex align-items-center pmc-gap-25 pmc-radius p-3" style={{ border: "1px solid rgba(240,68,56,0.25)", background: "rgba(254,228,226,0.4)" }}>
+                      <Icon name="lock" size={15} className="pmc-danger-ink" />
+                      <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                        <p className="pmc-truncate pmc-fs-125 fw-bold pmc-ink mb-0">{c.nickname}</p>
+                        <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">•• {c.last4} · blocked {c.issuedOn === "Today" ? "today" : c.issuedOn}</p>
                       </div>
                       <Badge tone="danger">Blocked</Badge>
                     </li>
@@ -145,7 +158,7 @@ function Donut() {
   const circ = 2 * Math.PI * r;
   let offset = 0;
   return (
-    <svg viewBox="0 0 100 100" className="h-[130px] w-[130px] -rotate-90">
+    <svg viewBox="0 0 100 100" style={{ width: 130, height: 130, transform: "rotate(-90deg)" }}>
       <circle cx="50" cy="50" r={r} fill="none" stroke="#eef0f4" strokeWidth="13" />
       {CHANNEL_MIX.map((c) => {
         const len = (c.pct / 100) * circ;
@@ -174,7 +187,7 @@ export function AnalyticsSection() {
   const { toast } = useApp();
   const max = Math.max(...SPEND_CATEGORIES.map((c) => c.amount));
   return (
-    <section id="analytics" className="scroll-mt-24">
+    <section id="analytics" className="pmc-scroll-mt">
       <SectionHead
         no="06"
         title="Analytics & Reporting"
@@ -190,55 +203,55 @@ export function AnalyticsSection() {
         </Btn>
       </SectionHead>
 
-      <div className="grid gap-3 lg:grid-cols-5">
+      <div className="row pmc-g-3">
         {/* Category bars */}
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <div className="mb-3 flex items-baseline justify-between">
-              <p className="font-display text-[13.5px] font-bold text-ink">MTD spend by category</p>
-              <p className="num text-[11.5px] font-bold text-faint">KES 424,000 total</p>
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <div className="pmc-mb-3 d-flex align-items-baseline justify-content-between">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">MTD spend by category</p>
+              <p className="pmc-num pmc-fs-115 fw-bold pmc-faint mb-0">KES 424,000 total</p>
             </div>
-            <ul className="space-y-2.5">
+            <ul className="d-flex flex-column pmc-gap-25 mb-0" style={{ listStyle: "none", padding: 0 }}>
               {SPEND_CATEGORIES.map((c) => (
                 <li key={c.name}>
-                  <div className="mb-1 flex items-baseline justify-between text-[11.5px]">
-                    <span className="font-bold text-ink-2">{c.name}</span>
-                    <span className="num font-bold text-muted">KES {c.amount.toLocaleString()} · {c.pct}%</span>
+                  <div className="pmc-mb-1 d-flex align-items-baseline justify-content-between pmc-fs-115">
+                    <span className="fw-bold pmc-ink-2">{c.name}</span>
+                    <span className="pmc-num fw-bold pmc-muted">KES {c.amount.toLocaleString()} · {c.pct}%</span>
                   </div>
-                  <div className="h-[7px] overflow-hidden rounded-full bg-[#eef0f4]">
-                    <div className="h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: `${(c.amount / max) * 100}%`, background: c.color }} />
+                  <div className="overflow-hidden" style={{ height: 7, borderRadius: 99, background: "#eef0f4" }}>
+                    <div className="h-100" style={{ width: `${(c.amount / max) * 100}%`, borderRadius: 99, background: c.color, transition: "width 0.7s ease-out" }} />
                   </div>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-canvas/80 px-3 py-2 text-[11.5px] font-semibold leading-relaxed text-muted">
-              <Icon name="spark" size={13} className="mt-0.5 flex-none text-pmviolet" />
+            <p className="pmc-note pmc-note-canvas pmc-mt-3 mb-0">
+              <Icon name="spark" size={13} className="pmc-mt-05 flex-none pmc-violet-ink" />
               Travel grew 24% MoM — seasonal holiday bookings. Consider pushing the Premium Travel card to frequent flyers.
             </p>
           </div>
         </Reveal>
 
-        <div className="flex flex-col gap-3 lg:col-span-2">
+        <div className="col-12 col-lg-5 d-flex flex-column pmc-gap-3">
           {/* Channel mix */}
           <Reveal delay={80}>
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2 text-[13.5px] font-bold text-ink">Authorisation rails</p>
-              <div className="flex items-center gap-4">
-                <div className="relative flex-none">
+            <div className="pmc-card p-4">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-2">Authorisation rails</p>
+              <div className="d-flex align-items-center pmc-gap-4">
+                <div className="position-relative flex-none">
                   <Donut />
-                  <span className="absolute inset-0 grid place-items-center">
-                    <span className="rotate-0 text-center leading-tight">
-                      <span className="num block font-display text-[17px] font-bold text-ink">68%</span>
-                      <span className="block text-[9px] font-bold uppercase tracking-wide text-faint">tap-to-pay</span>
+                  <span className="position-absolute top-0 start-0 w-100 h-100 d-grid" style={{ placeItems: "center" }}>
+                    <span className="text-center lh-sm">
+                      <span className="pmc-num pmc-display pmc-fs-17 fw-bold pmc-ink d-block">68%</span>
+                      <span className="d-block pmc-fs-9 fw-bold text-uppercase pmc-faint" style={{ letterSpacing: "0.025em" }}>tap-to-pay</span>
                     </span>
                   </span>
                 </div>
-                <ul className="min-w-0 flex-1 space-y-1.5">
+                <ul className="flex-grow-1 d-flex flex-column pmc-gap-15 mb-0" style={{ minWidth: 0, listStyle: "none", padding: 0 }}>
                   {CHANNEL_MIX.map((c) => (
-                    <li key={c.name} className="flex items-center gap-2 text-[11.5px]">
-                      <span className="h-2.5 w-2.5 flex-none rounded-[3px]" style={{ background: c.color }} />
-                      <span className="min-w-0 flex-1 truncate font-bold text-ink-2">{c.name}</span>
-                      <span className="num font-bold text-muted">{c.pct}%</span>
+                    <li key={c.name} className="d-flex align-items-center pmc-gap-2 pmc-fs-115">
+                      <span className="d-inline-block flex-none" style={{ width: 10, height: 10, borderRadius: 3, background: c.color }} />
+                      <span className="flex-grow-1 pmc-truncate fw-bold pmc-ink-2">{c.name}</span>
+                      <span className="pmc-num fw-bold pmc-muted">{c.pct}%</span>
                     </li>
                   ))}
                 </ul>
@@ -248,19 +261,19 @@ export function AnalyticsSection() {
 
           {/* International corridors */}
           <Reveal delay={140}>
-            <div className="flex-1 rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="font-display text-[13.5px] font-bold text-ink">International corridors</p>
+            <div className="pmc-card flex-grow-1 p-4">
+              <div className="pmc-mb-2 d-flex align-items-center justify-content-between">
+                <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">International corridors</p>
                 <Badge tone="info">12% of volume</Badge>
               </div>
-              <ul className="space-y-2">
+              <ul className="d-flex flex-column pmc-gap-2 mb-0" style={{ listStyle: "none", padding: 0 }}>
                 {INTL_CORRIDORS.map((c) => (
                   <li key={c.country}>
-                    <div className="mb-0.5 flex justify-between text-[11px] font-bold">
-                      <span className="text-ink-2">{c.country}</span>
-                      <span className="text-faint">{c.vol} · {c.pct}%</span>
+                    <div className="pmc-mb-05 d-flex justify-content-between pmc-fs-11 fw-bold">
+                      <span className="pmc-ink-2">{c.country}</span>
+                      <span className="pmc-faint">{c.vol} · {c.pct}%</span>
                     </div>
-                    <Progress value={c.pct * 2} tone="blue" className="h-[5px]" />
+                    <Progress value={c.pct * 2} tone="blue" />
                   </li>
                 ))}
               </ul>
@@ -288,38 +301,40 @@ export function ProgramSection() {
   ];
 
   return (
-    <section id="program" className="scroll-mt-24">
+    <section id="program" className="pmc-scroll-mt">
       <SectionHead no="07" title="Programme & System Health" sub="Corporate programme terms and the issuing stack underneath it (Modules 5.6 & 5.9)." />
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="row pmc-g-3">
         {/* Corporate config */}
-        <Reveal>
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="font-display text-[13.5px] font-bold text-ink">Corporate programme terms</p>
+        <Reveal className="col-12 col-lg-6 h-100">
+          <div className="pmc-card p-4 h-100">
+            <div className="pmc-mb-3 d-flex align-items-center justify-content-between">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">Corporate programme terms</p>
               <Badge tone="violet">Module 5.6</Badge>
             </div>
-            <ul className="divide-y divide-line/70">
+            <ul className="pmc-divided">
               {corpConfig.map(([k, v, sub]) => (
-                <li key={k} className="flex items-center gap-3 py-2.5">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[12.5px] font-bold text-ink">{k}</p>
-                    <p className="text-[11px] font-semibold text-faint">{sub}</p>
+                <li key={k} className="d-flex align-items-center pmc-gap-3 pmc-py-25">
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="pmc-fs-125 fw-bold pmc-ink mb-0">{k}</p>
+                    <p className="pmc-fs-11 fw-semibold pmc-faint mb-0">{sub}</p>
                   </div>
                   <Badge tone="success">{v}</Badge>
                 </li>
               ))}
             </ul>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="pmc-mt-3 row pmc-g-2">
               {[
                 ["Departments", "4", "building"],
                 ["Budget MTD", "KES 4.5M", "wallet"],
                 ["Utilisation", "76%", "gauge"],
               ].map(([k, v, icon]) => (
-                <div key={k} className="rounded-xl bg-canvas/70 p-2.5 text-center">
-                  <Icon name={icon as Parameters<typeof Icon>[0]["name"]} size={15} className="mx-auto text-muted" />
-                  <p className="num mt-1 font-display text-[13px] font-bold text-ink">{v}</p>
-                  <p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">{k}</p>
+                <div key={k} className="col-4">
+                  <div className="pmc-radius-sm pmc-p-25 text-center h-100" style={{ background: "rgba(242,244,248,0.7)" }}>
+                    <Icon name={icon as Parameters<typeof Icon>[0]["name"]} size={15} className="mx-auto pmc-muted" />
+                    <p className="pmc-num pmc-mt-1 pmc-display pmc-fs-13 fw-bold pmc-ink mb-0">{v}</p>
+                    <p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>{k}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -327,27 +342,27 @@ export function ProgramSection() {
         </Reveal>
 
         {/* Health */}
-        <Reveal delay={80}>
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm" id="health">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="font-display text-[13.5px] font-bold text-ink">Issuing stack health</p>
-              <button onClick={sync} className="flex items-center gap-1.5 text-[11.5px] font-bold text-pmgreen-dark transition hover:text-pmgreen">
-                <Icon name="refresh" size={12} className={cn(syncing && "spin-slow")} /> Re-check
+        <Reveal delay={80} className="col-12 col-lg-6 h-100">
+          <div className="pmc-card p-4 h-100" id="health">
+            <div className="pmc-mb-3 d-flex align-items-center justify-content-between">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">Issuing stack health</p>
+              <button type="button" onClick={sync} className="d-flex align-items-center pmc-gap-15 pmc-fs-115 fw-bold pmc-green-dark pmc-focus" style={{ background: "none", border: "none", padding: 0 }}>
+                <Icon name="refresh" size={12} className={cn(syncing && "pmc-spin")} /> Re-check
               </button>
             </div>
-            <ul className="space-y-2">
+            <ul className="d-flex flex-column pmc-gap-2 mb-0" style={{ listStyle: "none", padding: 0 }}>
               {HEALTH_SYSTEMS.map((h) => (
-                <li key={h.name} className="flex items-center gap-3 rounded-xl border border-line bg-canvas/40 px-3 py-2.5">
-                  <span className={cn("live-dot", h.dot === "amber" && "amber")} />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[12.5px] font-bold text-ink">{h.name}</p>
-                    <p className="text-[10.5px] font-semibold text-faint">{h.detail}</p>
+                <li key={h.name} className="d-flex align-items-center pmc-gap-3 pmc-radius pmc-px-3 pmc-py-25" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.4)" }}>
+                  <span className={cn("pmc-live-dot", h.dot === "amber" && "amber")} />
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="pmc-fs-125 fw-bold pmc-ink mb-0">{h.name}</p>
+                    <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{h.detail}</p>
                   </div>
                   <Badge tone={h.dot === "green" ? "success" : "warning"}>{h.status}</Badge>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-faint">
+            <p className="pmc-mt-3 d-flex align-items-center justify-content-center pmc-gap-15 pmc-fs-11 fw-semibold pmc-faint mb-0">
               <Icon name="clock" size={12} /> Last automated check {syncing ? "running…" : `· ${lastSync}`} · all issuing endpoints accepting payloads
             </p>
           </div>
@@ -355,13 +370,13 @@ export function ProgramSection() {
       </div>
 
       {/* Settings (5.10) */}
-      <div id="settings" className="scroll-mt-24">
+      <div id="settings" className="pmc-scroll-mt">
         <SectionHead no="08" title="Card Settings & Support" sub="Programme-wide defaults applied to every newly issued card (Module 5.10)." />
-        <div className="grid gap-3 lg:grid-cols-5">
-          <Reveal className="lg:col-span-3">
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Default for new cards</p>
-              <ul className="space-y-2">
+        <div className="row pmc-g-3">
+          <Reveal className="col-12 col-lg-7 h-100">
+            <div className="pmc-card p-4 h-100">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Default for new cards</p>
+              <ul className="d-flex flex-column pmc-gap-2 mb-0" style={{ listStyle: "none", padding: 0 }}>
                 {(
                   [
                     ["online", "Default for Online Payments", "Card-not-present enabled at issuance", "globe"],
@@ -369,11 +384,11 @@ export function ProgramSection() {
                     ["atm", "Default for ATM", "Cash access enabled at issuance", "wallet"],
                   ] as const
                 ).map(([key, title, desc, icon]) => (
-                  <li key={key} className="flex items-center gap-3 rounded-xl border border-line px-3 py-2.5">
-                    <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-canvas text-muted"><Icon name={icon} size={16} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[12.5px] font-bold text-ink">{title}</p>
-                      <p className="text-[11px] text-muted">{desc}</p>
+                  <li key={key} className="d-flex align-items-center pmc-gap-3 pmc-radius pmc-px-3 pmc-py-25" style={{ border: "1px solid var(--pmc-line)" }}>
+                    <span className="pmc-icon-sq d-grid pmc-tone-muted"><Icon name={icon} size={16} /></span>
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <p className="pmc-fs-125 fw-bold pmc-ink mb-0">{title}</p>
+                      <p className="pmc-fs-11 pmc-muted mb-0">{desc}</p>
                     </div>
                     <Toggle
                       on={defaults[key]}
@@ -386,16 +401,16 @@ export function ProgramSection() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <div>
-                  <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-muted">Default funding source · virtual cards</p>
-                  <select value={funding} onChange={(e) => { setFunding(e.target.value); toast("success", "Funding source updated"); }} className="focus-ring w-full rounded-[10px] border border-line bg-white px-3 py-2.5 text-[12.5px] font-bold text-ink outline-none">
+              <div className="pmc-mt-3 row pmc-g-2">
+                <div className="col-12 col-sm-6">
+                  <p className="pmc-mb-1 pmc-fs-11 fw-bold text-uppercase pmc-muted" style={{ letterSpacing: "0.06em" }}>Default funding source · virtual cards</p>
+                  <select value={funding} onChange={(e) => { setFunding(e.target.value); toast("success", "Funding source updated"); }} className="form-select pmc-focus pmc-fs-125 fw-bold pmc-ink">
                     {["Biz Wallet (primary)", "M-Pesa Paybill 522 123", "KCB Bank •• 4471"].map((o) => <option key={o}>{o}</option>)}
                   </select>
                 </div>
-                <div>
-                  <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-muted">Preferred international currency</p>
-                  <select value={currency} onChange={(e) => { setCurrency(e.target.value); toast("success", "Settlement currency updated"); }} className="focus-ring w-full rounded-[10px] border border-line bg-white px-3 py-2.5 text-[12.5px] font-bold text-ink outline-none">
+                <div className="col-12 col-sm-6">
+                  <p className="pmc-mb-1 pmc-fs-11 fw-bold text-uppercase pmc-muted" style={{ letterSpacing: "0.06em" }}>Preferred international currency</p>
+                  <select value={currency} onChange={(e) => { setCurrency(e.target.value); toast("success", "Settlement currency updated"); }} className="form-select pmc-focus pmc-fs-125 fw-bold pmc-ink">
                     {["KES — Kenya Shilling", "USD — US Dollar", "GBP — British Pound", "EUR — Euro"].map((o) => <option key={o}>{o}</option>)}
                   </select>
                 </div>
@@ -403,29 +418,29 @@ export function ProgramSection() {
             </div>
           </Reveal>
 
-          <Reveal delay={80} className="lg:col-span-2">
-            <div className="flex h-full flex-col rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Need a human?</p>
-              <div className="space-y-2">
+          <Reveal delay={80} className="col-12 col-lg-5 h-100">
+            <div className="pmc-card d-flex flex-column p-4 h-100">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Need a human?</p>
+              <div className="d-flex flex-column pmc-gap-2">
                 {[
                   ["Live chat", "Fastest · card specialists online now", "sms"],
                   ["Fraud hotline", "+254 709 900 112 · 24/7", "phone"],
                   ["Email desk", "cards@paymo.app · < 1 hour", "mail"],
                 ].map(([t, s, icon]) => (
-                  <button key={t} onClick={() => openDrawer({ type: "support" })} className="group flex w-full items-center gap-3 rounded-xl border border-line p-3 text-left transition hover:-translate-y-0.5 hover:border-pmgreen/50 hover:shadow-pm">
-                    <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-pmgreen-soft text-[#067647]"><Icon name={icon as Parameters<typeof Icon>[0]["name"]} size={16} /></span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[12.5px] font-bold text-ink">{t}</span>
-                      <span className="block text-[10.5px] font-semibold text-faint">{s}</span>
+                  <button key={t} type="button" onClick={() => openDrawer({ type: "support" })} className="pmc-lift pmc-focus d-flex w-100 align-items-center pmc-gap-3 pmc-radius p-3 text-start" style={{ border: "1px solid var(--pmc-line)", background: "#fff" }}>
+                    <span className="pmc-icon-sq d-grid pmc-tone-green"><Icon name={icon as Parameters<typeof Icon>[0]["name"]} size={16} /></span>
+                    <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <span className="d-block pmc-fs-125 fw-bold pmc-ink">{t}</span>
+                      <span className="d-block pmc-fs-105 fw-semibold pmc-faint">{s}</span>
                     </span>
-                    <Icon name="chevRight" size={14} className="text-faint transition group-hover:translate-x-0.5 group-hover:text-ink" />
+                    <Icon name="chevRight" size={14} className="pmc-faint" />
                   </button>
                 ))}
               </div>
               <div className="mt-auto pt-3">
-                <div className="rounded-xl bg-canvas/70 p-3">
-                  <p className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.1em] text-faint"><span className="live-dot" /> All systems operational</p>
-                  <p className="mt-1 text-[11.5px] font-semibold text-muted">Uptime 99.98% · 30 days · status.paymo.app</p>
+                <div className="pmc-radius p-3" style={{ background: "rgba(242,244,248,0.7)" }}>
+                  <p className="d-flex align-items-center pmc-gap-15 pmc-fs-105 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.1em" }}><span className="pmc-live-dot" /> All systems operational</p>
+                  <p className="pmc-mt-1 pmc-fs-115 fw-semibold pmc-muted mb-0">Uptime 99.98% · 30 days · status.paymo.app</p>
                 </div>
               </div>
             </div>
