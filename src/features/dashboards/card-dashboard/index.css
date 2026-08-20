@@ -1,0 +1,235 @@
+/* ============================================================================
+ * Card Dashboard — Scoped Theme (NOT global)
+ * ----------------------------------------------------------------------------
+ * The redesign-dashboard-cards app's original stylesheet, isolated so it never
+ * leaks into other routes (home, business, dev, …).
+ *
+ * Design tokens (colors / fonts / shadows) are registered in the GLOBAL
+ * theme — see src/styles.css — so Tailwind generates every pm* utility
+ * (bg-pmgreen, text-ink, shadow-pm, font-display, and their /opacity,
+ * hover:, gradient and ring variants) exactly like the original app.
+ *
+ * This file keeps ONLY what must stay scoped to the card shell:
+ *   1. Runtime custom properties re-declared on .pm-cards-shell (so the
+ *      element rules below and any var(--color-*) usages resolve inside the
+ *      shell without touching other pages).
+ *   2. --muted, --font-display and --font-sans overrides that differ from the
+ *      global theme (Manrope body font, #667085 muted text).
+ *   3. Every element rule is prefixed with .pm-cards-shell so selectors only
+ *      match descendants of the card layout wrapper.
+ *   4. No @import "tailwindcss" — the single global import owns preflight.
+ * ========================================================================== */
+
+/* ---------- scoped design tokens (only inside /cards/app/*) ---------- */
+.pm-cards-shell {
+  --color-ink: #101828;
+  --color-ink-2: #1d2939;
+  --color-muted: #667085;
+  --color-faint: #98a2b3;
+  --color-canvas: #f2f4f8;
+  --color-line: #e6e9f0;
+  --color-paper: #ffffff;
+  --color-pmgreen: #12b76a;
+  --color-pmgreen-dark: #0b8f52;
+  --color-pmgreen-soft: #e7f8ef;
+  --color-side: #0b1322;
+  --color-side-2: #101c30;
+  --color-warn: #f79009;
+  --color-warn-soft: #fef0c7;
+  --color-danger: #f04438;
+  --color-danger-soft: #fee4e2;
+  --color-pmblue: #2e90fa;
+  --color-pmblue-soft: #e8f1fe;
+  --color-pmviolet: #7a5af8;
+  --color-pmviolet-soft: #f0ebfe;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Overrides the shadcn "muted" token so .text-muted/.bg-muted resolve to the
+   * cards palette inside the shell (the global utility inlines var(--muted)). */
+  --muted: #667085;
+
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Heading / display font — hard-set so it never falls back to the global
+ * Inter stack even if the utility layer is unavailable. */
+.pm-cards-shell .font-display {
+  font-family: "Sora", ui-sans-serif, system-ui, sans-serif;
+}
+.pm-cards-shell .font-sans {
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------- Ambient canvas ---------- */
+.pm-cards-shell .canvas-wash {
+  background:
+    radial-gradient(900px 420px at 85% -140px, rgba(18, 183, 106, 0.09), transparent 65%),
+    radial-gradient(700px 380px at -10% -120px, rgba(46, 144, 250, 0.07), transparent 60%),
+    var(--color-canvas);
+}
+
+/* ---------- Hero banner ---------- */
+.pm-cards-shell .pm-hero {
+  background: linear-gradient(115deg, #0b1322 0%, #123a2c 55%, #0d5c38 100%);
+}
+.pm-cards-shell .pm-hero-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.4px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(120deg, transparent 30%, #000 100%);
+  -webkit-mask-image: linear-gradient(120deg, transparent 30%, #000 100%);
+}
+
+/* ---------- Sidebar glow ---------- */
+.pm-cards-shell .side-glow {
+  background:
+    radial-gradient(420px 300px at 20% -60px, rgba(18, 183, 106, 0.22), transparent 70%),
+    #0b1322;
+}
+
+/* ---------- Live dots ---------- */
+.pm-cards-shell .live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-pmgreen);
+  box-shadow: 0 0 0 0 rgba(18, 183, 106, 0.5);
+  animation: pmPulse 2s infinite;
+  display: inline-block;
+  flex: none;
+}
+.pm-cards-shell .live-dot.amber {
+  background: var(--color-warn);
+  animation-name: pmPulseAmber;
+}
+.pm-cards-shell .live-dot.red {
+  background: var(--color-danger);
+  animation-name: pmPulseRed;
+}
+@keyframes pmPulse {
+  0% { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0.5); }
+  70% { box-shadow: 0 0 0 7px rgba(18, 183, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0); }
+}
+@keyframes pmPulseAmber {
+  0% { box-shadow: 0 0 0 0 rgba(247, 144, 9, 0.45); }
+  70% { box-shadow: 0 0 0 7px rgba(247, 144, 9, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(247, 144, 9, 0); }
+}
+@keyframes pmPulseRed {
+  0% { box-shadow: 0 0 0 0 rgba(240, 68, 56, 0.45); }
+  70% { box-shadow: 0 0 0 7px rgba(240, 68, 56, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(240, 68, 56, 0); }
+}
+
+/* ---------- Motion ---------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pm-cards-shell .reveal { opacity: 0; }
+.pm-cards-shell .reveal.in { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.pm-cards-shell .modal-pop { animation: popIn 0.22s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.pm-cards-shell .overlay-fade { animation: fadeIn 0.2s ease both; }
+
+@keyframes drawerIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.pm-cards-shell .drawer-in { animation: drawerIn 0.28s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+
+@keyframes drawerInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.pm-cards-shell .drawer-in-left { animation: drawerInLeft 0.28s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.pm-cards-shell .toast-in { animation: toastIn 0.25s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+.pm-cards-shell .shake { animation: shake 0.4s ease; }
+
+@keyframes spinS { to { transform: rotate(360deg); } }
+.pm-cards-shell .spin-slow { animation: spinS 1s linear infinite; }
+
+/* ---------- Plastic sheen ---------- */
+.pm-cards-shell .card-sheen { position: relative; }
+.pm-cards-shell .card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 34%, transparent 46%);
+  pointer-events: none;
+}
+.pm-cards-shell .card-hover {
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.25s ease;
+}
+.pm-cards-shell .card-hover:hover {
+  transform: translateY(-4px) rotate(-0.4deg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Range inputs (scoped) ---------- */
+.pm-cards-shell input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 99px;
+  background: #e6e9f0;
+  outline: none;
+}
+.pm-cards-shell input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--color-pmgreen);
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.pm-cards-shell input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+.pm-cards-shell input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--color-pmgreen);
+  cursor: pointer;
+}
+
+/* ---------- Scrollbars (scoped) ---------- */
+.pm-cards-shell .thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.pm-cards-shell .thin-scroll::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 99px; }
+.pm-cards-shell .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+.pm-cards-shell .dark-scroll::-webkit-scrollbar { width: 6px; }
+.pm-cards-shell .dark-scroll::-webkit-scrollbar-thumb { background: #2a3650; border-radius: 99px; }
+
+/* ---------- Helpers (scoped) ---------- */
+.pm-cards-shell .num { font-variant-numeric: tabular-nums; }
+.pm-cards-shell .focus-ring:focus-visible {
+  outline: 2px solid var(--color-pmgreen);
+  outline-offset: 2px;
+}
