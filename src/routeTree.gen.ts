@@ -21,6 +21,7 @@ import { Route as HomeRouteImport } from './routes/_home'
 import { Route as UtilityIndexRouteImport } from './routes/utility/index'
 import { Route as DevIndexRouteImport } from './routes/dev/index'
 import { Route as DevDashboardIndexRouteImport } from './routes/dev-dashboard/index'
+import { Route as CardsIndexRouteImport } from './routes/cards/index'
 import { Route as CardsShellIndexRouteImport } from './routes/cards-shell/index'
 import { Route as BusinessIndexRouteImport } from './routes/business/index'
 import { Route as BusinessDashboardIndexRouteImport } from './routes/business-dashboard/index'
@@ -265,6 +266,11 @@ const DevDashboardIndexRoute = DevDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DevDashboardRoute,
+} as any)
+const CardsIndexRoute = CardsIndexRouteImport.update({
+  id: '/cards/',
+  path: '/cards/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CardsShellIndexRoute = CardsShellIndexRouteImport.update({
   id: '/',
@@ -1382,6 +1388,7 @@ export interface FileRoutesByFullPath {
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
   '/cards-shell/': typeof CardsShellIndexRoute
+  '/cards/': typeof CardsIndexRoute
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
@@ -1571,6 +1578,7 @@ export interface FileRoutesByTo {
   '/': typeof HomeIndexRoute
   '/business-dashboard': typeof BusinessDashboardIndexRoute
   '/cards-shell': typeof CardsShellIndexRoute
+  '/cards': typeof CardsIndexRoute
   '/dev-dashboard': typeof DevDashboardIndexRoute
   '/dev': typeof DevIndexRoute
   '/utility': typeof UtilityIndexRoute
@@ -1771,6 +1779,7 @@ export interface FileRoutesById {
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
   '/business/': typeof BusinessIndexRoute
   '/cards-shell/': typeof CardsShellIndexRoute
+  '/cards/': typeof CardsIndexRoute
   '/dev-dashboard/': typeof DevDashboardIndexRoute
   '/dev/': typeof DevIndexRoute
   '/utility/': typeof UtilityIndexRoute
@@ -1970,6 +1979,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/'
     | '/business/'
     | '/cards-shell/'
+    | '/cards/'
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
@@ -2159,6 +2169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/business-dashboard'
     | '/cards-shell'
+    | '/cards'
     | '/dev-dashboard'
     | '/dev'
     | '/utility'
@@ -2358,6 +2369,7 @@ export interface FileRouteTypes {
     | '/business-dashboard/'
     | '/business/'
     | '/cards-shell/'
+    | '/cards/'
     | '/dev-dashboard/'
     | '/dev/'
     | '/utility/'
@@ -2517,6 +2529,7 @@ export interface RootRouteChildren {
   AuthSecurityRoute: typeof AuthSecurityRoute
   CardsAppRoute: typeof CardsAppRouteWithChildren
   PmAppRoute: typeof PmAppRouteWithChildren
+  CardsIndexRoute: typeof CardsIndexRoute
   ErrorAdvancedErrorsDev40001PayloadValidationRoute: typeof ErrorAdvancedErrorsDev40001PayloadValidationRoute
   ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute: typeof ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute
   ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute: typeof ErrorAdvancedErrorsDev40003SandboxProdMismatchRoute
@@ -2704,6 +2717,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev-dashboard/'
       preLoaderRoute: typeof DevDashboardIndexRouteImport
       parentRoute: typeof DevDashboardRoute
+    }
+    '/cards/': {
+      id: '/cards/'
+      path: '/cards'
+      fullPath: '/cards/'
+      preLoaderRoute: typeof CardsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/cards-shell/': {
       id: '/cards-shell/'
@@ -4263,6 +4283,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSecurityRoute: AuthSecurityRoute,
   CardsAppRoute: CardsAppRouteWithChildren,
   PmAppRoute: PmAppRouteWithChildren,
+  CardsIndexRoute: CardsIndexRoute,
   ErrorAdvancedErrorsDev40001PayloadValidationRoute:
     ErrorAdvancedErrorsDev40001PayloadValidationRoute,
   ErrorAdvancedErrorsDev40002SignatureVerificationFailedRoute:
