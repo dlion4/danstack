@@ -1,20 +1,28 @@
 /* ============================================================================
  * AccountStatus.tsx — Paymo BAAS · Account status & restoration
  * ----------------------------------------------------------------------------
- * Re-themed to the PayMo Business design language via ../components/AuthKit.
- * The legacy 633-line wall of warnings and tips is now a task board: what is
- * restricted, what unlocks it, and how far along each task is.
+ * A task board for a restricted account: what is locked, what unlocks it, and
+ * exactly how far along each application is.
  *
- * Kept: all six verification tasks with their original destination URLs,
- * restricted-module list, warnings, unlock tips and the 24/7 contact options.
- * Added: overall restoration progress, task detail dialog, warnings/tips moved
- * into dialogs, toasts and an appeal-submitted flow.
+ * Each of the six verification tasks opens its own purpose-built multi-step
+ * wizard (5–6 steps, see ../components/TaskWizards). Submitting a wizard turns
+ * the task into a tracked application with a live progress bar and status
+ * badges (Pending → In review → Resolved); once resolved, the tracker offers
+ * "Proceed to account", which routes to /auth/hub.
  *
  * Routes/links preserved: /auth/identity · /auth/security · /auth/login ·
- * verify.paymo.com deep links · tel/mailto/support links
+ * /auth/hub · verify.paymo.com deep links · tel/mailto/support links
  * ========================================================================== */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+	ApplicationTracker,
+	createSubmission,
+	percentOf,
+	StatusBadge,
+	statusOf,
+} from "../components/ApplicationTracker";
+import type { Tone } from "../components/AuthKit";
 import {
 	AuthConsole,
 	AuthPage,
@@ -31,8 +39,8 @@ import {
 	s,
 	toast,
 } from "../components/AuthKit";
-
-type Tone = "green" | "blue" | "amber" | "violet" | "red";
+import { TaskWizard } from "../components/TaskWizards";
+import type { Submission } from "../components/WizardKit";
 
 interface Task {
 	id: string;
@@ -44,6 +52,7 @@ interface Task {
 	summary: string;
 	details: Array<[string, string]>;
 	action: string;
+	steps: number;
 	progress: number;
 	url: string;
 	internal?: string;
@@ -64,6 +73,7 @@ const TASKS: Task[] = [
 			["Review", "24–48 h"],
 		],
 		action: "Start verification",
+		steps: 5,
 		progress: 0,
 		url: "https://verify.paymo.com/identity/kyc",
 		internal: "/auth/identity",
@@ -82,6 +92,7 @@ const TASKS: Task[] = [
 			["Method", "Micro-deposit"],
 		],
 		action: "Verify accounts",
+		steps: 5,
 		progress: 25,
 		url: "https://verify.paymo.com/linked-accounts",
 	},
@@ -95,10 +106,11 @@ const TASKS: Task[] = [
 		summary: "Confirm four transactions flagged for unusual patterns.",
 		details: [
 			["Flagged", "4 transactions"],
-			["Value", "NGN 2,450,000"],
+			["Value", "KES 2,450,000"],
 			["Window", "Last 14 days"],
 		],
 		action: "Review now",
+		steps: 5,
 		progress: 40,
 		url: "https://verify.paymo.com/transactions/review",
 	},
@@ -112,10 +124,11 @@ const TASKS: Task[] = [
 		summary: "Provide evidence for dispute #DSP-2024-8842.",
 		details: [
 			["Dispute", "#DSP-2024-8842"],
-			["Amount", "NGN 150,000"],
+			["Amount", "KES 150,000"],
 			["Response due", "48 hours"],
 		],
 		action: "Resolve dispute",
+		steps: 6,
 		progress: 15,
 		url: "https://verify.paymo.com/disputes/resolve",
 	},
@@ -133,6 +146,7 @@ const TASKS: Task[] = [
 			["Priority", "Urgent"],
 		],
 		action: "Submit appeal",
+		steps: 6,
 		progress: 5,
 		url: "https://verify.paymo.com/compliance/fraud-appeal",
 	},
@@ -147,9 +161,10 @@ const TASKS: Task[] = [
 		details: [
 			["Entity", "Private Limited"],
 			["Docs", "CAC, Tax ID"],
-			["Current limit", "NGN 10M/mo"],
+			["Current limit", "KES 10M/mo"],
 		],
 		action: "Start KYB",
+		steps: 6,
 		progress: 60,
 		url: "https://verify.paymo.com/business/kyb",
 	},
@@ -200,33 +215,91 @@ const CONTACTS = [
 	},
 ];
 
+/** Applications advance one stage on this cadence so the tracker stays live. */
+const STAGE_TICK_MS = 7000;
+
 export default function AccountStatus() {
-	const [tasks, setTasks] = useState(TASKS);
 	const [detail, setDetail] = useState<Task | null>(null);
+	const [wizard, setWizard] = useState<Task | null>(null);
+	const [tracking, setTracking] = useState<string | null>(null);
+	const [apps, setApps] = useState<Record<string, Submission>>({});
 	const [warnOpen, setWarnOpen] = useState(false);
 	const [tipsOpen, setTipsOpen] = useState(false);
+	const announced = useRef<Set<string>>(new Set());
 
-	const overall = useMemo(
-		() =>
-			Math.round(tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length),
-		[tasks],
-	);
-	const required = tasks.filter((t) => t.statusTone === "red").length;
+	/* ---- applications advance through their pipeline on their own -------- */
+	useEffect(() => {
+		const id = window.setInterval(() => {
+			setApps((prev) => {
+				const entries = Object.entries(prev);
+				if (!entries.length) return prev;
+				let changed = false;
+				const next: Record<string, Submission> = {};
+				for (const [key, app] of entries) {
+					if (app.stage < app.stages.length - 1) {
+						changed = true;
+						next[key] = { ...app, stage: app.stage + 1 };
+					} else {
+						next[key] = app;
+					}
+				}
+				return changed ? next : prev;
+			});
+		}, STAGE_TICK_MS);
+		return () => window.clearInterval(id);
+	}, []);
 
-	const openTask = (t: Task) => {
-		setDetail(null);
-		if (t.internal) {
-			toast.info("Opening verification", "Redirecting to the identity flow…");
-			window.setTimeout(() => go(t.internal as string), 700);
-			return;
+	/* ---- announce decisions once ---------------------------------------- */
+	useEffect(() => {
+		for (const app of Object.values(apps)) {
+			if (statusOf(app) !== "resolved" || announced.current.has(app.ref))
+				continue;
+			announced.current.add(app.ref);
+			toast.success(app.outcome, `${app.title} · ${app.ref}`, {
+				duration: 9000,
+				action: {
+					label: "View",
+					onClick: () => setTracking(app.taskId),
+				},
+			});
 		}
-		toast.info("Opening secure portal", `${t.title} · verify.paymo.com`);
-		window.open(t.url, "_blank", "noopener");
-		setTasks((prev) =>
-			prev.map((x) =>
-				x.id === t.id ? { ...x, progress: Math.min(95, x.progress + 10) } : x,
-			),
-		);
+	}, [apps]);
+
+	const appList = useMemo(() => Object.values(apps), [apps]);
+
+	const taskPercent = (t: Task) => {
+		const app = apps[t.id];
+		return app ? Math.max(t.progress, percentOf(app)) : t.progress;
+	};
+
+	const overall = useMemo(() => {
+		const sum = TASKS.reduce((n, t) => {
+			const app = apps[t.id];
+			return n + (app ? Math.max(t.progress, percentOf(app)) : t.progress);
+		}, 0);
+		return Math.round(sum / TASKS.length);
+	}, [apps]);
+
+	const requiredLeft = TASKS.filter((t) => {
+		const app = apps[t.id];
+		return t.statusTone === "red" && !(app && statusOf(app) === "resolved");
+	}).length;
+	const allClear = requiredLeft === 0;
+
+	const openWizard = (t: Task) => {
+		setDetail(null);
+		setWizard(t);
+	};
+
+	const submitWizard = (t: Task, summary: Array<[string, string]>) => {
+		const app = createSubmission(t, summary);
+		setApps((prev) => ({ ...prev, [t.id]: app }));
+		setWizard(null);
+		toast.success("Application submitted", `${t.title} · ${app.ref}`, {
+			duration: 8000,
+			action: { label: "Track", onClick: () => setTracking(t.id) },
+		});
+		window.setTimeout(() => setTracking(t.id), 500);
 	};
 
 	return (
@@ -235,8 +308,8 @@ export default function AccountStatus() {
 				crumb="Account recovery centre"
 				actions={
 					<>
-						<Badge tone="amber" icon="bi-lock-fill">
-							Limited access mode
+						<Badge tone={allClear ? "green" : "amber"} icon="bi-lock-fill">
+							{allClear ? "Restrictions lifted" : "Limited access mode"}
 						</Badge>
 						<Button
 							variant="ghost"
@@ -251,28 +324,53 @@ export default function AccountStatus() {
 			>
 				<Hero
 					zone="ACCOUNT STATUS"
-					title="Access restricted — here's the way back."
-					copy="Complete the required tasks below to lift every restriction. Most accounts are restored within 48 hours."
+					title={
+						allClear
+							? "You're cleared — welcome back."
+							: "Access restricted — here's the way back."
+					}
+					copy="Each task below opens a guided wizard. Submit it once and track the decision live; nothing else is required from you."
 					chips={
 						<>
-							<Badge tone="onDark">Account frozen</Badge>
-							<Badge tone="onDark">Under review</Badge>
+							<Badge tone="onDark">
+								{allClear ? "Review complete" : "Account frozen"}
+							</Badge>
+							<Badge tone="onDark">
+								{appList.length
+									? `${appList.length} application${appList.length > 1 ? "s" : ""} filed`
+									: "Under review"}
+							</Badge>
 						</>
 					}
 					stats={[
 						{ value: `${overall}%`, label: "Restored" },
-						{ value: String(required), label: "Required", warn: required > 0 },
+						{
+							value: String(requiredLeft),
+							label: "Required left",
+							warn: requiredLeft > 0,
+						},
 						{ value: "30d", label: "Deadline" },
 					]}
 					actions={
-						<Button
-							size="sm"
-							variant="dark"
-							icon="bi-headset"
-							onClick={() => setTipsOpen(true)}
-						>
-							Unlock faster
-						</Button>
+						allClear ? (
+							<Button
+								size="sm"
+								variant="primary"
+								icon="bi-box-arrow-in-right"
+								onClick={() => go("/auth/hub")}
+							>
+								Proceed to account
+							</Button>
+						) : (
+							<Button
+								size="sm"
+								variant="dark"
+								icon="bi-headset"
+								onClick={() => setTipsOpen(true)}
+							>
+								Unlock faster
+							</Button>
+						)
 					}
 				/>
 
@@ -280,23 +378,28 @@ export default function AccountStatus() {
 					title="Restoration progress"
 					sub="Weighted across all verification tasks."
 					icon="bi-unlock"
-					tone="amber"
+					tone={allClear ? "green" : "amber"}
 				>
 					<Progress value={overall} />
 					<div className={s.row} style={{ marginTop: "0.8rem" }}>
-						{MODULES.map((m) => (
-							<span
-								key={m.label}
-								className={cx(s.badge, m.locked ? s.badgeRed : s.badgeGreen)}
-							>
-								<i className={m.locked ? "bi bi-lock-fill" : "bi bi-unlock"} />{" "}
-								{m.label}
-							</span>
-						))}
+						{MODULES.map((m) => {
+							const locked = m.locked && !allClear;
+							return (
+								<span
+									key={m.label}
+									className={cx(s.badge, locked ? s.badgeRed : s.badgeGreen)}
+								>
+									<i className={locked ? "bi bi-lock-fill" : "bi bi-unlock"} />{" "}
+									{m.label}
+								</span>
+							);
+						})}
 					</div>
 					<div className={s.spread} style={{ marginTop: "0.9rem" }}>
 						<span className={s.tiny}>
-							Risk level: High · immediate action required
+							{allClear
+								? "Risk level: Cleared · full access available"
+								: "Risk level: High · immediate action required"}
 						</span>
 						<Button
 							size="sm"
@@ -315,50 +418,175 @@ export default function AccountStatus() {
 					sub="Required items must be finished before access is restored."
 				/>
 				<div className={s.grid} style={{ ["--au-min" as string]: "320px" }}>
-					{tasks.map((t) => (
-						<Card key={t.id} hover onClick={() => setDetail(t)}>
-							<div className={s.cardHead}>
-								<span
-									className={cx(
-										s.tile,
-										s[`tile${t.tone[0].toUpperCase()}${t.tone.slice(1)}`],
-									)}
-								>
-									<i className={`bi ${t.icon}`} />
-								</span>
-								<div className={s.grow}>
-									<div className={s.cardTitle}>{t.title}</div>
-									<p className={s.cardSub}>{t.summary}</p>
-								</div>
-								<Badge tone={t.statusTone}>{t.status}</Badge>
-							</div>
-							<div className={s.row} style={{ marginBottom: "0.7rem" }}>
-								{t.details.map(([k, v]) => (
-									<span className={s.metaChip} key={k}>
-										{k}: <b>{v}</b>
+					{TASKS.map((t) => {
+						const app = apps[t.id];
+						const status = app ? statusOf(app) : null;
+						const pct = taskPercent(t);
+						return (
+							<Card key={t.id} hover onClick={() => setDetail(t)}>
+								<div className={s.cardHead}>
+									<span
+										className={cx(
+											s.tile,
+											s[`tile${t.tone[0].toUpperCase()}${t.tone.slice(1)}`],
+										)}
+									>
+										<i className={`bi ${t.icon}`} />
 									</span>
-								))}
-							</div>
-							<Progress value={t.progress} sm />
-							<div className={s.spread} style={{ marginTop: "0.7rem" }}>
-								<span className={s.tiny}>{t.progress}% complete</span>
-								<Button
-									size="sm"
-									variant={t.statusTone === "red" ? "primary" : "ghost"}
-									onClick={(e) => {
-										e.stopPropagation();
-										openTask(t);
-									}}
-								>
-									{t.action}
-								</Button>
-							</div>
-						</Card>
-					))}
+									<div className={s.grow}>
+										<div className={s.cardTitle}>{t.title}</div>
+										<p className={s.cardSub}>{t.summary}</p>
+									</div>
+									{status ? (
+										<StatusBadge status={status} />
+									) : (
+										<Badge tone={t.statusTone}>{t.status}</Badge>
+									)}
+								</div>
+								<div className={s.row} style={{ marginBottom: "0.7rem" }}>
+									{app ? (
+										<>
+											<span className={s.metaChip}>
+												Ref: <b>{app.ref}</b>
+											</span>
+											<span className={s.metaChip}>
+												Stage:{" "}
+												<b>
+													{Math.min(app.stage + 1, app.stages.length)}/
+													{app.stages.length}
+												</b>
+											</span>
+											<span className={s.metaChip}>
+												SLA: <b>{app.sla}</b>
+											</span>
+										</>
+									) : (
+										<>
+											{t.details.map(([k, v]) => (
+												<span className={s.metaChip} key={k}>
+													{k}: <b>{v}</b>
+												</span>
+											))}
+											<span className={s.metaChip}>
+												Wizard: <b>{t.steps} steps</b>
+											</span>
+										</>
+									)}
+								</div>
+								<Progress value={pct} sm />
+								<div className={s.spread} style={{ marginTop: "0.7rem" }}>
+									<span className={s.tiny}>
+										{app
+											? status === "resolved"
+												? app.outcome
+												: app.stages[app.stage].label
+											: `${pct}% complete`}
+									</span>
+									{app ? (
+										<Button
+											size="sm"
+											variant={status === "resolved" ? "primary" : "subtle"}
+											icon={
+												status === "resolved"
+													? "bi-box-arrow-in-right"
+													: "bi-activity"
+											}
+											onClick={(e) => {
+												e.stopPropagation();
+												setTracking(t.id);
+											}}
+										>
+											{status === "resolved"
+												? "View decision"
+												: "Track application"}
+										</Button>
+									) : (
+										<Button
+											size="sm"
+											variant={t.statusTone === "red" ? "primary" : "ghost"}
+											onClick={(e) => {
+												e.stopPropagation();
+												openWizard(t);
+											}}
+										>
+											{t.action}
+										</Button>
+									)}
+								</div>
+							</Card>
+						);
+					})}
 				</div>
 
+				{appList.length > 0 && (
+					<>
+						<Section
+							no="2"
+							title="Applications in review"
+							sub="Live status from the compliance queue — updates on its own."
+							actions={
+								allClear ? (
+									<Button
+										size="sm"
+										icon="bi-box-arrow-in-right"
+										onClick={() => go("/auth/hub")}
+									>
+										Proceed to account
+									</Button>
+								) : undefined
+							}
+						/>
+						<Card flush>
+							<div className={s.stack}>
+								{appList.map((app) => {
+									const status = statusOf(app);
+									return (
+										<div className={s.listRow} key={app.ref}>
+											<span
+												className={cx(
+													s.tile,
+													s.tileSm,
+													s[
+														`tile${app.tone[0].toUpperCase()}${app.tone.slice(1)}`
+													],
+												)}
+											>
+												<i className={`bi ${app.icon}`} />
+											</span>
+											<span className={s.grow}>
+												<span className={s.optionTitle}>{app.title}</span>
+												<span
+													className={s.optionSub}
+													style={{ display: "block" }}
+												>
+													<span className={s.mono}>{app.ref}</span> ·{" "}
+													{status === "resolved"
+														? app.outcome
+														: app.stages[app.stage].label}
+												</span>
+											</span>
+											<span style={{ width: 120 }}>
+												<Progress value={percentOf(app)} sm />
+											</span>
+											<StatusBadge status={status} />
+											<Button
+												size="sm"
+												variant={status === "resolved" ? "primary" : "ghost"}
+												icon="bi-activity"
+												onClick={() => setTracking(app.taskId)}
+											>
+												{status === "resolved" ? "Continue" : "Progress"}
+											</Button>
+										</div>
+									);
+								})}
+							</div>
+						</Card>
+					</>
+				)}
+
 				<Section
-					no="2"
+					no={appList.length > 0 ? "3" : "2"}
 					title="Need a hand?"
 					sub="The recovery desk is staffed 24/7."
 				/>
@@ -420,9 +648,23 @@ export default function AccountStatus() {
 						<Button variant="ghost" onClick={() => setDetail(null)}>
 							Close
 						</Button>
-						{detail && (
-							<Button onClick={() => openTask(detail)}>{detail.action}</Button>
-						)}
+						{detail &&
+							(apps[detail.id] ? (
+								<Button
+									icon="bi-activity"
+									onClick={() => {
+										const id = detail.id;
+										setDetail(null);
+										setTracking(id);
+									}}
+								>
+									Track application
+								</Button>
+							) : (
+								<Button icon="bi-ui-checks" onClick={() => openWizard(detail)}>
+									{detail.action} · {detail.steps} steps
+								</Button>
+							))}
 					</>
 				}
 			>
@@ -436,15 +678,49 @@ export default function AccountStatus() {
 					<hr className={s.divider} />
 					<div className={s.spread}>
 						<span className={s.tiny}>Progress</span>
-						<span className={s.strong}>{detail?.progress}%</span>
+						<span className={s.strong}>
+							{detail ? taskPercent(detail) : 0}%
+						</span>
 					</div>
-					<Progress value={detail?.progress ?? 0} sm />
+					<Progress value={detail ? taskPercent(detail) : 0} sm />
 					<Notice tone="slate" icon="bi-link-45deg">
-						Opens{" "}
-						<span className={s.mono}>{detail?.internal ?? detail?.url}</span>
+						Prefer the legacy portal? Open{" "}
+						<a
+							className={s.link}
+							href={detail?.url}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{detail?.url}
+						</a>
+						{detail?.internal && (
+							<>
+								{" "}
+								or the full page at{" "}
+								<a className={s.link} href={detail.internal}>
+									{detail.internal}
+								</a>
+							</>
+						)}
+						.
 					</Notice>
 				</div>
 			</Modal>
+
+			{/* ---------------- the six multi-step wizards ---------------- */}
+			<TaskWizard
+				taskId={wizard?.id ?? null}
+				open={!!wizard}
+				onClose={() => setWizard(null)}
+				onSubmit={(summary) => wizard && submitWizard(wizard, summary)}
+			/>
+
+			{/* ---------------- live application tracker ---------------- */}
+			<ApplicationTracker
+				app={tracking ? (apps[tracking] ?? null) : null}
+				open={!!tracking && !!apps[tracking ?? ""]}
+				onClose={() => setTracking(null)}
+			/>
 
 			{/* ---------------- warnings ---------------- */}
 			<Modal
