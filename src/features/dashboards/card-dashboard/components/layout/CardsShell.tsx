@@ -146,7 +146,7 @@ function LayoutShell() {
   }, [openDrawer]);
 
   return (
-    <div className="pmc-shell pmc-canvas pm-cards-shell">
+    <div className="pmc-shell pmc-canvas">
       <div className="d-flex">
         {/* Desktop sidebar */}
         <aside className="pmc-sidebar pmc-side-glow d-none d-lg-flex">
