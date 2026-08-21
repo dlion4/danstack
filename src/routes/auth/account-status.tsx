@@ -3,4 +3,5 @@ import AccountStatus from "../../features/authentication/pages/AccountStatus";
 
 export const Route = createFileRoute("/auth/account-status")({
 	component: AccountStatus,
+	head: () => ({ meta: [{ title: "Account status · Paymo BAAS" }] }),
 });

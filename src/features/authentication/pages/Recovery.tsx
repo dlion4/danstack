@@ -1,983 +1,591 @@
 /* ============================================================================
- * Recovery.tsx — Paymo BAAS Account Recovery (Emerald Glass Edition)
+ * Recovery.tsx — Paymo BAAS · Account recovery
  * ----------------------------------------------------------------------------
- * MIGRATED FROM: legacy page53.html (1,103 LOC) — vanilla JS + Bootstrap CSS
- * STACK ........: Vite + React + TypeScript + TanStack Query v5 + Bootstrap 5
- * ARCHITECTURE .: ONE component file holds all layout + logic (per spec).
- *                 Styles live in ../styles/recovery.module.css (CSS Module).
- * REPO NOTES ...: tuned for dlion4/danstack — no new packages; art is served
- *                 from /public/assets; fonts come from routes/__root.tsx.
+ * Re-themed to the PayMo Business design language via ../components/AuthKit.
+ * Condensed from the legacy 983-line page into a tight 3-step flow
+ * (Method → Verify → New password) plus a success state.
  *
- * EVERY INTERACTION FROM THE LEGACY PAGE IS MAINTAINED:
- *   3-step flow (method -> verify -> reset) + success state, 4 recovery
- *   methods (email / sms / security questions / magic link), 6-digit OTP
- *   boxes with auto-advance, Backspace focus-back and full paste support,
- *   60s resend countdown, magic-link auto-advance after 3s, shake-on-error,
- *   Enter-key submit, password strength meter with 4 live requirement rows,
- *   confirm-match gate, eye toggles, "log out all devices", success screen.
+ * Kept: email / SMS / security-question / magic-link paths, 6-digit OTP with
+ * shake-on-error, 60s resend cooldown, magic-link auto-advance, password
+ * strength meter, "sign out other devices" toggle.
+ * Added: toasts on every transition and a support-escalation dialog.
  *
- * LEGACY BRIDGE MAP (vanilla JS -> React):
- *   state vars (currentStep/selectedMethod/resendInterval) . useState + refs
- *   .tab-btn show/hide ................. selectedMethod state mapping
- *   goToStep() display toggling ........ step state + conditional classes
- *   handleContinue() validation+shake .. form submit + shakeKey counter
- *   document keypress Enter ............ native form onSubmit (a11y upgrade)
- *   OTP input/paste listeners .......... otpRefs DOM bridge + setOtpDigit
- *   startResendTimer() setInterval ..... resendTick effect (cleaned)
- *   strength innerHTML updates ......... derived data render (.map())
+ * Routes/links preserved: /auth/login · /auth/identity · /auth/account-status
  * ========================================================================== */
 
-import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-if (typeof document !== "undefined") {
-	import("bootstrap/dist/js/bootstrap.bundle.min.js");
-}
+import {
+	AuthPage,
+	AuthSplit,
+	Button,
+	Card,
+	Check,
+	cx,
+	Field,
+	go,
+	Input,
+	Modal,
+	Notice,
+	OptionCard,
+	OtpInput,
+	PasswordInput,
+	Progress,
+	Stepper,
+	s,
+	toast,
+	useCountdown,
+} from "../components/AuthKit";
 
-import styles from "../styles/recovery.module.css";
+type Method = "email" | "sms" | "questions" | "magic";
 
-/* --------------------------------------------------------------------------
- * Types
- * ------------------------------------------------------------------------ */
-type RecoveryMethod = "email" | "sms" | "questions" | "magic";
-type Tone = "featMint" | "featPurple" | "featGreen";
-
-interface RecoveryConfig {
-	brand: {
-		title: string;
-		copy: string;
-		features: Array<{ icon: string; tone: Tone; title: string; sub: string }>;
-	};
-	methods: Array<{ id: RecoveryMethod; icon: string; label: string }>;
-	verifyIcons: Record<RecoveryMethod, string>;
-	verifySubtitles: Record<RecoveryMethod, string>;
-	securityQuestions: string[];
-	passwordRequirements: string[];
-	magicExpiryNote: string;
-	resendSeconds: number;
-	magicRedirectMs: number;
-	loginRoute: string;
-}
-
-/* --------------------------------------------------------------------------
- * 1. initialMockData — every repeating/hardcoded block extracted from legacy
- *    markup + script. GET /api/recovery-config returns this same shape.
- * ------------------------------------------------------------------------ */
-const initialMockData: RecoveryConfig = {
-	brand: {
-		title: "Secure Account Recovery",
-		copy: "We'll help you regain access to your account safely. Your security is our priority.",
-		features: [
-			{
-				icon: "bi-shield-check",
-				tone: "featMint",
-				title: "End-to-End Encrypted",
-				sub: "256-bit encryption",
-			},
-			{
-				icon: "bi-eye-slash",
-				tone: "featPurple",
-				title: "Privacy Protected",
-				sub: "Zero-knowledge architecture",
-			},
-			{
-				icon: "bi-clock-history",
-				tone: "featGreen",
-				title: "Fast Recovery",
-				sub: "Under 2 minutes",
-			},
-		],
+const METHODS: Array<{
+	id: Method;
+	icon: string;
+	tone: "green" | "blue" | "violet" | "amber";
+	title: string;
+	sub: string;
+}> = [
+	{
+		id: "email",
+		icon: "bi-envelope",
+		tone: "green",
+		title: "Email code",
+		sub: "6-digit code to a•••a@paymo.com",
 	},
-
-	methods: [
-		{ id: "email", icon: "bi-envelope", label: "Email" },
-		{ id: "sms", icon: "bi-phone", label: "SMS" },
-		{ id: "questions", icon: "bi-shield-question", label: "Security Qs" },
-		{ id: "magic", icon: "bi-link-45deg", label: "Magic Link" },
-	],
-
-	verifyIcons: {
-		email: "bi-envelope-check",
-		sms: "bi-phone",
-		questions: "bi-shield-question",
-		magic: "bi-link-45deg",
+	{
+		id: "sms",
+		icon: "bi-phone",
+		tone: "blue",
+		title: "SMS code",
+		sub: "6-digit code to +254 •••••4321",
 	},
-
-	verifySubtitles: {
-		email: "Enter the 6-digit code sent to your email",
-		sms: "Enter the 6-digit code sent to your phone",
-		questions: "Answer your security questions to verify identity",
-		magic: "Open the magic link we sent to your email",
+	{
+		id: "questions",
+		icon: "bi-shield-question",
+		tone: "violet",
+		title: "Security questions",
+		sub: "Answer 2 of your saved questions",
 	},
+	{
+		id: "magic",
+		icon: "bi-link-45deg",
+		tone: "amber",
+		title: "Magic link",
+		sub: "One-tap link, expires in 15 min",
+	},
+];
 
-	securityQuestions: [
-		"What is your mother's maiden name?",
-		"What was the name of your first pet?",
-		"What city were you born in?",
-	],
+const QUESTIONS = [
+	"What was the name of your first pet?",
+	"What city were you born in?",
+];
 
-	passwordRequirements: [
-		"At least 8 characters",
-		"One uppercase letter",
-		"One number",
-		"One special character",
-	],
+const STEPS = [
+	{ label: "Method", icon: "bi-grid" },
+	{ label: "Verify", icon: "bi-shield-check" },
+	{ label: "New password", icon: "bi-key" },
+];
 
-	magicExpiryNote:
-		"We'll send a secure link to reset your password. Link expires in 15 minutes.",
-	resendSeconds: 60,
-	magicRedirectMs: 3000,
-	loginRoute: "/auth/login",
-};
+const REQS = [
+	"At least 8 characters",
+	"One uppercase letter",
+	"One number",
+	"One symbol",
+];
+const strengthOf = (pw: string) => [
+	pw.length >= 8,
+	/[A-Z]/.test(pw),
+	/\d/.test(pw),
+	/[^A-Za-z0-9]/.test(pw),
+];
 
-/* --------------------------------------------------------------------------
- * 2. Helpers
- * ------------------------------------------------------------------------ */
-const s = styles as Record<string, string>;
-const cx = (...parts: Array<string | false | null | undefined>) =>
-	parts.filter(Boolean).join(" ");
-
-const STRENGTH_COLORS = ["#ef4444", "#fbbf24", "#52d689", "#2ee6a0"];
-
-function strengthOf(password: string): boolean[] {
-	return [
-		password.length >= 8,
-		/[A-Z]/.test(password),
-		/[0-9]/.test(password),
-		/[^A-Za-z0-9]/.test(password),
-	];
-}
-
-/* --------------------------------------------------------------------------
- * 3. COMPONENT
- * ------------------------------------------------------------------------ */
 export default function Recovery() {
-	/* ---------- bundled page configuration ---------- */
-	const content = initialMockData;
+	const [step, setStep] = useState(0); // 0 method · 1 verify · 2 reset · 3 done
+	const [method, setMethod] = useState<Method>("email");
+	const [identifier, setIdentifier] = useState("");
 
-	/* ---------- wizard state (legacy currentStep / selectedMethod) ---------- */
-	const [step, setStep] = useState(1); // 1 method · 2 verify · 3 reset · 0 success
-	const [method, setMethod] = useState<RecoveryMethod>("email");
-	const [shakeKey, setShakeKey] = useState(0); // bump to replay .shake
+	const [otp, setOtp] = useState("");
+	const [otpBad, setOtpBad] = useState(false);
+	const [answers, setAnswers] = useState(["", ""]);
+	const [cooldown, setCooldown] = useCountdown(0);
 
-	/* method inputs */
-	const [emailInput, setEmailInput] = useState("");
-	const [phoneInput, setPhoneInput] = useState("");
-	const [identifierInput, setIdentifierInput] = useState("");
-	const [magicEmailInput, setMagicEmailInput] = useState("");
+	const [pw, setPw] = useState("");
+	const [pw2, setPw2] = useState("");
+	const [signOutAll, setSignOutAll] = useState(true);
+	const [busy, setBusy] = useState(false);
+	const [supportOpen, setSupportOpen] = useState(false);
 
-	/* verification */
-	const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
-	const [answers, setAnswers] = useState<string[]>(["", "", ""]);
-	const [resendLeft, setResendLeft] = useState(content.resendSeconds);
-	const [resendActive, setResendActive] = useState(false);
-	const [resentFlash, setResentFlash] = useState(false);
-
-	/* reset password */
-	const [newPwd, setNewPwd] = useState("");
-	const [confirmPwd, setConfirmPwd] = useState("");
-	const [showNew, setShowNew] = useState(false);
-	const [showConfirm, setShowConfirm] = useState(false);
-	const [logoutDevices, setLogoutDevices] = useState(true);
-	const [resetting, setResetting] = useState(false);
-
-	/* ---------- refs (legacy DOM bridges) ---------- */
-	const cardRef = useRef<HTMLDivElement | null>(null);
-	const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
-	const timersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
-
+	const timers = useRef<number[]>([]);
 	const later = (fn: () => void, ms: number) => {
-		const id = setTimeout(fn, ms);
-		timersRef.current.push(id);
+		timers.current.push(window.setTimeout(fn, ms));
 	};
-
-	useEffect(
-		() => () => {
-			timersRef.current.forEach(clearTimeout);
-		},
-		[],
-	);
-
-	/* ---------- derived validation (legacy checkPasswordMatch) ---------- */
-	const reqMet = strengthOf(newPwd);
-	const score = reqMet.filter(Boolean).length;
-	const matchOk = confirmPwd.length > 0 && newPwd === confirmPwd;
-	const resetReady = reqMet.every(Boolean) && matchOk;
-
-	const step1Ready =
-		(method === "email" && emailInput.trim().length > 0) ||
-		(method === "sms" && phoneInput.trim().length > 0) ||
-		(method === "questions" && identifierInput.trim().length > 0) ||
-		(method === "magic" && magicEmailInput.trim().length > 0);
-
-	const verifyReady =
-		method === "questions"
-			? answers.every((a) => a.trim().length > 0)
-			: otp.every((d) => d.length === 1);
-
-	/* LEGACY BRIDGE: goToStep(step) — legacy toggled section display and step
-     dots; React derives both from `step` state. */
-	const goToStep = (next: number) => {
-		setStep(next);
-		cardRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-	};
-
-	/* LEGACY BRIDGE: startResendTimer() setInterval — effect-based countdown
-     with proper cleanup; begins when an OTP method enters step 2. */
 	useEffect(() => {
-		if (
-			step !== 2 ||
-			method === "questions" ||
-			method === "magic" ||
-			!resendActive
-		)
-			return undefined;
-		if (resendLeft <= 0) {
-			setResendActive(false);
-			return undefined;
-		}
-		const id = setTimeout(() => setResendLeft((v) => v - 1), 1000);
-		return () => clearTimeout(id);
-	}, [step, method, resendActive, resendLeft]);
+		const t = timers.current;
+		return () => {
+			t.forEach(window.clearTimeout);
+		};
+	}, []);
 
-	/* LEGACY BRIDGE: setupVerification() magic-section auto-advance —
-     legacy setTimeout(() => goToStep(3), 3000). */
+	/* magic link auto-advance, mirroring the legacy 3s demo hop */
 	useEffect(() => {
-		if (step === 2 && method === "magic") {
-			const id = setTimeout(() => goToStep(3), content.magicRedirectMs);
-			return () => clearTimeout(id);
+		if (step === 1 && method === "magic") {
+			const id = window.setTimeout(() => {
+				toast.success(
+					"Link opened",
+					"Verified from this device — set a new password.",
+				);
+				setStep(2);
+			}, 3200);
+			return () => window.clearTimeout(id);
 		}
-		return undefined;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [step, method, content.magicRedirectMs]);
+	}, [step, method]);
 
-	/* ---------- step 1 continue (legacy handleContinue) ---------- */
-	const handleContinue = (e: FormEvent) => {
-		e.preventDefault();
-		if (!step1Ready) {
-			setShakeKey((k) => k + 1); // legacy: input.classList.add('shake')
+	const checks = strengthOf(pw);
+	const score = checks.filter(Boolean).length;
+	const match = pw.length > 0 && pw === pw2;
+
+	const startRecovery = () => {
+		if (identifier.trim().length < 4) {
+			toast.warning(
+				"Who are we recovering?",
+				"Enter the email or phone on the account.",
+			);
 			return;
 		}
+		setStep(1);
 		if (method === "email" || method === "sms") {
-			setResendLeft(content.resendSeconds);
-			setResendActive(true);
+			setCooldown(60);
+			toast.success(
+				"Code sent",
+				`We sent a 6-digit code via ${method === "email" ? "email" : "SMS"}.`,
+			);
+		} else if (method === "magic") {
+			toast.success(
+				"Magic link sent",
+				"Open it on this device — it expires in 15 minutes.",
+			);
+		} else {
+			toast.info("Identity check", "Answer your saved questions to continue.");
 		}
-		setOtp(["", "", "", "", "", ""]);
-		goToStep(2);
 	};
 
-	/* ---------- resend (legacy handleResend + innerHTML flash) ---------- */
-	const handleResend = () => {
-		setResendLeft(content.resendSeconds);
-		setResendActive(true);
-		setResentFlash(true);
-		later(() => setResentFlash(false), 2000);
-	};
-
-	/* ---------- OTP boxes (legacy .otp-input listeners) ---------- */
-	const setOtpDigit = (index: number, raw: string) => {
-		const digit = raw.replace(/\D/g, "").slice(-1);
-		setOtp((prev) => {
-			const next = [...prev];
-			next[index] = digit;
-			return next;
-		});
-		if (digit && index < otpRefs.current.length - 1)
-			otpRefs.current[index + 1]?.focus();
-	};
-
-	const handleOtpKeyDown = (index: number, key: string) => {
-		if (key === "Backspace" && !otp[index] && index > 0)
-			otpRefs.current[index - 1]?.focus();
-	};
-
-	/* LEGACY BRIDGE: legacy paste listener split 6 chars across inputs. */
-	const handleOtpPaste = (e: React.ClipboardEvent) => {
-		e.preventDefault();
-		const data = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-		if (!data) return;
-		setOtp((prev) => {
-			const next = [...prev];
-			data.split("").forEach((ch, i) => {
-				next[i] = ch;
-			});
-			return next;
-		});
-		otpRefs.current[Math.min(data.length, 6) - 1]?.focus();
-	};
-
-	/* ---------- step 2 verify (legacy handleVerify) ---------- */
-	const handleVerify = (e: FormEvent) => {
-		e.preventDefault();
-		if (!verifyReady) {
-			setShakeKey((k) => k + 1);
+	const verify = () => {
+		if (method === "questions") {
+			if (answers.some((a) => a.trim().length < 2)) {
+				toast.warning(
+					"Answer both questions",
+					"Answers aren't case sensitive.",
+				);
+				return;
+			}
+			toast.success("Answers accepted", "Set a new password below.");
+			setStep(2);
 			return;
 		}
-		goToStep(3);
+		if (otp.length < 6) {
+			toast.warning(
+				"Enter the 6-digit code",
+				"It expires 5 minutes after sending.",
+			);
+			return;
+		}
+		if (otp === "000000") {
+			setOtpBad(true);
+			later(() => {
+				setOtpBad(false);
+				setOtp("");
+			}, 480);
+			toast.danger(
+				"Incorrect code",
+				"Double-check the latest message and try again.",
+			);
+			return;
+		}
+		toast.success("Identity verified", "Set a new password below.");
+		setStep(2);
 	};
 
-	/* ---------- step 3 reset (legacy handleReset spinner -> success) ---------- */
-	const handleReset = (e: FormEvent) => {
-		e.preventDefault();
-		if (!resetReady || resetting) return;
-		setResetting(true);
+	const resetPassword = () => {
+		if (score < 3) {
+			toast.warning(
+				"Password too weak",
+				"Meet at least three of the four requirements.",
+			);
+			return;
+		}
+		if (!match) {
+			toast.danger("Passwords don't match", "Re-type the confirmation field.");
+			return;
+		}
+		setBusy(true);
 		later(() => {
-			setResetting(false);
-			goToStep(0); // success state (legacy hid .step-indicator here)
-		}, 2000);
+			setBusy(false);
+			setStep(3);
+			toast.success(
+				"Password updated",
+				signOutAll ? "All other sessions were signed out." : "You're all set.",
+			);
+		}, 1200);
 	};
 
-	/* ------------------------------------------------------------------------
-	 * 4. TEMPLATE (JSX)
-	 * ---------------------------------------------------------------------- */
+	/* ------------------------------------------------------------- success */
+	if (step === 3) {
+		return (
+			<AuthPage>
+				<AuthSplit
+					pill="Recovery complete"
+					title="Access restored."
+					accent="Lock it down."
+					copy="Add a passkey so the next sign-in takes two seconds and can't be phished."
+					trust={["256-bit encryption", "Zero-knowledge"]}
+				>
+					<Card>
+						<div className={s.center}>
+							<div className={cx(s.bio, s.bioDone)}>
+								<i className="bi bi-shield-check" />
+							</div>
+							<h1 className={s.title}>You&apos;re back in</h1>
+							<p className={s.subtitle}>Your password was changed just now.</p>
+						</div>
+						<div className={s.stack} style={{ marginTop: "1.1rem" }}>
+							<Notice tone="green" icon="bi-info-circle">
+								We emailed a security receipt. If this wasn&apos;t you,{" "}
+								<button
+									type="button"
+									className={s.link}
+									onClick={() => setSupportOpen(true)}
+								>
+									tell us immediately
+								</button>
+								.
+							</Notice>
+							<Button
+								block
+								size="lg"
+								icon="bi-box-arrow-in-right"
+								onClick={() => go("/auth/login")}
+							>
+								Continue to sign in
+							</Button>
+							<Button
+								block
+								variant="ghost"
+								icon="bi-fingerprint"
+								onClick={() => go("/auth/passkeys")}
+							>
+								Set up a passkey
+							</Button>
+						</div>
+					</Card>
+				</AuthSplit>
+				<SupportModal
+					open={supportOpen}
+					onClose={() => setSupportOpen(false)}
+				/>
+			</AuthPage>
+		);
+	}
+
+	/* -------------------------------------------------------------- wizard */
 	return (
-		<div className={s.recoveryPage}>
-			{/* background blobs (legacy fixed blobs) */}
-			<div
-				className={s.blob}
-				style={{
-					width: "500px",
-					height: "500px",
-					background: "#2ee6a0",
-					top: "-160px",
-					right: "-120px",
-				}}
-			/>
-			<div
-				className={s.blob}
-				style={{
-					width: "380px",
-					height: "380px",
-					background: "#0a7a54",
-					bottom: "-100px",
-					left: "-60px",
-					animationDelay: "-6s",
-				}}
-			/>
-
-			<div
-				className="container"
-				style={{
-					minHeight: "100vh",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					padding: "2rem 0",
-				}}
+		<AuthPage>
+			<AuthSplit
+				pill="Secure account recovery"
+				title="Locked out?"
+				accent="We'll get you back."
+				copy="Recovery is verified end-to-end. We never reveal which factor failed, and every attempt is logged."
+				features={[
+					{
+						icon: "bi-shield-check",
+						title: "End-to-end encrypted",
+						sub: "256-bit in transit and at rest",
+					},
+					{
+						icon: "bi-eye-slash",
+						title: "Privacy protected",
+						sub: "Zero-knowledge architecture",
+					},
+					{
+						icon: "bi-stopwatch",
+						title: "Under 2 minutes",
+						sub: "Most recoveries complete instantly",
+					},
+				]}
+				trust={["PCI DSS L1", "SOC 2 Type II"]}
 			>
-				<div className="row g-4 align-items-center w-100">
-					{/* ================= LEFT: brand visual ================= */}
-					<div className="col-lg-6 d-none d-lg-block">
-						<div className="position-relative">
-							<div className={s.brandArt} />
-							<div className={s.brandShade} />
-							<div style={{ position: "relative", zIndex: 2, padding: "3rem" }}>
-								<div className={cx(s.logoMark, "mb-3")}>P</div>
-								<h2
-									style={{
-										fontSize: "2.5rem",
-										fontWeight: 900,
-										marginBottom: "1rem",
-										color: "#fff",
-									}}
-								>
-									{content.brand.title}
-								</h2>
-								<p
-									className={s.mutedText}
-									style={{
-										fontSize: "1.1rem",
-										maxWidth: "400px",
-										lineHeight: 1.6,
-									}}
-								>
-									{content.brand.copy}
-								</p>
-								<div
-									style={{
-										marginTop: "2rem",
-										display: "flex",
-										flexDirection: "column",
-										gap: "1rem",
-									}}
-								>
-									{content.brand.features.map((feat) => (
-										<div className={s.featRow} key={feat.title}>
-											<div className={cx(s.featIcon, s[feat.tone])}>
-												<i className={`bi ${feat.icon}`} />
-											</div>
-											<div>
-												<div
-													style={{ fontWeight: 600, color: "var(--rc-ink-0)" }}
-												>
-													{feat.title}
-												</div>
-												<div
-													style={{
-														fontSize: "0.85rem",
-														color: "var(--rc-ink-3)",
-													}}
-												>
-													{feat.sub}
-												</div>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ================= RIGHT: recovery card ================= */}
-					<div className="col-lg-6">
-						<div
-							className={cx(s.glassStrong, "p-4 p-md-5")}
-							style={{ maxWidth: "480px", margin: "0 auto" }}
-							ref={cardRef}
-						>
-							{/* logo */}
-							<div className="d-flex align-items-center gap-2 mb-4">
-								<div className={s.logoMark}>P</div>
-								<div>
-									<div style={{ fontWeight: 800, color: "var(--rc-ink-0)" }}>
-										Paymo <span className={s.textGradient}>BAAS</span>
-									</div>
-									<div
-										style={{ fontSize: "0.75rem", color: "var(--rc-ink-3)" }}
-									>
-										Secure Recovery
-									</div>
-								</div>
-							</div>
-
-							{/* step indicator (hidden on success, as legacy did) */}
-							{step > 0 && (
-								<div className={s.stepIndicator}>
-									{[1, 2, 3].map((dot, i) => (
-										<div key={dot} style={{ display: "contents" }}>
-											<div
-												className={cx(
-													s.stepDot,
-													step > dot && s.completed,
-													step === dot && s.active,
-												)}
-											>
-												{step > dot ? <i className="bi bi-check-lg" /> : dot}
-											</div>
-											{i < 2 && <div className={s.stepLine} />}
-										</div>
-									))}
-								</div>
-							)}
-
-							{/* ===== STEP 1: choose method ===== */}
-							{step === 1 && (
-								<form onSubmit={handleContinue} noValidate>
-									<h3
-										className={s.brandTitleSm}
-										style={{
-											fontSize: "1.8rem",
-											fontWeight: 800,
-											marginBottom: "0.5rem",
-											color: "var(--rc-ink-0)",
-										}}
-									>
-										Recover Your Account
-									</h3>
-									<p className={s.mutedText} style={{ marginBottom: "1.5rem" }}>
-										Choose how you&apos;d like to verify your identity
-									</p>
-
-									<div
-										className={s.tabContainer}
-										role="tablist"
-										aria-label="Recovery method"
-									>
-										{content.methods.map((m) => (
-											<button
-												key={m.id}
-												type="button"
-												role="tab"
-												aria-selected={method === m.id}
-												className={cx(s.tabBtn, method === m.id && s.active)}
-												onClick={() => setMethod(m.id)}
-											>
-												<i className={`bi ${m.icon}`} />
-												{m.label}
-											</button>
-										))}
-									</div>
-
-									{/* method panes (legacy .method-content display toggling) */}
-									<div
-										key={shakeKey}
-										className={
-											shakeKey > 0 && !step1Ready ? s.shake : undefined
-										}
-									>
-										{method === "email" && (
-											<div className={s.formGroup}>
-												<label className={s.formLabel} htmlFor="rcEmail">
-													Email Address
-												</label>
-												<input
-													type="email"
-													className={s.formInput}
-													id="rcEmail"
-													placeholder="your@email.com"
-													autoComplete="email"
-													value={emailInput}
-													onChange={(e) => setEmailInput(e.target.value)}
-												/>
-											</div>
-										)}
-										{method === "sms" && (
-											<div className={s.formGroup}>
-												<label className={s.formLabel} htmlFor="rcPhone">
-													Phone Number
-												</label>
-												<input
-													type="tel"
-													className={s.formInput}
-													id="rcPhone"
-													placeholder="+254 700 000 000"
-													autoComplete="tel"
-													value={phoneInput}
-													onChange={(e) => setPhoneInput(e.target.value)}
-												/>
-											</div>
-										)}
-										{method === "questions" && (
-											<div className={s.formGroup}>
-												<label className={s.formLabel} htmlFor="rcIdentifier">
-													Email or Phone
-												</label>
-												<input
-													type="text"
-													className={s.formInput}
-													id="rcIdentifier"
-													placeholder="your@email.com or +254..."
-													value={identifierInput}
-													onChange={(e) => setIdentifierInput(e.target.value)}
-												/>
-											</div>
-										)}
-										{method === "magic" && (
-											<>
-												<div className={s.formGroup}>
-													<label className={s.formLabel} htmlFor="rcMagicEmail">
-														Email Address
-													</label>
-													<input
-														type="email"
-														className={s.formInput}
-														id="rcMagicEmail"
-														placeholder="your@email.com"
-														value={magicEmailInput}
-														onChange={(e) => setMagicEmailInput(e.target.value)}
-													/>
-												</div>
-												<div className={s.infoBox}>
-													<i
-														className="bi bi-info-circle"
-														style={{
-															color: "var(--rc-accent)",
-															marginRight: "0.5rem",
-														}}
-													/>
-													<span
-														style={{
-															fontSize: "0.85rem",
-															color: "var(--rc-ink-2)",
-														}}
-													>
-														{content.magicExpiryNote}
-													</span>
-												</div>
-											</>
-										)}
-									</div>
-
-									<button
-										type="submit"
-										className={cx(s.btnPaymo, "w-100 mt-3")}
-										disabled={!step1Ready}
-									>
-										Continue <i className="bi bi-arrow-right ms-1" />
-									</button>
-
-									<div className="mt-4" style={{ textAlign: "center" }}>
-										<a href={content.loginRoute} style={{ fontSize: "0.9rem" }}>
-											<i className="bi bi-arrow-left me-1" /> Back to Sign In
-										</a>
-									</div>
-								</form>
-							)}
-
-							{/* ===== STEP 2: verification ===== */}
-							{step === 2 && (
-								<form onSubmit={handleVerify} noValidate>
-									<div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-										<div className={cx(s.medallion, s.medallionMint)}>
-											<i className={`bi ${content.verifyIcons[method]}`} />
-										</div>
-										<h3
-											style={{
-												fontSize: "1.5rem",
-												fontWeight: 800,
-												marginBottom: "0.5rem",
-												color: "var(--rc-ink-0)",
-											}}
-										>
-											Verify Your Identity
-										</h3>
-										<p className={s.mutedText} style={{ marginBottom: 0 }}>
-											{content.verifySubtitles[method]}
-										</p>
-									</div>
-
-									<div
-										key={`verify-${shakeKey}`}
-										className={
-											shakeKey > 0 && !verifyReady ? s.shake : undefined
-										}
-									>
-										{/* OTP (email/sms) */}
-										{(method === "email" || method === "sms") && (
-											<div>
-												<div className={s.otpContainer}>
-													{otp.map((digit, i) => (
-														<input
-															key={i}
-															ref={(el) => {
-																otpRefs.current[i] = el;
-															}}
-															type="text"
-															inputMode="numeric"
-															className={s.otpInput}
-															maxLength={1}
-															aria-label={`Code digit ${i + 1}`}
-															value={digit}
-															onChange={(e) => setOtpDigit(i, e.target.value)}
-															onKeyDown={(e) => handleOtpKeyDown(i, e.key)}
-															onPaste={handleOtpPaste}
-														/>
-													))}
-												</div>
-
-												{resendActive && resendLeft > 0 && (
-													<div className={s.timerText}>
-														Didn&apos;t receive the code? Resend in{" "}
-														<span className={s.countdown}>{resendLeft}</span>s
-													</div>
-												)}
-												{(!resendActive || resendLeft <= 0) && (
-													<button
-														type="button"
-														className={cx(s.btnOutline, "w-100 mt-3")}
-														onClick={handleResend}
-													>
-														{resentFlash ? (
-															<>
-																<i className="bi bi-check-circle me-1" /> Code
-																Resent!
-															</>
-														) : (
-															<>
-																<i className="bi bi-arrow-clockwise me-1" />{" "}
-																Resend Code
-															</>
-														)}
-													</button>
-												)}
-											</div>
-										)}
-
-										{/* security questions */}
-										{method === "questions" && (
-											<div>
-												{content.securityQuestions.map((q, i) => (
-													<div className={s.formGroup} key={q}>
-														<label
-															className={s.formLabel}
-															htmlFor={`rcAnswer${i}`}
-														>
-															{q}
-														</label>
-														<input
-															type="text"
-															className={s.formInput}
-															id={`rcAnswer${i}`}
-															placeholder="Your answer"
-															value={answers[i]}
-															onChange={(e) => {
-																const next = [...answers];
-																next[i] = e.target.value;
-																setAnswers(next);
-															}}
-														/>
-													</div>
-												))}
-											</div>
-										)}
-
-										{/* magic link status */}
-										{method === "magic" && (
-											<div style={{ textAlign: "center", padding: "2rem 0" }}>
-												<div className={s.successIcon}>
-													<i className="bi bi-check-lg" />
-												</div>
-												<h4
-													style={{
-														fontWeight: 700,
-														marginBottom: "0.5rem",
-														color: "var(--rc-ink-0)",
-													}}
-												>
-													Check Your Email
-												</h4>
-												<p
-													className={s.mutedText}
-													style={{ fontSize: "0.9rem", marginBottom: "1.5rem" }}
-												>
-													We&apos;ve sent a secure recovery link to
-													<br />
-													<strong style={{ color: "var(--rc-accent)" }}>
-														{magicEmailInput || "your email"}
-													</strong>
-												</p>
-												<div
-													className={s.infoBox}
-													style={{ textAlign: "left" }}
-												>
-													<i
-														className="bi bi-clock"
-														style={{
-															color: "var(--rc-accent)",
-															marginRight: "0.5rem",
-														}}
-													/>
-													<span
-														style={{
-															fontSize: "0.85rem",
-															color: "var(--rc-ink-2)",
-														}}
-													>
-														Link expires in 15 minutes
-													</span>
-												</div>
-											</div>
-										)}
-									</div>
-
-									{method !== "magic" && (
-										<button
-											type="submit"
-											className={cx(s.btnPaymo, "w-100 mt-3")}
-											disabled={!verifyReady}
-										>
-											Verify <i className="bi bi-check-circle ms-1" />
-										</button>
-									)}
-
-									<button
-										type="button"
-										className={cx(s.btnOutline, "w-100 mt-2")}
-										onClick={() => goToStep(1)}
-									>
-										<i className="bi bi-arrow-left me-1" /> Change Method
-									</button>
-								</form>
-							)}
-
-							{/* ===== STEP 3: reset password ===== */}
-							{step === 3 && (
-								<form onSubmit={handleReset} noValidate>
-									<div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-										<div className={cx(s.medallion, s.medallionPurple)}>
-											<i className="bi bi-lock" />
-										</div>
-										<h3
-											style={{
-												fontSize: "1.5rem",
-												fontWeight: 800,
-												marginBottom: "0.5rem",
-												color: "var(--rc-ink-0)",
-											}}
-										>
-											Create New Password
-										</h3>
-										<p className={s.mutedText} style={{ marginBottom: 0 }}>
-											Choose a strong, unique password
-										</p>
-									</div>
-
-									<div className={s.formGroup}>
-										<label className={s.formLabel} htmlFor="newPassword">
-											New Password
-										</label>
-										<div className="position-relative">
-											<input
-												type={showNew ? "text" : "password"}
-												className={s.formInput}
-												id="newPassword"
-												placeholder="Enter new password"
-												style={{ paddingRight: "3rem" }}
-												value={newPwd}
-												onChange={(e) => setNewPwd(e.target.value)}
-											/>
-											<button
-												type="button"
-												className={s.eyeBtn}
-												aria-label={showNew ? "Hide password" : "Show password"}
-												onClick={() => setShowNew((v) => !v)}
-											>
-												<i
-													className={showNew ? "bi bi-eye-slash" : "bi bi-eye"}
-												/>
-											</button>
-										</div>
-										{/* LEGACY BRIDGE: strengthBar width/background per score */}
-										<div className={s.strengthTrack}>
-											<div
-												className={s.strengthBar}
-												style={{
-													width: `${(score / 4) * 100}%`,
-													background:
-														score > 0
-															? STRENGTH_COLORS[score - 1]
-															: "transparent",
-												}}
-											/>
-										</div>
-										<div
-											style={{
-												marginTop: "0.7rem",
-												display: "grid",
-												gap: "0.2rem",
-											}}
-										>
-											{content.passwordRequirements.map((req, i) => (
-												<div
-													className={cx(s.reqRow, reqMet[i] && s.met)}
-													key={req}
-												>
-													<i
-														className={
-															reqMet[i]
-																? "bi bi-check-circle-fill"
-																: "bi bi-circle"
-														}
-													/>
-													{req}
-												</div>
-											))}
-										</div>
-									</div>
-
-									<div className={s.formGroup}>
-										<label className={s.formLabel} htmlFor="confirmPassword">
-											Confirm Password
-										</label>
-										<div className="position-relative">
-											<input
-												type={showConfirm ? "text" : "password"}
-												className={s.formInput}
-												id="confirmPassword"
-												placeholder="Confirm new password"
-												style={{ paddingRight: "3rem" }}
-												value={confirmPwd}
-												onChange={(e) => setConfirmPwd(e.target.value)}
-											/>
-											<button
-												type="button"
-												className={s.eyeBtn}
-												aria-label={
-													showConfirm ? "Hide password" : "Show password"
-												}
-												onClick={() => setShowConfirm((v) => !v)}
-											>
-												<i
-													className={
-														showConfirm ? "bi bi-eye-slash" : "bi bi-eye"
-													}
-												/>
-											</button>
-										</div>
-									</div>
-
-									<div className="form-check mb-3">
-										<input
-											type="checkbox"
-											className="form-check-input"
-											id="logoutDevices"
-											checked={logoutDevices}
-											onChange={(e) => setLogoutDevices(e.target.checked)}
-										/>
-										<label
-											className="form-check-label"
-											htmlFor="logoutDevices"
-											style={{ color: "var(--rc-ink-2)", fontSize: "0.85rem" }}
-										>
-											Log out all other devices
-										</label>
-									</div>
-
-									<button
-										type="submit"
-										className={cx(s.btnPaymo, "w-100")}
-										disabled={!resetReady || resetting}
-									>
-										{resetting ? (
-											<>
-												<span className="spinner-border spinner-border-sm me-2" />{" "}
-												Resetting...
-											</>
-										) : (
-											<>
-												Reset Password <i className="bi bi-arrow-right ms-1" />
-											</>
-										)}
-									</button>
-								</form>
-							)}
-
-							{/* ===== SUCCESS ===== */}
-							{step === 0 && (
-								<div style={{ textAlign: "center", padding: "2rem 0" }}>
-									<div className={s.successIcon}>
-										<i className="bi bi-check-lg" />
-									</div>
-									<h3
-										style={{
-											fontSize: "1.5rem",
-											fontWeight: 800,
-											marginBottom: "0.5rem",
-											color: "var(--rc-ink-0)",
-										}}
-									>
-										Password Reset Successfully
-									</h3>
-									<p className={s.mutedText} style={{ marginBottom: "1.5rem" }}>
-										Your account is now secured. You can sign in with your new
-										password.
-									</p>
-									<a
-										href={content.loginRoute}
-										className={cx(
-											s.btnPaymo,
-											"w-100 d-inline-flex align-items-center justify-content-center",
-										)}
-									>
-										Go to Sign In <i className="bi bi-arrow-right ms-1" />
-									</a>
-								</div>
-							)}
-						</div>
-					</div>
+				<div className={s.center}>
+					<h1 className={s.title}>Recover your account</h1>
+					<p className={s.subtitle}>Step {step + 1} of 3</p>
 				</div>
+
+				<Card>
+					<Stepper steps={STEPS} current={step} />
+					<div style={{ margin: "0.9rem 0 1.1rem" }}>
+						<Progress value={((step + 1) / 3) * 100} sm />
+					</div>
+
+					{/* -------- method -------- */}
+					{step === 0 && (
+						<div className={s.stack}>
+							<Field label="Email or phone on the account" htmlFor="rcId">
+								<Input
+									id="rcId"
+									placeholder="you@company.com"
+									value={identifier}
+									onChange={(e) => setIdentifier(e.target.value)}
+								/>
+							</Field>
+							<div className={s.label}>How should we verify you?</div>
+							{METHODS.map((m) => (
+								<OptionCard
+									key={m.id}
+									icon={m.icon}
+									tone={m.tone}
+									title={m.title}
+									sub={m.sub}
+									selected={method === m.id}
+									onClick={() => setMethod(m.id)}
+								/>
+							))}
+						</div>
+					)}
+
+					{/* -------- verify -------- */}
+					{step === 1 && (
+						<div className={s.stack}>
+							{method === "questions" ? (
+								QUESTIONS.map((q, i) => (
+									<Field key={q} label={q} htmlFor={`rcQ${i}`}>
+										<Input
+											id={`rcQ${i}`}
+											value={answers[i]}
+											onChange={(e) =>
+												setAnswers((prev) =>
+													prev.map((a, j) => (i === j ? e.target.value : a)),
+												)
+											}
+										/>
+									</Field>
+								))
+							) : method === "magic" ? (
+								<div className={s.center}>
+									<div className={cx(s.bio, s.bioScan)}>
+										<i className="bi bi-link-45deg" />
+									</div>
+									<div className={s.cardTitle}>Waiting for the link</div>
+									<p className={s.tiny} style={{ margin: "0.35rem 0 0" }}>
+										Open the email we sent to <b>{identifier}</b>. This page
+										updates automatically.
+									</p>
+								</div>
+							) : (
+								<>
+									<div className={s.center}>
+										<span
+											className={cx(s.tile, s.tileLg, s.tileGreen)}
+											style={{ margin: "0 auto 0.7rem" }}
+										>
+											<i
+												className={
+													method === "email"
+														? "bi bi-envelope-check"
+														: "bi bi-phone"
+												}
+											/>
+										</span>
+										<div className={s.cardTitle}>
+											Enter your verification code
+										</div>
+										<p className={s.tiny} style={{ margin: "0.3rem 0 0" }}>
+											Sent to <b>{identifier}</b> · expires in 5 minutes
+										</p>
+									</div>
+									<OtpInput
+										value={otp}
+										onChange={setOtp}
+										invalid={otpBad}
+										onComplete={() => verify()}
+									/>
+									<div className={s.row} style={{ justifyContent: "center" }}>
+										<Button
+											variant="subtle"
+											size="sm"
+											icon="bi-arrow-clockwise"
+											disabled={cooldown > 0}
+											onClick={() => {
+												setCooldown(60);
+												toast.success(
+													"New code sent",
+													"The previous code is now invalid.",
+												);
+											}}
+										>
+											{cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+										</Button>
+										<Button
+											variant="subtle"
+											size="sm"
+											onClick={() => setStep(0)}
+											icon="bi-shuffle"
+										>
+											Try another method
+										</Button>
+									</div>
+								</>
+							)}
+						</div>
+					)}
+
+					{/* -------- reset -------- */}
+					{step === 2 && (
+						<div className={s.stack}>
+							<Field label="New password" htmlFor="rcPw">
+								<PasswordInput
+									id="rcPw"
+									value={pw}
+									onChange={setPw}
+									placeholder="Choose a strong password"
+									autoComplete="new-password"
+								/>
+							</Field>
+							<Field
+								label="Confirm password"
+								htmlFor="rcPw2"
+								tone={pw2.length === 0 ? undefined : match ? "ok" : "err"}
+								hint={
+									pw2.length === 0
+										? undefined
+										: match
+											? "Passwords match"
+											: "Passwords don't match"
+								}
+							>
+								<PasswordInput
+									id="rcPw2"
+									value={pw2}
+									onChange={setPw2}
+									placeholder="Re-type your password"
+									autoComplete="new-password"
+								/>
+							</Field>
+							<div className={s.row} style={{ gap: "0.4rem" }}>
+								{REQS.map((r, i) => (
+									<span
+										key={r}
+										className={cx(
+											s.badge,
+											checks[i] ? s.badgeGreen : s.badgeSlate,
+										)}
+									>
+										<i
+											className={checks[i] ? "bi bi-check-lg" : "bi bi-dash"}
+										/>{" "}
+										{r}
+									</span>
+								))}
+							</div>
+							<div className={s.listRow}>
+								<span className={cx(s.tile, s.tileSm, s.tileAmber)}>
+									<i className="bi bi-box-arrow-right" />
+								</span>
+								<span className={s.grow}>
+									<span className={s.optionTitle}>
+										Sign out all other devices
+									</span>
+									<span className={s.optionSub} style={{ display: "block" }}>
+										Recommended if you suspect someone else had access
+									</span>
+								</span>
+								<Check checked={signOutAll} onChange={setSignOutAll}>
+									<span className={s.srOnly}>Sign out other devices</span>
+								</Check>
+							</div>
+						</div>
+					)}
+
+					<div className={s.spread} style={{ marginTop: "1.2rem" }}>
+						<Button
+							variant="subtle"
+							icon="bi-arrow-left"
+							onClick={() =>
+								step === 0 ? go("/auth/login") : setStep((v) => v - 1)
+							}
+						>
+							{step === 0 ? "Back to sign in" : "Back"}
+						</Button>
+						<Button
+							loading={busy}
+							onClick={
+								step === 0 ? startRecovery : step === 1 ? verify : resetPassword
+							}
+							disabled={step === 1 && method === "magic"}
+						>
+							{step === 2
+								? busy
+									? "Updating…"
+									: "Update password"
+								: "Continue"}
+						</Button>
+					</div>
+				</Card>
+
+				<p className={cx(s.tiny, s.center)}>
+					Still stuck?{" "}
+					<button
+						type="button"
+						className={s.link}
+						onClick={() => setSupportOpen(true)}
+					>
+						Contact the recovery team
+					</button>
+				</p>
+			</AuthSplit>
+
+			<SupportModal open={supportOpen} onClose={() => setSupportOpen(false)} />
+		</AuthPage>
+	);
+}
+
+function SupportModal({
+	open,
+	onClose,
+}: {
+	open: boolean;
+	onClose: () => void;
+}) {
+	return (
+		<Modal
+			open={open}
+			onClose={onClose}
+			title="Assisted recovery"
+			sub="Identity verification is required — expect 24–48 hours."
+			icon="bi-headset"
+			tone="violet"
+			footer={
+				<Button variant="ghost" onClick={onClose}>
+					Close
+				</Button>
+			}
+		>
+			<div className={s.stack}>
+				<OptionCard
+					icon="bi-person-vcard"
+					title="High-assurance identity check"
+					sub="Document, video or bank micro-deposit verification"
+					onClick={() => go("/auth/identity")}
+				/>
+				<OptionCard
+					icon="bi-lock"
+					tone="amber"
+					title="My account is restricted"
+					sub="See what's blocked and the fastest way to unlock"
+					onClick={() => go("/auth/account-status")}
+				/>
+				<Notice tone="red" icon="bi-shield-exclamation">
+					Paymo staff will never ask for your password, PIN or OTP. Third-party
+					“recovery agents” are always fraudulent.
+				</Notice>
 			</div>
-		</div>
+		</Modal>
 	);
 }

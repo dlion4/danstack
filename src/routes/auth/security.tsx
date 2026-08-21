@@ -3,4 +3,5 @@ import SecurityCenter from "../../features/authentication/pages/SecurityCenter";
 
 export const Route = createFileRoute("/auth/security")({
 	component: SecurityCenter,
+	head: () => ({ meta: [{ title: "Security centre · Paymo BAAS" }] }),
 });
