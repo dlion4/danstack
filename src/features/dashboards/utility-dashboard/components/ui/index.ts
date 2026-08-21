@@ -1,2 +1,2 @@
-export * from "./index.tsx";
 export * from "./icons";
+export * from "./index.tsx";

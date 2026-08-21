@@ -1,2 +1,1 @@
-export * from "./Shell";
-export { default as UtilityShell } from "./UtilityShell";
+export { Shell } from "./Shell";
