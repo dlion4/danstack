@@ -94,15 +94,15 @@ export interface Module {
 }
 
 export const MODULES: Module[] = [
-  { id: "5.1", name: "Card Command Center", anchor: "overview", hint: "Portfolio pulse, alerts & controls", icon: "grid" },
+  { id: "5.1", name: "Card Command Center", anchor: "overview", hint: "Portfolio pulse, alerts & controls", icon: "sliders" },
   { id: "5.2", name: "Physical Debit Cards", anchor: "overview", hint: "Issuance, tiers & delivery", icon: "card" },
   { id: "5.3", name: "Virtual Debit Center", anchor: "overview", hint: "Single & multi-use virtual debit", icon: "zap" },
   { id: "5.4", name: "Virtual Credit Center", anchor: "overview", hint: "Credit lines & merchant locks", icon: "wallet" },
-  { id: "5.5", name: "Prepaid Cards", anchor: "overview", hint: "Top-ups, funding & MCC locks", icon: "card" },
+  { id: "5.5", name: "Prepaid Cards", anchor: "overview", hint: "Top-ups, funding & MCC locks", icon: "key" },
   { id: "5.6", name: "Corporate Programs", anchor: "overview", hint: "Liability, billing & settlement", icon: "building" },
   { id: "5.7", name: "Security & Fraud", anchor: "overview", hint: "Blocks, disputes & recovery", icon: "shield" },
   { id: "5.8", name: "Analytics & Reporting", anchor: "overview", hint: "Spend mix, corridors & insights", icon: "chart" },
-  { id: "5.9", name: "Program Administration", anchor: "overview", hint: "Gateway & ledger health", icon: "settings" },
+  { id: "5.9", name: "Program Administration", anchor: "overview", hint: "Gateway & ledger health", icon: "gauge" },
   { id: "5.10", name: "Settings & Support", anchor: "overview", hint: "Defaults, currency & help", icon: "headset" },
 ];
 

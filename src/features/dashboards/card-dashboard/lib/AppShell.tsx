@@ -63,20 +63,6 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      {/* Business switcher */}
-      <button type="button" className="pmc-biz-chip">
-        <span className="d-flex align-items-center pmc-gap-25">
-          <span className="pmc-icon-sq-sm d-grid" style={{ background: "var(--pmc-green-soft)", color: "var(--pmc-green-dark)" }}>
-            <Icon name="building" size={16} />
-          </span>
-          <span className="flex-grow-1 text-start" style={{ minWidth: 0, lineHeight: 1.2 }}>
-            <span className="pmc-truncate d-block" style={{ fontSize: 12.5, fontWeight: 700, color: "var(--pmc-ink)" }}>Acme Traders Ltd</span>
-            <span className="d-block" style={{ fontSize: 10.5, color: "var(--pmc-muted)" }}>KRA P051 882 440M</span>
-          </span>
-          <Icon name="chevDown" size={14} style={{ color: "var(--pmc-muted)" }} />
-        </span>
-      </button>
-
       <nav className="pmc-nav-wrap pmc-dark-scroll">
         <p className="pmc-nav-group">Card Center</p>
         <ul className="pmc-nav-list">
@@ -95,16 +81,17 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           })}
         </ul>
 
-        <p className="pmc-nav-group">Card Modules · 5.x</p>
+        <p className="pmc-nav-group">Card Modules</p>
         <ul className="pmc-nav-list">
           {MODULES.map((m) => {
             const pageFor = m.id === "5.2" ? "5.2" as const : m.id === "5.3" ? "5.3" as const : m.id === "5.4" ? "5.4" as const : m.id === "5.5" ? "5.5" as const : m.id === "5.6" ? "5.6" as const : m.id === "5.7" ? "5.7" as const : m.id === "5.8" ? "5.8" as const : m.id === "5.9" ? "5.9" as const : m.id === "5.10" ? "5.10" as const : "5.1" as const;
             const primaryPage = ["5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "5.8", "5.9", "5.10"].includes(m.id);
             const isOn = page === pageFor && (primaryPage || active === m.anchor);
+            const iconName = (m.icon || "sliders") as any;
             return (
               <li key={m.id} title={m.hint}>
                 <button type="button" onClick={() => goPage(pageFor, m.anchor, m.filter)} className={cn("pmc-nav-item pmc-module-item pmc-focus", isOn && "active")}>
-                  <span className="pmc-module-id">{m.id}</span>
+                  <Icon name={iconName} size={15} className="pmc-nav-icon flex-shrink-0" />
                   <span className="flex-grow-1 pmc-truncate pmc-module-label">{m.name}</span>
                   {isOn && <span className="pmc-live-dot" />}
                 </button>
@@ -114,8 +101,12 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </ul>
       </nav>
 
-      {/* Status + support */}
+      {/* Switch Account */}
       <div className="pmc-side-footer">
+        <a href="/auth/hub" className="pmc-switch-acct-btn pmc-focus">
+          <Icon name="arrowRight" size={15} />
+          <span className="pmc-switch-acct-label">Switch Account</span>
+        </a>
         <button type="button" onClick={() => openDrawer({ type: "support" })} className="pmc-support-btn pmc-focus">
           <span className="pmc-icon-sq-sm d-grid" style={{ background: "var(--pmc-blue-soft)", color: "var(--pmc-blue)" }}>
             <Icon name="headset" size={15} />
