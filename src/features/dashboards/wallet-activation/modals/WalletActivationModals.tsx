@@ -107,11 +107,11 @@ export function WalletActivationModals({
         if (step === 1) {
           return (
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, padding: "14px 16px", borderRadius: 12, background: "var(--success-bg)", color: "#047857" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, padding: "14px 16px", borderRadius: 12, background: "var(--success-bg)", color: "#0b8f52" }}>
                 <i className="bi bi-lightning-charge-fill" style={{ fontSize: 22 }} />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Activating {activeDash}</div>
-                  <div style={{ fontSize: 12, color: "#065F46" }}>Review and accept the consent items below to unlock this dashboard.</div>
+                  <div style={{ fontSize: 12, color: "#0a6b3e" }}>Review and accept the consent items below to unlock this dashboard.</div>
                 </div>
               </div>
               <div className={s.softBox} style={{ marginBottom: 14 }}>
@@ -382,7 +382,7 @@ export function WalletActivationModals({
               <div style={{ marginTop: 16 }}>
                 <div style={{ fontWeight: 700, fontSize: 12, color: "var(--ink-700)", marginBottom: 12 }}>Available Source Wallets</div>
                 {[
-                  { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", balance: "KES 1,284,300", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "P" },
+                  { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", balance: "KES 1,284,300", grad: "linear-gradient(135deg,#0b8f52,#12b76a)", letter: "P" },
                   { id: 2, name: "Business Float", origin: "Business Portal", number: "•••• 2207", balance: "KES 6,150,000", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
                   { id: 3, name: "Savings Jar", origin: "Savings & Investments", number: "•••• 7793", balance: "KES 480,000", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "S" },
                 ].map((acc) => (
@@ -484,7 +484,7 @@ export function WalletActivationModals({
                     <div style={{ fontSize: 11, color: "var(--ink-500)" }}>Destination Wallet</div>
                   </div>
                 </div>
-                <div style={{ padding: "12px", borderRadius: 8, background: "var(--success-bg)", border: "1px solid var(--success)", fontSize: 12, color: "#065F46" }}>
+                <div style={{ padding: "12px", borderRadius: 8, background: "var(--success-bg)", border: "1px solid var(--success)", fontSize: 12, color: "#0a6b3e" }}>
                   <i className="bi bi-info-circle" /> With the default Full Control permission, money can flow freely in both directions. You can customize this in the next step.
                 </div>
                 <div style={{ marginTop: 12 }}>
@@ -816,7 +816,7 @@ export function WalletActivationModals({
       </div>
       <div className="row g-3">
         {[
-          { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", linked: "12 Jan 2023", balance: "KES 1,284,300", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#059669,#10b981)", letter: "P" },
+          { id: 1, name: "PayMo KES Wallet", origin: "Transaction Hub", number: "•••• 5530", linked: "12 Jan 2023", balance: "KES 1,284,300", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#0b8f52,#12b76a)", letter: "P" },
           { id: 2, name: "Business Float", origin: "Business Portal", number: "•••• 2207", linked: "03 Feb 2024", balance: "KES 6,150,000", permission: "Full Control", status: "Active", grad: "linear-gradient(135deg,#7c3aed,#8b5cf6)", letter: "B" },
           { id: 3, name: "Savings Jar", origin: "Savings & Investments", number: "•••• 7793", linked: "15 Mar 2024", balance: "KES 480,000", permission: "View + Transfer In", status: "Active", grad: "linear-gradient(135deg,#b45309,#f59e0b)", letter: "S" },
           { id: 4, name: "Loan Disbursement", origin: "Loans & Credit", number: "•••• 8910", linked: "02 Apr 2025", balance: "KES 0", permission: "View Only", status: "Paused", grad: "linear-gradient(135deg,#3b82f6,#2563eb)", letter: "L" },
@@ -1579,6 +1579,7 @@ export function WalletActivationModals({
       {linkPermissionsModal}
       {linkNotificationsModal}
       {activeLinksModal}
+      {linkFlowControlModal}
       {unlinkAccountModal}
       {relinkAccountModal}
       {revokeAllAccessModal}
