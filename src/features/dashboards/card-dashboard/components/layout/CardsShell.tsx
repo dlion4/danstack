@@ -17,7 +17,8 @@ import { useEffect, useState } from "react";
 import { AppProvider, scrollToId, ToastViewport, useApp } from "../../store";
 import { Icon, Logo } from "../../icons";
 import { cn } from "../../utils/cn";
-import { MobileNav, QuickBar, SidebarContent, Topbar } from "../../lib/AppShell";
+import { MobileNav, QuickBar, SidebarContent } from "../../lib/AppShell";
+import CardsTopbar from "./CardsTopbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
@@ -159,7 +160,7 @@ function LayoutShell() {
         </aside>
 
         <div className="flex-grow-1" style={{ minWidth: 0 }}>
-          <Topbar />
+          <CardsTopbar expanded={!sidebarCollapsed} onToggleSidebar={() => setSidebarCollapsed((c) => !c)} />
           <main className="pmc-page-content">
             <div className="pmc-main">
               <Outlet />

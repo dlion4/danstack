@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { unpluginRouterGeneratorFactory } from "@tanstack/router-plugin";
+import { nitro } from "nitro/vite";
 
 const tanstackRouter = Object.assign(
 	unpluginRouterGeneratorFactory({}).vite,
@@ -33,6 +34,7 @@ export default defineConfig({
   plugins: [
     tanstackRouter,   // must come first
     tanstackStart(),
+    nitro(),
     react(),
     tailwindcss(),
     devtools({

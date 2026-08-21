@@ -424,7 +424,7 @@
 .pmc-search-panel { left: 0; right: 0; top: calc(100% + 6px); width: auto; }
 
 /* ---------- page content ---------- */
-.pmc-page-content { flex: 1; min-width: 0; padding: 20px 16px 110px; }
+.pmc-page-content { flex: 1; min-width: 0; margin-top: 72px; padding: 20px 16px 110px; }
 @media (min-width: 576px) { .pmc-page-content { padding: 24px 24px 110px; } }
 @media (min-width: 992px) { .pmc-page-content { padding: 28px 28px 120px; } }
 .pmc-main { max-width: 1280px; margin: 0 auto; }
