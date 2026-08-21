@@ -760,6 +760,156 @@ const initialMockData = {
                 },
         ],
 
+
+        businessSuite: {
+                highlights: [
+                        {
+                                icon: "bi-speedometer2",
+                                label: "Health score",
+                                value: "82/100",
+                                text: "Composite signal across cash runway, VAT readiness, receivables, growth, and inventory velocity.",
+                        },
+                        {
+                                icon: "bi-wallet2",
+                                label: "Cash on hand",
+                                value: "KES 1.24M",
+                                text: "Live liquidity split across M-Pesa, banks, wallets, card floats, and treasury balances.",
+                        },
+                        {
+                                icon: "bi-bell",
+                                label: "Attention hub",
+                                value: "5 alerts",
+                                text: "Money-at-stake tasks prioritized by urgency, deadline, and owner — from VAT to overdue invoices.",
+                        },
+                        {
+                                icon: "bi-activity",
+                                label: "Modules online",
+                                value: "12 healthy",
+                                text: "Get Paid, Pay, Cash, Books, CRM, Store, Funding, Marketing, Data and integrations in one cockpit.",
+                        },
+                ],
+                modules: [
+                        { name: "Get Paid", icon: "bi-receipt", status: "Collections strong", tone: "tileGreen" },
+                        { name: "Pay Suppliers", icon: "bi-truck", status: "3 bills due", tone: "tileGold" },
+                        { name: "Cash", icon: "bi-bank", status: "Runway 64 days", tone: "tileBlue" },
+                        { name: "Books", icon: "bi-journal-check", status: "VAT ready", tone: "tilePurple" },
+                        { name: "CRM", icon: "bi-people", status: "4,820 customers", tone: "tilePink" },
+                        { name: "Online Store", icon: "bi-shop", status: "23 live SKUs", tone: "tileGreen" },
+                        { name: "Marketing", icon: "bi-megaphone", status: "+18% repeat", tone: "tilePurple" },
+                        { name: "Funding", icon: "bi-cash-stack", status: "KES 5M limit", tone: "tileGold" },
+                ],
+                timeline: [
+                        { time: "08:02", title: "M-Pesa settlement matched", meta: "KES 186,400 posted to ledger", icon: "bi-check2-circle" },
+                        { time: "08:21", title: "VAT return risk lowered", meta: "eTIMS entries reconciled automatically", icon: "bi-receipt-cutoff" },
+                        { time: "08:43", title: "Supplier payment scheduled", meta: "Kirinyaga Farmers Co-op · KES 48,000", icon: "bi-calendar-check" },
+                        { time: "09:10", title: "Campaign segment refreshed", meta: "VIP buyers with 3+ repeat purchases", icon: "bi-stars" },
+                ],
+        },
+
+        operatingConsole: {
+                tiles: [
+                        {
+                                icon: "bi-diagram-3",
+                                title: "Decision engine",
+                                text: "Home briefing prioritizes actions by cash impact, compliance risk, and customer promise instead of a flat task list.",
+                                points: ["Urgent/important/informational triage", "Money-at-stake labels", "Snooze or resolve without context switching"],
+                        },
+                        {
+                                icon: "bi-graph-up-arrow",
+                                title: "Performance cockpit",
+                                text: "Revenue, expenses, cash allocation, margin, and trend telemetry mirror the business dashboard experience.",
+                                points: ["7/30/90 day views", "Cash allocation drilldowns", "Live module health"],
+                        },
+                        {
+                                icon: "bi-kanban",
+                                title: "Workflows that finish",
+                                text: "Homepage visitors can understand the entire product journey: invoice, collect, reconcile, file tax, pay supplier, and forecast cash.",
+                                points: ["Quick invoice", "Bulk reminders", "Supplier schedules", "Export-ready records"],
+                        },
+                ],
+                tasks: [
+                        { label: "Invoice sent", value: "INV-1104", done: true },
+                        { label: "Payment collected", value: "M-Pesa Till", done: true },
+                        { label: "Ledger posted", value: "Auto matched", done: true },
+                        { label: "VAT checked", value: "eTIMS ready", done: true },
+                        { label: "Supplier paid", value: "Scheduled", done: false },
+                        { label: "Cash forecast", value: "64 days", done: false },
+                ],
+        },
+
+        implementationTracks: [
+                {
+                        week: "Week 1",
+                        title: "Connect the money layer",
+                        text: "Activate sandbox keys, connect M-Pesa, bank, account, wallet, and card rails, then map every incoming event to the ledger.",
+                        chips: ["API keys", "Bank/M-Pesa", "Webhooks", "Ledger mapping"],
+                },
+                {
+                        week: "Week 2–3",
+                        title: "Model operations",
+                        text: "Configure customers, products, suppliers, approvals, VAT categories, settlement rules, and role-based access.",
+                        chips: ["Roles", "Tax rules", "Approvals", "Catalogs"],
+                },
+                {
+                        week: "Week 4–6",
+                        title: "Launch command center",
+                        text: "Go live with dashboard modules, task automation, reconciliation exports, alerts, and route-quality monitoring.",
+                        chips: ["Attention hub", "Reports", "Alerts", "Module health"],
+                },
+                {
+                        week: "Scale",
+                        title: "Optimize and expand",
+                        text: "Add funding, marketing automation, inventory intelligence, multi-branch reporting, and cross-border treasury expansion.",
+                        chips: ["Funding", "Marketing", "Branches", "FX treasury"],
+                },
+        ],
+
+        automationRecipes: [
+                {
+                        trigger: "Invoice overdue by 7 days",
+                        action: "Send WhatsApp/SMS reminder",
+                        outcome: "Recover cash without manual follow-up",
+                        icon: "bi-bell",
+                },
+                {
+                        trigger: "Cash runway drops below 45 days",
+                        action: "Surface funding options and deferable payables",
+                        outcome: "Protect payroll and supplier continuity",
+                        icon: "bi-fuel-pump",
+                },
+                {
+                        trigger: "VAT period closes",
+                        action: "Prepare eTIMS-backed filing pack",
+                        outcome: "Reduce late penalties and accountant churn",
+                        icon: "bi-file-earmark-check",
+                },
+                {
+                        trigger: "Product stock hits reorder point",
+                        action: "Draft purchase order from approved supplier",
+                        outcome: "Prevent lost sales and dead stock",
+                        icon: "bi-box-seam",
+                },
+                {
+                        trigger: "Route degradation detected",
+                        action: "Switch payout rail and notify operator",
+                        outcome: "Maintain collection and payout reliability",
+                        icon: "bi-signpost-split",
+                },
+                {
+                        trigger: "VIP customer becomes inactive",
+                        action: "Launch retention offer segment",
+                        outcome: "Compound lifetime value with less effort",
+                        icon: "bi-stars",
+                },
+        ],
+
+        platformProof: [
+                { label: "Dashboard pages", value: "18+", text: "A full business cockpit behind the homepage promise." },
+                { label: "Workflow modals", value: "40+", text: "Actions for invoice, payroll, tax, stock, funding, marketing and data." },
+                { label: "Realtime surfaces", value: "24/7", text: "Activity, alerts, route quality and business health updates." },
+                { label: "Kenya-first logic", value: "M-Pesa + eTIMS", text: "Localized rails and tax posture built into everyday operations." },
+        ],
+
         developerPoints: [
                 {
                         icon: "bi-clock-history",
@@ -1144,6 +1294,7 @@ export default function Home() {
         const [activeCase, setActiveCase] = useState("neobank");
         const [activeRegion, setActiveRegion] = useState("all");
         const [activeCode, setActiveCode] = useState("curl");
+        const [activeAutomation, setActiveAutomation] = useState(0);
         const [typedCode, setTypedCode] = useState("");
         const [isTyping, setIsTyping] = useState(false);
         const [toasts, setToasts] = useState([]);
@@ -1528,7 +1679,6 @@ export default function Home() {
                         <div className={s.ambientOrb} />
                         <div className={s.ambientOrb2} />
                         <div className={s.ambientOrb3} />
-
 
                         <main>
                                 {/* ================= HERO ================= */}
@@ -2300,6 +2450,281 @@ export default function Home() {
                                                                                         ))}
                                                                                 </div>
                                                                         </div>
+                                                                </div>
+                                                        ))}
+                                                </div>
+                                        </div>
+                                </section>
+
+
+                                {/* ================= BUSINESS DASHBOARD ================= */}
+                                <section id="business-dashboard" className={s.sectionPad}>
+                                        <div className="container">
+                                                <div className="row g-4 align-items-stretch">
+                                                        <div className={cx("col-lg-5", s.reveal)}>
+                                                                <span className={s.sectionKicker}>PayMo Business Dashboard</span>
+                                                                <h2 className={cx(s.heading, "mb-3")}>
+                                                                        The homepage now previews the decision engine behind the product.
+                                                                </h2>
+                                                                <p className={s.textMutedPaymo}>
+                                                                        This section mirrors the refined business-dashboard language: cash,
+                                                                        attention, performance, health, activity, and module status — all
+                                                                        presented with the emerald BAAS animation system.
+                                                                </p>
+                                                                <div className={s.dashboardHeroStack}>
+                                                                        {content.businessSuite.highlights.map((item) => (
+                                                                                <div className={cx(s.glassCard, s.dashboardBrief)} key={item.label}>
+                                                                                        <span className={s.iconBadge}>
+                                                                                                <i className={`bi ${item.icon}`} />
+                                                                                        </span>
+                                                                                        <div>
+                                                                                                <small>{item.label}</small>
+                                                                                                <strong>{item.value}</strong>
+                                                                                                <span>{item.text}</span>
+                                                                                        </div>
+                                                                                </div>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                        <div className={cx("col-lg-7", s.reveal)}>
+                                                                <div className={cx(s.glassCard, s.commandBoard)} data-tilt>
+                                                                        <div className={s.commandTopbar}>
+                                                                                <div>
+                                                                                        <span className={s.sectionKicker}>Live briefing</span>
+                                                                                        <h3 className={cx(s.heading, "mb-1")}>Good morning, Wanjiku 👋</h3>
+                                                                                        <p className={cx(s.textMutedPaymo, "mb-0")}>
+                                                                                                5 things need you today — and the business is trending up.
+                                                                                        </p>
+                                                                                </div>
+                                                                                <div className={s.healthDial}>
+                                                                                        <svg viewBox="0 0 120 70" aria-hidden="true">
+                                                                                                <defs>
+                                                                                                        <linearGradient id="healthGrad" x1="0" y1="0" x2="1" y2="0">
+                                                                                                                <stop offset="0%" stopColor="#2ee6a0" />
+                                                                                                                <stop offset="100%" stopColor="#7cf5c8" />
+                                                                                                        </linearGradient>
+                                                                                                </defs>
+                                                                                                <path d="M 18 60 A 42 42 0 0 1 102 60" />
+                                                                                                <path d="M 18 60 A 42 42 0 0 1 102 60" className={s.healthArc} />
+                                                                                        </svg>
+                                                                                        <strong>82</strong>
+                                                                                        <span>health</span>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div className={s.commandKpis}>
+                                                                                <div className={cx(s.commandKpi, s.primary)}>
+                                                                                        <small>Cash on hand</small>
+                                                                                        <strong>KES 1.245M</strong>
+                                                                                        <span>+12% vs last month</span>
+                                                                                </div>
+                                                                                <div className={s.commandKpi}>
+                                                                                        <small>Collected</small>
+                                                                                        <strong>KES 385K</strong>
+                                                                                        <span>Friday peak hour · 17:00</span>
+                                                                                </div>
+                                                                                <div className={s.commandKpi}>
+                                                                                        <small>Net position</small>
+                                                                                        <strong>KES 685K</strong>
+                                                                                        <span>Receivables less payables</span>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div className="row g-3 mt-1">
+                                                                                <div className="col-md-6">
+                                                                                        <div className={s.moduleGridCompact}>
+                                                                                                {content.businessSuite.modules.map((mod) => (
+                                                                                                        <div className={s.modulePill} key={mod.name}>
+                                                                                                                <span className={cx(s.tile, s[mod.tone])}>
+                                                                                                                        <i className={`bi ${mod.icon}`} />
+                                                                                                                </span>
+                                                                                                                <div>
+                                                                                                                        <strong>{mod.name}</strong>
+                                                                                                                        <small>{mod.status}</small>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                ))}
+                                                                                        </div>
+                                                                                </div>
+                                                                                <div className="col-md-6">
+                                                                                        <div className={s.activityTimeline}>
+                                                                                                {content.businessSuite.timeline.map((event) => (
+                                                                                                        <div className={s.activityEvent} key={event.title}>
+                                                                                                                <span>{event.time}</span>
+                                                                                                                <i className={`bi ${event.icon}`} />
+                                                                                                                <div>
+                                                                                                                        <strong>{event.title}</strong>
+                                                                                                                        <small>{event.meta}</small>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                ))}
+                                                                                        </div>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </section>
+
+                                {/* ================= OPERATING CONSOLE ================= */}
+                                <section id="operating-console" className={s.sectionPad}>
+                                        <div className="container">
+                                                <div className={cx("text-center mb-5", s.reveal)}>
+                                                        <span className={s.sectionKicker}>Advanced Operating Console</span>
+                                                        <h2 className={cx(s.heading, "mb-3")}>
+                                                                From marketing page to product narrative — every feature has a visible operating loop.
+                                                        </h2>
+                                                        <p className={cx(s.textMutedPaymo, "mx-auto")} style={{ maxWidth: "860px" }}>
+                                                                The home page now explains what PayMo does after a user signs in: decide,
+                                                                execute, reconcile, and optimize. It keeps the existing glass motion system
+                                                                while adding deeper dashboard-consistent product storytelling.
+                                                        </p>
+                                                </div>
+                                                <div className="row g-4">
+                                                        {content.operatingConsole.tiles.map((tile) => (
+                                                                <div className={cx("col-lg-4", s.reveal)} key={tile.title}>
+                                                                        <div className={cx(s.glassCard, s.consoleCard, s.tilt)} data-tilt>
+                                                                                <span className={s.consoleIcon}>
+                                                                                        <i className={`bi ${tile.icon}`} />
+                                                                                </span>
+                                                                                <h3 className={cx(s.heading, "fs-4")}>{tile.title}</h3>
+                                                                                <p className={s.textMutedPaymo}>{tile.text}</p>
+                                                                                <ul className={s.consoleList}>
+                                                                                        {tile.points.map((point) => (
+                                                                                                <li key={point}>
+                                                                                                        <i className="bi bi-check2-circle" />
+                                                                                                        {point}
+                                                                                                </li>
+                                                                                        ))}
+                                                                                </ul>
+                                                                        </div>
+                                                                </div>
+                                                        ))}
+                                                </div>
+                                                <div className={cx(s.glassCard, s.workflowStrip, s.reveal)}>
+                                                        {content.operatingConsole.tasks.map((task, index) => (
+                                                                <div className={cx(s.workflowNode, task.done && s.done)} key={task.label}>
+                                                                        <span>{String(index + 1).padStart(2, "0")}</span>
+                                                                        <strong>{task.label}</strong>
+                                                                        <small>{task.value}</small>
+                                                                        {index < content.operatingConsole.tasks.length - 1 && <i className={cx("bi bi-arrow-right", s.workflowArrow)} />}
+                                                                </div>
+                                                        ))}
+                                                </div>
+                                        </div>
+                                </section>
+
+                                {/* ================= IMPLEMENTATION ================= */}
+                                <section id="implementation" className={s.sectionPad}>
+                                        <div className="container">
+                                                <div className="row g-4 align-items-stretch">
+                                                        <div className={cx("col-lg-4", s.reveal)}>
+                                                                <span className={s.sectionKicker}>Implementation Path</span>
+                                                                <h2 className={cx(s.heading, "mb-3")}>
+                                                                        Extensive, enterprise-ready rollout without losing startup speed.
+                                                                </h2>
+                                                                <p className={s.textMutedPaymo}>
+                                                                        A clear adoption plan helps founders, operators, and engineers see how
+                                                                        the platform goes from sandbox to live command center.
+                                                                </p>
+                                                                <button
+                                                                        className={cx(s.btnPaymo, "btn d-inline-flex align-items-center gap-2")}
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#treasuryModal"
+                                                                        type="button"
+                                                                >
+                                                                        <i className="bi bi-diagram-2" />
+                                                                        Generate rollout plan
+                                                                </button>
+                                                        </div>
+                                                        <div className={cx("col-lg-8", s.reveal)}>
+                                                                <div className={s.implementationGrid}>
+                                                                        {content.implementationTracks.map((track) => (
+                                                                                <div className={cx(s.glassCard, s.implementationCard)} key={track.week}>
+                                                                                        <small>{track.week}</small>
+                                                                                        <h3 className={cx(s.heading, "fs-4")}>{track.title}</h3>
+                                                                                        <p className={s.textMutedPaymo}>{track.text}</p>
+                                                                                        <div className={s.chipRow}>
+                                                                                                {track.chips.map((chip) => (
+                                                                                                        <span className={s.dataChip} key={chip}>{chip}</span>
+                                                                                                ))}
+                                                                                        </div>
+                                                                                </div>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </section>
+
+                                {/* ================= AUTOMATIONS ================= */}
+                                <section id="automations" className={s.sectionPad}>
+                                        <div className="container">
+                                                <div className={cx("text-center mb-5", s.reveal)}>
+                                                        <span className={s.sectionKicker}>Automation Recipes</span>
+                                                        <h2 className={cx(s.heading, "mb-3")}>
+                                                                Relevant business automations that make the page feel alive.
+                                                        </h2>
+                                                        <p className={cx(s.textMutedPaymo, "mx-auto")} style={{ maxWidth: "820px" }}>
+                                                                Click any recipe to preview the trigger, action, and business outcome.
+                                                                The motion and cards stay aligned with the current emerald glass theme.
+                                                        </p>
+                                                </div>
+                                                <div className="row g-4 align-items-stretch">
+                                                        <div className={cx("col-lg-5", s.reveal)}>
+                                                                <div className={cx(s.glassCard, s.automationPreview)}>
+                                                                        <span className={s.consoleIcon}>
+                                                                                <i className={`bi ${content.automationRecipes[activeAutomation].icon}`} />
+                                                                        </span>
+                                                                        <small className={s.textMint}>SELECTED AUTOMATION</small>
+                                                                        <h3 className={cx(s.heading, "mb-3")}>
+                                                                                {content.automationRecipes[activeAutomation].trigger}
+                                                                        </h3>
+                                                                        <div className={s.automationStep}>
+                                                                                <span>Action</span>
+                                                                                <strong>{content.automationRecipes[activeAutomation].action}</strong>
+                                                                        </div>
+                                                                        <div className={s.automationStep}>
+                                                                                <span>Outcome</span>
+                                                                                <strong>{content.automationRecipes[activeAutomation].outcome}</strong>
+                                                                        </div>
+                                                                        <button
+                                                                                className={cx(s.btnPaymoOutline, "btn w-100 mt-4")}
+                                                                                type="button"
+                                                                                onClick={() => pushToast("Automation recipe added to sandbox", "bi-magic")}
+                                                                        >
+                                                                                Add to sandbox workspace
+                                                                        </button>
+                                                                </div>
+                                                        </div>
+                                                        <div className={cx("col-lg-7", s.reveal)}>
+                                                                <div className={s.automationGrid}>
+                                                                        {content.automationRecipes.map((recipe, index) => (
+                                                                                <button
+                                                                                        type="button"
+                                                                                        className={cx(s.automationCard, activeAutomation === index && s.active)}
+                                                                                        key={recipe.trigger}
+                                                                                        onClick={() => setActiveAutomation(index)}
+                                                                                >
+                                                                                        <i className={`bi ${recipe.icon}`} />
+                                                                                        <span>{recipe.trigger}</span>
+                                                                                        <small>{recipe.action}</small>
+                                                                                </button>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </section>
+
+                                {/* ================= PROOF STRIP ================= */}
+                                <section id="proof" className={cx(s.sectionPad, "pt-0")}>
+                                        <div className="container">
+                                                <div className={cx(s.proofShell, s.reveal)}>
+                                                        {content.platformProof.map((proof) => (
+                                                                <div className={s.proofCard} key={proof.label}>
+                                                                        <small>{proof.label}</small>
+                                                                        <strong>{proof.value}</strong>
+                                                                        <span>{proof.text}</span>
                                                                 </div>
                                                         ))}
                                                 </div>

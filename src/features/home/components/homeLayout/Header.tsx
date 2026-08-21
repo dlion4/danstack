@@ -248,16 +248,16 @@ export default function Header() {
   const navItemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   /* ----- theme ----- */
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
 
   useEffect(() => {
-    const saved =
-      typeof localStorage !== "undefined"
-        ? localStorage.getItem("paymo-theme")
-        : null;
-    const initial = saved === "light" ? "light" : "dark";
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
+    setTheme("light");
+    document.documentElement.setAttribute("data-theme", "light");
+    try {
+      localStorage.removeItem("paymo-theme");
+    } catch {
+      // ignore storage access failures in restricted browsers
+    }
     return () => {
       document.documentElement.removeAttribute("data-theme");
     };
@@ -267,7 +267,6 @@ export default function Header() {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("paymo-theme", next);
   }, [theme]);
 
   /* ----- toast ----- */
