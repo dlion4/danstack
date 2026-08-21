@@ -1,5 +1,5 @@
 /* ============================================================================
- * UtilityShell.tsx — the PayMo BAAS Utility Dashboard shell (modules 3.1 – 3.6).
+ * UtilityShell.tsx — the PayMo BAAS Utility Dashboard shell (modules 3.1 – 3.7).
  * ----------------------------------------------------------------------------
  * Owns the full layout composition for /utility/* and renders child pages
  * into <Outlet /> — the same pattern the cards dashboard uses in
@@ -20,13 +20,8 @@
  * ========================================================================== */
 
 import { Outlet } from "@tanstack/react-router";
-import "../../features/utility-dashboard/styles/index.css";
+import "../../features/utility-dashboard/styles/index.scss";
 import { AppProvider, useApp } from "../../lib";
-import {
-	AddAccountWizard,
-	BuyWizard,
-	TopUpModal,
-} from "../modals";
 import {
 	AutopayDrawer,
 	ExportModal,
@@ -39,6 +34,7 @@ import {
 	TariffModal,
 	TxnDrawer,
 } from "../dialogs";
+import { AddAccountWizard, BuyWizard, TopUpModal } from "../modals";
 import { ToastHost } from "../ui";
 import { Shell } from "./Shell";
 

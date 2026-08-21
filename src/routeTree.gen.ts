@@ -28,9 +28,10 @@ import { Route as BusinessDashboardIndexRouteImport } from './routes/business-da
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
 import { Route as UtilityWaterRouteImport } from './routes/utility/water'
 import { Route as UtilitySettingsRouteImport } from './routes/utility/settings'
+import { Route as UtilityRecurringRouteImport } from './routes/utility/recurring'
+import { Route as UtilityMobileMoneyRouteImport } from './routes/utility/mobile-money'
 import { Route as UtilityInternetRouteImport } from './routes/utility/internet'
 import { Route as UtilityElectricityRouteImport } from './routes/utility/electricity'
-import { Route as UtilityAirtimeRouteImport } from './routes/utility/airtime'
 import { Route as UtilityModuleRouteImport } from './routes/utility/$module'
 import { Route as PmAppRouteImport } from './routes/pm/app'
 import { Route as DevModuleRouteImport } from './routes/dev/$module'
@@ -302,6 +303,16 @@ const UtilitySettingsRoute = UtilitySettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => UtilityRoute,
 } as any)
+const UtilityRecurringRoute = UtilityRecurringRouteImport.update({
+  id: '/recurring',
+  path: '/recurring',
+  getParentRoute: () => UtilityRoute,
+} as any)
+const UtilityMobileMoneyRoute = UtilityMobileMoneyRouteImport.update({
+  id: '/mobile-money',
+  path: '/mobile-money',
+  getParentRoute: () => UtilityRoute,
+} as any)
 const UtilityInternetRoute = UtilityInternetRouteImport.update({
   id: '/internet',
   path: '/internet',
@@ -310,11 +321,6 @@ const UtilityInternetRoute = UtilityInternetRouteImport.update({
 const UtilityElectricityRoute = UtilityElectricityRouteImport.update({
   id: '/electricity',
   path: '/electricity',
-  getParentRoute: () => UtilityRoute,
-} as any)
-const UtilityAirtimeRoute = UtilityAirtimeRouteImport.update({
-  id: '/airtime',
-  path: '/airtime',
   getParentRoute: () => UtilityRoute,
 } as any)
 const UtilityModuleRoute = UtilityModuleRouteImport.update({
@@ -1380,9 +1386,10 @@ export interface FileRoutesByFullPath {
   '/dev/$module': typeof DevModuleRoute
   '/pm/app': typeof PmAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
-  '/utility/airtime': typeof UtilityAirtimeRoute
   '/utility/electricity': typeof UtilityElectricityRoute
   '/utility/internet': typeof UtilityInternetRoute
+  '/utility/mobile-money': typeof UtilityMobileMoneyRoute
+  '/utility/recurring': typeof UtilityRecurringRoute
   '/utility/settings': typeof UtilitySettingsRoute
   '/utility/water': typeof UtilityWaterRoute
   '/business-dashboard/': typeof BusinessDashboardIndexRoute
@@ -1570,9 +1577,10 @@ export interface FileRoutesByTo {
   '/dev-dashboard/webhooks-events': typeof DevDashboardWebhooksEventsRoute
   '/dev/$module': typeof DevModuleRoute
   '/utility/$module': typeof UtilityModuleRoute
-  '/utility/airtime': typeof UtilityAirtimeRoute
   '/utility/electricity': typeof UtilityElectricityRoute
   '/utility/internet': typeof UtilityInternetRoute
+  '/utility/mobile-money': typeof UtilityMobileMoneyRoute
+  '/utility/recurring': typeof UtilityRecurringRoute
   '/utility/settings': typeof UtilitySettingsRoute
   '/utility/water': typeof UtilityWaterRoute
   '/': typeof HomeIndexRoute
@@ -1770,9 +1778,10 @@ export interface FileRoutesById {
   '/dev/$module': typeof DevModuleRoute
   '/pm/app': typeof PmAppRouteWithChildren
   '/utility/$module': typeof UtilityModuleRoute
-  '/utility/airtime': typeof UtilityAirtimeRoute
   '/utility/electricity': typeof UtilityElectricityRoute
   '/utility/internet': typeof UtilityInternetRoute
+  '/utility/mobile-money': typeof UtilityMobileMoneyRoute
+  '/utility/recurring': typeof UtilityRecurringRoute
   '/utility/settings': typeof UtilitySettingsRoute
   '/utility/water': typeof UtilityWaterRoute
   '/_home/': typeof HomeIndexRoute
@@ -1971,9 +1980,10 @@ export interface FileRouteTypes {
     | '/dev/$module'
     | '/pm/app'
     | '/utility/$module'
-    | '/utility/airtime'
     | '/utility/electricity'
     | '/utility/internet'
+    | '/utility/mobile-money'
+    | '/utility/recurring'
     | '/utility/settings'
     | '/utility/water'
     | '/business-dashboard/'
@@ -2161,9 +2171,10 @@ export interface FileRouteTypes {
     | '/dev-dashboard/webhooks-events'
     | '/dev/$module'
     | '/utility/$module'
-    | '/utility/airtime'
     | '/utility/electricity'
     | '/utility/internet'
+    | '/utility/mobile-money'
+    | '/utility/recurring'
     | '/utility/settings'
     | '/utility/water'
     | '/'
@@ -2360,9 +2371,10 @@ export interface FileRouteTypes {
     | '/dev/$module'
     | '/pm/app'
     | '/utility/$module'
-    | '/utility/airtime'
     | '/utility/electricity'
     | '/utility/internet'
+    | '/utility/mobile-money'
+    | '/utility/recurring'
     | '/utility/settings'
     | '/utility/water'
     | '/_home/'
@@ -2767,6 +2779,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UtilitySettingsRouteImport
       parentRoute: typeof UtilityRoute
     }
+    '/utility/recurring': {
+      id: '/utility/recurring'
+      path: '/recurring'
+      fullPath: '/utility/recurring'
+      preLoaderRoute: typeof UtilityRecurringRouteImport
+      parentRoute: typeof UtilityRoute
+    }
+    '/utility/mobile-money': {
+      id: '/utility/mobile-money'
+      path: '/mobile-money'
+      fullPath: '/utility/mobile-money'
+      preLoaderRoute: typeof UtilityMobileMoneyRouteImport
+      parentRoute: typeof UtilityRoute
+    }
     '/utility/internet': {
       id: '/utility/internet'
       path: '/internet'
@@ -2779,13 +2805,6 @@ declare module '@tanstack/react-router' {
       path: '/electricity'
       fullPath: '/utility/electricity'
       preLoaderRoute: typeof UtilityElectricityRouteImport
-      parentRoute: typeof UtilityRoute
-    }
-    '/utility/airtime': {
-      id: '/utility/airtime'
-      path: '/airtime'
-      fullPath: '/utility/airtime'
-      preLoaderRoute: typeof UtilityAirtimeRouteImport
       parentRoute: typeof UtilityRoute
     }
     '/utility/$module': {
@@ -4155,9 +4174,10 @@ const DevDashboardRouteWithChildren = DevDashboardRoute._addFileChildren(
 
 interface UtilityRouteChildren {
   UtilityModuleRoute: typeof UtilityModuleRoute
-  UtilityAirtimeRoute: typeof UtilityAirtimeRoute
   UtilityElectricityRoute: typeof UtilityElectricityRoute
   UtilityInternetRoute: typeof UtilityInternetRoute
+  UtilityMobileMoneyRoute: typeof UtilityMobileMoneyRoute
+  UtilityRecurringRoute: typeof UtilityRecurringRoute
   UtilitySettingsRoute: typeof UtilitySettingsRoute
   UtilityWaterRoute: typeof UtilityWaterRoute
   UtilityIndexRoute: typeof UtilityIndexRoute
@@ -4165,9 +4185,10 @@ interface UtilityRouteChildren {
 
 const UtilityRouteChildren: UtilityRouteChildren = {
   UtilityModuleRoute: UtilityModuleRoute,
-  UtilityAirtimeRoute: UtilityAirtimeRoute,
   UtilityElectricityRoute: UtilityElectricityRoute,
   UtilityInternetRoute: UtilityInternetRoute,
+  UtilityMobileMoneyRoute: UtilityMobileMoneyRoute,
+  UtilityRecurringRoute: UtilityRecurringRoute,
   UtilitySettingsRoute: UtilitySettingsRoute,
   UtilityWaterRoute: UtilityWaterRoute,
   UtilityIndexRoute: UtilityIndexRoute,
