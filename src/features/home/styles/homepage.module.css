@@ -2044,6 +2044,517 @@
         width: 100%;
 }
 
+/* ---------- advanced business dashboard narrative ---------- */
+.dashboardHeroStack {
+        display: grid;
+        gap: 14px;
+        margin-top: 28px;
+}
+
+.dashboardBrief {
+        padding: 16px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.dashboardBrief:hover {
+        transform: translateX(8px);
+        border-color: rgba(46, 230, 160, 0.28);
+        box-shadow: 0 24px 60px rgba(2, 35, 22, 0.34);
+}
+
+.dashboardBrief small,
+.modulePill small,
+.activityEvent small,
+.workflowNode small,
+.implementationCard small,
+.proofCard small {
+        display: block;
+        color: #91bba8;
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+}
+
+.dashboardBrief strong {
+        display: block;
+        color: #fff;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.35rem;
+        letter-spacing: -0.03em;
+}
+
+.dashboardBrief span:last-child {
+        color: #93bca9;
+        font-size: 0.88rem;
+        line-height: 1.55;
+}
+
+.commandBoard {
+        padding: 26px;
+        min-height: 100%;
+        position: relative;
+        overflow: hidden;
+}
+
+.commandBoard::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        background:
+                radial-gradient(circle at 18% 12%, rgba(46, 230, 160, 0.18), transparent 28%),
+                radial-gradient(circle at 92% 8%, rgba(124, 245, 200, 0.13), transparent 22%),
+                linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 48%);
+        pointer-events: none;
+}
+
+.commandBoard > * {
+        position: relative;
+        z-index: 2;
+}
+
+.commandTopbar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 22px;
+        margin-bottom: 20px;
+}
+
+.commandTopbar .sectionKicker {
+        margin-bottom: 12px;
+}
+
+.healthDial {
+        width: 126px;
+        min-width: 126px;
+        height: 102px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background: rgba(2, 12, 7, 0.42);
+        border: 1px solid rgba(80, 230, 170, 0.14);
+}
+
+.healthDial svg {
+        width: 102px;
+        height: 64px;
+        overflow: visible;
+}
+
+.healthDial path {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.09);
+        stroke-width: 11;
+        stroke-linecap: round;
+}
+
+.healthDial .healthArc {
+        stroke: url(#healthGrad);
+        stroke-dasharray: 108 132;
+        filter: drop-shadow(0 0 10px rgba(46, 230, 160, 0.5));
+}
+
+.healthDial svg::before {
+        content: "";
+}
+
+.healthDial::before {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 18px;
+        background: conic-gradient(from 220deg, rgba(46, 230, 160, 0.38), transparent 72%);
+        opacity: 0.28;
+        animation: spinSlow 8s linear infinite;
+}
+
+.healthDial strong {
+        position: absolute;
+        bottom: 27px;
+        color: #7cf5c8;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.8rem;
+        line-height: 1;
+}
+
+.healthDial span {
+        position: absolute;
+        bottom: 14px;
+        color: #91bba8;
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+}
+
+@keyframes spinSlow {
+        to {
+                transform: rotate(360deg);
+        }
+}
+
+.commandKpis {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+}
+
+.commandKpi {
+        border: 1px solid rgba(80, 230, 170, 0.1);
+        background: rgba(255, 255, 255, 0.035);
+        border-radius: 20px;
+        padding: 16px;
+        min-height: 118px;
+}
+
+.commandKpi.primary {
+        background: linear-gradient(135deg, rgba(46, 230, 160, 0.24), rgba(10, 122, 84, 0.24));
+        border-color: rgba(124, 245, 200, 0.22);
+}
+
+.commandKpi small {
+        color: #a5d2bd;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+}
+
+.commandKpi strong {
+        display: block;
+        color: #fff;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.45rem;
+        letter-spacing: -0.04em;
+        margin: 8px 0 4px;
+}
+
+.commandKpi span {
+        color: #93bca9;
+        font-size: 0.8rem;
+}
+
+.moduleGridCompact {
+        display: grid;
+        gap: 10px;
+}
+
+.modulePill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 16px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(80, 230, 170, 0.1);
+}
+
+.modulePill .tile {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 13px;
+}
+
+.modulePill strong,
+.activityEvent strong {
+        display: block;
+        color: #f6fff9;
+        font-size: 0.88rem;
+        line-height: 1.25;
+}
+
+.activityTimeline {
+        display: grid;
+        gap: 12px;
+        position: relative;
+}
+
+.activityTimeline::before {
+        content: "";
+        position: absolute;
+        left: 58px;
+        top: 10px;
+        bottom: 10px;
+        width: 1px;
+        background: linear-gradient(180deg, rgba(46, 230, 160, 0), rgba(46, 230, 160, 0.45), rgba(46, 230, 160, 0));
+}
+
+.activityEvent {
+        display: grid;
+        grid-template-columns: 44px 30px 1fr;
+        gap: 10px;
+        align-items: start;
+}
+
+.activityEvent > span {
+        color: #7cf5c8;
+        font-size: 0.72rem;
+        font-family: "Space Grotesk", sans-serif;
+        padding-top: 5px;
+}
+
+.activityEvent > i {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        color: #0a3d27;
+        background: #7cf5c8;
+        box-shadow: 0 0 24px rgba(46, 230, 160, 0.28);
+        position: relative;
+        z-index: 2;
+}
+
+.consoleCard {
+        min-height: 100%;
+        padding: 24px;
+        overflow: hidden;
+        position: relative;
+}
+
+.consoleCard::after {
+        content: "";
+        position: absolute;
+        right: -44px;
+        top: -44px;
+        width: 134px;
+        height: 134px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(46, 230, 160, 0.16), transparent 66%);
+        transition: transform 0.3s ease;
+}
+
+.consoleCard:hover::after {
+        transform: scale(1.28);
+}
+
+.consoleIcon {
+        width: 52px;
+        height: 52px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #7cf5c8, #19b877);
+        color: #03130c;
+        font-size: 1.35rem;
+        box-shadow: 0 20px 44px rgba(46, 230, 160, 0.18);
+        margin-bottom: 18px;
+}
+
+.consoleList {
+        list-style: none;
+        padding: 0;
+        margin: 18px 0 0;
+        display: grid;
+        gap: 10px;
+}
+
+.consoleList li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        color: #b7dfcc;
+        font-size: 0.9rem;
+}
+
+.consoleList i {
+        color: #2ee6a0;
+        margin-top: 1px;
+}
+
+.workflowStrip {
+        margin-top: 28px;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+}
+
+.workflowNode {
+        min-height: 132px;
+        border-radius: 18px;
+        border: 1px solid rgba(80, 230, 170, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 14px;
+        position: relative;
+}
+
+.workflowNode.done {
+        border-color: rgba(46, 230, 160, 0.28);
+        background: rgba(46, 230, 160, 0.08);
+}
+
+.workflowNode > span {
+        color: #7cf5c8;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.76rem;
+}
+
+.workflowNode strong {
+        display: block;
+        color: #fff;
+        margin: 8px 0 4px;
+        font-size: 0.95rem;
+}
+
+.workflowArrow {
+        position: absolute;
+        right: -17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #2ee6a0;
+        z-index: 2;
+}
+
+.implementationGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+}
+
+.implementationCard {
+        padding: 22px;
+        min-height: 100%;
+        position: relative;
+}
+
+.implementationCard::before {
+        content: "";
+        position: absolute;
+        left: 22px;
+        top: -1px;
+        width: 54px;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #2ee6a0, transparent);
+}
+
+.implementationCard small {
+        color: #7cf5c8;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        margin-bottom: 10px;
+}
+
+.automationPreview {
+        padding: 28px;
+        min-height: 100%;
+        position: sticky;
+        top: 90px;
+}
+
+.automationStep {
+        border-radius: 18px;
+        border: 1px solid rgba(80, 230, 170, 0.12);
+        background: rgba(255, 255, 255, 0.035);
+        padding: 16px;
+        margin-top: 12px;
+}
+
+.automationStep span {
+        display: block;
+        color: #7cf5c8;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        margin-bottom: 6px;
+}
+
+.automationStep strong {
+        color: #fff;
+        font-size: 1rem;
+}
+
+.automationGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+}
+
+.automationCard {
+        text-align: left;
+        border: 1px solid rgba(80, 230, 170, 0.12);
+        background: rgba(255, 255, 255, 0.035);
+        color: #eafff5;
+        border-radius: 20px;
+        padding: 18px;
+        min-height: 146px;
+        transition:
+                transform 0.2s ease,
+                border-color 0.2s ease,
+                background 0.2s ease;
+}
+
+.automationCard:hover,
+.automationCard.active {
+        transform: translateY(-4px);
+        border-color: rgba(46, 230, 160, 0.36);
+        background: rgba(46, 230, 160, 0.08);
+}
+
+.automationCard i {
+        display: inline-grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        background: rgba(46, 230, 160, 0.12);
+        color: #7cf5c8;
+        margin-bottom: 14px;
+}
+
+.automationCard span {
+        display: block;
+        color: #fff;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: 6px;
+}
+
+.automationCard small {
+        color: #93bca9;
+        line-height: 1.45;
+}
+
+.proofShell {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        border: 1px solid rgba(80, 230, 170, 0.12);
+        border-radius: 26px;
+        overflow: hidden;
+        background: rgba(80, 230, 170, 0.12);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
+}
+
+.proofCard {
+        padding: 24px;
+        background: rgba(4, 24, 15, 0.88);
+}
+
+.proofCard strong {
+        display: block;
+        color: #fff;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.55rem;
+        letter-spacing: -0.04em;
+        margin: 6px 0;
+}
+
+.proofCard span {
+        color: #93bca9;
+        font-size: 0.9rem;
+        line-height: 1.5;
+}
+
+
 
 
 /* ---------- reveals & toasts ---------- */
@@ -2213,8 +2724,14 @@
         }
         .trustGrid,
         .caseMetrics,
-        .overlayMetrics {
+        .overlayMetrics,
+        .commandKpis,
+        .workflowStrip,
+        .proofShell {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .automationPreview {
+                position: static;
         }
         .hubNode {
                 position: static;
@@ -2266,7 +2783,12 @@
         .stepRail,
         .trustGrid,
         .caseMetrics,
-        .overlayMetrics {
+        .overlayMetrics,
+        .commandKpis,
+        .implementationGrid,
+        .automationGrid,
+        .workflowStrip,
+        .proofShell {
                 grid-template-columns: 1fr;
         }
         .heroVisual {
@@ -2321,6 +2843,29 @@
         }
         .ctaArt {
                 display: none;
+        }
+        .commandTopbar {
+                flex-direction: column;
+        }
+        .healthDial {
+                width: 100%;
+                min-width: 0;
+        }
+        .workflowArrow {
+                display: none;
+        }
+        .commandBoard,
+        .automationPreview,
+        .consoleCard,
+        .implementationCard,
+        .proofCard {
+                padding: 18px;
+        }
+        .activityEvent {
+                grid-template-columns: 38px 28px 1fr;
+        }
+        .activityTimeline::before {
+                left: 52px;
         }
         .toastWrap {
                 left: 16px;
@@ -2879,4 +3424,547 @@
 :global(html[data-theme="light"] .navbar .nav-link:hover),
 :global(html[data-theme="light"] .navbar .nav-link.active) {
         color: #0c2e1e;
+}
+
+/* ---- advanced business dashboard narrative (light) ---- */
+:global(html[data-theme="light"]) .dashboardBrief,
+:global(html[data-theme="light"]) .commandBoard,
+:global(html[data-theme="light"]) .consoleCard,
+:global(html[data-theme="light"]) .workflowStrip,
+:global(html[data-theme="light"]) .implementationCard,
+:global(html[data-theme="light"]) .automationPreview {
+        background: rgba(255, 255, 255, 0.82);
+        border-color: rgba(22, 168, 97, 0.16);
+}
+:global(html[data-theme="light"]) .dashboardBrief strong,
+:global(html[data-theme="light"]) .commandTopbar h3,
+:global(html[data-theme="light"]) .commandKpi strong,
+:global(html[data-theme="light"]) .modulePill strong,
+:global(html[data-theme="light"]) .activityEvent strong,
+:global(html[data-theme="light"]) .consoleCard h3,
+:global(html[data-theme="light"]) .workflowNode strong,
+:global(html[data-theme="light"]) .implementationCard h3,
+:global(html[data-theme="light"]) .automationStep strong,
+:global(html[data-theme="light"]) .automationCard span,
+:global(html[data-theme="light"]) .proofCard strong {
+        color: #0c2e1e;
+}
+:global(html[data-theme="light"]) .dashboardBrief small,
+:global(html[data-theme="light"]) .modulePill small,
+:global(html[data-theme="light"]) .activityEvent small,
+:global(html[data-theme="light"]) .workflowNode small,
+:global(html[data-theme="light"]) .proofCard small,
+:global(html[data-theme="light"]) .commandKpi span,
+:global(html[data-theme="light"]) .automationCard small,
+:global(html[data-theme="light"]) .proofCard span {
+        color: #3d6b57;
+}
+:global(html[data-theme="light"]) .commandKpi,
+:global(html[data-theme="light"]) .modulePill,
+:global(html[data-theme="light"]) .workflowNode,
+:global(html[data-theme="light"]) .automationStep,
+:global(html[data-theme="light"]) .automationCard {
+        background: rgba(246, 251, 247, 0.92);
+        border-color: rgba(22, 168, 97, 0.15);
+}
+:global(html[data-theme="light"]) .commandKpi.primary,
+:global(html[data-theme="light"]) .workflowNode.done,
+:global(html[data-theme="light"]) .automationCard:hover,
+:global(html[data-theme="light"]) .automationCard.active {
+        background: rgba(22, 168, 97, 0.1);
+        border-color: rgba(22, 168, 97, 0.3);
+}
+:global(html[data-theme="light"]) .healthDial {
+        background: rgba(246, 251, 247, 0.92);
+        border-color: rgba(22, 168, 97, 0.18);
+}
+:global(html[data-theme="light"]) .healthDial path {
+        stroke: rgba(12, 46, 30, 0.1);
+}
+:global(html[data-theme="light"]) .healthDial .healthArc {
+        stroke: url(#healthGrad);
+}
+:global(html[data-theme="light"]) .proofShell {
+        background: rgba(22, 168, 97, 0.16);
+        border-color: rgba(22, 168, 97, 0.16);
+}
+:global(html[data-theme="light"]) .proofCard {
+        background: rgba(255, 255, 255, 0.9);
+}
+
+/* ==========================================================================
+   AUTH-STYLE HOMEPAGE HEADER + LIGHT DEFAULT REFINEMENTS
+   Matches src/features/authentication/styles/authTheme.module.css tokens.
+   ========================================================================== */
+.homeHeader {
+        position: sticky;
+        top: 0;
+        z-index: 1200;
+        padding: 12px 0;
+        background: rgba(255, 255, 255, 0.92);
+        border-bottom: 1px solid #e6e9f0;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 42px -32px rgba(16, 24, 40, 0.24);
+}
+
+.homeNav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+}
+
+.homeBrand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #101828;
+        text-decoration: none;
+        min-width: max-content;
+}
+
+.homeBrand:hover {
+        color: #101828;
+}
+
+.homeBrandMark {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: inline-grid;
+        place-items: center;
+        color: #fff;
+        background: linear-gradient(135deg, #12b76a, #0b8f52);
+        box-shadow: 0 4px 14px rgba(18, 183, 106, 0.3);
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+}
+
+.homeBrand strong {
+        display: block;
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 1rem;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+}
+
+.homeBrand small {
+        display: block;
+        color: #667085;
+        font-size: 0.68rem;
+        line-height: 1.2;
+}
+
+.homeNavLinks {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 5px;
+        border: 1px solid #e6e9f0;
+        border-radius: 999px;
+        background: #f9fafc;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.homeNavLinks a {
+        color: #475467;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.78rem;
+        padding: 8px 12px;
+        border-radius: 999px;
+        transition:
+                color 0.16s ease,
+                background 0.16s ease,
+                box-shadow 0.16s ease;
+}
+
+.homeNavLinks a:hover {
+        color: #067647;
+        background: #e7f8ef;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.homeNavActions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: max-content;
+}
+
+.themeSwitch {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 38px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid #e6e9f0;
+        background: #fff;
+        color: #344054;
+        font-family: "Inter", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+        transition:
+                transform 0.15s ease,
+                border-color 0.15s ease,
+                background 0.15s ease;
+}
+
+.themeSwitch:hover {
+        transform: translateY(-1px);
+        border-color: #b7e6cf;
+        background: #e7f8ef;
+}
+
+.themeSwitch i {
+        color: #12b76a;
+}
+
+.navSandboxButton,
+.navPrimaryButton {
+        min-height: 38px;
+        padding: 0.5rem 0.85rem !important;
+        border-radius: 999px !important;
+        font-size: 0.78rem !important;
+        box-shadow: none !important;
+}
+
+.navPrimaryButton {
+        background: #12b76a !important;
+        border-color: #12b76a !important;
+        color: #fff !important;
+}
+
+.navPrimaryButton:hover {
+        background: #0b8f52 !important;
+        border-color: #0b8f52 !important;
+}
+
+.navSandboxButton {
+        background: #fff !important;
+        border-color: #b7e6cf !important;
+        color: #0b8f52 !important;
+}
+
+.navSandboxButton:hover {
+        background: #e7f8ef !important;
+}
+
+/* Light-theme section harmonization — make all homepage areas feel like auth pages. */
+:global(html[data-theme="light"]) .homeHeader {
+        background: rgba(255, 255, 255, 0.94);
+        border-bottom-color: #e6e9f0;
+}
+
+:global(html[data-theme="light"]) .heroSection {
+        padding-top: 54px;
+}
+
+:global(html[data-theme="light"]) .sectionPad {
+        position: relative;
+}
+
+:global(html[data-theme="light"]) .sectionPad::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: min(1120px, calc(100% - 32px));
+        height: 1px;
+        transform: translateX(-50%);
+        background: linear-gradient(90deg, transparent, rgba(18, 183, 106, 0.16), transparent);
+        pointer-events: none;
+}
+
+:global(html[data-theme="light"]) .heading {
+        color: #101828;
+}
+
+:global(html[data-theme="light"]) .btnPaymo {
+        background: #12b76a;
+        border-color: #12b76a;
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 10px 22px rgba(18, 183, 106, 0.14);
+}
+
+:global(html[data-theme="light"]) .btnPaymo:hover {
+        background: #0b8f52;
+        border-color: #0b8f52;
+        color: #fff;
+}
+
+:global(html[data-theme="light"]) .btnPaymoOutline,
+:global(html[data-theme="light"]) .btnChip {
+        background: #fff;
+        border-color: #b7e6cf;
+        color: #0b8f52;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+:global(html[data-theme="light"]) .btnPaymoOutline:hover,
+:global(html[data-theme="light"]) .btnChip:hover,
+:global(html[data-theme="light"]) .btnChip.active {
+        background: #e7f8ef;
+        border-color: #12b76a;
+        color: #067647;
+}
+
+/* Dark switch support keeps the old emerald glass visual but makes header coherent. */
+:global(html[data-theme="dark"]) .homeHeader {
+        background: rgba(11, 19, 34, 0.82);
+        border-bottom-color: rgba(126, 226, 176, 0.12);
+        box-shadow: 0 16px 42px -28px rgba(0, 0, 0, 0.8);
+}
+
+:global(html[data-theme="dark"]) .homeBrand,
+:global(html[data-theme="dark"]) .homeBrand:hover,
+:global(html[data-theme="dark"]) .homeBrand strong {
+        color: #fff;
+}
+
+:global(html[data-theme="dark"]) .homeBrand small {
+        color: #93a5ba;
+}
+
+:global(html[data-theme="dark"]) .homeNavLinks {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(html[data-theme="dark"]) .homeNavLinks a {
+        color: #cfe8db;
+}
+
+:global(html[data-theme="dark"]) .homeNavLinks a:hover {
+        color: #fff;
+        background: rgba(126, 226, 176, 0.12);
+}
+
+:global(html[data-theme="dark"]) .themeSwitch {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #e7eef8;
+}
+
+:global(html[data-theme="dark"]) .navSandboxButton {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(126, 226, 176, 0.2) !important;
+        color: #7ee2b0 !important;
+}
+
+@media (max-width: 1199px) {
+        .homeNav {
+                flex-wrap: wrap;
+        }
+        .homeNavLinks {
+                order: 3;
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto;
+                scrollbar-width: none;
+        }
+        .homeNavLinks::-webkit-scrollbar {
+                display: none;
+        }
+}
+
+@media (max-width: 767px) {
+        .homeHeader {
+                padding: 9px 0;
+        }
+        .homeBrand small,
+        .themeSwitch span,
+        .navSandboxButton {
+                display: none !important;
+        }
+        .homeNavActions {
+                gap: 6px;
+        }
+        .themeSwitch {
+                width: 38px;
+                padding: 0;
+        }
+        .navPrimaryButton {
+                padding-inline: 0.75rem !important;
+        }
+        :global(html[data-theme="light"]) .heroSection {
+                padding-top: 32px;
+        }
+}
+
+/* ==========================================================================
+   FINAL LIGHT THEME REPAIR LAYER
+   This makes the marketing homepage render as a complete auth-style light page
+   even before any client-side observers run. The existing motion system remains
+   available, but content is never hidden if hydration is delayed.
+   ========================================================================== */
+:global(html[data-theme="light"]) :global(body) {
+        background:
+                radial-gradient(circle at 8% 4%, rgba(18, 183, 106, 0.12), transparent 28%),
+                radial-gradient(circle at 90% 8%, rgba(46, 144, 250, 0.08), transparent 24%),
+                linear-gradient(180deg, #f2f4f8 0%, #f9fafc 44%, #eef8f1 100%) !important;
+        color: #101828 !important;
+}
+
+:global(html[data-theme="light"]) .heroSection {
+        padding-top: 56px;
+        padding-bottom: 42px;
+}
+
+:global(html[data-theme="light"]) .heroTitle,
+:global(html[data-theme="light"]) .headlineGradient {
+        background: linear-gradient(180deg, #101828 0%, #123c2a 46%, #0b8f52 100%) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        color: transparent !important;
+}
+
+:global(html[data-theme="light"]) .mintStroke {
+        background: linear-gradient(90deg, #12b76a, #0b8f52, #067647) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        color: transparent !important;
+}
+
+:global(html[data-theme="light"]) .heading:not(.headlineGradient):not(.heroTitle) {
+        color: #101828 !important;
+}
+
+:global(html[data-theme="light"]) .glassCard,
+:global(html[data-theme="light"]) .moduleCard,
+:global(html[data-theme="light"]) .flowCard,
+:global(html[data-theme="light"]) .resultCard,
+:global(html[data-theme="light"]) .consoleCard,
+:global(html[data-theme="light"]) .implementationCard,
+:global(html[data-theme="light"]) .automationPreview,
+:global(html[data-theme="light"]) .commandBoard,
+:global(html[data-theme="light"]) .workflowStrip,
+:global(html[data-theme="light"]) .stackDetail,
+:global(html[data-theme="light"]) .networkShell,
+:global(html[data-theme="light"]) .codePanel,
+:global(html[data-theme="light"]) .ctaShell {
+        background: rgba(255, 255, 255, 0.92) !important;
+        border: 1px solid #e6e9f0 !important;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 18px 45px -28px rgba(16, 24, 40, 0.3) !important;
+        color: #101828 !important;
+}
+
+:global(html[data-theme="light"]) .glassCard:hover,
+:global(html[data-theme="light"]) .moduleCard:hover,
+:global(html[data-theme="light"]) .flowCard:hover,
+:global(html[data-theme="light"]) .consoleCard:hover,
+:global(html[data-theme="light"]) .automationCard:hover,
+:global(html[data-theme="light"]) .automationCard.active {
+        border-color: #b7e6cf !important;
+        box-shadow: 0 24px 60px -22px rgba(18, 183, 106, 0.24) !important;
+}
+
+:global(html[data-theme="light"]) .sectionKicker,
+:global(html[data-theme="light"]) .heroBadge,
+:global(html[data-theme="light"]) .trustBand,
+:global(html[data-theme="light"]) .railChip,
+:global(html[data-theme="light"]) .dataChip,
+:global(html[data-theme="light"]) .btnChip,
+:global(html[data-theme="light"]) .automationCard,
+:global(html[data-theme="light"]) .workflowNode,
+:global(html[data-theme="light"]) .commandKpi,
+:global(html[data-theme="light"]) .modulePill,
+:global(html[data-theme="light"]) .automationStep,
+:global(html[data-theme="light"]) .miniStat {
+        background: #ffffff !important;
+        border-color: #e6e9f0 !important;
+        color: #344054 !important;
+}
+
+:global(html[data-theme="light"]) .sectionKicker,
+:global(html[data-theme="light"]) .textMint,
+:global(html[data-theme="light"]) .activityEvent > span,
+:global(html[data-theme="light"]) .workflowNode > span,
+:global(html[data-theme="light"]) .implementationCard small,
+:global(html[data-theme="light"]) .automationStep span {
+        color: #0b8f52 !important;
+}
+
+:global(html[data-theme="light"]) .textMutedPaymo,
+:global(html[data-theme="light"]) .metricLabel,
+:global(html[data-theme="light"]) .dashboardBrief span:last-child,
+:global(html[data-theme="light"]) .commandKpi span,
+:global(html[data-theme="light"]) .automationCard small,
+:global(html[data-theme="light"]) .proofCard span,
+:global(html[data-theme="light"]) .activityEvent small,
+:global(html[data-theme="light"]) .modulePill small {
+        color: #667085 !important;
+}
+
+:global(html[data-theme="light"]) .metricNumber,
+:global(html[data-theme="light"]) .fxValue,
+:global(html[data-theme="light"]) .resultNumber,
+:global(html[data-theme="light"]) .dashboardBrief strong,
+:global(html[data-theme="light"]) .commandKpi strong,
+:global(html[data-theme="light"]) .modulePill strong,
+:global(html[data-theme="light"]) .activityEvent strong,
+:global(html[data-theme="light"]) .workflowNode strong,
+:global(html[data-theme="light"]) .automationCard span,
+:global(html[data-theme="light"]) .proofCard strong {
+        color: #101828 !important;
+}
+
+:global(html[data-theme="light"]) .commandKpi.primary,
+:global(html[data-theme="light"]) .workflowNode.done,
+:global(html[data-theme="light"]) .automationCard.active {
+        background: #e7f8ef !important;
+        border-color: #b7e6cf !important;
+}
+
+:global(html[data-theme="light"]) .btnPaymo {
+        background: #12b76a !important;
+        border-color: #12b76a !important;
+        color: #ffffff !important;
+}
+
+:global(html[data-theme="light"]) .btnPaymoOutline,
+:global(html[data-theme="light"]) .btnChip {
+        background: #ffffff !important;
+        border-color: #b7e6cf !important;
+        color: #0b8f52 !important;
+}
+
+:global(html[data-theme="light"]) .btnPaymoOutline:hover,
+:global(html[data-theme="light"]) .btnChip:hover,
+:global(html[data-theme="light"]) .btnChip.active {
+        background: #e7f8ef !important;
+        border-color: #12b76a !important;
+        color: #067647 !important;
+}
+
+:global(html[data-theme="light"]) .codeScreen {
+        background: #0b1322 !important;
+        border-color: rgba(18, 183, 106, 0.22) !important;
+}
+
+:global(html[data-theme="light"]) .codePre {
+        color: #d8ffe9 !important;
+}
+
+:global(html[data-theme="light"]) .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: lightRise 0.58s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes lightRise {
+        from {
+                opacity: 0;
+                transform: translateY(18px);
+        }
+        to {
+                opacity: 1;
+                transform: translateY(0);
+        }
 }
