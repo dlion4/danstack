@@ -50,15 +50,20 @@ const setValue = (
 const LONG =
 	"We onboarded two supermarket chains on 14 August and ran a national back-to-school promotion across three outlets, which tripled our usual volume.";
 
+/** The wizard dialog, so page chrome behind it is never touched. */
+function scope(): ParentNode {
+	return document.querySelector(`.${s.modalLg}`) ?? document;
+}
+
 function footerButtons() {
-	const foot = document.querySelector(`.${s.modalFoot}`);
+	const foot = scope().querySelector(`.${s.modalFoot}`);
 	if (!foot) throw new Error("wizard footer missing");
 	return Array.from(foot.querySelectorAll("button"));
 }
 
 async function fillCurrentStep() {
 	// 1 · allow-listed in-step actions
-	for (const btn of Array.from(document.querySelectorAll("button"))) {
+	for (const btn of Array.from(scope().querySelectorAll("button"))) {
 		const label = btn.textContent?.trim() ?? "";
 		if (
 			label === "Start liveness scan" ||
@@ -71,16 +76,16 @@ async function fillCurrentStep() {
 
 	// 2 · option cards (single-select) — pick the first if nothing is selected
 	const options = Array.from(
-		document.querySelectorAll<HTMLButtonElement>(`button.${s.option}`),
+		scope().querySelectorAll<HTMLButtonElement>(`button.${s.option}`),
 	);
-	if (options.length && !document.querySelector(`button.${s.optionOn}`)) {
+	if (options.length && !scope().querySelector(`button.${s.optionOn}`)) {
 		click(options[0]);
 	}
 
 	// 3 · segmented mini buttons: one pick per group that has no selection
 	const groups = new Set<Element>();
 	for (const mini of Array.from(
-		document.querySelectorAll(`button.${s.miniBtn}`),
+		scope().querySelectorAll(`button.${s.miniBtn}`),
 	)) {
 		if (mini.parentElement) groups.add(mini.parentElement);
 	}
@@ -92,7 +97,7 @@ async function fillCurrentStep() {
 
 	// 4 · uploads
 	const drops = Array.from(
-		document.querySelectorAll<HTMLButtonElement>(
+		scope().querySelectorAll<HTMLButtonElement>(
 			`button.${s.drop}:not(.${s.dropDone})`,
 		),
 	);
@@ -100,7 +105,7 @@ async function fillCurrentStep() {
 	if (drops.length) await wait(1000);
 
 	// 5 · selects — take the last option (the first is often a placeholder)
-	for (const select of Array.from(document.querySelectorAll("select"))) {
+	for (const select of Array.from(scope().querySelectorAll("select"))) {
 		const opts = Array.from(select.options).filter((o) => o.value !== "");
 		if (opts.length)
 			fireEvent.change(select, {
@@ -109,7 +114,7 @@ async function fillCurrentStep() {
 	}
 
 	// 6 · text inputs
-	const inputs = Array.from(document.querySelectorAll("input"));
+	const inputs = Array.from(scope().querySelectorAll("input"));
 	let shareSeen = 0;
 	let otpDigit = 1;
 	for (const input of inputs) {
@@ -133,13 +138,13 @@ async function fillCurrentStep() {
 	}
 
 	// 7 · textareas
-	for (const area of Array.from(document.querySelectorAll("textarea"))) {
+	for (const area of Array.from(scope().querySelectorAll("textarea"))) {
 		setValue(area, LONG);
 	}
 
 	// 8 · checkboxes
 	for (const box of Array.from(
-		document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'),
+		scope().querySelectorAll<HTMLInputElement>('input[type="checkbox"]'),
 	)) {
 		if (!box.checked) click(box);
 	}
@@ -234,7 +239,7 @@ describe("account status page", () => {
 		await wait(20);
 		expect(screen.getByText("What was flagged")).toBeTruthy();
 
-		const totalSteps = document.querySelectorAll(`button.${s.wizNode}`).length;
+		const totalSteps = scope().querySelectorAll(`button.${s.wizNode}`).length;
 		for (let i = 0; i < totalSteps; i++) {
 			await fillCurrentStep();
 			const advance = footerButtons().at(-1) as HTMLButtonElement;

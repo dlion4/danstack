@@ -218,6 +218,9 @@ const CONTACTS = [
 /** Applications advance one stage on this cadence so the tracker stays live. */
 const STAGE_TICK_MS = 7000;
 
+/** Filed applications survive a refresh for the length of the browser tab. */
+const STORE_KEY = "paymo.auth.applications";
+
 export default function AccountStatus() {
 	const [detail, setDetail] = useState<Task | null>(null);
 	const [wizard, setWizard] = useState<Task | null>(null);
@@ -226,6 +229,33 @@ export default function AccountStatus() {
 	const [warnOpen, setWarnOpen] = useState(false);
 	const [tipsOpen, setTipsOpen] = useState(false);
 	const announced = useRef<Set<string>>(new Set());
+
+	/* ---- restore filed applications after a refresh ---------------------- */
+	const hydrated = useRef(false);
+	useEffect(() => {
+		try {
+			const raw = window.sessionStorage.getItem(STORE_KEY);
+			if (raw) {
+				const saved = JSON.parse(raw) as Record<string, Submission>;
+				for (const app of Object.values(saved)) {
+					if (statusOf(app) === "resolved") announced.current.add(app.ref);
+				}
+				setApps(saved);
+			}
+		} catch {
+			/* private mode or corrupt payload — start fresh */
+		}
+		hydrated.current = true;
+	}, []);
+
+	useEffect(() => {
+		if (!hydrated.current || Object.keys(apps).length === 0) return;
+		try {
+			window.sessionStorage.setItem(STORE_KEY, JSON.stringify(apps));
+		} catch {
+			/* storage unavailable — tracking stays in memory */
+		}
+	}, [apps]);
 
 	/* ---- applications advance through their pipeline on their own -------- */
 	useEffect(() => {
@@ -311,6 +341,23 @@ export default function AccountStatus() {
 						<Badge tone={allClear ? "green" : "amber"} icon="bi-lock-fill">
 							{allClear ? "Restrictions lifted" : "Limited access mode"}
 						</Badge>
+						{appList.length > 0 && (
+							<Button
+								variant="subtle"
+								size="sm"
+								icon="bi-activity"
+								onClick={() =>
+									setTracking(
+										(
+											appList.find((a) => statusOf(a) === "resolved") ??
+											appList[0]
+										).taskId,
+									)
+								}
+							>
+								Applications · {appList.length}
+							</Button>
+						)}
 						<Button
 							variant="ghost"
 							size="sm"
@@ -423,7 +470,11 @@ export default function AccountStatus() {
 						const status = app ? statusOf(app) : null;
 						const pct = taskPercent(t);
 						return (
-							<Card key={t.id} hover onClick={() => setDetail(t)}>
+							<Card
+								key={t.id}
+								hover
+								onClick={() => (app ? setTracking(t.id) : openWizard(t))}
+							>
 								<div className={s.cardHead}>
 									<span
 										className={cx(
@@ -442,6 +493,18 @@ export default function AccountStatus() {
 									) : (
 										<Badge tone={t.statusTone}>{t.status}</Badge>
 									)}
+									<button
+										type="button"
+										className={s.miniBtn}
+										title="Task details and legacy links"
+										aria-label={`Details for ${t.title}`}
+										onClick={(e) => {
+											e.stopPropagation();
+											setDetail(t);
+										}}
+									>
+										<i className="bi bi-info-lg" />
+									</button>
 								</div>
 								<div className={s.row} style={{ marginBottom: "0.7rem" }}>
 									{app ? (
