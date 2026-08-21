@@ -1,3 +1,7 @@
+/* ============================================================================
+ * Card Dashboard — page 5.9 · Card Program Administration (Bootstrap 5)
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { cn } from "./utils/cn";
 import { Icon, type IconName } from "./icons";
@@ -38,64 +42,64 @@ export function AdminOverview() {
   };
 
   return (
-    <section id="overview" className="scroll-mt-24">
+    <section id="overview" className="pmc-scroll-mt">
       <Reveal>
-        <div className="pm-hero relative overflow-hidden rounded-2xl border border-line p-5 text-white shadow-pm sm:p-7">
-          <div className="pm-hero-dots absolute inset-0" />
-          <div className="relative flex flex-wrap items-center gap-6">
-            <div className="min-w-0 flex-1 basis-[300px]">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#cfe8db]">
-                  <span className="live-dot" /> BAAS · Cards
+        <div className="pmc-hero">
+          <div className="pmc-hero-dots" />
+          <div className="position-relative d-flex flex-wrap align-items-center pmc-gap-6">
+            <div className="flex-grow-1" style={{ minWidth: 0, flexBasis: 300 }}>
+              <div className="d-flex flex-wrap align-items-center pmc-gap-2">
+                <span className="pmc-hero-chip d-inline-flex align-items-center pmc-gap-15 text-uppercase fw-bold" style={{ letterSpacing: "0.12em" }}>
+                  <span className="pmc-live-dot" /> BAAS · Cards
                 </span>
-                <span className="rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-semibold text-[#cfe8db]">Module 5.9</span>
+                <span className="pmc-hero-chip">Module 5.9</span>
               </div>
-              <h1 className="font-display mt-3 text-[26px] font-bold leading-[1.1] tracking-tight sm:text-[34px]">
-                Card Program<br className="hidden sm:block" /> Administration
+              <h1 className="pmc-hero-title pmc-mt-3">
+                Card Program<br className="d-none d-sm-inline" /> Administration
               </h1>
-              <p className="mt-2 max-w-[510px] text-[13px] leading-relaxed text-white/65">
+              <p className="pmc-hero-sub" style={{ maxWidth: 510 }}>
                 Monitor the issuing stack — gateways, ledger, KYC/AML and settlement — plus webhooks,
                 API keys and admin access for the whole programme.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="pmc-mt-4 d-flex flex-wrap pmc-gap-2">
                 <Btn icon="refresh" onClick={runCheck}>{syncing ? "Checking…" : "Run Health Check"}</Btn>
                 <Btn variant="ghost" icon="key" onClick={() => document.getElementById("integrations")?.scrollIntoView({ behavior: "smooth" })}>API Keys</Btn>
                 <Btn variant="ghost" icon="gauge" onClick={() => setPage("5.1")}>Command Center</Btn>
               </div>
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+              <div className="pmc-hero-stats">
                 {[
                   { k: "Systems healthy", v: `${healthy}/${SEED_SYSTEMS.length}` },
                   { k: "Degraded", v: String(degraded), warn: degraded > 0 },
                   { k: "Uptime · 30d", v: "99.98%" },
                   { k: "Last check", v: checked },
                 ].map((s) => (
-                  <div key={s.k} className="leading-tight">
-                    <p className={cn("font-display num text-[17px] font-bold", s.warn ? "text-[#ffd27d]" : "text-white")}>{s.v}</p>
-                    <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-white/45">{s.k}</p>
+                  <div key={s.k} className="lh-sm">
+                    <p className="pmc-hero-stat-value" style={s.warn ? { color: "#ffd27d" } : undefined}>{s.v}</p>
+                    <p className="pmc-hero-stat-label">{s.k}</p>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="relative hidden h-[220px] w-[260px] flex-none md:block">
-              <div className="absolute right-0 top-0 w-[230px] rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/50">Issuing endpoints</p>
-                <div className="mt-3 space-y-2">
+            <div className="pmc-hero-art" style={{ height: 220, width: 260 }}>
+              <div className="position-absolute p-4" style={{ right: 0, top: 0, width: 230, borderRadius: 16, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(2px)" }}>
+                <p className="pmc-fs-10 fw-bold text-uppercase mb-0" style={{ letterSpacing: "0.12em", color: "rgba(255,255,255,0.5)" }}>Issuing endpoints</p>
+                <div className="pmc-mt-3 d-flex flex-column pmc-gap-2">
                   {SEED_SYSTEMS.slice(0, 4).map((s) => {
                     const m = statusMeta[s.status];
                     return (
-                      <div key={s.id} className="flex items-center gap-2">
-                        <span className={cn("live-dot", m.dot === "amber" && "amber", m.dot === "red" && "red")} />
-                        <span className="flex-1 text-[11.5px] font-bold text-white/85">{s.name}</span>
-                        <span className="text-[10px] font-bold text-white/50">{s.latency ?? "—"}</span>
+                      <div key={s.id} className="d-flex align-items-center pmc-gap-2">
+                        <span className={cn("pmc-live-dot", m.dot === "amber" && "amber", m.dot === "red" && "red")} />
+                        <span className="flex-grow-1 pmc-fs-115 fw-bold" style={{ color: "rgba(255,255,255,0.85)" }}>{s.name}</span>
+                        <span className="pmc-fs-10 fw-bold" style={{ color: "rgba(255,255,255,0.5)" }}>{s.latency ?? "—"}</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 w-[210px] rounded-2xl bg-white/10 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/50">Environment</p>
-                <p className="mt-1 text-[12px] font-bold text-white">{ENV_INFO.environment}</p>
-                <p className="text-[10.5px] text-white/50">{ENV_INFO.region}</p>
+              <div className="position-absolute p-3" style={{ bottom: 0, left: 0, width: 210, borderRadius: 16, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(2px)" }}>
+                <p className="pmc-fs-10 fw-bold text-uppercase mb-0" style={{ letterSpacing: "0.12em", color: "rgba(255,255,255,0.5)" }}>Environment</p>
+                <p className="pmc-mt-1 pmc-fs-12 fw-bold text-white mb-0">{ENV_INFO.environment}</p>
+                <p className="pmc-fs-105 mb-0" style={{ color: "rgba(255,255,255,0.5)" }}>{ENV_INFO.region}</p>
               </div>
             </div>
           </div>
@@ -103,26 +107,33 @@ export function AdminOverview() {
       </Reveal>
 
       {/* systems grid */}
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="row pmc-g-3 pmc-mt-4">
         {SEED_SYSTEMS.map((s, i) => {
           const m = statusMeta[s.status];
           return (
-            <Reveal key={s.id} delay={(i % 3) * 70}>
-              <button onClick={() => openModal({ type: "adminHealth" })} className={cn("group w-full rounded-2xl border bg-white p-4 text-left shadow-pm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-pm-lg", s.status === "degraded" ? "border-warn/40" : "border-line")}>
-                <div className="flex items-start justify-between">
-                  <span className={cn("grid h-[42px] w-[42px] place-items-center rounded-xl", m.tone === "success" ? "bg-pmgreen-soft text-[#067647]" : m.tone === "warning" ? "bg-warn-soft text-[#93370d]" : m.tone === "info" ? "bg-pmblue-soft text-[#175cd3]" : "bg-canvas text-muted")}>
-                    <Icon name={m.icon} size={19} />
-                  </span>
-                  <span className={cn("live-dot", m.dot === "amber" && "amber", m.dot === "red" && "red")} />
-                </div>
-                <p className="mt-3 text-[13.5px] font-bold text-ink">{s.name}</p>
-                <p className="mt-0.5 text-[11.5px] font-semibold text-muted">{s.detail}</p>
-                <div className="mt-2 flex items-center justify-between">
-                  <Badge tone={m.tone} dot>{m.label}</Badge>
-                  <span className="text-[10.5px] font-semibold text-faint">{s.latency ? `${s.latency} · ` : ""}{s.lastEvent}</span>
-                </div>
-              </button>
-            </Reveal>
+            <div key={s.id} className="col-12 col-sm-6 col-xl-4">
+              <Reveal delay={(i % 3) * 70} className="h-100">
+                <button
+                  type="button"
+                  onClick={() => openModal({ type: "adminHealth" })}
+                  className="pmc-card pmc-lift pmc-focus w-100 p-4 text-start h-100"
+                  style={{ border: `1px solid ${s.status === "degraded" ? "rgba(247,144,9,0.4)" : "var(--pmc-line)"}` }}
+                >
+                  <div className="d-flex align-items-start justify-content-between">
+                    <span className={cn("pmc-stat-icon d-grid", m.tone === "success" ? "pmc-tone-green" : m.tone === "warning" ? "pmc-tone-warn" : m.tone === "info" ? "pmc-tone-blue" : "pmc-tone-muted")}>
+                      <Icon name={m.icon} size={19} />
+                    </span>
+                    <span className={cn("pmc-live-dot", m.dot === "amber" && "amber", m.dot === "red" && "red")} />
+                  </div>
+                  <p className="pmc-mt-3 pmc-fs-135 fw-bold pmc-ink mb-0">{s.name}</p>
+                  <p className="pmc-mt-05 pmc-fs-115 fw-semibold pmc-muted mb-0">{s.detail}</p>
+                  <div className="pmc-mt-2 d-flex align-items-center justify-content-between">
+                    <Badge tone={m.tone} dot>{m.label}</Badge>
+                    <span className="pmc-fs-105 fw-semibold pmc-faint">{s.latency ? `${s.latency} · ` : ""}{s.lastEvent}</span>
+                  </div>
+                </button>
+              </Reveal>
+            </div>
           );
         })}
       </div>
@@ -130,11 +141,11 @@ export function AdminOverview() {
       {/* degraded callout */}
       {degraded > 0 && (
         <Reveal delay={120}>
-          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-warn/35 bg-warn-soft/40 p-4">
-            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-warn/15 text-[#93370d]"><Icon name="alertTri" size={18} /></span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[12.5px] font-bold text-[#93370d]">KYC / AML Oracle is degraded</p>
-              <p className="text-[11.5px] text-[#93370d]/75">Identity checks are running with a 1.2s delay. Issuance remains unaffected — the vendor is investigating.</p>
+          <div className="pmc-mt-4 d-flex align-items-center pmc-gap-3 p-4" style={{ borderRadius: 16, border: "1px solid rgba(247,144,9,0.35)", background: "rgba(255,250,235,0.4)" }}>
+            <span className="pmc-icon-sq d-grid flex-none" style={{ width: 40, height: 40, background: "rgba(247,144,9,0.15)", color: "#93370d" }}><Icon name="alertTri" size={18} /></span>
+            <div className="flex-grow-1" style={{ minWidth: 0 }}>
+              <p className="pmc-fs-125 fw-bold mb-0" style={{ color: "#93370d" }}>KYC / AML Oracle is degraded</p>
+              <p className="pmc-fs-115 mb-0" style={{ color: "rgba(147,55,13,0.75)" }}>Identity checks are running with a 1.2s delay. Issuance remains unaffected — the vendor is investigating.</p>
             </div>
             <Btn size="sm" variant="outline" onClick={() => openModal({ type: "adminHealth" })}>Details</Btn>
           </div>
@@ -142,7 +153,7 @@ export function AdminOverview() {
       )}
 
       <Reveal delay={140}>
-        <p className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl border border-line bg-white py-3 text-center text-[11.5px] font-semibold text-muted shadow-pm">
+        <p className="pmc-mt-4 d-flex align-items-center justify-content-center pmc-gap-15 py-3 text-center pmc-fs-115 fw-semibold pmc-muted mb-0" style={{ borderRadius: 16, border: "1px solid var(--pmc-line)", background: "#fff", boxShadow: "var(--shadow-pm)" }}>
           <Icon name="clock" size={13} /> Last automated check: {checked}. All issuing endpoints are active and accepting payload requests.
         </p>
       </Reveal>
@@ -159,48 +170,56 @@ export function GatewayLogsSection() {
   const successRate = Math.round((SEED_GATEWAY_EVENTS.filter((e) => e.status === "success").length / SEED_GATEWAY_EVENTS.length) * 100);
 
   return (
-    <section id="gateway-logs" className="scroll-mt-24">
+    <section id="gateway-logs" className="pmc-scroll-mt">
       <SectionHead no="02" title="Gateway Logs" sub="Live request/response flow across Visa, Mastercard, ledger and the KYC/AML oracle.">
         <Btn size="sm" variant="outline" icon="download" onClick={() => toast("success", "Gateway logs exported", `${SEED_GATEWAY_EVENTS.length} events written to gateway-logs.csv`)}>Export</Btn>
       </SectionHead>
 
-      <div className="mb-4 grid grid-cols-3 gap-3 sm:max-w-md">
+      <div className="row g-3 pmc-mb-4" style={{ maxWidth: 448 }}>
         {[
-          { k: "Success rate", v: `${successRate}%`, tone: "text-[#067647]" },
-          { k: "Requests", v: String(SEED_GATEWAY_EVENTS.length), tone: "text-ink" },
-          { k: "Errors", v: String(SEED_GATEWAY_EVENTS.filter((e) => e.status !== "success").length), tone: "text-[#b42318]" },
+          { k: "Success rate", v: `${successRate}%`, tone: "pmc-green-ink" },
+          { k: "Requests", v: String(SEED_GATEWAY_EVENTS.length), tone: "pmc-ink" },
+          { k: "Errors", v: String(SEED_GATEWAY_EVENTS.filter((e) => e.status !== "success").length), tone: "pmc-danger-ink" },
         ].map((s) => (
-          <div key={s.k} className="rounded-xl border border-line bg-white p-3 shadow-pm">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-faint">{s.k}</p>
-            <p className={cn("num font-display mt-1 text-[16px] font-bold", s.tone)}>{s.v}</p>
+          <div key={s.k} className="col-4">
+            <div className="pmc-card p-3 h-100">
+              <p className="pmc-fs-10 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>{s.k}</p>
+              <p className={cn("pmc-num pmc-display pmc-mt-1 pmc-fs-16 fw-bold mb-0", s.tone)}>{s.v}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="thin-scroll mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="pmc-thin-scroll pmc-mb-4 d-flex pmc-gap-2 overflow-auto pb-1">
         {(["all", "success", "error"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={cn("rounded-full border px-3.5 py-1.5 text-[12px] font-bold transition", filter === f ? "border-ink bg-ink text-white" : "border-line bg-white text-muted hover:border-[#c4c9d4]")}>
+          <button
+            key={f}
+            type="button"
+            onClick={() => setFilter(f)}
+            className="pmc-focus pmc-pill-choice"
+            style={filter === f ? { border: "1px solid var(--pmc-ink)", background: "var(--pmc-ink)", color: "#fff" } : undefined}
+          >
             {f === "all" ? "All" : f === "success" ? "Successful" : "Errors"}
           </button>
         ))}
       </div>
 
       <Reveal>
-        <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
-          <ul className="divide-y divide-line/70 font-mono text-[12px]">
+        <div className="pmc-table-frame">
+          <ul className="pmc-mobile-list" style={{ fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)", fontSize: 12 }}>
             {shown.map((e) => (
-              <li key={e.id} className="flex items-center gap-3 px-4 py-2.5 transition hover:bg-canvas/60">
-                <span className="num flex-none text-[11px] font-bold text-faint">{e.time}</span>
-                <span className="w-[130px] flex-none font-bold text-ink">{e.gateway}</span>
-                <span className="hidden flex-1 font-semibold text-muted sm:block">{e.type}</span>
-                <span className={cn("num flex-none font-bold", e.status === "success" ? "text-[#067647]" : e.status === "retry" ? "text-[#93370d]" : "text-[#b42318]")}>{e.code}</span>
+              <li key={e.id} className="px-4 pmc-py-25">
+                <span className="pmc-num flex-none pmc-fs-11 fw-bold pmc-faint">{e.time}</span>
+                <span className="flex-none fw-bold pmc-ink" style={{ width: 130 }}>{e.gateway}</span>
+                <span className="d-none d-sm-block flex-grow-1 fw-semibold pmc-muted" style={{ minWidth: 0 }}>{e.type}</span>
+                <span className={cn("pmc-num flex-none fw-bold")} style={{ color: e.status === "success" ? "#067647" : e.status === "retry" ? "#93370d" : "#b42318" }}>{e.code}</span>
                 <span className="flex-none"><Badge tone={e.status === "success" ? "success" : e.status === "retry" ? "warning" : "danger"} dot>{e.status === "success" ? "200" : e.status === "retry" ? "Retry" : "Error"}</Badge></span>
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between border-t border-line bg-canvas/60 px-4 py-2.5">
-            <p className="text-[11.5px] font-bold text-muted">{shown.length} event{shown.length === 1 ? "" : "s"}</p>
-            <p className="flex items-center gap-1.5 text-[11.5px] font-semibold text-faint"><span className="live-dot" /> Streaming live</p>
+          <div className="d-flex align-items-center justify-content-between px-4 pmc-py-25" style={{ borderTop: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.6)" }}>
+            <p className="pmc-fs-115 fw-bold pmc-muted mb-0">{shown.length} event{shown.length === 1 ? "" : "s"}</p>
+            <p className="d-flex align-items-center pmc-gap-15 pmc-fs-115 fw-semibold pmc-faint mb-0"><span className="pmc-live-dot" /> Streaming live</p>
           </div>
         </div>
       </Reveal>
@@ -213,67 +232,74 @@ export function GatewayLogsSection() {
 export function IntegrationsSection() {
   const { openModal, toast } = useApp();
   return (
-    <section id="integrations" className="scroll-mt-24">
+    <section id="integrations" className="pmc-scroll-mt">
       <SectionHead no="03" title="Webhooks & API Keys" sub="Outgoing webhooks for card events and API credentials for your engineering team.">
         <Btn size="sm" icon="plus" onClick={() => openModal({ type: "adminKey" })}>New API Key</Btn>
       </SectionHead>
 
-      <div className="grid gap-3 lg:grid-cols-5">
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Webhook endpoints</p>
-            <ul className="space-y-2">
+      <div className="row pmc-g-3">
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Webhook endpoints</p>
+            <ul className="list-unstyled d-flex flex-column pmc-gap-2 mb-0">
               {WEBHOOK_ENDPOINTS.map((w) => (
-                <li key={w.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-canvas/40 px-3.5 py-3">
-                  <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", w.status === "healthy" ? "bg-pmgreen-soft text-[#067647]" : "bg-danger-soft text-[#b42318]")}>
+                <li key={w.id} className="d-flex flex-wrap align-items-center pmc-gap-3 pmc-radius px-3 pmc-py-3" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.4)" }}>
+                  <span className={cn("pmc-icon-sq d-grid flex-none", w.status === "healthy" ? "pmc-tone-green" : "pmc-tone-danger")}>
                     <Icon name={w.status === "healthy" ? "checkCircle" : "alertTri"} size={16} />
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[12.5px] font-bold text-ink">{w.name}</p>
-                    <p className="truncate font-mono text-[10.5px] font-semibold text-faint">{w.url}</p>
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="text-truncate pmc-fs-125 fw-bold pmc-ink mb-0">{w.name}</p>
+                    <p className="text-truncate pmc-fs-105 fw-semibold pmc-faint mb-0" style={{ fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)" }}>{w.url}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
+                  <div className="d-flex flex-column align-items-end pmc-gap-1">
                     <Badge tone={w.status === "healthy" ? "success" : "danger"} dot>{w.status === "healthy" ? "Healthy" : "Failing"}</Badge>
-                    <span className="num text-[10.5px] font-semibold text-faint">{w.successRate}% success · {w.last}</span>
+                    <span className="pmc-num pmc-fs-105 fw-semibold pmc-faint">{w.successRate}% success · {w.last}</span>
                   </div>
-                  <button onClick={() => openModal({ type: "adminWebhook", webhookId: w.id })} className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]"><Icon name="sliders" size={14} /></button>
+                  <button type="button" onClick={() => openModal({ type: "adminWebhook", webhookId: w.id })} className="pmc-focus pmc-icon-btn pmc-icon-btn-sm pmc-icon-btn-green"><Icon name="sliders" size={14} /></button>
                 </li>
               ))}
             </ul>
           </div>
         </Reveal>
 
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="flex h-full flex-col gap-3">
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="font-display text-[13.5px] font-bold text-ink">API keys</p>
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="d-flex flex-column pmc-gap-3 h-100">
+            <div className="pmc-card p-4">
+              <div className="pmc-mb-3 d-flex align-items-center justify-content-between">
+                <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">API keys</p>
                 <Btn size="sm" variant="outline" icon="plus" onClick={() => openModal({ type: "adminKey" })}>Add</Btn>
               </div>
-              <ul className="space-y-2">
+              <ul className="list-unstyled d-flex flex-column pmc-gap-2 mb-0">
                 {SEED_API_KEYS.map((k) => (
-                  <li key={k.id} className="flex items-center gap-3 rounded-xl border border-line bg-canvas/40 px-3 py-2.5">
-                    <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-ink font-display text-[10px] font-bold text-pmgreen"><Icon name="key" size={14} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12px] font-bold text-ink">{k.name}</p>
-                      <p className="font-mono text-[10px] font-semibold text-faint">{k.prefix}</p>
+                  <li key={k.id} className="d-flex align-items-center pmc-gap-3 pmc-radius px-3 pmc-py-25" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.4)" }}>
+                    <span className="pmc-display d-grid flex-none fw-bold pmc-green" style={{ width: 32, height: 32, borderRadius: 8, background: "var(--pmc-ink)", fontSize: 10 }}><Icon name="key" size={14} /></span>
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <p className="text-truncate pmc-fs-12 fw-bold pmc-ink mb-0">{k.name}</p>
+                      <p className="pmc-fs-10 fw-semibold pmc-faint mb-0" style={{ fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)" }}>{k.prefix}</p>
                     </div>
                     <Badge tone={k.env === "live" ? "success" : "muted"}>{k.env}</Badge>
                   </li>
                 ))}
               </ul>
-              <button onClick={() => { navigator.clipboard?.writeText("pk_live_8f2a").catch(() => {}); toast("info", "Key copied", "Secret revealed once — copy it somewhere safe."); }} className="mt-2 w-full rounded-[10px] border border-dashed border-line py-2 text-[11.5px] font-bold text-muted transition hover:border-pmgreen/50 hover:text-[#067647]">Copy production key</button>
+              <button
+                type="button"
+                onClick={() => { navigator.clipboard?.writeText("pk_live_8f2a").catch(() => {}); toast("info", "Key copied", "Secret revealed once — copy it somewhere safe."); }}
+                className="pmc-focus pmc-mt-2 w-100 pmc-radius-sm pmc-py-2 pmc-fs-115 fw-bold pmc-muted"
+                style={{ border: "1px dashed var(--pmc-line)", background: "transparent" }}
+              >
+                Copy production key
+              </button>
             </div>
-            <div className="flex-1 rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2 text-[13.5px] font-bold text-ink">API usage · 30d</p>
-              <div className="space-y-2.5">
+            <div className="pmc-card p-4 flex-grow-1">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-2">API usage · 30d</p>
+              <div className="d-flex flex-column pmc-gap-25">
                 {[
                   ["Issuance calls", 12400, 78],
                   ["Authorisation events", 88400, 64],
                   ["Webhook deliveries", 5210, 46],
                 ].map(([label, val, w]) => (
                   <div key={label as string}>
-                    <div className="mb-1 flex justify-between text-[11px] font-bold"><span className="text-muted">{label}</span><span className="num text-ink">{(val as number).toLocaleString()}</span></div>
+                    <div className="pmc-mb-1 d-flex justify-content-between pmc-fs-11 fw-bold"><span className="pmc-muted">{label}</span><span className="pmc-num pmc-ink">{(val as number).toLocaleString()}</span></div>
                     <Progress value={w as number} tone="violet" />
                   </div>
                 ))}
@@ -291,55 +317,55 @@ export function IntegrationsSection() {
 export function AdminAccessSection() {
   const { toast } = useApp();
   return (
-    <section id="admin-access" className="scroll-mt-24">
+    <section id="admin-access" className="pmc-scroll-mt">
       <SectionHead no="04" title="Admin Access" sub="Who can administer the card programme and their scope.">
         <Btn size="sm" icon="plus" onClick={() => toast("info", "Invite sent", "A new administrator invitation has been emailed.")}>Invite Admin</Btn>
       </SectionHead>
 
       <Reveal>
-        <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
-          <div className="hidden md:block">
-            <table className="w-full text-left">
+        <div className="pmc-table-frame">
+          <div className="d-none d-md-block">
+            <table className="pmc-table w-100 text-start">
               <thead>
-                <tr className="border-b border-line bg-canvas/70 text-[10.5px] font-bold uppercase tracking-[0.08em] text-faint">
-                  <th className="px-4 py-2.5">Administrator</th>
-                  <th className="px-3 py-2.5">Access level</th>
-                  <th className="px-3 py-2.5">Last login</th>
-                  <th className="px-4 py-2.5 text-right">Status</th>
+                <tr>
+                  <th className="pmc-px-4 pmc-py-25">Administrator</th>
+                  <th className="pmc-px-3 pmc-py-25">Access level</th>
+                  <th className="pmc-px-3 pmc-py-25">Last login</th>
+                  <th className="pmc-px-4 pmc-py-25 text-end">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line/70">
+              <tbody>
                 {SEED_ADMINS.map((a) => (
-                  <tr key={a.id} className="text-[12.5px] transition hover:bg-canvas/60">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <span className="grid h-8 w-8 flex-none place-items-center rounded-full bg-ink font-display text-[10.5px] font-bold text-pmgreen">{a.initials}</span>
-                        <div className="leading-tight"><p className="font-bold text-ink">{a.name}</p><p className="text-[10.5px] font-semibold text-faint">{a.role}</p></div>
+                  <tr key={a.id}>
+                    <td className="pmc-px-4 pmc-py-3">
+                      <div className="d-flex align-items-center pmc-gap-25">
+                        <span className="pmc-display d-grid flex-none fw-bold pmc-green" style={{ width: 32, height: 32, borderRadius: 99, background: "var(--pmc-ink)", fontSize: 10.5 }}>{a.initials}</span>
+                        <div className="lh-sm"><p className="fw-bold pmc-ink mb-0">{a.name}</p><p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{a.role}</p></div>
                       </div>
                     </td>
-                    <td className="px-3 py-3"><Badge tone="muted">{a.access}</Badge></td>
-                    <td className="px-3 py-3 font-semibold text-muted">{a.lastLogin}</td>
-                    <td className="px-4 py-3 text-right"><Badge tone={a.status === "active" ? "success" : "warning"} dot className="capitalize">{a.status}</Badge></td>
+                    <td className="pmc-px-3 pmc-py-3"><Badge tone="muted">{a.access}</Badge></td>
+                    <td className="pmc-px-3 pmc-py-3 fw-semibold pmc-muted">{a.lastLogin}</td>
+                    <td className="pmc-px-4 pmc-py-3 text-end"><Badge tone={a.status === "active" ? "success" : "warning"} dot className="text-capitalize">{a.status}</Badge></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <ul className="divide-y divide-line/70 md:hidden">
+          <ul className="pmc-mobile-list d-md-none">
             {SEED_ADMINS.map((a) => (
-              <li key={a.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-ink font-display text-[11px] font-bold text-pmgreen">{a.initials}</span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-bold text-ink">{a.name}</p>
-                  <p className="text-[10.5px] font-semibold text-faint">{a.access}</p>
+              <li key={a.id}>
+                <span className="pmc-display d-grid flex-none fw-bold pmc-green" style={{ width: 36, height: 36, borderRadius: 99, background: "var(--pmc-ink)", fontSize: 11 }}>{a.initials}</span>
+                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                  <p className="text-truncate pmc-fs-13 fw-bold pmc-ink mb-0">{a.name}</p>
+                  <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{a.access}</p>
                 </div>
-                <Badge tone={a.status === "active" ? "success" : "warning"} dot className="capitalize">{a.status}</Badge>
+                <Badge tone={a.status === "active" ? "success" : "warning"} dot className="text-capitalize">{a.status}</Badge>
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between border-t border-line bg-canvas/60 px-4 py-2.5">
-            <p className="text-[11.5px] font-bold text-muted">{SEED_ADMINS.length} administrators</p>
-            <p className="text-[11.5px] font-semibold text-faint">Owner access cannot be revoked</p>
+          <div className="d-flex align-items-center justify-content-between px-4 pmc-py-25" style={{ borderTop: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.6)" }}>
+            <p className="pmc-fs-115 fw-bold pmc-muted mb-0">{SEED_ADMINS.length} administrators</p>
+            <p className="pmc-fs-115 fw-semibold pmc-faint mb-0">Owner access cannot be revoked</p>
           </div>
         </div>
       </Reveal>
@@ -361,43 +387,43 @@ export function EnvironmentSection() {
   ];
 
   return (
-    <section id="environment" className="scroll-mt-24">
+    <section id="environment" className="pmc-scroll-mt">
       <SectionHead no="05" title="Environment & Maintenance" sub="Where the programme runs and upcoming maintenance windows." />
 
-      <div className="grid gap-3 lg:grid-cols-5">
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Environment details</p>
-            <div className="overflow-hidden rounded-xl border border-line">
+      <div className="row pmc-g-3">
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Environment details</p>
+            <div className="overflow-hidden pmc-radius" style={{ border: "1px solid var(--pmc-line)" }}>
               {items.map(([k, v], i) => (
-                <div key={k} className={cn("flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-[12.5px]", i % 2 === 0 ? "bg-canvas/50" : "bg-white")}>
-                  <span className="font-bold text-ink">{k}</span>
-                  <span className="text-right font-semibold text-muted">{v}</span>
+                <div key={k} className="d-flex flex-wrap align-items-center justify-content-between pmc-gap-2 px-4 pmc-py-3 pmc-fs-125" style={{ background: i % 2 === 0 ? "rgba(242,244,248,0.5)" : "#fff" }}>
+                  <span className="fw-bold pmc-ink">{k}</span>
+                  <span className="text-end fw-semibold pmc-muted">{v}</span>
                 </div>
               ))}
             </div>
           </div>
         </Reveal>
 
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="flex h-full flex-col gap-3">
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2.5 text-[13.5px] font-bold text-ink">Maintenance windows</p>
-              <ul className="space-y-2">
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="d-flex flex-column pmc-gap-3 h-100">
+            <div className="pmc-card p-4">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-25">Maintenance windows</p>
+              <ul className="list-unstyled d-flex flex-column pmc-gap-2 mb-0">
                 {MAINTENANCE_WINDOWS.map((m) => (
-                  <li key={m.window} className="rounded-xl border border-line bg-canvas/40 p-3">
-                    <p className="flex items-center gap-2 text-[12px] font-bold text-ink"><Icon name="clock" size={13} className="text-muted" /> {m.window}</p>
-                    <p className="mt-0.5 text-[10.5px] font-semibold text-faint">{m.when}</p>
-                    <Badge tone={m.status === "upcoming" ? "info" : "muted"} className="mt-1.5">{m.status}</Badge>
+                  <li key={m.window} className="pmc-radius p-3" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.4)" }}>
+                    <p className="d-flex align-items-center pmc-gap-2 pmc-fs-12 fw-bold pmc-ink mb-0"><Icon name="clock" size={13} className="pmc-muted" /> {m.window}</p>
+                    <p className="pmc-mt-05 pmc-fs-105 fw-semibold pmc-faint mb-0">{m.when}</p>
+                    <Badge tone={m.status === "upcoming" ? "info" : "muted"} className="pmc-mt-15">{m.status}</Badge>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="flex-1 rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2 text-[13.5px] font-bold text-ink">Uptime · last 30 days</p>
-              <p className="num font-display text-[26px] font-bold text-pmgreen-dark">99.98%</p>
-              <p className="text-[11px] text-muted">4 minutes of scheduled maintenance, zero unplanned incidents.</p>
-              <button onClick={() => toast("info", "Status page", "Live status is published at status.paymo.app.")} className="mt-3 text-[11.5px] font-bold text-pmgreen-dark transition hover:text-pmgreen">View status page →</button>
+            <div className="pmc-card p-4 flex-grow-1">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-2">Uptime · last 30 days</p>
+              <p className="pmc-num pmc-display pmc-fs-26 fw-bold pmc-green-dark mb-0">99.98%</p>
+              <p className="pmc-fs-11 pmc-muted mb-0">4 minutes of scheduled maintenance, zero unplanned incidents.</p>
+              <button type="button" onClick={() => toast("info", "Status page", "Live status is published at status.paymo.app.")} className="pmc-focus pmc-mt-3 pmc-fs-115 fw-bold pmc-green-dark border-0 bg-transparent p-0">View status page →</button>
             </div>
           </div>
         </Reveal>
@@ -444,27 +470,27 @@ export function HealthCheckModal() {
 
   return (
     <Modal open={open} onClose={closeModal} icon="gauge" title="Run health check" subtitle="Pings every issuing endpoint and returns latency in real time." width="max-w-lg" footer={done ? <Btn icon="check" onClick={closeModal}>Done</Btn> : <><Btn variant="outline" onClick={closeModal}>Cancel</Btn><Btn icon="refresh" disabled={running} onClick={run}>{running ? "Checking…" : "Start Check"}</Btn></>}>
-      <div className="space-y-2">
+      <div className="d-flex flex-column pmc-gap-2">
         {results.length === 0 && !running && (
           <Empty icon="gauge" title="Ready to check" sub="Start a health check to probe gateways, ledger, KYC/AML and settlement." />
         )}
         {results.map((r) => (
-          <div key={r.name} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
-            <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", r.ok ? "bg-pmgreen-soft text-[#067647]" : "bg-warn-soft text-[#93370d]")}>
+          <div key={r.name} className="d-flex align-items-center pmc-gap-3 pmc-radius p-3" style={{ border: "1px solid var(--pmc-line)", background: "#fff" }}>
+            <span className={cn("pmc-icon-sq d-grid flex-none", r.ok ? "pmc-tone-green" : "pmc-tone-warn")}>
               <Icon name={r.ok ? "checkCircle" : "alertTri"} size={16} />
             </span>
-            <div className="min-w-0 flex-1"><p className="text-[12.5px] font-bold text-ink">{r.name}</p><p className="text-[10.5px] font-semibold text-faint">Latency {r.latency}</p></div>
+            <div className="flex-grow-1" style={{ minWidth: 0 }}><p className="pmc-fs-125 fw-bold pmc-ink mb-0">{r.name}</p><p className="pmc-fs-105 fw-semibold pmc-faint mb-0">Latency {r.latency}</p></div>
             <Badge tone={r.ok ? "success" : "warning"} dot>{r.ok ? "Healthy" : "Degraded"}</Badge>
           </div>
         ))}
         {running && (
-          <div className="flex items-center justify-center gap-2 py-4 text-[12px] font-bold text-muted">
-            <Icon name="refresh" size={15} className="spin-slow" /> Probing endpoints…
+          <div className="d-flex align-items-center justify-content-center pmc-gap-2 py-4 pmc-fs-12 fw-bold pmc-muted">
+            <Icon name="refresh" size={15} className="pmc-spin" /> Probing endpoints…
           </div>
         )}
         {done && (
-          <p className="rounded-lg bg-pmgreen-soft/50 px-3 py-2 text-[11.5px] font-semibold text-[#067647]">
-            <Icon name="checkCircle" size={12} className="mr-1 inline" /> Check complete — KYC/AML oracle still degraded (1.2s), everything else is operational.
+          <p className="pmc-note pmc-note-green mb-0">
+            <Icon name="checkCircle" size={12} className="flex-none" style={{ marginTop: 2 }} /> Check complete — KYC/AML oracle still degraded (1.2s), everything else is operational.
           </p>
         )}
       </div>
@@ -488,25 +514,28 @@ export function WebhookModal() {
 
   return (
     <Modal open={open} onClose={closeModal} icon="key" title={webhook.name} subtitle="Outgoing webhook configuration and delivery health." width="max-w-lg" footer={<><Btn variant="outline" onClick={closeModal}>Cancel</Btn><Btn icon="check" onClick={() => { toast("success", "Webhook saved", `${webhook.name} configuration updated.`); closeModal(); }}>Save</Btn></>}>
-      <div className="space-y-4">
+      <div className="d-flex flex-column pmc-gap-4">
         <div>
           <FieldLabel>Endpoint URL</FieldLabel>
-          <input value={webhook.url} readOnly className="focus-ring w-full rounded-[10px] border border-line bg-canvas/60 px-3.5 py-2.5 font-mono text-[12px] font-semibold text-ink outline-none" />
+          <input value={webhook.url} readOnly className="form-control pmc-focus" style={{ fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)", fontSize: 12, background: "rgba(242,244,248,0.6)" }} />
         </div>
-        <div className={cn("flex items-center gap-3 rounded-xl border p-3", enabled ? "border-pmgreen/40 bg-pmgreen-soft/40" : "border-line bg-canvas/50")}>
-          <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", enabled ? "bg-white text-[#067647] shadow-sm" : "bg-white text-faint")}><Icon name="refresh" size={16} /></span>
-          <div className="flex-1"><p className="text-[12.5px] font-bold text-ink">Active</p><p className="text-[11px] text-muted">Pause delivery without deleting the endpoint.</p></div>
+        <div
+          className="d-flex align-items-center pmc-gap-3 pmc-radius p-3"
+          style={enabled ? { border: "1px solid rgba(18,183,106,0.4)", background: "rgba(231,248,239,0.4)" } : { border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}
+        >
+          <span className={cn("pmc-icon-sq d-grid flex-none", enabled ? "pmc-green-ink" : "pmc-faint")} style={{ background: "#fff", boxShadow: enabled ? "0 1px 2px rgba(16,24,40,0.06)" : undefined }}><Icon name="refresh" size={16} /></span>
+          <div className="flex-grow-1"><p className="pmc-fs-125 fw-bold pmc-ink mb-0">Active</p><p className="pmc-fs-11 pmc-muted mb-0">Pause delivery without deleting the endpoint.</p></div>
           <Toggle on={enabled} label="Webhook active" onChange={setEnabled} />
         </div>
-        <div className="rounded-xl border border-line bg-canvas/50 p-3.5">
-          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-faint">Delivery stats · 30d</p>
-          <div className="mt-2 grid grid-cols-3 gap-2 text-center">
-            <div><p className="num font-display text-[14px] font-bold text-ink">{webhook.successRate}%</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Success</p></div>
-            <div><p className="num font-display text-[14px] font-bold text-ink">5,210</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Delivered</p></div>
-            <div><p className="num font-display text-[14px] font-bold text-ink">0</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Retries queued</p></div>
+        <div className="pmc-radius pmc-p-35" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}>
+          <p className="pmc-fs-11 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.08em" }}>Delivery stats · 30d</p>
+          <div className="pmc-mt-2 row g-2 text-center">
+            <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">{webhook.successRate}%</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Success</p></div>
+            <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">5,210</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Delivered</p></div>
+            <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">0</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Retries queued</p></div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="d-flex flex-wrap pmc-gap-2">
           <Btn size="sm" variant="outline" icon="send" onClick={() => toast("success", "Test event sent", "A sample payload was delivered to the endpoint.")}>Test webhook</Btn>
           <Btn size="sm" variant="outline" icon="refresh" onClick={() => toast("info", "Replaying failures", "Failed deliveries will be retried in the next minute.")}>Replay failures</Btn>
         </div>
@@ -534,33 +563,35 @@ export function ApiKeyModal() {
   return (
     <Modal open={open} onClose={closeModal} icon="key" title={created ? "Key created" : "Create API key"} subtitle={created ? undefined : "Credentials for your engineering team to integrate with the card programme."} width="max-w-lg" footer={created ? <Btn icon="check" onClick={closeModal}>Done</Btn> : <><Btn variant="outline" onClick={closeModal}>Cancel</Btn><Btn icon="key" disabled={name.trim().length < 2} onClick={() => setCreated({ prefix: `${env === "live" ? "pk_live" : "pk_test"}_${Math.random().toString(36).slice(2, 8)}`, secret: `${env === "live" ? "sk_live" : "sk_test"}_${Math.random().toString(36).slice(2, 18)}` })}>Create Key</Btn></>}>
       {created ? (
-        <div className="space-y-3">
-          <div className="rounded-xl border-2 border-pmgreen/50 bg-pmgreen-soft/40 p-4 text-center">
-            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-faint">Copy now — shown once</p>
-            <p className="mt-2 break-all font-mono text-[13px] font-bold text-ink">{created.secret}</p>
-            <p className="mt-1 break-all font-mono text-[11px] font-semibold text-faint">{created.prefix}</p>
+        <div className="d-flex flex-column pmc-gap-3">
+          <div className="pmc-radius p-4 text-center" style={{ border: "2px solid rgba(18,183,106,0.5)", background: "rgba(231,248,239,0.4)" }}>
+            <p className="pmc-fs-11 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.1em" }}>Copy now — shown once</p>
+            <p className="pmc-mt-2 pmc-fs-13 fw-bold pmc-ink mb-0" style={{ wordBreak: "break-all", fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)" }}>{created.secret}</p>
+            <p className="pmc-mt-1 pmc-fs-11 fw-semibold pmc-faint mb-0" style={{ wordBreak: "break-all", fontFamily: "var(--bs-font-monospace, SFMono-Regular, Menlo, monospace)" }}>{created.prefix}</p>
           </div>
-          <Btn className="w-full" icon="copy" onClick={() => { navigator.clipboard?.writeText(created.secret).catch(() => {}); toast("success", "Key copied", "Store it in your secrets manager."); }}>Copy secret key</Btn>
+          <Btn className="w-100" icon="copy" onClick={() => { navigator.clipboard?.writeText(created.secret).catch(() => {}); toast("success", "Key copied", "Store it in your secrets manager."); }}>Copy secret key</Btn>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="d-flex flex-column pmc-gap-4">
           <div>
             <FieldLabel>Key name</FieldLabel>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Production Core" className="focus-ring w-full rounded-[10px] border border-line bg-canvas/50 px-3.5 py-2.5 text-[13px] font-bold text-ink outline-none transition placeholder:font-medium placeholder:text-faint focus:border-pmgreen/60 focus:bg-white" />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Production Core" className="form-control pmc-focus fw-bold" />
           </div>
           <div>
             <FieldLabel>Environment</FieldLabel>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="row g-2">
               {([["test", "Test / sandbox"], ["live", "Live production"]] as const).map(([id, label]) => (
-                <button key={id} onClick={() => setEnv(id)} className={cn("rounded-[10px] border-2 px-3 py-2.5 text-[12px] font-bold transition", env === id ? "border-pmgreen bg-pmgreen-soft/50 text-[#067647]" : "border-line bg-white text-ink-2 hover:border-[#c4c9d4]")}>{label}</button>
+                <div key={id} className="col-6">
+                  <button type="button" onClick={() => setEnv(id)} className={cn("pmc-focus pmc-rect-choice w-100 justify-content-center", env === id && "on")}>{label}</button>
+                </div>
               ))}
             </div>
           </div>
           <div>
             <FieldLabel>Permissions</FieldLabel>
-            <div className="flex flex-wrap gap-2">
+            <div className="d-flex flex-wrap pmc-gap-2">
               {["read", "write", "admin"].map((s) => (
-                <button key={s} onClick={() => setScope(s)} className={cn("rounded-full border px-3 py-1.5 text-[11.5px] font-bold capitalize transition", scope === s ? "border-pmgreen bg-pmgreen-soft text-[#067647]" : "border-line bg-white text-muted hover:border-[#c4c9d4]")}>{s}</button>
+                <button key={s} type="button" onClick={() => setScope(s)} className={cn("pmc-focus pmc-pill-choice text-capitalize", scope === s && "on")}>{s}</button>
               ))}
             </div>
           </div>

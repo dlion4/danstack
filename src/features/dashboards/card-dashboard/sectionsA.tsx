@@ -1,3 +1,11 @@
+/* ============================================================================
+ * Card Dashboard — page 5.1 sections A (Bootstrap 5 edition)
+ * ----------------------------------------------------------------------------
+ * 01 · Overview (hero + KPIs + attention strip) and 02 · My Cards.
+ * Behavior and copy identical to the Tailwind original; markup uses Bootstrap
+ * utilities + scoped .pmc-* classes.
+ * ========================================================================== */
+
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "./utils/cn";
 import { Icon, type IconName } from "./icons";
@@ -22,30 +30,34 @@ export function OverviewSection() {
   const channelsOn = [alerts.push && "Push", alerts.sms && "SMS", alerts.email && "Email"].filter(Boolean);
 
   return (
-    <section id="overview" className="scroll-mt-24">
+    <section id="overview" className="pmc-scroll-mt">
       {/* Hero */}
       <Reveal>
-        <div className="pm-hero relative overflow-hidden rounded-2xl border border-line p-5 text-white shadow-pm sm:p-7">
-          <div className="pm-hero-dots absolute inset-0" />
-          <div className="relative flex flex-wrap items-center gap-6">
-            <div className="min-w-0 flex-1 basis-[300px]">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#cfe8db]">
-                  <span className="live-dot" /> BAAS · Card Programme
+        <div className="pmc-hero">
+          <div className="pmc-hero-dots" />
+          <div className="position-relative d-flex flex-wrap align-items-center pmc-gap-6">
+            <div className="flex-grow-1" style={{ minWidth: 0, flexBasis: 300 }}>
+              <div className="d-flex flex-wrap align-items-center pmc-gap-2">
+                <span className="pmc-hero-chip d-inline-flex align-items-center pmc-gap-15 text-uppercase fw-bold" style={{ letterSpacing: "0.12em" }}>
+                  <span className="pmc-live-dot" /> BAAS · Card Programme
                 </span>
-                <span className="rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-semibold text-[#cfe8db]">Module 5.1</span>
+                <span className="pmc-hero-chip">Module 5.1</span>
               </div>
-              <h1 className="font-display mt-3 text-[26px] font-bold leading-[1.1] tracking-tight sm:text-[34px]">
+              <h1 className="pmc-hero-title pmc-mt-3">
                 Card Command Center
               </h1>
-              <p className="mt-2 max-w-[480px] text-[13px] leading-relaxed text-white/65">
+              <p className="pmc-hero-sub">
                 Every card Acme Traders has issued — physical, virtual, credit and prepaid — with live spend,
                 alerts, controls and fraud response in one place.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="pmc-mt-4 d-flex flex-wrap pmc-gap-2">
                 <Btn icon="plus" onClick={() => openModal({ type: "issue" })}>Issue New Card</Btn>
                 <Btn variant="ghost" icon="bell" onClick={() => openModal({ type: "alerts" })}>
-                  Configure Alerts {channelsOn.length > 0 && <span className="rounded-full bg-white/15 px-1.5 text-[10px]">{channelsOn.join(" · ")}</span>}
+                  Configure Alerts {channelsOn.length > 0 && (
+                    <span className="d-inline-block" style={{ borderRadius: 99, background: "rgba(255,255,255,0.15)", padding: "1px 6px", fontSize: 10 }}>
+                      {channelsOn.join(" · ")}
+                    </span>
+                  )}
                 </Btn>
                 <Btn variant="ghost" icon="card" onClick={() => setPage("5.2")}>Physical Cards →</Btn>
                 <Btn variant="ghost" icon="zap" onClick={() => setPage("5.4")}>Credit Cards →</Btn>
@@ -56,25 +68,25 @@ export function OverviewSection() {
                 <Btn variant="ghost" icon="building" onClick={() => setPage("5.9")}>Admin →</Btn>
                 <Btn variant="ghost" icon="sliders" onClick={() => setPage("5.10")}>Settings →</Btn>
               </div>
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+              <div className="pmc-hero-stats">
                 {[
                   { k: "Active cards", v: String(stats.active) },
                   { k: "MTD spend", v: kesShort(stats.spend) },
                   { k: "Alerts · 30d", v: "148" },
                   { k: "Fraud flags", v: String(stats.flagged), warn: true },
                 ].map((s) => (
-                  <div key={s.k} className="leading-tight">
-                    <p className={cn("font-display num text-[17px] font-bold", s.warn ? "text-[#ffd27d]" : "text-white")}>{s.v}</p>
-                    <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-white/45">{s.k}</p>
+                  <div key={s.k} className="lh-sm">
+                    <p className={cn("pmc-hero-stat-value", s.warn && "pmc-warn-hero")}>{s.v}</p>
+                    <p className="pmc-hero-stat-label">{s.k}</p>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="relative hidden h-[240px] w-[300px] flex-none md:block">
-              <div className="absolute right-2 top-1 w-[250px] rotate-[6deg] transition-transform duration-300 hover:rotate-[3deg]">
+            <div className="pmc-hero-art">
+              <div className="pmc-hero-card-a">
                 {cards[0] && <CardVisual card={cards[0]} />}
               </div>
-              <div className="absolute bottom-1 left-0 w-[250px] -rotate-[4deg] transition-transform duration-300 hover:-rotate-[1deg]">
+              <div className="pmc-hero-card-b">
                 {cards[2] && <CardVisual card={cards[2]} />}
               </div>
             </div>
@@ -83,11 +95,11 @@ export function OverviewSection() {
       </Reveal>
 
       {/* KPI cards */}
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="row pmc-g-3 pmc-mt-4">
         {[
           {
             icon: "wallet" as IconName,
-            tone: "bg-pmgreen-soft text-[#067647]",
+            tone: "pmc-tone-green",
             label: "MTD Card Spend",
             value: kes(stats.spend),
             delta: "+8.4%",
@@ -97,7 +109,7 @@ export function OverviewSection() {
           },
           {
             icon: "card" as IconName,
-            tone: "bg-pmblue-soft text-[#175cd3]",
+            tone: "pmc-tone-blue",
             label: "Active Cards",
             value: `${stats.active} / ${stats.total}`,
             delta: "+2",
@@ -107,7 +119,7 @@ export function OverviewSection() {
           },
           {
             icon: "bell" as IconName,
-            tone: "bg-pmviolet-soft text-[#5925dc]",
+            tone: "pmc-tone-violet",
             label: "Alerts Sent · 30d",
             value: "148",
             delta: "+12%",
@@ -118,7 +130,7 @@ export function OverviewSection() {
           },
           {
             icon: "shield" as IconName,
-            tone: "bg-warn-soft text-[#93370d]",
+            tone: "pmc-tone-warn",
             label: "Fraud Flags",
             value: String(stats.flagged),
             delta: "needs review",
@@ -129,67 +141,91 @@ export function OverviewSection() {
             onClick: () => scrollToId("security"),
           },
         ].map((k, i) => (
-          <Reveal key={k.label} delay={i * 70}>
-            <button
-              onClick={k.onClick}
-              className={cn(
-                "group w-full rounded-2xl border border-line bg-white p-4 text-left shadow-pm transition-all duration-200",
-                k.onClick ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-pm-lg" : "cursor-default"
-              )}
-            >
-              <div className="flex items-start justify-between">
-                <span className={cn("grid h-[42px] w-[42px] place-items-center rounded-xl", k.tone)}>
-                  <Icon name={k.icon} size={19} />
-                </span>
-                <Spark points={k.spark} stroke={k.sparkStroke ?? "#12b76a"} />
-              </div>
-              <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.07em] text-muted">{k.label}</p>
-              <p className="num font-display mt-0.5 text-[24px] font-bold leading-none tracking-tight text-ink">{k.value}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-bold",
-                    k.dir === "up" && "bg-pmgreen-soft text-[#067647]",
-                    k.dir === "flat" && "bg-warn-soft text-[#93370d]"
-                  )}
-                >
-                  {k.dir === "up" && <Icon name="upRight" size={11} strokeWidth={2.4} />}
-                  {k.delta}
-                </span>
-                <span className={cn("text-[11px] font-semibold text-faint", k.warnNote && "font-bold text-[#b42318]")}>{k.note}</span>
-              </div>
-            </button>
-          </Reveal>
+          <div key={k.label} className="col-12 col-sm-6 col-xl-3">
+            <Reveal delay={i * 70} className="h-100">
+              <button
+                type="button"
+                onClick={k.onClick}
+                className={cn("pmc-card pmc-stat pmc-focus h-100", k.onClick ? "pmc-lift" : undefined)}
+                style={k.onClick ? undefined : { cursor: "default" }}
+              >
+                <div className="d-flex align-items-start justify-content-between">
+                  <span className={cn("pmc-stat-icon d-grid", k.tone)}>
+                    <Icon name={k.icon} size={19} />
+                  </span>
+                  <Spark points={k.spark} stroke={k.sparkStroke ?? "#12b76a"} />
+                </div>
+                <p className="pmc-stat-label">{k.label}</p>
+                <p className="pmc-stat-value">{k.value}</p>
+                <div className="pmc-mt-2 d-flex align-items-center pmc-gap-2">
+                  <span
+                    className="d-inline-flex align-items-center pmc-gap-05 pmc-fs-11 fw-bold"
+                    style={{
+                      borderRadius: 99,
+                      padding: "2px 8px",
+                      background: k.dir === "up" ? "var(--pmc-green-soft)" : "var(--pmc-warn-soft)",
+                      color: k.dir === "up" ? "var(--pmc-green-ink)" : "var(--pmc-warn-ink)",
+                    }}
+                  >
+                    {k.dir === "up" && <Icon name="upRight" size={11} />}
+                    {k.delta}
+                  </span>
+                  <span className={cn("pmc-fs-11 fw-semibold pmc-faint", k.warnNote && "fw-bold pmc-danger-ink")}>{k.note}</span>
+                </div>
+              </button>
+            </Reveal>
+          </div>
         ))}
       </div>
 
       {/* Needs attention strip */}
       <Reveal delay={120}>
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          <button onClick={() => scrollToId("security")} className="group flex items-center gap-3 rounded-2xl border border-warn/35 bg-warn-soft/50 p-4 text-left transition hover:-translate-y-0.5 hover:shadow-pm">
-            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-warn/15 text-[#93370d]"><Icon name="alertTri" size={18} /></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[13px] font-bold text-[#93370d]">CNP fraud spike detected</span>
-              <span className="block text-[11.5px] font-semibold text-[#93370d]/70">Online attempts up 400% in 6h — review 2 flagged transactions</span>
-            </span>
-            <Icon name="arrowRight" size={16} className="text-[#93370d] transition group-hover:translate-x-0.5" />
-          </button>
-          <button onClick={() => openDrawer({ type: "card", cardId: "c7" })} className="group flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-left shadow-pm transition hover:-translate-y-0.5 hover:shadow-pm-lg">
-            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-pmblue-soft text-[#175cd3]"><Icon name="clock" size={18} /></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[13px] font-bold text-ink">1 card in delivery</span>
-              <span className="block text-[11.5px] font-semibold text-muted">Sales Team Card ·• 2214 — Fargo Courier, ETA 2 days</span>
-            </span>
-            <Icon name="arrowRight" size={16} className="text-faint transition group-hover:translate-x-0.5 group-hover:text-ink" />
-          </button>
-          <button onClick={() => scrollToId("program")} className="group flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-left shadow-pm transition hover:-translate-y-0.5 hover:shadow-pm-lg">
-            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-canvas text-muted"><Icon name="refresh" size={18} /></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[13px] font-bold text-ink">KYC/AML oracle degraded</span>
-              <span className="block text-[11.5px] font-semibold text-muted">1.2s delay on checks — issuance unaffected</span>
-            </span>
-            <Icon name="arrowRight" size={16} className="text-faint transition group-hover:translate-x-0.5 group-hover:text-ink" />
-          </button>
+        <div className="row pmc-g-3 pmc-mt-4">
+          <div className="col-12 col-lg-4">
+            <button
+              type="button"
+              onClick={() => scrollToId("security")}
+              className="pmc-lift pmc-focus d-flex align-items-center pmc-gap-3 pmc-radius p-4 w-100 text-start"
+              style={{ border: "1px solid rgba(247,144,9,0.35)", background: "rgba(254,240,199,0.5)" }}
+            >
+              <span className="pmc-icon-sq-lg d-grid" style={{ background: "rgba(247,144,9,0.15)", color: "var(--pmc-warn-ink)" }}>
+                <Icon name="alertTri" size={18} />
+              </span>
+              <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                <span className="d-block pmc-fs-13 fw-bold pmc-warn-ink">CNP fraud spike detected</span>
+                <span className="d-block pmc-fs-115 fw-semibold" style={{ color: "rgba(147,55,13,0.7)" }}>Online attempts up 400% in 6h — review 2 flagged transactions</span>
+              </span>
+              <Icon name="arrowRight" size={16} className="pmc-warn-ink" />
+            </button>
+          </div>
+          <div className="col-12 col-lg-4">
+            <button
+              type="button"
+              onClick={() => openDrawer({ type: "card", cardId: "c7" })}
+              className="pmc-card pmc-lift pmc-focus d-flex align-items-center pmc-gap-3 p-4 w-100 text-start"
+            >
+              <span className="pmc-icon-sq-lg d-grid pmc-tone-blue"><Icon name="clock" size={18} /></span>
+              <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                <span className="d-block pmc-fs-13 fw-bold pmc-ink">1 card in delivery</span>
+                <span className="d-block pmc-fs-115 fw-semibold pmc-muted">Sales Team Card ·• 2214 — Fargo Courier, ETA 2 days</span>
+              </span>
+              <Icon name="arrowRight" size={16} className="pmc-faint" />
+            </button>
+          </div>
+          <div className="col-12 col-lg-4">
+            <button
+              type="button"
+              onClick={() => scrollToId("program")}
+              className="pmc-card pmc-lift pmc-focus d-flex align-items-center pmc-gap-3 p-4 w-100 text-start"
+            >
+              <span className="pmc-icon-sq-lg d-grid pmc-tone-muted"><Icon name="refresh" size={18} /></span>
+              <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                <span className="d-block pmc-fs-13 fw-bold pmc-ink">KYC/AML oracle degraded</span>
+                <span className="d-block pmc-fs-115 fw-semibold pmc-muted">1.2s delay on checks — issuance unaffected</span>
+              </span>
+              <Icon name="arrowRight" size={16} className="pmc-faint" />
+            </button>
+          </div>
         </div>
       </Reveal>
     </section>
@@ -230,7 +266,7 @@ export function CardsSection() {
   const countFor = (f: string) => cards.filter((c) => matchFilter(c, f)).length;
 
   return (
-    <section id="cards" className="scroll-mt-24">
+    <section id="cards" className="pmc-scroll-mt">
       <SectionHead
         no="02"
         title="My Cards"
@@ -239,7 +275,7 @@ export function CardsSection() {
         <Btn size="sm" icon="plus" onClick={() => openModal({ type: "issue" })}>Issue Card</Btn>
       </SectionHead>
 
-      <div className="thin-scroll mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="pmc-thin-scroll pmc-mb-4 d-flex pmc-gap-2 overflow-auto pb-1">
         {FILTERS.map((f) => (
           <Chip key={f.id} on={filter === f.id} onClick={() => setFilter(f.id)} count={countFor(f.id)}>
             {f.label}
@@ -255,72 +291,74 @@ export function CardsSection() {
           action={<Btn size="sm" icon="plus" onClick={() => openModal({ type: "issue" })}>Issue a {filter} card</Btn>}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="row pmc-g-4">
           {shown.map((c, i) => {
             const usage = Math.round((c.spentMonth / c.limitMonth) * 100);
             return (
-              <Reveal key={c.id} delay={(i % 3) * 70}>
-                <div className="group rounded-2xl border border-line bg-white p-3.5 shadow-pm transition-all duration-200 hover:-translate-y-1 hover:shadow-pm-lg">
-                  <button onClick={() => openDrawer({ type: "card", cardId: c.id })} className="card-hover block w-full text-left" aria-label={`Open ${c.nickname} details`}>
-                    <CardVisual card={c} />
-                  </button>
+              <div key={c.id} className="col-12 col-sm-6 col-xl-4">
+                <Reveal delay={(i % 3) * 70} className="h-100">
+                  <div className="pmc-card pmc-lift-lg pmc-p-35 h-100">
+                    <button type="button" onClick={() => openDrawer({ type: "card", cardId: c.id })} className="pmc-card-hover d-block w-100 text-start pmc-focus" style={{ background: "none", border: "none", padding: 0 }} aria-label={`Open ${c.nickname} details`}>
+                      <CardVisual card={c} />
+                    </button>
 
-                  <div className="mt-3 flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="flex items-center gap-1.5 truncate text-[13.5px] font-bold text-ink">
-                        {c.nickname}
-                        {c.tag && <Badge tone={c.status === "delivering" ? "warning" : "success"}>{c.tag}</Badge>}
-                      </p>
-                      <p className="text-[11px] font-semibold text-faint">{c.holder.toLowerCase()} · •• {c.last4}</p>
+                    <div className="pmc-mt-3 d-flex align-items-start justify-content-between pmc-gap-2">
+                      <div style={{ minWidth: 0 }}>
+                        <p className="d-flex align-items-center pmc-gap-15 pmc-truncate pmc-fs-135 fw-bold pmc-ink mb-0">
+                          {c.nickname}
+                          {c.tag && <Badge tone={c.status === "delivering" ? "warning" : "success"}>{c.tag}</Badge>}
+                        </p>
+                        <p className="pmc-fs-11 fw-semibold pmc-faint mb-0">{c.holder.toLowerCase()} · •• {c.last4}</p>
+                      </div>
+                      <Badge tone={c.status === "active" ? "success" : c.status === "frozen" ? "info" : c.status === "delivering" ? "warning" : "danger"} dot className="text-capitalize">
+                        {c.status}
+                      </Badge>
                     </div>
-                    <Badge tone={c.status === "active" ? "success" : c.status === "frozen" ? "info" : c.status === "delivering" ? "warning" : "danger"} dot className="capitalize">
-                      {c.status}
-                    </Badge>
-                  </div>
 
-                  <div className="mt-2.5">
-                    <div className="mb-1 flex justify-between text-[10.5px] font-bold text-faint">
-                      <span className="num">{kesShort(c.spentMonth)} spent</span>
-                      <span className="num">{usage}% of {kesShort(c.limitMonth)}</span>
+                    <div className="pmc-mt-25">
+                      <div className="pmc-mb-1 d-flex justify-content-between pmc-fs-105 fw-bold pmc-faint">
+                        <span className="pmc-num">{kesShort(c.spentMonth)} spent</span>
+                        <span className="pmc-num">{usage}% of {kesShort(c.limitMonth)}</span>
+                      </div>
+                      <Progress value={usage} tone={usage > 85 ? "red" : usage > 60 ? "amber" : "green"} />
                     </div>
-                    <Progress value={usage} tone={usage > 85 ? "red" : usage > 60 ? "amber" : "green"} />
-                  </div>
 
-                  <div className="mt-3 flex items-center gap-1.5 border-t border-line/70 pt-3">
-                    {c.status === "frozen" ? (
-                      <Btn
-                        size="sm"
-                        icon="zap"
-                        className="flex-1"
-                        onClick={() => {
-                          setCardStatus(c.id, "active");
-                          toast("success", `${c.nickname} unfrozen`);
-                          pushNotif({ channel: "push", title: "Card unfrozen", body: `${c.nickname} •• ${c.last4} is active again.` });
-                        }}
-                      >
-                        Unfreeze
-                      </Btn>
-                    ) : c.status === "active" ? (
-                      <Btn size="sm" variant="dangerGhost" icon="snow" className="flex-1" onClick={() => openModal({ type: "freeze", cardId: c.id })}>
-                        Freeze
-                      </Btn>
-                    ) : (
-                      <span className="flex-1 rounded-[10px] bg-canvas px-3 py-1.5 text-center text-[11.5px] font-bold text-faint">
-                        {c.status === "blocked" ? "Permanently blocked" : "Awaiting delivery"}
-                      </span>
-                    )}
-                    <button onClick={() => openModal({ type: "alerts", cardId: c.id })} title="Configure alerts for this card" className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]">
-                      <Icon name="bell" size={14} />
-                    </button>
-                    <button onClick={() => openModal({ type: "limits", cardId: c.id })} title="Limits & controls" className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]">
-                      <Icon name="sliders" size={14} />
-                    </button>
-                    <button onClick={() => openDrawer({ type: "card", cardId: c.id })} title="Card details" className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]">
-                      <Icon name="chevRight" size={14} />
-                    </button>
+                    <div className="pmc-mt-3 d-flex align-items-center pmc-gap-15 pt-3" style={{ borderTop: "1px solid rgba(230,233,240,0.7)" }}>
+                      {c.status === "frozen" ? (
+                        <Btn
+                          size="sm"
+                          icon="zap"
+                          className="flex-grow-1"
+                          onClick={() => {
+                            setCardStatus(c.id, "active");
+                            toast("success", `${c.nickname} unfrozen`);
+                            pushNotif({ channel: "push", title: "Card unfrozen", body: `${c.nickname} •• ${c.last4} is active again.` });
+                          }}
+                        >
+                          Unfreeze
+                        </Btn>
+                      ) : c.status === "active" ? (
+                        <Btn size="sm" variant="dangerGhost" icon="snow" className="flex-grow-1" onClick={() => openModal({ type: "freeze", cardId: c.id })}>
+                          Freeze
+                        </Btn>
+                      ) : (
+                        <span className="flex-grow-1 pmc-radius-sm pmc-px-3 pmc-py-15 text-center pmc-fs-115 fw-bold pmc-faint" style={{ background: "var(--pmc-canvas)" }}>
+                          {c.status === "blocked" ? "Permanently blocked" : "Awaiting delivery"}
+                        </span>
+                      )}
+                      <button type="button" onClick={() => openModal({ type: "alerts", cardId: c.id })} title="Configure alerts for this card" aria-label={`Configure alerts for ${c.nickname}`} className="pmc-icon-btn pmc-icon-btn-sm pmc-focus">
+                        <Icon name="bell" size={14} />
+                      </button>
+                      <button type="button" onClick={() => openModal({ type: "limits", cardId: c.id })} title="Limits & controls" aria-label={`Limits and controls for ${c.nickname}`} className="pmc-icon-btn pmc-icon-btn-sm pmc-focus">
+                        <Icon name="sliders" size={14} />
+                      </button>
+                      <button type="button" onClick={() => openDrawer({ type: "card", cardId: c.id })} title="Card details" aria-label={`Open ${c.nickname} details`} className="pmc-icon-btn pmc-icon-btn-sm pmc-focus">
+                        <Icon name="chevRight" size={14} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </Reveal>
+                </Reveal>
+              </div>
             );
           })}
         </div>

@@ -1,3 +1,11 @@
+/* ============================================================================
+ * Card Dashboard — page 5.1 sections B (Bootstrap 5 edition)
+ * ----------------------------------------------------------------------------
+ * 03 · Alerts & Notifications and 04 · Transaction Feed. Behavior and copy
+ * identical to the Tailwind original; markup uses Bootstrap utilities +
+ * scoped .pmc-* classes.
+ * ========================================================================== */
+
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "./utils/cn";
 import { Icon, type IconName } from "./icons";
@@ -35,14 +43,14 @@ export function AlertsSection() {
   const notifFiltered = notifs.filter((n) => chanFilter === "all" || n.channel === chanFilter);
   const chanIcon: Record<string, IconName> = { push: "phone", sms: "sms", email: "mail", system: "shield" };
   const chanTone: Record<string, string> = {
-    push: "bg-pmgreen-soft text-[#067647]",
-    sms: "bg-pmblue-soft text-[#175cd3]",
-    email: "bg-pmviolet-soft text-[#5925dc]",
-    system: "bg-warn-soft text-[#93370d]",
+    push: "pmc-tone-green",
+    sms: "pmc-tone-blue",
+    email: "pmc-tone-violet",
+    system: "pmc-tone-warn",
   };
 
   return (
-    <section id="alerts" className="scroll-mt-24">
+    <section id="alerts" className="pmc-scroll-mt">
       <SectionHead
         no="03"
         title="Alerts & Notifications"
@@ -51,33 +59,35 @@ export function AlertsSection() {
         <Btn size="sm" icon="sliders" onClick={() => openModal({ type: "alerts" })}>Configure Alerts</Btn>
       </SectionHead>
 
-      <div className="grid gap-3 lg:grid-cols-5">
+      <div className="row pmc-g-3">
         {/* Rules summary */}
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="font-display text-[13.5px] font-bold text-ink">Active alert rules</p>
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <div className="pmc-mb-3 d-flex align-items-center justify-content-between">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">Active alert rules</p>
               <Badge tone={rules.some((r) => r.on) ? "success" : "danger"} dot>
                 {rules.filter((r) => r.on).length} of {rules.length} on
               </Badge>
             </div>
-            <ul className="divide-y divide-line/70">
+            <ul className="pmc-divided">
               {rules.map((r) => (
-                <li key={r.label} className="flex items-center gap-3 py-2.5">
-                  <span className={cn("grid h-8 w-8 flex-none place-items-center rounded-lg", r.on ? "bg-pmgreen-soft text-[#067647]" : "bg-canvas text-faint")}>
+                <li key={r.label} className="d-flex align-items-center pmc-gap-3 pmc-py-25">
+                  <span className={cn("pmc-icon-sq-sm d-grid", r.on ? "pmc-tone-green" : "pmc-tone-muted", !r.on && "pmc-faint")}>
                     <Icon name={r.icon} size={15} />
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className={cn("block text-[12.5px] font-bold", r.on ? "text-ink" : "text-faint")}>{r.label}</span>
-                    <span className={cn("block text-[11px] font-semibold", r.on ? "text-muted" : "text-faint/70")}>{r.state}</span>
+                  <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <span className={cn("d-block pmc-fs-125 fw-bold", r.on ? "pmc-ink" : "pmc-faint")}>{r.label}</span>
+                    <span className={cn("d-block pmc-fs-11 fw-semibold", r.on ? "pmc-muted" : "pmc-faint")} style={!r.on ? { opacity: 0.7 } : undefined}>{r.state}</span>
                   </span>
                   {r.on ? <Badge tone="success">Live</Badge> : <Badge tone="muted">Off</Badge>}
                 </li>
               ))}
             </ul>
             <button
+              type="button"
               onClick={() => openModal({ type: "alerts" })}
-              className="focus-ring mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-line py-2.5 text-[12px] font-bold text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft/40 hover:text-[#067647]"
+              className="pmc-focus pmc-mt-3 d-flex w-100 align-items-center justify-content-center pmc-gap-15 pmc-radius-sm pmc-py-25 pmc-fs-12 fw-bold pmc-muted"
+              style={{ border: "1px dashed var(--pmc-line)", background: "none", transition: "all 0.15s ease" }}
             >
               <Icon name="sliders" size={13} /> Edit rules & threshold
             </button>
@@ -85,21 +95,25 @@ export function AlertsSection() {
         </Reveal>
 
         {/* Channels */}
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Delivery channels</p>
-            <ul className="space-y-2">
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="pmc-card p-4 h-100">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Delivery channels</p>
+            <ul className="d-flex flex-column pmc-gap-2" style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {channels.map((c) => (
-                <li key={c.name} className={cn("flex items-center gap-3 rounded-xl border p-3 transition", c.on ? "border-pmgreen/40 bg-pmgreen-soft/40" : "border-line bg-canvas/50")}>
-                  <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", c.on ? "bg-white text-[#067647] shadow-sm" : "bg-white text-faint")}>
+                <li
+                  key={c.name}
+                  className="d-flex align-items-center pmc-gap-3 pmc-radius p-3"
+                  style={c.on ? { border: "1px solid rgba(18,183,106,0.4)", background: "rgba(231,248,239,0.4)" } : { border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}
+                >
+                  <span className={cn("pmc-icon-sq d-grid", c.on ? "pmc-green-ink" : "pmc-faint")} style={{ background: "#fff", boxShadow: c.on ? "0 1px 2px rgba(16,24,40,0.06)" : undefined }}>
                     <Icon name={c.icon} size={16} />
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className={cn("block text-[12.5px] font-bold", c.on ? "text-ink" : "text-faint")}>{c.name}</span>
-                    <span className="block truncate text-[10.5px] font-semibold text-faint">{c.detail}</span>
+                  <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <span className={cn("d-block pmc-fs-125 fw-bold", c.on ? "pmc-ink" : "pmc-faint")}>{c.name}</span>
+                    <span className="d-block pmc-truncate pmc-fs-105 fw-semibold pmc-faint">{c.detail}</span>
                   </span>
                   {c.on ? (
-                    <span className="flex items-center gap-1 text-[10.5px] font-bold text-[#067647]"><span className="live-dot" />ON</span>
+                    <span className="d-flex align-items-center pmc-gap-1 pmc-fs-105 fw-bold pmc-green-ink"><span className="pmc-live-dot" />ON</span>
                   ) : (
                     <Badge tone="muted">Off</Badge>
                   )}
@@ -107,13 +121,13 @@ export function AlertsSection() {
               ))}
             </ul>
             {channels.filter((c) => c.on).length === 0 && (
-              <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-danger-soft px-3 py-2 text-[11.5px] font-bold leading-snug text-[#b42318]">
-                <Icon name="alertTri" size={13} className="mt-0.5 flex-none" /> No delivery channels — alerts are firing into the void. Enable at least one.
+              <p className="pmc-mt-3 d-flex align-items-start pmc-gap-15 rounded-2 pmc-px-3 pmc-py-2 pmc-fs-115 fw-bold lh-sm pmc-danger-ink mb-0" style={{ background: "var(--pmc-danger-soft)" }}>
+                <Icon name="alertTri" size={13} className="pmc-mt-05 flex-none" /> No delivery channels — alerts are firing into the void. Enable at least one.
               </p>
             )}
-            <div className="mt-3 rounded-xl bg-canvas/70 p-3">
-              <p className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-faint">Quiet hours</p>
-              <p className="mt-0.5 text-[12px] font-bold text-ink">22:00 – 06:30 EAT · fraud alerts always break through</p>
+            <div className="pmc-mt-3 pmc-radius p-3" style={{ background: "rgba(242,244,248,0.7)" }}>
+              <p className="pmc-fs-105 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.1em" }}>Quiet hours</p>
+              <p className="pmc-mt-05 pmc-fs-12 fw-bold pmc-ink mb-0">22:00 – 06:30 EAT · fraud alerts always break through</p>
             </div>
           </div>
         </Reveal>
@@ -121,37 +135,41 @@ export function AlertsSection() {
 
       {/* Notification log */}
       <Reveal delay={120}>
-        <div className="mt-3 rounded-2xl border border-line bg-white p-4 shadow-pm">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <p className="font-display mr-auto text-[13.5px] font-bold text-ink">
-              Notification log {unread > 0 && <Badge tone="danger" className="ml-1">{unread} unread</Badge>}
+        <div className="pmc-card pmc-mt-3 p-4">
+          <div className="pmc-mb-3 d-flex flex-wrap align-items-center pmc-gap-2">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink me-auto mb-0">
+              Notification log {unread > 0 && <Badge tone="danger" className="ms-1">{unread} unread</Badge>}
             </p>
             {["all", "push", "sms", "email", "system"].map((c) => (
               <Chip key={c} on={chanFilter === c} onClick={() => setChanFilter(c)}>
                 {c === "all" ? "All" : c === "push" ? "Push" : c.toUpperCase()}
               </Chip>
             ))}
-            <button onClick={markAllRead} className="ml-1 text-[11.5px] font-bold text-pmgreen-dark transition hover:text-pmgreen">
+            <button type="button" onClick={markAllRead} className="ms-1 pmc-fs-115 fw-bold pmc-green-dark pmc-focus" style={{ background: "none", border: "none", padding: 0 }}>
               Mark all read
             </button>
           </div>
           {notifFiltered.length === 0 ? (
             <Empty icon="bell" title={`No ${chanFilter} notifications`} sub="Alerts you receive will appear here with full context." />
           ) : (
-            <ul className="divide-y divide-line/70">
+            <ul className="pmc-divided">
               {notifFiltered.slice(0, 6).map((n) => (
-                <li key={n.id} className={cn("flex items-start gap-3 py-3", !n.read && "rounded-lg bg-pmgreen-soft/25 px-2 -mx-2")}>
-                  <span className={cn("mt-0.5 grid h-9 w-9 flex-none place-items-center rounded-[10px]", chanTone[n.channel])}>
+                <li
+                  key={n.id}
+                  className={cn("d-flex align-items-start pmc-gap-3 pmc-py-3", !n.read && "pmc-radius-xs pmc-px-2")}
+                  style={!n.read ? { background: "rgba(231,248,239,0.25)", marginLeft: -8, marginRight: -8 } : undefined}
+                >
+                  <span className={cn("pmc-mt-05 pmc-icon-sq d-grid", chanTone[n.channel])}>
                     <Icon name={chanIcon[n.channel]} size={15} />
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-2 text-[13px] font-bold text-ink">
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="d-flex flex-wrap align-items-center pmc-gap-2 pmc-fs-13 fw-bold pmc-ink mb-0">
                       {n.title}
-                      {!n.read && <span className="h-1.5 w-1.5 rounded-full bg-pmgreen" />}
+                      {!n.read && <span className="d-inline-block rounded-circle" style={{ width: 6, height: 6, background: "var(--pmc-green)" }} />}
                     </p>
-                    <p className="mt-0.5 text-[12px] leading-relaxed text-muted">{n.body}</p>
+                    <p className="pmc-mt-05 pmc-fs-12 pmc-muted mb-0" style={{ lineHeight: 1.65 }}>{n.body}</p>
                   </div>
-                  <span className="flex-none pt-0.5 text-[10.5px] font-bold text-faint">{n.time}</span>
+                  <span className="flex-none pmc-pt-05 pmc-fs-105 fw-bold pmc-faint">{n.time}</span>
                 </li>
               ))}
             </ul>
@@ -204,25 +222,26 @@ export function TransactionsSection() {
   };
 
   return (
-    <section id="transactions" className="scroll-mt-24">
+    <section id="transactions" className="pmc-scroll-mt">
       <SectionHead
         no="04"
         title="Transaction Feed"
         sub="Live authorisations across every card. Dispute anything suspicious within 120 days."
       >
-        <div className="relative">
-          <Icon name="search" size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+        <div className="position-relative">
+          <Icon name="search" size={14} className="position-absolute pmc-faint" style={{ left: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Filter by merchant…"
-            className="focus-ring w-[190px] rounded-[10px] border border-line bg-white py-2 pl-9 pr-3 text-[12.5px] font-semibold outline-none transition placeholder:font-medium placeholder:text-faint focus:border-pmgreen/50"
+            className="pmc-focus pmc-radius-sm pmc-fs-125 fw-semibold pmc-ink"
+            style={{ width: 190, border: "1px solid var(--pmc-line)", background: "#fff", padding: "8px 12px 8px 36px", outline: "none" }}
           />
         </div>
         <Btn size="sm" variant="outline" icon="download" onClick={exportCsv}>Export</Btn>
       </SectionHead>
 
-      <div className="thin-scroll mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="pmc-thin-scroll pmc-mb-4 d-flex pmc-gap-2 overflow-auto pb-1">
         {TXN_FILTERS.map((f) => {
           const count = f === "all" ? txns.length : f === "flagged" ? txns.filter((t) => t.flagged).length : txns.filter((t) => t.status === f).length;
           return (
@@ -244,42 +263,42 @@ export function TransactionsSection() {
         />
       ) : (
         <Reveal>
-          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
+          <div className="pmc-table-frame">
             {/* Desktop table */}
-            <div className="hidden md:block">
-              <table className="w-full text-left">
+            <div className="table-responsive d-none d-md-block">
+              <table className="table pmc-table w-100 text-start align-middle">
                 <thead>
-                  <tr className="border-b border-line bg-canvas/70 text-[10.5px] font-bold uppercase tracking-[0.08em] text-faint">
-                    <th className="px-4 py-2.5">Merchant</th>
-                    <th className="px-3 py-2.5">Card</th>
-                    <th className="px-3 py-2.5">Channel</th>
-                    <th className="px-3 py-2.5 text-right">Amount</th>
-                    <th className="px-3 py-2.5">Status</th>
-                    <th className="px-4 py-2.5 text-right">Actions</th>
+                  <tr>
+                    <th scope="col">Merchant</th>
+                    <th scope="col">Card</th>
+                    <th scope="col">Channel</th>
+                    <th scope="col" className="text-end">Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" className="text-end">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-line/70">
+                <tbody>
                   {shown.map((t) => (
-                    <tr key={t.id} className="group text-[12.5px] transition hover:bg-pmgreen-soft/20">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-canvas text-muted"><Icon name={chanIcon(t.channel)} size={14} /></span>
-                          <div className="leading-tight">
-                            <p className="flex items-center gap-1.5 font-bold text-ink">
+                    <tr key={t.id}>
+                      <td>
+                        <div className="d-flex align-items-center pmc-gap-25">
+                          <span className="pmc-icon-sq-sm d-grid pmc-tone-muted"><Icon name={chanIcon(t.channel)} size={14} /></span>
+                          <div className="lh-sm">
+                            <p className="d-flex align-items-center pmc-gap-15 fw-bold pmc-ink mb-0">
                               {t.merchant}
                               {t.intl && <Badge tone="info">INTL</Badge>}
                               {t.flagged && <Badge tone="danger" dot>FLAG</Badge>}
                             </p>
-                            <p className="text-[10.5px] font-semibold text-faint">{t.category} · {t.date} · {t.time}</p>
+                            <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{t.category} · {t.date} · {t.time}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 font-semibold text-muted">{cardName(t.cardId)}</td>
-                      <td className="px-3 py-3 font-semibold text-muted">{t.channel}</td>
-                      <td className="num px-3 py-3 text-right font-display font-bold text-ink">{kes(t.amount)}</td>
-                      <td className="px-3 py-3"><Badge tone={toneFor(t.status)} dot>{t.status}</Badge></td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-1.5 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
+                      <td className="fw-semibold pmc-muted">{cardName(t.cardId)}</td>
+                      <td className="fw-semibold pmc-muted">{t.channel}</td>
+                      <td className="pmc-num text-end pmc-display fw-bold pmc-ink">{kes(t.amount)}</td>
+                      <td><Badge tone={toneFor(t.status)} dot>{t.status}</Badge></td>
+                      <td>
+                        <div className="d-flex justify-content-end pmc-gap-15 pmc-row-actions">
                           {t.status === "Cleared" && (
                             <Btn size="sm" variant="outline" icon="flag" onClick={() => openModal({ type: "dispute", txnId: t.id })}>Dispute</Btn>
                           )}
@@ -292,22 +311,22 @@ export function TransactionsSection() {
             </div>
 
             {/* Mobile cards */}
-            <ul className="divide-y divide-line/70 md:hidden">
+            <ul className="pmc-mobile-list d-md-none">
               {shown.map((t) => (
-                <li key={t.id} className="flex items-center gap-3 px-4 py-3">
-                  <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-canvas text-muted"><Icon name={chanIcon(t.channel)} size={15} /></span>
-                  <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-1.5 text-[13px] font-bold text-ink">
+                <li key={t.id}>
+                  <span className="pmc-icon-sq d-grid pmc-tone-muted"><Icon name={chanIcon(t.channel)} size={15} /></span>
+                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                    <p className="d-flex flex-wrap align-items-center pmc-gap-15 pmc-fs-13 fw-bold pmc-ink mb-0">
                       {t.merchant}
                       {t.intl && <Badge tone="info">INTL</Badge>}
                     </p>
-                    <p className="text-[10.5px] font-semibold text-faint">{cardName(t.cardId)} · {t.date}</p>
-                    <div className="mt-1"><Badge tone={toneFor(t.status)} dot>{t.status}</Badge></div>
+                    <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{cardName(t.cardId)} · {t.date}</p>
+                    <div className="pmc-mt-1"><Badge tone={toneFor(t.status)} dot>{t.status}</Badge></div>
                   </div>
-                  <div className="text-right">
-                    <p className="num font-display text-[13.5px] font-bold text-ink">−{kes(t.amount)}</p>
+                  <div className="text-end">
+                    <p className="pmc-num pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">−{kes(t.amount)}</p>
                     {t.status === "Cleared" && (
-                      <button onClick={() => openModal({ type: "dispute", txnId: t.id })} className="mt-1 text-[11px] font-bold text-pmgreen-dark">
+                      <button type="button" onClick={() => openModal({ type: "dispute", txnId: t.id })} className="pmc-mt-1 pmc-fs-11 fw-bold pmc-green-dark pmc-focus" style={{ background: "none", border: "none", padding: 0 }}>
                         Dispute
                       </button>
                     )}
@@ -316,9 +335,9 @@ export function TransactionsSection() {
               ))}
             </ul>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-canvas/60 px-4 py-2.5">
-              <p className="text-[11.5px] font-bold text-muted">{shown.length} transaction{shown.length === 1 ? "" : "s"} in view</p>
-              <p className="num text-[11.5px] font-bold text-muted">Cleared volume · <span className="font-display text-[13px] text-ink">{kes(clearedVol)}</span></p>
+            <div className="pmc-table-footer">
+              <p className="mb-0">{shown.length} transaction{shown.length === 1 ? "" : "s"} in view</p>
+              <p className="mb-0">Cleared volume · <span className="pmc-display pmc-fs-13 pmc-ink">{kes(clearedVol)}</span></p>
             </div>
           </div>
         </Reveal>

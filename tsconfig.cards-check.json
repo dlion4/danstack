@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/features/dashboards/card-dashboard/**/*.ts",
+    "src/features/dashboards/card-dashboard/**/*.tsx",
+    "src/routes/cards/**/*.tsx",
+    "src/routes/cards.tsx"
+  ]
+}

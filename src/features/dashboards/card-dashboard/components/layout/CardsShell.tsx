@@ -1,23 +1,24 @@
 /* ============================================================================
- * CardsShell.tsx — the PayMo BAAS Cards Layout shell.
+ * CardsShell.tsx — the PayMo BAAS Cards layout shell (Bootstrap 5 edition).
  * ----------------------------------------------------------------------------
- * MIGRATED FROM: the standalone redesign-dashboard-cards app's CardsShell.tsx
- * (originally App.tsx's <Layout> component), now placed in the danstack
- * feature tree at features/dashboards/card-dashboard/components/layout/.
+ * Layout component rendered by routes/cards/app.tsx. Renders the shell chrome
+ * (sidebar, topbar, quickbar, mobile nav) around the <Outlet /> where the
+ * active /cards/app/<module> route renders. All modals, drawers and toasts
+ * are mounted here so they persist across page navigations.
  *
- * This is the layout component rendered by routes/cards/app.tsx. It renders the
- * shell chrome (sidebar, topbar, quickbar, mobile nav) around the <Outlet />
- * where the active /cards/app/<module> route renders. All modals, drawers and
- * toasts are mounted here so they persist across page navigations.
- *
- * STACK: Vite + React + TypeScript + TanStack Router + Tailwind CSS
+ * Bootstrap + bootstrap-icons CSS are imported HERE (and nowhere else) so the
+ * rest of the app stays untouched; the bootstrap JS bundle is loaded lazily
+ * so .modal/.offcanvas behaviors are available. All visual overrides live in
+ * ../../index.css scoped under .pmc-* selectors.
  * ========================================================================== */
 
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { AppProvider, scrollToId, ToastViewport, useApp } from "../../store";
-import { MobileNav, QuickBar, SidebarContent, Topbar } from "../../Shell";
 import { Icon, Logo } from "../../icons";
+import { MobileNav, QuickBar, SidebarContent, Topbar } from "../../lib/AppShell";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
 
 /* ---- Modals (shared across all pages) ---- */
@@ -78,21 +79,36 @@ function useShortcuts() {
 function Footer() {
   const { openDrawer, toast } = useApp();
   return (
-    <footer className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-2xl border border-line bg-white px-5 py-4 shadow-pm">
-      <span className="flex items-center gap-2">
+    <footer className="pmc-card mt-5 d-flex flex-wrap align-items-center px-4 py-3" style={{ gap: "12px 24px" }}>
+      <span className="d-flex align-items-center pmc-gap-2">
         <Logo size={22} />
-        <span className="font-display text-[12.5px] font-bold text-ink">PayMo BAAS</span>
-        <span className="rounded-md bg-canvas px-1.5 py-0.5 text-[10px] font-bold text-muted">v2.4</span>
+        <span className="pmc-display" style={{ fontSize: 12.5, fontWeight: 700, color: "var(--pmc-ink)" }}>PayMo BAAS</span>
+        <span className="pmc-badge-muted badge">v2.4</span>
       </span>
-      <span className="hidden text-[11px] font-semibold text-faint sm:inline">CBK-licensed issuer partner · PCI-DSS L1 · Visa & Mastercard principal member</span>
-      <span className="ml-auto flex items-center gap-4">
-        <button onClick={() => scrollToId("health")} className="flex items-center gap-1.5 text-[11.5px] font-bold text-muted transition hover:text-ink">
-          <span className="live-dot" /> System status
+      <span className="d-none d-sm-inline pmc-faint" style={{ fontSize: 11, fontWeight: 600 }}>CBK-licensed issuer partner · PCI-DSS L1 · Visa & Mastercard principal member</span>
+      <span className="ms-auto d-flex align-items-center" style={{ gap: 16 }}>
+        <button
+          type="button"
+          onClick={() => scrollToId("health")}
+          className="pmc-focus d-flex align-items-center pmc-gap-2 pmc-muted"
+          style={{ border: 0, background: "transparent", fontSize: 11.5, fontWeight: 700 }}
+        >
+          <span className="pmc-live-dot" /> System status
         </button>
-        <button onClick={() => toast("info", "Opening developer docs", "API reference for card issuance, authorisations and webhooks.")} className="text-[11.5px] font-bold text-muted transition hover:text-ink">
+        <button
+          type="button"
+          onClick={() => toast("info", "Opening developer docs", "API reference for card issuance, authorisations and webhooks.")}
+          className="pmc-focus pmc-muted"
+          style={{ border: 0, background: "transparent", fontSize: 11.5, fontWeight: 700 }}
+        >
           API docs
         </button>
-        <button onClick={() => openDrawer({ type: "support" })} className="flex items-center gap-1 text-[11.5px] font-bold text-pmgreen-dark transition hover:text-pmgreen">
+        <button
+          type="button"
+          onClick={() => openDrawer({ type: "support" })}
+          className="pmc-focus pmc-green-dark d-flex align-items-center"
+          style={{ border: 0, background: "transparent", gap: 4, fontSize: 11.5, fontWeight: 700 }}
+        >
           <Icon name="headset" size={13} /> Support
         </button>
       </span>
@@ -107,6 +123,13 @@ function Footer() {
 function LayoutShell() {
   const { openDrawer } = useApp();
   useShortcuts();
+
+  /* bootstrap JS bundle (Popper + modal/offcanvas plugins) — loaded once */
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.bundle.min.js").catch(() => {
+      /* shell modals are React-controlled; JS bundle is progressive enhancement */
+    });
+  }, []);
 
   useEffect(() => {
     const onOpenSupport = () => openDrawer({ type: "support" });
@@ -123,18 +146,22 @@ function LayoutShell() {
   }, [openDrawer]);
 
   return (
-    <div className="pm-cards-shell canvas-wash min-h-screen">
-      {/* Desktop sidebar */}
-      <aside className="side-glow fixed inset-y-0 left-0 z-[45] hidden w-[250px] border-r border-white/[0.06] lg:block">
-        <SidebarContent />
-      </aside>
+    <div className="pmc-shell pmc-canvas pm-cards-shell">
+      <div className="d-flex">
+        {/* Desktop sidebar */}
+        <aside className="pmc-sidebar pmc-side-glow d-none d-lg-flex">
+          <SidebarContent />
+        </aside>
 
-      <div className="lg:pl-[250px]">
-        <Topbar />
-        <main className="mx-auto w-full max-w-[1320px] px-4 pb-36 pt-5 sm:px-6">
-          <Outlet />
-          <Footer />
-        </main>
+        <div className="flex-grow-1" style={{ minWidth: 0 }}>
+          <Topbar />
+          <main className="pmc-page-content">
+            <div className="pmc-main">
+              <Outlet />
+              <Footer />
+            </div>
+          </main>
+        </div>
       </div>
 
       <QuickBar />
