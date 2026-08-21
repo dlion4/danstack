@@ -3,4 +3,5 @@ import IdentityVerification from "../../features/authentication/pages/IdentityVe
 
 export const Route = createFileRoute("/auth/identity")({
 	component: IdentityVerification,
+	head: () => ({ meta: [{ title: "Identity verification · Paymo BAAS" }] }),
 });

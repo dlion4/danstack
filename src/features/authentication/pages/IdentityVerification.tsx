@@ -1,1190 +1,650 @@
-import { useEffect, useRef, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-if (typeof document !== "undefined") {
-	import("bootstrap/dist/js/bootstrap.bundle.min.js");
-}
-
-import styles from "../styles/identityVerification.module.css";
-
 /* ============================================================================
-   Paymo BAAS — Account Recovery & Identity Verification (legacy page59)
-   React + TypeScript + TanStack Query, emerald-glass theme.
-   ========================================================================== */
+ * IdentityVerification.tsx — Paymo BAAS · Identity verification (KYC)
+ * ----------------------------------------------------------------------------
+ * Re-themed to the PayMo Business design language via ../components/AuthKit and
+ * cut down from the legacy 1,190-line page to a four-stage flow:
+ * Method → Verify → Review → Next steps.
+ *
+ * Kept: the four assurance levels (dual-channel OTP, document + selfie, live
+ * video, bank micro-deposit), document types, slot booking, deposit amounts
+ * and the automated review timeline.
+ * Added: upload feedback, progress simulation, requirement dialog, toasts and
+ * an abort confirmation.
+ *
+ * Routes/links preserved: /auth/hub · /auth/account-status · /auth/security
+ * ========================================================================== */
 
-type MethodId =
-	| "basic"
-	| "document"
-	| "video"
-	| "bank"
-	| "enterprise"
-	| "affidavit";
-type Stage = "select" | "verify" | "review" | "done";
-type BadgeTone =
-	| "badgeOk"
-	| "badgeNative"
-	| "badgeAdv"
-	| "badgeSoon"
-	| "badgeWarn";
+import { useEffect, useState } from "react";
+import {
+	AuthPage,
+	AuthSplit,
+	Badge,
+	Button,
+	Card,
+	cx,
+	Field,
+	go,
+	Input,
+	Modal,
+	Notice,
+	OptionCard,
+	OtpInput,
+	Progress,
+	Select,
+	Stepper,
+	s,
+	toast,
+} from "../components/AuthKit";
 
-interface VerificationMethod {
-	id: MethodId;
+type Method = "basic" | "document" | "video" | "bank";
+
+const METHODS: Array<{
+	id: Method;
 	icon: string;
+	tone: "green" | "blue" | "violet" | "amber";
 	title: string;
-	text: string;
-	badges: { label: string; tone: BadgeTone }[];
-}
-
-interface NextAction {
-	id: string;
-	icon: string;
-	title: string;
-	text: string;
-	cta: string;
-	primary?: boolean;
-}
-
-interface KycConfig {
-	pill: string;
-	heroTitleA: string;
-	heroTitleB: string;
-	heroText: string;
-	reasons: string[];
-	heroStats: { lbl: string; val: string }[];
-	methods: VerificationMethod[];
-	docTypes: string[];
-	languages: string[];
-	timezones: string[];
-	slots: string[];
-	banks: string[];
-	countries: string[];
-	caseTypes: string[];
-	statusSteps: { icon: string; title: string; text: string }[];
-	nextActions: NextAction[];
-}
-
-const STAGE_ORDER: Stage[] = ["select", "verify", "review", "done"];
-
-const RAIL_STEPS: { stage: Stage; icon: string; label: string }[] = [
-	{ stage: "select", icon: "bi-grid", label: "Method" },
-	{ stage: "verify", icon: "bi-person-vcard", label: "Verify" },
-	{ stage: "review", icon: "bi-hourglass-split", label: "Review" },
-	{ stage: "done", icon: "bi-check2-circle", label: "Next steps" },
+	sub: string;
+	badge: string;
+	sla: string;
+}> = [
+	{
+		id: "basic",
+		icon: "bi-shield-check",
+		tone: "green",
+		title: "Level 1 · Basic",
+		sub: "Dual-channel OTP for low-risk recovery",
+		badge: "Instant",
+		sla: "2 minutes",
+	},
+	{
+		id: "document",
+		icon: "bi-person-vcard",
+		tone: "blue",
+		title: "Level 2 · Standard",
+		sub: "Government ID plus a live selfie match",
+		badge: "Most common",
+		sla: "2–5 minutes",
+	},
+	{
+		id: "video",
+		icon: "bi-camera-video",
+		tone: "violet",
+		title: "Level 3 · Video",
+		sub: "Live agent review for high-risk cases",
+		badge: "4h SLA",
+		sla: "Same day",
+	},
+	{
+		id: "bank",
+		icon: "bi-bank",
+		tone: "amber",
+		title: "Bank micro-deposit",
+		sub: "Confirm two small amounts on a linked account",
+		badge: "1–2 days",
+		sla: "1–2 business days",
+	},
 ];
 
-/* Demo micro-deposit values accepted by the legacy page (verbatim). */
-const DEMO_DEPOSIT_1 = "0.23";
-const DEMO_DEPOSIT_2 = "0.47";
+const DOC_TYPES = [
+	"International Passport",
+	"National ID Card",
+	"Driver's Licence",
+	"Voter's Card",
+];
+const SLOTS = [
+	"Today · 14:00",
+	"Today · 16:30",
+	"Tomorrow · 09:00",
+	"Tomorrow · 11:30",
+];
+const BANKS = [
+	"Equity Bank",
+	"KCB Bank",
+	"NCBA",
+	"Standard Chartered",
+	"Co-operative Bank",
+];
 
-/* ---------- typed mock data (fallback + initial render) ---------- */
-const initialMockData: KycConfig = {
-	pill: "High assurance recovery",
-	heroTitleA: "Verify your",
-	heroTitleB: "identity.",
-	heroText:
-		"We need to confirm it is really you. This protects your Paymo account from unauthorized recovery, fraud, and sensitive-action abuse.",
-	reasons: [
-		"Account recovery",
-		"Large transaction above $10,000",
-		"Sensitive action: API key rotation",
-		"Regulatory requirement: KYC refresh",
-	],
-	heroStats: [
-		{ lbl: "Auto review", val: "2-5 min" },
-		{ lbl: "Video calls", val: "4h SLA" },
-		{ lbl: "Languages", val: "8" },
-		{ lbl: "Encryption", val: "TLS 1.3" },
-	],
-	methods: [
-		{
-			id: "basic",
-			icon: "bi-shield-check",
-			title: "Level 1 - Basic",
-			text: "Dual-channel OTP plus security questions for low-risk recovery.",
-			badges: [
-				{ label: "Email", tone: "badgeOk" },
-				{ label: "SMS", tone: "badgeOk" },
-			],
-		},
-		{
-			id: "document",
-			icon: "bi-person-vcard",
-			title: "Level 2 - Standard",
-			text: "Government ID, selfie match, and automated document review.",
-			badges: [
-				{ label: "ID", tone: "badgeNative" },
-				{ label: "Selfie", tone: "badgeNative" },
-			],
-		},
-		{
-			id: "video",
-			icon: "bi-camera-video",
-			title: "Level 3 - Video",
-			text: "Live agent verification for high-risk recovery and legal holds.",
-			badges: [{ label: "4h slots", tone: "badgeAdv" }],
-		},
-		{
-			id: "bank",
-			icon: "bi-bank",
-			title: "Bank Micro-deposit",
-			text: "Confirm ownership of a linked bank account with two small amounts.",
-			badges: [{ label: "1-2 days", tone: "badgeSoon" }],
-		},
-		{
-			id: "enterprise",
-			icon: "bi-building-lock",
-			title: "Enterprise Courier",
-			text: "Document courier verification for enterprise admins and signatories.",
-			badges: [{ label: "High assurance", tone: "badgeWarn" }],
-		},
-		{
-			id: "affidavit",
-			icon: "bi-file-earmark-lock",
-			title: "Notarized Affidavit",
-			text: "Legal dispute recovery with notarized statement and compliance review.",
-			badges: [{ label: "3-5 days", tone: "badgeWarn" }],
-		},
-	],
-	docTypes: ["Passport", "National ID", "Driver's License", "Voter's Card"],
-	languages: [
-		"English",
-		"French",
-		"Portuguese",
-		"Swahili",
-		"Arabic",
-		"Hausa",
-		"Yoruba",
-		"Zulu",
-	],
-	timezones: [
-		"WAT - Lagos",
-		"EAT - Nairobi",
-		"GMT - Accra/London",
-		"GST - Dubai",
-	],
-	slots: [
-		"Today 14:00",
-		"Today 16:30",
-		"Tomorrow 09:00",
-		"Tomorrow 11:30",
-		"Tomorrow 15:00",
-		"+2 days 10:00",
-		"+2 days 13:30",
-		"+2 days 17:00",
-	],
-	banks: ["GTBank", "Equity Bank", "Stanbic Bank", "Standard Bank"],
-	countries: ["Nigeria", "Kenya", "Ghana", "South Africa", "United Kingdom"],
-	caseTypes: [
-		"Lost access to all factors",
-		"Business signatory dispute",
-		"Estate/legal representative",
-		"Regulatory hold appeal",
-	],
-	statusSteps: [
-		{
-			icon: "bi-check-lg",
-			title: "Submitted",
-			text: "Evidence package received",
-		},
-		{
-			icon: "bi-hourglass-split",
-			title: "Under review",
-			text: "Automated and human checks running",
-		},
-		{
-			icon: "bi-info",
-			title: "Decision",
-			text: "Approved, rejected, or additional info required",
-		},
-	],
-	nextActions: [
-		{
-			id: "password",
-			icon: "bi-key",
-			title: "Set new password",
-			text: "Create a strong password and revoke older login credentials.",
-			cta: "Start password reset",
-		},
-		{
-			id: "mfa",
-			icon: "bi-phone",
-			title: "Re-enroll MFA",
-			text: "Refresh authenticator, SMS, WhatsApp, or passkey factors.",
-			cta: "Open MFA setup",
-		},
-		{
-			id: "sessions",
-			icon: "bi-clock-history",
-			title: "Review login activity",
-			text: "Check recent logins and mark unauthorized devices.",
-			cta: "Review sessions",
-		},
-		{
-			id: "passkey",
-			icon: "bi-shield-lock",
-			title: "Set up passkey",
-			text: "Add phishing-resistant recovery for future access.",
-			cta: "Create passkey",
-			primary: true,
-		},
-	],
-};
+const STAGES = [
+	{ label: "Method", icon: "bi-grid" },
+	{ label: "Verify", icon: "bi-person-vcard" },
+	{ label: "Review", icon: "bi-hourglass-split" },
+	{ label: "Next steps", icon: "bi-check2-circle" },
+];
+
+const REVIEW_STEPS = [
+	"Analysing document quality",
+	"Matching selfie to ID",
+	"Screening sanctions & PEP lists",
+	"Finalising decision",
+];
 
 export default function IdentityVerification() {
-	/* ---------- bundled page configuration ---------- */
-	const config = initialMockData;
+	const [stage, setStage] = useState(0);
+	const [method, setMethod] = useState<Method>("document");
 
-	/* ---------- method & stage state machine ---------- */
-	const [selected, setSelected] = useState<MethodId>("basic");
-	const [stage, setStage] = useState<Stage>("select");
-	const [reasonIndex, setReasonIndex] = useState(0);
+	const [otp, setOtp] = useState("");
+	const [docType, setDocType] = useState(DOC_TYPES[0]);
+	const [docFront, setDocFront] = useState(false);
+	const [selfie, setSelfie] = useState(false);
+	const [slot, setSlot] = useState(SLOTS[0]);
+	const [bank, setBank] = useState(BANKS[0]);
+	const [dep1, setDep1] = useState("");
+	const [dep2, setDep2] = useState("");
 
-	const stageIndex = STAGE_ORDER.indexOf(stage);
+	const [reviewStep, setReviewStep] = useState(0);
+	const [reqOpen, setReqOpen] = useState(false);
+	const [abortOpen, setAbortOpen] = useState(false);
 
-	/* ---------- reason select ---------- */
-	const pickReason = (idx: number) => setReasonIndex(idx);
+	/* review simulation */
+	useEffect(() => {
+		if (stage !== 2) return;
+		setReviewStep(0);
+		const id = window.setInterval(() => {
+			setReviewStep((v) => {
+				if (v >= REVIEW_STEPS.length - 1) {
+					window.clearInterval(id);
+					window.setTimeout(() => {
+						setStage(3);
+						toast.success(
+							"Verification approved",
+							"Your limits have been raised immediately.",
+						);
+					}, 900);
+					return v;
+				}
+				return v + 1;
+			});
+		}, 1200);
+		return () => window.clearInterval(id);
+	}, [stage]);
 
-	/* ---------- risk badge derivation (legacy mapping, verbatim) ---------- */
-	const riskLabel =
-		selected === "basic"
-			? "Risk: Low"
-			: selected === "document" || selected === "bank"
-				? "Risk: Medium"
-				: "Risk: High";
-	const riskTone =
-		selected === "basic"
-			? styles.badgeOk
-			: selected === "document" || selected === "bank"
-				? styles.badgeNative
-				: styles.badgeWarn;
-
-	/* ---------- verify flow state ---------- */
-	// document flow
-	const docFileRef = useRef<HTMLInputElement | null>(null);
-	const [docLoaded, setDocLoaded] = useState(false);
-	const [docError, setDocError] = useState(false);
-	const [liveness, setLiveness] = useState({
-		blink: false,
-		turn: false,
-		smile: false,
-	});
-	// video flow
-	const [slot, setSlot] = useState<string | null>(null);
-	// bank flow
-	const [depositsSent, setDepositsSent] = useState(false);
-	const acctNumRef = useRef<HTMLInputElement | null>(null);
-	const dep1Ref = useRef<HTMLInputElement | null>(null);
-	const dep2Ref = useRef<HTMLInputElement | null>(null);
-
-	/* ---------- review state ---------- */
-	const [caseId, setCaseId] = useState("IDV-0000");
-	const [caseEta, setCaseEta] = useState("2-5 min");
-	const [reviewPct, setReviewPct] = useState(38);
-
-	/* ---------- done state ---------- */
-	const [queuedActions, setQueuedActions] = useState<Record<string, boolean>>(
-		{},
-	);
-
-	/* ---------- panel navigation (legacy goto/showFlow) ---------- */
-	const goto = (name: Stage) => setStage(name);
-
-	const showFlow = () => setStage("verify");
-
-	const simulateRisk = () => {
-		const routes: MethodId[] = [
-			"basic",
-			"document",
-			"video",
-			"bank",
-			"enterprise",
-			"affidavit",
-		];
-		setSelected(routes[Math.floor(Math.random() * routes.length)]);
-		setReasonIndex(Math.floor(Math.random() * config.reasons.length));
-	};
-
-	/* ---------- document upload & liveness (legacy handlers) ---------- */
-	const handleDocPicked = () => {
-		if (!docFileRef.current?.files?.length) return;
-		setDocLoaded(true);
-		setDocError(false);
-	};
-
-	const runLiveness = (key: "blink" | "turn" | "smile") =>
-		setLiveness((prev) => ({ ...prev, [key]: true }));
-
-	const livenessComplete = liveness.blink && liveness.turn && liveness.smile;
-
-	/* ---------- verification submit (legacy validation, verbatim) ---------- */
 	const submitVerify = () => {
-		if (selected === "document" && !docLoaded) {
-			setDocError(true);
-			return;
-		}
-		if (selected === "bank" && depositsSent) {
-			if (
-				dep1Ref.current?.value !== DEMO_DEPOSIT_1 ||
-				dep2Ref.current?.value !== DEMO_DEPOSIT_2
-			) {
-				dep1Ref.current?.focus();
+		if (method === "basic") {
+			if (otp.length < 6) {
+				toast.warning(
+					"Enter the 6-digit code",
+					"We sent it to your email and phone.",
+				);
 				return;
 			}
 		}
-		setCaseId("IDV-" + Math.floor(1000 + Math.random() * 9000));
-		setCaseEta(
-			selected === "video"
-				? "After video call"
-				: selected === "enterprise" || selected === "affidavit"
-					? "3-5 days"
-					: "2-5 min",
-		);
-		goto("review");
-		/* legacy review progress simulation: 38% → +12% / 650ms → done */
-		setReviewPct(38);
-		let w = 38;
-		const timer = window.setInterval(() => {
-			w += 12;
-			setReviewPct(Math.min(w, 100));
-			if (w >= 100) {
-				window.clearInterval(timer);
-				window.setTimeout(() => goto("done"), 500);
+		if (method === "document" && (!docFront || !selfie)) {
+			toast.warning(
+				"Two items required",
+				"Upload your ID and capture a live selfie.",
+			);
+			return;
+		}
+		if (method === "bank") {
+			if (dep1 !== "0.23" || dep2 !== "0.47") {
+				toast.danger(
+					"Amounts don't match",
+					"Check your statement — demo values are 0.23 and 0.47.",
+				);
+				return;
 			}
-		}, 650);
+		}
+		if (method === "video") {
+			toast.success(
+				"Slot booked",
+				`${slot} · you'll get a calendar invite and SMS reminder.`,
+			);
+			setStage(3);
+			return;
+		}
+		toast.info("Submitted for review", "Automated checks are running now.");
+		setStage(2);
 	};
 
-	const queueAction = (id: string) =>
-		setQueuedActions((prev) => ({ ...prev, [id]: true }));
+	const activeMethod = METHODS.find((m) => m.id === method);
 
 	return (
-		<div className={styles.kycPage}>
-			<div className={styles.gridOverlay} />
-			<div
-				className={styles.blob}
-				style={{
-					width: 520,
-					height: 520,
-					background: "#2ee6a0",
-					top: -160,
-					right: -120,
-				}}
-			/>
-			<div
-				className={styles.blob}
-				style={{
-					width: 420,
-					height: 420,
-					background: "#0f9d6c",
-					bottom: -130,
-					left: -80,
-					animationDelay: "-6s",
-				}}
-			/>
-
-			<div className={`container ${styles.contentWrap}`}>
-				<div className="row g-4 align-items-stretch">
-					{/* ============ LEFT — HERO PANEL ============ */}
-					<aside className="col-lg-5">
-						<div className={`${styles.glassStrong} ${styles.heroPanel}`}>
-							<div className={styles.heroContent}>
-								<div>
-									<div className="d-flex align-items-center gap-2 mb-4">
-										<span className={styles.logoMark}>P</span>
-										<div>
-											<div className="fw-bold text-white">
-												Paymo <span className={styles.textGradient}>BAAS</span>
-											</div>
-											<div className={styles.mutedSmall}>
-												Identity Verification
-											</div>
-										</div>
-									</div>
-									<span className={`${styles.pill} mb-3`}>
-										<span className={styles.pillDot} /> {config.pill}
-									</span>
-									<h1
-										style={{
-											fontSize: "clamp(2.2rem, 4.4vw, 4rem)",
-											lineHeight: 1.02,
-											fontWeight: 900,
-										}}
-									>
-										{config.heroTitleA}{" "}
-										<span className={styles.textGradient}>
-											{config.heroTitleB}
-										</span>
-									</h1>
-									<p
-										className="mt-3"
-										style={{ color: "var(--iv-ink2)", maxWidth: 430 }}
-									>
-										{config.heroText}
-									</p>
-									<div
-										className={`${styles.glass} p-3 mt-4 ${styles.reasonCard}`}
-									>
-										<div className={`${styles.sectionTitle} mb-2`}>
-											Reason for verification
-										</div>
-										<select
-											className="form-select"
-											value={config.reasons[reasonIndex]}
-											onChange={(e) =>
-												pickReason(config.reasons.indexOf(e.target.value))
-											}
-											aria-label="Reason for verification"
-										>
-											{config.reasons.map((r) => (
-												<option key={r}>{r}</option>
-											))}
-										</select>
-									</div>
-								</div>
-								<div className="mt-4">
-									<div className="row g-2">
-										{config.heroStats.map((s) => (
-											<div className="col-6" key={s.lbl}>
-												<div className={styles.detailStat}>
-													<div className={styles.detailStatLbl}>{s.lbl}</div>
-													<div className={styles.detailStatVal}>{s.val}</div>
-												</div>
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
-						</div>
-					</aside>
-
-					{/* ============ RIGHT — FLOW PANEL ============ */}
-					<section className="col-lg-7">
-						<div className={`${styles.glassStrong} p-3 p-md-4`}>
-							<div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-								<div>
-									<div className={styles.sectionTitle}>
-										Page 59 - Account Recovery &amp; Identity Verification
-									</div>
-									<h2 className="mb-1" style={{ fontSize: "1.55rem" }}>
-										Choose a verification path
-									</h2>
-									<p
-										className="mb-0"
-										style={{ color: "var(--iv-ink2)", fontSize: "0.92rem" }}
-									>
-										Select the assurance level that matches your risk prompt.
-									</p>
-								</div>
-								<span className={`${styles.badgeMini} ${riskTone}`}>
-									{riskLabel}
-								</span>
-							</div>
-
-							{/* ---------- step rail ---------- */}
-							<div className={`${styles.stepRail} mb-4`}>
-								{RAIL_STEPS.map((s) => {
-									const idx = STAGE_ORDER.indexOf(s.stage);
-									return (
-										<span
-											key={s.stage}
-											className={`${styles.stepChip} ${idx === stageIndex ? styles.stepChipActive : ""} ${
-												idx < stageIndex ? styles.stepChipDone : ""
-											}`}
-										>
-											<i className={`bi ${s.icon}`} /> {s.label}
-										</span>
-									);
-								})}
-							</div>
-
-							{/* ============ PANEL: method select ============ */}
-							<div
-								className={`${styles.hiddenPanel} ${stage === "select" ? styles.hiddenPanelActive : ""}`}
-							>
-								<div className="row g-3">
-									{config.methods.map((m) => (
-										<div className="col-md-6 col-xl-4" key={m.id}>
-											<div
-												className={`${styles.methodCard} ${selected === m.id ? styles.methodCardActive : ""}`}
-												onClick={() => setSelected(m.id)}
-												role="button"
-												tabIndex={0}
-												onKeyDown={(e) => {
-													if (e.key === "Enter" || e.key === " ")
-														setSelected(m.id);
-												}}
-											>
-												<div className="d-flex justify-content-between">
-													<div className={styles.methodIcon}>
-														<i className={`bi ${m.icon}`} />
-													</div>
-													<span className={styles.checkDot} />
-												</div>
-												<h5 style={{ fontSize: "1rem" }}>{m.title}</h5>
-												<p
-													style={{
-														fontSize: "0.82rem",
-														color: "var(--iv-ink2)",
-														margin: 0,
-													}}
-												>
-													{m.text}
-												</p>
-												<div className="mt-3 d-flex gap-1 flex-wrap">
-													{m.badges.map((b) => (
-														<span
-															key={b.label}
-															className={`${styles.badgeMini} ${styles[b.tone]}`}
-														>
-															{b.label}
-														</span>
-													))}
-												</div>
-											</div>
-										</div>
-									))}
-								</div>
-								<div className="d-flex flex-wrap gap-2 mt-4">
-									<button
-										className={`btn ${styles.btnPrimaryPaymo}`}
-										onClick={showFlow}
-									>
-										<i className="bi bi-arrow-right-circle me-1" /> Continue
-										verification
-									</button>
-									<button
-										className={`btn ${styles.btnOutlinePaymo}`}
-										onClick={simulateRisk}
-									>
-										<i className="bi bi-lightning-charge me-1" /> Simulate risk
-										routing
-									</button>
-								</div>
-							</div>
-
-							{/* ============ PANEL: verify flows ============ */}
-							<div
-								className={`${styles.hiddenPanel} ${stage === "verify" ? styles.hiddenPanelActive : ""}`}
-							>
-								{/* ---- basic ---- */}
-								{selected === "basic" && (
-									<div>
-										<h4>Dual-channel verification</h4>
-										<p className={styles.mutedBody}>
-											Enter both OTP codes and answer 2 security questions.
-										</p>
-										<div className="row g-3">
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="kycEmailOtp"
-												>
-													Email OTP
-												</label>
-												<input
-													className="form-control"
-													id="kycEmailOtp"
-													maxLength={6}
-													placeholder="123456"
-												/>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="kycSmsOtp"
-												>
-													SMS OTP
-												</label>
-												<input
-													className="form-control"
-													id="kycSmsOtp"
-													maxLength={6}
-													placeholder="654321"
-												/>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="kycQ1"
-												>
-													Security question 1
-												</label>
-												<input
-													className="form-control"
-													id="kycQ1"
-													placeholder="City where you were born"
-												/>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="kycQ2"
-												>
-													Security question 2
-												</label>
-												<input
-													className="form-control"
-													id="kycQ2"
-													placeholder="First school name"
-												/>
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* ---- document ---- */}
-								{selected === "document" && (
-									<div className="row g-4">
-										<div className="col-lg-6">
-											<h4>Document upload verification</h4>
-											<p className={styles.mutedBody}>
-												Select document type, upload or capture the document,
-												then complete a live selfie match.
-											</p>
-											<label
-												className={styles.formLabelPaymo}
-												htmlFor="docType"
-											>
-												Document type
-											</label>
-											<select className="form-select mb-3" id="docType">
-												{config.docTypes.map((d) => (
-													<option key={d}>{d}</option>
-												))}
-											</select>
-											<input
-												type="file"
-												ref={docFileRef}
-												className="d-none"
-												accept="image/*,.pdf"
-												onChange={handleDocPicked}
-											/>
-											<div
-												className={`${styles.uploadZone} ${docLoaded ? styles.uploadZoneLoaded : ""} ${
-													docError ? styles.uploadZoneError : ""
-												}`}
-												onClick={() => docFileRef.current?.click()}
-												role="button"
-												tabIndex={0}
-												onKeyDown={(e) => {
-													if (e.key === "Enter" || e.key === " ")
-														docFileRef.current?.click();
-												}}
-											>
-												{docLoaded ? (
-													<>
-														<i
-															className="bi bi-check-circle"
-															style={{ fontSize: "2rem", color: "#86efac" }}
-														/>
-														<div className="fw-bold mt-2">
-															Document received
-														</div>
-														<div className={styles.mutedSmall}>
-															Auto-crop and OCR complete
-														</div>
-													</>
-												) : (
-													<>
-														<i
-															className="bi bi-cloud-arrow-up"
-															style={{
-																fontSize: "2rem",
-																color: "var(--iv-accent)",
-															}}
-														/>
-														<div className="fw-bold mt-2">
-															Upload or capture document
-														</div>
-														<div className={styles.mutedSmall}>
-															JPEG, PNG, or PDF. Auto-crop enabled.
-														</div>
-													</>
-												)}
-											</div>
-											<div className="mt-3">
-												{["Lighting", "Glare detection", "Frame quality"].map(
-													(label) => (
-														<div className={styles.qualityRow} key={label}>
-															<span>{label}</span>
-															<span
-																className={`${styles.badgeMini} ${docLoaded ? styles.badgeOk : styles.badgeSoon}`}
-															>
-																{docLoaded ? "Passed" : "Pending"}
-															</span>
-														</div>
-													),
-												)}
-											</div>
-										</div>
-										<div className="col-lg-6">
-											<div className={styles.cameraBox}>
-												<div className={styles.cameraIcon}>
-													<i className="bi bi-person-bounding-box" />
-												</div>
-												<div className={styles.scanLine} />
-												<div className={styles.faceFrame} />
-											</div>
-											<div className="d-flex flex-wrap gap-2 mt-3">
-												<button
-													className={`btn btn-sm ${liveness.blink ? styles.btnPrimaryPaymo : styles.btnOutlinePaymo}`}
-													onClick={() => runLiveness("blink")}
-												>
-													<i className="bi bi-eye me-1" /> Blink
-												</button>
-												<button
-													className={`btn btn-sm ${liveness.turn ? styles.btnPrimaryPaymo : styles.btnOutlinePaymo}`}
-													onClick={() => runLiveness("turn")}
-												>
-													<i className="bi bi-arrow-left-right me-1" /> Turn
-													head
-												</button>
-												<button
-													className={`btn btn-sm ${liveness.smile ? styles.btnPrimaryPaymo : styles.btnOutlinePaymo}`}
-													onClick={() => runLiveness("smile")}
-												>
-													<i className="bi bi-emoji-smile me-1" /> Smile
-												</button>
-											</div>
-											<div className={`${styles.detailStat} mt-3`}>
-												<div className={styles.detailStatLbl}>
-													Face match confidence
-												</div>
-												<div className={styles.detailStatVal}>
-													{livenessComplete ? (
-														<span className={styles.faceScoreOk}>
-															97.8% match
-														</span>
-													) : (
-														"Not captured"
-													)}
-												</div>
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* ---- video ---- */}
-								{selected === "video" && (
-									<div>
-										<h4>Schedule a 5-minute video call</h4>
-										<p className={styles.mutedBody}>
-											Have a valid ID ready, use good lighting, and join from a
-											stable connection.
-										</p>
-										<div className="row g-3">
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="callLang"
-												>
-													Language
-												</label>
-												<select className="form-select" id="callLang">
-													{config.languages.map((l) => (
-														<option key={l}>{l}</option>
-													))}
-												</select>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="callTz"
-												>
-													Timezone
-												</label>
-												<select className="form-select" id="callTz">
-													{config.timezones.map((t) => (
-														<option key={t}>{t}</option>
-													))}
-												</select>
-											</div>
-										</div>
-										<div className="row g-2 mt-3">
-											{config.slots.map((s) => (
-												<div className="col-6 col-md-3" key={s}>
-													<div
-														className={`${styles.slot} ${slot === s ? styles.slotActive : ""}`}
-														onClick={() => setSlot(s)}
-														role="button"
-														tabIndex={0}
-														onKeyDown={(e) => {
-															if (e.key === "Enter" || e.key === " ")
-																setSlot(s);
-														}}
-													>
-														{s}
-													</div>
-												</div>
-											))}
-										</div>
-										{slot && (
-											<div
-												className={`${styles.glass} p-3 mt-3 ${styles.callConfirm}`}
-											>
-												<i
-													className="bi bi-calendar-check me-2"
-													style={{ color: "#86efac" }}
-												/>
-												Video call reserved for <strong>{slot}</strong>.
-												Calendar invite will be sent after submission.
-											</div>
-										)}
-									</div>
-								)}
-
-								{/* ---- bank ---- */}
-								{selected === "bank" && (
-									<div>
-										<h4>Micro-deposit verification</h4>
-										<p className={styles.mutedBody}>
-											We send two small deposits to your linked bank. Enter the
-											amounts to confirm ownership.
-										</p>
-										{!depositsSent ? (
-											<div>
-												<div className="row g-3">
-													<div className="col-md-6">
-														<label
-															className={styles.formLabelPaymo}
-															htmlFor="bankName"
-														>
-															Bank name
-														</label>
-														<select className="form-select" id="bankName">
-															{config.banks.map((b) => (
-																<option key={b}>{b}</option>
-															))}
-														</select>
-													</div>
-													<div className="col-md-6">
-														<label
-															className={styles.formLabelPaymo}
-															htmlFor="acctNum"
-														>
-															Account number
-														</label>
-														<input
-															className="form-control"
-															id="acctNum"
-															ref={acctNumRef}
-															placeholder="0123456789"
-														/>
-													</div>
-												</div>
-												<button
-													className={`btn ${styles.btnOutlinePaymo} mt-3`}
-													onClick={() => {
-														if (!acctNumRef.current?.value) {
-															acctNumRef.current?.focus();
-															return;
-														}
-														setDepositsSent(true);
-													}}
-												>
-													Send micro-deposits
-												</button>
-											</div>
-										) : (
-											<div>
-												<div className="row g-3">
-													<div className="col-md-6">
-														<label
-															className={styles.formLabelPaymo}
-															htmlFor="dep1"
-														>
-															First amount
-														</label>
-														<input
-															className="form-control"
-															id="dep1"
-															ref={dep1Ref}
-															placeholder={DEMO_DEPOSIT_1}
-														/>
-													</div>
-													<div className="col-md-6">
-														<label
-															className={styles.formLabelPaymo}
-															htmlFor="dep2"
-														>
-															Second amount
-														</label>
-														<input
-															className="form-control"
-															id="dep2"
-															ref={dep2Ref}
-															placeholder={DEMO_DEPOSIT_2}
-														/>
-													</div>
-												</div>
-												<p
-													className="mt-2"
-													style={{
-														fontSize: "0.82rem",
-														color: "var(--iv-ink3)",
-													}}
-												>
-													Demo accepted values: {DEMO_DEPOSIT_1} and{" "}
-													{DEMO_DEPOSIT_2}.
-												</p>
-											</div>
-										)}
-									</div>
-								)}
-
-								{/* ---- enterprise ---- */}
-								{selected === "enterprise" && (
-									<div>
-										<h4>Enterprise document courier verification</h4>
-										<p className={styles.mutedBody}>
-											For enterprise admins and signatories, we verify original
-											documents through an approved courier partner.
-										</p>
-										<div className="row g-3">
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="entName"
-												>
-													Company legal name
-												</label>
-												<input
-													className="form-control"
-													id="entName"
-													placeholder="Company Ltd"
-												/>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="entCountry"
-												>
-													Registered country
-												</label>
-												<select className="form-select" id="entCountry">
-													{config.countries.map((c) => (
-														<option key={c}>{c}</option>
-													))}
-												</select>
-											</div>
-											<div className="col-12">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="pickupAddr"
-												>
-													Courier pickup address
-												</label>
-												<input
-													className="form-control"
-													id="pickupAddr"
-													placeholder="Office address"
-												/>
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* ---- affidavit ---- */}
-								{selected === "affidavit" && (
-									<div>
-										<h4>Notarized affidavit recovery</h4>
-										<p className={styles.mutedBody}>
-											For legal disputes, ownership conflicts, or inaccessible
-											recovery factors.
-										</p>
-										<div className="row g-3">
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="affCase"
-												>
-													Case type
-												</label>
-												<select className="form-select" id="affCase">
-													{config.caseTypes.map((c) => (
-														<option key={c}>{c}</option>
-													))}
-												</select>
-											</div>
-											<div className="col-md-6">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="jurisdiction"
-												>
-													Jurisdiction
-												</label>
-												<input
-													className="form-control"
-													id="jurisdiction"
-													placeholder="e.g. Lagos, Nigeria"
-												/>
-											</div>
-											<div className="col-12">
-												<label
-													className={styles.formLabelPaymo}
-													htmlFor="affText"
-												>
-													Short explanation
-												</label>
-												<textarea
-													className="form-control"
-													rows={3}
-													id="affText"
-													placeholder="Describe the recovery issue"
-												/>
-											</div>
-										</div>
-									</div>
-								)}
-
-								<div className="d-flex flex-wrap gap-2 mt-4">
-									<button
-										className={`btn ${styles.btnPrimaryPaymo}`}
-										onClick={submitVerify}
-									>
-										<i className="bi bi-shield-check me-1" /> Submit
-										verification
-									</button>
-									<button
-										className={`btn ${styles.btnOutlinePaymo}`}
-										onClick={() => goto("select")}
-									>
-										<i className="bi bi-arrow-left me-1" /> Change method
-									</button>
-								</div>
-							</div>
-
-							{/* ============ PANEL: review ============ */}
-							<div
-								className={`${styles.hiddenPanel} ${stage === "review" ? styles.hiddenPanelActive : ""}`}
-							>
-								<div className="row g-4">
-									<div className="col-lg-6">
-										<h4>Verification status tracking</h4>
-										<p className={styles.mutedBody}>
-											Email and push notifications are sent at each stage. If
-											rejected, we provide a clear reason and re-submission
-											guidance.
-										</p>
-										<div>
-											{config.statusSteps.map((s, i) => (
-												<div
-													key={s.title}
-													className={`${styles.statusLine} ${i === 0 ? styles.statusLineDone : ""} ${
-														i === 1 ? styles.statusLineActive : ""
-													}`}
-												>
-													<span className={styles.statusDot}>
-														<i className={`bi ${s.icon}`} />
-													</span>
-													<strong>{s.title}</strong>
-													<div className={styles.mutedSmall}>{s.text}</div>
-												</div>
-											))}
-										</div>
-										<div className="progress mt-3">
-											<div
-												className="progress-bar"
-												style={{ width: `${reviewPct}%` }}
-											/>
-										</div>
-									</div>
-									<div className="col-lg-6">
-										<div className={styles.flowFrame}>
-											<div className={styles.flowLabel}>
-												<span
-													className={`${styles.badgeMini} ${styles.badgeNative}`}
-												>
-													Review engine
-												</span>
-												<div className="fw-bold text-white mt-1">
-													Identity graph, fraud checks, and compliance rules
-												</div>
-											</div>
-										</div>
-										<div className="row g-2 mt-3">
-											<div className="col-6">
-												<div className={styles.detailStat}>
-													<div className={styles.detailStatLbl}>Case ID</div>
-													<div
-														className={`${styles.detailStatVal} ${styles.mono}`}
-													>
-														{caseId}
-													</div>
-												</div>
-											</div>
-											<div className="col-6">
-												<div className={styles.detailStat}>
-													<div className={styles.detailStatLbl}>ETA</div>
-													<div className={styles.detailStatVal}>{caseEta}</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							{/* ============ PANEL: done ============ */}
-							<div
-								className={`${styles.hiddenPanel} ${stage === "done" ? styles.hiddenPanelActive : ""}`}
-							>
-								<div className={styles.successCard}>
-									<div className={styles.successIcon}>
-										<i className="bi bi-check-lg" />
-									</div>
-									<h3>Identity verified</h3>
-									<p
-										style={{
-											color: "var(--iv-ink2)",
-											maxWidth: 520,
-											margin: "0 auto 1.5rem",
-										}}
-									>
-										Your account recovery can continue. Please secure your
-										account with the next actions.
-									</p>
-									<div className="row g-3 text-start">
-										{config.nextActions.map((a) => (
-											<div className="col-md-6" key={a.id}>
-												<div
-													className={styles.methodCard}
-													style={{ cursor: "default" }}
-												>
-													<div className={styles.methodIcon}>
-														<i className={`bi ${a.icon}`} />
-													</div>
-													<h5 style={{ fontSize: "1rem" }}>{a.title}</h5>
-													<p
-														style={{
-															fontSize: "0.82rem",
-															color: "var(--iv-ink2)",
-														}}
-													>
-														{a.text}
-													</p>
-													<button
-														className={`btn btn-sm w-100 ${a.primary ? styles.btnPrimaryPaymo : styles.btnOutlinePaymo}`}
-														disabled={!!queuedActions[a.id]}
-														onClick={() => queueAction(a.id)}
-													>
-														{queuedActions[a.id] ? (
-															<>
-																<i className="bi bi-check-lg me-1" /> Action
-																queued
-															</>
-														) : (
-															a.cta
-														)}
-													</button>
-												</div>
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
-						</div>
-					</section>
+		<AuthPage>
+			<AuthSplit
+				pill="High-assurance verification"
+				title="Prove it's you,"
+				accent="once."
+				copy="Verification protects your account from fraudulent recovery and unlocks higher limits across every Paymo product."
+				features={[
+					{
+						icon: "bi-stopwatch",
+						title: "2–5 minute decisions",
+						sub: "Automated document review",
+					},
+					{
+						icon: "bi-lock",
+						title: "Encrypted end-to-end",
+						sub: "TLS 1.3 · documents deleted after review",
+					},
+					{
+						icon: "bi-globe-africa",
+						title: "8 languages",
+						sub: "Live agents across 4 time zones",
+					},
+				]}
+				trust={["ISO 27001", "GDPR aligned"]}
+				wide
+			>
+				<div className={s.spread}>
+					<div>
+						<h1 className={s.title}>Identity verification</h1>
+						<p className={s.subtitle}>Triggered by: account recovery request</p>
+					</div>
+					<Button
+						variant="subtle"
+						size="sm"
+						icon="bi-info-circle"
+						onClick={() => setReqOpen(true)}
+					>
+						What do I need?
+					</Button>
 				</div>
-			</div>
-		</div>
+
+				<Card>
+					<Stepper steps={STAGES} current={stage} />
+					<div style={{ margin: "0.9rem 0 1.1rem" }}>
+						<Progress value={((stage + 1) / 4) * 100} sm />
+					</div>
+
+					{/* ---------------- stage 0 · choose ---------------- */}
+					{stage === 0 && (
+						<div className={s.stack}>
+							{METHODS.map((m) => (
+								<OptionCard
+									key={m.id}
+									icon={m.icon}
+									tone={m.tone}
+									title={m.title}
+									sub={m.sub}
+									selected={method === m.id}
+									badge={<Badge tone={m.tone}>{m.badge}</Badge>}
+									onClick={() => setMethod(m.id)}
+								/>
+							))}
+							<Notice tone="slate" icon="bi-clock-history">
+								Estimated decision time for <b>{activeMethod?.title}</b>:{" "}
+								{activeMethod?.sla}.
+							</Notice>
+						</div>
+					)}
+
+					{/* ---------------- stage 1 · verify ---------------- */}
+					{stage === 1 && (
+						<div className={s.stack}>
+							{method === "basic" && (
+								<>
+									<div className={s.center}>
+										<span
+											className={cx(s.tile, s.tileLg, s.tileGreen)}
+											style={{ margin: "0 auto 0.6rem" }}
+										>
+											<i className="bi bi-envelope-check" />
+										</span>
+										<div className={s.cardTitle}>Confirm both channels</div>
+										<p className={s.tiny} style={{ margin: "0.25rem 0 0" }}>
+											Same code sent to a•••a@paymo.com and +254 •••••4321
+										</p>
+									</div>
+									<OtpInput
+										value={otp}
+										onChange={setOtp}
+										onComplete={submitVerify}
+									/>
+								</>
+							)}
+
+							{method === "document" && (
+								<>
+									<Field label="Document type" htmlFor="kycDoc">
+										<Select
+											id="kycDoc"
+											value={docType}
+											onChange={(e) => setDocType(e.target.value)}
+										>
+											{DOC_TYPES.map((d) => (
+												<option key={d}>{d}</option>
+											))}
+										</Select>
+									</Field>
+									<div
+										className={s.grid}
+										style={{ ["--au-min" as string]: "200px" }}
+									>
+										<UploadTile
+											done={docFront}
+											icon="bi-card-image"
+											title={`Photo of ${docType}`}
+											hint="PNG or JPG · max 8 MB"
+											onPick={() => {
+												setDocFront(true);
+												toast.success(
+													"Document received",
+													"Quality check passed — glare not detected.",
+												);
+											}}
+										/>
+										<UploadTile
+											done={selfie}
+											icon="bi-camera"
+											title="Live selfie"
+											hint="Liveness detection · 3 seconds"
+											onPick={() => {
+												setSelfie(true);
+												toast.success(
+													"Selfie captured",
+													"Face match confidence: 98.4%.",
+												);
+											}}
+										/>
+									</div>
+									<Notice tone="blue" icon="bi-lightbulb">
+										Good lighting and a plain background cut review time from
+										days to minutes.
+									</Notice>
+								</>
+							)}
+
+							{method === "video" && (
+								<>
+									<Field label="Pick a slot" htmlFor="kycSlot">
+										<Select
+											id="kycSlot"
+											value={slot}
+											onChange={(e) => setSlot(e.target.value)}
+										>
+											{SLOTS.map((sl) => (
+												<option key={sl}>{sl}</option>
+											))}
+										</Select>
+									</Field>
+									<Notice tone="violet" icon="bi-camera-video">
+										Have your ID with you. Calls last about 6 minutes and are
+										recorded for compliance.
+									</Notice>
+								</>
+							)}
+
+							{method === "bank" && (
+								<>
+									<Field label="Linked account" htmlFor="kycBank">
+										<Select
+											id="kycBank"
+											value={bank}
+											onChange={(e) => setBank(e.target.value)}
+										>
+											{BANKS.map((b) => (
+												<option key={b}>{b}</option>
+											))}
+										</Select>
+									</Field>
+									<div className={s.row}>
+										<div className={s.grow}>
+											<Field label="Deposit 1 (KES)" htmlFor="kycD1">
+												<Input
+													id="kycD1"
+													placeholder="0.00"
+													value={dep1}
+													onChange={(e) => setDep1(e.target.value)}
+												/>
+											</Field>
+										</div>
+										<div className={s.grow}>
+											<Field label="Deposit 2 (KES)" htmlFor="kycD2">
+												<Input
+													id="kycD2"
+													placeholder="0.00"
+													value={dep2}
+													onChange={(e) => setDep2(e.target.value)}
+												/>
+											</Field>
+										</div>
+									</div>
+									<Notice tone="amber" icon="bi-hourglass-split">
+										Deposits land within 1–2 business days and are reversed
+										automatically.
+									</Notice>
+								</>
+							)}
+						</div>
+					)}
+
+					{/* ---------------- stage 2 · review ---------------- */}
+					{stage === 2 && (
+						<div className={s.stack}>
+							<div className={s.center}>
+								<div className={cx(s.bio, s.bioScan)}>
+									<i className="bi bi-hourglass-split" />
+								</div>
+								<div className={s.cardTitle}>Running automated checks</div>
+								<p className={s.tiny} style={{ margin: "0.25rem 0 0" }}>
+									Keep this tab open — usually done in under two minutes.
+								</p>
+							</div>
+							<div className={s.stack}>
+								{REVIEW_STEPS.map((r, i) => (
+									<div className={s.listRow} key={r}>
+										<span
+											className={cx(
+												s.tile,
+												s.tileSm,
+												i < reviewStep
+													? s.tileGreen
+													: i === reviewStep
+														? s.tileBlue
+														: s.tileSlate,
+											)}
+										>
+											<i
+												className={
+													i < reviewStep
+														? "bi bi-check-lg"
+														: i === reviewStep
+															? "bi bi-arrow-repeat"
+															: "bi bi-dash"
+												}
+											/>
+										</span>
+										<span className={s.grow}>{r}</span>
+										{i < reviewStep && <Badge tone="green">Passed</Badge>}
+										{i === reviewStep && <Badge tone="blue">Running</Badge>}
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* ---------------- stage 3 · done ---------------- */}
+					{stage === 3 && (
+						<div className={s.stack}>
+							<div className={s.center}>
+								<div className={cx(s.bio, s.bioDone)}>
+									<i className="bi bi-patch-check" />
+								</div>
+								<div className={s.cardTitle}>
+									{method === "video"
+										? "Video session booked"
+										: "Identity verified"}
+								</div>
+								<p className={s.tiny} style={{ margin: "0.25rem 0 0" }}>
+									{method === "video"
+										? `${slot} · invite sent to your email`
+										: "Tier 3 limits are now active on your account."}
+								</p>
+							</div>
+							<div
+								className={s.grid}
+								style={{ ["--au-min" as string]: "220px" }}
+							>
+								<Card hover onClick={() => go("/auth/hub")}>
+									<div className={s.row}>
+										<span className={cx(s.tile, s.tileGreen)}>
+											<i className="bi bi-grid-1x2" />
+										</span>
+										<span className={s.grow}>
+											<span className={s.optionTitle}>Back to dashboards</span>
+											<span
+												className={s.optionSub}
+												style={{ display: "block" }}
+											>
+												Pick up where you left off
+											</span>
+										</span>
+									</div>
+								</Card>
+								<Card hover onClick={() => go("/auth/security")}>
+									<div className={s.row}>
+										<span className={cx(s.tile, s.tileViolet)}>
+											<i className="bi bi-shield-check" />
+										</span>
+										<span className={s.grow}>
+											<span className={s.optionTitle}>Review security</span>
+											<span
+												className={s.optionSub}
+												style={{ display: "block" }}
+											>
+												Sessions, alerts and connected apps
+											</span>
+										</span>
+									</div>
+								</Card>
+							</div>
+						</div>
+					)}
+
+					{stage < 3 && (
+						<div className={s.spread} style={{ marginTop: "1.2rem" }}>
+							<Button
+								variant="subtle"
+								icon="bi-arrow-left"
+								disabled={stage === 2}
+								onClick={() =>
+									stage === 0 ? setAbortOpen(true) : setStage((v) => v - 1)
+								}
+							>
+								{stage === 0 ? "Cancel" : "Back"}
+							</Button>
+							{stage < 2 && (
+								<Button
+									onClick={() => (stage === 0 ? setStage(1) : submitVerify())}
+								>
+									{stage === 0
+										? "Continue"
+										: method === "video"
+											? "Book slot"
+											: "Submit for review"}
+								</Button>
+							)}
+						</div>
+					)}
+				</Card>
+
+				<div className={s.footNote}>
+					<span>Case #KYC-2026-4471</span>
+					<a className={s.link} href="/auth/account-status">
+						Account status
+					</a>
+				</div>
+			</AuthSplit>
+
+			<Modal
+				open={reqOpen}
+				onClose={() => setReqOpen(false)}
+				title="What you'll need"
+				sub="Requirements differ by assurance level."
+				icon="bi-list-check"
+				footer={
+					<Button variant="ghost" onClick={() => setReqOpen(false)}>
+						Got it
+					</Button>
+				}
+			>
+				<div className={s.stack}>
+					{METHODS.map((m) => (
+						<div className={s.listRow} key={m.id}>
+							<span
+								className={cx(
+									s.tile,
+									s.tileSm,
+									s[`tile${m.tone[0].toUpperCase()}${m.tone.slice(1)}`],
+								)}
+							>
+								<i className={`bi ${m.icon}`} />
+							</span>
+							<span className={s.grow}>
+								<span className={s.optionTitle}>{m.title}</span>
+								<span className={s.optionSub} style={{ display: "block" }}>
+									{m.sub} · decision in {m.sla}
+								</span>
+							</span>
+						</div>
+					))}
+					<Notice tone="slate" icon="bi-shield-lock">
+						Documents are encrypted, reviewed and then deleted. We never share
+						them with third parties outside regulatory obligations.
+					</Notice>
+				</div>
+			</Modal>
+
+			<Modal
+				open={abortOpen}
+				onClose={() => setAbortOpen(false)}
+				title="Cancel verification?"
+				icon="bi-x-octagon"
+				tone="amber"
+				size="sm"
+				footer={
+					<>
+						<Button variant="ghost" onClick={() => setAbortOpen(false)}>
+							Keep verifying
+						</Button>
+						<Button variant="danger" onClick={() => go("/auth/account-status")}>
+							Cancel
+						</Button>
+					</>
+				}
+			>
+				Your account stays limited until verification completes. You can restart
+				at any time from the account status page.
+			</Modal>
+		</AuthPage>
+	);
+}
+
+function UploadTile({
+	done,
+	icon,
+	title,
+	hint,
+	onPick,
+}: {
+	done: boolean;
+	icon: string;
+	title: string;
+	hint: string;
+	onPick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			className={cx(s.option, done && s.optionOn)}
+			style={{
+				flexDirection: "column",
+				alignItems: "center",
+				textAlign: "center",
+				padding: "1.2rem",
+			}}
+			onClick={onPick}
+		>
+			<span className={cx(s.tile, s.tileLg, done ? s.tileGreen : s.tileSlate)}>
+				<i className={`bi ${done ? "bi-check-lg" : icon}`} />
+			</span>
+			<span className={s.optionTitle} style={{ marginTop: "0.6rem" }}>
+				{title}
+			</span>
+			<span className={s.optionSub}>
+				{done ? "Uploaded · tap to replace" : hint}
+			</span>
+		</button>
 	);
 }

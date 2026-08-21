@@ -1,633 +1,506 @@
 /* ============================================================================
- * AccountStatus.tsx — Paymo BAAS Account Status / Recovery Center
+ * AccountStatus.tsx — Paymo BAAS · Account status & restoration
  * ----------------------------------------------------------------------------
- * MIGRATED FROM: legacy page55.html (1,454 LOC) — pure custom CSS + FontAwesome
- * STACK ........: Vite + React + TypeScript + TanStack Query v5 + Bootstrap 5
- * ARCHITECTURE .: ONE component file holds all layout + logic (per spec).
- *                 Styles live in ../styles/accountStatus.module.css.
- * REPO NOTES ...: tuned for dlion4/danstack — FontAwesome glyphs mapped to
- *                 bootstrap-icons (already in repo); the two FA icons BS lacks
- *                 (handshake, gavel) come from lucide-react (also already in
- *                 repo). Zero new packages.
+ * Re-themed to the PayMo Business design language via ../components/AuthKit.
+ * The legacy 633-line wall of warnings and tips is now a task board: what is
+ * restricted, what unlocks it, and how far along each task is.
  *
- * THEME NOTE ...: legacy slate/cyan surfaces were re-themed to the emerald
- *                 glass palette; per-card tone families (mint/blue/gold/
- * purple/red/green tiles) from the legacy design are preserved.
+ * Kept: all six verification tasks with their original destination URLs,
+ * restricted-module list, warnings, unlock tips and the 24/7 contact options.
+ * Added: overall restoration progress, task detail dialog, warnings/tips moved
+ * into dialogs, toasts and an appeal-submitted flow.
  *
- * LEGACY BRIDGE MAP (vanilla JS -> React):
- *   DOMContentLoaded progress-fill width loop ... inline width from data
- *   mouseenter/mouseleave transform listeners .. pure CSS :hover (same effect)
- *   6 hardcoded <a> action cards + lists ....... initialMockData extraction
- *     rendered through typed .map() loops (backend-ready shape)
+ * Routes/links preserved: /auth/identity · /auth/security · /auth/login ·
+ * verify.paymo.com deep links · tel/mailto/support links
  * ========================================================================== */
 
-import { Gavel, Handshake } from "lucide-react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-if (typeof document !== "undefined") {
-	import("bootstrap/dist/js/bootstrap.bundle.min.js");
-}
+import { useMemo, useState } from "react";
+import {
+	AuthConsole,
+	AuthPage,
+	Badge,
+	Button,
+	Card,
+	cx,
+	go,
+	Hero,
+	Modal,
+	Notice,
+	Progress,
+	Section,
+	s,
+	toast,
+} from "../components/AuthKit";
 
-import styles from "../styles/accountStatus.module.css";
+type Tone = "green" | "blue" | "amber" | "violet" | "red";
 
-/* --------------------------------------------------------------------------
- * Types
- * ------------------------------------------------------------------------ */
-type CardTone =
-	| "toneMint"
-	| "toneBlue"
-	| "toneGold"
-	| "tonePurple"
-	| "toneRed"
-	| "toneGreen";
-type StatusKind = "required" | "pending" | "optional";
-type BannerKind =
-	| "statusFrozen"
-	| "statusFlagged"
-	| "statusVerification"
-	| "statusDormant";
-
-interface ActionCard {
+interface Task {
 	id: string;
-	tone: CardTone;
-	icon: string; // bootstrap-icons class
-	lucide?: "handshake" | "gavel"; // fallback glyph (FA icons BS lacks)
-	status: { label: string; kind: StatusKind };
+	icon: string;
+	tone: Tone;
 	title: string;
-	description: string;
-	details: Array<{ label: string; value: string; danger?: boolean }>;
-	meta: Array<{ icon: string; lucide?: "handshake" | "gavel"; label: string }>;
-	actionLabel: string;
+	status: string;
+	statusTone: "red" | "amber" | "slate";
+	summary: string;
+	details: Array<[string, string]>;
+	action: string;
 	progress: number;
 	url: string;
+	internal?: string;
 }
 
-interface StatusConfig {
-	nav: {
-		title: string;
-		sub: string;
-		sessionBadge: string;
-		userName: string;
-		userInitials: string;
-		userMode: string;
-	};
-	banner: {
-		icon: string;
-		title: string;
-		badges: Array<{ label: string; kind: BannerKind }>;
-		copy: string;
-	};
-	hero: {
-		indicator: { icon: string; text: string };
-		titlePre: string;
-		titleAccent: string;
-		description: string;
-		risk: { icon: string; pre: string; level: string; post: string };
-	};
-	summary: {
-		typeLabel: string;
-		statusTitle: string;
-		icon: string;
-		flow: Array<{ icon: string; label: string; active?: boolean }>;
-		route: string;
-		modulesTitle: string;
-		modules: Array<{ label: string; locked?: boolean }>;
-	};
-	cardsSection: { title: string; sub: string };
-	cards: ActionCard[];
-	warnings: { title: string; icon: string; items: string[] };
-	tips: { title: string; icon: string; items: string[] };
-	contact: {
-		title: string;
-		copy: string;
-		buttons: Array<{
-			icon: string;
-			label: string;
-			href: string;
-			external?: boolean;
-		}>;
-	};
-}
-
-/* --------------------------------------------------------------------------
- * 1. initialMockData — ALL hardcoded legacy content extracted (6 action
- *    cards, banner badges, summary modules, warnings, tips, contacts).
- *    GET /api/account-status returns this same shape.
- * ------------------------------------------------------------------------ */
-const initialMockData: StatusConfig = {
-	nav: {
-		title: "Paymo BAAS",
-		sub: "Account Recovery Center",
-		sessionBadge: "Secured session verified",
-		userName: "Amara Okafor",
-		userInitials: "AO",
-		userMode: "Limited Access Mode",
-	},
-
-	banner: {
-		icon: "bi-lock-fill",
-		title: "Account Access Restricted",
-		badges: [
-			{ label: "Account Frozen", kind: "statusFrozen" },
-			{ label: "Under Review", kind: "statusFlagged" },
+const TASKS: Task[] = [
+	{
+		id: "identity-verification",
+		icon: "bi-person-vcard",
+		tone: "green",
+		title: "Verify your identity",
+		status: "Required",
+		statusTone: "red",
+		summary: "Government ID, proof of address and a live selfie.",
+		details: [
+			["Documents", "3 items"],
+			["Time", "5–10 min"],
+			["Review", "24–48 h"],
 		],
-		copy: "Your account has been temporarily restricted due to security concerns. Complete the required verification steps below to restore full access to your account and resume all transactions.",
+		action: "Start verification",
+		progress: 0,
+		url: "https://verify.paymo.com/identity/kyc",
+		internal: "/auth/identity",
 	},
-
-	hero: {
-		indicator: { icon: "bi-shield-check", text: "Account Security & Recovery" },
-		titlePre: "Restore your account ",
-		titleAccent: "access.",
-		description:
-			"Your account security is our priority. Select the appropriate verification path below to unlock your account. Each section addresses specific restrictions placed on your account. Complete all required steps to regain full functionality.",
-		risk: {
-			icon: "bi-exclamation-triangle",
-			pre: "Risk Level: ",
-			level: "High",
-			post: " — Immediate action required",
-		},
-	},
-
-	summary: {
-		typeLabel: "Account Status",
-		statusTitle: "Restricted Access",
-		icon: "bi-person-lock",
-		flow: [
-			{ icon: "bi-check", label: "Login", active: true },
-			{ icon: "bi-lock", label: "Verify" },
-			{ icon: "bi-unlock", label: "Access" },
+	{
+		id: "bank-verification",
+		icon: "bi-bank",
+		tone: "blue",
+		title: "Verify linked accounts",
+		status: "Required",
+		statusTone: "red",
+		summary: "Confirm ownership of 2 bank accounts and 1 mobile wallet.",
+		details: [
+			["Bank accounts", "2 pending"],
+			["Wallets", "1 pending"],
+			["Method", "Micro-deposit"],
 		],
-		route: "Route: /recovery/verify?status=restricted&priority=high",
-		modulesTitle: "Restricted Modules",
-		modules: [
-			{ label: "Transfers", locked: true },
-			{ label: "Withdrawals", locked: true },
-			{ label: "Bill Payments", locked: true },
-			{ label: "View Only" },
-			{ label: "Support" },
+		action: "Verify accounts",
+		progress: 25,
+		url: "https://verify.paymo.com/linked-accounts",
+	},
+	{
+		id: "transaction-review",
+		icon: "bi-arrow-left-right",
+		tone: "amber",
+		title: "Review flagged transactions",
+		status: "4 pending",
+		statusTone: "amber",
+		summary: "Confirm four transactions flagged for unusual patterns.",
+		details: [
+			["Flagged", "4 transactions"],
+			["Value", "NGN 2,450,000"],
+			["Window", "Last 14 days"],
 		],
+		action: "Review now",
+		progress: 40,
+		url: "https://verify.paymo.com/transactions/review",
 	},
-
-	cardsSection: {
-		title: "Verification Required",
-		sub: "Complete these verification steps to restore full account functionality. Required actions must be completed before access is restored.",
-	},
-
-	cards: [
-		{
-			id: "identity-verification",
-			tone: "toneMint",
-			icon: "bi-person-vcard",
-			status: { label: "Required", kind: "required" },
-			title: "Verify Your Identity",
-			description:
-				"Complete KYC verification to confirm your identity. Upload government-issued ID, proof of address, and complete facial verification to unlock account features.",
-			details: [
-				{ label: "Documents Needed", value: "3 items" },
-				{ label: "Est. Time", value: "5-10 minutes" },
-				{ label: "Review Time", value: "24-48 hours" },
-			],
-			meta: [
-				{ icon: "bi-shield-check", label: "Bank-grade security" },
-				{ icon: "bi-camera", label: "Live selfie required" },
-			],
-			actionLabel: "Start Verification",
-			progress: 0,
-			url: "https://verify.paymo.com/identity/kyc",
-		},
-		{
-			id: "bank-verification",
-			tone: "toneBlue",
-			icon: "bi-bank",
-			status: { label: "Required", kind: "required" },
-			title: "Verify Linked Accounts",
-			description:
-				"Confirm ownership of all linked bank accounts and mobile wallets. This prevents unauthorized access and ensures secure transaction processing across all your connected financial accounts.",
-			details: [
-				{ label: "Bank Accounts", value: "2 pending" },
-				{ label: "Mobile Wallets", value: "1 pending" },
-				{ label: "Verification Method", value: "Micro-deposit" },
-			],
-			meta: [
-				{ icon: "bi-clock", label: "1-2 business days" },
-				{ icon: "bi-arrow-repeat", label: "Auto-verification" },
-			],
-			actionLabel: "Verify Accounts",
-			progress: 25,
-			url: "https://verify.paymo.com/linked-accounts",
-		},
-		{
-			id: "transaction-review",
-			tone: "toneGold",
-			icon: "bi-arrow-left-right",
-			status: { label: "4 Pending", kind: "pending" },
-			title: "Review Flagged Transactions",
-			description:
-				"Several transactions on your account have been flagged for review due to unusual patterns. Confirm these transactions were authorized by you to remove the hold on your account.",
-			details: [
-				{ label: "Flagged Count", value: "4 transactions" },
-				{ label: "Total Amount", value: "NGN 2,450,000" },
-				{ label: "Date Range", value: "Last 14 days" },
-			],
-			meta: [
-				{ icon: "bi-search", label: "Detailed review" },
-				{ icon: "bi-chat-dots", label: "Add notes" },
-			],
-			actionLabel: "Review Now",
-			progress: 40,
-			url: "https://verify.paymo.com/transactions/review",
-		},
-		{
-			id: "dispute-resolution",
-			tone: "tonePurple",
-			icon: "bi-people",
-			lucide: "handshake",
-			status: { label: "1 Active", kind: "pending" },
-			title: "Resolve Customer Disputes",
-			description:
-				"A customer has flagged a transaction from your account through another channel. Provide evidence of transaction legitimacy including invoices, delivery confirmations, or communication records.",
-			details: [
-				{ label: "Dispute ID", value: "#DSP-2024-8842" },
-				{ label: "Amount in Dispute", value: "NGN 150,000" },
-				{ label: "Response Due", value: "48 hours", danger: true },
-			],
-			meta: [
-				{ icon: "bi-flag", lucide: "gavel", label: "Arbitration ready" },
-				{ icon: "bi-cloud-upload", label: "Upload proof" },
-			],
-			actionLabel: "Resolve Dispute",
-			progress: 15,
-			url: "https://verify.paymo.com/disputes/resolve",
-		},
-		{
-			id: "fraud-appeal",
-			tone: "toneRed",
-			icon: "bi-exclamation-circle",
-			status: { label: "High Priority", kind: "required" },
-			title: "Fraud Flag Appeal",
-			description:
-				"Your account has been flagged for potential fraudulent activity. Submit comprehensive documentation to prove your business legitimacy and transaction authenticity to our compliance team.",
-			details: [
-				{ label: "Flag Reason", value: "Unusual volume spike" },
-				{ label: "Evidence Required", value: "Business docs" },
-				{ label: "Case Priority", value: "Urgent", danger: true },
-			],
-			meta: [
-				{ icon: "bi-person-shield", label: "Compliance review" },
-				{ icon: "bi-building", label: "Business verify" },
-			],
-			actionLabel: "Submit Appeal",
-			progress: 5,
-			url: "https://verify.paymo.com/compliance/fraud-appeal",
-		},
-		{
-			id: "business-verification",
-			tone: "toneGreen",
-			icon: "bi-building",
-			status: { label: "Business", kind: "optional" },
-			title: "Business Verification (KYB)",
-			description:
-				"For business accounts, complete Know Your Business verification. Submit corporate documents, beneficial ownership information, and business registration certificates to unlock higher transaction limits.",
-			details: [
-				{ label: "Business Type", value: "Private Limited" },
-				{ label: "Documents", value: "CAC, Tax ID, etc." },
-				{ label: "Current Limit", value: "NGN 10M/month" },
-			],
-			meta: [
-				{ icon: "bi-graph-up", label: "Higher limits" },
-				{ icon: "bi-patch-check", label: "Verified badge" },
-			],
-			actionLabel: "Start KYB",
-			progress: 60,
-			url: "https://verify.paymo.com/business/kyb",
-		},
-	],
-
-	warnings: {
-		title: "Important Warnings",
-		icon: "bi-exclamation-triangle",
-		items: [
-			"Do not create new accounts to bypass restrictions — this will result in permanent suspension of all associated accounts.",
-			"Providing false documentation or misleading information is a criminal offense and will be reported to authorities.",
-			"Account recovery must be completed within 30 days or your account will be converted to dormant status with fund remittance to unclaimed property.",
-			"Third-party account recovery services are fraudulent — Paymo will never ask for your password or PIN via email or phone.",
+	{
+		id: "dispute-resolution",
+		icon: "bi-people",
+		tone: "violet",
+		title: "Resolve customer dispute",
+		status: "1 active",
+		statusTone: "amber",
+		summary: "Provide evidence for dispute #DSP-2024-8842.",
+		details: [
+			["Dispute", "#DSP-2024-8842"],
+			["Amount", "NGN 150,000"],
+			["Response due", "48 hours"],
 		],
+		action: "Resolve dispute",
+		progress: 15,
+		url: "https://verify.paymo.com/disputes/resolve",
 	},
-
-	tips: {
-		title: "Tips to Unlock Faster",
-		icon: "bi-lightbulb",
-		items: [
-			"Ensure all uploaded documents are clear, high-resolution, and not cropped — blurry documents delay review by 3-5 days.",
-			"Use the same name across all documents that matches your Paymo profile exactly, including middle names.",
-			"For disputed transactions, provide complete communication history — screenshots, emails, delivery receipts help resolve cases faster.",
-			"Check your email and SMS regularly for verification codes and additional requests from our compliance team.",
-			"Complete identity verification during daytime hours for better lighting during the facial recognition step.",
+	{
+		id: "fraud-appeal",
+		icon: "bi-exclamation-circle",
+		tone: "red",
+		title: "Fraud flag appeal",
+		status: "High priority",
+		statusTone: "red",
+		summary: "Submit documentation proving the volume spike was legitimate.",
+		details: [
+			["Reason", "Volume spike"],
+			["Evidence", "Business docs"],
+			["Priority", "Urgent"],
 		],
+		action: "Submit appeal",
+		progress: 5,
+		url: "https://verify.paymo.com/compliance/fraud-appeal",
 	},
-
-	contact: {
-		title: "Need Help With Recovery?",
-		copy: "Our specialized account recovery team is available 24/7 to assist you through the verification process.",
-		buttons: [
-			{
-				icon: "bi-telephone",
-				label: "Call Support: 800-PAYMO-HELP",
-				href: "tel:+234800PAYMO",
-			},
-			{
-				icon: "bi-envelope",
-				label: "Email Recovery Team",
-				href: "mailto:recovery@paymo.com",
-			},
-			{
-				icon: "bi-chat-dots",
-				label: "Live Chat",
-				href: "https://support.paymo.com/live-chat",
-				external: true,
-			},
-			{
-				icon: "bi-calendar-check",
-				label: "Schedule Callback",
-				href: "https://support.paymo.com/schedule-callback",
-				external: true,
-			},
+	{
+		id: "business-verification",
+		icon: "bi-building",
+		tone: "blue",
+		title: "Business verification (KYB)",
+		status: "Optional",
+		statusTone: "slate",
+		summary: "Unlock higher limits with corporate documents.",
+		details: [
+			["Entity", "Private Limited"],
+			["Docs", "CAC, Tax ID"],
+			["Current limit", "NGN 10M/mo"],
 		],
+		action: "Start KYB",
+		progress: 60,
+		url: "https://verify.paymo.com/business/kyb",
 	},
-};
+];
 
-/* --------------------------------------------------------------------------
- * Helpers
- * ------------------------------------------------------------------------ */
-const s = styles as Record<string, string>;
-const cx = (...parts: Array<string | false | null | undefined>) =>
-	parts.filter(Boolean).join(" ");
+const MODULES = [
+	{ label: "Transfers", locked: true },
+	{ label: "Withdrawals", locked: true },
+	{ label: "Bill payments", locked: true },
+	{ label: "View balances", locked: false },
+	{ label: "Support", locked: false },
+];
 
-/** Renders a bi glyph, or the lucide stand-in for the FA icons BS lacks. */
-function Glyph({
-	icon,
-	lucide,
-	size = 20,
-}: {
-	icon: string;
-	lucide?: "handshake" | "gavel";
-	size?: number;
-}) {
-	if (lucide === "handshake")
-		return <Handshake size={size} strokeWidth={2} aria-hidden="true" />;
-	if (lucide === "gavel")
-		return <Gavel size={size} strokeWidth={2} aria-hidden="true" />;
-	return <i className={`bi ${icon}`} aria-hidden="true" />;
-}
+const WARNINGS = [
+	"Creating new accounts to bypass restrictions permanently suspends every linked account.",
+	"False documentation is a criminal offence and is reported to the authorities.",
+	"Recovery must complete within 30 days or the account becomes dormant.",
+	"Third-party “recovery agents” are fraudulent — Paymo never asks for your password or PIN.",
+];
 
-/* --------------------------------------------------------------------------
- * 3. COMPONENT
- * ------------------------------------------------------------------------ */
+const TIPS = [
+	"Upload sharp, uncropped documents — blurry scans add 3–5 days.",
+	"Names must match your Paymo profile exactly, including middle names.",
+	"For disputes, attach the full communication trail and delivery receipts.",
+	"Verify during daylight hours for better selfie lighting.",
+];
+
+const CONTACTS = [
+	{
+		icon: "bi-telephone",
+		label: "Call 800-PAYMO-HELP",
+		href: "tel:+234800PAYMO",
+	},
+	{
+		icon: "bi-envelope",
+		label: "Email recovery team",
+		href: "mailto:recovery@paymo.com",
+	},
+	{
+		icon: "bi-chat-dots",
+		label: "Live chat",
+		href: "https://support.paymo.com/live-chat",
+	},
+	{
+		icon: "bi-calendar-check",
+		label: "Schedule callback",
+		href: "https://support.paymo.com/schedule-callback",
+	},
+];
+
 export default function AccountStatus() {
-	/* ---------- bundled page configuration ---------- */
-	const content = initialMockData;
+	const [tasks, setTasks] = useState(TASKS);
+	const [detail, setDetail] = useState<Task | null>(null);
+	const [warnOpen, setWarnOpen] = useState(false);
+	const [tipsOpen, setTipsOpen] = useState(false);
 
-	/* ------------------------------------------------------------------------
-	 * 4. TEMPLATE (JSX)
-	 * ---------------------------------------------------------------------- */
+	const overall = useMemo(
+		() =>
+			Math.round(tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length),
+		[tasks],
+	);
+	const required = tasks.filter((t) => t.statusTone === "red").length;
+
+	const openTask = (t: Task) => {
+		setDetail(null);
+		if (t.internal) {
+			toast.info("Opening verification", "Redirecting to the identity flow…");
+			window.setTimeout(() => go(t.internal as string), 700);
+			return;
+		}
+		toast.info("Opening secure portal", `${t.title} · verify.paymo.com`);
+		window.open(t.url, "_blank", "noopener");
+		setTasks((prev) =>
+			prev.map((x) =>
+				x.id === t.id ? { ...x, progress: Math.min(95, x.progress + 10) } : x,
+			),
+		);
+	};
+
 	return (
-		<div className={s.statusPage}>
-			<div className={s.bgGrid} />
+		<AuthPage>
+			<AuthConsole
+				crumb="Account recovery centre"
+				actions={
+					<>
+						<Badge tone="amber" icon="bi-lock-fill">
+							Limited access mode
+						</Badge>
+						<Button
+							variant="ghost"
+							size="sm"
+							icon="bi-shield-check"
+							onClick={() => go("/auth/security")}
+						>
+							Security centre
+						</Button>
+					</>
+				}
+			>
+				<Hero
+					zone="ACCOUNT STATUS"
+					title="Access restricted — here's the way back."
+					copy="Complete the required tasks below to lift every restriction. Most accounts are restored within 48 hours."
+					chips={
+						<>
+							<Badge tone="onDark">Account frozen</Badge>
+							<Badge tone="onDark">Under review</Badge>
+						</>
+					}
+					stats={[
+						{ value: `${overall}%`, label: "Restored" },
+						{ value: String(required), label: "Required", warn: required > 0 },
+						{ value: "30d", label: "Deadline" },
+					]}
+					actions={
+						<Button
+							size="sm"
+							variant="dark"
+							icon="bi-headset"
+							onClick={() => setTipsOpen(true)}
+						>
+							Unlock faster
+						</Button>
+					}
+				/>
 
-			{/* ================= page top bar ================= */}
-			<nav className={s.navbar} aria-label="Recovery center">
-				<div className={s.brand}>
-					<div className={s.brandLogo}>P</div>
-					<div className={s.brandText}>
-						<h1>{content.nav.title}</h1>
-						<span>{content.nav.sub}</span>
+				<Card
+					title="Restoration progress"
+					sub="Weighted across all verification tasks."
+					icon="bi-unlock"
+					tone="amber"
+				>
+					<Progress value={overall} />
+					<div className={s.row} style={{ marginTop: "0.8rem" }}>
+						{MODULES.map((m) => (
+							<span
+								key={m.label}
+								className={cx(s.badge, m.locked ? s.badgeRed : s.badgeGreen)}
+							>
+								<i className={m.locked ? "bi bi-lock-fill" : "bi bi-unlock"} />{" "}
+								{m.label}
+							</span>
+						))}
 					</div>
-				</div>
-				<div className={s.navRight}>
-					<div className={s.sessionBadge}>{content.nav.sessionBadge}</div>
-					<div className={s.userProfile}>
-						<div className={s.userAvatar}>{content.nav.userInitials}</div>
-						<div className={s.userInfo}>
-							<h4>{content.nav.userName}</h4>
-							<span>{content.nav.userMode}</span>
-						</div>
+					<div className={s.spread} style={{ marginTop: "0.9rem" }}>
+						<span className={s.tiny}>
+							Risk level: High · immediate action required
+						</span>
+						<Button
+							size="sm"
+							variant="subtle"
+							icon="bi-exclamation-triangle"
+							onClick={() => setWarnOpen(true)}
+						>
+							Read the warnings
+						</Button>
 					</div>
-				</div>
-			</nav>
+				</Card>
 
-			<div className={s.containerBox}>
-				{/* ================= alert banner ================= */}
-				<div className={s.alertBanner} role="alert">
-					<div className={s.alertIcon}>
-						<i className={`bi ${content.banner.icon}`} />
-					</div>
-					<div>
-						<h2 className={s.alertTitle}>
-							{content.banner.title}
-							{content.banner.badges.map((badge) => (
+				<Section
+					no="1"
+					title="Verification tasks"
+					sub="Required items must be finished before access is restored."
+				/>
+				<div className={s.grid} style={{ ["--au-min" as string]: "320px" }}>
+					{tasks.map((t) => (
+						<Card key={t.id} hover onClick={() => setDetail(t)}>
+							<div className={s.cardHead}>
 								<span
-									key={badge.label}
-									className={cx(s.statusBadge, s[badge.kind])}
+									className={cx(
+										s.tile,
+										s[`tile${t.tone[0].toUpperCase()}${t.tone.slice(1)}`],
+									)}
 								>
-									{badge.label}
+									<i className={`bi ${t.icon}`} />
 								</span>
-							))}
-						</h2>
-						<p
-							style={{
-								color: "var(--as-text-2)",
-								fontSize: "0.9rem",
-								maxWidth: "620px",
-								margin: 0,
-							}}
-						>
-							{content.banner.copy}
-						</p>
-					</div>
-				</div>
-
-				{/* ================= hero ================= */}
-				<div className={s.heroSection}>
-					<div className={s.heroMain}>
-						<div className={s.pageIndicator}>
-							<i className={`bi ${content.hero.indicator.icon}`} />
-							{content.hero.indicator.text}
-						</div>
-						<h2 className={s.heroTitle}>
-							{content.hero.titlePre}
-							<span>{content.hero.titleAccent}</span>
-						</h2>
-						<p className={s.heroDescription}>{content.hero.description}</p>
-						<div className={s.riskIndicator}>
-							<i className={`bi ${content.hero.risk.icon}`} />
-							<span>
-								{content.hero.risk.pre}
-								<strong>{content.hero.risk.level}</strong>
-								{content.hero.risk.post}
-							</span>
-						</div>
-					</div>
-
-					<div className={s.heroSidebar}>
-						<div className={s.accountSummary}>
-							<div className={s.summaryHeader}>
-								<div>
-									<span className={s.summaryType}>
-										{content.summary.typeLabel}
+								<div className={s.grow}>
+									<div className={s.cardTitle}>{t.title}</div>
+									<p className={s.cardSub}>{t.summary}</p>
+								</div>
+								<Badge tone={t.statusTone}>{t.status}</Badge>
+							</div>
+							<div className={s.row} style={{ marginBottom: "0.7rem" }}>
+								{t.details.map(([k, v]) => (
+									<span className={s.metaChip} key={k}>
+										{k}: <b>{v}</b>
 									</span>
-									<h3>{content.summary.statusTitle}</h3>
-								</div>
-								<i
-									className={`bi ${content.summary.icon}`}
-									style={{ color: "var(--as-red)", fontSize: "1.4rem" }}
-								/>
-							</div>
-							<div className={s.accountFlow}>
-								{content.summary.flow.map((step, i) => (
-									<div key={step.label} style={{ display: "contents" }}>
-										<div className={cx(s.flowStep, step.active && s.active)}>
-											<i className={`bi ${step.icon}`} />
-											<span>{step.label}</span>
-										</div>
-										{i < content.summary.flow.length - 1 && (
-											<div className={s.flowLine} />
-										)}
-									</div>
 								))}
 							</div>
-							<div className={s.routeInfo}>{content.summary.route}</div>
-							<div className={s.enabledModules}>
-								<h4>{content.summary.modulesTitle}</h4>
-								<div className={s.moduleTags}>
-									{content.summary.modules.map((mod) => (
-										<span
-											key={mod.label}
-											className={cx(s.moduleTag, mod.locked && s.locked)}
-										>
-											{mod.label}
-										</span>
-									))}
-								</div>
+							<Progress value={t.progress} sm />
+							<div className={s.spread} style={{ marginTop: "0.7rem" }}>
+								<span className={s.tiny}>{t.progress}% complete</span>
+								<Button
+									size="sm"
+									variant={t.statusTone === "red" ? "primary" : "ghost"}
+									onClick={(e) => {
+										e.stopPropagation();
+										openTask(t);
+									}}
+								>
+									{t.action}
+								</Button>
 							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ================= section header ================= */}
-				<div className={s.sectionHeader}>
-					<h2>{content.cardsSection.title}</h2>
-					<p>{content.cardsSection.sub}</p>
-				</div>
-
-				{/* ================= action cards (legacy 6 hardcoded <a> blocks) ================= */}
-				<div className={s.cardsGrid}>
-					{content.cards.map((card) => (
-						<a
-							key={card.id}
-							href={card.url}
-							target="_blank"
-							rel="noreferrer"
-							className={cx(s.actionCard, s[card.tone])}
-						>
-							<span className={s.externalLink}>
-								<i className="bi bi-box-arrow-up-right" />
-							</span>
-							<div className={s.cardHeader}>
-								<div className={s.cardIcon}>
-									<Glyph icon={card.icon} lucide={card.lucide} size={22} />
-								</div>
-								<span className={cx(s.cardStatus, s[card.status.kind])}>
-									{card.status.label}
-								</span>
-							</div>
-							<h3 className={s.cardTitle}>{card.title}</h3>
-							<p className={s.cardDescription}>{card.description}</p>
-							<div className={s.cardDetails}>
-								{card.details.map((row) => (
-									<div className={s.detailRow} key={row.label}>
-										<span className={s.detailLabel}>{row.label}</span>
-										<span className={cx(s.detailValue, row.danger && s.danger)}>
-											{row.value}
-										</span>
-									</div>
-								))}
-							</div>
-							<div className={s.cardFooter}>
-								<div className={s.cardMeta}>
-									{card.meta.map((m) => (
-										<span className={s.metaItem} key={m.label}>
-											<Glyph icon={m.icon} lucide={m.lucide} size={13} />
-											{m.label}
-										</span>
-									))}
-								</div>
-								<span className={s.cardAction}>
-									{card.actionLabel} <i className="bi bi-arrow-right" />
-								</span>
-							</div>
-							<div className={s.progressTrack}>
-								<div
-									className={s.progressFill}
-									style={{ width: `${card.progress}%` }}
-								/>
-							</div>
-						</a>
+						</Card>
 					))}
 				</div>
 
-				{/* ================= info section ================= */}
-				<div className={s.infoSection}>
-					<div className={s.infoCard}>
-						<h3>
-							<i className={`bi ${content.warnings.icon}`} />{" "}
-							{content.warnings.title}
-						</h3>
-						<ul className={cx(s.lineList, s.warnList)}>
-							{content.warnings.items.map((item) => (
-								<li key={item.slice(0, 32)}>
-									<i className="bi bi-x-circle" />
-									<span>{item}</span>
-								</li>
-							))}
-						</ul>
-					</div>
-
-					<div className={s.infoCard}>
-						<h3>
-							<i className={`bi ${content.tips.icon}`} /> {content.tips.title}
-						</h3>
-						<ul className={cx(s.lineList, s.tipList)}>
-							{content.tips.items.map((item) => (
-								<li key={item.slice(0, 32)}>
-									<i className="bi bi-check-circle" />
-									<span>{item}</span>
-								</li>
-							))}
-						</ul>
-					</div>
-				</div>
-
-				{/* ================= contact section ================= */}
-				<div className={s.contactSection}>
-					<h3>{content.contact.title}</h3>
-					<p>{content.contact.copy}</p>
-					<div className={s.contactButtons}>
-						{content.contact.buttons.map((btn) => (
+				<Section
+					no="2"
+					title="Need a hand?"
+					sub="The recovery desk is staffed 24/7."
+				/>
+				<Card>
+					<div className={s.grid} style={{ ["--au-min" as string]: "220px" }}>
+						{CONTACTS.map((c) => (
 							<a
-								key={btn.label}
-								href={btn.href}
-								className={s.contactBtn}
-								{...(btn.external
-									? { target: "_blank", rel: "noreferrer" }
-									: {})}
+								key={c.label}
+								className={cx(s.listRow)}
+								href={c.href}
+								target={c.href.startsWith("http") ? "_blank" : undefined}
+								rel="noreferrer"
+								style={{ textDecoration: "none", color: "inherit" }}
 							>
-								<i className={`bi ${btn.icon}`} />
-								{btn.label}
+								<span className={cx(s.tile, s.tileSm, s.tileGreen)}>
+									<i className={`bi ${c.icon}`} />
+								</span>
+								<span className={cx(s.grow, s.optionTitle)}>{c.label}</span>
+								<i
+									className="bi bi-chevron-right"
+									style={{ color: "#98a2b3" }}
+								/>
 							</a>
 						))}
 					</div>
+					<Notice tone="red" icon="bi-shield-exclamation">
+						Paymo will never ask for your password, PIN or OTP by phone or
+						email.{" "}
+						<button
+							type="button"
+							className={s.link}
+							onClick={() => setWarnOpen(true)}
+						>
+							See all warnings
+						</button>
+					</Notice>
+				</Card>
+
+				<div className={s.footNote}>
+					<span>
+						Route: /recovery/verify?status=restricted&amp;priority=high
+					</span>
+					<a className={s.link} href="/auth/login">
+						Back to sign in
+					</a>
 				</div>
-			</div>
-		</div>
+			</AuthConsole>
+
+			{/* ---------------- task detail ---------------- */}
+			<Modal
+				open={!!detail}
+				onClose={() => setDetail(null)}
+				title={detail?.title ?? ""}
+				sub={detail?.summary}
+				icon={detail?.icon}
+				tone={detail?.tone}
+				footer={
+					<>
+						<Button variant="ghost" onClick={() => setDetail(null)}>
+							Close
+						</Button>
+						{detail && (
+							<Button onClick={() => openTask(detail)}>{detail.action}</Button>
+						)}
+					</>
+				}
+			>
+				<div className={s.stack}>
+					{detail?.details.map(([k, v]) => (
+						<div className={s.spread} key={k}>
+							<span className={s.tiny}>{k}</span>
+							<span className={s.strong}>{v}</span>
+						</div>
+					))}
+					<hr className={s.divider} />
+					<div className={s.spread}>
+						<span className={s.tiny}>Progress</span>
+						<span className={s.strong}>{detail?.progress}%</span>
+					</div>
+					<Progress value={detail?.progress ?? 0} sm />
+					<Notice tone="slate" icon="bi-link-45deg">
+						Opens{" "}
+						<span className={s.mono}>{detail?.internal ?? detail?.url}</span>
+					</Notice>
+				</div>
+			</Modal>
+
+			{/* ---------------- warnings ---------------- */}
+			<Modal
+				open={warnOpen}
+				onClose={() => setWarnOpen(false)}
+				title="Important warnings"
+				sub="Read before you submit anything."
+				icon="bi-exclamation-triangle"
+				tone="red"
+				footer={
+					<Button variant="ghost" onClick={() => setWarnOpen(false)}>
+						Understood
+					</Button>
+				}
+			>
+				<ul className={s.stack} style={{ paddingLeft: "1.1rem", margin: 0 }}>
+					{WARNINGS.map((w) => (
+						<li key={w}>{w}</li>
+					))}
+				</ul>
+			</Modal>
+
+			{/* ---------------- tips ---------------- */}
+			<Modal
+				open={tipsOpen}
+				onClose={() => setTipsOpen(false)}
+				title="Unlock faster"
+				sub="Four habits that cut review time in half."
+				icon="bi-lightbulb"
+				tone="amber"
+				footer={
+					<Button
+						onClick={() => {
+							setTipsOpen(false);
+							toast.success(
+								"Checklist saved",
+								"We emailed the checklist to your recovery address.",
+							);
+						}}
+					>
+						Email me this checklist
+					</Button>
+				}
+			>
+				<div className={s.stack}>
+					{TIPS.map((t) => (
+						<div className={s.listRow} key={t}>
+							<i
+								className="bi bi-check-circle-fill"
+								style={{ color: "#12b76a" }}
+							/>
+							<span className={s.grow}>{t}</span>
+						</div>
+					))}
+				</div>
+			</Modal>
+		</AuthPage>
 	);
 }
