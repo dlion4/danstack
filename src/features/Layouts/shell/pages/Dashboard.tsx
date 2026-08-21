@@ -108,8 +108,7 @@ export default function Dashboard() {
 						{quickLinks.map((mod) => (
 							<Link
 								key={mod.key}
-								to="/pm/app/$section"
-								params={{ section: mod.key }}
+								to={`/pm/app/${mod.key}`}
 								className={d.moduleCard}
 							>
 								<span

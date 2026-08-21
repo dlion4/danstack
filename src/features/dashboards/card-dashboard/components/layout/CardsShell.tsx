@@ -13,9 +13,10 @@
  * ========================================================================== */
 
 import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppProvider, scrollToId, ToastViewport, useApp } from "../../store";
 import { Icon, Logo } from "../../icons";
+import { cn } from "../../utils/cn";
 import { MobileNav, QuickBar, SidebarContent, Topbar } from "../../lib/AppShell";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -122,6 +123,7 @@ function Footer() {
 
 function LayoutShell() {
   const { openDrawer } = useApp();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   useShortcuts();
 
   /* bootstrap JS bundle (Popper + modal/offcanvas plugins) — loaded once */
@@ -149,8 +151,11 @@ function LayoutShell() {
     <div className="pmc-shell pmc-canvas pm-cards-shell">
       <div className="d-flex">
         {/* Desktop sidebar */}
-        <aside className="pmc-sidebar pmc-side-glow d-none d-lg-flex">
+        <aside className={cn("pmc-sidebar pmc-side-glow d-none d-lg-flex", sidebarCollapsed && "collapsed")}>
           <SidebarContent />
+          <button type="button" onClick={() => setSidebarCollapsed((c) => !c)} aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"} style={{ position: "absolute", top: 20, right: -12, width: 24, height: 24, borderRadius: 99, background: "#fff", border: "1px solid var(--pmc-line)", display: "grid", placeItems: "center", cursor: "pointer", zIndex: 10, boxShadow: "0 1px 4px rgba(16,24,40,0.1)", transition: "transform 0.15s ease" }}>
+            <Icon name={sidebarCollapsed ? "arrowRight" : "chevLeft"} size={12} />
+          </button>
         </aside>
 
         <div className="flex-grow-1" style={{ minWidth: 0 }}>

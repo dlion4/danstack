@@ -73,7 +73,7 @@ export default function UtilitySidebar({
                                 )}
                         </div>
 
-                        <div className="flex-grow-1">
+                        <div className={cx("flex-grow-1", s.navScroll)}>
                                 {content.navGroups.map((group) => (
                                         <div className="mb-2" key={group.title}>
                                                 <span className={s["nav-group-label"]}>{group.title}</span>

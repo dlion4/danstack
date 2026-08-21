@@ -58,22 +58,22 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <div className="pmc-brand">
         <Logo size={32} />
         <div style={{ lineHeight: 1.2 }}>
-          <p className="pmc-display mb-0" style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>PayMo</p>
-          <p className="mb-0" style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7c8aa0" }}>BAAS · Cards</p>
+          <p className="pmc-display mb-0 pmc-brand-text" style={{ fontSize: 15, fontWeight: 700, color: "var(--pmc-ink)" }}>PayMo</p>
+          <p className="mb-0 pmc-brand-sub" style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--pmc-muted)" }}>BAAS · Cards</p>
         </div>
       </div>
 
       {/* Business switcher */}
       <button type="button" className="pmc-biz-chip">
         <span className="d-flex align-items-center pmc-gap-25">
-          <span className="pmc-icon-sq-sm d-grid" style={{ background: "rgba(18,183,106,0.2)", color: "#12b76a" }}>
+          <span className="pmc-icon-sq-sm d-grid" style={{ background: "var(--pmc-green-soft)", color: "var(--pmc-green-dark)" }}>
             <Icon name="building" size={16} />
           </span>
           <span className="flex-grow-1 text-start" style={{ minWidth: 0, lineHeight: 1.2 }}>
-            <span className="pmc-truncate d-block" style={{ fontSize: 12.5, fontWeight: 700, color: "#fff" }}>Acme Traders Ltd</span>
-            <span className="d-block" style={{ fontSize: 10.5, color: "#7c8aa0" }}>KRA P051 882 440M</span>
+            <span className="pmc-truncate d-block" style={{ fontSize: 12.5, fontWeight: 700, color: "var(--pmc-ink)" }}>Acme Traders Ltd</span>
+            <span className="d-block" style={{ fontSize: 10.5, color: "var(--pmc-muted)" }}>KRA P051 882 440M</span>
           </span>
-          <Icon name="chevDown" size={14} style={{ color: "#7c8aa0" }} />
+          <Icon name="chevDown" size={14} style={{ color: "var(--pmc-muted)" }} />
         </span>
       </button>
 
@@ -87,7 +87,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 <button type="button" onClick={() => go(n.anchor)} className={cn("pmc-nav-item pmc-focus", isOn && "active")}>
                   <span className="pmc-nav-rail" />
                   <Icon name={n.icon} size={16} className="pmc-nav-icon flex-shrink-0" />
-                  <span className="flex-grow-1">{n.label}</span>
+                  <span className="flex-grow-1 pmc-nav-label">{n.label}</span>
                   {n.badge && <span className="pmc-nav-badge">{n.badge}</span>}
                 </button>
               </li>
@@ -105,7 +105,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               <li key={m.id} title={m.hint}>
                 <button type="button" onClick={() => goPage(pageFor, m.anchor, m.filter)} className={cn("pmc-nav-item pmc-module-item pmc-focus", isOn && "active")}>
                   <span className="pmc-module-id">{m.id}</span>
-                  <span className="flex-grow-1 pmc-truncate">{m.name}</span>
+                  <span className="flex-grow-1 pmc-truncate pmc-module-label">{m.name}</span>
                   {isOn && <span className="pmc-live-dot" />}
                 </button>
               </li>
@@ -117,17 +117,17 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Status + support */}
       <div className="pmc-side-footer">
         <button type="button" onClick={() => openDrawer({ type: "support" })} className="pmc-support-btn pmc-focus">
-          <span className="pmc-icon-sq-sm d-grid" style={{ background: "rgba(46,144,250,0.2)", color: "#7cb8fb" }}>
+          <span className="pmc-icon-sq-sm d-grid" style={{ background: "var(--pmc-blue-soft)", color: "var(--pmc-blue)" }}>
             <Icon name="headset" size={15} />
           </span>
-          <span className="flex-grow-1" style={{ lineHeight: 1.2 }}>
-            <span className="d-block" style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>Card Support</span>
-            <span className="d-block" style={{ fontSize: 10.5, color: "#7c8aa0" }}>24/7 · avg reply 3 min</span>
+          <span className="pmc-support-text flex-grow-1" style={{ lineHeight: 1.2 }}>
+            <span className="d-block" style={{ fontSize: 12, fontWeight: 700, color: "var(--pmc-ink)" }}>Card Support</span>
+            <span className="d-block" style={{ fontSize: 10.5, color: "var(--pmc-muted)" }}>24/7 · avg reply 3 min</span>
           </span>
-          <Icon name="arrowRight" size={14} style={{ color: "#7c8aa0" }} />
+          <Icon name="arrowRight" size={14} style={{ color: "var(--pmc-muted)" }} />
         </button>
         <button type="button" onClick={() => openModal({ type: "shortcuts" })} className="pmc-shortcut-link pmc-focus">
-          <Icon name="zap" size={12} /> Keyboard shortcuts
+          <Icon name="zap" size={12} /> <span className="pmc-shortcut-label">Keyboard shortcuts</span>
         </button>
       </div>
     </div>

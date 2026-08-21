@@ -18,7 +18,6 @@
  *   TabbedModal ......................... segmented-tabs container
  *   PinRow / ReviewRow / SelectField ... small field helpers
  * ========================================================================== */
-"use client";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -458,6 +457,7 @@ export function TabbedModal({
 	title,
 	size = "lg",
 	tabs,
+	footer,
 }: {
 	show: boolean;
 	onClose: () => void;
@@ -465,6 +465,7 @@ export function TabbedModal({
 	title: string;
 	size?: "sm" | "md" | "lg" | "xl";
 	tabs: TabDef[];
+	footer?: ReactNode;
 }) {
 	const mounted = useReactModal(show, onClose);
 	const [active, setActive] = useState(tabs[0]?.key ?? "");
@@ -523,13 +524,15 @@ export function TabbedModal({
 						{tabs.find((t) => t.key === active)?.render()}
 					</div>
 					<div className={styles.modalFooter}>
-						<button
-							type="button"
-							className={cx(styles.btn, styles.btnSecondary)}
-							onClick={onClose}
-						>
-							Close
-						</button>
+						{footer ?? (
+							<button
+								type="button"
+								className={cx(styles.btn, styles.btnSecondary)}
+								onClick={onClose}
+							>
+								Close
+							</button>
+						)}
 					</div>
 				</div>
 			</div>
@@ -587,10 +590,12 @@ export function SelectField({
 	label,
 	options,
 	defaultValue,
+	onChange,
 }: {
 	label: string;
 	options: string[];
 	defaultValue?: string;
+	onChange?: (value: string) => void;
 }) {
 	return (
 		<div className="mb-3">
@@ -598,6 +603,7 @@ export function SelectField({
 			<select
 				className={cx(styles.field, styles.select)}
 				defaultValue={defaultValue}
+				onChange={(e) => onChange?.(e.target.value)}
 			>
 				{options.map((o) => (
 					<option key={o}>{o}</option>

@@ -2,26 +2,26 @@
        Paymo V2 — Bank-as-a-Service shell layout (standalone)
        ====================================================================== */
 .utilityRoot {
-        --paymo-primary: #5b4ddb;
-        --paymo-primary-600: #4338ca;
-        --paymo-primary-light: #7c6ee6;
-        --paymo-accent: #10b981;
+        --paymo-primary: #12b76a;
+        --paymo-primary-600: #0b8f52;
+        --paymo-primary-light: #7ee2b0;
+        --paymo-accent: #12b76a;
         --paymo-danger: #ef4444;
         --paymo-warning: #f59e0b;
         --paymo-info: #3b82f6;
 
-        --bg: #f4f3f9;
+        --bg: #f2f4f8;
         --surface: #ffffff;
-        --surface-2: #f9f8fc;
-        --surface-3: #f0eff7;
-        --text: #1d1a2e;
-        --text-secondary: #5a5668;
-        --muted: #8b8796;
-        --border: #e7e6ee;
+        --surface-2: #f9fafc;
+        --surface-3: #f0f2f6;
+        --text: #101828;
+        --text-secondary: #475467;
+        --muted: #667085;
+        --border: #e6e9f0;
 
-        --shadow-sm: 0 2px 8px rgba(29, 26, 46, 0.06);
-        --shadow: 0 12px 40px rgba(29, 26, 46, 0.1);
-        --shadow-glow: 0 4px 20px rgba(91, 77, 219, 0.18);
+        --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+        --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+        --shadow-glow: 0 4px 20px rgba(18, 183, 106, 0.22);
 
         --sidebar-width: 264px;
         --sidebar-collapsed: 76px;
@@ -60,15 +60,15 @@
         --sh-glass-border: rgba(255, 255, 255, 0.08);
 }
 
-/* -------- Sidebar -------- */
+/* -------- Sidebar (light cream + emerald) -------- */
 .sidebar {
         position: fixed;
         top: 0;
         left: 0;
         height: 100vh;
         width: var(--sidebar-collapsed);
-        background: var(--surface);
-        border-right: 1px solid var(--border);
+        background: #fafbf8;
+        border-right: 1px solid #e8ece6;
         z-index: 1040;
         display: flex;
         flex-direction: column;
@@ -76,8 +76,7 @@
         transition:
                 width var(--transition-slow),
                 transform var(--transition-slow);
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden;
 }
 
 .sidebar.expanded {
@@ -96,7 +95,7 @@
 .sidebar-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(18, 16, 32, 0.45);
+        background: rgba(11, 19, 34, 0.3);
         backdrop-filter: blur(2px);
         z-index: 1035;
         opacity: 0;
@@ -133,7 +132,7 @@
         justify-content: center;
         font-weight: 800;
         font-size: 1.1rem;
-        box-shadow: 0 6px 18px rgba(91, 77, 219, 0.25);
+        box-shadow: 0 4px 12px rgba(18, 183, 106, 0.25);
 }
 
 .brand-text {
@@ -157,7 +156,7 @@
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: var(--paymo-primary);
-        background: rgba(91, 77, 219, 0.08);
+        background: rgba(18, 183, 106, 0.1);
         padding: 0.15rem 0.45rem;
         border-radius: 999px;
         margin-left: auto;
@@ -201,7 +200,7 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: var(--muted);
+        color: #8a9484;
         white-space: nowrap;
         opacity: 0;
         transition: opacity var(--transition-base);
@@ -216,18 +215,20 @@
         display: flex;
         align-items: center;
         gap: 0.85rem;
-        padding: 0.72rem 0.85rem;
-        margin-bottom: 0.2rem;
-        border-radius: var(--radius-sm);
-        color: var(--text-secondary);
+        padding: 0.6rem 0.85rem;
+        margin-bottom: 0.15rem;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        color: #4a5549;
         text-decoration: none;
-        font-size: 0.92rem;
+        font-size: 0.84rem;
         font-weight: 500;
         position: relative;
         overflow: hidden;
         transition:
                 color var(--transition-fast),
                 background var(--transition-fast),
+                border-color var(--transition-fast),
                 transform var(--transition-fast);
 }
 
@@ -244,18 +245,17 @@
         transition: transform var(--transition-fast);
 }
 
-.nav-link:hover,
-.nav-link.active {
-        background: linear-gradient(
-                135deg,
-                rgba(91, 77, 219, 0.1),
-                rgba(91, 77, 219, 0.04)
-        );
-        color: var(--paymo-primary);
+.nav-link:hover {
+        background: rgba(18, 183, 106, 0.08);
+        color: #2d5a3f;
+        transform: translateX(2px);
 }
 
-.nav-link:hover {
-        transform: translateX(2px);
+.nav-link.active {
+        background: rgba(18, 183, 106, 0.12);
+        color: #0b7a45;
+        border-color: rgba(18, 183, 106, 0.2);
+        font-weight: 600;
 }
 
 .nav-link.active::before {
@@ -269,15 +269,21 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.28rem;
+        font-size: 1.15rem;
+        color: #7a8a76;
         transition:
                 transform var(--transition-fast),
                 color var(--transition-fast);
 }
 
-.nav-link:hover .nav-icon,
+.nav-link:hover .nav-icon {
+        color: #2d5a3f;
+        transform: scale(1.12);
+}
+
 .nav-link.active .nav-icon {
-        transform: scale(1.15);
+        color: var(--paymo-primary);
+        transform: scale(1.12);
 }
 
 .nav-link .nav-label {
@@ -298,7 +304,7 @@
 
 .nav-link .nav-badge {
         flex: 0 0 auto;
-        font-size: 0.65rem;
+        font-size: 0.62rem;
         font-weight: 700;
         padding: 0.2rem 0.5rem;
         border-radius: 999px;
@@ -327,7 +333,7 @@
         background: linear-gradient(
                 90deg,
                 transparent,
-                rgba(255, 255, 255, 0.4),
+                rgba(18, 183, 106, 0.08),
                 transparent
         );
         transform: skewX(-20deg);
@@ -346,39 +352,37 @@
 
 .sidebar-account {
         margin-top: auto;
-        padding: 0.85rem;
-        border-radius: var(--radius-sm);
-        background: var(--surface-2);
-        border: 1px solid var(--border);
+        padding: 0.7rem 0.85rem;
+        border-radius: 10px;
+        background: #ffffff;
+        border: 1px solid #e8ece6;
         transition:
-                background var(--transition-fast),
                 border-color var(--transition-fast);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.6rem;
         cursor: pointer;
 }
 
 .sidebar-account:hover {
-        border-color: var(--paymo-primary-light);
-        background: #fff;
+        border-color: #b7e6cf;
 }
 
 .sidebar-account .avatar {
-        width: 38px;
-        height: 38px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background: linear-gradient(
                 135deg,
-                var(--paymo-primary-light),
-                var(--paymo-primary)
+                var(--paymo-primary),
+                var(--paymo-primary-600)
         );
         color: #fff;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         flex: 0 0 auto;
 }
 
@@ -395,6 +399,16 @@
 .sidebar.mobile-open .sidebar-account .details {
         opacity: 1;
         max-width: 180px;
+}
+
+/* ===== Nav scroll region ===== */
+.navScroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
 }
 
 /* -------- Header -------- */
@@ -1095,7 +1109,7 @@
         padding: 0.7rem 0.6rem;
         border: none;
         border-radius: var(--radius-sm);
-        background: linear-gradient(135deg, #10b981 0%, #059669 40%, #047857 100%);
+        background: linear-gradient(135deg, #12b76a 0%, #0b8f52 40%, #0a7743 100%);
         color: #fff;
         font-family: inherit;
         font-size: 0.82rem;
@@ -1114,7 +1128,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, #34d399 0%, #10b981 40%, #059669 100%);
+        background: linear-gradient(135deg, #3cd68f 0%, #12b76a 40%, #0b8f52 100%);
         opacity: 0;
         transition: opacity 0.3s ease;
 }
@@ -1122,8 +1136,8 @@
 .switchAccountBtn:hover {
         transform: translateY(-2px);
         box-shadow:
-                0 8px 24px rgba(16, 185, 129, 0.4),
-                0 2px 6px rgba(16, 185, 129, 0.2);
+                0 8px 24px rgba(18, 183, 106, 0.4),
+                0 2px 6px rgba(18, 183, 106, 0.2);
 }
 
 .switchAccountBtn:hover::before {
@@ -1157,9 +1171,9 @@
 
 /* ===== Badge: OK (green) variant ===== */
 .badgeOk {
-        background: rgba(16, 185, 129, 0.1) !important;
-        color: #059669 !important;
-        border-color: rgba(16, 185, 129, 0.2) !important;
+        background: rgba(18, 183, 106, 0.1) !important;
+        color: #067647 !important;
+        border-color: rgba(18, 183, 106, 0.2) !important;
 }
 
 /* -------- Responsive -------- */

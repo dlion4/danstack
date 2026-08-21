@@ -1409,6 +1409,36 @@ input[type="date"].field {
 	flex-direction: column;
 }
 
+/* ---------- modal overlay + wrapper (used by shared modal components) ---------- */
+.modalOverlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	padding: 16px;
+	backdrop-filter: blur(4px);
+	overflow-y: auto;
+}
+
+.modalWrapper {
+	width: 100%;
+	max-width: var(--bs-modal-width, 500px);
+	margin: auto;
+	flex-shrink: 0;
+	background: var(--surface-elev);
+	border: none;
+	border-radius: var(--radius-lg);
+	color: var(--ink-900);
+	box-shadow: var(--shadow-xl);
+	max-height: 90vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
 .modalSm {
 	max-width: 400px;
 }

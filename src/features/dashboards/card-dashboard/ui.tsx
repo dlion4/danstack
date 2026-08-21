@@ -47,18 +47,17 @@ export function Chip({ on, onClick, children, count }: { on: boolean; onClick: (
 
 export function Toggle({ on, onChange, disabled, label }: { on: boolean; onChange: (v: boolean) => void; disabled?: boolean; label?: string }) {
   return (
-    <span className="form-check form-switch pmc-switch m-0 d-inline-flex flex-none">
-      <input
-        className="form-check-input"
-        type="checkbox"
-        role="switch"
-        checked={on}
-        disabled={disabled}
-        aria-checked={on}
-        aria-label={label}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-    </span>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange(!on)}
+      className={cn("pmc-toggle", on && "on")}
+    >
+      <span className="pmc-toggle-knob" />
+    </button>
   );
 }
 

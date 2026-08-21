@@ -11,6 +11,21 @@ const tanstackRouter = Object.assign(
 );
 
 export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Silence Bootstrap 5.x Sass deprecation warnings (from node_modules).
+        // Bootstrap 5 doesn't support the modern @use/@forward module system;
+        // these will go away when Bootstrap 6 ships.
+        silenceDeprecations: [
+          'import',          // @import rules
+          'if-function',     // Sass if() syntax
+          'global-builtin',  // mix(), unit(), etc.
+          'color-functions', // red(), green(), blue()
+        ],
+      },
+    },
+  },
   server: {
     // Allow the Arena preview proxy host (and any *.e2b.app subdomain).
     allowedHosts: [".e2b.app", "localhost", "127.0.0.1"],

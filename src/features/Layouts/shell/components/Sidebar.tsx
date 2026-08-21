@@ -28,6 +28,34 @@ interface SidebarProps {
 	onLogout: () => void;
 }
 
+/* Mapping from nav item keys to their specific route paths */
+const ROUTE_MAP: Record<string, string> = {
+	"transfer-overview": "/pm/app/transfer-overview",
+	"initiate-transfer": "/pm/app/initiate-transfer",
+	"transfer-management": "/pm/app/transfer-management",
+	"payment-rails": "/pm/app/payment-rails",
+	"mobile-money": "/pm/app/mobile-money",
+	"onboarding": "/pm/app/onboarding",
+	"customers": "/pm/app/customers",
+	"liquidity": "/pm/app/liquidity",
+	"reconciliation": "/pm/app/reconciliation",
+	"settlement": "/pm/app/settlement",
+	"fx": "/pm/app/fx",
+	"fees": "/pm/app/fees",
+	"compliance": "/pm/app/compliance",
+	"disputes": "/pm/app/disputes",
+	"kra-government": "/pm/app/kra-government",
+	"analytics": "/pm/app/analytics",
+	"ops-health": "/pm/app/ops-health",
+	"account": "/pm/app/account",
+	"settings": "/pm/app/settings",
+	"support": "/pm/app/support",
+};
+
+function getRoutePath(key: string): string {
+	return ROUTE_MAP[key] || `/pm/app/${key}`;
+}
+
 export default function Sidebar({
 	content,
 	isDesktop,
@@ -136,8 +164,7 @@ export default function Sidebar({
 											return (
 												<Link
 													key={item.key}
-													to="/pm/app/$section"
-													params={{ section: item.key }}
+													to={getRoutePath(item.key)}
 													className={className}
 													title={item.label}
 													onClick={() => handleItemClick(item)}
@@ -198,8 +225,7 @@ export default function Sidebar({
 									return (
 										<Link
 											key={item.key}
-											to="/pm/app/$section"
-											params={{ section: item.key }}
+											to={getRoutePath(item.key)}
 											className={className}
 											title={item.label}
 											onClick={() => handleItemClick(item)}

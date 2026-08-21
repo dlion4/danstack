@@ -208,8 +208,7 @@ export default function CardsHeader({
 							</div>
 							<div className={cx(s.panelFooter, "text-center")}>
 								<Link
-									to="/pm/app/$section"
-									params={{ section: "card-transactions" }}
+									to="/cards/app/card-transactions"
 									className={cx(s.btnLink, s.btnLinkPrimary)}
 								>
 									View all notifications
