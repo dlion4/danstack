@@ -1,3 +1,7 @@
+/* ============================================================================
+ * Card Dashboard — page 5.5 · Prepaid Card Management (Bootstrap 5 edition)
+ * ========================================================================== */
+
 import { useEffect, useState } from "react";
 import { cn } from "./utils/cn";
 import { Icon, type IconName, NetworkMark } from "./icons";
@@ -28,53 +32,51 @@ const statusTone = (s: PrepaidCard["status"]): "success" | "info" | "warning" | 
 
 function PrepaidVisual({ card, small }: { card: PrepaidCard; small?: boolean }) {
   const pct = card.loaded > 0 ? Math.round((card.balance / card.loaded) * 100) : 0;
+  const dimmed = card.status === "frozen" || card.status === "retired";
   return (
     <div
-      className={cn(
-        "card-sheen relative aspect-[1.62] w-full overflow-hidden rounded-2xl text-white shadow-[var(--shadow-card)]",
-        (card.status === "frozen" || card.status === "retired") && "saturate-[0.4]"
-      )}
-      style={{ background: card.gradient }}
+      className="position-relative w-100 overflow-hidden text-white"
+      style={{ aspectRatio: "1.62", borderRadius: 16, background: card.gradient, boxShadow: "var(--shadow-card)", filter: dimmed ? "saturate(0.4)" : undefined }}
     >
-      <div className="pm-hero-dots absolute inset-0" />
-      <div className={cn("relative flex h-full flex-col justify-between", small ? "p-3.5" : "p-4")}>
-        <div className="flex items-start justify-between">
+      <div className="pmc-hero-dots" />
+      <div className={cn("position-relative d-flex flex-column justify-content-between h-100", small ? "p-3" : "p-3", !small && "pmc-p-4")}>
+        <div className="d-flex align-items-start justify-content-between">
           <div>
-            <p className={cn("font-display font-bold", small ? "text-[12px]" : "text-[13.5px]")}>PayMo</p>
-            <p className={cn("font-semibold uppercase tracking-[0.14em] text-white/60", small ? "text-[8px]" : "text-[9px]")}>
+            <p className="pmc-display fw-bold mb-0" style={{ fontSize: small ? 12 : 13.5 }}>PayMo</p>
+            <p className="fw-semibold text-uppercase mb-0" style={{ fontSize: small ? 8 : 9, letterSpacing: "0.14em", color: "rgba(255,255,255,0.6)" }}>
               {card.form === "virtual" ? "Virtual Prepaid" : "Physical Prepaid"}
             </p>
           </div>
           <NetworkMark network={card.network} />
         </div>
         <div>
-          <div className="flex items-end justify-between">
+          <div className="d-flex align-items-end justify-content-between">
             <div>
-              <p className={cn("font-semibold uppercase tracking-wider text-white/55", small ? "text-[8px]" : "text-[9.5px]")}>Balance</p>
-              <p className={cn("num font-display font-bold tracking-tight", small ? "text-[16px]" : "text-[20px]")}>{kes(card.balance)}</p>
+              <p className="fw-semibold text-uppercase mb-0" style={{ fontSize: small ? 8 : 9.5, letterSpacing: "0.05em", color: "rgba(255,255,255,0.55)" }}>Balance</p>
+              <p className="pmc-num pmc-display fw-bold mb-0" style={{ fontSize: small ? 16 : 20, letterSpacing: "-0.02em" }}>{kes(card.balance)}</p>
             </div>
-            <div className="text-right">
-              <p className={cn("font-semibold uppercase tracking-wider text-white/55", small ? "text-[8px]" : "text-[9.5px]")}>Valid</p>
-              <p className={cn("font-bold", small ? "text-[10px]" : "text-[11px]")}>{card.expiry}</p>
+            <div className="text-end">
+              <p className="fw-semibold text-uppercase mb-0" style={{ fontSize: small ? 8 : 9.5, letterSpacing: "0.05em", color: "rgba(255,255,255,0.55)" }}>Valid</p>
+              <p className="fw-bold mb-0" style={{ fontSize: small ? 10 : 11 }}>{card.expiry}</p>
             </div>
           </div>
-          <div className="mt-2 h-[4px] overflow-hidden rounded-full bg-white/20">
-            <div className="h-full rounded-full bg-white/85" style={{ width: `${pct}%` }} />
+          <div className="overflow-hidden" style={{ marginTop: 8, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.2)" }}>
+            <div className="h-100" style={{ width: `${pct}%`, borderRadius: 99, background: "rgba(255,255,255,0.85)" }} />
           </div>
-          <div className="mt-1.5 flex items-center justify-between">
-            <p className={cn("font-semibold tracking-wide text-white/85", small ? "text-[10px]" : "text-[11.5px]")}>{card.panMask}</p>
-            <p className={cn("text-white/70", small ? "text-[8px]" : "text-[9.5px]")}>{card.holder}</p>
+          <div className="d-flex align-items-center justify-content-between" style={{ marginTop: 6 }}>
+            <p className="fw-semibold mb-0" style={{ fontSize: small ? 10 : 11.5, letterSpacing: "0.025em", color: "rgba(255,255,255,0.85)" }}>{card.panMask}</p>
+            <p className="mb-0" style={{ fontSize: small ? 8 : 9.5, color: "rgba(255,255,255,0.7)" }}>{card.holder}</p>
           </div>
         </div>
       </div>
       {card.status === "frozen" && (
-        <span className="absolute right-3 top-3 rounded-md bg-[#0b1322]/70 px-2 py-1 text-[10px] font-bold text-[#a5d8ff] backdrop-blur-sm">FROZEN</span>
+        <span className="position-absolute fw-bold" style={{ right: 12, top: 12, borderRadius: 6, background: "rgba(11,19,34,0.7)", padding: "4px 8px", fontSize: 10, color: "#a5d8ff", backdropFilter: "blur(2px)" }}>FROZEN</span>
       )}
       {card.status === "depleted" && (
-        <span className="absolute right-3 top-3 rounded-md bg-[#0b1322]/70 px-2 py-1 text-[10px] font-bold text-[#fdd9a0] backdrop-blur-sm">EMPTY</span>
+        <span className="position-absolute fw-bold" style={{ right: 12, top: 12, borderRadius: 6, background: "rgba(11,19,34,0.7)", padding: "4px 8px", fontSize: 10, color: "#fdd9a0", backdropFilter: "blur(2px)" }}>EMPTY</span>
       )}
       {card.status === "retired" && (
-        <span className="absolute right-3 top-3 rounded-md bg-[#0b1322]/70 px-2 py-1 text-[10px] font-bold text-[#cdd3df] backdrop-blur-sm">RETIRED</span>
+        <span className="position-absolute fw-bold" style={{ right: 12, top: 12, borderRadius: 6, background: "rgba(11,19,34,0.7)", padding: "4px 8px", fontSize: 10, color: "#cdd3df", backdropFilter: "blur(2px)" }}>RETIRED</span>
       )}
     </div>
   );
@@ -91,49 +93,49 @@ export function PrepaidOverview() {
   const lowCount = live.filter((p) => p.loaded > 0 && p.balance / p.loaded < 0.2).length;
 
   return (
-    <section id="overview" className="scroll-mt-24">
+    <section id="overview" className="pmc-scroll-mt">
       <Reveal>
-        <div className="pm-hero relative overflow-hidden rounded-2xl border border-line p-5 text-white shadow-pm sm:p-7">
-          <div className="pm-hero-dots absolute inset-0" />
-          <div className="relative flex flex-wrap items-center gap-6">
-            <div className="min-w-0 flex-1 basis-[300px]">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#cfe8db]">
-                  <span className="live-dot" /> BAAS · Cards
+        <div className="pmc-hero">
+          <div className="pmc-hero-dots" />
+          <div className="position-relative d-flex flex-wrap align-items-center pmc-gap-6">
+            <div className="flex-grow-1" style={{ minWidth: 0, flexBasis: 300 }}>
+              <div className="d-flex flex-wrap align-items-center pmc-gap-2">
+                <span className="pmc-hero-chip d-inline-flex align-items-center pmc-gap-15 text-uppercase fw-bold" style={{ letterSpacing: "0.12em" }}>
+                  <span className="pmc-live-dot" /> BAAS · Cards
                 </span>
-                <span className="rounded-md bg-white/12 px-2.5 py-1 text-[10.5px] font-semibold text-[#cfe8db]">Module 5.5</span>
+                <span className="pmc-hero-chip">Module 5.5</span>
               </div>
-              <h1 className="font-display mt-3 text-[26px] font-bold leading-[1.1] tracking-tight sm:text-[34px]">
-                Prepaid Card<br className="hidden sm:block" /> Management
+              <h1 className="pmc-hero-title pmc-mt-3">
+                Prepaid Card<br className="d-none d-sm-inline" /> Management
               </h1>
-              <p className="mt-2 max-w-[500px] text-[13px] leading-relaxed text-white/65">
+              <p className="pmc-hero-sub" style={{ maxWidth: 500 }}>
                 Issue loadable prepaid cards for teams, gifts and travel. Fund them upfront, cap spend by category,
                 and top up in seconds — with zero exposure to your main accounts.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="pmc-mt-4 d-flex flex-wrap pmc-gap-2">
                 <Btn icon="plus" onClick={() => openModal({ type: "prepaidIssue" })}>Issue Prepaid Card</Btn>
                 <Btn variant="ghost" icon="wallet" onClick={() => openModal({ type: "topup" })}>Top Up a Card</Btn>
                 <Btn variant="ghost" icon="gauge" onClick={() => setPage("5.1")}>Command Center</Btn>
               </div>
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+              <div className="pmc-hero-stats">
                 {[
                   { k: "Total balance", v: kesShort(totalBalance) },
                   { k: "Active cards", v: String(active) },
                   { k: "Loaded MTD", v: kesShort(totalLoaded) },
                   { k: "Low balance", v: String(lowCount), warn: lowCount > 0 },
                 ].map((s) => (
-                  <div key={s.k} className="leading-tight">
-                    <p className={cn("font-display num text-[17px] font-bold", s.warn ? "text-[#ffd27d]" : "text-white")}>{s.v}</p>
-                    <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-white/45">{s.k}</p>
+                  <div key={s.k} className="lh-sm">
+                    <p className="pmc-hero-stat-value" style={s.warn ? { color: "#ffd27d" } : undefined}>{s.v}</p>
+                    <p className="pmc-hero-stat-label">{s.k}</p>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="relative hidden h-[230px] w-[300px] flex-none md:block">
-              <div className="absolute right-0 top-0 w-[245px] rotate-[6deg]">
+            <div className="pmc-hero-art" style={{ height: 230 }}>
+              <div className="position-absolute" style={{ right: 0, top: 0, width: 245, transform: "rotate(6deg)" }}>
                 {prepaid[0] && <PrepaidVisual card={prepaid[0]} />}
               </div>
-              <div className="absolute bottom-0 left-1 w-[245px] -rotate-[4deg]">
+              <div className="position-absolute" style={{ bottom: 0, left: 4, width: 245, transform: "rotate(-4deg)" }}>
                 {prepaid[4] && <PrepaidVisual card={prepaid[4]} />}
               </div>
             </div>
@@ -141,46 +143,53 @@ export function PrepaidOverview() {
         </div>
       </Reveal>
 
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="row pmc-g-3 pmc-mt-4">
         {[
-          { icon: "wallet" as IconName, tone: "bg-pmgreen-soft text-[#067647]", label: "Available Balance", value: kes(totalBalance), note: `across ${live.length} live cards`, spark: [30, 28, 34, 31, 27, 24, 22, 26], stroke: "#12b76a" },
-          { icon: "refresh" as IconName, tone: "bg-pmblue-soft text-[#175cd3]", label: "Loaded (all-time)", value: kesShort(totalLoaded), note: "top-ups + initial loads", spark: [12, 18, 22, 30, 38, 44, 52, 60], stroke: "#2e90fa" },
-          { icon: "card" as IconName, tone: "bg-pmviolet-soft text-[#5925dc]", label: "Cards Issued", value: String(prepaid.length), note: `${prepaid.filter((p) => p.form === "virtual").length} virtual · ${prepaid.filter((p) => p.form === "physical").length} physical`, spark: [2, 3, 3, 4, 4, 5, 5, 5], stroke: "#7a5af8" },
-          { icon: "alertTri" as IconName, tone: "bg-warn-soft text-[#93370d]", label: "Need Attention", value: String(lowCount), note: lowCount > 0 ? "low balance — top up soon" : "all balances healthy", spark: [1, 0, 1, 1, 2, 1, 1, 1], stroke: "#f79009", action: () => document.getElementById("balances")?.scrollIntoView({ behavior: "smooth" }) },
+          { icon: "wallet" as IconName, tone: "pmc-tone-green", label: "Available Balance", value: kes(totalBalance), note: `across ${live.length} live cards`, spark: [30, 28, 34, 31, 27, 24, 22, 26], stroke: "#12b76a" },
+          { icon: "refresh" as IconName, tone: "pmc-tone-blue", label: "Loaded (all-time)", value: kesShort(totalLoaded), note: "top-ups + initial loads", spark: [12, 18, 22, 30, 38, 44, 52, 60], stroke: "#2e90fa" },
+          { icon: "card" as IconName, tone: "pmc-tone-violet", label: "Cards Issued", value: String(prepaid.length), note: `${prepaid.filter((p) => p.form === "virtual").length} virtual · ${prepaid.filter((p) => p.form === "physical").length} physical`, spark: [2, 3, 3, 4, 4, 5, 5, 5], stroke: "#7a5af8" },
+          { icon: "alertTri" as IconName, tone: "pmc-tone-warn", label: "Need Attention", value: String(lowCount), note: lowCount > 0 ? "low balance — top up soon" : "all balances healthy", spark: [1, 0, 1, 1, 2, 1, 1, 1], stroke: "#f79009", action: () => document.getElementById("balances")?.scrollIntoView({ behavior: "smooth" }) },
         ].map((k, i) => (
-          <Reveal key={k.label} delay={i * 70}>
-            <button
-              onClick={k.action}
-              className={cn("group w-full rounded-2xl border border-line bg-white p-4 text-left shadow-pm transition-all duration-200", k.action ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-pm-lg" : "cursor-default")}
-            >
-              <div className="flex items-start justify-between">
-                <span className={cn("grid h-[42px] w-[42px] place-items-center rounded-xl", k.tone)}><Icon name={k.icon} size={19} /></span>
-                <Spark points={k.spark} stroke={k.stroke} />
-              </div>
-              <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.07em] text-muted">{k.label}</p>
-              <p className="num font-display mt-0.5 text-[22px] font-bold leading-none tracking-tight text-ink">{k.value}</p>
-              <p className="mt-2 text-[11px] font-semibold text-faint">{k.note}</p>
-            </button>
-          </Reveal>
+          <div key={k.label} className="col-12 col-sm-6 col-xl-3">
+            <Reveal delay={i * 70} className="h-100">
+              <button
+                type="button"
+                onClick={k.action}
+                className={cn("pmc-card pmc-stat pmc-focus h-100", k.action && "pmc-lift")}
+                style={k.action ? undefined : { cursor: "default" }}
+              >
+                <div className="d-flex align-items-start justify-content-between">
+                  <span className={cn("pmc-stat-icon d-grid", k.tone)}><Icon name={k.icon} size={19} /></span>
+                  <Spark points={k.spark} stroke={k.stroke} />
+                </div>
+                <p className="pmc-stat-label">{k.label}</p>
+                <p className="pmc-stat-value">{k.value}</p>
+                <p className="pmc-mt-2 pmc-fs-11 fw-semibold pmc-faint mb-0">{k.note}</p>
+              </button>
+            </Reveal>
+          </div>
         ))}
       </div>
 
       {/* Use-case launchers */}
-      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="row g-2 pmc-mt-4">
         {PREPAID_USES.map((u, i) => (
-          <Reveal key={u.id} delay={i * 60}>
-            <button
-              onClick={() => { openModal({ type: "prepaidIssue" }); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pm-prepaid-use", { detail: u.id })), 40); }}
-              className="group flex w-full items-center gap-3 rounded-xl border border-line bg-white p-3 text-left shadow-pm transition-all duration-200 hover:-translate-y-0.5 hover:border-pmgreen/50 hover:shadow-pm-lg"
-            >
-              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-pmgreen-soft text-[#067647]"><Icon name={u.icon} size={16} /></span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[12.5px] font-bold text-ink">{u.title}</span>
-                <span className="block truncate text-[10.5px] font-semibold text-faint">{u.sub}</span>
-              </span>
-              <Icon name="plus" size={14} className="flex-none text-faint transition group-hover:text-pmgreen" />
-            </button>
-          </Reveal>
+          <div key={u.id} className="col-12 col-sm-6 col-lg-3">
+            <Reveal delay={i * 60} className="h-100">
+              <button
+                type="button"
+                onClick={() => { openModal({ type: "prepaidIssue" }); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pm-prepaid-use", { detail: u.id })), 40); }}
+                className="pmc-card pmc-lift pmc-focus d-flex w-100 align-items-center pmc-gap-3 p-3 text-start h-100"
+              >
+                <span className="pmc-icon-sq d-grid flex-none pmc-tone-green"><Icon name={u.icon} size={16} /></span>
+                <span className="flex-grow-1" style={{ minWidth: 0 }}>
+                  <span className="d-block pmc-fs-125 fw-bold pmc-ink">{u.title}</span>
+                  <span className="d-block text-truncate pmc-fs-105 fw-semibold pmc-faint">{u.sub}</span>
+                </span>
+                <Icon name="plus" size={14} className="flex-none pmc-faint" />
+              </button>
+            </Reveal>
+          </div>
         ))}
       </div>
     </section>
@@ -208,16 +217,22 @@ export function PrepaidCardsSection() {
   const count = (f: PpFilter) => prepaid.filter((p) => (f === "all" ? true : f === "low" ? isLow(p) : p.status === f)).length;
 
   return (
-    <section id="prepaid-cards" className="scroll-mt-24">
+    <section id="prepaid-cards" className="pmc-scroll-mt">
       <SectionHead no="02" title="Prepaid Cards" sub="Loadable cards with their own balance, category lock and top-up controls.">
-        <div className="relative">
-          <Icon name="search" size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Find a prepaid card…" className="focus-ring w-[190px] rounded-[10px] border border-line bg-white py-2 pl-9 pr-3 text-[12.5px] font-semibold outline-none transition placeholder:font-medium placeholder:text-faint focus:border-pmgreen/50" />
+        <div className="position-relative">
+          <Icon name="search" size={14} className="position-absolute pmc-faint" style={{ left: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Find a prepaid card…"
+            className="pmc-focus pmc-radius-sm pmc-fs-125 fw-semibold pmc-ink"
+            style={{ width: 190, border: "1px solid var(--pmc-line)", background: "#fff", padding: "8px 12px 8px 36px", outline: "none" }}
+          />
         </div>
         <Btn size="sm" icon="plus" onClick={() => openModal({ type: "prepaidIssue" })}>Issue Card</Btn>
       </SectionHead>
 
-      <div className="thin-scroll mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="pmc-thin-scroll pmc-mb-4 d-flex pmc-gap-2 overflow-auto pb-1">
         {(["all", "active", "low", "frozen", "depleted"] as PpFilter[]).map((f) => (
           <Chip key={f} on={filter === f} onClick={() => setFilter(f)} count={count(f)}>
             {f === "all" ? "All" : f === "low" ? "Low balance" : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -228,46 +243,48 @@ export function PrepaidCardsSection() {
       {shown.length === 0 ? (
         <Empty icon="card" title="No prepaid cards match" sub="Try another filter, or issue a new loadable card." action={<Btn size="sm" icon="plus" onClick={() => openModal({ type: "prepaidIssue" })}>Issue Prepaid Card</Btn>} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="row pmc-g-4">
           {shown.map((card, i) => {
             const spentPct = card.loaded > 0 ? Math.round((card.spent / card.loaded) * 100) : 0;
             const low = isLow(card);
             return (
-              <Reveal key={card.id} delay={(i % 3) * 70}>
-                <div className="group rounded-2xl border border-line bg-white p-3.5 shadow-pm transition-all duration-200 hover:-translate-y-1 hover:shadow-pm-lg">
-                  <button onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} className="card-hover block w-full text-left" aria-label={`Manage ${card.name}`}>
-                    <PrepaidVisual card={card} />
-                  </button>
-                  <div className="mt-3 flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-[13.5px] font-bold text-ink">{card.name}</p>
-                      <p className="text-[11px] font-semibold text-faint">{useMeta(card.use).title}</p>
+              <div key={card.id} className="col-12 col-sm-6 col-xl-4">
+                <Reveal delay={(i % 3) * 70} className="h-100">
+                  <div className="pmc-card pmc-lift p-3 h-100">
+                    <button type="button" onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} className="pmc-focus d-block w-100 text-start border-0 bg-transparent p-0" aria-label={`Manage ${card.name}`}>
+                      <PrepaidVisual card={card} />
+                    </button>
+                    <div className="pmc-mt-3 d-flex align-items-start justify-content-between pmc-gap-2">
+                      <div style={{ minWidth: 0 }}>
+                        <p className="text-truncate pmc-fs-135 fw-bold pmc-ink mb-0">{card.name}</p>
+                        <p className="pmc-fs-11 fw-semibold pmc-faint mb-0">{useMeta(card.use).title}</p>
+                      </div>
+                      <Badge tone={statusTone(card.status)} dot className="text-capitalize">{card.status}</Badge>
                     </div>
-                    <Badge tone={statusTone(card.status)} dot className="capitalize">{card.status}</Badge>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    <Badge tone="muted">{card.form === "virtual" ? "Virtual" : "Physical"}</Badge>
-                    <Badge tone={card.mcc === "any" ? "muted" : "violet"}>{card.mcc === "any" ? "Open MCC" : mccLabel(card.mcc)}</Badge>
-                    {low && <Badge tone="warning" dot>Low</Badge>}
-                  </div>
-                  <div className="mt-2.5">
-                    <div className="mb-1 flex justify-between text-[10.5px] font-bold text-faint">
-                      <span className="num">{kes(card.balance)} left</span>
-                      <span className="num">{spentPct}% spent</span>
+                    <div className="pmc-mt-2 d-flex flex-wrap pmc-gap-15">
+                      <Badge tone="muted">{card.form === "virtual" ? "Virtual" : "Physical"}</Badge>
+                      <Badge tone={card.mcc === "any" ? "muted" : "violet"}>{card.mcc === "any" ? "Open MCC" : mccLabel(card.mcc)}</Badge>
+                      {low && <Badge tone="warning" dot>Low</Badge>}
                     </div>
-                    <Progress value={100 - spentPct} tone={low ? "red" : spentPct > 60 ? "amber" : "green"} />
+                    <div className="pmc-mt-25">
+                      <div className="pmc-mb-1 d-flex justify-content-between pmc-fs-105 fw-bold pmc-faint">
+                        <span className="pmc-num">{kes(card.balance)} left</span>
+                        <span className="pmc-num">{spentPct}% spent</span>
+                      </div>
+                      <Progress value={100 - spentPct} tone={low ? "red" : spentPct > 60 ? "amber" : "green"} />
+                    </div>
+                    <div className="pmc-mt-3 d-flex align-items-center pmc-gap-15" style={{ borderTop: "1px solid rgba(230,233,240,0.7)", paddingTop: 12 }}>
+                      {card.status === "retired" ? (
+                        <span className="flex-grow-1 pmc-radius-sm px-3 pmc-py-15 text-center pmc-fs-115 fw-bold pmc-faint" style={{ background: "var(--pmc-canvas)" }}>Card retired</span>
+                      ) : (
+                        <Btn size="sm" icon="wallet" className="flex-grow-1" disabled={!card.reloadable && card.status === "depleted"} onClick={() => openModal({ type: "topup", cardId: card.id })}>Top Up</Btn>
+                      )}
+                      <button type="button" onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} title="Manage" className="pmc-focus pmc-icon-btn pmc-icon-btn-sm pmc-icon-btn-green"><Icon name="sliders" size={14} /></button>
+                      <button type="button" onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} title="Details" className="pmc-focus pmc-icon-btn pmc-icon-btn-sm pmc-icon-btn-green"><Icon name="chevRight" size={14} /></button>
+                    </div>
                   </div>
-                  <div className="mt-3 flex items-center gap-1.5 border-t border-line/70 pt-3">
-                    {card.status === "retired" ? (
-                      <span className="flex-1 rounded-[10px] bg-canvas px-3 py-1.5 text-center text-[11.5px] font-bold text-faint">Card retired</span>
-                    ) : (
-                      <Btn size="sm" icon="wallet" className="flex-1" disabled={!card.reloadable && card.status === "depleted"} onClick={() => openModal({ type: "topup", cardId: card.id })}>Top Up</Btn>
-                    )}
-                    <button onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} title="Manage" className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]"><Icon name="sliders" size={14} /></button>
-                    <button onClick={() => openModal({ type: "prepaidManage", cardId: card.id })} title="Details" className="focus-ring grid h-8 w-8 place-items-center rounded-[9px] border border-line text-muted transition hover:border-pmgreen/50 hover:bg-pmgreen-soft hover:text-[#067647]"><Icon name="chevRight" size={14} /></button>
-                  </div>
-                </div>
-              </Reveal>
+                </Reveal>
+              </div>
             );
           })}
         </div>
@@ -283,7 +300,7 @@ export function BalancesSection() {
   const live = prepaid.filter((p) => p.status !== "retired");
 
   return (
-    <section id="balances" className="scroll-mt-24">
+    <section id="balances" className="pmc-scroll-mt">
       <SectionHead no="03" title="Balances & Reloads" sub="At-a-glance funding health with one-tap top-ups for anything running low.">
         <Btn size="sm" icon="wallet" onClick={() => openModal({ type: "topup" })}>Top Up a Card</Btn>
       </SectionHead>
@@ -292,42 +309,44 @@ export function BalancesSection() {
         <Empty icon="wallet" title="No live prepaid balances" sub="Issue a prepaid card to start tracking balances here." />
       ) : (
         <Reveal>
-          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
-            <div className="hidden md:block">
-              <table className="w-full text-left">
+          <div className="pmc-table-frame">
+            <div className="d-none d-md-block">
+              <table className="pmc-table w-100 text-start">
                 <thead>
-                  <tr className="border-b border-line bg-canvas/70 text-[10.5px] font-bold uppercase tracking-[0.08em] text-faint">
-                    <th className="px-4 py-2.5">Card</th>
-                    <th className="px-3 py-2.5">Category lock</th>
-                    <th className="px-3 py-2.5">Balance</th>
-                    <th className="px-3 py-2.5 w-[180px]">Remaining</th>
-                    <th className="px-4 py-2.5 text-right">Action</th>
+                  <tr>
+                    <th className="pmc-px-4 pmc-py-25">Card</th>
+                    <th className="pmc-px-3 pmc-py-25">Category lock</th>
+                    <th className="pmc-px-3 pmc-py-25">Balance</th>
+                    <th className="pmc-px-3 pmc-py-25" style={{ width: 180 }}>Remaining</th>
+                    <th className="pmc-px-4 pmc-py-25 text-end">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-line/70">
+                <tbody>
                   {live.map((p) => {
                     const remaining = p.loaded > 0 ? Math.round((p.balance / p.loaded) * 100) : 0;
                     const low = p.loaded > 0 && p.balance / p.loaded < 0.2;
                     return (
-                      <tr key={p.id} className="text-[12.5px] transition hover:bg-pmgreen-soft/15">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2.5">
-                            <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-canvas text-muted"><Icon name={p.form === "virtual" ? "card" : "wallet"} size={14} /></span>
-                            <div className="leading-tight">
-                              <p className="font-bold text-ink">{p.name}</p>
-                              <p className="text-[10.5px] font-semibold text-faint">•• {p.last4} · {p.form}</p>
+                      <tr key={p.id}>
+                        <td className="pmc-px-4 pmc-py-3">
+                          <div className="d-flex align-items-center pmc-gap-25">
+                            <span className="pmc-icon-sq d-grid flex-none pmc-tone-muted" style={{ width: 32, height: 32, borderRadius: 8 }}><Icon name={p.form === "virtual" ? "card" : "wallet"} size={14} /></span>
+                            <div className="lh-sm">
+                              <p className="fw-bold pmc-ink mb-0">{p.name}</p>
+                              <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">•• {p.last4} · {p.form}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-3 py-3"><Badge tone={p.mcc === "any" ? "muted" : "violet"}>{p.mcc === "any" ? "Open" : mccLabel(p.mcc)}</Badge></td>
-                        <td className="num px-3 py-3 font-display font-bold text-ink">{kes(p.balance)}</td>
-                        <td className="px-3 py-3">
-                          <div className="flex items-center gap-2">
-                            <Progress value={remaining} tone={low ? "red" : remaining < 50 ? "amber" : "green"} className="w-[110px]" />
-                            <span className={cn("num text-[11px] font-bold", low ? "text-[#b42318]" : "text-muted")}>{remaining}%</span>
+                        <td className="pmc-px-3 pmc-py-3"><Badge tone={p.mcc === "any" ? "muted" : "violet"}>{p.mcc === "any" ? "Open" : mccLabel(p.mcc)}</Badge></td>
+                        <td className="pmc-num pmc-px-3 pmc-py-3 pmc-display fw-bold pmc-ink">{kes(p.balance)}</td>
+                        <td className="pmc-px-3 pmc-py-3">
+                          <div className="d-flex align-items-center pmc-gap-2">
+                            <div className="d-inline-block" style={{ width: 110 }}>
+                              <Progress value={remaining} tone={low ? "red" : remaining < 50 ? "amber" : "green"} />
+                            </div>
+                            <span className={cn("pmc-num pmc-fs-11 fw-bold", low ? "pmc-danger-ink" : "pmc-muted")}>{remaining}%</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="pmc-px-4 pmc-py-3 text-end">
                           <Btn size="sm" variant={low ? "primary" : "outline"} icon="wallet" onClick={() => openModal({ type: "topup", cardId: p.id })}>Top Up</Btn>
                         </td>
                       </tr>
@@ -336,17 +355,17 @@ export function BalancesSection() {
                 </tbody>
               </table>
             </div>
-            <ul className="divide-y divide-line/70 md:hidden">
+            <ul className="pmc-mobile-list d-md-none">
               {live.map((p) => {
                 const remaining = p.loaded > 0 ? Math.round((p.balance / p.loaded) * 100) : 0;
                 const low = p.loaded > 0 && p.balance / p.loaded < 0.2;
                 return (
-                  <li key={p.id} className="flex items-center gap-3 px-4 py-3">
-                    <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-canvas text-muted"><Icon name={p.form === "virtual" ? "card" : "wallet"} size={15} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-bold text-ink">{p.name}</p>
-                      <p className="num text-[11px] font-semibold text-faint">{kes(p.balance)} · {remaining}% left</p>
-                      <Progress value={remaining} tone={low ? "red" : remaining < 50 ? "amber" : "green"} className="mt-1.5" />
+                  <li key={p.id}>
+                    <span className="pmc-icon-sq d-grid flex-none pmc-tone-muted" style={{ width: 36, height: 36, borderRadius: 10 }}><Icon name={p.form === "virtual" ? "card" : "wallet"} size={15} /></span>
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <p className="text-truncate pmc-fs-13 fw-bold pmc-ink mb-0">{p.name}</p>
+                      <p className="pmc-num pmc-fs-11 fw-semibold pmc-faint mb-0">{kes(p.balance)} · {remaining}% left</p>
+                      <Progress value={remaining} tone={low ? "red" : remaining < 50 ? "amber" : "green"} className="pmc-mt-15" />
                     </div>
                     <Btn size="sm" variant={low ? "primary" : "outline"} icon="wallet" onClick={() => openModal({ type: "topup", cardId: p.id })}>Top Up</Btn>
                   </li>
@@ -369,23 +388,23 @@ export function ControlsSection() {
   const active = prepaid.filter((p) => p.status === "active" || p.status === "frozen");
 
   return (
-    <section id="controls" className="scroll-mt-24">
+    <section id="controls" className="pmc-scroll-mt">
       <SectionHead no="04" title="Limits & MCC Locks" sub="Category restrictions and spend caps that keep prepaid funds on-purpose." />
 
-      <div className="grid gap-3 lg:grid-cols-5">
-        <Reveal className="lg:col-span-3">
-          <div className="h-full rounded-2xl border border-line bg-white p-4 shadow-pm">
-            <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Per-card controls</p>
+      <div className="row pmc-g-3">
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-card p-4 h-100">
+            <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Per-card controls</p>
             {active.length === 0 ? (
               <Empty icon="shield" title="No active cards" sub="Issue a prepaid card to configure category locks." />
             ) : (
-              <ul className="space-y-2">
+              <ul className="list-unstyled d-flex flex-column pmc-gap-2 mb-0">
                 {active.map((p) => (
-                  <li key={p.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-canvas/40 px-3.5 py-3">
-                    <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-white text-muted shadow-sm"><Icon name="card" size={15} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[12.5px] font-bold text-ink">{p.name}</p>
-                      <p className="text-[11px] font-semibold text-faint num">Cap {kes(p.monthlyLimit)}/mo · •• {p.last4}</p>
+                  <li key={p.id} className="d-flex flex-wrap align-items-center pmc-gap-3 pmc-radius px-3 pmc-py-3" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.4)" }}>
+                    <span className="pmc-icon-sq d-grid flex-none pmc-tone-muted" style={{ background: "#fff", boxShadow: "0 1px 2px rgba(16,24,40,0.06)" }}><Icon name="card" size={15} /></span>
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <p className="pmc-fs-125 fw-bold pmc-ink mb-0">{p.name}</p>
+                      <p className="pmc-fs-11 fw-semibold pmc-faint pmc-num mb-0">Cap {kes(p.monthlyLimit)}/mo · •• {p.last4}</p>
                     </div>
                     <Badge tone={p.mcc === "any" ? "muted" : "violet"}>{p.mcc === "any" ? "Open MCC" : mccLabel(p.mcc)}</Badge>
                     <Btn size="sm" variant="outline" icon="sliders" onClick={() => openModal({ type: "prepaidManage", cardId: p.id })}>Edit</Btn>
@@ -396,38 +415,50 @@ export function ControlsSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="flex h-full flex-col gap-3">
-            <div className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-3 text-[13.5px] font-bold text-ink">Programme defaults</p>
-              <div className={cn("flex items-center gap-3 rounded-xl border p-3 transition", autoReload ? "border-pmgreen/40 bg-pmgreen-soft/40" : "border-line bg-canvas/50")}>
-                <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", autoReload ? "bg-white text-[#067647] shadow-sm" : "bg-white text-faint")}><Icon name="refresh" size={16} /></span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12.5px] font-bold text-ink">Auto-reload when low</p>
-                  <p className="text-[11px] text-muted">Top up KES 10,000 when a card drops below 15%.</p>
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="d-flex flex-column pmc-gap-3 h-100">
+            <div className="pmc-card p-4">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-3">Programme defaults</p>
+              <div
+                className="d-flex align-items-center pmc-gap-3 pmc-radius p-3"
+                style={autoReload ? { border: "1px solid rgba(18,183,106,0.4)", background: "rgba(231,248,239,0.4)" } : { border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}
+              >
+                <span className={cn("pmc-icon-sq d-grid flex-none", autoReload ? "pmc-green-ink" : "pmc-faint")} style={{ background: "#fff", boxShadow: autoReload ? "0 1px 2px rgba(16,24,40,0.06)" : undefined }}>
+                  <Icon name="refresh" size={16} />
+                </span>
+                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                  <p className="pmc-fs-125 fw-bold pmc-ink mb-0">Auto-reload when low</p>
+                  <p className="pmc-fs-11 pmc-muted mb-0">Top up KES 10,000 when a card drops below 15%.</p>
                 </div>
                 <Toggle on={autoReload} label="Auto-reload" onChange={(v) => { setAutoReload(v); toast(v ? "success" : "warn", `Auto-reload ${v ? "enabled" : "disabled"}`); }} />
               </div>
-              <div className={cn("mt-2 flex items-center gap-3 rounded-xl border p-3 transition", lowAlert ? "border-pmgreen/40 bg-pmgreen-soft/40" : "border-line bg-canvas/50")}>
-                <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", lowAlert ? "bg-white text-[#067647] shadow-sm" : "bg-white text-faint")}><Icon name="bell" size={16} /></span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12.5px] font-bold text-ink">Low-balance alerts</p>
-                  <p className="text-[11px] text-muted">Notify the cardholder and admin at 20%.</p>
+              <div
+                className="pmc-mt-2 d-flex align-items-center pmc-gap-3 pmc-radius p-3"
+                style={lowAlert ? { border: "1px solid rgba(18,183,106,0.4)", background: "rgba(231,248,239,0.4)" } : { border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}
+              >
+                <span className={cn("pmc-icon-sq d-grid flex-none", lowAlert ? "pmc-green-ink" : "pmc-faint")} style={{ background: "#fff", boxShadow: lowAlert ? "0 1px 2px rgba(16,24,40,0.06)" : undefined }}>
+                  <Icon name="bell" size={16} />
+                </span>
+                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                  <p className="pmc-fs-125 fw-bold pmc-ink mb-0">Low-balance alerts</p>
+                  <p className="pmc-fs-11 pmc-muted mb-0">Notify the cardholder and admin at 20%.</p>
                 </div>
                 <Toggle on={lowAlert} label="Low-balance alerts" onChange={(v) => { setLowAlert(v); toast(v ? "success" : "warn", `Low-balance alerts ${v ? "on" : "off"}`); }} />
               </div>
             </div>
 
-            <div className="flex-1 rounded-2xl border border-line bg-white p-4 shadow-pm">
-              <p className="font-display mb-2.5 text-[13.5px] font-bold text-ink">Available MCC categories</p>
-              <ul className="grid grid-cols-2 gap-1.5">
+            <div className="pmc-card p-4 flex-grow-1">
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink pmc-mb-25">Available MCC categories</p>
+              <div className="row g-2">
                 {MCC_CATEGORIES.filter((m) => m.id !== "any").map((m) => (
-                  <li key={m.id} className="flex items-center gap-2 rounded-lg bg-canvas/60 px-2.5 py-2">
-                    <Icon name={m.icon} size={13} className="flex-none text-muted" />
-                    <span className="truncate text-[11px] font-bold text-ink-2">{m.label}</span>
-                  </li>
+                  <div key={m.id} className="col-6">
+                    <div className="d-flex align-items-center pmc-gap-2 pmc-radius-sm px-2 pmc-py-2 h-100" style={{ background: "rgba(242,244,248,0.6)" }}>
+                      <Icon name={m.icon} size={13} className="flex-none pmc-muted" />
+                      <span className="text-truncate pmc-fs-11 fw-bold pmc-ink-2">{m.label}</span>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </Reveal>
@@ -450,23 +481,31 @@ export function PrepaidActivitySection() {
     k === "Top-up" ? "success" : k === "Purchase" ? "danger" : k === "Auto-reload" ? "info" : "violet";
 
   return (
-    <section id="prepaid-activity" className="scroll-mt-24">
+    <section id="prepaid-activity" className="pmc-scroll-mt">
       <SectionHead no="05" title="Load & Spend Activity" sub="Every top-up, purchase, auto-reload and refund across your prepaid cards.">
         <Btn size="sm" variant="outline" icon="download" onClick={() => toast("success", "Activity exported", `${shown.length} events written to prepaid-activity.csv`)}>Export CSV</Btn>
       </SectionHead>
 
-      <div className="mb-4 grid grid-cols-2 gap-3 sm:max-w-md">
-        <div className="rounded-xl border border-line bg-white p-3 shadow-pm">
-          <p className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wide text-faint"><Icon name="upRight" size={12} className="text-[#067647]" /> Loaded</p>
-          <p className="num font-display mt-1 text-[16px] font-bold text-[#067647]">{kes(totalLoaded)}</p>
+      <div className="row g-3 pmc-mb-4" style={{ maxWidth: 448 }}>
+        <div className="col-6">
+          <div className="pmc-card p-3 h-100">
+            <p className="d-flex align-items-center pmc-gap-15 pmc-fs-105 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>
+              <Icon name="upRight" size={12} style={{ color: "#067647" }} /> Loaded
+            </p>
+            <p className="pmc-num pmc-display pmc-mt-1 pmc-fs-16 fw-bold mb-0" style={{ color: "#067647" }}>{kes(totalLoaded)}</p>
+          </div>
         </div>
-        <div className="rounded-xl border border-line bg-white p-3 shadow-pm">
-          <p className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wide text-faint"><Icon name="downRight" size={12} className="text-[#b42318]" /> Spent</p>
-          <p className="num font-display mt-1 text-[16px] font-bold text-ink">{kes(totalSpent)}</p>
+        <div className="col-6">
+          <div className="pmc-card p-3 h-100">
+            <p className="d-flex align-items-center pmc-gap-15 pmc-fs-105 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>
+              <Icon name="downRight" size={12} style={{ color: "#b42318" }} /> Spent
+            </p>
+            <p className="pmc-num pmc-display pmc-mt-1 pmc-fs-16 fw-bold pmc-ink mb-0">{kes(totalSpent)}</p>
+          </div>
         </div>
       </div>
 
-      <div className="thin-scroll mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="pmc-thin-scroll pmc-mb-4 d-flex pmc-gap-2 overflow-auto pb-1">
         {(["all", "load", "spend"] as const).map((f) => (
           <Chip key={f} on={filter === f} onClick={() => setFilter(f)} count={f === "all" ? loads.length : loads.filter((l) => (f === "load" ? l.amount > 0 : l.amount < 0)).length}>
             {f === "all" ? "All" : f === "load" ? "Top-ups" : "Purchases"}
@@ -478,31 +517,31 @@ export function PrepaidActivitySection() {
         <Empty icon="inbox" title="No activity yet" sub="Top-ups and purchases will appear here." />
       ) : (
         <Reveal>
-          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
-            <ul className="divide-y divide-line/70">
+          <div className="pmc-table-frame">
+            <ul className="pmc-mobile-list">
               {shown.map((l) => {
                 const card = byId(l.cardId);
                 const isLoad = l.amount > 0;
                 return (
-                  <li key={l.id} className="flex items-center gap-3 px-4 py-3">
-                    <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", isLoad ? "bg-pmgreen-soft text-[#067647]" : "bg-canvas text-muted")}>
+                  <li key={l.id}>
+                    <span className={cn("pmc-icon-sq d-grid flex-none", isLoad ? "pmc-tone-green" : "pmc-tone-muted")}>
                       <Icon name={isLoad ? "upRight" : "downRight"} size={15} />
                     </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="flex flex-wrap items-center gap-1.5 text-[13px] font-bold text-ink">
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <p className="d-flex flex-wrap align-items-center pmc-gap-15 pmc-fs-13 fw-bold pmc-ink mb-0">
                         {l.merchant}
                         <Badge tone={kindTone(l.kind)}>{l.kind}</Badge>
                       </p>
-                      <p className="text-[10.5px] font-semibold text-faint">{l.date} · {card?.name ?? "—"} •• {card?.last4 ?? "----"}{l.source ? ` · ${l.source}` : ""}</p>
+                      <p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{l.date} · {card?.name ?? "—"} •• {card?.last4 ?? "----"}{l.source ? ` · ${l.source}` : ""}</p>
                     </div>
-                    <p className={cn("num font-display text-[13.5px] font-bold", isLoad ? "text-[#067647]" : "text-ink")}>{isLoad ? "+" : "−"}{kes(Math.abs(l.amount))}</p>
+                    <p className={cn("pmc-num pmc-display pmc-fs-135 fw-bold mb-0", isLoad ? "" : "pmc-ink")} style={isLoad ? { color: "#067647" } : undefined}>{isLoad ? "+" : "−"}{kes(Math.abs(l.amount))}</p>
                   </li>
                 );
               })}
             </ul>
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-canvas/60 px-4 py-2.5">
-              <p className="text-[11.5px] font-bold text-muted">{shown.length} event{shown.length === 1 ? "" : "s"} in view</p>
-              <p className="num text-[11.5px] font-bold text-muted">Net · <span className="font-display text-[13px] text-ink">{kes(totalLoaded - totalSpent)}</span></p>
+            <div className="d-flex flex-wrap align-items-center justify-content-between pmc-gap-2 px-4 pmc-py-25" style={{ borderTop: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.6)" }}>
+              <p className="pmc-fs-115 fw-bold pmc-muted mb-0">{shown.length} event{shown.length === 1 ? "" : "s"} in view</p>
+              <p className="pmc-num pmc-fs-115 fw-bold pmc-muted mb-0">Net · <span className="pmc-display pmc-fs-13 pmc-ink">{kes(totalLoaded - totalSpent)}</span></p>
             </div>
           </div>
         </Reveal>
@@ -516,19 +555,21 @@ export function PrepaidActivitySection() {
 export function PrepaidFeesSection() {
   const { openModal } = useApp();
   return (
-    <section id="prepaid-fees" className="scroll-mt-24">
+    <section id="prepaid-fees" className="pmc-scroll-mt">
       <SectionHead no="06" title="Fees & Guide" sub="Transparent prepaid pricing and how to get the most from loadable cards." />
-      <div className="grid gap-3 lg:grid-cols-5">
-        <Reveal className="lg:col-span-3">
-          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-pm">
-            <div className="border-b border-line px-4 py-3"><p className="font-display text-[13.5px] font-bold text-ink">Prepaid fee schedule</p></div>
-            <table className="w-full text-left">
-              <tbody className="divide-y divide-line/70">
+      <div className="row pmc-g-3">
+        <Reveal className="col-12 col-lg-7 h-100">
+          <div className="pmc-table-frame h-100">
+            <div className="px-4 pmc-py-3" style={{ borderBottom: "1px solid var(--pmc-line)" }}>
+              <p className="pmc-display pmc-fs-135 fw-bold pmc-ink mb-0">Prepaid fee schedule</p>
+            </div>
+            <table className="pmc-table w-100 text-start">
+              <tbody>
                 {PREPAID_FEES.map((f, i) => (
-                  <tr key={i} className="text-[12.5px] transition hover:bg-pmgreen-soft/15">
-                    <td className="px-4 py-2.5 font-bold text-ink">{f.item}</td>
-                    <td className="num px-3 py-2.5 font-display font-bold text-ink">{f.amount}</td>
-                    <td className="hidden px-4 py-2.5 font-semibold text-muted sm:table-cell">{f.note}</td>
+                  <tr key={i}>
+                    <td className="pmc-px-4 pmc-py-25 fw-bold pmc-ink">{f.item}</td>
+                    <td className="pmc-num pmc-px-3 pmc-py-25 pmc-display fw-bold pmc-ink">{f.amount}</td>
+                    <td className="d-none d-sm-table-cell pmc-px-4 pmc-py-25 fw-semibold pmc-muted">{f.note}</td>
                   </tr>
                 ))}
               </tbody>
@@ -536,17 +577,17 @@ export function PrepaidFeesSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={80} className="lg:col-span-2">
-          <div className="flex h-full flex-col gap-3">
+        <Reveal delay={80} className="col-12 col-lg-5 h-100">
+          <div className="d-flex flex-column pmc-gap-3 h-100">
             {[
               { icon: "users" as IconName, title: "Fund a team without exposure", copy: "Give each department a capped prepaid card instead of shared logins to the main account." },
               { icon: "spark" as IconName, title: "Gift cards that self-retire", copy: "Load once, let it spend down, and the leftover balance refunds to your wallet on retire." },
               { icon: "globe" as IconName, title: "Travel cash, ring-fenced", copy: "Pre-load a travel card so a lost card never touches your operating funds." },
             ].map((g) => (
-              <div key={g.title} className="rounded-2xl border border-line bg-white p-4 shadow-pm">
-                <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-pmgreen-soft text-[#067647]"><Icon name={g.icon} size={16} /></span>
-                <p className="font-display mt-2 text-[13.5px] font-bold text-ink">{g.title}</p>
-                <p className="mt-0.5 text-[11.5px] leading-relaxed text-muted">{g.copy}</p>
+              <div key={g.title} className="pmc-card p-4">
+                <span className="pmc-icon-sq d-grid pmc-tone-green"><Icon name={g.icon} size={16} /></span>
+                <p className="pmc-display pmc-mt-2 pmc-fs-135 fw-bold pmc-ink mb-0">{g.title}</p>
+                <p className="pmc-mt-05 pmc-fs-115 pmc-muted mb-0" style={{ lineHeight: 1.6 }}>{g.copy}</p>
               </div>
             ))}
             <Btn icon="plus" onClick={() => openModal({ type: "prepaidIssue" })}>Issue a Prepaid Card</Btn>
@@ -670,55 +711,66 @@ export function PrepaidIssueModal() {
       }
     >
       {issued ? (
-        <div className="flex flex-col items-center gap-4 py-2 text-center">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-pmgreen-soft text-[#067647]"><Icon name="checkCircle" size={26} /></span>
+        <div className="d-flex flex-column align-items-center pmc-gap-4 py-2 text-center">
+          <span className="pmc-done-icon d-grid"><Icon name="checkCircle" size={26} /></span>
           <div>
-            <p className="font-display text-[16px] font-bold text-ink">Loaded and ready</p>
-            <p className="mt-1 text-[12.5px] leading-relaxed text-muted">{kes(issued.balance)} is available now. {issued.reloadable ? "Top it up anytime it runs low." : "This card retires once the balance is spent."}</p>
+            <p className="pmc-display pmc-fs-16 fw-bold pmc-ink mb-0">Loaded and ready</p>
+            <p className="pmc-mt-1 pmc-fs-125 pmc-muted mb-0" style={{ lineHeight: 1.6 }}>{kes(issued.balance)} is available now. {issued.reloadable ? "Top it up anytime it runs low." : "This card retires once the balance is spent."}</p>
           </div>
-          <div className="w-full max-w-[340px]"><PrepaidVisual card={issued} /></div>
+          <div className="w-100" style={{ maxWidth: 340 }}><PrepaidVisual card={issued} /></div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="d-flex flex-column pmc-gap-4">
           {/* stepper */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+          <div className="d-flex flex-wrap align-items-center justify-content-between pmc-gap-2">
+            <div className="d-flex align-items-center pmc-gap-2">
               {[1, 2, 3].map((s) => (
-                <div key={s} className="flex items-center gap-2">
-                  <span className={cn("grid h-6 w-6 place-items-center rounded-full font-display text-[11px] font-bold", s < step ? "bg-pmgreen text-white" : s === step ? "bg-ink text-white" : "bg-canvas text-faint")}>
+                <div key={s} className="d-flex align-items-center pmc-gap-2">
+                  <span className={cn("pmc-step-dot", s < step && "done", s === step && "current")}>
                     {s < step ? <Icon name="check" size={11} strokeWidth={3} /> : s}
                   </span>
-                  {s < 3 && <span className={cn("h-px w-7 sm:w-10", s < step ? "bg-pmgreen" : "bg-line")} />}
+                  {s < 3 && <span className="pmc-step-line" style={s < step ? { background: "var(--pmc-green)" } : undefined} />}
                 </div>
               ))}
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-faint">
+            <span className="pmc-fs-11 fw-bold text-uppercase pmc-faint" style={{ letterSpacing: "0.1em" }}>
               Step {step} · {step === 1 ? "Card Type" : step === 2 ? "Initial Funding & Limits" : "Review & Confirm"}
             </span>
           </div>
 
           {/* Step 1 — form + use */}
           {step === 1 && (
-            <div className="space-y-4">
+            <div className="d-flex flex-column pmc-gap-4">
               <div>
                 <FieldLabel>Card format</FieldLabel>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="row g-2">
                   {([["virtual", "Virtual Prepaid", "Instant · online use", "card"], ["physical", "Physical Prepaid", "Tap in-store · 2–3 days", "wallet"]] as const).map(([id, label, sub, icon]) => (
-                    <button key={id} onClick={() => setForm(id)} className={cn("flex items-start gap-3 rounded-xl border-2 p-3.5 text-left transition", form === id ? "border-pmgreen bg-pmgreen-soft/50 shadow-[0_4px_16px_-6px_rgba(18,183,106,0.4)]" : "border-line bg-white hover:border-[#c4c9d4]")}>
-                      <span className={cn("grid h-9 w-9 flex-none place-items-center rounded-[10px]", form === id ? "bg-pmgreen text-white" : "bg-canvas text-muted")}><Icon name={icon} size={16} /></span>
-                      <span><span className="block text-[13px] font-bold text-ink">{label}</span><span className="mt-0.5 block text-[11px] text-muted">{sub}</span><span className="mt-1 block text-[10.5px] font-bold text-faint">Fee {kes(PREPAID_ISSUANCE_FEE[id])}</span></span>
-                    </button>
+                    <div key={id} className="col-6">
+                      <button type="button" onClick={() => setForm(id)} className={cn("pmc-focus pmc-choice h-100", form === id && "on")}>
+                        <span className={cn("pmc-icon-sq d-grid flex-none", form === id ? "pmc-tone-green-solid" : "pmc-tone-muted")}><Icon name={icon} size={16} /></span>
+                        <span>
+                          <span className="d-block pmc-fs-13 fw-bold pmc-ink">{label}</span>
+                          <span className="d-block pmc-mt-05 pmc-fs-11 pmc-muted">{sub}</span>
+                          <span className="d-block pmc-mt-1 pmc-fs-105 fw-bold pmc-faint">Fee {kes(PREPAID_ISSUANCE_FEE[id])}</span>
+                        </span>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
               <div>
                 <FieldLabel>What's it for?</FieldLabel>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="row g-2">
                   {PREPAID_USES.map((u) => (
-                    <button key={u.id} onClick={() => { setUse(u.id); setLoad(u.defaultLoad); setMonthlyLimit(u.defaultLoad); }} className={cn("flex items-start gap-3 rounded-xl border-2 p-3 text-left transition", use === u.id ? "border-pmgreen bg-pmgreen-soft/50" : "border-line bg-white hover:border-[#c4c9d4]")}>
-                      <span className={cn("grid h-8 w-8 flex-none place-items-center rounded-[9px]", use === u.id ? "bg-pmgreen text-white" : "bg-canvas text-muted")}><Icon name={u.icon} size={15} /></span>
-                      <span className="min-w-0"><span className="block text-[12.5px] font-bold text-ink">{u.title}</span><span className="mt-0.5 block text-[10.5px] leading-snug text-muted">{u.sub}</span></span>
-                    </button>
+                    <div key={u.id} className="col-12 col-sm-6">
+                      <button type="button" onClick={() => { setUse(u.id); setLoad(u.defaultLoad); setMonthlyLimit(u.defaultLoad); }} className={cn("pmc-focus pmc-choice h-100", use === u.id && "on")} style={{ padding: 12 }}>
+                        <span className={cn("pmc-icon-sq d-grid flex-none", use === u.id ? "pmc-tone-green-solid" : "pmc-tone-muted")} style={{ width: 32, height: 32, borderRadius: 9 }}><Icon name={u.icon} size={15} /></span>
+                        <span style={{ minWidth: 0 }}>
+                          <span className="d-block pmc-fs-125 fw-bold pmc-ink">{u.title}</span>
+                          <span className="d-block pmc-mt-05 pmc-fs-105 pmc-muted" style={{ lineHeight: 1.35 }}>{u.sub}</span>
+                        </span>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -727,67 +779,86 @@ export function PrepaidIssueModal() {
 
           {/* Step 2 — funding & limits */}
           {step === 2 && (
-            <div className="grid gap-5 lg:grid-cols-[1fr_250px]">
-              <div className="space-y-4">
-                <div>
-                  <FieldLabel hint={`${name.length}/24`}>Card name</FieldLabel>
-                  <input value={name} maxLength={24} onChange={(e) => setName(e.target.value)} placeholder="Marketing Dept" className="focus-ring w-full rounded-[10px] border border-line bg-canvas/50 px-3.5 py-2.5 font-display text-[13px] font-semibold tracking-wide text-ink outline-none transition placeholder:font-medium placeholder:text-faint focus:border-pmgreen/60 focus:bg-white" />
-                </div>
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <FieldLabel>Initial Top-up Amount (KES)</FieldLabel>
-                    <span className="num font-display text-[15px] font-bold text-ink">{kes(load)}</span>
+            <div className="row pmc-g-4">
+              <div className="col-12 col-lg" style={{ minWidth: 0 }}>
+                <div className="d-flex flex-column pmc-gap-4">
+                  <div>
+                    <FieldLabel hint={`${name.length}/24`}>Card name</FieldLabel>
+                    <input
+                      value={name}
+                      maxLength={24}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Marketing Dept"
+                      className="form-control pmc-focus pmc-display pmc-fs-13 fw-semibold pmc-ink"
+                    />
                   </div>
-                  <input type="range" min={500} max={100000} step={500} value={load} onChange={(e) => setLoad(Number(e.target.value))} className="w-full" aria-label="Initial top-up amount" />
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {[1000, 5000, 10000, 25000].map((v) => (
-                      <button key={v} onClick={() => setLoad(v)} className={cn("rounded-full border px-2.5 py-1 text-[11px] font-bold transition", load === v ? "border-pmgreen bg-pmgreen-soft text-[#067647]" : "border-line bg-white text-muted hover:border-[#c4c9d4]")}>{kesShort(v)}</button>
-                    ))}
+                  <div>
+                    <div className="pmc-mb-15 d-flex align-items-center justify-content-between">
+                      <FieldLabel>Initial Top-up Amount (KES)</FieldLabel>
+                      <span className="pmc-num pmc-display pmc-fs-15 fw-bold pmc-ink">{kes(load)}</span>
+                    </div>
+                    <input type="range" min={500} max={100000} step={500} value={load} onChange={(e) => setLoad(Number(e.target.value))} className="form-range w-100" aria-label="Initial top-up amount" />
+                    <div className="pmc-mt-2 d-flex flex-wrap pmc-gap-2">
+                      {[1000, 5000, 10000, 25000].map((v) => (
+                        <button key={v} type="button" onClick={() => setLoad(v)} className={cn("pmc-focus pmc-pill-choice", load === v && "on")}>{kesShort(v)}</button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <FieldLabel>Funding Source</FieldLabel>
-                  <div className="space-y-1.5">
-                    {PREPAID_FUNDING_SOURCES.map((f) => (
-                      <button key={f} onClick={() => setFunding(f)} className={cn("flex w-full items-center gap-2.5 rounded-[10px] border px-3.5 py-2.5 text-left text-[12.5px] font-bold transition", funding === f ? "border-pmgreen bg-pmgreen-soft/50 text-[#067647]" : "border-line bg-white text-ink-2 hover:border-[#c4c9d4]")}>
-                        <Icon name={f.startsWith("Biz Wallet") ? "wallet" : f.startsWith("M-Pesa") ? "phone" : "building"} size={15} />
-                        <span className="flex-1">{f}</span>
-                        {funding === f && <Icon name="check" size={14} />}
-                      </button>
-                    ))}
+                  <div>
+                    <FieldLabel>Funding Source</FieldLabel>
+                    <div className="d-flex flex-column pmc-gap-15">
+                      {PREPAID_FUNDING_SOURCES.map((f) => (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => setFunding(f)}
+                          className="pmc-focus d-flex w-100 align-items-center pmc-gap-25 pmc-radius-sm pmc-px-35 pmc-py-25 text-start pmc-fs-125 fw-bold"
+                          style={funding === f ? { border: "1px solid var(--pmc-green)", background: "rgba(231,248,239,0.5)", color: "var(--pmc-green-ink)" } : { border: "1px solid var(--pmc-line)", background: "#fff", color: "var(--pmc-ink-2)" }}
+                        >
+                          <Icon name={f.startsWith("Biz Wallet") ? "wallet" : f.startsWith("M-Pesa") ? "phone" : "building"} size={15} />
+                          <span className="flex-grow-1">{f}</span>
+                          {funding === f && <Icon name="check" size={14} />}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <FieldLabel>Monthly Spending Limit (Optional)</FieldLabel>
-                    <span className="num font-display text-[13px] font-bold text-ink">{kes(monthlyLimit)}</span>
+                  <div>
+                    <div className="pmc-mb-15 d-flex align-items-center justify-content-between">
+                      <FieldLabel>Monthly Spending Limit (Optional)</FieldLabel>
+                      <span className="pmc-num pmc-display pmc-fs-13 fw-bold pmc-ink">{kes(monthlyLimit)}</span>
+                    </div>
+                    <input type="range" min={500} max={100000} step={500} value={monthlyLimit} onChange={(e) => setMonthlyLimit(Number(e.target.value))} className="form-range w-100" aria-label="Monthly limit" />
                   </div>
-                  <input type="range" min={500} max={100000} step={500} value={monthlyLimit} onChange={(e) => setMonthlyLimit(Number(e.target.value))} className="w-full" aria-label="Monthly limit" />
-                </div>
-                <div>
-                  <FieldLabel>Lock card to specific Merchant Category (MCC)</FieldLabel>
-                  <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                    {MCC_CATEGORIES.map((m) => (
-                      <button key={m.id} onClick={() => setMcc(m.id)} className={cn("flex items-center gap-2.5 rounded-[10px] border px-3 py-2 text-left transition", mcc === m.id ? "border-pmgreen bg-pmgreen-soft/50" : "border-line bg-white hover:border-[#c4c9d4]")}>
-                        <Icon name={m.icon} size={14} className={cn("flex-none", mcc === m.id ? "text-[#067647]" : "text-muted")} />
-                        <span className="min-w-0"><span className="block truncate text-[11.5px] font-bold text-ink">{m.label}</span><span className="block truncate text-[9.5px] text-faint">{m.sample}</span></span>
-                      </button>
-                    ))}
+                  <div>
+                    <FieldLabel>Lock card to specific Merchant Category (MCC)</FieldLabel>
+                    <div className="row g-2">
+                      {MCC_CATEGORIES.map((m) => (
+                        <div key={m.id} className="col-12 col-sm-6">
+                          <button type="button" onClick={() => setMcc(m.id)} className={cn("pmc-focus pmc-choice h-100", mcc === m.id && "on")} style={{ padding: "8px 12px" }}>
+                            <Icon name={m.icon} size={14} className={cn("flex-none", mcc === m.id ? "pmc-green-ink" : "pmc-muted")} />
+                            <span style={{ minWidth: 0 }}>
+                              <span className="d-block text-truncate pmc-fs-115 fw-bold pmc-ink">{m.label}</span>
+                              <span className="d-block text-truncate pmc-fs-95 pmc-faint">{m.sample}</span>
+                            </span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="col-12 col-lg-auto" style={{ width: 250 }}>
                 <FieldLabel>Live preview</FieldLabel>
                 <IssuePreview form={form} use={use} name={name} load={load} mcc={mcc} network={network} />
-                <p className="mt-2 rounded-lg bg-canvas/80 px-3 py-2 text-[11px] leading-relaxed text-muted">Balance shown is the initial load. Spending is capped at your monthly limit and locked to the chosen category.</p>
+                <p className="pmc-mt-2 pmc-radius-sm px-3 pmc-py-2 pmc-fs-11 pmc-muted mb-0" style={{ background: "rgba(242,244,248,0.8)", lineHeight: 1.6 }}>Balance shown is the initial load. Spending is capped at your monthly limit and locked to the chosen category.</p>
               </div>
             </div>
           )}
 
           {/* Step 3 — review */}
           {step === 3 && (
-            <div className="space-y-4">
-              <div className="overflow-hidden rounded-xl border border-line">
+            <div className="d-flex flex-column pmc-gap-4">
+              <div className="overflow-hidden pmc-radius" style={{ border: "1px solid var(--pmc-line)" }}>
                 {[
                   ["Type", `${form === "virtual" ? "Virtual" : "Physical"} Prepaid ${network}`],
                   ["Name", name.trim()],
@@ -796,22 +867,31 @@ export function PrepaidIssueModal() {
                   ["Monthly limit", kes(monthlyLimit)],
                   ["Initial Load", kes(load)],
                   ["Issuance Fee", kes(fee)],
-                ].map(([k, v], i) => (
-                  <div key={k} className={cn("flex items-center justify-between gap-3 px-4 py-2.5 text-[12.5px]", i % 2 === 0 ? "bg-canvas/60" : "bg-white")}>
-                    <span className="font-semibold text-muted">{k}</span>
-                    <span className="text-right font-bold text-ink">{v}</span>
+                ].map(([k, v]) => (
+                  <div key={k} className="pmc-kv">
+                    <span className="fw-semibold pmc-muted">{k}</span>
+                    <span className="text-end fw-bold pmc-ink">{v}</span>
                   </div>
                 ))}
-                <div className="flex items-center justify-between bg-ink px-4 py-3">
-                  <span className="text-[12.5px] font-bold text-white/70">Total Deduction</span>
-                  <span className="num font-display text-[16px] font-bold text-pmgreen">{kes(total)}</span>
+                <div className="pmc-kv-total">
+                  <span className="pmc-fs-125 fw-bold" style={{ color: "rgba(255,255,255,0.7)" }}>Total Deduction</span>
+                  <span className="pmc-num pmc-display pmc-fs-16 fw-bold pmc-green">{kes(total)}</span>
                 </div>
               </div>
-              <p className="text-[11px] font-semibold text-muted">Debited from {funding.split("·")[0].trim()}.</p>
+              <p className="pmc-fs-11 fw-semibold pmc-muted mb-0">Debited from {funding.split("·")[0].trim()}.</p>
               <div>
                 <FieldLabel hint="Authorises issuance">Enter PIN to authorize issuance</FieldLabel>
-                <input type="password" inputMode="numeric" maxLength={4} value={pin} onChange={(e) => { setPin(e.target.value.replace(/\D/g, "")); setPinErr(false); }} placeholder="••••" className={cn("focus-ring num w-full rounded-[10px] border-2 bg-canvas/50 px-3.5 py-2.5 text-center font-display text-xl font-bold tracking-[0.5em] text-ink outline-none transition focus:bg-white", pinErr ? "border-danger shake" : "border-line focus:border-pmgreen")} />
-                {pinErr && <p className="shake mt-1.5 flex items-center gap-1.5 text-[11.5px] font-bold text-[#b42318]"><Icon name="alertTri" size={12} /> Enter your 4-digit PayMo PIN.</p>}
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={pin}
+                  onChange={(e) => { setPin(e.target.value.replace(/\D/g, "")); setPinErr(false); }}
+                  placeholder="••••"
+                  className={cn("pmc-focus pmc-pin-input", pinErr && "err pmc-shake")}
+                  style={{ letterSpacing: "0.5em" }}
+                />
+                {pinErr && <p className="pmc-shake pmc-mt-15 d-flex align-items-center pmc-gap-15 pmc-fs-115 fw-bold mb-0" style={{ color: "#b42318" }}><Icon name="alertTri" size={12} /> Enter your 4-digit PayMo PIN.</p>}
               </div>
             </div>
           )}
@@ -863,48 +943,62 @@ export function TopupModal() {
       }
     >
       {done && card ? (
-        <div className="flex flex-col items-center gap-3 py-6 text-center">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-pmgreen-soft text-[#067647]"><Icon name="checkCircle" size={26} /></span>
-          <p className="font-display text-[15px] font-bold text-ink">{kes(amount)} added to {card.name}</p>
-          <p className="max-w-[300px] text-[12.5px] leading-relaxed text-muted">The new balance is live and shown in Balances &amp; Reloads.</p>
+        <div className="d-flex flex-column align-items-center pmc-gap-3 py-4 text-center">
+          <span className="pmc-done-icon d-grid"><Icon name="checkCircle" size={26} /></span>
+          <p className="pmc-display pmc-fs-15 fw-bold pmc-ink mb-0">{kes(amount)} added to {card.name}</p>
+          <p className="pmc-fs-125 pmc-muted mb-0" style={{ maxWidth: 300, lineHeight: 1.6 }}>The new balance is live and shown in Balances &amp; Reloads.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="d-flex flex-column pmc-gap-4">
           <div>
             <FieldLabel>Card to top up</FieldLabel>
-            <div className="thin-scroll flex gap-2 overflow-x-auto pb-1">
+            <div className="pmc-thin-scroll d-flex pmc-gap-2 overflow-auto pb-1">
               {eligible.map((p) => (
-                <button key={p.id} onClick={() => setCardId(p.id)} className={cn("flex-none rounded-[10px] border px-3 py-2 text-left text-[12px] font-bold transition", cardId === p.id ? "border-pmgreen bg-pmgreen-soft/50 text-[#067647]" : "border-line bg-white text-muted hover:border-[#c4c9d4]")}>
-                  <span className="block">{p.name}</span>
-                  <span className="num block text-[10.5px] font-semibold text-faint">{kes(p.balance)} · •• {p.last4}</span>
+                <button key={p.id} type="button" onClick={() => setCardId(p.id)} className={cn("pmc-focus pmc-rect-choice flex-none text-start", cardId === p.id && "on")} style={{ flexDirection: "column", alignItems: "flex-start", gap: 0 }}>
+                  <span className="d-block">{p.name}</span>
+                  <span className="pmc-num d-block pmc-fs-105 fw-semibold pmc-faint">{kes(p.balance)} · •• {p.last4}</span>
                 </button>
               ))}
             </div>
           </div>
           {card && (
-            <div className="rounded-xl border border-line bg-canvas/50 p-3">
-              <div className="mx-auto max-w-[280px]"><PrepaidVisual card={card} small /></div>
+            <div className="pmc-radius p-3" style={{ border: "1px solid var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}>
+              <div className="mx-auto" style={{ maxWidth: 280 }}><PrepaidVisual card={card} small /></div>
             </div>
           )}
           <div>
             <FieldLabel hint="Min KES 100">Amount to load</FieldLabel>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-faint">KES</span>
-              <input type="number" min={100} step={100} value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="focus-ring num w-full rounded-[10px] border border-line bg-canvas/50 py-2.5 pl-11 pr-3 font-display text-[16px] font-bold text-ink outline-none transition focus:border-pmgreen/60 focus:bg-white" />
+            <div className="position-relative">
+              <span className="position-absolute pmc-fs-11 fw-bold pmc-faint" style={{ left: 12, top: "50%", transform: "translateY(-50%)" }}>KES</span>
+              <input
+                type="number"
+                min={100}
+                step={100}
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="form-control pmc-focus pmc-num pmc-display pmc-fs-16 fw-bold pmc-ink"
+                style={{ paddingLeft: 44 }}
+              />
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="pmc-mt-2 d-flex flex-wrap pmc-gap-2">
               {[1000, 5000, 10000, 25000].map((v) => (
-                <button key={v} onClick={() => setAmount(v)} className={cn("rounded-full border px-2.5 py-1 text-[11px] font-bold transition", amount === v ? "border-pmgreen bg-pmgreen-soft text-[#067647]" : "border-line bg-white text-muted hover:border-[#c4c9d4]")}>{kesShort(v)}</button>
+                <button key={v} type="button" onClick={() => setAmount(v)} className={cn("pmc-focus pmc-pill-choice", amount === v && "on")}>{kesShort(v)}</button>
               ))}
             </div>
           </div>
           <div>
             <FieldLabel>Fund from</FieldLabel>
-            <div className="space-y-1.5">
+            <div className="d-flex flex-column pmc-gap-15">
               {["Biz Wallet", "M-Pesa Paybill 522 123", "KCB Bank •• 4471"].map((m) => (
-                <button key={m} onClick={() => setSource(m)} className={cn("flex w-full items-center gap-2.5 rounded-[10px] border px-3.5 py-2.5 text-left text-[12.5px] font-bold transition", source === m ? "border-pmgreen bg-pmgreen-soft/50 text-[#067647]" : "border-line bg-white text-ink-2 hover:border-[#c4c9d4]")}>
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setSource(m)}
+                  className="pmc-focus d-flex w-100 align-items-center pmc-gap-25 pmc-radius-sm pmc-px-35 pmc-py-25 text-start pmc-fs-125 fw-bold"
+                  style={source === m ? { border: "1px solid var(--pmc-green)", background: "rgba(231,248,239,0.5)", color: "var(--pmc-green-ink)" } : { border: "1px solid var(--pmc-line)", background: "#fff", color: "var(--pmc-ink-2)" }}
+                >
                   <Icon name={m.startsWith("Biz") ? "wallet" : m.startsWith("M-Pesa") ? "phone" : "building"} size={15} />
-                  <span className="flex-1">{m}</span>
+                  <span className="flex-grow-1">{m}</span>
                   {source === m && <Icon name="check" size={14} />}
                 </button>
               ))}
@@ -912,7 +1006,16 @@ export function TopupModal() {
           </div>
           <div>
             <FieldLabel hint="Authorises the load">Enter your PayMo PIN</FieldLabel>
-            <input type="password" inputMode="numeric" maxLength={4} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} placeholder="••••" className="focus-ring num w-full rounded-[10px] border-2 border-line bg-canvas/50 px-3.5 py-2.5 text-center font-display text-xl font-bold tracking-[0.5em] text-ink outline-none transition focus:border-pmgreen focus:bg-white" />
+            <input
+              type="password"
+              inputMode="numeric"
+              maxLength={4}
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+              placeholder="••••"
+              className="pmc-focus pmc-pin-input"
+              style={{ letterSpacing: "0.5em" }}
+            />
           </div>
         </div>
       )}
@@ -948,79 +1051,81 @@ export function PrepaidManageDrawer() {
 
   return (
     <Drawer open={open} onClose={closeModal}>
-      <div className="flex items-center justify-between border-b border-line px-5 py-4">
+      <div className="d-flex align-items-center justify-content-between px-4 pmc-py-4" style={{ borderBottom: "1px solid var(--pmc-line)" }}>
         <div>
-          <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-faint">Prepaid card</p>
-          <h3 className="font-display text-[16px] font-bold tracking-tight text-ink">{card.name}</h3>
+          <p className="pmc-fs-105 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.12em" }}>Prepaid card</p>
+          <h3 className="pmc-display pmc-fs-16 fw-bold pmc-ink mb-0" style={{ letterSpacing: "-0.02em" }}>{card.name}</h3>
         </div>
-        <button onClick={closeModal} aria-label="Close" className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-muted transition hover:bg-canvas hover:text-ink"><Icon name="x" size={17} /></button>
+        <button type="button" onClick={closeModal} aria-label="Close" className="pmc-focus pmc-icon-btn pmc-icon-btn-sm border-0" style={{ background: "transparent" }}><Icon name="x" size={17} /></button>
       </div>
 
-      <div className="thin-scroll flex-1 overflow-y-auto px-5 py-4 pb-28">
+      <div className="pmc-thin-scroll flex-grow-1 overflow-auto px-4 pmc-py-4" style={{ paddingBottom: 112 }}>
         <PrepaidVisual card={card} />
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Badge tone={statusTone(card.status)} dot className="capitalize">{card.status}</Badge>
+        <div className="pmc-mt-3 d-flex flex-wrap align-items-center pmc-gap-2">
+          <Badge tone={statusTone(card.status)} dot className="text-capitalize">{card.status}</Badge>
           <Badge tone="muted">{card.form === "virtual" ? "Virtual" : "Physical"}</Badge>
           <Badge tone="violet">{useMeta(card.use).title}</Badge>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl bg-canvas/70 p-3 text-center">
-          <div><p className="num font-display text-[14px] font-bold text-ink">{kesShort(card.balance)}</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Balance</p></div>
-          <div><p className="num font-display text-[14px] font-bold text-ink">{kesShort(card.loaded)}</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Loaded</p></div>
-          <div><p className="num font-display text-[14px] font-bold text-ink">{spentPct}%</p><p className="text-[9.5px] font-bold uppercase tracking-wide text-faint">Spent</p></div>
+        <div className="pmc-mt-4 row g-2 pmc-radius p-3 text-center" style={{ background: "rgba(242,244,248,0.7)" }}>
+          <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">{kesShort(card.balance)}</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Balance</p></div>
+          <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">{kesShort(card.loaded)}</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Loaded</p></div>
+          <div className="col-4"><p className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink mb-0">{spentPct}%</p><p className="pmc-fs-95 fw-bold text-uppercase pmc-faint mb-0" style={{ letterSpacing: "0.025em" }}>Spent</p></div>
         </div>
 
         {/* quick actions */}
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {card.status !== "retired" && <Btn icon="wallet" className="col-span-2" onClick={() => { const id = card.id; closeModal(); window.setTimeout(() => openModal({ type: "topup", cardId: id }), 60); }}>Top Up</Btn>}
-          {card.status === "active" ? (
-            <Btn variant="dangerGhost" icon="snow" onClick={() => setPrepaidStatus(card.id, "frozen")}>Freeze</Btn>
-          ) : card.status === "frozen" ? (
-            <Btn icon="zap" onClick={() => setPrepaidStatus(card.id, "active")}>Unfreeze</Btn>
-          ) : (
-            <span className="rounded-[10px] bg-canvas px-3 py-2 text-center text-[11.5px] font-bold text-faint">{card.status === "depleted" ? "Balance empty" : "Retired"}</span>
-          )}
-          <Btn variant="outline" icon="copy" onClick={() => toast("info", "Card details copied", "PAN, expiry and CVV copied securely.")}>Copy details</Btn>
+        <div className="pmc-mt-4 row g-2">
+          {card.status !== "retired" && <div className="col-12"><Btn icon="wallet" className="w-100" onClick={() => { const id = card.id; closeModal(); window.setTimeout(() => openModal({ type: "topup", cardId: id }), 60); }}>Top Up</Btn></div>}
+          <div className="col-6">
+            {card.status === "active" ? (
+              <Btn variant="dangerGhost" icon="snow" className="w-100" onClick={() => setPrepaidStatus(card.id, "frozen")}>Freeze</Btn>
+            ) : card.status === "frozen" ? (
+              <Btn icon="zap" className="w-100" onClick={() => setPrepaidStatus(card.id, "active")}>Unfreeze</Btn>
+            ) : (
+              <span className="d-block pmc-radius-sm px-3 pmc-py-2 text-center pmc-fs-115 fw-bold pmc-faint" style={{ background: "var(--pmc-canvas)" }}>{card.status === "depleted" ? "Balance empty" : "Retired"}</span>
+            )}
+          </div>
+          <div className="col-6"><Btn variant="outline" icon="copy" className="w-100" onClick={() => toast("info", "Card details copied", "PAN, expiry and CVV copied securely.")}>Copy details</Btn></div>
         </div>
 
         {/* controls */}
         {card.status !== "retired" && (
-          <div className="mt-5 space-y-3">
+          <div className="pmc-mt-5 d-flex flex-column pmc-gap-3">
             <div>
               <FieldLabel>Card name</FieldLabel>
-              <input value={name} maxLength={24} onChange={(e) => setName(e.target.value)} className="focus-ring w-full rounded-[10px] border border-line bg-canvas/50 px-3.5 py-2.5 text-[13px] font-bold text-ink outline-none transition focus:border-pmgreen/60 focus:bg-white" />
+              <input value={name} maxLength={24} onChange={(e) => setName(e.target.value)} className="form-control pmc-focus" />
             </div>
             <div>
-              <div className="mb-1.5 flex items-center justify-between"><FieldLabel>Monthly limit</FieldLabel><span className="num font-display text-[14px] font-bold text-ink">{kes(limit)}</span></div>
-              <input type="range" min={500} max={100000} step={500} value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="w-full" aria-label="Monthly limit" />
+              <div className="pmc-mb-15 d-flex align-items-center justify-content-between"><FieldLabel>Monthly limit</FieldLabel><span className="pmc-num pmc-display pmc-fs-14 fw-bold pmc-ink">{kes(limit)}</span></div>
+              <input type="range" min={500} max={100000} step={500} value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="form-range w-100" aria-label="Monthly limit" />
             </div>
             <div>
               <FieldLabel>Category lock (MCC)</FieldLabel>
-              <select value={mcc} onChange={(e) => setMcc(e.target.value)} className="focus-ring w-full rounded-[10px] border border-line bg-white px-3 py-2.5 text-[12.5px] font-bold text-ink outline-none">
+              <select value={mcc} onChange={(e) => setMcc(e.target.value)} className="form-select pmc-focus pmc-fs-125 fw-bold">
                 {MCC_CATEGORIES.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
               </select>
             </div>
-            <div className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
-              <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-pmgreen-soft text-[#067647]"><Icon name="refresh" size={16} /></span>
-              <div className="min-w-0 flex-1"><p className="text-[12.5px] font-bold text-ink">Reloadable</p><p className="text-[11px] text-muted">Allow future top-ups on this card.</p></div>
+            <div className="d-flex align-items-center pmc-gap-3 pmc-radius p-3" style={{ border: "1px solid var(--pmc-line)", background: "#fff" }}>
+              <span className="pmc-icon-sq d-grid flex-none pmc-tone-green"><Icon name="refresh" size={16} /></span>
+              <div className="flex-grow-1" style={{ minWidth: 0 }}><p className="pmc-fs-125 fw-bold pmc-ink mb-0">Reloadable</p><p className="pmc-fs-11 pmc-muted mb-0">Allow future top-ups on this card.</p></div>
               <Toggle on={reloadable} label="Reloadable" onChange={setReloadable} />
             </div>
-            <Btn icon="check" className="w-full" onClick={save}>Save controls</Btn>
+            <Btn icon="check" className="w-100" onClick={save}>Save controls</Btn>
           </div>
         )}
 
         {/* recent activity */}
-        <p className="mb-2 mt-5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">Recent activity</p>
+        <p className="pmc-mb-2 pmc-mt-5 pmc-fs-11 fw-bold text-uppercase pmc-faint" style={{ letterSpacing: "0.12em" }}>Recent activity</p>
         {cardLoads.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line bg-canvas/50 p-4 text-center text-[12px] font-semibold text-faint">No activity on this card yet.</div>
+          <div className="pmc-radius p-4 text-center pmc-fs-12 fw-semibold pmc-faint" style={{ border: "1px dashed var(--pmc-line)", background: "rgba(242,244,248,0.5)" }}>No activity on this card yet.</div>
         ) : (
-          <ul className="divide-y divide-line/70 rounded-xl border border-line bg-white">
+          <ul className="pmc-mobile-list pmc-radius overflow-hidden" style={{ border: "1px solid var(--pmc-line)", background: "#fff" }}>
             {cardLoads.map((l) => (
-              <li key={l.id} className="flex items-center gap-3 px-3.5 py-2.5">
-                <span className={cn("grid h-8 w-8 flex-none place-items-center rounded-lg", l.amount > 0 ? "bg-pmgreen-soft text-[#067647]" : "bg-canvas text-muted")}><Icon name={l.amount > 0 ? "upRight" : "downRight"} size={14} /></span>
-                <div className="min-w-0 flex-1"><p className="truncate text-[12.5px] font-bold text-ink">{l.merchant}</p><p className="text-[10.5px] font-semibold text-faint">{l.date} · {l.kind}</p></div>
-                <p className={cn("num text-[12.5px] font-bold", l.amount > 0 ? "text-[#067647]" : "text-ink")}>{l.amount > 0 ? "+" : "−"}{kesShort(Math.abs(l.amount))}</p>
+              <li key={l.id} className="px-3 pmc-py-25">
+                <span className={cn("pmc-icon-sq d-grid flex-none", l.amount > 0 ? "pmc-tone-green" : "pmc-tone-muted")} style={{ width: 32, height: 32, borderRadius: 8 }}><Icon name={l.amount > 0 ? "upRight" : "downRight"} size={14} /></span>
+                <div className="flex-grow-1" style={{ minWidth: 0 }}><p className="text-truncate pmc-fs-125 fw-bold pmc-ink mb-0">{l.merchant}</p><p className="pmc-fs-105 fw-semibold pmc-faint mb-0">{l.date} · {l.kind}</p></div>
+                <p className={cn("pmc-num pmc-fs-125 fw-bold mb-0", l.amount > 0 ? "" : "pmc-ink")} style={l.amount > 0 ? { color: "#067647" } : undefined}>{l.amount > 0 ? "+" : "−"}{kesShort(Math.abs(l.amount))}</p>
               </li>
             ))}
           </ul>
@@ -1028,16 +1133,16 @@ export function PrepaidManageDrawer() {
 
         {/* retire */}
         {card.status !== "retired" && (
-          <div className="mt-5 rounded-xl border border-danger/25 bg-danger-soft/30 p-3.5">
-            <p className="text-[12.5px] font-bold text-[#b42318]">Retire this card</p>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-[#b42318]/80">Permanently closes the card. Any remaining {kes(card.balance)} is refunded to your Biz Wallet.</p>
+          <div className="pmc-mt-5 pmc-radius pmc-p-35" style={{ border: "1px solid rgba(240,68,56,0.25)", background: "rgba(254,228,226,0.3)" }}>
+            <p className="pmc-fs-125 fw-bold mb-0" style={{ color: "#b42318" }}>Retire this card</p>
+            <p className="pmc-mt-05 pmc-fs-11 mb-0" style={{ color: "rgba(180,35,24,0.8)", lineHeight: 1.6 }}>Permanently closes the card. Any remaining {kes(card.balance)} is refunded to your Biz Wallet.</p>
             {confirmRetire ? (
-              <div className="mt-2.5 flex gap-2">
+              <div className="pmc-mt-25 d-flex pmc-gap-2">
                 <Btn size="sm" variant="danger" icon="check" onClick={() => { retirePrepaid(card.id); closeModal(); }}>Confirm retire</Btn>
                 <Btn size="sm" variant="outline" onClick={() => setConfirmRetire(false)}>Cancel</Btn>
               </div>
             ) : (
-              <Btn size="sm" variant="dangerGhost" icon="x" className="mt-2.5" onClick={() => setConfirmRetire(true)}>Retire card</Btn>
+              <Btn size="sm" variant="dangerGhost" icon="x" className="pmc-mt-25" onClick={() => setConfirmRetire(true)}>Retire card</Btn>
             )}
           </div>
         )}

@@ -305,6 +305,7 @@
 }
 .pmc-icon-btn:hover { border-color: #c4c9d4; color: var(--pmc-ink); }
 .pmc-icon-btn-sm { width: 32px; height: 32px; border-radius: 9px; }
+.pmc-icon-btn-blue:hover { border-color: rgba(46, 144, 250, 0.5); background: var(--pmc-blue-soft); color: var(--pmc-blue-ink); }
 .pmc-count-dot {
   position: absolute;
   right: -4px;
@@ -548,6 +549,14 @@
 .pmc-tone-warn { background: var(--pmc-warn-soft); color: var(--pmc-warn-ink); }
 .pmc-tone-danger { background: var(--pmc-danger-soft); color: var(--pmc-danger-ink); }
 .pmc-tone-muted { background: var(--pmc-canvas); color: var(--pmc-muted); }
+.pmc-tone-green-solid { background: var(--pmc-green); color: #fff; }
+.pmc-icon-btn-green:hover { border-color: rgba(18, 183, 106, 0.5); background: var(--pmc-green-soft); color: var(--pmc-green-ink); }
+.pmc-quick-link {
+  border: 1px solid var(--pmc-line);
+  background: rgba(242, 244, 248, 0.4);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.pmc-quick-link:hover { border-color: rgba(18, 183, 106, 0.5); background: rgba(231, 248, 239, 0.4); }
 .pmc-tone-ink { background: var(--pmc-ink); color: var(--pmc-green); }
 
 /* icon square helpers */
@@ -640,6 +649,7 @@
 
 /* ---------- progress ---------- */
 .pmc-page-content .progress { background: #eef0f4; }
+.pmc-page-content .progress.pmc-progress-lg { height: 10px; }
 .pmc-page-content .progress-bar { background-color: var(--pmc-green); border-radius: 99px; }
 .pmc-bar-green { background-color: var(--pmc-green); }
 .pmc-bar-amber { background-color: var(--pmc-warn); }
@@ -705,7 +715,7 @@
 .pmc-pin-input.danger-focus:focus { border-color: var(--pmc-danger); }
 .pmc-otp-box {
   width: 44px;
-  height: 48px;
+  height: 56px;
   border-radius: 10px;
   border: 2px solid var(--pmc-line);
   background: rgba(242, 244, 248, 0.5);
@@ -901,9 +911,11 @@
   font-weight: 700;
 }
 .pmc-step-dot.done { background: var(--pmc-green); color: #fff; }
-.pmc-step-dot.current { background: var(--pmc-ink); color: #fff; }
+.pmc-step-dot.current { background: var(--pmc-ink); color: #fff; box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(18,183,106,0.4); }
 .pmc-step-line { display: inline-block; width: 28px; height: 1px; background: var(--pmc-line); }
 .pmc-step-line.done { background: var(--pmc-green); }
+.pmc-step-line.short { width: 16px; }
+@media (min-width: 576px) { .pmc-step-line.short { width: 32px; } }
 @media (min-width: 576px) { .pmc-step-line { width: 40px; } }
 
 /* ---------- tables ---------- */
