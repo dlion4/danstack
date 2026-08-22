@@ -12,8 +12,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  z-index: 40;
   border-right: 1px solid #e8ece6;
   overflow: hidden;
   transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -771,12 +773,26 @@
 .main-content {
   flex: 1;
   min-width: 0;
+  margin-left: 260px;
+  transition: margin-left 0.15s ease;
+}
+
+.main-content-collapsed {
+  margin-left: 68px;
 }
 
 /* ---------- responsive ---------- */
 @media (max-width: 991.98px) {
   .sidebar {
     display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .main-content-collapsed {
+    margin-left: 0;
   }
 
   .search-box {

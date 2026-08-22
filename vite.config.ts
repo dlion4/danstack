@@ -4,17 +4,33 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { unpluginRouterGeneratorFactory } from "@tanstack/router-plugin";
-import { nitro } from "nitro/vite";
+// import { nitro } from "nitro/vite";
 
+// const tanstackRouter = Object.assign(
+// 	unpluginRouterGeneratorFactory({
+// 		autoCodeSplitting: true,
+// 		codeSplittingOptions: {
+// 			defaultBehavior: "bundle-and-cache",
+// 		},
+// 	}).vite,
+// 	{ name: "@tanstack/router-plugin" },
+// );
 const tanstackRouter = Object.assign(
-	unpluginRouterGeneratorFactory({
-		autoCodeSplitting: true,
-		codeSplittingOptions: {
-			defaultBehavior: "bundle-and-cache",
-		},
-	}).vite,
-	{ name: "@tanstack/router-plugin" },
+  unpluginRouterGeneratorFactory({
+    autoCodeSplitting: true,
+    codeSplittingOptions: {
+      // FIX: Replace "bundle-and-cache" with the required array configuration
+      defaultBehavior: [
+        ['component'], 
+        ['pendingComponent'], 
+        ['errorComponent', 'notFoundComponent']
+      ],
+    },
+  }).vite,
+  { name: "@tanstack/router-plugin" },
 );
+
+
 
 export default defineConfig({
   css: {
@@ -39,7 +55,7 @@ export default defineConfig({
   plugins: [
     tanstackRouter,   // must come first
     tanstackStart(),
-    nitro(),
+    // nitro(),
     react(),
     tailwindcss(),
     devtools({

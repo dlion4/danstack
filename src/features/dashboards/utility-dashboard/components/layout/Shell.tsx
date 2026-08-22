@@ -30,7 +30,7 @@ function SideNav({
 	onToggleCollapse: () => void;
 }) {
 	return (
-		<div className={cn(s.sidebar, collapsed && s.collapsed)} style={{ position: "relative" }}>
+		<div className={cn(s.sidebar, collapsed && s.collapsed)}>
 			{/* Brand */}
 			<div className={s.brand}>
 				<span className={s["brand-icon"]}>
@@ -309,7 +309,10 @@ function Palette() {
 								e.preventDefault();
 								setIdx((i) => Math.max(i - 1, 0));
 							}
-							if (e.key === "Enter") flat[idx]?.run(), setPaletteOpen(false);
+							if (e.key === "Enter") {
+								flat[idx]?.run();
+								setPaletteOpen(false);
+							}
 						}}
 						placeholder="Search meters, providers, references or actions…"
 						className="w-100 bg-transparent fs-14 fw-medium text-ink outline-none placeholder-text-faint"
@@ -637,16 +640,14 @@ export function Shell({ children }: { children: ReactNode }) {
 
 			<div className="d-flex">
 				{/* Desktop sidebar */}
-				<aside className={cn(s.sidebar, sidebarCollapsed && s.collapsed)} style={{ position: "relative" }}>
-					<SideNav
-						onNav={onNav}
-						active={active}
-						collapsed={sidebarCollapsed}
-						onToggleCollapse={toggleSidebar}
-					/>
-				</aside>
+				<SideNav
+					onNav={onNav}
+					active={active}
+					collapsed={sidebarCollapsed}
+					onToggleCollapse={toggleSidebar}
+				/>
 
-				<div className={s["main-content"]}>
+				<div className={cn(s["main-content"], sidebarCollapsed && s["main-content-collapsed"])}>
 					{/* Topbar */}
 					<header className={s["top-header"]}>
 						<div className={s["top-header-inner"]}>
