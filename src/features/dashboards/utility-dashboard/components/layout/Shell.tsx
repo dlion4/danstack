@@ -12,96 +12,80 @@ import {
 } from "../../lib/data";
 import { useApp } from "../../lib/store";
 import { cn } from "../../lib/utils/cn";
-import { Avatar, Badge, Button, Drawer, DrawerHead, IconBtn } from "../ui";
+import { Button, Drawer, DrawerHead, IconBtn } from "../ui";
 import { Icon } from "../ui/icons";
+import s from "./shell.module.css";
 
 /* ================================================================ Sidebar ================================================================ */
 
 function SideNav({
 	onNav,
 	active,
+	collapsed,
+	onToggleCollapse,
 }: {
 	onNav: (key: string, target?: string) => void;
 	active: string;
+	collapsed: boolean;
+	onToggleCollapse: () => void;
 }) {
 	return (
-		<div className="d-flex h-100 flex-column">
+		<div className={cn(s.sidebar, collapsed && s.collapsed)} style={{ position: "relative" }}>
 			{/* Brand */}
-			<div className="d-flex align-items-center gap-25 px-5 pt-5">
-				<span className="d-grid h-9 w-9 flex-none place-items-center rounded-11px bg-pmgreen shadow-green-cta">
-					<Icon name="bolt" size={19} className="text-white" strokeWidth={2} />
+			<div className={s.brand}>
+				<span className={s["brand-icon"]}>
+					<Icon name="bolt" size={18} />
 				</span>
-				<div className="min-w-0">
-					<p className="font-display fs-15 fw-extrabold lh-1 tracking-tight text-white">
-						PayMo
-					</p>
-					<p className="mt-1 fs-105 fw-semibold text-uppercase tracking-0-14em text-white-40">
-						Business
-					</p>
+				<div>
+					<p className={s["brand-text"]}>PayMo</p>
+					<p className={s["brand-sub"]}>Business</p>
 				</div>
-				<Badge
-					tone="dark"
-					className="ms-auto border border-white-10 bg-white-10 fs-10 text-white-70"
-				>
-					3.6
-				</Badge>
+				<span className={s["brand-tag"]}>3.6</span>
 			</div>
 
+			{/* Collapse toggle */}
+			<button
+				type="button"
+				onClick={onToggleCollapse}
+				aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+				className={s["sidebar-toggle"]}
+			>
+				<Icon name={collapsed ? "arrow-right" : "chevron-left"} size={10} />
+			</button>
+
 			{/* Org switcher */}
-			<button className="focus-ring mx-3 mt-5 d-flex align-items-center gap-25 rounded-4 border border-white-8 bg-white-04 p-25 text-start transition hover-bg-white-08">
-				<span className="d-grid h-8 w-8 flex-none place-items-center rounded-3 bg-pmviolet-25 fs-12 fw-bold text-violet-200">
-					PH
-				</span>
-				<span className="min-w-0 flex-1">
-					<span className="d-block text-truncate fs-125 fw-bold text-white">
-						PayMo Hardware
-					</span>
-					<span className="d-block text-truncate fs-11 text-white-45">
-						Kiambu Rd · 8 meters
-					</span>
-				</span>
-				<Icon name="chevron-down" size={14} className="text-white-40" />
+			<button className={s["org-btn"]}>
+				<span className={s["org-avatar"]}>PH</span>
+				<div style={{ minWidth: 0, flex: 1 }}>
+					<div className={s["org-label"]}>PayMo Hardware</div>
+					<div className={s["org-sub"]}>Kiambu Rd · 8 meters</div>
+				</div>
+				<Icon name="chevron-down" size={13} style={{ color: "#8a9484", flexShrink: 0 }} />
 			</button>
 
 			{/* Nav */}
-			<nav className="dark-scroll mt-5 flex-1 overflow-y-auto px-3 pb-4">
+			<nav className={s["nav-scroll"]}>
 				{NAV_GROUPS.map((g) => (
-					<div key={g.title} className="mb-5">
-						<p className="mb-2 px-25 fs-10 fw-bold text-uppercase tracking-0-16em text-white-30">
-							{g.title}
-						</p>
-						<div className="space-y-05">
+					<div key={g.title} style={{ marginBottom: 16 }}>
+						<p className={s["nav-group-label"]}>{g.title}</p>
+						<div>
 							{g.items.map((it) => {
 								const on = active === it.key;
 								return (
 									<button
 										key={it.key}
 										onClick={() => onNav(it.key, it.target)}
-										className={cn(
-											"group d-flex w-100 align-items-center gap-25 rounded-4 px-25 py-25 text-start fs-13 fw-semibold transition-all duration-150",
-											on
-												? "bg-white-10 text-white shadow-inset-white"
-												: "text-white-55 hover-bg-white-06 hover-text-white",
-										)}
+										className={cn(s["nav-item"], on && s.active)}
+										title={it.label}
 									>
-										<Icon
-											name={it.icon}
-											size={17}
-											className={cn(
-												"flex-none transition",
-												on
-													? "text-pmgreen"
-													: "text-white-45 group-hover-text-white-80",
-											)}
-										/>
-										<span className="flex-1 text-truncate">{it.label}</span>
+										<span className={s["nav-icon"]}>
+											<Icon name={it.icon} size={16} />
+										</span>
+										<span className={s["nav-label"]}>{it.label}</span>
 										{it.badge && (
-											<span className="rounded-2 bg-white-8 px-15 py-05 fs-10 fw-bold text-white-45">
+											<span className={cn(s["nav-badge"], it.badge === "0" && s.green)}>
 												{it.badge}
 											</span>
-										)}
-										{on && (
-											<span className="h-15 w-15 rounded-full bg-pmgreen" />
 										)}
 									</button>
 								);
@@ -110,48 +94,31 @@ function SideNav({
 					</div>
 				))}
 
-				{/* Balance widget */}
-				<div className="mx-1 rounded-5 border border-white-8 bg-gradient-to-br from-white-07 to-transparent p-4">
-					<div className="d-flex align-items-center gap-2">
-						<Icon name="wallet" size={15} className="text-pmgreen" />
-						<p className="fs-11 fw-semibold text-uppercase tracking-wider text-white-45">
-							Wallet
-						</p>
+				{/* Wallet card */}
+				<div className={s["wallet-card"]}>
+					<div className={s["wallet-card-header"]}>
+						<Icon name="wallet" size={14} />
+						<span className={s["wallet-label"]}>Wallet</span>
 					</div>
-					<p className="num mt-15 font-display fs-19 fw-extrabold text-white">
-						{kes(24500)}
-					</p>
-					<p className="mt-05 fs-11 text-white-40">Zero-fee utility payments</p>
-					<button className="focus-ring mt-3 w-100 rounded-3 bg-white-12 py-2 fs-12 fw-bold text-white transition hover-bg-white-20">
-						Top up wallet
+					<p className={s["wallet-balance"]}>{kes(24500)}</p>
+					<p className={s["wallet-desc"]}>Zero-fee utility payments</p>
+					<button className={s["wallet-btn"]}>
+						<span className={s["wallet-btn-label"]}>Top up wallet</span>
 					</button>
 				</div>
 			</nav>
 
-			{/* Support + user */}
-			<div className="border-top border-white-8 p-3">
-				<button className="d-flex w-100 align-items-center gap-25 rounded-4 px-25 py-25 text-start fs-13 fw-semibold text-white-55 transition hover-bg-white-06 hover-text-white">
-					<Icon name="lifebuoy" size={17} className="text-white-45" />
-					Help centre
-					<Icon name="external" size={13} className="ms-auto text-white-25" />
+			{/* Footer */}
+			<div className={s["sidebar-footer"]}>
+				<button className={s["help-item"]}>
+					<Icon name="lifebuoy" size={16} />
+					<span className={s["support-text"]}>Help centre</span>
+					<Icon name="external" size={11} className={s["external-icon"]} />
 				</button>
-				<div className="mt-1 d-flex align-items-center gap-25 rounded-4 bg-white-04 p-25">
-					<Avatar name="Joseph Mwangi" size={32} tone="green" />
-					<div className="min-w-0 flex-1">
-						<p className="text-truncate fs-125 fw-bold text-white">
-							Joseph Mwangi
-						</p>
-						<p className="text-truncate fs-11 text-white-45">
-							Admin · j@paymo.co.ke
-						</p>
-					</div>
-					<button
-						aria-label="Sign out"
-						className="d-grid h-7 w-7 place-items-center rounded-3 text-white-40 transition hover-bg-white-10 hover-text-white"
-					>
-						<Icon name="logout" size={15} />
-					</button>
-				</div>
+				<a href="/auth/hub" className={s["switch-acct-btn"]} style={{ textDecoration: "none" }}>
+					<Icon name="arrow-right" size={15} />
+					<span className={s["switch-acct-label"]}>Switch Account</span>
+				</a>
 			</div>
 		</div>
 	);
@@ -636,71 +603,76 @@ export function Shell({ children }: { children: ReactNode }) {
 		}
 	};
 
+	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+	const toggleSidebar = () => setSidebarCollapsed((c) => !c);
+
+	const pageTitle = pathname.includes("/recurring")
+			? "Household bills & rent"
+			: pathname.includes("/electricity")
+				? "Electricity"
+				: pathname.includes("/water")
+					? "Water"
+					: pathname.includes("/internet")
+						? "Internet"
+						: pathname.includes("/mobile-money")
+							? "Mobile Money"
+							: pathname.includes("/settings")
+								? "Utility Settings & Automation"
+								: "Utility command centre";
+
 	return (
-		<div className="canvas-wash min-vh-100">
-			{/* Desktop sidebar overlay */}
+		<div style={{ minHeight: "100vh", background: "#f2f4f8" }}>
+			{/* Mobile sidebar overlay */}
 			{navOpen && (
 				<div
-					className="position-fixed inset-0 z-30 bg-side-60 backdrop-blur-3px"
+					className={cn(s["mobile-overlay"], s.show)}
 					onClick={() => setNavOpen(false)}
 				/>
 			)}
 
-			{/* Desktop sidebar - hidden by default, toggled via menu button */}
-			<aside
-				className={cn(
-					"side-glow position-fixed inset-y-0 start-0 z-40 w-252px border-end border-white-5",
-					navOpen ? "d-block" : "d-none",
-				)}
-			>
-				<SideNav onNav={onNav} active={active} />
+			{/* Mobile sidebar drawer */}
+			<aside className={cn(s["mobile-sidebar"], navOpen && s.open)}>
+				<SideNav onNav={onNav} active={active} collapsed={false} onToggleCollapse={() => setNavOpen(false)} />
 			</aside>
 
-			<div>
-				{/* Topbar */}
-				<header className="position-sticky top-0 z-30 border-bottom border-line bg-white-85 backdrop-blur-xl">
-					<div className="d-flex align-items-center gap-3 px-4 py-3 sm-px-6">
-						<button
+			<div className="d-flex">
+				{/* Desktop sidebar */}
+				<aside className={cn(s.sidebar, sidebarCollapsed && s.collapsed)} style={{ position: "relative" }}>
+					<SideNav
+						onNav={onNav}
+						active={active}
+						collapsed={sidebarCollapsed}
+						onToggleCollapse={toggleSidebar}
+					/>
+				</aside>
+
+				<div className={s["main-content"]}>
+					{/* Topbar */}
+					<header className={s["top-header"]}>
+						<div className={s["top-header-inner"]}>
+							<button
 							onClick={() => setNavOpen(true)}
 							aria-label="Open navigation"
-							className="focus-ring d-grid h-10 w-10 flex-none place-items-center rounded-4 border border-line text-ink"
+							className={s["menu-btn"]}
 						>
 							<Icon name="menu" size={18} />
 						</button>
-						<div className="min-w-0 flex-1">
-							<div className="d-flex align-items-center gap-15 fs-115 fw-semibold text-faint">
-								<span>PayMo Business</span>
-								<Icon name="chevron-right" size={12} />
-								<span className="text-muted">Utilities</span>
+
+							<div className={s["breadcrumb-area"]}>
+								<div className={s.breadcrumbs}>
+									<span>PayMo Business</span>
+									<span className={s.sep}>›</span>
+									<span className={s.current}>Utilities</span>
 							</div>
-							<h1 className="text-truncate font-display fs-155 fw-bold tracking-tight text-ink sm-fs-17">
-								{pathname.includes("/recurring")
-									? "Household bills & rent"
-									: pathname.includes("/electricity")
-										? "Electricity"
-										: pathname.includes("/water")
-											? "Water"
-											: pathname.includes("/internet")
-												? "Internet"
-												: pathname.includes("/mobile-money")
-													? "Mobile Money"
-													: pathname.includes("/settings")
-														? "Utility Settings & Automation"
-														: "Utility command centre"}
-							</h1>
+							<h1 className={s["page-title"]}>{pageTitle}</h1>
 						</div>
 
 						<button
 							onClick={() => setPaletteOpen(true)}
-							className="focus-ring d-none h-10 align-items-center gap-25 rounded-4 border border-line bg-paper-2 px-3 fs-125 fw-medium text-faint transition hover-border-gray-400 d-md-flex xl-w-320px"
+							className={cn(s["search-box"], "d-none d-md-flex")}
 						>
 							<Icon name="search" size={16} />
-							<span className="flex-1 text-start">
-								Search meters, refs, actions…
-							</span>
-							<kbd className="rounded-2 border border-line bg-white px-15 py-05 fs-105 fw-bold text-muted">
-								⌘K
-							</kbd>
+							<input readOnly placeholder="Search meters, refs, actions…" style={{ cursor: "pointer" }} />
 						</button>
 
 						<IconBtn
@@ -710,132 +682,68 @@ export function Shell({ children }: { children: ReactNode }) {
 							onClick={() => setPaletteOpen(true)}
 						/>
 
-						<button
-							onClick={() => open({ kind: "topup" })}
-							className="focus-ring d-none h-10 align-items-center gap-2 rounded-4 border border-pmgreen-25 bg-pmgreen-soft px-3 fs-125 fw-bold text-pmgreen-ink transition hover-bg-pmgreen-hover d-sm-flex"
-						>
-							<Icon name="wallet" size={16} />
-							<span className="num">{kes(balance)}</span>
-							<Icon name="plus" size={13} />
-						</button>
-
-						<div className="position-relative">
-							<IconBtn
-								icon="bell"
-								label="Notifications"
-								onClick={() => setNotifOpen(!notifOpen)}
-							/>
-							<span className="pe-none position-absolute right-15 top-15 d-grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 fs-95 fw-bold text-white ring-2 ring-white">
-								5
-							</span>
-						</div>
-
-						<Button
-							icon="bolt"
-							size="md"
-							className="d-none d-sm-inline-flex"
-							onClick={() => open({ kind: "buy", utility: "electricity" })}
-						>
-							Buy utilities
-						</Button>
-
-						<button
-							onClick={() => open({ kind: "help" })}
-							aria-label="Account"
-							className="focus-ring d-none d-sm-block"
-						>
-							<Avatar name="Joseph Mwangi" size={36} />
-						</button>
-					</div>
-				</header>
-
-				<main className="px-4 pb-28 pt-5 sm-px-6 lg-pb-12">{children}</main>
-
-				<footer className="border-top border-line bg-white-60 px-4 py-6 sm-px-6 lg-pb-8">
-					<div className="d-flex flex-wrap align-items-center justify-content-between gap-4">
-						<div className="d-flex align-items-center gap-25">
-							<span className="d-grid h-7 w-7 place-items-center rounded-3 bg-ink">
-								<Icon
-									name="bolt"
-									size={14}
-									className="text-pmgreen"
-									strokeWidth={2.2}
-								/>
-							</span>
-							<p className="fs-12 text-muted">
-								<span className="fw-bold text-ink-2">PayMo Business</span> ·
-								Settings 3.6 · Automation rules, guardrails, approvers,
-								notifications and audit
-							</p>
-						</div>
-						<div className="d-flex flex-wrap align-items-center gap-4 fs-12 fw-semibold text-muted">
+						<div className={s["topbar-actions"]}>
 							<button
-								onClick={() => open({ kind: "tariff" })}
-								className="transition hover-text-ink"
+							onClick={() => open({ kind: "topup" })}
+							className={cn(s["wallet-chip"], "d-none d-sm-inline-flex")}
+						>
+							<Icon name="wallet" size={14} />
+							<span className="num">{kes(balance)}</span>
+							<Icon name="plus" size={11} />
+						</button>
+
+							<div style={{ position: "relative" }}>
+								<button
+								type="button"
+								className={s["action-btn"]}
+								onClick={() => setNotifOpen(!notifOpen)}
 							>
-								Tariff & fees
+								<Icon name="bell" size={18} />
+								<span className={s["action-badge"]}>5</span>
+							</button>							</div>
+
+							<button
+								onClick={() => open({ kind: "buy", utility: "electricity" })}
+								className={cn(s["buy-btn"], "d-none d-sm-inline-flex")}
+							>
+								<Icon name="bolt" size={15} />
+								Buy utilities
 							</button>
+
 							<button
 								onClick={() => open({ kind: "help" })}
-								className="transition hover-text-ink"
+								aria-label="Account"
+								className={s["user-trigger"]}
 							>
-								Help centre
+								JM
 							</button>
-							<button
-								onClick={() =>
-									toast({
-										title: "Report exported",
-										msg: "Compliance pack queued — we'll email it in a few minutes.",
-										tone: "success",
-									})
-								}
-								className="transition hover-text-ink"
-							>
-								Compliance pack
-							</button>
-							<span className="d-flex align-items-center gap-15 rounded-full bg-pmgreen-soft px-25 py-1 fs-11 fw-bold text-pmgreen-ink">
-								<span className="live-dot" /> 99.98% uptime
-							</span>
 						</div>
 					</div>
-				</footer>
+					</header>
+
+					<main style={{ padding: "20px 24px 110px" }}>{children}</main>
+				</div>
 			</div>
 
 			{/* Mobile bottom nav */}
-			<nav className="position-fixed bottom-0 start-0 end-0 z-30 d-flex align-items-stretch border-top border-line bg-white-95 backdrop-blur-xl d-lg-none">
+			<nav className={s["bottom-nav"]}>
 				{[
 					{ key: "home", label: "Home", icon: "home" as const, to: "/utility" },
-					{
-						key: "electricity",
-						label: "Utilities",
-						icon: "grid" as const,
-						to: "/utility/electricity",
-					},
+					{ key: "electricity", label: "Utilities", icon: "grid" as const, to: "/utility/electricity" },
 					{ key: "__buy", label: "Buy", icon: "bolt" as const },
-					{
-						key: "history",
-						label: "History",
-						icon: "receipt" as const,
-						to: "/utility",
-						target: "sec-history",
-					},
-					{
-						key: "water",
-						label: "Water",
-						icon: "droplet" as const,
-						to: "/utility/water",
-					},
+					{ key: "history", label: "History", icon: "receipt" as const, to: "/utility", target: "sec-history" },
+					{ key: "water", label: "Water", icon: "droplet" as const, to: "/utility/water" },
 				].map((it) =>
 					it.key === "__buy" ? (
 						<button
 							key={it.key}
 							onClick={() => open({ kind: "buy", utility: "electricity" })}
-							className="focus-ring d-flex flex-1 flex-column align-items-center justify-content-center gap-1 py-25"
+							className={s["bottom-buy-btn"]}
 						>
-							<span className="d-grid h-9 w-9 place-items-center rounded-4 bg-pmgreen text-white shadow-green-btn">
-								<Icon name={it.icon} size={18} strokeWidth={2} />
+							<span className={s["bottom-buy-icon"]}>
+								<Icon name={it.icon} size={18} />
 							</span>
-							<span className="fs-10 fw-bold text-pmgreen-ink">{it.label}</span>
+							<span>{it.label}</span>
 						</button>
 					) : (
 						<button
@@ -844,38 +752,12 @@ export function Shell({ children }: { children: ReactNode }) {
 								if (it.to) {
 									setNavOpen(false);
 									navigate({ to: it.to });
-									if (it.target) {
-										setTimeout(() => {
-											const el = document.getElementById(it.target!);
-											if (el)
-												el.scrollIntoView({
-													behavior: "smooth",
-													block: "start",
-												});
-										}, 120);
-									} else {
-										setTimeout(
-											() => window.scrollTo({ top: 0, behavior: "smooth" }),
-											60,
-										);
-									}
 								}
 							}}
-							className="focus-ring d-flex flex-1 flex-column align-items-center justify-content-center gap-1 py-25"
+							className={cn(s["bottom-nav-item"], pathname === it.to && s.active)}
 						>
-							<Icon
-								name={it.icon}
-								size={19}
-								className={pathname === it.to ? "text-pmgreen" : "text-faint"}
-							/>
-							<span
-								className={cn(
-									"fs-10 fw-bold",
-									pathname === it.to ? "text-ink" : "text-faint",
-								)}
-							>
-								{it.label}
-							</span>
+							<Icon name={it.icon} size={19} />
+							<span>{it.label}</span>
 						</button>
 					),
 				)}
@@ -888,27 +770,9 @@ export function Shell({ children }: { children: ReactNode }) {
 	);
 }
 
-/* Mobile drawer nav */
-function MobileNavDrawer({
-	onNav,
-	active,
-}: {
-	onNav: (key: string, target?: string) => void;
-	active: string;
-}) {
-	const { navOpen, setNavOpen } = useApp();
-	if (!navOpen) return null;
-	return (
-		<Drawer
-			open={navOpen}
-			onClose={() => setNavOpen(false)}
-			side="left"
-			width="max-w-280px"
-			bg="side-glow"
-		>
-			<SideNav active={active} onNav={onNav} />
-		</Drawer>
-	);
+/* Mobile drawer nav — now handled by the mobile-sidebar above, this is a no-op */
+function MobileNavDrawer(_props: { onNav: (key: string, target?: string) => void; active: string }) {
+	return null;
 }
 
 export { MODULES, SCHEDULES, PAY_METHODS };

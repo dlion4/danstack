@@ -427,7 +427,7 @@ export default function Header() {
               <span
                 className={`${styles.fontDisplay} ${styles.logoTextSecondary}`}
               >
-                BaaS PLATFORM
+                v7
               </span>
             </span>
           </a>

@@ -8,7 +8,7 @@
   top: 0;
   right: 0;
   height: var(--header-height, 72px);
-  left: 260px;
+  left: 68px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -22,7 +22,14 @@
 }
 
 .top-header.sidebar-expanded {
-  left: 68px;
+  left: 260px;
+}
+
+/* Mobile: sidebar hidden, topbar spans full width */
+@media (max-width: 991.98px) {
+  .top-header {
+    left: 0 !important;
+  }
 }
 
 /* -------- Sidebar toggle -------- */

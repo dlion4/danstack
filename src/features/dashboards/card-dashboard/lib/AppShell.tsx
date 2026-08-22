@@ -8,6 +8,7 @@
  * ========================================================================== */
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "../utils/cn";
 import { Icon, Logo, type IconName } from "../icons";
 import { Drawer } from "../ui";
@@ -103,23 +104,23 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Switch Account */}
       <div className="pmc-side-footer">
-        <a href="/auth/hub" className="pmc-switch-acct-btn pmc-focus">
+        <Link to="/auth/hub" preload="intent" className="pmc-switch-acct-btn pmc-focus" style={{ textDecoration: "none" }}>
           <Icon name="arrowRight" size={15} />
           <span className="pmc-switch-acct-label">Switch Account</span>
-        </a>
-        <button type="button" onClick={() => openDrawer({ type: "support" })} className="pmc-support-btn pmc-focus">
+        </Link>
+        {/* <button type="button" onClick={() => openDrawer({ type: "support" })} className="pmc-support-btn pmc-focus">
           <span className="pmc-icon-sq-sm d-grid" style={{ background: "var(--pmc-blue-soft)", color: "var(--pmc-blue)" }}>
             <Icon name="headset" size={15} />
           </span>
-          <span className="pmc-support-text flex-grow-1" style={{ lineHeight: 1.2 }}>
+          {/* <span className="pmc-support-text flex-grow-1" style={{ lineHeight: 1.2 }}>
             <span className="d-block" style={{ fontSize: 12, fontWeight: 700, color: "var(--pmc-ink)" }}>Card Support</span>
             <span className="d-block" style={{ fontSize: 10.5, color: "var(--pmc-muted)" }}>24/7 · avg reply 3 min</span>
-          </span>
-          <Icon name="arrowRight" size={14} style={{ color: "var(--pmc-muted)" }} />
-        </button>
-        <button type="button" onClick={() => openModal({ type: "shortcuts" })} className="pmc-shortcut-link pmc-focus">
+          </span> */}
+          {/* <Icon name="arrowRight" size={14} style={{ color: "var(--pmc-muted)" }} /> */}
+        {/* </button> */} 
+        {/* <button type="button" onClick={() => openModal({ type: "shortcuts" })} className="pmc-shortcut-link pmc-focus">
           <Icon name="zap" size={12} /> <span className="pmc-shortcut-label">Keyboard shortcuts</span>
-        </button>
+        </button> */}
       </div>
     </div>
   );

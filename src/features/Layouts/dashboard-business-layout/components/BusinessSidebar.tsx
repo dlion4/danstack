@@ -83,6 +83,7 @@ export default function BusinessSidebar({
 			<div className="d-flex align-items-center justify-content-between mb-2">
 				<Link
 					to="/business-dashboard"
+					preload="intent"
 					className={s.brand}
 					aria-label="Go to business dashboard"
 				>
@@ -134,19 +135,18 @@ export default function BusinessSidebar({
 											{inner}
 										</button>
 									);
-								}
-
-				return (
-					<Link
-						key={item.key}
-						to={modulePath(item.key)}
-						className={className}
-						title={item.label}
-						onClick={() => handleItemClick(item)}
-					>
-						{inner}
-					</Link>
-				);
+								}						return (
+							<Link
+								key={item.key}
+								to={modulePath(item.key)}
+								preload="intent"
+								className={className}
+								title={item.label}
+								onClick={() => handleItemClick(item)}
+							>
+								{inner}
+							</Link>
+						);
 							})}
 						</nav>
 					</div>
@@ -179,6 +179,7 @@ export default function BusinessSidebar({
 {/* Switch Account button */}
 				<Link
 					to="/auth/hub"
+					preload="intent"
 					className={s.switchAccountBtn}
 					title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
 				>

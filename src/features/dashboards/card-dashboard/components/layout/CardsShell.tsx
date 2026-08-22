@@ -159,7 +159,7 @@ function LayoutShell() {
           </button>
         </aside>
 
-        <div className="flex-grow-1" style={{ minWidth: 0 }}>
+        <div className={cn("flex-grow-1", sidebarCollapsed && "sidebar-collapsed")} style={{ minWidth: 0 }}>
           <CardsTopbar expanded={!sidebarCollapsed} onToggleSidebar={() => setSidebarCollapsed((c) => !c)} />
           <main className="pmc-page-content">
             <div className="pmc-main">

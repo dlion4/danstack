@@ -56,6 +56,7 @@ export default function UtilitySidebar({
                         <div className="d-flex align-items-center justify-content-between mb-2">
                                 <Link
                                         to="/utility"
+                                        preload="intent"
                                         className={s.brand}
                                         aria-label="Go to utility overview"
                                 >
@@ -114,6 +115,7 @@ export default function UtilitySidebar({
                                                                                 key={item.key}
                                                                                 to="/utility/$module"
                                                                                 params={{ module: item.key }}
+                                                                                preload="intent"
                                                                                 className={className}
                                                                                 title={item.label}
                                                                                 onClick={() => handleItemClick(item)}
@@ -130,6 +132,7 @@ export default function UtilitySidebar({
 {/* Switch Account button */}
                                 <Link
                                         to="/auth/hub"
+                                        preload="intent"
                                         className={s.switchAccountBtn}
                                         title="Switch Account — easily switch between Utility, Biz, Dev, and Savings accounts"
                                 >

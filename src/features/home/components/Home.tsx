@@ -50,8 +50,8 @@ const initialMockData = {
                 badgeStrong: "The Financial Nervous System",
                 badgeRest: "for Borderless Africa",
                 titleStart:
-                        "Build, bank, and move money across Africa and the world — from a ",
-                titleAccent: "single API.",
+                        "Pay more, bank, and move money across Africa and the world — with ",
+                titleAccent: "PayMO",
                 copy: "Paymo BAAS unifies African local rails, SWIFT and regional transfer networks, embedded banking, ledger infrastructure, and FX intelligence into one emerald operating layer for fintechs, platforms, and enterprise treasury teams.",
                 trustPills: [
                         {
@@ -1116,7 +1116,7 @@ Positioning:
 The financial nervous system for borderless Africa.
 
 Core promise:
-Build, bank, and move money across Africa and the world from a single API.
+Pay more, bank, and move money across Africa and the world with PayMO
 
 Key platform layers:
 1. Global rails

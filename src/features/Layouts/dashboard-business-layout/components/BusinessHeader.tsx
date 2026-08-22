@@ -131,13 +131,12 @@ export default function BusinessHeader({
                                                                 ))}
                                                         </div>
                                                         <div className={cx(s["panel-footer"], "d-flex justify-content-between")}>
-                                                                <div className={s.accountActions}>
-                                                                        <Link to="/wallet-activation" className={s.btnLinkAccount}>
-                                                                                <i className="bi bi-link-45deg" /> Link Account
-                                                                        </Link>
-                                                                        <Link to="/wallet-activation" className={s.btnUnlinkAccount}>
-                                                                                <i className="bi bi-link-break" /> Unlink Account
-                                                                        </Link>
+                                                                <div className={s.accountActions}>																					<Link to="/wallet-activation" preload="intent" className={s.btnLinkAccount}>
+																						<i className="bi bi-link-45deg" /> Link Account
+																					</Link>
+																					<Link to="/wallet-activation" preload="intent" className={s.btnUnlinkAccount}>
+																						<i className="bi bi-link-break" /> Unlink Account
+																					</Link>
                                                                 </div>
                                                         </div>
                                                 </div>
@@ -291,13 +290,13 @@ export default function BusinessHeader({
                                                                         </div>
                                                                 ))}
                                                         </div>
-                                                        <div className={cx(s["panel-footer"], "text-center")}>
-                                                                <Link
-                                                                        to="/business-dashboard/$module"
-                                                                        params={{ module: "insights" }}
-                                                                        className={cx(s.btnLink, s.btnLinkPrimary)}
-                                                                        onClick={() => onToggleDropdown("notifications")}
-                                                                >
+                                                        <div className={cx(s["panel-footer"], "text-center")}>																						<Link
+																							to="/business-dashboard/$module"
+																							params={{ module: "insights" }}
+																							preload="intent"
+																							className={cx(s.btnLink, s.btnLinkPrimary)}
+																							onClick={() => onToggleDropdown("notifications")}
+																						>
                                                                         View all
                                                                 </Link>
                                                         </div>

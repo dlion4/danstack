@@ -7,7 +7,12 @@ import { unpluginRouterGeneratorFactory } from "@tanstack/router-plugin";
 import { nitro } from "nitro/vite";
 
 const tanstackRouter = Object.assign(
-	unpluginRouterGeneratorFactory({}).vite,
+	unpluginRouterGeneratorFactory({
+		autoCodeSplitting: true,
+		codeSplittingOptions: {
+			defaultBehavior: "bundle-and-cache",
+		},
+	}).vite,
 	{ name: "@tanstack/router-plugin" },
 );
 
@@ -46,13 +51,37 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000,
+    target: "es2020",
+    cssMinify: "lightningcss",
     rollupOptions: {
       output: {
         manualChunks: (id: string) => {
           if (!id.includes("node_modules")) return undefined;
-          if (id.includes("@tanstack")) return "tanstack";
-          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
-            return "react";
+          // Core framework — always cached together
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/") || id.includes("node_modules/react/jsx")) {
+            return "react-core";
+          }
+          // TanStack ecosystem
+          if (id.includes("@tanstack/react-router") || id.includes("@tanstack/react-router-devtools")) {
+            return "tanstack-router";
+          }
+          if (id.includes("@tanstack/react-query")) {
+            return "tanstack-query";
+          }
+          if (id.includes("@tanstack/react-table")) {
+            return "tanstack-table";
+          }
+          // Bootstrap (heavy, shared across card/utility/business dashboards)
+          if (id.includes("bootstrap") && !id.includes("bootstrap-icons")) {
+            return "bootstrap";
+          }
+          // Icon fonts
+          if (id.includes("bootstrap-icons") || id.includes("lucide")) {
+            return "icons";
+          }
+          // Chart libraries (heavy)
+          if (id.includes("recharts") || id.includes("d3-")) {
+            return "charts";
           }
           return undefined;
         },
