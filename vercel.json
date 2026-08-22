@@ -1,8 +1,24 @@
 {
-  "framework": "tanstack-start",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "dist/client",
   "installCommand": "npm install",
+  "functions": {
+    "api/server.js": {
+      "runtime": "@vercel/node@3",
+      "maxDuration": 30,
+      "includeFiles": "dist/server/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/api/server"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
