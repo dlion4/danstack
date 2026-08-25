@@ -47,57 +47,57 @@ import styles from "@/features/home/styles/homepage.module.css";
  * ------------------------------------------------------------------------ */
 const initialMockData = {
         hero: {
-                badgeStrong: "The Financial Nervous System",
-                badgeRest: "for Borderless Africa",
+                badgeStrong: "Your Money",
+                badgeRest: "Made Simple",
                 titleStart:
-                        "Pay more, bank, and move money across Africa and the world — with ",
+                        "Send, receive, and manage money across Africa and the world — with ",
                 titleAccent: "PayMO",
-                copy: "Paymo BAAS unifies African local rails, SWIFT and regional transfer networks, embedded banking, ledger infrastructure, and FX intelligence into one emerald operating layer for fintechs, platforms, and enterprise treasury teams.",
+                copy: "Paymo connects M-Pesa, banks, mobile money, and international payments in one simple platform. Perfect for businesses, freelancers, students, and anyone who needs to move money easily across Kenya and beyond.",
                 trustPills: [
                         {
                                 icon: "bi-people",
                                 value: "400+",
-                                label: "fintechs, neobanks & treasury teams",
+                                label: "businesses and users trust us",
                         },
-                        { icon: "bi-signpost", value: "25+", label: "active market routes" },
+                        { icon: "bi-signpost", value: "25+", label: "countries and routes" },
                 ],
                 metrics: [
                         {
                                 end: 30,
                                 suffix: "+",
-                                label: "African local rails orchestrated from one platform layer",
+                                label: "ways to pay and get paid",
                         },
                         {
                                 end: 10,
                                 suffix: "+",
-                                label: "Global payout corridors — SWIFT, SEPA, ACH and card push",
+                                label: "countries you can send to",
                         },
                         {
                                 end: 99,
                                 suffix: ".97%",
-                                label: "Platform uptime target for mission-critical flows",
+                                label: "uptime - we're always working",
                         },
                         {
                                 end: 90,
                                 suffix: " days",
-                                label: "Launch path for embedded accounts, cards and compliant flows",
+                                label: "to launch your business payments",
                         },
                 ],
                 visualBadges: [
                         {
                                 key: "badge1",
-                                label: "Unified rails",
-                                text: "30+ local and global movement paths behind one decision layer.",
+                                label: "All connected",
+                                text: "M-Pesa, banks, and cards all in one app.",
                         },
                         {
                                 key: "badge2",
-                                label: "Live settlement",
-                                text: "KES 125,000 payout to M-Pesa settled · just now",
+                                label: "Instant payments",
+                                text: "KES 125,000 sent to M-Pesa · just now",
                         },
                         {
                                 key: "badge3",
-                                label: "Developer speed",
-                                text: "Sandbox-ready flows for collections, accounts, payouts, and FX.",
+                                label: "Easy setup",
+                                text: "Start sending and receiving in minutes.",
                         },
                 ],
         },
@@ -149,29 +149,29 @@ const initialMockData = {
                         {
                                 icon: "bi-arrow-down-up",
                                 tile: "tileGreen",
-                                title: "Collections & Payouts",
-                                sub: "Unified money movement APIs.",
+                                title: "Send & Receive",
+                                sub: "All payment types in one place.",
                                 href: "#modules",
                         },
                         {
                                 icon: "bi-building",
                                 tile: "tileBlue",
                                 title: "Virtual Accounts",
-                                sub: "Named & pooled account issuance.",
+                                sub: "Create accounts for customers.",
                                 href: "#modules",
                         },
                         {
                                 icon: "bi-credit-card-2-front",
                                 tile: "tilePurple",
                                 title: "Card Programs",
-                                sub: "White-label corporate cards.",
+                                sub: "Issue virtual and physical cards.",
                                 href: "#modules",
                         },
                         {
                                 icon: "bi-currency-exchange",
                                 tile: "tileGold",
-                                title: "FX Treasury",
-                                sub: "Smart conversion & float logic.",
+                                title: "Currency Exchange",
+                                sub: "Smart conversion and best rates.",
                                 href: "#modules",
                         },
                 ],
@@ -179,36 +179,36 @@ const initialMockData = {
                         {
                                 icon: "bi-bank2",
                                 tile: "tileGreen",
-                                title: "Financial Institutions & Banks",
-                                sub: "Core banking rails & clearing infrastructure.",
+                                title: "Banks & Financial Institutions",
+                                sub: "Payment rails and clearing systems.",
                                 href: "#use-cases",
                         },
                         {
                                 icon: "bi-globe",
                                 tile: "tileBlue",
-                                title: "Global Merchants",
-                                sub: "Accept African payment methods globally.",
+                                title: "Global Businesses",
+                                sub: "Accept African payments worldwide.",
                                 href: "#use-cases",
                         },
                         {
                                 icon: "bi-send",
                                 tile: "tilePurple",
-                                title: "Cross-Border Traders & Importers",
-                                sub: "Seamless foreign exchange and FX settlement.",
+                                title: "Traders & Importers",
+                                sub: "Easy foreign exchange and payments.",
                                 href: "#use-cases",
                         },
                         {
                                 icon: "bi-grid-3x3-gap",
                                 tile: "tilePink",
                                 title: "Platforms & Marketplaces",
-                                sub: "Mass automated payouts and multi-split collections.",
+                                sub: "Bulk payments and split collections.",
                                 href: "#use-cases",
                         },
                         {
                                 icon: "bi-graph-up-arrow",
                                 tile: "tileGold",
-                                title: "Growing SMEs & Startups",
-                                sub: "All-in-one financial dashboard & corporate tools.",
+                                title: "Growing Businesses",
+                                sub: "Complete money management tools.",
                                 href: "#use-cases",
                         },
                 ],
@@ -217,21 +217,21 @@ const initialMockData = {
                                 icon: "bi-terminal",
                                 tile: "tileGreen",
                                 title: "API Quickstart",
-                                sub: "Sandbox-first payout & account APIs.",
+                                sub: "Start building with our APIs.",
                                 href: "#developers",
                         },
                         {
                                 icon: "bi-plug",
                                 tile: "tileBlue",
                                 title: "Webhooks & Events",
-                                sub: "Real-time ledger and rail signals.",
+                                sub: "Real-time updates and signals.",
                                 href: "#developers",
                         },
                         {
                                 icon: "bi-shield-lock",
                                 tile: "tileGold",
-                                title: "Security Practices",
-                                sub: "Compliance built into the fabric.",
+                                title: "Security",
+                                sub: "Built-in safety and compliance.",
                                 href: "#security",
                         },
                 ],
@@ -241,83 +241,83 @@ const initialMockData = {
                 tensionPoints: [
                         {
                                 icon: "bi-diagram-3",
-                                text: "Average African fintech teams integrate multiple providers before reaching stability and settlement consistency.",
+                                text: "Most businesses juggle multiple payment apps and systems before things work smoothly.",
                         },
                         {
                                 icon: "bi-cash-coin",
-                                text: "Hidden FX spread leakage compounds when treasury decisions happen across disconnected providers and timelines.",
+                                text: "Hidden fees pile up when you use different services for different payments.",
                         },
                         {
                                 icon: "bi-shield-lock",
-                                text: "Compliance complexity grows when KYC, KYB, sanctions, monitoring, and reporting live across separate tools.",
+                                text: "Keeping track of rules, safety checks, and reports becomes a nightmare across different tools.",
                         },
                 ],
                 before: {
-                        title: "Fragmented stack",
+                        title: "The Old Way",
                         points: [
                                 {
                                         icon: "bi-columns-gap",
-                                        text: "Six dashboards, separate PSPs, and different settlement views across markets.",
+                                        text: "Multiple apps, different logins, and confusing screens for every payment type.",
                                 },
                                 {
                                         icon: "bi-file-earmark-spreadsheet",
-                                        text: "Manual spreadsheet reconciliation across collections, payouts, cards, and float accounts.",
+                                        text: "Manual spreadsheets to track money coming in and going out.",
                                 },
                                 {
                                         icon: "bi-hourglass-split",
-                                        text: "Multi-day settlement delays and poor visibility into failed or pending cross-border hops.",
+                                        text: "Payments take days to arrive, and you can't see where money is stuck.",
                                 },
                                 {
                                         icon: "bi-eye-slash",
-                                        text: "Hidden FX costs, duplicated KYC work, and weak alerting when routing fails.",
+                                        text: "Hidden charges, repeated paperwork, and no alerts when payments fail.",
                                 },
                         ],
                         stats: [
                                 {
                                         value: "7.3",
-                                        label: "average provider touchpoints before reliable scale",
+                                        label: "different apps to manage payments",
                                 },
                                 {
                                         value: "5 days",
-                                        label: "settlement drag across disconnected routes",
+                                        label: "waiting for payments to clear",
                                 },
                                 {
                                         value: "4.2B",
-                                        label: "annual hidden FX leakage pressure on African SMEs",
+                                        label: "shillings lost in hidden fees yearly",
                                 },
                                 {
                                         value: "0 clarity",
-                                        label: "when teams cannot see ledger, rails, and risk in one place",
+                                        label: "on where your money actually is",
                                 },
                         ],
                 },
                 after: {
-                        title: "Unified operating layer",
+                        title: "The Paymo Way",
                         points: [
                                 {
                                         icon: "bi-boxes",
-                                        text: "One API across payouts, collections, accounts, wallets, ledgers, compliance, and reporting.",
+                                        text: "One simple system for all payments, collections, accounts, and reports.",
                                 },
                                 {
                                         icon: "bi-lightning-charge",
-                                        text: "Smart routing for local rails, cards, bank transfers, and treasury conversion windows.",
+                                        text: "Smart routing sends money the best way - M-Pesa, bank, or card automatically.",
                                 },
                                 {
                                         icon: "bi-journal-check",
-                                        text: "Real-time ledgering with event traces, sub-accounts, reconciliation exports, and alerts.",
+                                        text: "See every transaction in real-time with clear records and automatic tracking.",
                                 },
                                 {
                                         icon: "bi-shield-check",
-                                        text: "Embedded KYC, KYB, sanctions checks, AML workflows, and audit-ready reporting.",
+                                        text: "Built-in safety checks, compliance, and audit-ready reports without extra work.",
                                 },
                         ],
                         stats: [
-                                { value: "1 API", label: "integration point across the finance stack" },
-                                { value: "Real time", label: "ledger updates and routing telemetry" },
-                                { value: "Same-day", label: "optimized payout and treasury windows" },
+                                { value: "1 app", label: "for all your payment needs" },
+                                { value: "Instant", label: "updates and tracking" },
+                                { value: "Same-day", label: "payments when possible" },
                                 {
-                                        value: "Full trace",
-                                        label: "from identity to payout confirmation and reconciliation",
+                                        value: "Full view",
+                                        label: "of every shilling you send or receive",
                                 },
                         ],
                 },
@@ -327,9 +327,9 @@ const initialMockData = {
                 {
                         id: "global",
                         order: "Layer 01",
-                        title: "Global rails",
-                        blurb: "SWIFT, SEPA, ACH, card push and enterprise payout connectivity.",
-                        text: "Bank transfers and card push networks connect Paymo to global payout corridors without forcing teams to rebuild treasury and compliance per route.",
+                        title: "Global payments",
+                        blurb: "Send money worldwide through banks and cards.",
+                        text: "Connect to international payment networks without setting up complex systems for each country.",
                         chips: [
                                 "SWIFT",
                                 "SEPA",
@@ -343,10 +343,10 @@ const initialMockData = {
                 {
                         id: "africa",
                         order: "Layer 02",
-                        title: "African local rails",
+                        title: "Local African payments",
                         blurb:
-                                "Mobile money, national ACH, instant transfers, and bank switching.",
-                        text: "Deep local coverage spans mobile money, domestic bank transfers, ACH networks, and market-specific clearing systems across priority African corridors.",
+                                "M-Pesa, mobile money, banks, and instant transfers.",
+                        text: "All your favorite African payment methods in one place - from M-Pesa to bank transfers across the continent.",
                         chips: [
                                 "M-Pesa",
                                 "MTN MoMo",
@@ -361,9 +361,9 @@ const initialMockData = {
                 {
                         id: "banking",
                         order: "Layer 03",
-                        title: "Embedded banking",
-                        blurb: "Virtual accounts, ledgers, wallets, and programmable balances.",
-                        text: "Virtual accounts, sub-accounts, wallets, and programmable balances let platforms launch branded finance products without building a ledger stack from scratch.",
+                        title: "Virtual accounts",
+                        blurb: "Create accounts, wallets, and manage balances.",
+                        text: "Generate virtual accounts and wallets for your customers without building complex banking systems from scratch.",
                         chips: [
                                 "Virtual accounts",
                                 "Sub-ledgers",
@@ -376,10 +376,10 @@ const initialMockData = {
                 {
                         id: "intelligence",
                         order: "Layer 04",
-                        title: "Intelligence layer",
+                        title: "Smart routing",
                         blurb:
-                                "Dynamic FX, predictive treasury, fraud scoring, route optimization.",
-                        text: "FX timing, treasury balancing, fraud signals, and route-quality decisions sit above the rails so capital and reliability both improve with scale.",
+                                "Best exchange rates, fraud protection, and route optimization.",
+                        text: "Automatic smart choices for exchange rates, fraud detection, and the best payment routes so your money moves safely and efficiently.",
                         chips: [
                                 "Dynamic FX",
                                 "Smart routing",
@@ -392,9 +392,9 @@ const initialMockData = {
                 {
                         id: "compliance",
                         order: "Layer 05",
-                        title: "Compliance shield",
-                        blurb: "KYC, KYB, monitoring, sanctions, and regulatory control.",
-                        text: "KYC, KYB, sanctions, AML monitoring, and reporting workflows are embedded into onboarding and transaction flows for pan-African expansion.",
+                        title: "Safety & compliance",
+                        blurb: "Identity checks, monitoring, and regulatory control.",
+                        text: "Built-in safety checks, identity verification, and compliance requirements so you can operate across Africa without the headache.",
                         chips: [
                                 "KYC",
                                 "KYB",
@@ -409,19 +409,19 @@ const initialMockData = {
         useCases: [
                 {
                         id: "neobank",
-                        nodeLabel: "Neobank launch",
-                        title: "Launch a digital bank in 90 days.",
+                        nodeLabel: "Digital bank",
+                        title: "Start your own bank in 90 days.",
                         description:
-                                "Combine virtual accounts, cards, compliance, customer wallets, and treasury routing in one rollout path without building core banking primitives from scratch.",
+                                "Launch accounts, cards, wallets, and payment systems without building everything from scratch.",
                         bullets: [
-                                "White-label account journeys and onboarding flows.",
-                                "Wallet and ledger infrastructure for retail or SME balances.",
-                                "Programmatic cards, transfers, and payout controls.",
+                                "Ready-made account opening flows.",
+                                "Wallet and balance tracking for customers.",
+                                "Cards, transfers, and payment controls.",
                         ],
                         metrics: [
-                                "90-day launch path",
+                                "90-day launch",
                                 "Accounts + cards",
-                                "Built-in compliance",
+                                "Built-in safety",
                         ],
                         position: {
                                 top: "8px",
@@ -431,48 +431,48 @@ const initialMockData = {
                 },
                 {
                         id: "payroll",
-                        nodeLabel: "Cross-border payroll",
-                        title: "Pay teams across markets with one payroll rail.",
+                        nodeLabel: "Payroll",
+                        title: "Pay your team anywhere, anytime.",
                         description:
-                                "Run payroll and contractor disbursements across multiple countries with local payout options, smart FX timing, and centralized reconciliation.",
+                                "Send salaries and payments to workers across different countries using local methods like M-Pesa and bank transfers.",
                         bullets: [
-                                "Local-currency payouts and account or wallet delivery.",
-                                "Bulk payment APIs and scheduled disbursement windows.",
-                                "Finance-grade ledger exports for payroll reconciliation.",
+                                "Pay in local currency to phones or banks.",
+                                "Bulk payments and scheduled transfers.",
+                                "Automatic records and tracking.",
                         ],
                         metrics: [
-                                "Bulk payout ready",
-                                "Local-currency delivery",
-                                "Reconciliation built in",
+                                "Bulk payments",
+                                "Local delivery",
+                                "Built-in tracking",
                         ],
                         position: { top: "126px", right: "4px" },
                 },
                 {
                         id: "ecommerce",
-                        nodeLabel: "E-commerce checkout",
-                        title: "Accept locally, settle intelligently.",
+                        nodeLabel: "Online shop",
+                        title: "Accept payments, get paid easily.",
                         description:
-                                "Collect with mobile money or bank transfers, then route settlement using the best treasury and payout options for each market.",
+                                "Let customers pay with M-Pesa or bank transfer, then receive your money through the best available method.",
                         bullets: [
-                                "Single integration for multi-market checkout.",
-                                "Unified events for collections, refunds, and merchant settlement.",
-                                "Better payout continuity through route fallback logic.",
+                                "One system for all payment types.",
+                                "Handle refunds and settlements automatically.",
+                                "Smart routing if payments fail.",
                         ],
-                        metrics: ["One checkout layer", "Unified settlement", "Fallback routing"],
+                        metrics: ["One checkout", "Smart settlement", "Backup routes"],
                         position: { bottom: "126px", right: "12px" },
                 },
                 {
                         id: "treasury",
-                        nodeLabel: "Treasury optimization",
-                        title: "Turn treasury from a spreadsheet into a system.",
+                        nodeLabel: "Money management",
+                        title: "Stop using spreadsheets for money.",
                         description:
-                                "Track positions, convert on stronger windows, route to the best rail, and view reconciliation outputs from one control plane.",
+                                "Track your balances, convert at the best rates, choose the best payment routes, and see everything in one place.",
                         bullets: [
-                                "FX window optimization and liquidity awareness.",
-                                "Balance segmentation across currencies and entities.",
-                                "Operational alerting around route health and float exposure.",
+                                "Best exchange rate timing.",
+                                "Separate money by currency and purpose.",
+                                "Alerts when something needs attention.",
                         ],
-                        metrics: ["FX intelligence", "Balance orchestration", "Operator control"],
+                        metrics: ["Smart FX", "Balance control", "Full visibility"],
                         position: {
                                 bottom: "8px",
                                 left: "50%",
@@ -481,37 +481,37 @@ const initialMockData = {
                 },
                 {
                         id: "remittance",
-                        nodeLabel: "Remittance superapp",
-                        title: "Build a remittance superapp with rail depth.",
+                        nodeLabel: "Send money home",
+                        title: "Build a money transfer app.",
                         description:
-                                "Support bank deposit, wallet, and mobile money delivery while maintaining compliance controls and payout visibility end to end.",
+                                "Let people send money to bank accounts, mobile money, or wallets while keeping everything safe and trackable.",
                         bullets: [
-                                "Cash-out flexibility across rail types.",
-                                "Identity and monitoring controls inside the flow.",
-                                "Event-level status for customer support and operations teams.",
+                                "Multiple cash-out options.",
+                                "Built-in safety checks.",
+                                "Real-time status for support.",
                         ],
                         metrics: [
-                                "Wallet + bank delivery",
-                                "Support traceability",
-                                "Compliance embedded",
+                                "Wallet + bank",
+                                "Full tracking",
+                                "Built-in compliance",
                         ],
                         position: { bottom: "126px", left: "12px" },
                 },
                 {
                         id: "supplier",
                         nodeLabel: "Supplier payments",
-                        title: "Run supplier payments from one dashboard layer.",
+                        title: "Pay suppliers from one place.",
                         description:
-                                "Move funds to local suppliers, international vendors, and service partners using a single payout workflow and ledger-backed finance controls.",
+                                "Send money to local suppliers, international vendors, and service providers using one simple system with full records.",
                         bullets: [
-                                "Bulk supplier payouts and approval logic.",
-                                "Global and local route support from one stack.",
-                                "Audit-ready records for AP teams and treasury operators.",
+                                "Bulk payments with approval.",
+                                "Local and international payment options.",
+                                "Audit-ready records for your team.",
                         ],
                         metrics: [
-                                "AP workflow ready",
-                                "Local + global reach",
-                                "Audit-grade records",
+                                "Ready workflows",
+                                "Local + global",
+                                "Full records",
                         ],
                         position: { top: "126px", left: "4px" },
                 },
@@ -521,18 +521,18 @@ const initialMockData = {
                 {
                         tag: "Routing",
                         imageKey: "dashboard",
-                        title: "Routing command surface",
-                        text: "Trigger, action, response logic for rails, retries, fallback paths, and payout confirmation handling.",
-                        chips: ["Fallback routing", "Event webhooks", "Failure recovery"],
+                        title: "Smart payment routing",
+                        text: "Automatic retry, backup routes, and payment confirmation handling.",
+                        chips: ["Backup routing", "Event webhooks", "Failure recovery"],
                         href: "#platform",
                         linkIcon: "bi-layers",
-                        linkLabel: "Inspect stack layers",
+                        linkLabel: "See platform layers",
                 },
                 {
                         tag: "FX Engine",
                         imageKey: "fxCoins",
-                        title: "FX & recommendation engine",
-                        text: "Model-driven suggestions for route selection, treasury balancing, and conversion timing across local currencies and majors.",
+                        title: "Currency exchange engine",
+                        text: "Smart suggestions for best routes, timing, and conversion rates across currencies.",
                         chips: ["Dynamic FX", "Cash positioning", "Anomaly scoring"],
                         href: "#coverage",
                         linkIcon: "bi-globe",
@@ -541,8 +541,8 @@ const initialMockData = {
                 {
                         tag: "Telemetry",
                         imageKey: "stockData",
-                        title: "Telemetry & data movement",
-                        text: "A high-density flow canvas for compliance signals, routing intelligence, payout states, and ledger reconciliation telemetry.",
+                        title: "Data and tracking",
+                        text: "Complete view of safety signals, routing intelligence, payment status, and records.",
                         chips: ["Risk events", "Settlement signals", "Ledger audit trail"],
                         href: "#developers",
                         linkIcon: "bi-braces",
@@ -554,22 +554,22 @@ const initialMockData = {
                 {
                         index: "01",
                         title: "Collect",
-                        text: "Cards, bank transfers, mobile money, and virtual account inflows enter one ledger stream.",
+                        text: "Cards, bank transfers, mobile money, and account payments all flow into one system.",
                 },
                 {
                         index: "02",
                         title: "Screen",
-                        text: "KYC, KYB, sanctions, AML, and threshold rules evaluate identity and payment behavior.",
+                        text: "Identity checks, safety rules, and compliance automatically verify payments.",
                 },
                 {
                         index: "03",
                         title: "Route",
-                        text: "The intelligence layer selects the best rail, FX timing window, and fallback path.",
+                        text: "Smart system selects the best payment method, timing, and backup options.",
                 },
                 {
                         index: "04",
                         title: "Settle",
-                        text: "Funds settle into wallets, bank accounts, ledgers, and reporting pipelines with full traceability.",
+                        text: "Money arrives in wallets, banks, and records with full tracking.",
                 },
         ],
 
@@ -643,45 +643,45 @@ const initialMockData = {
                                 region: "africa",
                                 tile: "tileGreen",
                                 icon: "bi-wallet2",
-                                kicker: "Local collections",
-                                title: "Mobile money + bank transfer intake",
-                                text: "Accept M-Pesa, MoMo, bank transfer, and account-based inflows with unified event streams.",
+                                kicker: "Local payments",
+                                title: "M-Pesa, MoMo, and bank transfers",
+                                text: "Accept payments through M-Pesa, mobile money, and bank transfers all in one system.",
                         },
                         {
                                 region: "global",
                                 tile: "tileBlue",
                                 icon: "bi-send-check",
-                                kicker: "Outbound reach",
-                                title: "Global bank and card payouts",
-                                text: "Send value through SWIFT, SEPA, ACH, and partner card push rails with treasury controls.",
+                                kicker: "Send worldwide",
+                                title: "Global bank and card payments",
+                                text: "Send money through international banks and cards with full control and tracking.",
                         },
                         {
                                 region: "west",
                                 tile: "tilePurple",
                                 icon: "bi-broadcast-pin",
                                 kicker: "West Africa",
-                                title: "Collections, payouts, disbursements",
-                                text: "Country-specific rails for payroll, supplier payouts, wallets, and business settlements.",
+                                title: "Payments for business",
+                                text: "Local payment methods for payroll, supplier payments, and business transactions.",
                         },
                         {
                                 region: "east",
                                 tile: "tileGold",
                                 icon: "bi-phone-vibrate",
                                 kicker: "East Africa",
-                                title: "Wallet-native disbursement flows",
-                                text: "High-speed mobile money and bank payout pathways for payroll, commerce, and remittance apps.",
+                                title: "Mobile money focus",
+                                text: "Fast mobile money and bank transfers for payroll, shopping, and sending money home.",
                         },
                 ],
                 stats: [
-                        { value: "25+", label: "market routes with regional compliance logic" },
-                        { value: "20+", label: "currency and wallet/account balance options" },
+                        { value: "25+", label: "countries and payment routes" },
+                        { value: "20+", label: "currencies and payment options" },
                         {
                                 value: "Multi-rail",
-                                label: "bank transfer, wallet, mobile money, and card disbursement",
+                                label: "bank, wallet, mobile money, and cards",
                         },
                         {
                                 value: "24/7",
-                                label: "monitoring across routing, risk, and reconciliation",
+                                label: "monitoring and support",
                         },
                 ],
                 markets: [
@@ -705,58 +705,58 @@ const initialMockData = {
                 {
                         icon: "bi-arrow-down-up",
                         tile: "tileGreen",
-                        title: "Collections",
-                        text: "Accept local transfers, wallet payments, cards, and account-based inflows through a unified API.",
+                        title: "Receive payments",
+                        text: "Accept bank transfers, mobile money, cards, and account payments through one simple system.",
                         chips: ["Bank transfer", "Mobile money", "Webhooks"],
                 },
                 {
                         icon: "bi-send",
                         tile: "tileBlue",
-                        title: "Payouts",
-                        text: "Single and bulk disbursement flows for suppliers, payroll, remittance, and merchant settlement.",
-                        chips: ["Bulk pay", "Fallback rails", "Status tracing"],
+                        title: "Send payments",
+                        text: "Pay suppliers, salaries, remittances, and settle merchants - single or bulk payments.",
+                        chips: ["Bulk pay", "Backup routes", "Status tracking"],
                 },
                 {
                         icon: "bi-building",
                         tile: "tilePurple",
                         title: "Virtual accounts",
-                        text: "Issue named and pooled account identifiers for customer onboarding, collections, and treasury segregation.",
+                        text: "Create virtual accounts for customers to collect payments and organize their money.",
                         chips: ["USD / EUR / GBP", "Local currency", "Sub-accounts"],
                 },
                 {
                         icon: "bi-journal-richtext",
                         tile: "tilePink",
-                        title: "Ledger core",
-                        text: "Double-entry infrastructure, wallet states, balance snapshots, and audit-grade event history.",
-                        chips: ["Real-time posting", "Audit trail", "Reconciliation"],
+                        title: "Account records",
+                        text: "Track all transactions, wallet balances, and maintain clear audit records automatically.",
+                        chips: ["Real-time updates", "Audit trail", "Reconciliation"],
                 },
                 {
                         icon: "bi-credit-card-2-front",
                         tile: "tileGold",
                         title: "Card programs",
-                        text: "Launch white-label consumer or corporate cards tied to wallets, spend controls, and program rules.",
+                        text: "Issue virtual or physical cards for customers with spending limits and controls.",
                         chips: ["Virtual cards", "Spend rules", "Program controls"],
                 },
                 {
                         icon: "bi-currency-exchange",
                         tile: "tileGreen",
-                        title: "FX treasury",
-                        text: "Auto-balance float positions, optimize conversion timing, and route payouts using treasury-aware logic.",
-                        chips: ["Dynamic spreads", "Rate windows", "Treasury alerts"],
+                        title: "Currency exchange",
+                        text: "Convert currencies at the best rates and manage multi-currency balances smartly.",
+                        chips: ["Best rates", "Timing", "Balance alerts"],
                 },
                 {
                         icon: "bi-shield-check",
                         tile: "tileBlue",
-                        title: "Compliance",
-                        text: "Identity checks, sanctions screening, transaction monitoring, and market-specific reporting controls.",
-                        chips: ["KYC / KYB", "AML rules", "Regulatory exports"],
+                        title: "Safety & compliance",
+                        text: "Identity verification, safety checks, monitoring, and required reporting built-in.",
+                        chips: ["KYC / KYB", "Safety rules", "Regulatory reports"],
                 },
                 {
                         icon: "bi-phone",
                         tile: "tilePurple",
-                        title: "White-label apps",
-                        text: "Launch branded finance experiences for neobanks, marketplaces, payroll apps, and treasury platforms.",
-                        chips: ["SDK-first", "Brand controls", "Embedded onboarding"],
+                        title: "Custom apps",
+                        text: "Build your own branded payment apps for banking, shopping, payroll, and money management.",
+                        chips: ["SDK-first", "Brand controls", "Easy setup"],
                 },
         ],
 
@@ -767,25 +767,25 @@ const initialMockData = {
                                 icon: "bi-speedometer2",
                                 label: "Health score",
                                 value: "82/100",
-                                text: "Composite signal across cash runway, VAT readiness, receivables, growth, and inventory velocity.",
+                                text: "Overall business health based on cash, VAT, sales, growth, and stock.",
                         },
                         {
                                 icon: "bi-wallet2",
                                 label: "Cash on hand",
                                 value: "KES 1.24M",
-                                text: "Live liquidity split across M-Pesa, banks, wallets, card floats, and treasury balances.",
+                                text: "Your money across M-Pesa, banks, wallets, cards, and savings.",
                         },
                         {
                                 icon: "bi-bell",
                                 label: "Attention hub",
                                 value: "5 alerts",
-                                text: "Money-at-stake tasks prioritized by urgency, deadline, and owner — from VAT to overdue invoices.",
+                                text: "Important tasks sorted by urgency - from VAT to unpaid bills.",
                         },
                         {
                                 icon: "bi-activity",
                                 label: "Modules online",
                                 value: "12 healthy",
-                                text: "Get Paid, Pay, Cash, Books, CRM, Store, Funding, Marketing, Data and integrations in one cockpit.",
+                                text: "Payments, Cash, Books, Customers, Shop, Marketing, and more in one place.",
                         },
                 ],
                 modules: [
@@ -793,16 +793,16 @@ const initialMockData = {
                         { name: "Pay Suppliers", icon: "bi-truck", status: "3 bills due", tone: "tileGold" },
                         { name: "Cash", icon: "bi-bank", status: "Runway 64 days", tone: "tileBlue" },
                         { name: "Books", icon: "bi-journal-check", status: "VAT ready", tone: "tilePurple" },
-                        { name: "CRM", icon: "bi-people", status: "4,820 customers", tone: "tilePink" },
-                        { name: "Online Store", icon: "bi-shop", status: "23 live SKUs", tone: "tileGreen" },
+                        { name: "Customers", icon: "bi-people", status: "4,820 customers", tone: "tilePink" },
+                        { name: "Online Shop", icon: "bi-shop", status: "23 live items", tone: "tileGreen" },
                         { name: "Marketing", icon: "bi-megaphone", status: "+18% repeat", tone: "tilePurple" },
                         { name: "Funding", icon: "bi-cash-stack", status: "KES 5M limit", tone: "tileGold" },
                 ],
                 timeline: [
-                        { time: "08:02", title: "M-Pesa settlement matched", meta: "KES 186,400 posted to ledger", icon: "bi-check2-circle" },
-                        { time: "08:21", title: "VAT return risk lowered", meta: "eTIMS entries reconciled automatically", icon: "bi-receipt-cutoff" },
+                        { time: "08:02", title: "M-Pesa payment received", meta: "KES 186,400 added to records", icon: "bi-check2-circle" },
+                        { time: "08:21", title: "VAT return done", meta: "eTIMS entries matched automatically", icon: "bi-receipt-cutoff" },
                         { time: "08:43", title: "Supplier payment scheduled", meta: "Kirinyaga Farmers Co-op · KES 48,000", icon: "bi-calendar-check" },
-                        { time: "09:10", title: "Campaign segment refreshed", meta: "VIP buyers with 3+ repeat purchases", icon: "bi-stars" },
+                        { time: "09:10", title: "Customer list updated", meta: "VIP buyers with 3+ purchases", icon: "bi-stars" },
                 ],
         },
 
@@ -810,27 +810,27 @@ const initialMockData = {
                 tiles: [
                         {
                                 icon: "bi-diagram-3",
-                                title: "Decision engine",
-                                text: "Home briefing prioritizes actions by cash impact, compliance risk, and customer promise instead of a flat task list.",
-                                points: ["Urgent/important/informational triage", "Money-at-stake labels", "Snooze or resolve without context switching"],
+                                title: "Smart priorities",
+                                text: "Tasks are sorted by what matters most - cash impact, deadlines, and customer needs.",
+                                points: ["Urgent/important/sorting", "Money-focused labels", "Handle tasks without switching apps"],
                         },
                         {
                                 icon: "bi-graph-up-arrow",
-                                title: "Performance cockpit",
-                                text: "Revenue, expenses, cash allocation, margin, and trend telemetry mirror the business dashboard experience.",
-                                points: ["7/30/90 day views", "Cash allocation drilldowns", "Live module health"],
+                                title: "Business dashboard",
+                                text: "See your revenue, expenses, cash flow, profits, and trends in one clear view.",
+                                points: ["7/30/90 day views", "Cash breakdown", "Live system status"],
                         },
                         {
                                 icon: "bi-kanban",
-                                title: "Workflows that finish",
-                                text: "Homepage visitors can understand the entire product journey: invoice, collect, reconcile, file tax, pay supplier, and forecast cash.",
-                                points: ["Quick invoice", "Bulk reminders", "Supplier schedules", "Export-ready records"],
+                                title: "Complete workflows",
+                                text: "Handle everything from invoicing to tax filing, supplier payments, and cash forecasting.",
+                                points: ["Quick invoices", "Bulk reminders", "Supplier schedules", "Export records"],
                         },
                 ],
                 tasks: [
                         { label: "Invoice sent", value: "INV-1104", done: true },
-                        { label: "Payment collected", value: "M-Pesa Till", done: true },
-                        { label: "Ledger posted", value: "Auto matched", done: true },
+                        { label: "Payment received", value: "M-Pesa Till", done: true },
+                        { label: "Records updated", value: "Auto matched", done: true },
                         { label: "VAT checked", value: "eTIMS ready", done: true },
                         { label: "Supplier paid", value: "Scheduled", done: false },
                         { label: "Cash forecast", value: "64 days", done: false },
@@ -840,91 +840,91 @@ const initialMockData = {
         implementationTracks: [
                 {
                         week: "Week 1",
-                        title: "Connect the money layer",
-                        text: "Activate sandbox keys, connect M-Pesa, bank, account, wallet, and card rails, then map every incoming event to the ledger.",
-                        chips: ["API keys", "Bank/M-Pesa", "Webhooks", "Ledger mapping"],
+                        title: "Connect payments",
+                        text: "Set up API keys, connect M-Pesa, banks, and cards, then link all transactions to your records.",
+                        chips: ["API keys", "Bank/M-Pesa", "Webhooks", "Record mapping"],
                 },
                 {
                         week: "Week 2–3",
-                        title: "Model operations",
-                        text: "Configure customers, products, suppliers, approvals, VAT categories, settlement rules, and role-based access.",
-                        chips: ["Roles", "Tax rules", "Approvals", "Catalogs"],
+                        title: "Set up operations",
+                        text: "Add customers, products, suppliers, approvals, tax rules, and team access.",
+                        chips: ["Roles", "Tax rules", "Approvals", "Product lists"],
                 },
                 {
                         week: "Week 4–6",
-                        title: "Launch command center",
-                        text: "Go live with dashboard modules, task automation, reconciliation exports, alerts, and route-quality monitoring.",
-                        chips: ["Attention hub", "Reports", "Alerts", "Module health"],
+                        title: "Go live",
+                        text: "Launch dashboards, automation, reports, alerts, and payment monitoring.",
+                        chips: ["Task hub", "Reports", "Alerts", "System health"],
                 },
                 {
                         week: "Scale",
-                        title: "Optimize and expand",
-                        text: "Add funding, marketing automation, inventory intelligence, multi-branch reporting, and cross-border treasury expansion.",
-                        chips: ["Funding", "Marketing", "Branches", "FX treasury"],
+                        title: "Grow and expand",
+                        text: "Add funding, marketing, stock management, multiple branches, and international payments.",
+                        chips: ["Funding", "Marketing", "Branches", "Currency exchange"],
                 },
         ],
 
         automationRecipes: [
                 {
-                        trigger: "Invoice overdue by 7 days",
+                        trigger: "Invoice unpaid for 7 days",
                         action: "Send WhatsApp/SMS reminder",
-                        outcome: "Recover cash without manual follow-up",
+                        outcome: "Get paid faster without chasing people",
                         icon: "bi-bell",
                 },
                 {
-                        trigger: "Cash runway drops below 45 days",
-                        action: "Surface funding options and deferable payables",
-                        outcome: "Protect payroll and supplier continuity",
+                        trigger: "Cash running low (45 days)",
+                        action: "Show funding options and delayable bills",
+                        outcome: "Protect salaries and supplier payments",
                         icon: "bi-fuel-pump",
                 },
                 {
-                        trigger: "VAT period closes",
-                        action: "Prepare eTIMS-backed filing pack",
-                        outcome: "Reduce late penalties and accountant churn",
+                        trigger: "VAT deadline approaching",
+                        action: "Prepare eTIMS tax filing package",
+                        outcome: "Avoid late fees and paperwork stress",
                         icon: "bi-file-earmark-check",
                 },
                 {
-                        trigger: "Product stock hits reorder point",
-                        action: "Draft purchase order from approved supplier",
-                        outcome: "Prevent lost sales and dead stock",
+                        trigger: "Stock running low",
+                        action: "Create order from approved supplier",
+                        outcome: "Never miss sales due to no stock",
                         icon: "bi-box-seam",
                 },
                 {
-                        trigger: "Route degradation detected",
-                        action: "Switch payout rail and notify operator",
-                        outcome: "Maintain collection and payout reliability",
+                        trigger: "Payment route has issues",
+                        action: "Switch to backup route and alert team",
+                        outcome: "Keep payments working reliably",
                         icon: "bi-signpost-split",
                 },
                 {
-                        trigger: "VIP customer becomes inactive",
-                        action: "Launch retention offer segment",
-                        outcome: "Compound lifetime value with less effort",
+                        trigger: "VIP customer stops buying",
+                        action: "Send special offer to bring them back",
+                        outcome: "Keep valuable customers with less effort",
                         icon: "bi-stars",
                 },
         ],
 
         platformProof: [
-                { label: "Dashboard pages", value: "18+", text: "A full business cockpit behind the homepage promise." },
-                { label: "Workflow modals", value: "40+", text: "Actions for invoice, payroll, tax, stock, funding, marketing and data." },
-                { label: "Realtime surfaces", value: "24/7", text: "Activity, alerts, route quality and business health updates." },
-                { label: "Kenya-first logic", value: "M-Pesa + eTIMS", text: "Localized rails and tax posture built into everyday operations." },
+                { label: "Dashboard pages", value: "18+", text: "Complete business management system." },
+                { label: "Workflow tools", value: "40+", text: "Actions for invoices, payroll, tax, stock, funding, marketing and data." },
+                { label: "Realtime updates", value: "24/7", text: "Activity, alerts, payment quality and business health." },
+                { label: "Kenya-first", value: "M-Pesa + eTIMS", text: "Built for Kenya with local payments and tax." },
         ],
 
         developerPoints: [
                 {
                         icon: "bi-clock-history",
-                        title: "Faster first request",
-                        text: "Organized APIs for accounts, payouts, webhooks, balances, cards, compliance, and FX.",
+                        title: "Quick to start",
+                        text: "Simple APIs for accounts, payments, webhooks, balances, cards, safety, and currency exchange.",
                 },
                 {
                         icon: "bi-box-arrow-in-down",
-                        title: "Practical tooling",
-                        text: "Downloadable sample collection and copy-ready base URL straight from the homepage.",
+                        title: "Ready-to-use tools",
+                        text: "Download sample code and copy-paste ready URLs directly from the homepage.",
                 },
                 {
                         icon: "bi-link-45deg",
-                        title: "One integration surface",
-                        text: "Avoid fragmented vendor logic by building against one event-driven interface.",
+                        title: "One simple connection",
+                        text: "Connect once instead of managing multiple different payment systems.",
                 },
         ],
 
@@ -993,101 +993,101 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
                 {
                         accent: "24/7",
                         rest: "",
-                        text: "transaction monitoring, alerting, and operational review windows",
+                        text: "monitoring, alerts, and support around the clock",
                 },
                 {
                         accent: "KYC",
                         rest: "/KYB",
-                        text: "identity and business onboarding controls built into the flow",
+                        text: "identity and business verification built into the system",
                 },
                 {
                         accent: "AML",
                         rest: "",
-                        text: "rule-based and risk-signaled screening across payouts and collections",
+                        text: "safety screening across all payments and collections",
                 },
                 {
                         accent: "Audit",
                         rest: "",
-                        text: "event logs, ledger traces, and export-ready reconciliation records",
+                        text: "complete records, tracking, and export-ready reports",
                 },
         ],
 
         trustFaq: [
                 {
                         id: "trustOne",
-                        title: "Pan-African compliance engine",
+                        title: "African compliance built-in",
                         open: true,
-                        body: "Market-specific identity, sanctions, AML, and reporting logic are mapped into the orchestration layer so expansion does not force a full rebuild of risk workflows per country.",
+                        body: "Identity checks, safety rules, and reporting requirements for each African country are already included - no need to build them separately for every market.",
                 },
                 {
                         id: "trustTwo",
-                        title: "Real-time ledger and reconciliation",
-                        body: "Every balance movement is captured with event-level traceability, enabling faster finance operations, internal controls, and partner reporting across complex payout programs.",
+                        title: "Real-time tracking and records",
+                        body: "Every money movement is tracked instantly, making finance operations faster, controls easier, and partner reporting simpler across all payment programs.",
                 },
                 {
                         id: "trustThree",
-                        title: "Multi-rail resilience and fallback logic",
-                        body: "When route quality changes, Paymo can re-direct through alternate rails or treasury-aware pathways to keep payout success and collection continuity high.",
+                        title: "Backup payment routes",
+                        body: "When one payment method has issues, Paymo automatically switches to backup options to keep your payments working reliably.",
                 },
                 {
                         id: "trustFour",
-                        title: "Enterprise and embedded finance readiness",
-                        body: "From white-label fintech launches to enterprise treasury control rooms, the product architecture supports both developer-first and operator-first deployment models.",
+                        title: "Ready for businesses of all sizes",
+                        body: "From small startups to large companies, the system works for both developers building apps and business teams managing money.",
                 },
                 {
                         id: "trustFive",
-                        title: "Status, observability, and incident context",
-                        body: "Operational status is surfaced through route telemetry, event monitoring, transaction state visibility, and clear fallback posture during rail degradation.",
+                        title: "Always know what's happening",
+                        body: "See payment status, monitoring, transaction updates, and clear backup options whenever there are any issues.",
                 },
         ],
 
         results: [
                 {
-                        kicker: "Fintech and neobanks",
+                        kicker: "Digital banks",
                         end: 90,
                         suffix: " days",
-                        text: "Typical launch path for branded accounts, cards, onboarding, and payout infrastructure with fewer custom banking primitives to build.",
+                        text: "Typical time to launch accounts, cards, onboarding, and payments without building everything from scratch.",
                 },
                 {
-                        kicker: "Treasury and enterprise",
+                        kicker: "Business money management",
                         end: null,
-                        suffix: "1 surface",
-                        text: "One control room for treasury balances, route quality, compliance rules, settlements, and reconciliation outputs.",
+                        suffix: "1 system",
+                        text: "One place for balances, payment quality, safety rules, settlements, and all records.",
                 },
                 {
                         kicker: "Commerce and payroll",
                         end: null,
                         suffix: "Same-day",
-                        text: "Designed for rapid local disbursement and optimized cross-border conversion windows where route quality supports it.",
+                        text: "Fast local payments and smart currency exchange when routes support it.",
                 },
         ],
 
         faqs: [
                 {
                         id: "faqOne",
-                        title: "What makes Paymo different from a normal payment processor?",
+                        title: "What makes Paymo different from other payment systems?",
                         open: true,
-                        body: "Paymo combines collections and payouts with embedded banking, ledgers, virtual accounts, treasury intelligence, and compliance automation. It is positioned as BAAS infrastructure, not just a payments gateway.",
+                        body: "Paymo does more than just process payments - it includes accounts, tracking, virtual accounts, smart currency exchange, and built-in safety rules. It's a complete money system, not just a payment gateway.",
                 },
                 {
                         id: "faqTwo",
-                        title: "Can Paymo support mobile money and bank rails together?",
-                        body: "Yes. The architecture is intentionally multi-rail, allowing products to combine local mobile money flows, account-based transfers, and global bank payout corridors through one orchestration layer.",
+                        title: "Can Paymo handle both mobile money and bank payments?",
+                        body: "Yes. You can combine M-Pesa, other mobile money, bank transfers, and international payments all in one system - no need for separate tools.",
                 },
                 {
                         id: "faqThree",
-                        title: "Is this homepage using real working interactions?",
-                        body: "Yes. The buttons open a real sandbox offcanvas, generate a treasury plan modal, switch code samples with a typing effect, copy code, download files, update FX cards, toggle coverage filters, and navigate to anchored sections.",
+                        title: "Do the buttons and features on this page actually work?",
+                        body: "Yes. The buttons open real demos, generate plans, switch code examples, copy code, download files, update exchange rates, filter coverage options, and navigate to different sections.",
                 },
                 {
                         id: "faqFour",
-                        title: "Is the layout responsive on mobile?",
-                        body: "Yes. It is built on Bootstrap 5 with responsive grids for the hero visual, orbit constellation, metric grids, coverage blocks, and code panels — including touch-friendly tap-to-open dropdown menus.",
+                        title: "Does this work on mobile phones?",
+                        body: "Yes. It's built to work perfectly on mobile with responsive design for all the visuals, metrics, coverage maps, and code sections.",
                 },
                 {
                         id: "faqFive",
-                        title: "Can this theme extend to other pages in the Paymo site map?",
-                        body: "Absolutely. The emerald neon-glass design system here is modular and can extend to platform, pricing, coverage, security, developer docs, and solutions pages while keeping the same visual language.",
+                        title: "Can this design be used on other pages?",
+                        body: "Absolutely. The design system can be extended to platform, pricing, coverage, security, developer docs, and solutions pages while keeping the same look and feel.",
                 },
         ],
 
@@ -1113,17 +1113,17 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
         capabilityBrief: `PAYMO BAAS — HOMEPAGE CAPABILITY BRIEF
 
 Positioning:
-The financial nervous system for borderless Africa.
+Your simple money system for Africa and beyond.
 
 Core promise:
-Pay more, bank, and move money across Africa and the world with PayMO
+Send, receive, and manage money across Africa and the world with PayMO
 
 Key platform layers:
-1. Global rails
-2. African local rails
-3. Embedded banking
-4. Intelligence layer
-5. Compliance shield
+1. Global payments
+2. African local payments
+3. Virtual accounts
+4. Smart routing
+5. Safety & compliance
 
 Design language:
 Deep-space emerald, glassmorphism, mint neon edges, 3D renders, animated telemetry.
@@ -1714,7 +1714,7 @@ export default function Home() {
                                                                                         type="button"
                                                                                 >
                                                                                         <i className="bi bi-code-slash" />
-                                                                                        Start Building — Free Sandbox
+                                                                                        Start Free Trial
                                                                                 </button>
                                                                                 <button
                                                                                         className={cx(
@@ -1726,7 +1726,7 @@ export default function Home() {
                                                                                         type="button"
                                                                                 >
                                                                                         <i className="bi bi-briefcase" />
-                                                                                        Talk to Treasury
+                                                                                        Talk to Sales
                                                                                 </button>
                                                                                 <a
                                                                                         href="#coverage"
@@ -1736,7 +1736,7 @@ export default function Home() {
                                                                                         )}
                                                                                 >
                                                                                         <i className="bi bi-globe2" />
-                                                                                        Explore Network
+                                                                                        See Where We Work
                                                                                 </a>
                                                                         </div>
                                                                         <div className={s.trustBand}>
@@ -1865,14 +1865,10 @@ export default function Home() {
                                                         <div className={cx("col-lg-5", s.reveal)}>
                                                                 <span className={s.sectionKicker}>The Problem</span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        Running finance across Africa should not require a PhD in
-                                                                        fragmentation.
+                                                                        Managing money shouldn't be this complicated.
                                                                 </h2>
                                                                 <p className={cx(s.textMutedPaymo, "mb-4")}>
-                                                                        Most operators stitch together dashboards, manual
-                                                                        reconciliation, region-specific payout vendors, and multiple
-                                                                        KYC tools. Paymo compresses that sprawl into a single
-                                                                        operating system.
+                                                                        Most people use multiple apps, manual spreadsheets, and different services just to send and receive money. Paymo puts everything in one simple place.
                                                                 </p>
                                                                 <div className="d-flex flex-wrap gap-2 mb-4">
                                                                         <button
@@ -1884,7 +1880,7 @@ export default function Home() {
                                                                                 type="button"
                                                                                 onClick={() => setProblemMode("before")}
                                                                         >
-                                                                                Before Paymo
+                                                                                Without Paymo
                                                                         </button>
                                                                         <button
                                                                                 className={cx(
@@ -1895,7 +1891,7 @@ export default function Home() {
                                                                                 type="button"
                                                                                 onClick={() => setProblemMode("after")}
                                                                         >
-                                                                                After Paymo
+                                                                                With Paymo
                                                                         </button>
                                                                 </div>
                                                                 <ul className={s.bulletList}>
@@ -1964,12 +1960,10 @@ export default function Home() {
                                                         <div className={cx("col-lg-5", s.reveal)}>
                                                                 <span className={s.sectionKicker}>Unified Platform Stack</span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        Five layers. One financial control plane.
+                                                                        Five layers. One simple money system.
                                                                 </h2>
                                                                 <p className={cx(s.textMutedPaymo, "mb-4")}>
-                                                                        Global rails, African local rails, embedded banking,
-                                                                        intelligence, and compliance. Click each layer to inspect the
-                                                                        operating components.
+                                                                        Global payments, local African methods, virtual accounts, smart routing, and safety. Click each layer to see how it works.
                                                                 </p>
                                                                 <div className={cx(s.glassCard, s.stackDetail)}>
                                                                         <small
