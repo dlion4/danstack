@@ -1,5 +1,5 @@
 /* ============================================================================
- * Home.jsx — Paymo BAAS Homepage (Emerald Glass Edition)
+ * Home.jsx — Paymo Homepage (Emerald Glass Edition)
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: legacy single-file index.html (992 LOC) — vanilla JS + Bootstrap
  * STACK .........: Vite + React 18 + TanStack Query v5 + Bootstrap 5
@@ -75,7 +75,7 @@ const initialMockData = {
                         {
                                 end: 99,
                                 suffix: ".97%",
-                                label: "uptime - we're always working",
+                                label: "uptime - we are always working",
                         },
                         {
                                 end: 90,
@@ -265,7 +265,7 @@ const initialMockData = {
                                 },
                                 {
                                         icon: "bi-hourglass-split",
-                                        text: "Payments take days to arrive, and you can't see where money is stuck.",
+                                        text: "Payments take days to arrive, and you cannot see where money is stuck.",
                                 },
                                 {
                                         icon: "bi-eye-slash",
@@ -1036,7 +1036,7 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
                 },
                 {
                         id: "trustFive",
-                        title: "Always know what's happening",
+                        title: "Always know what is happening",
                         body: "See payment status, monitoring, transaction updates, and clear backup options whenever there are any issues.",
                 },
         ],
@@ -1067,7 +1067,7 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
                         id: "faqOne",
                         title: "What makes Paymo different from other payment systems?",
                         open: true,
-                        body: "Paymo does more than just process payments - it includes accounts, tracking, virtual accounts, smart currency exchange, and built-in safety rules. It's a complete money system, not just a payment gateway.",
+                        body: "Paymo does more than just process payments - it includes accounts, tracking, virtual accounts, smart currency exchange, and built-in safety rules. It is a complete money system, not just a payment gateway.",
                 },
                 {
                         id: "faqTwo",
@@ -1082,7 +1082,7 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
                 {
                         id: "faqFour",
                         title: "Does this work on mobile phones?",
-                        body: "Yes. It's built to work perfectly on mobile with responsive design for all the visuals, metrics, coverage maps, and code sections.",
+                        body: "Yes. It is built to work perfectly on mobile with responsive design for all the visuals, metrics, coverage maps, and code sections.",
                 },
                 {
                         id: "faqFive",
@@ -1110,7 +1110,7 @@ fetch('https://sandbox.paymo.africa/v1/payouts', {
                 stockCoins: stockCoinsImg,
         },
 
-        capabilityBrief: `PAYMO BAAS — HOMEPAGE CAPABILITY BRIEF
+        capabilityBrief: `PAYMO — HOMEPAGE CAPABILITY BRIEF
 
 Positioning:
 Your simple money system for Africa and beyond.
@@ -1131,7 +1131,7 @@ Deep-space emerald, glassmorphism, mint neon edges, 3D renders, animated telemet
 
         postmanStarter: {
                 info: {
-                        name: "Paymo BAAS Starter Collection",
+                        name: "Paymo Starter Collection",
                         schema:
                                 "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
                 },
@@ -2180,17 +2180,15 @@ export default function Home() {
                                 <section id="flow-engine" className={s.sectionPad}>
                                         <div className="container">
                                                 <div className={cx("text-center mb-5", s.reveal)}>
-                                                        <span className={s.sectionKicker}>Operational Flow Engine</span>
+                                                        <span className={s.sectionKicker}>Smart Payment System</span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                Live orchestration visuals, engineered for Paymo BAAS.
+                                                                See how payments move in real-time.
                                                         </h2>
                                                         <p
                                                                 className={cx(s.textMutedPaymo, "mx-auto")}
                                                                 style={{ maxWidth: "840px" }}
                                                         >
-                                                                Deep-space emerald gradients, frosted glass surfaces, and
-                                                                animated 3D renders frame Paymo as a living financial command
-                                                                center — not a static landing page.
+                                                                Watch the complete payment journey - from routing to settlement - with live visuals and clear tracking.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4">
@@ -2408,17 +2406,16 @@ export default function Home() {
                                         <div className="container">
                                                 <div className={cx("text-center mb-5", s.reveal)}>
                                                         <span className={s.sectionKicker}>
-                                                                Comprehensive Product Modules
+                                                                Complete Payment Features
                                                         </span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                Detailed, card-first platform coverage.
+                                                                Everything you need in one place.
                                                         </h2>
                                                         <p
                                                                 className={cx(s.textMutedPaymo, "mx-auto")}
                                                                 style={{ maxWidth: "820px" }}
                                                         >
-                                                                Every major BAAS component gets a focused module card so
-                                                                visitors understand the stack quickly.
+                                                                Every payment feature clearly explained so you can see exactly what we offer.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4">
@@ -2458,12 +2455,10 @@ export default function Home() {
                                                         <div className={cx("col-lg-5", s.reveal)}>
                                                                 <span className={s.sectionKicker}>PayMo Business Dashboard</span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        The homepage now previews the decision engine behind the product.
+                                                                        Your complete business command center.
                                                                 </h2>
                                                                 <p className={s.textMutedPaymo}>
-                                                                        This section mirrors the refined business-dashboard language: cash,
-                                                                        attention, performance, health, activity, and module status — all
-                                                                        presented with the emerald BAAS animation system.
+                                                                        See your cash flow, priorities, performance, business health, activity, and system status - all in one powerful dashboard.
                                                                 </p>
                                                                 <div className={s.dashboardHeroStack}>
                                                                         {content.businessSuite.highlights.map((item) => (
@@ -2563,14 +2558,12 @@ export default function Home() {
                                 <section id="operating-console" className={s.sectionPad}>
                                         <div className="container">
                                                 <div className={cx("text-center mb-5", s.reveal)}>
-                                                        <span className={s.sectionKicker}>Advanced Operating Console</span>
+                                                        <span className={s.sectionKicker}>Business Dashboard</span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                From marketing page to product narrative — every feature has a visible operating loop.
+                                                                See your complete business in action.
                                                         </h2>
                                                         <p className={cx(s.textMutedPaymo, "mx-auto")} style={{ maxWidth: "860px" }}>
-                                                                The home page now explains what PayMo does after a user signs in: decide,
-                                                                execute, reconcile, and optimize. It keeps the existing glass motion system
-                                                                while adding deeper dashboard-consistent product storytelling.
+                                                                After signing in, manage decisions, execute payments, reconcile accounts, and optimize your business - all from one clear dashboard.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4">
@@ -2612,13 +2605,12 @@ export default function Home() {
                                         <div className="container">
                                                 <div className="row g-4 align-items-stretch">
                                                         <div className={cx("col-lg-4", s.reveal)}>
-                                                                <span className={s.sectionKicker}>Implementation Path</span>
+                                                                <span className={s.sectionKicker}>Setup Guide</span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        Extensive, enterprise-ready rollout without losing startup speed.
+                                                                        Get started quickly and scale as you grow.
                                                                 </h2>
                                                                 <p className={s.textMutedPaymo}>
-                                                                        A clear adoption plan helps founders, operators, and engineers see how
-                                                                        the platform goes from sandbox to live command center.
+                                                                        A clear step-by-step plan shows how to go from testing to live operations without any complexity.
                                                                 </p>
                                                                 <button
                                                                         className={cx(s.btnPaymo, "btn d-inline-flex align-items-center gap-2")}
@@ -2627,7 +2619,7 @@ export default function Home() {
                                                                         type="button"
                                                                 >
                                                                         <i className="bi bi-diagram-2" />
-                                                                        Generate rollout plan
+                                                                        Create your plan
                                                                 </button>
                                                         </div>
                                                         <div className={cx("col-lg-8", s.reveal)}>
@@ -2654,13 +2646,12 @@ export default function Home() {
                                 <section id="automations" className={s.sectionPad}>
                                         <div className="container">
                                                 <div className={cx("text-center mb-5", s.reveal)}>
-                                                        <span className={s.sectionKicker}>Automation Recipes</span>
+                                                        <span className={s.sectionKicker}>Smart Automations</span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                Relevant business automations that make the page feel alive.
+                                                                Automate your business tasks.
                                                         </h2>
                                                         <p className={cx(s.textMutedPaymo, "mx-auto")} style={{ maxWidth: "820px" }}>
-                                                                Click any recipe to preview the trigger, action, and business outcome.
-                                                                The motion and cards stay aligned with the current emerald glass theme.
+                                                                Click any automation to see how it works - what triggers it, what action it takes, and the business benefit.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4 align-items-stretch">
@@ -2730,14 +2721,12 @@ export default function Home() {
                                         <div className="container">
                                                 <div className="row g-4 align-items-stretch">
                                                         <div className={cx("col-lg-5", s.reveal)}>
-                                                                <span className={s.sectionKicker}>Developer Experience</span>
+                                                                <span className={s.sectionKicker}>For Developers</span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        SDK-first. Sandbox-first. Operator-ready.
+                                                                        Start building immediately.
                                                                 </h2>
                                                                 <p className={s.textMutedPaymo}>
-                                                                        The developer section is designed as a working surface. Switch
-                                                                        runtimes, copy the code sample, download an API starter, or
-                                                                        open the sandbox panel immediately.
+                                                                        Test with our sandbox, copy code samples, download API starters, and start integrating payments right away.
                                                                 </p>
                                                                 <div className={s.developerPoints}>
                                                                         {content.developerPoints.map((point) => (
@@ -2860,11 +2849,11 @@ export default function Home() {
                                                                         Security &amp; Trust Center
                                                                 </span>
                                                                 <h2 className={cx(s.heading, "mb-3")}>
-                                                                        Compliance automation without losing operational speed.
+                                                                        Built-in compliance without slowing you down.
                                                                 </h2>
                                                                 <p className={s.textMutedPaymo}>
-                                                                        Paymo positions compliance as part of the transaction fabric,
-                                                                        not an afterthought added at the end of routing.
+                                                                        We make compliance part of every transaction automatically,
+                                                                        not something added at the end.
                                                                 </p>
                                                                 <div className={cx(s.trustGrid, "mt-4")}>
                                                                         {content.trustStats.map((stat) => (
@@ -2929,17 +2918,16 @@ export default function Home() {
                                 <section id="results" className={s.sectionPad}>
                                         <div className="container">
                                                 <div className={cx("text-center mb-5", s.reveal)}>
-                                                        <span className={s.sectionKicker}>Why Operators Switch</span>
+                                                        <span className={s.sectionKicker}>Why Businesses Choose Us</span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                Built for fintech builders and finance teams at the same time.
+
+                                                                Complete financial infrastructure for builders and teams.
                                                         </h2>
                                                         <p
                                                                 className={cx(s.textMutedPaymo, "mx-auto")}
                                                                 style={{ maxWidth: "780px" }}
                                                         >
-                                                                Paymo is not just another checkout layer — it is treasury,
-                                                                embedded banking, compliance automation, developer speed, and
-                                                                regional depth together.
+                                                                We deliver treasury management, virtual banking, built-in compliance, fast development tools, and deep regional coverage — all in one platform.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4">
@@ -2975,7 +2963,7 @@ export default function Home() {
                                                 <div className={cx("text-center mb-5", s.reveal)}>
                                                         <span className={s.sectionKicker}>FAQ</span>
                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                Answers for founders, operators, and engineers.
+                                                                Common questions answered.
                                                         </h2>
                                                 </div>
                                                 <div
@@ -3031,12 +3019,10 @@ export default function Home() {
                                                                 <div className="col-lg-7">
                                                                         <span className={s.sectionKicker}>Final Call to Action</span>
                                                                         <h2 className={cx(s.heading, "mb-3")}>
-                                                                                Launch the next financial layer for borderless Africa.
+                                                                                Build the future of money across Africa.
                                                                         </h2>
                                                                         <p className={cx(s.textMutedPaymo, "mb-0")}>
-                                                                                Start with the sandbox, generate a route plan for your
-                                                                                rollout, or download the homepage capability brief built
-                                                                                from the Paymo BAAS structure.
+                                                                                Start with our sandbox, create your rollout plan, or download our platform overview to get started today.
                                                                         </p>
                                                                 </div>
                                                                 <div className="col-lg-5">
