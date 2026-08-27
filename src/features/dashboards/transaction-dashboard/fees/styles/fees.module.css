@@ -5,42 +5,42 @@
    ============================================================ */
 
 .feesPage {
-	--pm-primary: #10b981;
-	--pm-primary-dark: #059669;
+	--pm-primary: #12b76a;
+	--pm-primary-dark: #0b8f52;
 	--pm-primary-light: #34d399;
-	--pm-accent: #10b981;
+	--pm-accent: #12b76a;
 	--pm-accent-soft: #d1fae5;
-	--pm-warning: #f59e0b;
+	--pm-warning: #f79009;
 	--pm-warning-soft: #fef3c7;
-	--pm-danger: #ef4444;
+	--pm-danger: #f04438;
 	--pm-danger-soft: #fee2e2;
-	--pm-info: #3b82f6;
+	--pm-info: #2e90fa;
 	--pm-info-soft: #dbeafe;
 	--pm-purple: #8b5cf6;
 	--pm-purple-soft: #ede9fe;
-	--pm-bg: #f5f1ec;
+	--pm-bg: #f2f4f8;
 	--pm-bg-2: #eee8df;
 	--pm-surface: #ffffff;
-	--pm-surface-2: #faf7f3;
+	--pm-surface-2: #fafbfd;
 	--pm-ink: #1a1f2e;
 	--pm-ink-soft: #4b5563;
 	--pm-muted: #9ca3af;
-	--pm-border: #e5e2dc;
+	--pm-border: #e6e9f0;
 	--pm-border-2: #d4d0c8;
-	--pm-gradient-hero: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	--pm-gradient-hero: linear-gradient(115deg, #0b1322 0%, #123a2c 60%, #0d5c38 100%);
 	--pm-gradient-slate: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-	--pm-gradient-accent-card: linear-gradient(135deg, #0f766e, #10b981, #059669);
+	--pm-gradient-accent-card: linear-gradient(135deg, #0f766e, #12b76a, #0b8f52);
 	--pm-shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
 	--pm-shadow-md: 0 4px 12px rgba(26, 31, 46, 0.06);
 	--pm-shadow-lg: 0 10px 30px rgba(26, 31, 46, 0.08);
 	--pm-shadow-xl: 0 20px 50px rgba(26, 31, 46, 0.12);
-	--pm-shadow-glow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+	--pm-shadow-glow: 0 0 0 3px rgba(18, 183, 106, 0.14);
 	--pm-r-sm: 8px;
-	--pm-r-md: 14px;
-	--pm-r-lg: 20px;
+	--pm-r-md: 12px;
+	--pm-r-lg: 16px;
 	--pm-r-pill: 999px;
 	--pm-font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-	--pm-font-display: "Space Grotesk", "Inter", sans-serif;
+	--pm-font-display: "Sora", "Inter", sans-serif;
 
 	display: flex;
 	min-height: 100vh;
@@ -386,7 +386,7 @@
 	background: var(--pm-gradient-accent-card);
 	color: var(--pm-ink);
 	border-color: rgba(16, 185, 129, 0.35);
-	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.2);
+	box-shadow: 0 4px 12px -4px rgba(18, 183, 106, 0.2);
 }
 
 .sv {
@@ -442,7 +442,7 @@
 
 .badgeS {
 	background: var(--pm-accent-soft);
-	color: #047857;
+	color: #0b8f52;
 	border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -506,7 +506,7 @@
 	background: var(--pm-primary);
 	color: #fff;
 	border-color: transparent;
-	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+	box-shadow: 0 4px 12px -4px rgba(16, 24, 40, 0.12);
 }
 
 .btnPmP:hover {
@@ -1014,7 +1014,7 @@ input[type="date"].fc {
 .backdrop {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(11, 19, 34, 0.45);
 	backdrop-filter: blur(4px);
 	-webkit-backdrop-filter: blur(4px);
 	z-index: 1055;
@@ -1481,7 +1481,7 @@ input[type="date"].fc {
 	gap: 12px;
 	padding: 14px 18px;
 	border-radius: var(--pm-r-md);
-	background: #fffbeb;
+	background: #fef0c7;
 	border: 1px solid #fde68a;
 	margin-bottom: 16px;
 	flex-wrap: wrap;
@@ -1574,7 +1574,7 @@ input[type="date"].fc {
 
 /* ---------- profit pot card ---------- */
 .potCard {
-	background: linear-gradient(135deg, #0f766e, #10b981, #059669);
+	background: linear-gradient(135deg, #0f766e, #12b76a, #0b8f52);
 	border-radius: var(--pm-r-lg);
 	padding: 18px;
 	color: #fff;

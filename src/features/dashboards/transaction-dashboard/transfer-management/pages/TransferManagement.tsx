@@ -600,7 +600,7 @@ export default function TransferManagement() {
 								{c.heroValue}
 							</div>
 							<p style={{ margin: 0, fontSize: 13 }}>{c.heroSub}</p>
-							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+											<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
 								<button
 									type="button"
 									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
@@ -841,8 +841,7 @@ export default function TransferManagement() {
 				<div className={s.card}>
 					<div className={s.sectionHead}>
 						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-globe" style={{ color: "var(--info)" }} />{" "}
+							<h3 className={s.sectionTitle}>								<i className="bi bi-globe" style={{ color: "var(--info)" }} />{" "}
 								International Transfers &amp; Remittances
 							</h3>
 							<p className={s.sectionSub}>
@@ -948,10 +947,7 @@ export default function TransferManagement() {
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-arrow-repeat"
-									style={{ color: "var(--purple)" }}
-								/>{" "}
+								<i className="bi bi-arrow-repeat" style={{ color: "var(--purple)" }} />{" "}
 								Scheduled &amp; Recurring Transfers
 							</h3>
 							<p className={s.sectionSub}>
@@ -1028,10 +1024,7 @@ export default function TransferManagement() {
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--ink-500)" }}
-								/>{" "}
+								<i className="bi bi-clock-history" style={{ color: "var(--ink-500)" }} />{" "}
 								Transfer History &amp; Reconciliation
 							</h3>
 							<p className={s.sectionSub}>
@@ -1107,10 +1100,7 @@ export default function TransferManagement() {
 					<div className={s.sectionHead}>
 						<div>
 							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-shield-check"
-									style={{ color: "var(--danger)" }}
-								/>{" "}
+								<i className="bi bi-shield-check" style={{ color: "var(--danger)" }} />{" "}
 								Transfer Limits, Approvals &amp; Compliance
 							</h3>
 							<p className={s.sectionSub}>

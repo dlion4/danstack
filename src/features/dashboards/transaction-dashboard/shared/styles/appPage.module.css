@@ -18,75 +18,62 @@
 }
 
 .pageRoot {
-	/* --- Emerald Theme (Cream surface + Emerald accents) --- */
-	--pri: #10b981;
-	/* Primary Emerald */
-	--pri-600: #059669;
-	/* Emerald-600 */
-	--pri-700: #047857;
-	/* Emerald-700 */
+	/* ── Brand (Dashboard A exact) ── */
+	--pri: #12b76a;
+	--pri-600: #0b8f52;
+	--pri-700: #0b8f52;
 	--pri-light: #34d399;
-	/* Emerald-400 */
-	--sec: #059669;
-	/* Emerald-600 */
+	--sec: #0b8f52;
 	--sec-light: #34d399;
-	/* Emerald-400 */
-	--acc: #f59e0b;
-	/* Amber-500 */
+	--acc: #f79009;
 	--acc-light: #fbbf24;
-	/* Amber-400 */
 
-	--surface: #f5f1ec;
-	/* Cream surface */
+	/* ── Neutrals (cool gray) ── */
+	--surface: #f2f4f8;
 	--surface-elev: #ffffff;
-	--surface-2: #faf7f3;
-	--ink-900: #1a1f2e;
-	--ink-700: #4b5563;
-	--ink-500: #9ca3af;
-	--ink-300: #d1d5db;
-	--ink-100: #f3f4f6;
-	--border: #e5e2dc;
-	--border-strong: #d4d0c8;
-	--border-2: #d4d0c8;
+	--surface-2: #fafbfd;
+	--ink-900: #101828;
+	--ink-700: #344054;
+	--ink-500: #667085;
+	--ink-300: #d0d5dd;
+	--ink-100: #f2f4f8;
+	--border: #e6e9f0;
+	--border-strong: #d5d9e2;
+	--border-2: #d5d9e2;
 
-	--success: #10b981;
-	/* Emerald-500 */
-	--success-bg: #ecfdf5;
-	--warning: #f59e0b;
-	/* Amber-500 */
-	--warning-bg: #fffbeb;
-	--danger: #ef4444;
-	/* Red-500 */
-	--danger-bg: #fef2f2;
-	--info: #3b82f6;
-	/* Blue-500 */
-	--info-bg: #eff6ff;
-	--purple: #7c3aed;
-	/* Purple-500 */
-	--purple-bg: #f5f0ff;
+	/* ── Semantic ── */
+	--success: #12b76a;
+	--success-bg: #e7f8ef;
+	--warning: #f79009;
+	--warning-bg: #fef0c7;
+	--danger: #f04438;
+	--danger-bg: #fee4e2;
+	--info: #2e90fa;
+	--info-bg: #e8f1fe;
+	--purple: #7a5af8;
+	--purple-bg: #f0ebfe;
+	--purple-soft: #f0ebfe;
 
-	/* legacy alias --purple used as `var(--purple)` inside pages */
-	--purple-soft: #f5f0ff;
-
-	--radius-lg: 20px;
-	--radius-md: 14px;
+	/* ── Dimensions ── */
+	--radius-lg: 16px;
+	--radius-md: 12px;
 	--radius-sm: 8px;
 	--radius-pill: 999px;
-	--shadow-sm: 0 1px 2px rgba(26, 31, 46, 0.04);
-	--shadow:
-		0 4px 12px rgba(26, 31, 46, 0.06);
-	--shadow-lg:
-		0 10px 30px rgba(26, 31, 46, 0.08);
-	--shadow-xl:
-		0 20px 50px rgba(26, 31, 46, 0.12);
-	--shadow-glow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+	--shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+	--shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+	--shadow-lg: 0 10px 30px rgba(16, 24, 40, 0.12);
+	--shadow-xl: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
+	--shadow-glow: 0 0 0 3px rgba(18, 183, 106, 0.14);
 
 	--header-height: 72px;
 	--sidebar-width: 264px;
 	--sidebar-collapsed: 76px;
 
-	font-family:
-		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	/* ── Font ── */
+	font-family: "Inter", system-ui, -apple-system, sans-serif;
+	font-size: 0.925rem;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
 	background: var(--surface);
 	color: var(--ink-900);
 	min-height: 100vh;
@@ -104,14 +91,14 @@
 
 .pageBar {
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
 	flex-wrap: wrap;
 }
 
 .breadcrumb {
-	font-size: 13px;
+	font-size: 0.82rem;
 	color: var(--ink-500);
 	margin: 0 0 6px;
 }
@@ -127,7 +114,7 @@
 }
 
 .breadcrumb strong {
-	color: var(--ink-700);
+	color: var(--ink-900);
 }
 
 .pageTitle {
@@ -139,7 +126,7 @@
 }
 
 .pageCopy {
-	font-size: 15px;
+	font-size: 0.82rem;
 	color: var(--ink-500);
 	margin: 0;
 	max-width: 640px;
@@ -162,7 +149,7 @@
 }
 
 .cardAccent {
-	background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);
+	background: linear-gradient(115deg, #0b1322 0%, #123a2c 60%, #0d5c38 100%);
 	color: #fff;
 	border: none;
 }
@@ -203,9 +190,10 @@
 
 /* ---------- stat values/labels ---------- */
 .statValue {
-	font-size: 32px;
-	font-weight: 700;
-	letter-spacing: -0.02em;
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1.65rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
 	color: var(--ink-900);
 	margin: 4px 0;
 	line-height: 1.1;
@@ -242,12 +230,13 @@
 .badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	padding: 4px 12px;
-	border-radius: 999px;
-	font-size: 12px;
+	gap: 4px;
+	padding: 0.32em 0.7em;
+	border-radius: 99px;
+	font-size: 0.7rem;
 	font-weight: 600;
 	white-space: nowrap;
+	letter-spacing: 0.01em;
 	border: 1px solid transparent;
 }
 
@@ -294,14 +283,14 @@
 	justify-content: center;
 	gap: 6px;
 	padding: 8px 16px;
-	border-radius: var(--radius-sm);
+	border-radius: 10px;
 	font-size: 13px;
 	font-weight: 600;
 	border: 1px solid var(--border);
 	background: #fff;
 	cursor: pointer;
 	transition: all 0.2s;
-	color: var(--ink-900);
+	color: #475467;
 	min-height: 40px;
 	white-space: nowrap;
 }
@@ -311,11 +300,9 @@
 }
 
 .btn:hover {
-	background: var(--surface-2);
-	border-color: var(--pri);
-	transform: translateY(-1px);
-	box-shadow: var(--shadow-sm);
+	background: #f2f4f8;
 	color: var(--ink-900);
+	border-color: var(--border-2);
 }
 
 .btn:disabled {
@@ -327,14 +314,14 @@
 .btnPrimary {
 	background: var(--pri);
 	color: #fff;
-	border-color: transparent;
-	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+	border-color: var(--pri);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
 }
 
 .btnPrimary:hover {
 	background: var(--pri-600);
+	border-color: var(--pri-600);
 	color: #fff;
-	border-color: transparent;
 }
 
 .btnSecondary {
@@ -386,6 +373,7 @@
 .btnSm {
 	padding: 5px 12px;
 	font-size: 12px;
+	border-radius: 8px;
 	min-height: 36px;
 }
 
@@ -417,13 +405,15 @@
 }
 
 .sectionTitle {
-	font-size: 18px;
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1.12rem;
 	font-weight: 700;
 	margin: 0;
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	color: var(--ink-900);
+	letter-spacing: -0.02em;
 }
 
 .sectionTitle i {
@@ -438,8 +428,9 @@
 }
 
 .blockHead {
-	font-size: 15px;
-	font-weight: 600;
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 14px;
+	font-weight: 700;
 	margin: 0 0 16px;
 	color: var(--ink-900);
 }
@@ -458,19 +449,21 @@
 
 .table th {
 	text-align: left;
-	padding: 10px 12px;
-	font-weight: 600;
-	font-size: 11px;
+	padding: 0.65rem 0.85rem;
+	font-weight: 700;
+	font-size: 0.68rem;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	letter-spacing: 0.07em;
 	color: var(--ink-500);
 	border-bottom: 1px solid var(--border);
-	background: var(--surface-2);
+	white-space: nowrap;
+	cursor: pointer;
+	user-select: none;
 }
 
 .table td {
-	padding: 12px;
-	border-bottom: 1px solid var(--border);
+	padding: 0.7rem 0.85rem;
+	border-bottom: 1px solid #f0f2f6;
 	vertical-align: middle;
 }
 
@@ -483,7 +476,7 @@
 }
 
 .table tbody tr:hover td {
-	background: var(--surface-2);
+	background: #fafbfd;
 }
 
 .table code {
@@ -534,13 +527,15 @@
 
 .rowTitle {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 13px;
+	line-height: 1.35;
 	color: var(--ink-900);
 }
 
 .rowSub {
-	font-size: 12px;
+	font-size: 11px;
 	color: var(--ink-500);
+	line-height: 1.35;
 }
 
 .rowAmount {
@@ -709,7 +704,7 @@
 
 .softBoxSuccess {
 	background: var(--success-bg);
-	border-color: rgba(16, 185, 129, 0.25);
+	border-color: rgba(18, 183, 106, 0.25);
 }
 
 .softBoxSuccess .softValue {
@@ -718,7 +713,7 @@
 
 .softBoxWarn {
 	background: var(--warning-bg);
-	border-color: rgba(245, 158, 11, 0.25);
+	border-color: rgba(247, 144, 9, 0.25);
 }
 
 .softBoxWarn .softValue {
@@ -727,7 +722,7 @@
 
 .softBoxDanger {
 	background: var(--danger-bg);
-	border-color: rgba(239, 68, 68, 0.25);
+	border-color: rgba(240, 68, 56, 0.25);
 }
 
 .softBoxDanger .softValue {
@@ -736,7 +731,7 @@
 
 .softBoxInfo {
 	background: var(--info-bg);
-	border-color: rgba(59, 130, 246, 0.25);
+	border-color: rgba(46, 144, 250, 0.25);
 }
 
 .softBoxInfo .softValue {
@@ -745,7 +740,7 @@
 
 .softBoxPurple {
 	background: var(--purple-bg);
-	border-color: rgba(124, 58, 237, 0.25);
+	border-color: rgba(122, 90, 248, 0.25);
 }
 
 .softBoxPurple .softValue {
@@ -757,23 +752,23 @@
 	display: flex;
 	gap: 4px;
 	padding: 4px;
-	background: var(--ink-100);
-	border-radius: var(--radius-md);
+	background: var(--surface);
+	border-radius: 10px;
 	flex-wrap: wrap;
 }
 
 .pill {
-	padding: 10px 16px;
-	border-radius: var(--radius-sm);
+	padding: 8px 16px;
+	border-radius: 8px;
 	border: none;
 	background: transparent;
-	font-size: 14px;
-	font-weight: 500;
+	font-size: 13px;
+	font-weight: 600;
 	cursor: pointer;
 	white-space: nowrap;
 	transition: all 0.15s;
 	color: var(--ink-500);
-	min-height: 40px;
+	min-height: 36px;
 	display: inline-flex;
 	align-items: center;
 	flex: 1 1 auto;
@@ -787,9 +782,9 @@
 
 .pillActive {
 	background: var(--surface-elev);
-	color: var(--pri);
-	font-weight: 600;
-	box-shadow: var(--shadow-sm);
+	color: var(--ink-900);
+	font-weight: 700;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
 }
 
 /* ---------- stepper ---------- */
@@ -875,21 +870,19 @@
 
 /* ---------- forms ---------- */
 .fieldLabel {
-	font-size: 12px;
 	font-weight: 600;
-	color: var(--ink-700);
-	margin-bottom: 6px;
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
+	font-size: 0.8rem;
+	color: #344054;
+	margin-bottom: 0.3rem;
 	display: block;
 }
 
 .field {
 	width: 100%;
-	padding: 10px 14px;
+	padding: 0.5rem 0.75rem;
 	border: 1px solid var(--border);
-	border-radius: var(--radius-sm);
-	font-size: 14px;
+	border-radius: 10px;
+	font-size: 0.9rem;
 	transition: all 0.2s;
 	background: #fff;
 	color: var(--ink-900);
@@ -902,7 +895,7 @@
 .field:focus {
 	outline: 0;
 	border-color: var(--pri);
-	box-shadow: var(--shadow-glow);
+	box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14);
 }
 
 .field option {
@@ -919,10 +912,10 @@
 /* ---------- form control (alias for field, used in modals) ---------- */
 .formControl {
 	width: 100%;
-	padding: 12px 16px;
+	padding: 0.5rem 0.75rem;
 	border: 1px solid var(--border);
-	border-radius: var(--radius-sm);
-	font-size: 14px;
+	border-radius: 10px;
+	font-size: 0.9rem;
 	transition: all 0.2s;
 	background: #fff;
 	color: var(--ink-900);
@@ -935,7 +928,7 @@
 .formControl:focus {
 	outline: 0;
 	border-color: var(--pri);
-	box-shadow: var(--shadow-glow);
+	box-shadow: 0 0 0 0.2rem rgba(18, 183, 106, 0.14);
 }
 
 .formControl option {
@@ -951,10 +944,10 @@
 
 /* ---------- form label (alias for fieldLabel, used in modals) ---------- */
 .formLabel {
-	font-size: 13px;
 	font-weight: 600;
-	color: var(--ink-700);
-	margin-bottom: 8px;
+	font-size: 0.8rem;
+	color: #344054;
+	margin-bottom: 0.3rem;
 	display: block;
 }
 
@@ -964,16 +957,16 @@
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	padding: 10px 20px;
-	border-radius: var(--radius-sm);
-	font-size: 14px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	font-size: 13px;
 	font-weight: 600;
 	border: 1px solid var(--border);
 	background: #fff;
 	cursor: pointer;
 	transition: all 0.2s;
-	color: var(--ink-900);
-	min-height: 42px;
+	color: #475467;
+	min-height: 40px;
 	white-space: nowrap;
 }
 
@@ -993,14 +986,14 @@
 .buttonPrimary {
 	background: var(--pri);
 	color: #fff;
-	border-color: transparent;
-	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+	border-color: var(--pri);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
 }
 
 .buttonPrimary:hover {
 	background: var(--pri-600);
+	border-color: var(--pri-600);
 	color: #fff;
-	border-color: transparent;
 }
 
 .buttonSmall {
@@ -1021,16 +1014,16 @@
 }
 
 .buttonAccent {
-	background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);
+	background: var(--pri);
 	color: #fff;
-	border-color: transparent;
-	box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+	border-color: var(--pri);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
 }
 
 .buttonAccent:hover {
-	background: linear-gradient(135deg, var(--pri-600) 0%, var(--pri-700) 100%);
+	background: var(--pri-600);
+	border-color: var(--pri-600);
 	color: #fff;
-	border-color: transparent;
 }
 
 /* ---------- summary row (used in modals) ---------- */
@@ -1219,8 +1212,8 @@ input[type="date"].field {
 
 .hintBox {
 	background: var(--info-bg);
-	border: 1px solid rgba(59, 130, 246, 0.2);
-	border-radius: var(--radius-sm);
+	border: 1px solid rgba(46, 144, 250, 0.2);
+	border-radius: 8px;
 	padding: 12px 16px;
 	font-size: 13px;
 	color: var(--info);
@@ -1231,19 +1224,19 @@ input[type="date"].field {
 
 .hintBoxWarn {
 	background: var(--warning-bg);
-	border-color: rgba(245, 158, 11, 0.2);
+	border-color: rgba(247, 144, 9, 0.2);
 	color: var(--warning);
 }
 
 .hintBoxDanger {
 	background: var(--danger-bg);
-	border-color: rgba(239, 68, 68, 0.2);
+	border-color: rgba(240, 68, 56, 0.2);
 	color: var(--danger);
 }
 
 .hintBoxSuccess {
 	background: var(--success-bg);
-	border-color: rgba(16, 185, 129, 0.2);
+	border-color: rgba(18, 183, 106, 0.2);
 	color: var(--success);
 }
 
@@ -1276,9 +1269,9 @@ input[type="date"].field {
 
 /* ---------- receipt ---------- */
 .receipt {
-	background: var(--surface-elev);
-	border: 1px dashed var(--border);
-	border-radius: var(--radius-md);
+	background: var(--ink-100);
+	border: 1px dashed #d0d5dd;
+	border-radius: 12px;
 	padding: 24px;
 	text-align: center;
 }
@@ -1383,7 +1376,7 @@ input[type="date"].field {
 .overlay {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(11, 19, 34, 0.45);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1413,7 +1406,7 @@ input[type="date"].field {
 .modalOverlay {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(11, 19, 34, 0.45);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1430,7 +1423,7 @@ input[type="date"].field {
 	flex-shrink: 0;
 	background: var(--surface-elev);
 	border: none;
-	border-radius: var(--radius-lg);
+	border-radius: 18px;
 	color: var(--ink-900);
 	box-shadow: var(--shadow-xl);
 	max-height: 90vh;
@@ -1464,7 +1457,7 @@ input[type="date"].field {
 .modalContent {
 	background: var(--surface-elev);
 	border: none;
-	border-radius: var(--radius-lg);
+	border-radius: 18px;
 	color: var(--ink-900);
 	box-shadow: var(--shadow-xl);
 	max-height: 90vh;
@@ -1491,7 +1484,7 @@ input[type="date"].field {
 
 .modalHeader {
 	border-bottom: 1px solid var(--border);
-	padding: 20px 24px;
+	padding: 1rem 1.4rem;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -1500,12 +1493,13 @@ input[type="date"].field {
 }
 
 .modalTitle {
+	font-family: "Sora", "Inter", sans-serif;
 	font-weight: 700;
 	color: var(--ink-900);
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
-	font-size: 18px;
+	font-size: 1.05rem;
 	flex: 1;
 	min-width: 0;
 	margin: 0;
@@ -1543,7 +1537,7 @@ input[type="date"].field {
 }
 
 .modalBody {
-	padding: 24px;
+	padding: 1.4rem;
 	overflow-y: auto;
 	flex: 1;
 	min-height: 0;
@@ -1551,12 +1545,13 @@ input[type="date"].field {
 
 .modalFooter {
 	border-top: 1px solid var(--border);
-	padding: 16px 24px;
+	padding: 0.9rem 1.4rem;
 	display: flex;
 	justify-content: flex-end;
 	gap: 10px;
 	flex-shrink: 0;
 	flex-wrap: wrap;
+	background: #fafbfd;
 }
 
 .modalBody :global(.text-muted) {
@@ -1883,6 +1878,37 @@ input[type="date"].field {
 		padding: 8px 12px;
 		font-size: 12px;
 	}
+}
+
+/* ── SCROLLBAR ── */
+.pageRoot * { scrollbar-width: thin; scrollbar-color: #c8cdd8 transparent; }
+.pageRoot *::-webkit-scrollbar { width: 8px; height: 8px; }
+.pageRoot *::-webkit-scrollbar-thumb { background: #c8cdd8; border-radius: 8px; }
+.pageRoot *::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes pmPulse {
+	0%   { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0.5); }
+	70%  { box-shadow: 0 0 0 7px rgba(18, 183, 106, 0); }
+	100% { box-shadow: 0 0 0 0 rgba(18, 183, 106, 0); }
+}
+
+@keyframes pmPop {
+	from { opacity: 0; transform: scale(0.97) translateY(4px); }
+	to   { opacity: 1; transform: none; }
+}
+
+@keyframes pmToastIn {
+	from { transform: translateX(30px); opacity: 0; }
+	to   { transform: none; opacity: 1; }
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: none; }
+}
+
+@keyframes pmSpin {
+	to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
