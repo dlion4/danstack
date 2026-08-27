@@ -301,7 +301,7 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-send text-primary me-2" />
+						<i className={`bi bi-send ${styles.iconGreen} ${styles.modalIcon}`} />
 						Initiate Transfer
 					</>
 				}
@@ -332,7 +332,7 @@ export default function TransferOverviewModals({
 				<Stepper flowKey="init" current={step} />
 				{step === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Select Beneficiary</h6>
+						<h6 className={styles.stepTitle}>Step 1: Select Beneficiary</h6>
 						<div className="mb-3">
 							<label className={styles.formLabel}>Search or Select</label>
 							<select className={styles.formControl}>
@@ -359,7 +359,7 @@ export default function TransferOverviewModals({
 				)}
 				{step === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Amount & Details</h6>
+						<h6 className={styles.stepTitle}>Step 2: Amount & Details</h6>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.formLabel}>Amount (KES)</label>
@@ -385,25 +385,22 @@ export default function TransferOverviewModals({
 				)}
 				{step === 3 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Review & Confirm</h6>
-						<div
-							className="p-3 rounded"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="text-muted">To</span>
+						<h6 className={styles.stepTitle}>Step 3: Review & Confirm</h6>
+						<div className={styles.reviewBox}>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>To</span>
 								<strong>Grace Kamau</strong>
 							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="text-muted">Amount</span>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Amount</span>
 								<strong>KES 12,500</strong>
 							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="text-muted">Fee</span>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Fee</span>
 								<strong>KES 0</strong>
 							</div>
-							<div className="d-flex justify-content-between">
-								<span className="text-muted">Total</span>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Total</span>
 								<strong style={{ color: "var(--pm-primary)" }}>
 									KES 12,500
 								</strong>
@@ -474,7 +471,7 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-collection text-info me-2" />
+						<i className={`bi bi-collection ${styles.iconBlue} ${styles.modalIcon}`} />
 						Bulk Transfer
 					</>
 				}
@@ -501,15 +498,12 @@ export default function TransferOverviewModals({
 				<Stepper flowKey="bulk" current={step} />
 				{step === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Upload Beneficiaries</h6>
+						<h6 className={styles.stepTitle}>Step 1: Upload Beneficiaries</h6>
 						<div className="mb-3">
 							<label className={styles.formLabel}>Upload CSV</label>
 							<input type="file" className={styles.formControl} />
 						</div>
-						<div
-							className="p-3 rounded"
-							style={{ background: "var(--pm-info-soft)", fontSize: 12 }}
-						>
+						<div className={styles.infoCallout}>
 							<i className="bi bi-info-circle me-1" /> CSV format: Name,
 							Phone/Bank, Amount, Reference
 						</div>
@@ -517,7 +511,7 @@ export default function TransferOverviewModals({
 				)}
 				{step === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Review List</h6>
+						<h6 className={styles.stepTitle}>Step 2: Review List</h6>
 						<div className="table-responsive">
 							<table className={styles.tbl}>
 								<thead>
@@ -550,21 +544,18 @@ export default function TransferOverviewModals({
 				)}
 				{step === 3 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Confirm & Pay</h6>
-						<div
-							className="p-3 rounded"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="text-muted">Total Beneficiaries</span>
+						<h6 className={styles.stepTitle}>Step 3: Confirm & Pay</h6>
+						<div className={styles.reviewBox}>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Total Beneficiaries</span>
 								<strong>3</strong>
 							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span className="text-muted">Total Amount</span>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Total Amount</span>
 								<strong>KES 65,500</strong>
 							</div>
-							<div className="d-flex justify-content-between">
-								<span className="text-muted">Total Fee</span>
+							<div className={styles.reviewRow}>
+								<span className={styles.reviewLabel}>Total Fee</span>
 								<strong>KES 0</strong>
 							</div>
 						</div>
@@ -602,7 +593,7 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-calendar-event text-success me-2" />
+						<i className={`bi bi-calendar-event ${styles.iconGreen} ${styles.modalIcon}`} />
 						Schedule Transfer
 					</>
 				}
@@ -629,7 +620,7 @@ export default function TransferOverviewModals({
 				<Stepper flowKey="sched" current={step} />
 				{step === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Beneficiary & Amount</h6>
+						<h6 className={styles.stepTitle}>Step 1: Beneficiary & Amount</h6>
 						<div className="mb-3">
 							<label className={styles.formLabel}>Beneficiary</label>
 							<select className={styles.formControl}>
@@ -655,7 +646,7 @@ export default function TransferOverviewModals({
 				)}
 				{step === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Schedule Details</h6>
+						<h6 className={styles.stepTitle}>Step 2: Schedule Details</h6>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.formLabel}>Start Date</label>
@@ -710,7 +701,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-person-plus text-warning me-2" />
+					<i className={`bi bi-person-plus ${styles.iconAmber} ${styles.modalIcon}`} />
 					Manage Beneficiaries
 				</>
 			}
@@ -842,7 +833,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-person-plus text-success me-2" />
+					<i className={`bi bi-person-plus ${styles.iconGreen} ${styles.modalIcon}`} />
 					Add Beneficiary
 				</>
 			}
@@ -916,32 +907,29 @@ export default function TransferOverviewModals({
 				</button>
 			}
 		>
-			<div
-				className="p-3 rounded mb-3"
-				style={{ background: "var(--pm-surface-2)" }}
-			>
-				<div className="d-flex justify-content-between mb-2">
-					<span className="text-muted">Reference</span>
+			<div className={`${styles.reviewBox} mb-3`}>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Reference</span>
 					<strong>TRF-448291</strong>
 				</div>
-				<div className="d-flex justify-content-between mb-2">
-					<span className="text-muted">Amount</span>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Amount</span>
 					<strong>KES 12,500</strong>
 				</div>
-				<div className="d-flex justify-content-between mb-2">
-					<span className="text-muted">To</span>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>To</span>
 					<strong>Grace Kamau</strong>
 				</div>
-				<div className="d-flex justify-content-between mb-2">
-					<span className="text-muted">Method</span>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Method</span>
 					<strong>M-Pesa</strong>
 				</div>
-				<div className="d-flex justify-content-between mb-2">
-					<span className="text-muted">Status</span>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Status</span>
 					<span className={`${styles.badge} ${styles.badgeS}`}>Success</span>
 				</div>
-				<div className="d-flex justify-content-between">
-					<span className="text-muted">Date</span>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Date</span>
 					<strong>27 Jun 2025, 14:32</strong>
 				</div>
 			</div>
@@ -1036,7 +1024,7 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className="bi bi-globe text-danger me-2" />
+						<i className={`bi bi-globe ${styles.iconRed} ${styles.modalIcon}`} />
 						International Transfer
 					</>
 				}
@@ -1067,7 +1055,7 @@ export default function TransferOverviewModals({
 				<Stepper flowKey="intl" current={step} />
 				{step === 1 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Recipient Details</h6>
+						<h6 className={styles.stepTitle}>Step 1: Recipient Details</h6>
 						<div className="mb-3">
 							<label className={styles.formLabel}>Country</label>
 							<select className={styles.formControl}>
@@ -1091,7 +1079,7 @@ export default function TransferOverviewModals({
 				)}
 				{step === 2 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Amount & Fees</h6>
+						<h6 className={styles.stepTitle}>Step 2: Amount & Fees</h6>
 						<div className="row g-3">
 							<div className="col-md-6">
 								<label className={styles.formLabel}>Amount (KES)</label>
@@ -1106,10 +1094,7 @@ export default function TransferOverviewModals({
 								</select>
 							</div>
 						</div>
-						<div
-							className="p-3 rounded mt-3"
-							style={{ background: "var(--pm-warning-soft)", fontSize: 12 }}
-						>
+						<div className={`${styles.warnCallout} mt-3`}>
 							<i className="bi bi-info-circle me-1" /> Estimated fee: KES 2,850
 							| Exchange rate: 1 KES = 0.0058 GBP
 						</div>
@@ -1117,7 +1102,7 @@ export default function TransferOverviewModals({
 				)}
 				{step === 3 && (
 					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Compliance</h6>
+						<h6 className={styles.stepTitle}>Step 3: Compliance</h6>
 						<div className="mb-3">
 							<label className={styles.formLabel}>Purpose of Transfer</label>
 							<select className={styles.formControl}>
@@ -1166,7 +1151,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-qr-code text-primary me-2" />
+					<i className={`bi bi-qr-code ${styles.iconGreen} ${styles.modalIcon}`} />
 					QR Pay
 				</>
 			}
@@ -1192,10 +1177,7 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"qrPayModal",
 				<div className="text-center">
-					<div
-						className="p-4 rounded mb-3"
-						style={{ background: "var(--pm-surface-2)" }}
-					>
+					<div className={`${styles.reviewBox} mb-3`} style={{ padding: 24 }}>
 						<div
 							style={{
 								width: 180,
@@ -1314,7 +1296,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-arrow-repeat text-warning me-2" />
+					<i className={`bi bi-arrow-repeat ${styles.iconAmber} ${styles.modalIcon}`} />
 					Retry Failed Transfer
 				</>
 			}
@@ -1337,17 +1319,14 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"retryTransferModal",
 				<>
-					<div
-						className="p-3 rounded mb-3"
-						style={{ background: "var(--pm-warning-soft)" }}
-					>
-						<div style={{ fontSize: 13, fontWeight: 700, color: "#B45309" }}>
+					<div className={`${styles.warnCallout} mb-3`}>
+						<div className={styles.notifTitle} style={{ color: "#B45309" }}>
 							Failed Transfer Details
 						</div>
 						<div style={{ fontSize: 14, marginTop: 4 }}>
 							Landlord Properties — KES 35,000
 						</div>
-						<div style={{ fontSize: 12, color: "#92400E" }}>
+						<div className={styles.notifDesc} style={{ color: "#92400E" }}>
 							Reason: Insufficient funds in M-Pesa
 						</div>
 					</div>
@@ -1489,7 +1468,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-shield-check text-success me-2" />
+					<i className={`bi bi-shield-check ${styles.iconGreen} ${styles.modalIcon}`} />
 					Transfer Security
 				</>
 			}
@@ -1575,25 +1554,25 @@ export default function TransferOverviewModals({
 			}
 		>
 			<div
-				className="p-3 rounded mb-2"
+				className={`${styles.notifCard} mb-2`}
 				style={{ background: "var(--pm-danger-soft)" }}
 			>
-				<strong>Scheduled transfer failed</strong>
-				<div style={{ fontSize: 11 }}>Landlord Properties — KES 35,000</div>
+				<div className={styles.notifTitle}>Scheduled transfer failed</div>
+				<div className={styles.notifDesc}>Landlord Properties — KES 35,000</div>
 			</div>
 			<div
-				className="p-3 rounded mb-2"
+				className={`${styles.notifCard} mb-2`}
 				style={{ background: "var(--pm-warning-soft)" }}
 			>
-				<strong>Large transfer pending approval</strong>
-				<div style={{ fontSize: 11 }}>KES 450,000 to James Ochieng</div>
+				<div className={styles.notifTitle}>Large transfer pending approval</div>
+				<div className={styles.notifDesc}>KES 450,000 to James Ochieng</div>
 			</div>
 			<div
-				className="p-3 rounded mb-2"
+				className={`${styles.notifCard} mb-2`}
 				style={{ background: "var(--pm-accent-soft)" }}
 			>
-				<strong>Recurring payment executed</strong>
-				<div style={{ fontSize: 11 }}>Grace Kamau — KES 15,000</div>
+				<div className={styles.notifTitle}>Recurring payment executed</div>
+				<div className={styles.notifDesc}>Grace Kamau — KES 15,000</div>
 			</div>
 		</MBox>
 	);
@@ -1626,28 +1605,22 @@ export default function TransferOverviewModals({
 				<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
 					james.k@email.com · +254 712 345 890
 				</p>
-				<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-					<div className="col-6">
-						<div
-							className="p-2 rounded"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<span className="text-muted">Transfers</span>
-							<br />
-							<strong>1,248 this month</strong>
-						</div>
-					</div>
-					<div className="col-6">
-						<div
-							className="p-2 rounded"
-							style={{ background: "var(--pm-surface-2)" }}
-						>
-							<span className="text-muted">Security</span>
-							<br />
-							<strong style={{ color: "var(--pm-accent)" }}>96/100</strong>
-						</div>
+			<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
+				<div className="col-6">
+					<div className={styles.reviewBox}>
+						<span className={styles.reviewLabel}>Transfers</span>
+						<br />
+						<strong>1,248 this month</strong>
 					</div>
 				</div>
+				<div className="col-6">
+					<div className={styles.reviewBox}>
+						<span className={styles.reviewLabel}>Security</span>
+						<br />
+						<strong style={{ color: "var(--pm-accent)" }}>96/100</strong>
+					</div>
+				</div>
+			</div>
 			</div>
 		</MBox>
 	);
@@ -1659,7 +1632,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-exclamation-circle text-warning me-2" />
+					<i className={`bi bi-exclamation-circle ${styles.iconAmber} ${styles.modalIcon}`} />
 					All Attention Items
 				</>
 			}
@@ -1712,7 +1685,7 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className="bi bi-exclamation-triangle text-danger me-2" />
+					<i className={`bi bi-exclamation-triangle ${styles.iconRed} ${styles.modalIcon}`} />
 					Report Transfer Issue
 				</>
 			}
@@ -1845,12 +1818,9 @@ export default function TransferOverviewModals({
 					))}
 				</select>
 			</div>
-			<div
-				className="p-3 rounded"
-				style={{ background: "var(--pm-surface-2)" }}
-			>
-				<div className="d-flex justify-content-between">
-					<span>Estimated Fee</span>
+			<div className={styles.reviewBox}>
+				<div className={styles.reviewRow}>
+					<span className={styles.reviewLabel}>Estimated Fee</span>
 					<strong>KES 35</strong>
 				</div>
 			</div>

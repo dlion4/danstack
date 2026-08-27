@@ -513,17 +513,11 @@ export default function TransferOverview() {
 					<div className="row g-3">
 						<div className="col-lg-4">
 							<div
-								className={`${styles.card} ${styles.cardAccent}`}
+								className={`${styles.card} ${styles.heroBanner}`}
 								style={{ minHeight: 170 }}
 							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.78)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
+								<p className={styles.heroSubtext}>
+									{config.hero.live} <span className={styles.dotLive} />
 								</p>
 								<div
 									className={styles.sv}
@@ -531,13 +525,7 @@ export default function TransferOverview() {
 								>
 									{config.hero.value}
 								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.78)",
-									}}
-								>
+								<p className={styles.heroSubtext}>
 									{config.hero.detail}
 								</p>
 								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
@@ -577,16 +565,11 @@ export default function TransferOverview() {
 									</div>
 									<span className={`${styles.badge} ${styles[s.badge.tone]}`}>
 										<i className={`bi ${s.badge.icon}`} /> {s.badge.text}
-									</span>
-									{s.lines.map((l) => (
-										<div
-											key={l}
-											className="mt-2"
-											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-										>
+									</span>									{s.lines.map((l) => (
+										<div key={l} className={styles.statSub}>
 											{l}
 										</div>
-									))}
+										))}
 								</div>
 							</div>
 						))}
@@ -618,10 +601,10 @@ export default function TransferOverview() {
 												<i className={`bi ${item.icon}`} />
 											</div>
 											<div>
-												<div style={{ fontWeight: 600, fontSize: 13 }}>
+												<div className={styles.itemTitle}>
 													{item.title}
 												</div>
-												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												<div className={styles.itemSub}>
 													{item.sub}
 												</div>
 											</div>
@@ -657,10 +640,10 @@ export default function TransferOverview() {
 												<i className={`bi ${item.icon}`} />
 											</div>
 											<div>
-												<div style={{ fontWeight: 600, fontSize: 13 }}>
+												<div className={styles.itemTitle}>
 													{item.title}
 												</div>
-												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
+												<div className={styles.itemSub}>
 													{item.sub}
 												</div>
 											</div>
@@ -736,16 +719,9 @@ export default function TransferOverview() {
 						</div>
 						<div className="row g-3">
 							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4
-										style={{
-											fontSize: 14,
-											fontWeight: 700,
-											margin: "0 0 16px",
-										}}
-									>
-										Recent Transfers
-									</h4>
+								<div className={styles.ub}>													<h4 className={styles.subHead}>
+														Recent Transfers
+													</h4>
 									<div className="table-responsive">
 										<table className={styles.tbl}>
 											<thead>
@@ -792,23 +768,16 @@ export default function TransferOverview() {
 								</div>
 							</div>
 							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4
-										style={{
-											fontSize: 14,
-											fontWeight: 700,
-											margin: "0 0 16px",
-										}}
-									>
-										Transfer Channels
-									</h4>
+								<div className={styles.ub}>														<h4 className={styles.subHead}>
+															Transfer Channels
+														</h4>
 									{config.channels.map((ch) => (
 										<div key={ch.name} className={styles.sr}>
 											<div>
 												<strong>{ch.name}</strong>
-												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-													{ch.transfers}
-												</div>
+										<div className={styles.itemSub}>
+											{ch.transfers}
+										</div>
 											</div>
 											<strong>{ch.amount}</strong>
 										</div>
@@ -855,8 +824,7 @@ export default function TransferOverview() {
 							{config.favorites.map((f) => (
 								<div key={f.name} className="col-6 col-md-3">
 									<div
-										className={styles.card}
-										style={{ cursor: "pointer" }}
+										className={`${styles.card} ${styles.cardHover}`}
 										onClick={() => setActiveModal("favoritesQuickModal")}
 									>
 										<div className="d-flex align-items-center gap-2">
@@ -868,9 +836,9 @@ export default function TransferOverview() {
 											</div>
 											<div>
 												<strong>{f.name}</strong>
-												<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-													{f.account}
-												</div>
+										<div className={styles.itemSub}>
+											{f.account}
+										</div>
 											</div>
 										</div>
 									</div>
@@ -981,16 +949,9 @@ export default function TransferOverview() {
 						</div>
 						<div className="row g-3">
 							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4
-										style={{
-											fontSize: 14,
-											fontWeight: 700,
-											margin: "0 0 12px",
-										}}
-									>
-										Top Recipients (30 days)
-									</h4>
+								<div className={styles.ub}>												<h4 className={styles.subHead}>
+													Top Recipients (30 days)
+												</h4>
 									{config.topRecipients.map((r) => (
 										<div key={r.name} className={styles.sr}>
 											<div>
@@ -1002,16 +963,9 @@ export default function TransferOverview() {
 								</div>
 							</div>
 							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4
-										style={{
-											fontSize: 14,
-											fontWeight: 700,
-											margin: "0 0 12px",
-										}}
-									>
-										Success Rate by Channel
-									</h4>
+								<div className={styles.ub}>												<h4 className={styles.subHead}>
+													Success Rate by Channel
+												</h4>
 									{config.successRates.map((s) => (
 										<div key={s.channel} className={styles.sr}>
 											<div>
@@ -1025,16 +979,9 @@ export default function TransferOverview() {
 								</div>
 							</div>
 							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4
-										style={{
-											fontSize: 14,
-											fontWeight: 700,
-											margin: "0 0 12px",
-										}}
-									>
-										Monthly Trend
-									</h4>
+								<div className={styles.ub}>												<h4 className={styles.subHead}>
+													Monthly Trend
+												</h4>
 									<div className={styles.chartBars} style={{ height: 90 }}>
 										{config.trendBars.map((b) => (
 											<div

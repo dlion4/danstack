@@ -8,21 +8,21 @@
  * ========================================================================== */
 
 .shellRoot {
-	--sh-bg: #f5f1ec;
+	--sh-bg: #f2f4f8;
 	--sh-surface: #ffffff;
-	--sh-surface-2: #faf7f3;
-	--sh-surface-3: #f0efe6;
-	--sh-text: #1f1f1f;
-	--sh-text-secondary: #6b7280;
-	--sh-muted: #374151;
-	--sh-border: #e5e7eb;
-	--sh-primary: #10b981;
-	--sh-primary-600: #059669;
-	--sh-primary-light: #34d399;
-	--sh-accent: #f59e0b;
-	--sh-danger: #ef4444;
-	--sh-warning: #f59e0b;
-	--sh-info: #3b82f6;
+	--sh-surface-2: #f9fafb;
+	--sh-surface-3: #eaecf0;
+	--sh-text: #101828;
+	--sh-text-secondary: #667085;
+	--sh-muted: #344054;
+	--sh-border: #e6e9f0;
+	--sh-primary: #12b76a;
+	--sh-primary-600: #0b8f52;
+	--sh-primary-light: #52d689;
+	--sh-accent: #f79009;
+	--sh-danger: #f04438;
+	--sh-warning: #f79009;
+	--sh-info: #2e90fa;
 
 	--sidebar-width: 264px;
 	--sidebar-collapsed: 76px;
@@ -526,7 +526,7 @@
 	right: 0;
 	height: var(--header-height);
 	left: var(--sidebar-collapsed);
-	background: rgba(245, 241, 236, 0.85);
+	background: rgba(255, 255, 255, 0.88);
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);
 	border-bottom: 1px solid var(--sh-border);
