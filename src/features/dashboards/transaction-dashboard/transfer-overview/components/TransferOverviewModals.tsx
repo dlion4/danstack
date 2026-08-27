@@ -268,7 +268,7 @@ export default function TransferOverviewModals({
 					Reference: {r.ref}
 				</p>
 			)}
-			<div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
+			<div className={`${styles.flex} ${styles.justifyCenter} ${styles.mt3}`} style={{ gap: 8 }}>
 				<button
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => downloadFile("receipt.txt", r.msg)}
@@ -333,7 +333,7 @@ export default function TransferOverviewModals({
 				{step === 1 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Select Beneficiary</h6>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Search or Select</label>
 							<select className={styles.formControl}>
 								{BENEFICIARIES.map((b) => (
@@ -341,7 +341,7 @@ export default function TransferOverviewModals({
 								))}
 							</select>
 						</div>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Transfer Type</label>
 							<div className={styles.pills}>
 								{TRANSFER_TYPES.map((t) => (
@@ -360,12 +360,12 @@ export default function TransferOverviewModals({
 				{step === 2 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 2: Amount & Details</h6>
-						<div className="row g-3">
-							<div className="col-md-6">
+						<div className={styles.row3}>
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Amount (KES)</label>
 								<input className={styles.formControl} defaultValue="12500" />
 							</div>
-							<div className="col-md-6">
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Reference / Note</label>
 								<input
 									className={styles.formControl}
@@ -373,7 +373,7 @@ export default function TransferOverviewModals({
 								/>
 							</div>
 						</div>
-						<div className="mt-3">
+						<div className={styles.mt3}>
 							<label className={styles.formLabel}>Funding Source</label>
 							<select className={styles.formControl}>
 								{FUNDING_SOURCES.map((f) => (
@@ -435,19 +435,19 @@ export default function TransferOverviewModals({
 								KES 12,500 sent to Grace Kamau via M-Pesa.
 							</p>
 							<div
-								className="p-3 rounded text-start mt-3"
+								className={`${styles.p3} ${styles.rounded} ${styles.textStart} ${styles.mt3}`}
 								style={{ background: "#fff", fontSize: 13 }}
 							>
-								<div className="d-flex justify-content-between mb-2">
-									<span className="text-muted">Reference</span>
+								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}>
+									<span className={styles.textMuted}>Reference</span>
 									<strong>TRF-448291</strong>
 								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span className="text-muted">Transaction ID</span>
+								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}>
+									<span className={styles.textMuted}>Transaction ID</span>
 									<strong>MPESA-9K2M4P</strong>
 								</div>
-								<div className="d-flex justify-content-between">
-									<span className="text-muted">Time</span>
+								<div className={`${styles.flex} ${styles.justifyBetween}`}>
+									<span className={styles.textMuted}>Time</span>
 									<strong>27 Jun 2025, 14:32</strong>
 								</div>
 							</div>
@@ -499,7 +499,7 @@ export default function TransferOverviewModals({
 				{step === 1 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Upload Beneficiaries</h6>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Upload CSV</label>
 							<input type="file" className={styles.formControl} />
 						</div>
@@ -621,19 +621,19 @@ export default function TransferOverviewModals({
 				{step === 1 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Beneficiary & Amount</h6>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Beneficiary</label>
 							<select className={styles.formControl}>
 								<option>Grace Kamau</option>
 								<option>Landlord Properties</option>
 							</select>
 						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
+						<div className={styles.row3}>
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Amount</label>
 								<input className={styles.formControl} defaultValue="45000" />
 							</div>
-							<div className="col-md-6">
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Frequency</label>
 								<select className={styles.formControl}>
 									{FREQUENCIES.map((f) => (
@@ -647,8 +647,8 @@ export default function TransferOverviewModals({
 				{step === 2 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 2: Schedule Details</h6>
-						<div className="row g-3">
-							<div className="col-md-6">
+						<div className={styles.row3}>
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Start Date</label>
 								<input
 									type="date"
@@ -656,12 +656,12 @@ export default function TransferOverviewModals({
 									defaultValue="2025-07-01"
 								/>
 							</div>
-							<div className="col-md-6">
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>End Date (optional)</label>
 								<input type="date" className={styles.formControl} />
 							</div>
 						</div>
-						<div className="mb-3 mt-3">
+						<div className={`${styles.mb3} ${styles.mt3}`}>
 							<label className={styles.formLabel}>Funding Source</label>
 							<select className={styles.formControl}>
 								<option>PayMo Wallet</option>
@@ -856,15 +856,15 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"addBeneficiaryModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Name</label>
 						<input className={styles.formControl} defaultValue="Mary Wanjiku" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Phone / Account</label>
 						<input className={styles.formControl} defaultValue="0733 222 111" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Type</label>
 						<select className={styles.formControl}>
 							{BEN_TYPES.map((t) => (
@@ -933,7 +933,7 @@ export default function TransferOverviewModals({
 					<strong>27 Jun 2025, 14:32</strong>
 				</div>
 			</div>
-			<div className="d-flex justify-content-center" style={{ gap: 8 }}>
+			<div className={`${styles.flex} ${styles.justifyCenter} ${styles.gap2}`}>
 				<button className={`${styles.btnPm} ${styles.btnSm}`}>
 					<i className="bi bi-download" /> Receipt
 				</button>
@@ -983,11 +983,11 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"editScheduleModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Amount</label>
 						<input className={styles.formControl} defaultValue="45000" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Frequency</label>
 						<select className={styles.formControl}>
 							<option>Monthly</option>
@@ -1056,7 +1056,7 @@ export default function TransferOverviewModals({
 				{step === 1 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Recipient Details</h6>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Country</label>
 							<select className={styles.formControl}>
 								{COUNTRIES.map((c) => (
@@ -1064,11 +1064,11 @@ export default function TransferOverviewModals({
 								))}
 							</select>
 						</div>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Recipient Name</label>
 							<input className={styles.formControl} defaultValue="John Smith" />
 						</div>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Account / IBAN</label>
 							<input
 								className={styles.formControl}
@@ -1080,12 +1080,12 @@ export default function TransferOverviewModals({
 				{step === 2 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 2: Amount & Fees</h6>
-						<div className="row g-3">
-							<div className="col-md-6">
+						<div className={styles.row3}>
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Amount (KES)</label>
 								<input className={styles.formControl} defaultValue="150000" />
 							</div>
-							<div className="col-md-6">
+							<div className={styles.colMd6}>
 								<label className={styles.formLabel}>Currency</label>
 								<select className={styles.formControl}>
 									{CURRENCIES.map((c) => (
@@ -1103,7 +1103,7 @@ export default function TransferOverviewModals({
 				{step === 3 && (
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 3: Compliance</h6>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Purpose of Transfer</label>
 							<select className={styles.formControl}>
 								{PURPOSES.map((p) => (
@@ -1111,7 +1111,7 @@ export default function TransferOverviewModals({
 								))}
 							</select>
 						</div>
-						<div className="mb-3">
+						<div className={styles.mb3}>
 							<label className={styles.formLabel}>Source of Funds</label>
 							<select className={styles.formControl}>
 								{FUND_SOURCES.map((s) => (
@@ -1176,7 +1176,7 @@ export default function TransferOverviewModals({
 		>
 			{renderActionBody(
 				"qrPayModal",
-				<div className="text-center">
+				<div className={styles.textCenter}>
 					<div className={`${styles.reviewBox} mb-3`} style={{ padding: 24 }}>
 						<div
 							style={{
@@ -1197,11 +1197,11 @@ export default function TransferOverviewModals({
 							</div>
 						</div>
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Amount (KES)</label>
 						<input className={styles.formControl} defaultValue="2500" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Reference</label>
 						<input
 							className={styles.formControl}
@@ -1249,15 +1249,15 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"transferLimitsModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Daily Limit</label>
 						<input className={styles.formControl} defaultValue="500000" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Per Transaction Limit</label>
 						<input className={styles.formControl} defaultValue="200000" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>International Limit</label>
 						<input className={styles.formControl} defaultValue="100000" />
 					</div>
@@ -1330,7 +1330,7 @@ export default function TransferOverviewModals({
 							Reason: Insufficient funds in M-Pesa
 						</div>
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>New Funding Source</label>
 						<select className={styles.formControl}>
 							<option>PayMo Wallet (KES 24,500)</option>
@@ -1478,10 +1478,10 @@ export default function TransferOverviewModals({
 				</button>
 			}
 		>
-			<div className="row g-3">
-				<div className="col-md-4">
+			<div className={styles.row3}>
+				<div className={styles.colMd4}>
 					<div
-						className="p-3 rounded text-center"
+						className={`${styles.p3} ${styles.rounded} ${styles.textCenter}`}
 						style={{ background: "var(--pm-accent-soft)" }}
 					>
 						<div
@@ -1498,9 +1498,9 @@ export default function TransferOverviewModals({
 						</div>
 					</div>
 				</div>
-				<div className="col-md-4">
+				<div className={styles.colMd4}>
 					<div
-						className="p-3 rounded text-center"
+						className={`${styles.p3} ${styles.rounded} ${styles.textCenter}`}
 						style={{ background: "var(--pm-info-soft)" }}
 					>
 						<div
@@ -1513,9 +1513,9 @@ export default function TransferOverviewModals({
 						</div>
 					</div>
 				</div>
-				<div className="col-md-4">
+				<div className={styles.colMd4}>
 					<div
-						className="p-3 rounded text-center"
+						className={`${styles.p3} ${styles.rounded} ${styles.textCenter}`}
 						style={{ background: "var(--pm-warning-soft)" }}
 					>
 						<div
@@ -1594,7 +1594,7 @@ export default function TransferOverviewModals({
 				</button>
 			}
 		>
-			<div className="text-center">
+			<div className={styles.textCenter}>
 				<div
 					className={`${styles.avatar} mx-auto mb-3`}
 					style={{ width: 64, height: 64, fontSize: 24 }}
@@ -1712,7 +1712,7 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"disputeTransferModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Issue Type</label>
 						<select className={styles.formControl}>
 							{ISSUE_TYPES.map((t) => (
@@ -1720,7 +1720,7 @@ export default function TransferOverviewModals({
 							))}
 						</select>
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Description</label>
 						<textarea
 							className={styles.formControl}
@@ -1766,11 +1766,11 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"editBeneficiaryModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Name</label>
 						<input className={styles.formControl} defaultValue="Grace Kamau" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Phone / Account</label>
 						<input className={styles.formControl} defaultValue="0712 345 890" />
 					</div>
@@ -1806,11 +1806,11 @@ export default function TransferOverviewModals({
 				</button>
 			}
 		>
-			<div className="mb-3">
+			<div className={styles.mb3}>
 				<label className={styles.formLabel}>Amount (KES)</label>
 				<input className={styles.formControl} defaultValue="50000" />
 			</div>
-			<div className="mb-3">
+			<div className={styles.mb3}>
 				<label className={styles.formLabel}>Method</label>
 				<select className={styles.formControl}>
 					{METHODS.map((m) => (
@@ -1845,7 +1845,7 @@ export default function TransferOverviewModals({
 				</button>
 			}
 		>
-			<div className="d-flex gap-2 mb-3">
+			<div className={`${styles.flex} ${styles.gap2} ${styles.mb3}`}>
 				<select className={styles.formControl} style={{ width: "auto" }}>
 					<option>All Methods</option>
 					<option>M-Pesa</option>
@@ -1930,11 +1930,11 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"favoritesQuickModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Amount (KES)</label>
 						<input className={styles.formControl} defaultValue="5000" />
 					</div>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Note</label>
 						<input
 							className={styles.formControl}
@@ -1976,7 +1976,7 @@ export default function TransferOverviewModals({
 			{renderActionBody(
 				"addToFavoritesModal",
 				<>
-					<div className="mb-3">
+					<div className={styles.mb3}>
 						<label className={styles.formLabel}>Nickname</label>
 						<input className={styles.formControl} defaultValue="My Landlord" />
 					</div>

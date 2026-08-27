@@ -485,7 +485,7 @@ export default function TransferOverview() {
 						</h2>
 						<p className={styles.pageSub}></p>
 					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
+					<div className={`${styles.flex} ${styles.flexWrap} ${styles.gap2}`}>
 						<button
 							className={styles.btnPm}
 							onClick={() => setActiveModal("transferHistoryModal")}
@@ -528,7 +528,7 @@ export default function TransferOverview() {
 								<p className={styles.heroSubtext}>
 									{config.hero.detail}
 								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+								<div className={`${styles.flex} ${styles.flexWrap} ${styles.mt3} ${styles.gap2}`}>
 									{config.hero.actions.map((a) => (
 										<button
 											key={a.label}
@@ -579,8 +579,8 @@ export default function TransferOverview() {
 					<div className="row g-3">
 						<div className="col-lg-4">
 							<div className={styles.card}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
-									<h3 className={styles.st}>Attention Required</h3>
+							<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.mb3}`}>
+								<h3 className={styles.st}>Attention Required</h3>
 									<button
 										className={`${styles.btnPm} ${styles.btnSm}`}
 										onClick={() => setActiveModal("attentionModal")}
@@ -590,7 +590,7 @@ export default function TransferOverview() {
 								</div>
 								{config.attention.map((item) => (
 									<div key={item.title} className={styles.sr}>
-										<div className="d-flex align-items-center gap-3">
+										<div className={`${styles.flex} ${styles.itemsCenter} ${styles.gap3}`}>
 											<div
 												className={styles.iconCircle}
 												style={{
@@ -621,15 +621,15 @@ export default function TransferOverview() {
 						</div>
 						<div className="col-lg-4">
 							<div className={styles.card}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
-									<h3 className={styles.st}>Smart Suggestions</h3>
+							<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.mb3}`}>
+								<h3 className={styles.st}>Smart Suggestions</h3>
 									<span className={`${styles.badge} ${styles.badgeP}`}>
 										<i className="bi bi-stars" /> AI
 									</span>
 								</div>
 								{config.suggestions.map((item) => (
 									<div key={item.title} className={styles.sr}>
-										<div className="d-flex align-items-center gap-3">
+										<div className={`${styles.flex} ${styles.itemsCenter} ${styles.gap3}`}>
 											<div
 												className={styles.iconCircle}
 												style={{
@@ -660,7 +660,7 @@ export default function TransferOverview() {
 						</div>
 						<div className="col-lg-4">
 							<div className={styles.card}>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<h3 className={styles.st}>Quick Actions</h3>
 									<p className={styles.ss}>Frequent transfer workflows</p>
 								</div>
@@ -684,25 +684,20 @@ export default function TransferOverview() {
 					</div>
 
 					{/* TRANSFER PORTFOLIO OVERVIEW */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-speedometer2"
-										style={{ color: "var(--pm-primary)" }}
-									/>{" "}
-									Transfer Portfolio Overview
-								</h3>
+					<div className={styles.card}>					<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.flexWrap} ${styles.mb3} ${styles.gap2}`}>
+						<div>
+							<h3 className={styles.st}>
+								<i
+									className={`bi bi-speedometer2 ${styles.iconGreen}`}
+								/>{" "}
+								Transfer Portfolio Overview
+							</h3>
 								<p className={styles.ss}>
 									Real-time view of all transfer activity, success rates, and
 									spending patterns.
 								</p>
 							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+							<div className={`${styles.flex} ${styles.gap2}`}>
 								<button
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => setActiveModal("transferAnalyticsModal")}
@@ -788,24 +783,19 @@ export default function TransferOverview() {
 					</div>
 
 					{/* FAVORITES & BENEFICIARIES */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-star-fill"
-										style={{ color: "var(--pm-warning)" }}
-									/>{" "}
-									Favorites & Frequent Beneficiaries
-								</h3>
+					<div className={styles.card}>					<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.flexWrap} ${styles.mb3} ${styles.gap2}`}>
+						<div>
+							<h3 className={styles.st}>
+								<i
+									className={`bi bi-star-fill ${styles.iconAmber}`}
+								/>{" "}
+								Favorites & Frequent Beneficiaries
+							</h3>
 								<p className={styles.ss}>
 									Quick-send to your most used recipients with one tap.
 								</p>
 							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+							<div className={`${styles.flex} ${styles.gap2}`}>
 								<button
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => setActiveModal("manageBeneficiariesModal")}
@@ -827,7 +817,7 @@ export default function TransferOverview() {
 										className={`${styles.card} ${styles.cardHover}`}
 										onClick={() => setActiveModal("favoritesQuickModal")}
 									>
-										<div className="d-flex align-items-center gap-2">
+										<div className={`${styles.flex} ${styles.itemsCenter} ${styles.gap2}`}>
 											<div
 												className={styles.iconCircle}
 												style={{ background: f.color, color: "#fff" }}
@@ -848,25 +838,20 @@ export default function TransferOverview() {
 					</div>
 
 					{/* SCHEDULED & RECURRING */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-calendar-check"
-										style={{ color: "var(--pm-accent)" }}
-									/>{" "}
-									Scheduled & Recurring Transfers
-								</h3>
+					<div className={styles.card}>					<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.flexWrap} ${styles.mb3} ${styles.gap2}`}>
+						<div>
+							<h3 className={styles.st}>
+								<i
+									className={`bi bi-calendar-check ${styles.iconGreen}`}
+								/>{" "}
+								Scheduled & Recurring Transfers
+							</h3>
 								<p className={styles.ss}>
 									Manage your automated payments and upcoming scheduled
 									transfers.
 								</p>
 							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+							<div className={`${styles.flex} ${styles.gap2}`}>
 								<button
 									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
 									onClick={() => setActiveModal("scheduleTransferModal")}
@@ -922,23 +907,19 @@ export default function TransferOverview() {
 
 					{/* ANALYTICS SNAPSHOT */}
 					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
+						<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.flexWrap} ${styles.mb3} ${styles.gap2}`}>
 							<div>
 								<h3 className={styles.st}>
 									<i
-										className="bi bi-graph-up-arrow"
-										style={{ color: "var(--pm-info)" }}
-									/>{" "}
-									Transfer Analytics Snapshot
-								</h3>
+										className={`bi bi-graph-up-arrow ${styles.iconBlue}`}
+								/>{" "}
+								Transfer Analytics Snapshot
+							</h3>
 								<p className={styles.ss}>
 									Spending patterns, success rates, and top recipients.
 								</p>
 							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+							<div className={`${styles.flex} ${styles.gap2}`}>
 								<button
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => setActiveModal("transferAnalyticsModal")}

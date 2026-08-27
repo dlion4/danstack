@@ -310,7 +310,7 @@ export const InitiateTransfer: React.FC = () => {
 						<strong>Initiate Transfer</strong>
 					</div>
 				</div>
-				<div className="d-flex flex-wrap" style={{ gap: 8 }}>
+				<div className={`${styles.flex} ${styles.flexWrap} ${styles.gap2}`}>
 					<button
 						className={styles.button + " " + styles.buttonSmall}
 						onClick={() => openModal("templateModal")}
@@ -584,7 +584,7 @@ export const InitiateTransfer: React.FC = () => {
 						{/* ── STEP 2: Sender ─ */}
 						{currentStep === 2 && (
 							<div className={styles.stepContent}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
+								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.mb3}`}>
 									<h3 className={styles.sectionTitle}>
 										<i className="fa-solid fa-building-columns"></i> Sender
 									</h3>
@@ -595,7 +595,7 @@ export const InitiateTransfer: React.FC = () => {
 										<i className="fa-solid fa-plus"></i> Account
 									</button>
 								</div>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Source Account</label>
 									<select className={styles.formControl}>
 										{data.sourceAccounts.map((account: any) => (
@@ -607,21 +607,21 @@ export const InitiateTransfer: React.FC = () => {
 								</div>
 								<div className={styles.accountInfoBox}>
 									<div className={styles.accountInfoRow}>
-										<span className="text-muted">Available</span>
+										<span className={styles.textMuted}>Available</span>
 										<strong>KES 124,700,000</strong>
 									</div>
 									<div className={styles.accountInfoRow}>
-										<span className="text-muted">Daily Limit</span>
+										<span className={styles.textMuted}>Daily Limit</span>
 										<strong>KES 500,000,000 (24.9% used)</strong>
 									</div>
 									<div className={styles.accountInfoRow}>
-										<span className="text-muted">Verification</span>
+										<span className={styles.textMuted}>Verification</span>
 										<span className={`${styles.badge} ${styles.badgeSuccess}`}>
 											<i className="fa-solid fa-circle-check"></i> Verified
 										</span>
 									</div>
 									<div className={styles.accountInfoRow}>
-										<span className="text-muted">Currency</span>
+										<span className={styles.textMuted}>Currency</span>
 										<strong>KES</strong>
 									</div>
 								</div>
@@ -635,7 +635,7 @@ export const InitiateTransfer: React.FC = () => {
 						{/* ── STEP 3: Receiver ── */}
 						{currentStep === 3 && (
 							<div className={styles.stepContent}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
+								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.mb3}`}>
 									<h3 className={styles.sectionTitle}>
 										<i className="fa-solid fa-user-plus"></i> Receiver
 									</h3>
@@ -646,7 +646,7 @@ export const InitiateTransfer: React.FC = () => {
 										<i className="fa-solid fa-address-book"></i> Address Book
 									</button>
 								</div>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Beneficiary Type</label>
 									<div className={styles.pills}>
 										{data.beneficiaryTypes.map((type: any) => (
@@ -673,7 +673,7 @@ export const InitiateTransfer: React.FC = () => {
 								</div>
 								{activeReceiver === "bank" && (
 									<div>
-										<div className="mb-2">
+										<div className={styles.mb2}>
 											<label className={styles.formLabel}>Bank</label>
 											<select className={styles.formControl}>
 												{data.banks.map((bank: string, idx: number) => (
@@ -703,7 +703,7 @@ export const InitiateTransfer: React.FC = () => {
 								)}
 								{activeReceiver === "mobile" && (
 									<div>
-										<div className="mb-2">
+										<div className={styles.mb2}>
 											<label className={styles.formLabel}>Network</label>
 											<select className={styles.formControl}>
 												{data.mobileNetworks.map((network: string, idx: number) => (
@@ -711,7 +711,7 @@ export const InitiateTransfer: React.FC = () => {
 												))}
 											</select>
 										</div>
-										<div className="mb-2">
+										<div className={styles.mb2}>
 											<label className={styles.formLabel}>Phone Number</label>
 											<input
 												className={styles.formControl}
@@ -722,7 +722,7 @@ export const InitiateTransfer: React.FC = () => {
 									</div>
 								)}
 								{activeReceiver === "wallet" && (
-									<div className="mb-2">
+									<div className={styles.mb2}>
 										<label className={styles.formLabel}>PayMo Wallet / PayPal</label>
 										<input
 											className={styles.formControl}
@@ -806,7 +806,7 @@ export const InitiateTransfer: React.FC = () => {
 						{/* ── STEP 5: Payment Rail ── */}
 						{currentStep === 5 && (
 							<div className={styles.stepContent}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
+								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.itemsCenter} ${styles.mb3}`}>
 									<h3 className={styles.sectionTitle}>
 										<i className="fa-solid fa-route"></i> Payment Rail
 									</h3>
@@ -887,7 +887,7 @@ export const InitiateTransfer: React.FC = () => {
 								<h3 className={`${styles.sectionTitle} mb-3`}>
 									<i className="fa-solid fa-file-shield"></i> Purpose & Compliance
 								</h3>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Purpose Code</label>
 									<select className={styles.formControl}>
 										{data.purposeCodes.map((code: string, idx: number) => (
@@ -895,16 +895,16 @@ export const InitiateTransfer: React.FC = () => {
 										))}
 									</select>
 								</div>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Reference / Narration</label>
 									<input
 										className={styles.formControl}
 										defaultValue="June 2025 Payroll - Engineering"
 									/>
 								</div>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Supporting Documents</label>
-									<div className="d-flex gap-2">
+									<div className={`${styles.flex} ${styles.gap2}`}>
 										<button
 											className={`${styles.button} ${styles.buttonSmall}`}
 											onClick={() => openModal("uploadDocModal")}
@@ -952,7 +952,7 @@ export const InitiateTransfer: React.FC = () => {
 										<strong>Peter O. (Treasury)</strong>
 									</div>
 								</div>
-								<div className="mb-3">
+								<div className={styles.mb3}>
 									<label className={styles.formLabel}>Schedule Execution</label>
 									<input
 										type="datetime-local"
@@ -986,25 +986,25 @@ export const InitiateTransfer: React.FC = () => {
 								<div className={styles.reviewGrid}>
 									<div className={styles.reviewCard}>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-building-columns"></i> From
 											</span>
 											<strong>PayMo KES Float</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-user"></i> To
 											</span>
 											<strong>James K. Mwangi (KCB)</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-coins"></i> Amount
 											</span>
 											<strong>KES 250,000</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-receipt"></i> Total Debit
 											</span>
 											<strong>KES 250,175</strong>
@@ -1012,25 +1012,25 @@ export const InitiateTransfer: React.FC = () => {
 									</div>
 									<div className={styles.reviewCard + " " + styles.reviewCardSuccess}>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-route"></i> Rail
 											</span>
 											<strong>PesaLink</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-clock"></i> ETA
 											</span>
 											<strong>3.4 seconds</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-hashtag"></i> Ref
 											</span>
 											<strong>PAY-20250627-8841</strong>
 										</div>
 										<div className={styles.reviewRow}>
-											<span className="text-muted">
+											<span className={styles.textMuted}>
 												<i className="fa-solid fa-shield-halved"></i> Risk Score
 											</span>
 											<span className={`${styles.badge} ${styles.badgeSuccess}`}>
