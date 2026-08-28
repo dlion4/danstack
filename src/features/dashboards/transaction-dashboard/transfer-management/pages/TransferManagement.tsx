@@ -658,104 +658,6 @@ export default function TransferManagement() {
 	}, []);
 
 	return (
-<<<<<<< HEAD
-		<div className={s.pageRoot} style={{ position: "relative" }}>
-			<div className={s.stack}>
-				{/* page bar */}
-				<div className={s.pageBar}>
-					<div>
-						<div className={s.breadcrumb}>
-							<Link to="/app">Home</Link> /{" "}
-							<Link to="/app/transfers">Transactions</Link> /{" "}
-							<strong>Transfer Management</strong>
-						</div>
-						{/* <h1 className={s.pageTitle}> Transfer Management</h1> */}
-						<p className={s.pageCopy}>
-							{/* Domestic, international, scheduled, recurring &amp;
-							compliance-controlled bank transfers. */}
-						</p>
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("transferHealthModal")}
-						>
-							<i className="bi bi-heart-pulse" /> Health Check
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("bulkTransferModal")}
-						>
-							<i className="bi bi-collection" /> Bulk Transfer
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnPrimary, s.btnSm)}
-							onClick={() => openModal("initiateTransferModal")}
-						>
-							<i className="bi bi-plus-lg" /> New Transfer
-						</button>
-					</div>
-				</div>
-
-				{/* hero + stats */}
-				<div className="row g-3">
-					<div className="col-lg-3">
-						<div
-							className={cx(s.card, s.cardAccent)}
-							style={{ minHeight: 180 }}
-						>
-							<p style={{ margin: 0, fontSize: 13 }}>
-								{c.heroTitle} <span style={{ color: "#86efac" }}>●</span>
-							</p>
-							<div className={s.statValue} style={{ margin: "10px 0" }}>
-								{c.heroValue}
-							</div>
-							<p style={{ margin: 0, fontSize: 13 }}>{c.heroSub}</p>
-											<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("initiateTransferModal")}
-								>
-									New Transfer
-								</button>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("scheduleTransferModal")}
-								>
-									Schedule
-								</button>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("bulkTransferModal")}
-								>
-									Bulk
-								</button>
-							</div>
-						</div>
-					</div>
-					{c.stats.map((stat) => (
-						<div className="col-lg-3 col-md-6" key={stat.label}>
-							<div
-								className={cx(
-									s.card,
-									stat.edge === "warn" && s.cardWarnEdge,
-									stat.edge === "success" && s.cardAccentEdge,
-								)}
-								style={{ minHeight: 180 }}
-							>
-								<p className={s.statLabel}>{stat.label}</p>
-								<div className={s.statValue}>{stat.value}</div>
-								{stat.badge && (
-									<span className={cx(s.badge, toneBadge[stat.badge.tone])}>
-										<i className={cx("bi", stat.badge.icon)} />{" "}
-										{stat.badge.text}
-=======
 		<div className={styles.managementPage}>
 			<main className={styles.main}>
 				<div className={styles.content}>
@@ -770,7 +672,6 @@ export default function TransferManagement() {
 								<div className={styles.heroEyebrow}>
 									<span>
 										<i className="bi bi-diagram-3" /> Transfer control
->>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 									</span>
 									<span className={styles.livePill}>
 										<span className={styles.liveDot} aria-hidden="true" />
@@ -1033,49 +934,6 @@ export default function TransferManagement() {
 										<h3>Recent domestic transfers</h3>
 										<span>Latest activity across connected Kenyan banks</span>
 									</div>
-<<<<<<< HEAD
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* 1.3.2 international */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>								<i className="bi bi-globe" style={{ color: "var(--info)" }} />{" "}
-								International Transfers &amp; Remittances
-							</h3>
-							<p className={s.sectionSub}>
-								SWIFT, Wave, Remitly, WorldRemit &amp; regional corridors with
-								live FX and compliance screening.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("fxRatesModal")}
-							>
-								<i className="bi bi-currency-exchange" /> FX Rates
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnPrimary, s.btnSm)}
-								onClick={() => openModal("internationalModal")}
-							>
-								<i className="bi bi-plus-lg" /> New International
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-8">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Recent International Transfers</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-=======
 									<button
 										type="button"
 										className={styles.textButton}
@@ -1089,7 +947,6 @@ export default function TransferManagement() {
 										<caption className={styles.srOnly}>
 											Recent domestic bank transfers
 										</caption>
->>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 										<thead>
 											<tr>
 												<th scope="col">Reference</th>
@@ -1184,218 +1041,6 @@ export default function TransferManagement() {
 												{bank.status}
 											</span>
 										</div>
-<<<<<<< HEAD
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* 1.3.3 scheduled & recurring */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-arrow-repeat" style={{ color: "var(--purple)" }} />{" "}
-								Scheduled &amp; Recurring Transfers
-							</h3>
-							<p className={s.sectionSub}>
-								One-time future transfers and recurring payments with approval
-								workflows and failure handling.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("scheduleTransferModal")}
-							>
-								<i className="bi bi-plus-lg" /> New Schedule
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("recurringModal")}
-							>
-								<i className="bi bi-arrow-repeat" /> Recurring
-							</button>
-						</div>
-					</div>
-					<div className={s.subBlock}>
-						<h4 className={s.blockHead}>
-							Active Schedules &amp; Recurring Runs
-						</h4>
-						<div className={s.tableWrap}>
-							<table className={s.table}>
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Beneficiary</th>
-										<th>Amount</th>
-										<th>Frequency</th>
-										<th>Next Run</th>
-										<th>Status</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									{c.schedules.map((r) => (
-										<tr key={r.name}>
-											<td>{r.name}</td>
-											<td>{r.beneficiary}</td>
-											<td>{r.amount}</td>
-											<td>{r.frequency}</td>
-											<td>{r.next}</td>
-											<td>
-												<span className={cx(s.badge, toneBadge[r.statusTone])}>
-													{r.status}
-												</span>
-											</td>
-											<td>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal(r.action.modal)}
-												>
-													{r.action.label}
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-
-				{/* 1.3.4 history */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-clock-history" style={{ color: "var(--ink-500)" }} />{" "}
-								Transfer History &amp; Reconciliation
-							</h3>
-							<p className={s.sectionSub}>
-								Full audit trail, receipt vault, reconciliation tools and export
-								options.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("reconciliationModal")}
-							>
-								<i className="bi bi-check2-square" /> Reconcile
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("transferHistoryModal")}
-							>
-								<i className="bi bi-download" /> Export
-							</button>
-						</div>
-					</div>
-					<div className={s.subBlock}>
-						<div className={s.tableWrap}>
-							<table className={s.table}>
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>Reference</th>
-										<th>Beneficiary</th>
-										<th>Bank</th>
-										<th>Amount</th>
-										<th>Method</th>
-										<th>Status</th>
-										<th>Receipt</th>
-									</tr>
-								</thead>
-								<tbody>
-									{c.history.map((r) => (
-										<tr key={r.ref}>
-											<td>{r.date}</td>
-											<td>{r.ref}</td>
-											<td>{r.beneficiary}</td>
-											<td>{r.bank}</td>
-											<td>{r.amount}</td>
-											<td>{r.method}</td>
-											<td>
-												<span className={cx(s.badge, toneBadge[r.statusTone])}>
-													{r.status}
-												</span>
-											</td>
-											<td>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() => openModal(r.action.modal)}
-												>
-													{r.action.label}
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-
-				{/* 1.3.5 limits / approvals / compliance */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-shield-check" style={{ color: "var(--danger)" }} />{" "}
-								Transfer Limits, Approvals &amp; Compliance
-							</h3>
-							<p className={s.sectionSub}>
-								Limits, maker-checker approval workflows, AML screening and
-								regulatory reporting.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("limitsModal")}
-							>
-								<i className="bi bi-sliders" /> Limits
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("approvalQueueModal")}
-							>
-								<i className="bi bi-check2-square" /> Approvals
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Current Limits</h4>
-								{c.limits.map((l) => (
-									<div className={s.rowItem} key={l.label}>
-										<strong>{l.label}</strong>
-										<strong>{l.value}</strong>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Approval Workflow</h4>
-								{c.approvals.map((a) => (
-									<div className={s.rowItem} key={a.label}>
-										<strong>{a.label}</strong>
-										<span className={cx(s.badge, toneBadge[a.tone])}>
-											{a.badge}
-=======
 									))}
 								</div>
 								<button
@@ -1408,7 +1053,6 @@ export default function TransferManagement() {
 										<strong>Rail health is within target</strong>
 										<span>
 											47 institutions reachable · RTGS closes 16:00 EAT
->>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 										</span>
 									</span>
 								</button>
