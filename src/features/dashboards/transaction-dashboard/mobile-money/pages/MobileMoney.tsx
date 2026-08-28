@@ -1,1485 +1,1841 @@
+/**
+ * PayMo Business — Mobile Money & PSP Integration Hub.
+ *
+ * Mobile wallet command center: M-Pesa, Airtel Money, T-Kash and PesaLink
+ * wallets plus 20+ PSP integrations — single & bulk disbursements, linked
+ * accounts, KYC compliance, reconciliation, fee comparison and support.
+ *
+ * Rebuilt in the navy/emerald PayMo blueprint: executive hero snapshot,
+ * numbered business sections, semantic tables, floating command bar and
+ * fully data-driven modal workflows (see DESIGN-BLUEPRINT.md).
+ */
+
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import MobileMoneyModals from "../components/MobileMoneyModals";
+import { useEffect, useMemo, useState } from "react";
+import MobileMoneyModals, {
+	type MobileMoneyData,
+} from "../components/MobileMoneyModals";
 import styles from "../styles/mobileMoney.module.css";
 
-/* ============================================================================
-   PayMo BaaS — Mobile Money & PSP Integration Hub (legacy page 1.11)
-   React + TypeScript + TanStack Query, emerald-glass dashboard theme.
-   ========================================================================== */
+type BadgeTone =
+	| "badgeSuccess"
+	| "badgeWarn"
+	| "badgeDanger"
+	| "badgeInfo"
+	| "badgeViolet"
+	| "badgeNeutral";
+type IconTone =
+	| "iconGreen"
+	| "iconBlue"
+	| "iconViolet"
+	| "iconAmber"
+	| "iconDanger";
 
-type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
-
-interface NavItem {
-	icon: string;
-	to: string;
-	label: string;
-	active?: boolean;
-	dot?: boolean;
+interface HeroSnapshot {
+	live: string;
+	value: string;
+	detail: string;
+	buttons: { label: string; icon: string; modal: string }[];
+	metrics: { value: string; label: string }[];
 }
 
-interface SrItem {
+interface KpiCard {
+	id: string;
 	icon: string;
-	iconBg: string;
-	iconColor: string;
+	iconTone: IconTone;
+	label: string;
+	meta: string;
+	value: string;
+	foot: string;
+}
+
+interface AttentionItem {
+	id: string;
+	severity: "danger" | "warn" | "info";
 	title: string;
-	sub: string;
+	detail: string;
 	actionLabel: string;
-	actionTone?: "btnPmD" | "btnPmP";
+	modal: string;
+}
+
+interface Suggestion {
+	id: string;
+	priority: "high" | "medium" | "low";
+	icon: string;
+	title: string;
+	detail: string;
+	actionLabel: string;
 	modal: string;
 }
 
 interface QuickAction {
+	id: string;
 	icon: string;
 	label: string;
-	color: string;
+	detail: string;
 	modal: string;
 }
 
-interface TableCol {
-	key: string;
-	label: string;
+interface Wallet {
+	id: string;
+	name: string;
+	provider: string;
+	providerTone: BadgeTone;
+	balance: string;
+	dailyLimit: string;
+	health: number;
+	txns24h: string;
 }
 
-type CellAction = { action: string; modal: string; tone?: "btnPmD" | "btnPmP" };
-type Cell =
-	| string
-	| { badge: string; tone: BadgeTone }
-	| CellAction
-	| { actions: CellAction[] };
-
-interface StatCardM {
-	key: string;
-	colClass: string;
+interface SnapshotBox {
+	id: string;
 	label: string;
-	labelColor: string;
 	value: string;
-	badge: { icon: string; text: string; tone: BadgeTone };
-	lines?: { label: string; value: string }[];
-	progress?: { label: string; value: string; width: string; color: string };
-	bordered?: boolean;
+	tone: "statAccent" | "statInfo" | "statWarn";
 }
 
-interface MobileMoneyConfig {
-	nav: NavItem[];
-	headerTitle: string;
-	headerSub: string;
-	searchPlaceholder: string;
-	user: {
-		initials: string;
-		name: string;
-		role: string;
-		headerInitials: string;
-	};
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
-	pageCode: string;
-	pageTitle: string;
-	pageSub: string;
-	hero: {
-		live: string;
-		value: string;
-		detail: string;
-		buttons: { label: string; modal: string }[];
-	};
-	statCards: StatCardM[];
-	attention: SrItem[];
-	suggestions: SrItem[];
+interface LinkedWallet {
+	id: string;
+	number: string;
+	provider: string;
+	owner: string;
+	kyc: string;
+	kycTone: BadgeTone;
+	status: string;
+	statusTone: BadgeTone;
+	perms: string;
+}
+
+interface TransferRow {
+	id: string;
+	date: string;
+	route: string;
+	amount: string;
+	status: string;
+	statusTone: BadgeTone;
+	ref: string;
+	actionLabel: string;
+	modal: string;
+}
+
+interface PspRow {
+	id: string;
+	name: string;
+	type: string;
+	status: string;
+	statusTone: BadgeTone;
+	uptime: string;
+	uptimeTone: BadgeTone;
+	settlement: string;
+}
+
+interface KycStat {
+	label: string;
+	count: string;
+	tone: BadgeTone;
+}
+
+interface LimitRow {
+	label: string;
+	value: string;
+}
+
+interface TrendBar {
+	label: string;
+	height: number;
+	highlight?: boolean;
+}
+
+interface SupportContact {
+	label: string;
+	value: string;
+	icon: string;
+}
+
+interface AlertSetting {
+	label: string;
+	checked: boolean;
+}
+
+interface IntegrationHealth {
+	label: string;
+	status: string;
+	tone: BadgeTone;
+}
+
+export interface MobileMoneyConfig {
+	hero: HeroSnapshot;
+	kpis: KpiCard[];
+	attention: AttentionItem[];
+	suggestions: Suggestion[];
 	quickActions: QuickAction[];
-	wallets: { cols: TableCol[]; rows: Cell[][] };
-	snapshot: {
-		label: string;
-		value: string;
-		boxTone: "summaryBoxAccent" | "summaryBoxInfo" | "summaryBoxWarn";
-		color: string;
-		big?: boolean;
-	}[];
-	linkedWallets: { cols: TableCol[]; rows: Cell[][] };
-	quickTransfer: { fromOptions: string[]; toOptions: string[]; amount: string };
-	recentTransfers: { cols: TableCol[]; rows: Cell[][] };
-	psps: { cols: TableCol[]; rows: Cell[][] };
-	kycStatus: { label: string; count: string; tone: BadgeTone }[];
-	txnLimits: { label: string; value: string }[];
-	trendBars: { height: string; color: string }[];
+	wallets: Wallet[];
+	snapshot: SnapshotBox[];
+	linkedWallets: LinkedWallet[];
+	recentTransfers: TransferRow[];
+	psps: PspRow[];
+	kycStatus: KycStat[];
+	txnLimits: LimitRow[];
+	trendBars: TrendBar[];
 	reconciliation: { label: string; value: string; sub: string };
-	supportContacts: { label: string; value: string }[];
-	alertSwitches: { label: string; checked: boolean }[];
-	integrationHealth: { label: string; status: string; tone: BadgeTone }[];
+	supportContacts: SupportContact[];
+	alertSettings: AlertSetting[];
+	integrationHealth: IntegrationHealth[];
 }
 
-/* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: MobileMoneyConfig = {
-
-
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "Transactions", to: "/select-dashboard" },
-		],
-		current: "Mobile Money & PSP Hub",
-	},
-
-	// pageTitle: "Mobile Money & PSP Integration Hub",
-	pageSub:
-		"Manage M-Pesa, Airtel Money, T-Kash, Pesalink, and 20+ PSP integrations. Execute transfers, reconcile wallets, handle disputes, and maintain full compliance from one command center.",
 	hero: {
-		live: "Mobile Money command center live",
+		live: "Mobile money command center live",
 		value: "12 wallets linked",
 		detail:
-			"M-Pesa, Airtel Money, T-Kash, Pesalink, 8 PSPs and 3 bank integrations — all reconciled in real time.",
+			"M-Pesa, Airtel Money, T-Kash, PesaLink, 8 PSPs and 3 bank integrations — all reconciled in real time.",
 		buttons: [
-			{ label: "Single Transaction", modal: "sendMoneyModal" },
-			{ label: "Bulk Money Transfer", modal: "bulkTransferModal" },
-			// { label: "Reconcile", modal: "reconcileModal" },
+			{ label: "Send Money", icon: "bi-send", modal: "sendMoneyModal" },
+			{
+				label: "Bulk Transfer",
+				icon: "bi-collection",
+				modal: "bulkTransferModal",
+			},
+			{
+				label: "Link Wallet",
+				icon: "bi-plus-circle",
+				modal: "linkWalletModal",
+			},
+		],
+		metrics: [
+			{ value: "KES 18.4M", label: "Today's volume" },
+			{ value: "99.2%", label: "Success rate" },
+			{ value: "12 wallets", label: "Connected" },
 		],
 	},
-	statCards: [
+	kpis: [
 		{
-			key: "pending",
-			colClass: "col-lg-2 col-md-4 col-6",
-			label: "PENDING SETTLEMENT",
-			labelColor: "var(--pm-warning)",
+			id: "pending",
+			icon: "bi-clock-history",
+			iconTone: "iconAmber",
+			label: "Pending settlement",
+			meta: "Batches awaiting auto-settle",
 			value: "KES 4.82M",
-			badge: { icon: "bi-clock", text: "7 batches", tone: "badgeW" },
-			lines: [{ label: "Next auto-settle:", value: "Today 6 PM" }],
+			foot: "7 batches · next auto-settle today at 6 PM",
 		},
 		{
-			key: "volume",
-			colClass: "col-lg-3 col-md-4 col-6",
-			label: "TODAY'S VOLUME",
-			labelColor: "var(--pm-info)",
+			id: "volume",
+			icon: "bi-graph-up-arrow",
+			iconTone: "iconBlue",
+			label: "Today's volume",
+			meta: "Across all mobile rails",
 			value: "KES 18.4M",
-			badge: {
-				icon: "bi-graph-up-arrow",
-				text: "+31% vs yesterday",
-				tone: "badgeS",
-			},
-			progress: {
-				label: "Success rate",
-				value: "99.2%",
-				width: "99.2%",
-				color: "var(--pm-accent)",
-			},
+			foot: "+31% vs yesterday · 99.2% success rate",
 		},
 		{
-			key: "compliance",
-			colClass: "col-lg-3 col-md-4",
-			label: "COMPLIANCE HEALTH",
-			labelColor: "var(--pm-accent)",
+			id: "balance",
+			icon: "bi-wallet2",
+			iconTone: "iconGreen",
+			label: "Total mobile balance",
+			meta: "All connected wallets",
+			value: "KES 24.05M",
+			foot: "Net flow today +KES 3.82M",
+		},
+		{
+			id: "compliance",
+			icon: "bi-shield-check",
+			iconTone: "iconViolet",
+			label: "Compliance health",
+			meta: "KYC & audit posture",
 			value: "98.7",
-			badge: { icon: "bi-shield-check", text: "All clear", tone: "badgeS" },
-			lines: [
-				{ label: "Last audit:", value: "12 Jun 2025" },
-				{ label: "Next KYC refresh:", value: "45 accounts" },
-			],
-			bordered: true,
+			foot: "45 KYC refreshes due · last audit 12 Jun",
 		},
 	],
 	attention: [
 		{
-			icon: "bi-exclamation-triangle",
-			iconBg: "var(--pm-danger-soft)",
-			iconColor: "var(--pm-danger)",
+			id: "att-batch",
+			severity: "danger",
 			title: "M-Pesa B2C batch failed (47 txns)",
-			sub: "KES 1.24M — retry or manual review",
+			detail: "KES 1.24M — retry or send to manual review",
 			actionLabel: "Retry",
-			actionTone: "btnPmD",
 			modal: "bulkRetryModal",
 		},
 		{
-			icon: "bi-person-exclamation",
-			iconBg: "var(--pm-warning-soft)",
-			iconColor: "var(--pm-warning)",
+			id: "att-kyc",
+			severity: "warn",
 			title: "KYC refresh required (45 accounts)",
-			sub: "Due by 30 Jun 2025",
+			detail: "Due by 30 Jun 2025 to keep wallets active",
 			actionLabel: "Start",
 			modal: "kycBulkModal",
 		},
 		{
-			icon: "bi-link-45deg",
-			iconBg: "var(--pm-info-soft)",
-			iconColor: "var(--pm-info)",
+			id: "att-token",
+			severity: "info",
 			title: "Airtel Money API token expiring",
-			sub: "In 6 days — renew credentials",
+			detail: "In 6 days — renew PSP credentials now",
 			actionLabel: "Renew",
 			modal: "pspSettingsModal",
 		},
 	],
 	suggestions: [
 		{
+			id: "sug-b2b",
+			priority: "high",
 			icon: "bi-lightning-charge",
-			iconBg: "var(--pm-accent-soft)",
-			iconColor: "var(--pm-accent)",
 			title: "Enable instant M-Pesa B2B for 3 suppliers",
-			sub: "Save 2–4 hours per payment cycle",
+			detail: "Save 2–4 hours per payment cycle on recurring disbursements.",
 			actionLabel: "Enable",
 			modal: "pspSettingsModal",
 		},
 		{
+			id: "sug-tkash",
+			priority: "high",
 			icon: "bi-graph-down",
-			iconBg: "var(--pm-warning-soft)",
-			iconColor: "var(--pm-warning)",
 			title: "Switch 18% of volume to T-Kash",
-			sub: "Lower fees on small disbursements",
+			detail: "Lower fees on small disbursements — compare fee tables.",
 			actionLabel: "Compare",
 			modal: "pspCompareModal",
 		},
 		{
+			id: "sug-recon",
+			priority: "medium",
 			icon: "bi-shield-check",
-			iconBg: "var(--pm-purple-soft)",
-			iconColor: "var(--pm-purple)",
 			title: "Run daily reconciliation at 10 PM",
-			sub: "Catch 99.8% of mismatches automatically",
+			detail: "Catches 99.8% of wallet mismatches automatically overnight.",
 			actionLabel: "Schedule",
 			modal: "reconcileModal",
 		},
 	],
 	quickActions: [
 		{
+			id: "qa-send",
 			icon: "bi-send",
 			label: "Send Money",
-			color: "var(--pm-accent)",
+			detail: "Single mobile transfer",
 			modal: "sendMoneyModal",
 		},
 		{
+			id: "qa-bulk",
 			icon: "bi-collection",
 			label: "Bulk Transfer",
-			color: "var(--pm-primary-light)",
+			detail: "Batch disbursements",
 			modal: "bulkTransferModal",
 		},
 		{
+			id: "qa-link",
 			icon: "bi-plus-circle",
 			label: "Link Wallet",
-			color: "var(--pm-info)",
+			detail: "Connect a new mobile account",
 			modal: "linkWalletModal",
 		},
 		{
+			id: "qa-recon",
 			icon: "bi-arrow-repeat",
 			label: "Reconcile",
-			color: "var(--pm-warning)",
+			detail: "Match wallet statements",
 			modal: "reconcileModal",
 		},
 		{
+			id: "qa-dispute",
 			icon: "bi-exclamation-triangle",
 			label: "Dispute",
-			color: "var(--pm-danger)",
+			detail: "File a transaction dispute",
 			modal: "disputeModal",
 		},
 		{
+			id: "qa-psp",
 			icon: "bi-gear",
 			label: "PSP Settings",
-			color: "var(--pm-purple)",
+			detail: "Credentials & webhooks",
 			modal: "pspSettingsModal",
 		},
 		{
+			id: "qa-kyc",
 			icon: "bi-person-check",
 			label: "KYC Refresh",
-			color: "var(--pm-accent)",
+			detail: "Bulk eKYC outreach",
 			modal: "kycBulkModal",
 		},
 		{
+			id: "qa-statement",
 			icon: "bi-download",
 			label: "Statements",
-			color: "var(--pm-muted)",
+			detail: "Export wallet reports",
 			modal: "statementModal",
 		},
 	],
-	wallets: {
-		cols: [
-			{ key: "wallet", label: "Wallet" },
-			{ key: "provider", label: "Provider" },
-			{ key: "balance", label: "Balance" },
-			{ key: "limit", label: "Daily Limit" },
-			{ key: "health", label: "Health" },
-			{ key: "txns", label: "24h Txns" },
-			{ key: "action", label: "Action" },
-		],
-		rows: [
-			[
-				"STR:Business Paybill",
-				{ badge: "M-Pesa", tone: "badgeS" },
-				"STR:KES 8,420,500",
-				"KES 50M",
-				{ badge: "98", tone: "badgeS" },
-				"1,842",
-				{ action: "Manage", modal: "walletDetailModal" },
-			],
-			[
-				"STR:Disbursement Till",
-				{ badge: "Airtel Money", tone: "badgeI" },
-				"STR:KES 2,184,000",
-				"KES 20M",
-				{ badge: "94", tone: "badgeS" },
-				"892",
-				{ action: "Manage", modal: "walletDetailModal" },
-			],
-			[
-				"STR:Collections Till",
-				{ badge: "T-Kash", tone: "badgeW" },
-				"STR:KES 941,200",
-				"KES 10M",
-				{ badge: "87", tone: "badgeW" },
-				"312",
-				{ action: "Manage", modal: "walletDetailModal" },
-			],
-			[
-				"STR:Payroll Float",
-				{ badge: "Pesalink", tone: "badgeP" },
-				"STR:KES 12,500,000",
-				"KES 100M",
-				{ badge: "99", tone: "badgeS" },
-				"48",
-				{ action: "Manage", modal: "walletDetailModal" },
-			],
-		],
-	},
+	wallets: [
+		{
+			id: "w1",
+			name: "Business Paybill",
+			provider: "M-Pesa",
+			providerTone: "badgeSuccess",
+			balance: "KES 8,420,500",
+			dailyLimit: "KES 50M",
+			health: 98,
+			txns24h: "1,842",
+		},
+		{
+			id: "w2",
+			name: "Disbursement Till",
+			provider: "Airtel Money",
+			providerTone: "badgeInfo",
+			balance: "KES 2,184,000",
+			dailyLimit: "KES 20M",
+			health: 94,
+			txns24h: "892",
+		},
+		{
+			id: "w3",
+			name: "Collections Till",
+			provider: "T-Kash",
+			providerTone: "badgeWarn",
+			balance: "KES 941,200",
+			dailyLimit: "KES 10M",
+			health: 87,
+			txns24h: "312",
+		},
+		{
+			id: "w4",
+			name: "Payroll Float",
+			provider: "Pesalink",
+			providerTone: "badgeViolet",
+			balance: "KES 12,500,000",
+			dailyLimit: "KES 100M",
+			health: 99,
+			txns24h: "48",
+		},
+	],
 	snapshot: [
 		{
-			label: "TOTAL MOBILE BALANCE",
+			id: "s1",
+			label: "Total mobile balance",
 			value: "KES 24.05M",
-			boxTone: "summaryBoxAccent",
-			color: "var(--pm-accent)",
-			big: true,
+			tone: "statAccent",
 		},
 		{
-			label: "TODAY'S NET FLOW",
+			id: "s2",
+			label: "Today's net flow",
 			value: "+ KES 3.82M",
-			boxTone: "summaryBoxInfo",
-			color: "var(--pm-info)",
+			tone: "statInfo",
 		},
 		{
-			label: "PENDING SETTLEMENT",
+			id: "s3",
+			label: "Pending settlement",
 			value: "KES 4.82M",
-			boxTone: "summaryBoxWarn",
-			color: "var(--pm-warning)",
+			tone: "statWarn",
 		},
 	],
-	linkedWallets: {
-		cols: [
-			{ key: "wallet", label: "Wallet" },
-			{ key: "provider", label: "Provider" },
-			{ key: "owner", label: "Owner" },
-			{ key: "kyc", label: "KYC" },
-			{ key: "status", label: "Status" },
-			{ key: "perms", label: "Permissions" },
-			{ key: "actions", label: "Actions" },
-		],
-		rows: [
-			[
-				"STR:0712 345 890",
-				"M-Pesa",
-				"James Kamau",
-				{ badge: "Full", tone: "badgeS" },
-				{ badge: "Active", tone: "badgeS" },
-				"Send, Receive, Bulk",
-				{
-					actions: [
-						{ action: "Edit", modal: "walletDetailModal" },
-						{ action: "Perms", modal: "walletPermissionsModal" },
-						{ action: "Pause", modal: "pauseWalletModal", tone: "btnPmD" },
-					],
-				},
-			],
-			[
-				"STR:0733 112 445",
-				"Airtel Money",
-				"Finance Dept",
-				{ badge: "Full", tone: "badgeS" },
-				{ badge: "Active", tone: "badgeS" },
-				"Send, Bulk",
-				{
-					actions: [
-						{ action: "Edit", modal: "walletDetailModal" },
-						{ action: "Perms", modal: "walletPermissionsModal" },
-						{ action: "Pause", modal: "pauseWalletModal", tone: "btnPmD" },
-					],
-				},
-			],
-			[
-				"STR:0700 998 112",
-				"T-Kash",
-				"Procurement",
-				{ badge: "Partial", tone: "badgeW" },
-				{ badge: "Pending KYC", tone: "badgeW" },
-				"Receive only",
-				{
-					actions: [
-						{ action: "Complete KYC", modal: "kycBulkModal" },
-						{ action: "Pause", modal: "pauseWalletModal", tone: "btnPmD" },
-					],
-				},
-			],
-		],
-	},
-	quickTransfer: {
-		fromOptions: [
-			"M-Pesa Business (KES 8.42M)",
-			"Airtel Disbursement (KES 2.18M)",
-		],
-		toOptions: [
-			"0712 345 890 — James Kamau",
-			"0733 112 445 — Finance",
-			"0700 998 112 — Procurement",
-		],
-		amount: "250000",
-	},
-	recentTransfers: {
-		cols: [
-			{ key: "date", label: "Date" },
-			{ key: "route", label: "From → To" },
-			{ key: "amount", label: "Amount" },
-			{ key: "status", label: "Status" },
-			{ key: "ref", label: "Ref" },
-			{ key: "action", label: "Action" },
-		],
-		rows: [
-			[
-				"27 Jun",
-				"M-Pesa → 0712***890",
-				"KES 250,000",
-				{ badge: "Success", tone: "badgeS" },
-				"C:MP-882910",
-				{ action: "Receipt", modal: "transferReceiptModal" },
-			],
-			[
-				"27 Jun",
-				"Airtel → 200 suppliers",
-				"KES 4,820,000",
-				{ badge: "Partial", tone: "badgeW" },
-				"C:AT-991203",
-				{ action: "Retry 47", modal: "bulkRetryModal" },
-			],
-			[
-				"26 Jun",
-				"T-Kash → 0733***445",
-				"KES 85,000",
-				{ badge: "Success", tone: "badgeS" },
-				"C:TK-774501",
-				{ action: "Receipt", modal: "transferReceiptModal" },
-			],
-		],
-	},
-	psps: {
-		cols: [
-			{ key: "psp", label: "PSP" },
-			{ key: "type", label: "Type" },
-			{ key: "status", label: "Status" },
-			{ key: "health", label: "API Health" },
-			{ key: "settlement", label: "Settlement" },
-			{ key: "actions", label: "Actions" },
-		],
-		rows: [
-			[
-				"STR:Safaricom M-Pesa",
-				"B2C / C2B",
-				{ badge: "Live", tone: "badgeS" },
-				{ badge: "99.98%", tone: "badgeS" },
-				"T+0",
-				{
-					actions: [
-						{ action: "Settings", modal: "pspSettingsModal" },
-						{ action: "Health", modal: "pspHealthModal" },
-					],
-				},
-			],
-			[
-				"STR:Airtel Money",
-				"B2C / C2B",
-				{ badge: "Live", tone: "badgeS" },
-				{ badge: "99.71%", tone: "badgeS" },
-				"T+1",
-				{
-					actions: [
-						{ action: "Settings", modal: "pspSettingsModal" },
-						{ action: "Health", modal: "pspHealthModal" },
-					],
-				},
-			],
-			[
-				"STR:Pesalink",
-				"Bank Transfer",
-				{ badge: "Live", tone: "badgeS" },
-				{ badge: "100%", tone: "badgeS" },
-				"Real-time",
-				{
-					actions: [
-						{ action: "Settings", modal: "pspSettingsModal" },
-						{ action: "Health", modal: "pspHealthModal" },
-					],
-				},
-			],
-			[
-				"STR:Cellulant",
-				"PSP Aggregator",
-				{ badge: "Maintenance", tone: "badgeW" },
-				{ badge: "94.2%", tone: "badgeW" },
-				"T+1",
-				{
-					actions: [
-						{ action: "Settings", modal: "pspSettingsModal" },
-						{ action: "Health", modal: "pspHealthModal" },
-					],
-				},
-			],
-		],
-	},
+	linkedWallets: [
+		{
+			id: "lw1",
+			number: "0712 345 890",
+			provider: "M-Pesa",
+			owner: "James Kamau",
+			kyc: "Full",
+			kycTone: "badgeSuccess",
+			status: "Active",
+			statusTone: "badgeSuccess",
+			perms: "Send, Receive, Bulk",
+		},
+		{
+			id: "lw2",
+			number: "0733 112 445",
+			provider: "Airtel Money",
+			owner: "Finance Dept",
+			kyc: "Full",
+			kycTone: "badgeSuccess",
+			status: "Active",
+			statusTone: "badgeSuccess",
+			perms: "Send, Bulk",
+		},
+		{
+			id: "lw3",
+			number: "0700 998 112",
+			provider: "T-Kash",
+			owner: "Procurement",
+			kyc: "Partial",
+			kycTone: "badgeWarn",
+			status: "Pending KYC",
+			statusTone: "badgeWarn",
+			perms: "Receive only",
+		},
+	],
+	recentTransfers: [
+		{
+			id: "t1",
+			date: "27 Jun",
+			route: "M-Pesa → 0712***890",
+			amount: "KES 250,000",
+			status: "Success",
+			statusTone: "badgeSuccess",
+			ref: "MP-882910",
+			actionLabel: "Receipt",
+			modal: "transferReceiptModal",
+		},
+		{
+			id: "t2",
+			date: "27 Jun",
+			route: "Airtel → 200 suppliers",
+			amount: "KES 4,820,000",
+			status: "Partial",
+			statusTone: "badgeWarn",
+			ref: "AT-991203",
+			actionLabel: "Retry 47",
+			modal: "bulkRetryModal",
+		},
+		{
+			id: "t3",
+			date: "26 Jun",
+			route: "T-Kash → 0733***445",
+			amount: "KES 85,000",
+			status: "Success",
+			statusTone: "badgeSuccess",
+			ref: "TK-774501",
+			actionLabel: "Receipt",
+			modal: "transferReceiptModal",
+		},
+	],
+	psps: [
+		{
+			id: "psp1",
+			name: "Safaricom M-Pesa",
+			type: "B2C / C2B",
+			status: "Live",
+			statusTone: "badgeSuccess",
+			uptime: "99.98%",
+			uptimeTone: "badgeSuccess",
+			settlement: "T+0",
+		},
+		{
+			id: "psp2",
+			name: "Airtel Money",
+			type: "B2C / C2B",
+			status: "Live",
+			statusTone: "badgeSuccess",
+			uptime: "99.71%",
+			uptimeTone: "badgeSuccess",
+			settlement: "T+1",
+		},
+		{
+			id: "psp3",
+			name: "Pesalink",
+			type: "Bank transfer",
+			status: "Live",
+			statusTone: "badgeSuccess",
+			uptime: "100%",
+			uptimeTone: "badgeSuccess",
+			settlement: "Real-time",
+		},
+		{
+			id: "psp4",
+			name: "Cellulant",
+			type: "PSP aggregator",
+			status: "Maintenance",
+			statusTone: "badgeWarn",
+			uptime: "94.2%",
+			uptimeTone: "badgeWarn",
+			settlement: "T+1",
+		},
+	],
 	kycStatus: [
-		{ label: "Full KYC", count: "187 accounts", tone: "badgeS" },
-		{ label: "Partial KYC", count: "45 accounts", tone: "badgeW" },
-		{ label: "Expired KYC", count: "12 accounts", tone: "badgeD" },
+		{ label: "Full KYC", count: "187 accounts", tone: "badgeSuccess" },
+		{ label: "Partial KYC", count: "45 accounts", tone: "badgeWarn" },
+		{ label: "Expired KYC", count: "12 accounts", tone: "badgeDanger" },
 	],
 	txnLimits: [
-		{ label: "Per Transaction", value: "KES 1,000,000" },
-		{ label: "Daily Limit", value: "KES 50,000,000" },
-		{ label: "Monthly Limit", value: "KES 500,000,000" },
+		{ label: "Per transaction", value: "KES 1,000,000" },
+		{ label: "Daily limit", value: "KES 50,000,000" },
+		{ label: "Monthly limit", value: "KES 500,000,000" },
 	],
 	trendBars: [
-		{ height: "65%", color: "var(--pm-primary)" },
-		{ height: "78%", color: "var(--pm-primary)" },
-		{ height: "92%", color: "var(--pm-primary)" },
-		{ height: "71%", color: "var(--pm-primary)" },
-		{ height: "85%", color: "var(--pm-primary)" },
-		{ height: "100%", color: "var(--pm-primary)" },
-		{ height: "88%", color: "var(--pm-accent)" },
+		{ label: "Mon", height: 65 },
+		{ label: "Tue", height: 78 },
+		{ label: "Wed", height: 92 },
+		{ label: "Thu", height: 71 },
+		{ label: "Fri", height: 85 },
+		{ label: "Sat", height: 100, highlight: true },
+		{ label: "Sun", height: 88 },
 	],
 	reconciliation: {
-		label: "LAST RECONCILIATION",
+		label: "Last reconciliation",
 		value: "27 Jun 2025, 06:00",
-		sub: "0 mismatches • 100% matched",
+		sub: "0 mismatches · 100% matched",
 	},
 	supportContacts: [
-		{ label: "Phone", value: "+254 800 723 001" },
-		{ label: "WhatsApp", value: "+254 712 000 001" },
-		{ label: "Email", value: "psp@paymo.co.ke" },
+		{ label: "Phone", value: "+254 800 723 001", icon: "bi-telephone" },
+		{ label: "WhatsApp", value: "+254 712 000 001", icon: "bi-whatsapp" },
+		{ label: "Email", value: "psp@paymo.co.ke", icon: "bi-envelope" },
 	],
-	alertSwitches: [
+	alertSettings: [
 		{ label: "Failed transactions", checked: true },
 		{ label: "API downtime", checked: true },
 		{ label: "Settlement delays", checked: true },
 		{ label: "KYC expiry", checked: false },
 	],
 	integrationHealth: [
-		{ label: "M-Pesa API", status: "Healthy", tone: "badgeS" },
-		{ label: "Airtel API", status: "Healthy", tone: "badgeS" },
-		{ label: "Pesalink", status: "Degraded", tone: "badgeW" },
+		{ label: "M-Pesa API", status: "Healthy", tone: "badgeSuccess" },
+		{ label: "Airtel API", status: "Healthy", tone: "badgeSuccess" },
+		{ label: "Pesalink", status: "Degraded", tone: "badgeWarn" },
 	],
 };
 
-/* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
 async function fetchMobileMoney(): Promise<MobileMoneyConfig> {
 	const res = await fetch("/api/mobile-money-hub");
 	if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-	const json = (await res.json()) as Partial<MobileMoneyConfig>;
-	return { ...initialMockData, ...json };
+	return res.json();
 }
 
-/* ---------- cell renderer for data tables ---------- */
-function CellValue({
-	cell,
-	onOpen,
-}: {
-	cell: Cell;
-	onOpen: (id: string) => void;
-}) {
-	if (typeof cell === "string") {
-		if (cell.startsWith("C:")) return <code>{cell.slice(2)}</code>;
-		if (cell.startsWith("STR:")) return <strong>{cell.slice(4)}</strong>;
-		return <>{cell}</>;
-	}
-	if ("badge" in cell)
-		return (
-			<span className={`${styles.badge} ${styles[cell.tone]}`}>
-				{cell.badge}
-			</span>
-		);
-	if ("actions" in cell) {
-		return (
-			<div className="d-flex" style={{ gap: 4 }}>
-				{cell.actions.map((a) => (
-					<button
-						key={a.action}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						{a.action}
-					</button>
-				))}
-			</div>
-		);
-	}
-	return (
-		<button
-			className={`${styles.btnPm} ${styles.btnSm} ${cell.tone ? styles[cell.tone] : ""}`}
-			onClick={() => onOpen(cell.modal)}
-		>
-			{cell.action}
-		</button>
-	);
-}
+const cx = (...parts: Array<string | false | null | undefined>) =>
+	parts.filter(Boolean).join(" ");
 
-/* ---------- section header (1.11.x pattern) ---------- */
-function SectionHead({
-	icon,
-	iconColor,
-	code,
-	title,
-	sub,
-	actions,
-	onOpen,
-}: {
-	icon: string;
-	iconColor: string;
-	code: string;
-	title: string;
-	sub: string;
-	actions: {
-		label: string;
-		icon?: string;
-		modal: string;
-		tone?: "btnPmP" | "btnPmD";
-	}[];
-	onOpen: (id: string) => void;
-}) {
-	return (
-		<div
-			className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-			style={{ gap: 8 }}
-		>
-			<div>
-				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} />
-					{title}
-				</h3>
-				<p className={styles.ss}>{sub}</p>
-			</div>
-			<div className="d-flex" style={{ gap: 8 }}>
-				{actions.map((a) => (
-					<button
-						key={a.label}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						{a.icon && <i className={`bi ${a.icon}`} />} {a.label}
-					</button>
-				))}
-			</div>
-		</div>
-	);
-}
+const severityMeta: Record<
+	AttentionItem["severity"],
+	{ icon: string; cls: IconTone }
+> = {
+	danger: { icon: "bi-exclamation-octagon-fill", cls: "iconDanger" },
+	warn: { icon: "bi-exclamation-triangle-fill", cls: "iconAmber" },
+	info: { icon: "bi-link-45deg", cls: "iconBlue" },
+};
+
+const priorityMeta: Record<
+	Suggestion["priority"],
+	{ label: string; badge: string }
+> = {
+	high: { label: "High priority", badge: styles.badgeDanger },
+	medium: { label: "Medium priority", badge: styles.badgeWarn },
+	low: { label: "Low priority", badge: styles.badgeInfo },
+};
 
 export default function MobileMoney() {
-	const { data } = useQuery({
+	const { data: remoteData, error } = useQuery({
 		queryKey: ["paymo-mobile-money"],
 		queryFn: fetchMobileMoney,
-		retry: 1,
+		initialData: initialMockData,
 		staleTime: 60_000,
+		retry: 1,
 	});
-	const config = data ?? initialMockData;
+	const c = remoteData ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [toasts, setToasts] = useState<
+		Array<{ id: number; message: string; danger?: boolean }>
+	>([]);
+	const [walletQuery, setWalletQuery] = useState("");
 
-	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
-	const openM = (id: string) => setActiveModal(id);
-	const closeM = () => setActiveModal(null);
+	useEffect(() => {
+		if (!toasts.length) return;
+		const timer = setTimeout(() => setToasts((prev) => prev.slice(1)), 4200);
+		return () => clearTimeout(timer);
+	}, [toasts]);
+
+	const pushToast = (message: string, danger = false) =>
+		setToasts((prev) => [
+			...prev.slice(-4),
+			{ id: Date.now() + Math.random(), message, danger },
+		]);
+
+	const go = (modalId: string | null) => setActiveModal(modalId);
+
+	const scrollTo = (sectionId: string) => {
+		document
+			.getElementById(sectionId)
+			?.scrollIntoView({ behavior: "smooth", block: "start" });
+	};
+
+	const filteredWallets = useMemo(() => {
+		const q = walletQuery.trim().toLowerCase();
+		if (!q) return c.wallets;
+		return c.wallets.filter(
+			(w) =>
+				w.name.toLowerCase().includes(q) ||
+				w.provider.toLowerCase().includes(q),
+		);
+	}, [c.wallets, walletQuery]);
+
+	const modalData: MobileMoneyData = {
+		...c,
+		activeModal,
+		setActiveModal: go,
+		onToast: pushToast,
+	};
 
 	return (
-		<div className={styles.mobileMoneyPage}>
-			{/* ======================= SIDEBAR ======================= */}
-			{/* <aside className={styles.sidebar}>
-				<div className={styles.sidebarLogo}>P</div>
-				<nav className={styles.sidebarNav}>
-					{config.nav.map((item) => (
-						<Link
-							key={item.label}
-							to={item.to}
-							className={`${styles.navItem} ${item.active ? styles.navItemActive : ""}`}
-							title={item.label}
-							aria-label={item.label}
-						>
-							<i className={`bi ${item.icon}`} />
-							{item.dot && <span className={styles.badgeDot} />}
-						</Link>
-					))}
-				</nav>
-				<Link
-					to="/support"
-					className={styles.navItem}
-					style={{ marginTop: "auto" }}
-					title="Help & Support"
-					aria-label="Help & Support"
-				>
-					<i className="bi bi-question-circle" />
-				</Link>
-			</aside> */}
-
-			<div className={styles.main}>
-				{/* ======================= HEADER ======================= */}
-				{/* <header className={styles.header}>
-					<div className={styles.headerTitle} style={{ flexShrink: 0 }}>
-						<div className="d-flex align-items-center gap-2">
-							<div
-								className={styles.avatar}
-								style={{ width: 36, height: 36, fontSize: 13 }}
-							>
-								{config.user.headerInitials}
-							</div>
-							<div>
-								<h1>{config.headerTitle}</h1>
-								<p>{config.headerSub}</p>
-							</div>
-						</div>
-					</div>
-					<div className={styles.headerSearch}>
-						<i className="bi bi-search" />
-						<input
-							type="text"
-							placeholder={config.searchPlaceholder}
-							aria-label="Search mobile money"
-						/>
-					</div>
-					<div className={styles.headerActions}>
-						<button
-							className={styles.headerBtn}
-							onClick={() => openM("healthCheckModal")}
-							title="Health check"
-							aria-label="Health check"
-						>
-							<i className="bi bi-heart-pulse" />
-						</button>
-						<button
-							className={styles.headerBtn}
-							onClick={() => openM("notifModal")}
-							title="Notifications"
-							aria-label="Notifications"
-						>
-							<i className="bi bi-bell" />
-							<span className={styles.counter}>14</span>
-						</button>
-						<button
-							className={styles.profileBtn}
-							onClick={() => openM("profileModal")}
-						>
-							<div className={styles.avatar}>{config.user.initials}</div>
-							<div className={styles.profileMeta}>
-								<div className={styles.profileName}>{config.user.name}</div>
-								<div className={styles.profileRole}>{config.user.role}</div>
-							</div>
-						</button>
-					</div>
-				</header> */}
-
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
-						</div>
-						{/* <h2 className={styles.pageH2}>
-							{config.pageTitle}
-						</h2> */}
-						{/* <p className={styles.pageSub}>{config.pageSub}</p> */}
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("healthCheckModal")}
-						>
-							<i className="bi bi-heart-pulse" /> Health
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("reconcileModal")}
-						>
-							<i className="bi bi-arrow-repeat" /> Reconcile
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => openM("sendMoneyModal")}
-						>
-							<i className="bi bi-send" /> Send Money
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmA}`}
-							onClick={() => openM("linkWalletModal")}
-						>
-							<i className="bi bi-plus-lg" /> Link Wallet
-						</button>
-					</div>
-				</div>
-
+		<div className={styles.mmPage}>
+			<main className={styles.main} id="main-content">
 				<div className={styles.content}>
-					{/* ======================= HERO STATS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff" }}
-								>
-									{config.hero.value}
-								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.buttons.map((b) => (
-										<button
-											key={b.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-											onClick={() => openM(b.modal)}
-										>
-											{b.label}
-										</button>
-									))}
-								</div>
-							</div>
-						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div
-									className={styles.card}
-									style={{
-										minHeight: 170,
-										...(card.bordered
-											? { borderLeft: "3px solid var(--pm-accent)" }
-											: {}),
-									}}
-								>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
-									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+					{/* ── Executive hero ─────────────────────────────────── */}
+					<header className={styles.heroBanner}>
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi-phone" aria-hidden="true" /> Mobile Money
+										&amp; PSP Hub
 									</span>
-									{card.lines && (
-										<div
-											className="mt-2"
-											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-										>
-											{card.lines.map((li) => (
-												<div key={li.label}>
-													{li.label} <strong>{li.value}</strong>
-												</div>
-											))}
-										</div>
-									)}
-									{card.progress && (
-										<div className="mt-2">
-											<div
-												className="d-flex justify-content-between"
-												style={{ fontSize: 11, color: "var(--pm-muted)" }}
-											>
-												<span>{card.progress.label}</span>
-												<span>{card.progress.value}</span>
-											</div>
-											<div className={`${styles.pmProgress} mt-1`}>
-												<div
-													className={styles.pmProgressBar}
-													style={{
-														width: card.progress.width,
-														background: card.progress.color,
-													}}
-												/>
-											</div>
-										</div>
-									)}
+									<span className={styles.livePill}>
+										<span className={styles.liveDot} aria-hidden="true" />{" "}
+										{c.hero.live}
+									</span>
 								</div>
-							</div>
-						))}
-					</div>
-
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Attention Required</h3>
+								<h1>Every mobile wallet, one command center.</h1>
+								<p>
+									Send and collect across M-Pesa, Airtel Money, T-Kash and
+									PesaLink, manage 20+ PSP integrations, run bulk disbursements
+									and reconcile every wallet in real time — with KYC compliance
+									built in.
+								</p>
+								<div className={styles.heroActions}>
 									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("attentionModal")}
+										type="button"
+										className={styles.heroPrimary}
+										onClick={() => go("sendMoneyModal")}
 									>
-										View all
+										<i className="bi-send" aria-hidden="true" /> Send money
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => go("bulkTransferModal")}
+									>
+										<i className="bi-collection" aria-hidden="true" /> Bulk
+										transfer
 									</button>
 								</div>
-								{config.attention.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
+							</div>
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="Mobile money snapshot"
+							>
+								<span>Network snapshot</span>
+								<strong>{c.hero.value}</strong>
+								<p>{c.hero.detail}</p>
+								<div className={styles.heroMetricRow}>
+									{c.hero.metrics.map((m) => (
+										<div key={m.label}>
+											<strong>{m.value}</strong>
+											<span>{m.label}</span>
 										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
-									</div>
-								))}
+									))}
+								</div>
+							</aside>
+						</div>
+					</header>
+
+					{error && (
+						<div
+							className={styles.statusNotice}
+							role="alert"
+							style={{
+								borderColor: "#fda29b",
+								background: "#fef3f2",
+								color: "#b42318",
+							}}
+						>
+							<i className="bi-cloud-slash" aria-hidden="true" />
+							<div>
+								<strong>Live mobile money service is unreachable.</strong>
+								<small style={{ color: "#b42318" }}>
+									Showing the last cached wallet snapshot — actions are queued
+									locally.
+								</small>
 							</div>
 						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Smart Suggestions</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> AI
+					)}
+
+					{/* ── KPI row ────────────────────────────────────────── */}
+					<section
+						className={styles.dashboardSection}
+						aria-label="Mobile money metrics"
+					>
+						<div className={styles.kpiGrid}>
+							{c.kpis.map((kpi) => (
+								<div className={cx(styles.card, styles.kpiCard)} key={kpi.id}>
+									<span className={cx(styles.kpiIcon, styles[kpi.iconTone])}>
+										<i className={`bi ${kpi.icon}`} aria-hidden="true" />
+									</span>
+									<div className={styles.kpiMeta}>
+										<span>{kpi.label}</span>
+										<small>{kpi.meta}</small>
+									</div>
+									<div className={styles.kpiValue}>{kpi.value}</div>
+									<div className={styles.kpiFoot}>
+										<span>
+											<i className="bi-info-circle" aria-hidden="true" />
+										</span>
+										<span>{kpi.foot}</span>
+									</div>
+								</div>
+							))}
+						</div>
+					</section>
+
+					{/* ── Section 01 — Queues ────────────────────────────── */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="mm-sec-queues"
+					>
+						<SectionHeading
+							index="01"
+							id="mm-sec-queues"
+							title="Attention, suggestions & quick actions"
+							description="Open operational items, AI cost-saving recommendations and the mobile money workflows teams use most."
+						/>
+						<div className={styles.queueGrid}>
+							<div className={cx(styles.card, styles.queueCard)}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Operations queue</span>
+										<h3>
+											<i
+												className="bi-exclamation-triangle"
+												aria-hidden="true"
+											/>{" "}
+											Attention required
+										</h3>
+										<p>{c.attention.length} items need a decision today.</p>
+									</div>
+									<button
+										type="button"
+										className={styles.textButton}
+										onClick={() => go("attentionModal")}
+									>
+										View all <i className="bi-arrow-right" aria-hidden="true" />
+									</button>
+								</div>
+								{c.attention.map((item) => {
+									const sev = severityMeta[item.severity];
+									return (
+										<div className={styles.actionRow} key={item.id}>
+											<div className={styles.actionLead}>
+												<span
+													className={cx(styles.actionIcon, styles[sev.cls])}
+												>
+													<i className={`bi ${sev.icon}`} aria-hidden="true" />
+												</span>
+												<div>
+													<div className={styles.actionTitle}>{item.title}</div>
+													<div className={styles.actionSub}>{item.detail}</div>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={styles.textButton}
+												onClick={() => go(item.modal)}
+											>
+												{item.actionLabel}{" "}
+												<i className="bi-arrow-right" aria-hidden="true" />
+											</button>
+										</div>
+									);
+								})}
+							</div>
+
+							<div className={cx(styles.card, styles.queueCard)}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>
+											AI money-movement copilot
+										</span>
+										<h3>
+											<i className="bi-stars" aria-hidden="true" /> Smart
+											suggestions
+										</h3>
+										<p>Routing-engine tips based on today's fees and flow.</p>
+									</div>
+									<span className={cx(styles.badge, styles.badgeViolet)}>
+										<i className="bi-stars" aria-hidden="true" /> AI
 									</span>
 								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
+								{c.suggestions.map((sug) => (
+									<div className={styles.actionRow} key={sug.id}>
+										<div className={styles.actionLead}>
+											<span className={cx(styles.actionIcon, styles.iconGreen)}>
+												<i className={`bi ${sug.icon}`} aria-hidden="true" />
+											</span>
 											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
+												<div className={styles.actionTitle}>
+													<span
+														className={cx(
+															styles.badge,
+															priorityMeta[sug.priority].badge,
+														)}
+														style={{ marginRight: 6 }}
+													>
+														{priorityMeta[sug.priority].label}
+													</span>
+													{sug.title}
+												</div>
+												<div className={styles.actionSub}>{sug.detail}</div>
 											</div>
 										</div>
 										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
+											type="button"
+											className={styles.textButton}
+											onClick={() => go(sug.modal)}
 										>
-											{item.actionLabel}
+											{sug.actionLabel}{" "}
+											<i className="bi-check2" aria-hidden="true" />
 										</button>
 									</div>
 								))}
 							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent mobile money workflows</p>
+
+							<div className={cx(styles.card, styles.queueCard)}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Workspace</span>
+										<h3>
+											<i className="bi-lightning-charge" aria-hidden="true" />{" "}
+											Quick actions
+										</h3>
+										<p>Jump straight into a mobile money workflow.</p>
+									</div>
 								</div>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
+								<div className={styles.qaGrid}>
+									{c.quickActions.map((qa) => (
 										<button
-											key={qa.label}
-											className={styles.quickBtn}
-											onClick={() => openM(qa.modal)}
+											type="button"
+											key={qa.id}
+											className={styles.qaBtn}
+											onClick={() => go(qa.modal)}
 										>
-											<i
-												className={`bi ${qa.icon} me-1`}
-												style={{ color: qa.color }}
-											/>{" "}
+											<i className={`bi ${qa.icon}`} aria-hidden="true" />
 											{qa.label}
+											<small>{qa.detail}</small>
 										</button>
 									))}
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION Portfolio Overview ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-wallet2"
-							iconColor="var(--pm-primary)"
-							code="1.11.1"
-							title="Mobile Money Portfolio Overview"
-							sub="Real-time balances, limits, health scores and transaction velocity across all connected mobile money wallets."
-							actions={[
-								{ label: "Link", icon: "bi-plus-lg", modal: "linkWalletModal" },
-								{ label: "Health", modal: "walletHealthModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
+					{/* ── Section 02 — Portfolio overview ────────────────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-portfolio"
+						aria-labelledby="mm-sec-portfolio"
+					>
+						<SectionHeading
+							index="02"
+							id="mm-sec-portfolio"
+							title="Mobile money portfolio overview"
+							description="Real-time balances, daily limits, health scores and transaction velocity across every connected mobile wallet."
 						/>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.wallets.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.wallets.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
+						<div className={styles.card}>
+							<div className={styles.toolbar}>
+								<div className={styles.searchBox}>
+									<i className="bi-search" aria-hidden="true" />
+									<label htmlFor="mm-wallet-search" className={styles.srOnly}>
+										Search wallets
+									</label>
+									<input
+										id="mm-wallet-search"
+										type="search"
+										placeholder="Search wallets or providers…"
+										value={walletQuery}
+										onChange={(e) => setWalletQuery(e.target.value)}
+									/>
+								</div>
+								<div className={styles.toolbarTools}>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => go("walletHealthModal")}
+									>
+										<i className="bi-heart-pulse" aria-hidden="true" /> Health
+									</button>
+									<button
+										type="button"
+										className={cx(styles.btn, styles.btnPrimary)}
+										onClick={() => go("linkWalletModal")}
+									>
+										<i className="bi-plus-lg" aria-hidden="true" /> Link wallet
+									</button>
 								</div>
 							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Portfolio Snapshot</h4>
-									{config.snapshot.map((s) => (
-										<div className={`${styles[s.boxTone]} mb-2`} key={s.label}>
-											<div
-												className={styles.miniStatLabel}
-												style={{ color: s.color }}
-											>
-												{s.label}
-											</div>
-											<div
-												style={{
-													fontSize: s.big ? 24 : 22,
-													fontWeight: 700,
-													color: s.color,
-												}}
-											>
-												{s.value}
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Linked Wallets ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-link-45deg"
-							iconColor="var(--pm-accent)"
-							code="1.11.2"
-							title="Linked Wallets & Accounts"
-							sub="View, edit, pause, or remove all connected mobile money accounts with full KYC status and permission levels."
-							actions={[
-								{
-									label: "Link New Wallet",
-									modal: "linkWalletModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.linkedWallets.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.linkedWallets.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
-											))}
+							<div className={styles.tableWrap}>
+								<table className={styles.table}>
+									<caption className={styles.srOnly}>
+										{filteredWallets.length} of {c.wallets.length} connected
+										wallets
+									</caption>
+									<thead>
+										<tr>
+											<th scope="col">Wallet</th>
+											<th scope="col">Balance</th>
+											<th scope="col">Daily limit</th>
+											<th scope="col">Health</th>
+											<th scope="col">24h txns</th>
+											<th scope="col">
+												<span className={styles.srOnly}>Actions</span>
+											</th>
 										</tr>
-									))}
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										{filteredWallets.map((w) => (
+											<tr key={w.id}>
+												<td>
+													<div className={styles.walletCell}>
+														<span
+															className={styles.walletMark}
+															aria-hidden="true"
+														>
+															<i className="bi-phone" />
+														</span>
+														<div>
+															<strong>{w.name}</strong>
+															<div className={styles.actionSub}>
+																<span
+																	className={cx(
+																		styles.badge,
+																		styles[w.providerTone],
+																	)}
+																>
+																	{w.provider}
+																</span>
+															</div>
+														</div>
+													</div>
+												</td>
+												<td className={styles.cellStrong}>{w.balance}</td>
+												<td>{w.dailyLimit}</td>
+												<td>
+													<span className={styles.miniBar} aria-hidden="true">
+														<span
+															style={{
+																width: `${w.health}%`,
+																background:
+																	w.health >= 95
+																		? "var(--mm-green)"
+																		: "var(--mm-warning)",
+															}}
+														/>
+													</span>
+													<strong style={{ fontSize: "0.72rem" }}>
+														{w.health}%
+													</strong>
+												</td>
+												<td>{w.txns24h}</td>
+												<td>
+													<button
+														type="button"
+														className={styles.textButton}
+														onClick={() => go("walletDetailModal")}
+													>
+														Manage{" "}
+														<i className="bi-arrow-right" aria-hidden="true" />
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+								{!filteredWallets.length && (
+									<div className={styles.emptyState}>
+										<i className="bi-phone" aria-hidden="true" />
+										No wallets match this search.
+									</div>
+								)}
+							</div>
+							<div className={styles.statGrid} style={{ marginTop: "1rem" }}>
+								{c.snapshot.map((s) => (
+									<div
+										key={s.id}
+										className={cx(styles.statBox, styles[s.tone])}
+									>
+										<span>{s.label}</span>
+										<strong>{s.value}</strong>
+									</div>
+								))}
+							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION Transfer Hub ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-send"
-							iconColor="var(--pm-primary)"
-							code="1.11.3"
-							title="Transfer & Payment Hub"
-							sub="Execute single, bulk, scheduled and recurring transfers across all mobile money networks with full audit trails."
-							actions={[
-								{ label: "Schedule", modal: "scheduleTransferModal" },
-								{
-									label: "New Transfer",
-									modal: "sendMoneyModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
+					{/* ── Section 03 — Linked wallets & transfer hub ─────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-linked"
+						aria-labelledby="mm-sec-linked"
+					>
+						<SectionHeading
+							index="03"
+							id="mm-sec-linked"
+							title="Linked wallets & transfer hub"
+							description="Connected mobile accounts with KYC status and permissions, plus quick and recent single/bulk transfers."
 						/>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Quick Transfer</h4>
-									<div className="mb-3">
-										<label className={styles.fl}>From</label>
-										<select
-											className={styles.fc}
-											defaultValue={config.quickTransfer.fromOptions[0]}
-										>
-											{config.quickTransfer.fromOptions.map((o) => (
-												<option key={o}>{o}</option>
-											))}
-										</select>
+						<div className={styles.card} style={{ marginBottom: "1rem" }}>
+							<div className={styles.cardHead}>
+								<div>
+									<span className={styles.cardKicker}>Connected accounts</span>
+									<h3>
+										<i className="bi-link-45deg" aria-hidden="true" /> Linked
+										wallets &amp; accounts
+									</h3>
+								</div>
+								<button
+									type="button"
+									className={cx(styles.btn, styles.btnPrimary)}
+									onClick={() => go("linkWalletModal")}
+								>
+									<i className="bi-plus-lg" aria-hidden="true" /> Link new
+									wallet
+								</button>
+							</div>
+							<div className={styles.tableWrap}>
+								<table className={styles.table}>
+									<caption className={styles.srOnly}>
+										Linked mobile money accounts
+									</caption>
+									<thead>
+										<tr>
+											<th scope="col">Wallet</th>
+											<th scope="col">Provider</th>
+											<th scope="col">Owner</th>
+											<th scope="col">KYC</th>
+											<th scope="col">Status</th>
+											<th scope="col">Permissions</th>
+											<th scope="col">
+												<span className={styles.srOnly}>Actions</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{c.linkedWallets.map((lw) => (
+											<tr key={lw.id}>
+												<td className={styles.cellStrong}>{lw.number}</td>
+												<td>{lw.provider}</td>
+												<td>{lw.owner}</td>
+												<td>
+													<span
+														className={cx(styles.badge, styles[lw.kycTone])}
+													>
+														{lw.kyc}
+													</span>
+												</td>
+												<td>
+													<span
+														className={cx(styles.badge, styles[lw.statusTone])}
+													>
+														{lw.status}
+													</span>
+												</td>
+												<td
+													style={{
+														color: "var(--mm-muted)",
+														fontSize: "0.72rem",
+													}}
+												>
+													{lw.perms}
+												</td>
+												<td>
+													<div style={{ display: "inline-flex", gap: 8 }}>
+														{lw.status === "Pending KYC" ? (
+															<button
+																type="button"
+																className={styles.textButton}
+																onClick={() => go("kycBulkModal")}
+															>
+																Complete KYC{" "}
+																<i
+																	className="bi-arrow-right"
+																	aria-hidden="true"
+																/>
+															</button>
+														) : (
+															<>
+																<button
+																	type="button"
+																	className={styles.textButton}
+																	onClick={() => go("walletPermissionsModal")}
+																>
+																	Perms
+																</button>
+																<button
+																	type="button"
+																	className={styles.textButton}
+																	onClick={() => go("pauseWalletModal")}
+																>
+																	Pause
+																</button>
+															</>
+														)}
+													</div>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div className={styles.queueGrid}>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Move money</span>
+										<h3>
+											<i className="bi-send" aria-hidden="true" /> Quick
+											transfer
+										</h3>
 									</div>
-									<div className="mb-3">
-										<label className={styles.fl}>To</label>
-										<select
-											className={styles.fc}
-											defaultValue={config.quickTransfer.toOptions[0]}
-										>
-											{config.quickTransfer.toOptions.map((o) => (
-												<option key={o}>{o}</option>
-											))}
-										</select>
-									</div>
-									<div className="mb-3">
-										<label className={styles.fl}>Amount</label>
-										<input
-											className={styles.fc}
-											defaultValue={config.quickTransfer.amount}
-										/>
-									</div>
-									<div className="d-flex gap-2">
+								</div>
+								<div style={{ display: "grid", gap: 12 }}>
+									<label className={styles.srOnly} htmlFor="mm-quick-from">
+										From
+									</label>
+									<select
+										id="mm-quick-from"
+										className="mmField"
+										defaultValue="M-Pesa Business (KES 8.42M)"
+										style={fieldStyle}
+									>
+										<option>M-Pesa Business (KES 8.42M)</option>
+										<option>Airtel Disbursement (KES 2.18M)</option>
+									</select>
+									<label className={styles.srOnly} htmlFor="mm-quick-to">
+										To
+									</label>
+									<select
+										id="mm-quick-to"
+										defaultValue="0712 345 890 — James Kamau"
+										style={fieldStyle}
+									>
+										<option>0712 345 890 — James Kamau</option>
+										<option>0733 112 445 — Finance</option>
+										<option>0700 998 112 — Procurement</option>
+									</select>
+									<label className={styles.srOnly} htmlFor="mm-quick-amount">
+										Amount
+									</label>
+									<input
+										id="mm-quick-amount"
+										defaultValue="250000"
+										style={fieldStyle}
+									/>
+									<div style={{ display: "flex", gap: 8 }}>
 										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("sendMoneyModal")}
+											type="button"
+											className={cx(styles.btn, styles.btnPrimary)}
+											onClick={() => go("sendMoneyModal")}
 										>
-											Send Now
+											<i className="bi-send" aria-hidden="true" /> Send now
 										</button>
 										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("scheduleTransferModal")}
+											type="button"
+											className={styles.btn}
+											onClick={() => go("scheduleTransferModal")}
 										>
+											<i className="bi-calendar-event" aria-hidden="true" />{" "}
 											Schedule
 										</button>
 									</div>
 								</div>
 							</div>
-							<div className="col-lg-7">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Recent Transfers</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.recentTransfers.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Activity</span>
+										<h3>
+											<i className="bi-clock-history" aria-hidden="true" />{" "}
+											Recent transfers
+										</h3>
+									</div>
+								</div>
+								<div className={styles.tableWrap}>
+									<table className={styles.table}>
+										<caption className={styles.srOnly}>
+											Recent mobile money transfers
+										</caption>
+										<thead>
+											<tr>
+												<th scope="col">Route</th>
+												<th scope="col">Amount</th>
+												<th scope="col">Status</th>
+												<th scope="col">
+													<span className={styles.srOnly}>Action</span>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{c.recentTransfers.map((t) => (
+												<tr key={t.id}>
+													<td style={{ whiteSpace: "normal" }}>
+														<div className={styles.cellStrong}>{t.route}</div>
+														<div className={styles.actionSub}>
+															{t.date} · {t.ref}
+														</div>
+													</td>
+													<td className={styles.cellStrong}>{t.amount}</td>
+													<td>
+														<span
+															className={cx(styles.badge, styles[t.statusTone])}
+														>
+															{t.status}
+														</span>
+													</td>
+													<td>
+														<button
+															type="button"
+															className={styles.textButton}
+															onClick={() => go(t.modal)}
+														>
+															{t.actionLabel}
+														</button>
+													</td>
 												</tr>
-											</thead>
-											<tbody>
-												{config.recentTransfers.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION PSP Integration ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-plug"
-							iconColor="var(--pm-purple)"
-							code="1.11.4"
-							title="PSP Integration Management"
-							sub="Connect, monitor, and manage 20+ Payment Service Providers with API health, credentials, and settlement rules."
-							actions={[
-								{ label: "Add PSP", modal: "addPspModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
-						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.psps.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.psps.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
 											))}
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Compliance, KYC & Limits ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-shield-check"
-							iconColor="var(--pm-info)"
-							code="1.11.5"
-							title="Compliance, KYC & Limits"
-							sub="Manage KYC status, transaction limits, AML flags, and regulatory reporting for all mobile money activity."
-							actions={[
-								{ label: "Bulk KYC", modal: "kycBulkModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-6">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>KYC Status</h4>
-									{config.kycStatus.map((k) => (
-										<div className={styles.sr} key={k.label}>
-											<div>
-												<strong>{k.label}</strong>
-											</div>
-											<span className={`${styles.badge} ${styles[k.tone]}`}>
-												{k.count}
-											</span>
-										</div>
-									))}
-									<div className="mt-3">
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} w-100`}
-											onClick={() => openM("kycBulkModal")}
-										>
-											Refresh 45 Partial + 12 Expired
-										</button>
-									</div>
-								</div>
-							</div>
-							<div className="col-lg-6">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Transaction Limits</h4>
-									{config.txnLimits.map((l) => (
-										<div className={styles.sr} key={l.label}>
-											<div>
-												<strong>{l.label}</strong>
-											</div>
-											<strong>{l.value}</strong>
-										</div>
-									))}
-									<div className="mt-3">
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} w-100`}
-											onClick={() => openM("limitSettingsModal")}
-										>
-											Adjust Limits
-										</button>
-									</div>
+										</tbody>
+									</table>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION Analytics & Reconciliation ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-bar-chart-line"
-							iconColor="var(--pm-warning)"
-							code="1.11.6"
-							title="Analytics, Reconciliation & Reporting"
-							sub="Reconciliation engine, volume trends, fee analysis, and regulatory reports."
-							actions={[
-								{ label: "Run Reconciliation", modal: "reconcileModal" },
-								{ label: "Export Reports", modal: "statementModal" },
-							]}
-							onOpen={openM}
+					{/* ── Section 04 — PSP integrations ──────────────────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-psp"
+						aria-labelledby="mm-sec-psp"
+					>
+						<SectionHeading
+							index="04"
+							id="mm-sec-psp"
+							title="PSP integration management"
+							description="Connect, monitor and manage payment service providers — API health, credentials, webhooks and settlement cycles."
 						/>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>7-Day Volume Trend</h4>
-									<div className={styles.chartBars} style={{ height: 80 }}>
-										{config.trendBars.map((b, i) => (
-											<div
-												key={i}
-												className={styles.chartBar}
-												style={{ height: b.height, background: b.color }}
-											/>
-										))}
-									</div>
+						<div className={styles.card}>
+							<div className={styles.cardHead}>
+								<div>
+									<span className={styles.cardKicker}>Providers</span>
+									<h3>
+										<i className="bi-plug" aria-hidden="true" /> Connected PSPs
+									</h3>
 								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Reconciliation Status</h4>
-									<div className={`${styles.summaryBoxAccent} mb-2`}>
-										<div
-											className={styles.miniStatLabel}
-											style={{ color: "var(--pm-accent)" }}
-										>
-											{config.reconciliation.label}
-										</div>
-										<div
-											style={{
-												fontSize: 18,
-												fontWeight: 700,
-												color: "var(--pm-accent)",
-											}}
-										>
-											{config.reconciliation.value}
-										</div>
-										<div style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
-											{config.reconciliation.sub}
-										</div>
-									</div>
+								<div style={{ display: "flex", gap: 8 }}>
 									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100`}
-										onClick={() => openM("reconcileModal")}
+										type="button"
+										className={styles.btn}
+										onClick={() => go("pspHealthModal")}
 									>
-										Run Now
+										<i className="bi-heart-pulse" aria-hidden="true" /> Health
+										dashboard
+									</button>
+									<button
+										type="button"
+										className={cx(styles.btn, styles.btnPrimary)}
+										onClick={() => go("addPspModal")}
+									>
+										<i className="bi-plus-lg" aria-hidden="true" /> Add PSP
+									</button>
+								</div>
+							</div>
+							<div className={styles.tableWrap}>
+								<table className={styles.table}>
+									<caption className={styles.srOnly}>
+										Payment service provider integrations
+									</caption>
+									<thead>
+										<tr>
+											<th scope="col">PSP</th>
+											<th scope="col">Type</th>
+											<th scope="col">Status</th>
+											<th scope="col">API health</th>
+											<th scope="col">Settlement</th>
+											<th scope="col">
+												<span className={styles.srOnly}>Actions</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{c.psps.map((p) => (
+											<tr key={p.id}>
+												<td className={styles.cellStrong}>
+													<i
+														className="bi-plug"
+														style={{
+															color: "var(--mm-green-dark)",
+															marginRight: 6,
+														}}
+														aria-hidden="true"
+													/>
+													{p.name}
+												</td>
+												<td>{p.type}</td>
+												<td>
+													<span
+														className={cx(styles.badge, styles[p.statusTone])}
+													>
+														{p.status}
+													</span>
+												</td>
+												<td>
+													<span
+														className={cx(styles.badge, styles[p.uptimeTone])}
+													>
+														{p.uptime}
+													</span>
+												</td>
+												<td>{p.settlement}</td>
+												<td>
+													<div style={{ display: "inline-flex", gap: 10 }}>
+														<button
+															type="button"
+															className={styles.textButton}
+															onClick={() => go("pspSettingsModal")}
+														>
+															Settings
+														</button>
+														<button
+															type="button"
+															className={styles.textButton}
+															onClick={() => go("pspHealthModal")}
+														>
+															Health
+														</button>
+													</div>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
+
+					{/* ── Section 05 — Compliance & limits ───────────────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-compliance"
+						aria-labelledby="mm-sec-compliance"
+					>
+						<SectionHeading
+							index="05"
+							id="mm-sec-compliance"
+							title="Compliance, KYC & limits"
+							description="KYC status across linked accounts, transaction limits and the regulatory posture for all mobile money activity."
+						/>
+						<div className={styles.queueGrid}>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>KYC register</span>
+										<h3>
+											<i className="bi-person-check" aria-hidden="true" /> KYC
+											status
+										</h3>
+									</div>
+								</div>
+								{c.kycStatus.map((k) => (
+									<div className={styles.listRow} key={k.label}>
+										<strong>{k.label}</strong>
+										<span className={cx(styles.badge, styles[k.tone])}>
+											{k.count}
+										</span>
+									</div>
+								))}
+								<button
+									type="button"
+									className={cx(styles.btn, styles.btnPrimary)}
+									style={{ marginTop: 10, width: "100%" }}
+									onClick={() => go("kycBulkModal")}
+								>
+									<i className="bi-send-check" aria-hidden="true" /> Refresh 45
+									partial + 12 expired
+								</button>
+							</div>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Controls</span>
+										<h3>
+											<i className="bi-sliders" aria-hidden="true" />{" "}
+											Transaction limits
+										</h3>
+									</div>
+								</div>
+								{c.txnLimits.map((l) => (
+									<div className={styles.listRow} key={l.label}>
+										<strong>{l.label}</strong>
+										<strong style={{ color: "var(--mm-ink)" }}>
+											{l.value}
+										</strong>
+									</div>
+								))}
+								<button
+									type="button"
+									className={cx(styles.btn)}
+									style={{ marginTop: 10, width: "100%" }}
+									onClick={() => go("limitSettingsModal")}
+								>
+									<i className="bi-gear" aria-hidden="true" /> Adjust limits
+								</button>
+							</div>
+						</div>
+					</section>
+
+					{/* ── Section 06 — Analytics & reconciliation ───────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-analytics"
+						aria-labelledby="mm-sec-analytics"
+					>
+						<SectionHeading
+							index="06"
+							id="mm-sec-analytics"
+							title="Analytics, reconciliation & reporting"
+							description="Seven-day volume trend, the reconciliation engine and downloadable regulatory reports."
+						/>
+						<div className={styles.queueGrid}>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Trend</span>
+										<h3>
+											<i className="bi-bar-chart-line" aria-hidden="true" />{" "}
+											7-day volume trend
+										</h3>
+									</div>
+								</div>
+								<div
+									className={styles.trendWrap}
+									role="img"
+									aria-label="Seven day mobile money volume trend, peaking Saturday"
+								>
+									{c.trendBars.map((b) => (
+										<div
+											key={b.label}
+											className={styles.trendBar}
+											title={`${b.label}: ${b.height}% of peak volume`}
+											style={{
+												height: `${b.height}%`,
+												background: b.highlight
+													? "linear-gradient(180deg, var(--mm-green-dark), var(--mm-green))"
+													: undefined,
+											}}
+										/>
+									))}
+								</div>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+										marginTop: 26,
+										color: "var(--mm-subtle)",
+										fontSize: "0.62rem",
+										fontWeight: 650,
+									}}
+								>
+									{c.trendBars.map((b) => (
+										<span key={b.label}>{b.label}</span>
+									))}
+								</div>
+							</div>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Reconciliation</span>
+										<h3>
+											<i className="bi-arrow-repeat" aria-hidden="true" />{" "}
+											Wallet reconciliation
+										</h3>
+									</div>
+								</div>
+								<div className={cx(styles.statBox, styles.statAccent)}>
+									<span>{c.reconciliation.label}</span>
+									<strong style={{ fontSize: "1.05rem" }}>
+										{c.reconciliation.value}
+									</strong>
+									<div
+										style={{
+											fontSize: "0.7rem",
+											color: "var(--mm-muted)",
+											marginTop: 4,
+										}}
+									>
+										{c.reconciliation.sub}
+									</div>
+								</div>
+								<div style={{ display: "grid", gap: 8, marginTop: 12 }}>
+									<button
+										type="button"
+										className={cx(styles.btn, styles.btnPrimary)}
+										onClick={() => go("reconcileModal")}
+									>
+										<i className="bi-arrow-repeat" aria-hidden="true" /> Run
+										reconciliation
+									</button>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => go("statementModal")}
+									>
+										<i
+											className="bi-file-earmark-spreadsheet"
+											aria-hidden="true"
+										/>{" "}
+										Export reports
 									</button>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION Support & Settings ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-headset"
-							iconColor="var(--pm-danger)"
-							code="1.11.7"
-							title="Support, Alerts & Settings"
-							sub="24/7 support, alert configuration, API credentials, and integration health monitoring."
-							actions={[
-								{
-									label: "Contact Support",
-									modal: "contactSupportModal",
-									tone: "btnPmD",
-								},
-							]}
-							onOpen={openM}
+					{/* ── Section 07 — Support, alerts & health ──────────── */}
+					<section
+						className={styles.dashboardSection}
+						id="mm-support"
+						aria-labelledby="mm-sec-support"
+					>
+						<SectionHeading
+							index="07"
+							id="mm-sec-support"
+							title="Support, alerts & integration health"
+							description="24/7 PSP support contacts, alert preferences and live integration monitoring."
 						/>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>24/7 Support</h4>
-									{config.supportContacts.map((c) => (
-										<div className={styles.sr} key={c.label}>
-											<div>
-												<strong>{c.label}</strong>
-											</div>
-											<strong>{c.value}</strong>
-										</div>
-									))}
-									<div className={styles.sr}>
-										<div>
-											<strong>In-app Chat</strong>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("contactSupportModal")}
-										>
-											Start Chat
-										</button>
+						<div
+							className={styles.queueGrid}
+							style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
+						>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>24/7 support</span>
+										<h3>
+											<i className="bi-headset" aria-hidden="true" /> Contacts
+										</h3>
 									</div>
 								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Alert Settings</h4>
-									{config.alertSwitches.map((s, i) => (
+								{c.supportContacts.map((contact) => (
+									<div className={styles.listRow} key={contact.label}>
 										<div
-											className={`form-check form-switch ${i < config.alertSwitches.length - 1 ? "mb-2" : ""}`}
-											key={s.label}
+											style={{ display: "flex", alignItems: "center", gap: 8 }}
+										>
+											<span
+												className={cx(styles.actionIcon, styles.iconGreen)}
+												style={{
+													width: 30,
+													height: 30,
+													flex: "0 0 30px",
+													fontSize: "0.8rem",
+												}}
+											>
+												<i
+													className={`bi ${contact.icon}`}
+													aria-hidden="true"
+												/>
+											</span>
+											<strong>{contact.label}</strong>
+										</div>
+										<span style={{ fontSize: "0.7rem", fontWeight: 650 }}>
+											{contact.value}
+										</span>
+									</div>
+								))}
+								<button
+									type="button"
+									className={cx(styles.btn)}
+									style={{ marginTop: 10, width: "100%" }}
+									onClick={() => go("contactSupportModal")}
+								>
+									<i className="bi-chat-dots" aria-hidden="true" /> Start in-app
+									chat
+								</button>
+							</div>
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Preferences</span>
+										<h3>
+											<i className="bi-bell" aria-hidden="true" /> Alert
+											settings
+										</h3>
+									</div>
+								</div>
+								{c.alertSettings.map((alert, i) => (
+									<div className={styles.listRow} key={alert.label}>
+										<strong>{alert.label}</strong>
+										<div
+											className="form-check form-switch"
+											style={{ margin: 0 }}
 										>
 											<input
 												className="form-check-input"
 												type="checkbox"
-												defaultChecked={s.checked}
-												id={`asw${i}`}
+												role="switch"
+												id={`mm-alert-${i}`}
+												defaultChecked={alert.checked}
+												aria-checked={alert.checked}
+												aria-label={alert.label}
 											/>
-											<label className="form-check-label" htmlFor={`asw${i}`}>
-												{s.label}
+											<label
+												className="form-check-label"
+												htmlFor={`mm-alert-${i}`}
+											>
+												<span className={styles.srOnly}>{alert.label}</span>
 											</label>
 										</div>
-									))}
-								</div>
+									</div>
+								))}
 							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Integration Health</h4>
-									{config.integrationHealth.map((h) => (
-										<div className={styles.sr} key={h.label}>
-											<div>
-												<strong>{h.label}</strong>
-											</div>
-											<span className={`${styles.badge} ${styles[h.tone]}`}>
-												{h.status}
-											</span>
-										</div>
-									))}
+							<div className={styles.card}>
+								<div className={styles.cardHead}>
+									<div>
+										<span className={styles.cardKicker}>Monitoring</span>
+										<h3>
+											<i className="bi-heart-pulse" aria-hidden="true" />{" "}
+											Integration health
+										</h3>
+									</div>
 									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
-										onClick={() => openM("pspHealthModal")}
+										type="button"
+										className={styles.textButton}
+										onClick={() => go("pspHealthModal")}
 									>
-										View All
+										View all <i className="bi-arrow-right" aria-hidden="true" />
 									</button>
 								</div>
+								{c.integrationHealth.map((h) => (
+									<div className={styles.listRow} key={h.label}>
+										<strong>{h.label}</strong>
+										<span className={cx(styles.badge, styles[h.tone])}>
+											<i
+												className={`bi ${h.tone === "badgeSuccess" ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill"}`}
+												aria-hidden="true"
+											/>
+											{h.status}
+										</span>
+									</div>
+								))}
+								<button
+									type="button"
+									className={cx(styles.btn, styles.btnPrimary)}
+									style={{ marginTop: 10, width: "100%" }}
+									onClick={() => go("healthCheckModal")}
+								>
+									<i className="bi-heart-pulse" aria-hidden="true" /> Run health
+									check
+								</button>
 							</div>
 						</div>
-					</div>
-				</div>
-				{/* content */}
-			</div>
-			{/* main */}
+					</section>
 
-			{/* ======================= ALL 25 MODALS ======================= */}
-			<MobileMoneyModals active={activeModal} onClose={closeM} onOpen={openM} />
+					{/* ── Footer ────────────────────────────────────────── */}
+					<footer className={styles.pageFooter}>
+						<span>
+							<i className="bi-shield-lock" aria-hidden="true" /> PayMo Business
+							· Mobile money &amp; PSP hub
+						</span>
+						<nav aria-label="Workspace sections">
+							<button type="button" onClick={() => scrollTo("mm-portfolio")}>
+								Wallets
+							</button>
+							<button type="button" onClick={() => scrollTo("mm-linked")}>
+								Transfers
+							</button>
+							<button type="button" onClick={() => scrollTo("mm-psp")}>
+								PSPs
+							</button>
+							<button type="button" onClick={() => scrollTo("mm-analytics")}>
+								Reconciliation
+							</button>
+							<button
+								type="button"
+								onClick={() => go("notifModal")}
+								aria-label="Notifications"
+							>
+								<i className="bi bi-bell" aria-hidden="true" /> Alerts
+							</button>
+							<button
+								type="button"
+								onClick={() => go("profileModal")}
+								aria-label="Profile"
+							>
+								<i className="bi bi-person-circle" aria-hidden="true" /> Profile
+							</button>
+						</nav>
+					</footer>
+				</div>
+			</main>
+
+			{/* ── Floating command bar ─────────────────────────────── */}
+			<div
+				className={styles.floatingBar}
+				role="toolbar"
+				aria-label="Mobile money quick actions"
+			>
+				<button
+					type="button"
+					className={styles.floatingPrimary}
+					onClick={() => go("sendMoneyModal")}
+				>
+					<i className="bi-send" aria-hidden="true" /> Send
+				</button>
+				<button type="button" onClick={() => go("bulkTransferModal")}>
+					<i className="bi-collection" aria-hidden="true" /> Bulk
+				</button>
+				<button type="button" onClick={() => go("linkWalletModal")}>
+					<i className="bi-plus-lg" aria-hidden="true" /> Link
+				</button>
+				<button type="button" onClick={() => go("reconcileModal")}>
+					<i className="bi-arrow-repeat" aria-hidden="true" /> Reconcile
+				</button>
+				<button type="button" onClick={() => go("statementModal")}>
+					<i className="bi-download" aria-hidden="true" /> Export
+				</button>
+			</div>
+
+			{/* ── Toasts ───────────────────────────────────────────── */}
+			<div className={styles.toastStack} aria-live="polite" aria-atomic="false">
+				{toasts.map((toast) => (
+					<output
+						key={toast.id}
+						className={cx(styles.toast, toast.danger && styles.toastDanger)}
+					>
+						<i
+							className={`bi ${toast.danger ? "bi-x-circle-fill" : "bi-check-circle-fill"}`}
+							aria-hidden="true"
+						/>
+						<span>{toast.message}</span>
+					</output>
+				))}
+			</div>
+
+			<MobileMoneyModals data={modalData} />
+		</div>
+	);
+}
+
+/* ── Local helpers ─────────────────────────────────────────────────────── */
+
+const fieldStyle: React.CSSProperties = {
+	width: "100%",
+	minHeight: 40,
+	padding: "0.5rem 0.75rem",
+	border: "1px solid var(--mm-border)",
+	borderRadius: 10,
+	fontSize: "0.78rem",
+	background: "#fff",
+	color: "var(--mm-ink)",
+};
+
+function SectionHeading({
+	index,
+	id,
+	title,
+	description,
+}: {
+	index: string;
+	id: string;
+	title: string;
+	description: string;
+}) {
+	return (
+		<div className={styles.sectionHeading}>
+			<span className={styles.sectionIndex} aria-hidden="true">
+				{index}
+			</span>
+			<div>
+				<h2 id={id}>{title}</h2>
+				<p>{description}</p>
+			</div>
 		</div>
 	);
 }
