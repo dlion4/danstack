@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../styles/walletActivation.module.css';
 
@@ -145,6 +143,14 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 	};
 
 	const handleHover = (linkId: number | null, event: React.MouseEvent | null) => {
+		// Suppress tooltip when hovering over buttons, links, or interactive elements
+		if (event) {
+			const target = event.target as HTMLElement;
+			if (target.closest('button, a, [role="button"]')) {
+				setHoverState({ visible: false, linkId: null, x: 0, y: 0 });
+				return;
+			}
+		}
 		if (event && linkId !== null) {
 			const rect = stageRef.current?.getBoundingClientRect();
 			if (rect) {
@@ -186,10 +192,10 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 				<div>
 					<h3 className={styles.flowChartTitle}>
 						<i className="bi bi-diagram-3" style={{ color: 'var(--pri)' }}></i>
-						Account Flow — Live Linkage Visualizer
+						Account Flow — Live Linkage
 					</h3>
 					<p className={styles.flowChartSub}>
-						Real-time visualization of fund flows between your Primary Wallet and linked dashboards
+						Fund flows between your Primary Wallet and linked dashboards
 					</p>
 				</div>
 				<div className={styles.flowChartTabs}>
@@ -457,9 +463,15 @@ export default function AccountFlowChart({ links, openModal }: AccountFlowChartP
 										<div
 											className={styles.flowLane}
 											key={link.id}
-											style={{ top, height: LANE_H - 18 }}
-											onMouseEnter={(e) => handleHover(link.id, e)}
-											onMouseLeave={() => handleHover(null, null)}
+											style={{ top, height: LANE_H - 18 }}										onMouseEnter={(e) => {
+											const target = e.target as HTMLElement;
+											if (target.closest('button, a, [role="button"]')) {
+												setHoverState({ visible: false, linkId: null, x: 0, y: 0 });
+											} else {
+												handleHover(link.id, e);
+											}
+										}}
+									onMouseLeave={() => handleHover(null, null)}
 										>
 											<div
 												className={`${styles.flowLaneCard} ${status === 'revoked' ? styles.flowLaneCardBroken : ''} ${styles.flowLaneCardHoverable}`}

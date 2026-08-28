@@ -1,652 +1,1803 @@
-/* ============================================================================
- * PaymentRailsModals.tsx — all modals for Page 1.4 "Payment Rails & Routing".
- * ----------------------------------------------------------------------------
- * MIGRATED FROM: legacy 1.4.html modal blocks (openM/closeM + Bootstrap-JS).
- * Each modal is state-driven via the shared modal primitives.
- * ========================================================================== */
-"use client";
-import { cx } from "@/features/Layouts/shell/data/shellData";
-import shared from "../../shared/styles/appPage.module.css";
+/**
+ * PaymentRailsModals — every dialog reachable from Payment Rails & Routing.
+ *
+ * All workflows are data-driven from the page payload (banks, routing rules,
+ * rail configs, nostro accounts, performance, audit trail and health-check
+ * summary) and share the PayMo modal primitives (SimpleModal / FlowModal /
+ * TabbedModal / ModalShell) with their navy/emerald design tokens.
+ */
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { cx } from "../../../../Layouts/shell/data/shellData";
 import {
-	Field,
 	FlowModal,
-	PinRow,
-	ReviewRow,
-	SelectField,
+	ModalShell,
 	SimpleModal,
 	TabbedModal,
-} from "../../shared/components/modals.tsx";
+} from "../../shared/components/modals";
+import s from "../../shared/styles/appPage.module.css";
 import type { PaymentRailsContent } from "../pages/PaymentRails";
 
-const s = shared as Record<string, string>;
+const styles = s as Record<string, string>;
 
-export type PaymentRailsData = Pick<
-	PaymentRailsContent,
-	"banks" | "routingRules"
->;
+const kickerStyle = {
+	display: "block",
+	color: "#0b8f52",
+	fontSize: "0.62rem",
+	fontWeight: 750,
+	letterSpacing: "0.09em",
+	textTransform: "uppercase",
+} as const;
 
-export interface PaymentRailsModalsProps {
-	modalState: Record<string, boolean>;
-	openModal: (id: string) => void;
-	closeModal: (id: string) => void;
-	data: PaymentRailsData;
+function Kicker({ children }: { children: ReactNode }) {
+	return <span style={kickerStyle}>{children}</span>;
 }
 
+/** Order rail tabs: requested rail first, then enabled rails, then disabled. */
+function useMemoTabOrder(
+	rails: PaymentRailsContent["rails"],
+	activeRail: string | null,
+) {
+	return useMemo(() => {
+		const sorted = [...rails].sort(
+			(a, b) => Number(b.enabled) - Number(a.enabled),
+		);
+		if (!activeRail) return sorted;
+		const target = sorted.find((r) => r.id === activeRail);
+		return target
+			? [target, ...sorted.filter((r) => r.id !== activeRail)]
+			: sorted;
+	}, [rails, activeRail]);
+}
+
+export type PaymentRailsData = PaymentRailsContent & {
+	activeModal: string | null;
+	setActiveModal: (modal: string | null) => void;
+	activeBank: string | null;
+	setActiveBank: (bank: string | null) => void;
+	activeRail: string | null;
+	setActiveRail: (rail: string | null) => void;
+	onToast?: (message: string, variant?: "success" | "danger") => void;
+};
+
 export function PaymentRailsModals({
-	modalState,
-	openModal,
-	closeModal,
 	data,
-}: PaymentRailsModalsProps) {
-	const isOpen = (id: string) => Boolean(modalState[id]);
-	const close = (id: string) => closeModal(id);
-	const open = (id: string) => openModal(id);
+}: {
+	data: PaymentRailsData;
+	offline?: boolean;
+}) {
+	const close = () => data.setActiveModal(null);
+	const is = (modal: string) => data.activeModal === modal;
+	const notify = (message: string) => data.onToast?.(message);
+	const navigate = (modal: string) => data.setActiveModal(modal);
 
 	return (
 		<>
-			{/* add bank — flow */}
-			<FlowModal
-				show={isOpen("addBankModal")}
-				onClose={() => close("addBankModal")}
-				iconCls="bi bi-plus-circle"
-				title="Connect New Bank"
-				steps={["Bank", "Rails", "Confirm", "Done"]}
-				confirmLabel="Connect Bank"
-			>
-				{(step) => (
-					<>
-						{step === 1 && (
-							<>
-								<Field label="Bank Name" defaultValue="NCBA Bank Kenya" />
-								<Field
-									label="API Endpoint"
-									defaultValue="https://api.ncba.co.ke/v2"
-								/>
-								<SelectField
-									label="Integration Type"
-									options={[
-										"REST API (real-time)",
-										"SFTP batch",
-										"ISO 20022",
-										"Host-to-Host",
-									]}
-								/>
-							</>
-						)}
-						{step === 2 && (
-							<>
-								<div className="mb-3">
-									<label className={s.fieldLabel}>Enabled Rails</label>
-									{["PesaLink", "RTGS", "ACH", "SWIFT", "Card-to-Bank"].map(
-										(r) => (
-											<div className="form-check" key={r}>
-												<input
-													className="form-check-input"
-													type="checkbox"
-													defaultChecked={r === "PesaLink" || r === "RTGS"}
-													id={`rail-${r}`}
-												/>
-												<label
-													className="form-check-label"
-													htmlFor={`rail-${r}`}
-													style={{ fontSize: 13 }}
-												>
-													{r}
-												</label>
-											</div>
-										),
-									)}
-								</div>
-								<Field label="Settlement Window" defaultValue="09:00 – 16:00" />
-							</>
-						)}
-						{step === 3 && (
-							<>
-								<ReviewRow label="Bank" value="NCBA Bank Kenya" />
-								<ReviewRow label="Rails" value="PesaLink, RTGS" />
-								<ReviewRow label="Per-tx limit" value="KES 150M" highlight />
-								<div className={`${s.hintBox} ${s.hintBoxSuccess} mt-3`}>
-									<i className="bi bi-shield-check" />
-									<span>API credentials validated • Sandbox test passed.</span>
-								</div>
-								<label className={`${s.fieldLabel} mt-3 d-block`}>
-									Authorisation PIN
-								</label>
-								<PinRow />
-							</>
-						)}
-						{step === 4 && (
-							<div className={s.receipt}>
-								<div className={s.receiptIcon}>
-									<i className="bi bi-check-lg" />
-								</div>
-								<h5 className={s.receiptTitle}>Bank Connected</h5>
-								<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
-									NCBA Bank is now live across 2 rails. Ref BANK-20250627-88291.
-								</p>
-							</div>
-						)}
-					</>
-				)}
-			</FlowModal>
-
-			{/* routing rules — tabbed */}
-			<TabbedModal
-				show={isOpen("routingRulesModal")}
-				onClose={() => close("routingRulesModal")}
-				iconCls="bi bi-diagram-3"
-				title="Routing Rules Engine"
-				tabs={[
-					{
-						key: "active",
-						label: "Active Rules",
-						render: () => (
-							<div className={s.tableWrap}>
-								<table className={s.table}>
-									<thead>
-										<tr>
-											<th>Rule</th>
-											<th>Amount</th>
-											<th>Rail</th>
-											<th>Fallback</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.routingRules.map((r) => (
-											<tr key={r.name}>
-												<td>{r.name}</td>
-												<td>{r.amount}</td>
-												<td>
-													<strong>{r.rail}</strong>
-												</td>
-												<td>{r.fallback}</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															r.status === "Active"
-																? s.badgeSuccess
-																: s.badgeWarn,
-														)}
-													>
-														{r.status}
-													</span>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						),
-					},
-					{
-						key: "new",
-						label: "New Rule",
-						render: () => (
-							<>
-								<Field
-									label="Rule Name"
-									defaultValue="High-Value International"
-								/>
-								<div className="row g-3">
-									<div className="col-md-6">
-										<Field label="Min Amount (KES)" defaultValue="500000" />
-									</div>
-									<div className="col-md-6">
-										<Field label="Max Amount (KES)" defaultValue="5000000" />
-									</div>
-								</div>
-								<SelectField
-									label="Primary Rail"
-									options={["PesaLink", "RTGS", "SWIFT", "ACH"]}
-								/>
-								<SelectField
-									label="Fallback Rail"
-									options={["None", "RTGS", "PesaLink", "ACH"]}
-								/>
-							</>
-						),
-					},
-				]}
+			<AddBankModal
+				show={is("addBankModal")}
+				onClose={close}
+				onDone={() =>
+					notify("Bank connection request submitted for compliance review.")
+				}
 			/>
 
-			{/* rail config */}
-			<SimpleModal
-				show={isOpen("railConfigModal")}
-				onClose={() => close("railConfigModal")}
-				iconCls="bi bi-gear"
-				title="Payment Rail Configuration"
-				size="lg"
-				submitLabel="Save Configuration"
-				successMsg="Rail configuration updated!"
-			>
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>Rail</th>
-								<th>Status</th>
-								<th>Cut-off</th>
-								<th>Per-tx Limit</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>PesaLink Instant</td>
-								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
-								</td>
-								<td>16:00</td>
-								<td>KES 100M</td>
-							</tr>
-							<tr>
-								<td>RTGS</td>
-								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
-								</td>
-								<td>15:30</td>
-								<td>KES 500M</td>
-							</tr>
-							<tr>
-								<td>ACH</td>
-								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>Enabled</span>
-								</td>
-								<td>14:00</td>
-								<td>KES 50M</td>
-							</tr>
-							<tr>
-								<td>SWIFT</td>
-								<td>
-									<span className={cx(s.badge, s.badgeWarn)}>
-										Credential expires in 5d
-									</span>
-								</td>
-								<td>12:00</td>
-								<td>USD 1M</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</SimpleModal>
+			<RoutingRulesModal
+				show={is("routingRulesModal")}
+				onClose={close}
+				data={data}
+				onSaved={() =>
+					notify("Routing rules updated and published to the engine.")
+				}
+			/>
 
-			{/* nostro accounts */}
-			<SimpleModal
-				show={isOpen("nostroModal")}
-				onClose={() => close("nostroModal")}
-				iconCls="bi bi-globe2"
-				title="Nostro / Vostro Accounts"
-				size="lg"
-			>
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>Account</th>
-								<th>Bank</th>
-								<th>Balance</th>
-								<th>Reconciliation</th>
-							</tr>
-						</thead>
-						<tbody>
-							{data.banks.slice(0, 4).map((b) => (
-								<tr key={b.name}>
-									<td>NOSTRO-{b.name.slice(0, 3).toUpperCase()}-001</td>
-									<td>{b.name}</td>
-									<td>
-										<strong>USD {(Math.random() * 2 + 0.5).toFixed(2)}M</strong>
-									</td>
-									<td>
-										<span className={cx(s.badge, s.badgeSuccess)}>Matched</span>
-									</td>
-								</tr>
+			<RailConfigModal
+				show={is("railConfigModal")}
+				onClose={close}
+				data={data}
+				onDone={() => notify("Rail configuration saved.")}
+			/>
+
+			<NostroModal show={is("nostroModal")} onClose={close} data={data} />
+
+			<FxRebalanceModal
+				show={is("fxRebalanceModal")}
+				onClose={close}
+				data={data}
+				onDone={() =>
+					notify("FX rebalance executed — nostro positions updated.")
+				}
+			/>
+
+			<HealthCheckModal
+				show={is("healthCheckModal")}
+				onClose={close}
+				data={data}
+				onDone={() => notify("Rail health check complete.")}
+			/>
+
+			<BankHealthModal
+				show={is("bankHealthModal")}
+				onClose={close}
+				data={data}
+			/>
+
+			<PerformanceModal
+				show={is("performanceModal")}
+				onClose={close}
+				data={data}
+			/>
+
+			<ReconcileModal
+				show={is("reconcileModal")}
+				onClose={close}
+				onDone={() =>
+					notify("Nostro reconciliation complete — all balances matched.")
+				}
+			/>
+
+			<ExportReportModal
+				show={is("exportReportModal")}
+				onClose={close}
+				onDone={() => notify("Payment rails report exported.")}
+			/>
+
+			<AbTestModal
+				show={is("abTestModal")}
+				onClose={close}
+				onDone={() => notify("A/B test configuration saved.")}
+			/>
+
+			<AttentionModal
+				show={is("attentionModal")}
+				onClose={close}
+				data={data}
+				onNavigate={(modal) => {
+					navigate(modal);
+				}}
+			/>
+
+			<AuditLogModal show={is("auditLogModal")} onClose={close} data={data} />
+		</>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Add bank connection
+ * ------------------------------------------------------------------------ */
+function AddBankModal({
+	show,
+	onClose,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	onDone: () => void;
+}) {
+	const [bankName, setBankName] = useState("");
+	const [contact, setContact] = useState("");
+
+	useEffect(() => {
+		if (show) {
+			setBankName("");
+			setContact("");
+		}
+	}, [show]);
+
+	return (
+		<SimpleModal
+			show={show}
+			onClose={onClose}
+			iconCls="bi-bank2"
+			title="Add bank connection"
+			successMsg="Connection request submitted"
+			onSubmit={() => onDone()}
+			submitLabel="Submit request"
+		>
+			<p className={styles.hintBox}>
+				<i className="bi bi-info-circle" aria-hidden="true" /> New banks go
+				through a compliance and integration review before rails are enabled.
+				Treasury ops will contact the bank's integration team.
+			</p>
+			<div style={{ display: "grid", gap: 14 }}>
+				<label className={styles.fieldLabel} htmlFor="pr-add-bank-name">
+					Bank / financial institution{" "}
+					<span aria-hidden="true" style={{ color: "#f04438" }}>
+						*
+					</span>
+					<input
+						id="pr-add-bank-name"
+						className={styles.field}
+						value={bankName}
+						onChange={(e) => setBankName(e.target.value)}
+						placeholder="e.g. Standard Chartered Kenya"
+						required
+					/>
+				</label>
+				<label className={styles.fieldLabel} htmlFor="pr-add-bank-contact">
+					Integration contact email
+					<input
+						id="pr-add-bank-contact"
+						className={styles.field}
+						type="email"
+						value={contact}
+						onChange={(e) => setContact(e.target.value)}
+						placeholder="integrations@bank.com"
+					/>
+				</label>
+				<fieldset
+					style={{
+						border: "1px solid var(--border, #e6e9f0)",
+						borderRadius: 12,
+						padding: 14,
+					}}
+				>
+					<legend style={{ ...kickerStyle, padding: "0 6px" }}>
+						Rails to request
+					</legend>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "1fr 1fr",
+							gap: 8,
+							marginTop: 4,
+						}}
+					>
+						{["PesaLink", "RTGS", "ACH", "SWIFT"].map((rail) => (
+							<label
+								key={rail}
+								className="form-check"
+								style={{
+									display: "flex",
+									gap: 8,
+									alignItems: "center",
+									fontWeight: 500,
+								}}
+							>
+								<input
+									className="form-check-input"
+									type="checkbox"
+									defaultChecked={rail === "PesaLink"}
+								/>
+								<span className="form-check-label">{rail}</span>
+							</label>
+						))}
+					</div>
+				</fieldset>
+			</div>
+		</SimpleModal>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Routing rules — tabbed editor
+ * ------------------------------------------------------------------------ */
+function RoutingRulesModal({
+	show,
+	onClose,
+	data,
+	onSaved,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+	onSaved: () => void;
+}) {
+	const [rules, setRules] = useState(data.routingRules);
+	useEffect(() => {
+		if (show) setRules(data.routingRules.map((r) => ({ ...r })));
+	}, [show, data.routingRules]);
+
+	const toggle = (id: string) =>
+		setRules((prev) =>
+			prev.map((r) =>
+				r.id === id
+					? { ...r, status: r.status === "active" ? "paused" : "active" }
+					: r,
+			),
+		);
+
+	return (
+		<TabbedModal
+			show={show}
+			onClose={onClose}
+			iconCls="bi-signpost-split"
+			title="Smart routing rules"
+			size="xl"
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={onClose}
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						onClick={() => {
+							onSaved();
+							onClose();
+						}}
+					>
+						<i className="bi bi-check-lg" aria-hidden="true" /> Publish rules
+					</button>
+				</>
+			}
+			tabs={[
+				{
+					key: "rules",
+					label: "Rules",
+					render: () => (
+						<div style={{ display: "grid", gap: 10 }}>
+							<p className={styles.hintBox}>
+								<i className="bi bi-info-circle" aria-hidden="true" /> Rules are
+								evaluated in priority order — the first match wins. Toggle a
+								rule to pause it without deleting.
+							</p>
+							{rules
+								.slice()
+								.sort((a, b) => a.priority - b.priority)
+								.map((rule) => (
+									<div key={rule.id} className={styles.switchRow}>
+										<div className={styles.switchLabel}>
+											<strong>
+												<span
+													aria-hidden="true"
+													style={{
+														display: "inline-grid",
+														placeItems: "center",
+														minWidth: 22,
+														height: 22,
+														padding: "0 6px",
+														marginRight: 8,
+														borderRadius: 99,
+														background: "#101828",
+														color: "#fff",
+														fontSize: "0.62rem",
+														verticalAlign: "middle",
+													}}
+												>
+													{rule.priority}
+												</span>
+												{rule.name}
+											</strong>
+											<span className={styles.switchDescription}>
+												If {rule.condition} → route via{" "}
+												<strong className="text-primary">
+													{rule.preferredRail}
+												</strong>{" "}
+												· {rule.monthlyVolume} / month
+											</span>
+										</div>
+										<div className="form-check form-switch">
+											<input
+												id={`pr-rule-switch-${rule.id}`}
+												className="form-check-input"
+												type="checkbox"
+												role="switch"
+												checked={rule.status === "active"}
+												aria-checked={rule.status === "active"}
+												onChange={() => toggle(rule.id)}
+											/>
+											<label
+												className="form-check-label"
+												htmlFor={`pr-rule-switch-${rule.id}`}
+											>
+												{rule.status === "active" ? "Active" : "Paused"}
+											</label>
+										</div>
+									</div>
+								))}
+						</div>
+					),
+				},
+				{
+					key: "engine",
+					label: "Engine settings",
+					render: () => (
+						<div style={{ display: "grid", gap: 10 }}>
+							{[
+								{
+									label: "Cost-aware routing",
+									desc: "Prefer the cheapest eligible rail within SLA",
+									on: true,
+								},
+								{
+									label: "Automatic failover",
+									desc: "Reroute to a healthy bank when latency exceeds 2s",
+									on: true,
+								},
+								{
+									label: "Nostro-aware limits",
+									desc: "Hold payments that would breach nostro utilization limits",
+									on: true,
+								},
+								{
+									label: "AI routing suggestions",
+									desc: "Let the routing copilot propose rule changes",
+									on: false,
+								},
+							].map((setting) => (
+								<div key={setting.label} className={styles.switchRow}>
+									<div className={styles.switchLabel}>
+										<strong>{setting.label}</strong>
+										<span className={styles.switchDescription}>
+											{setting.desc}
+										</span>
+									</div>
+									<div className="form-check form-switch">
+										<input
+											id={`pr-engine-${setting.label
+												.replace(/\s+/g, "-")
+												.toLowerCase()}`}
+											className="form-check-input"
+											type="checkbox"
+											role="switch"
+											defaultChecked={setting.on}
+											aria-checked={setting.on}
+											aria-label={setting.label}
+										/>
+									</div>
+								</div>
 							))}
-						</tbody>
-					</table>
-				</div>
-			</SimpleModal>
+						</div>
+					),
+				},
+			]}
+		/>
+	);
+}
 
-			{/* fx rebalance — flow */}
-			<FlowModal
-				show={isOpen("fxRebalanceModal")}
-				onClose={() => close("fxRebalanceModal")}
-				iconCls="bi bi-arrow-left-right"
-				title="Nostro FX Rebalance"
-				steps={["Position", "Trade", "Confirm", "Done"]}
-				confirmLabel="Execute Rebalance"
-			>
-				{(step) => (
-					<>
-						{step === 1 && (
-							<>
-								<div className={`${s.hintBox} ${s.hintBoxWarn} mb-3`}>
-									<i className="bi bi-exclamation-triangle" />
-									<span>
-										USD exposure +$142K above target band. Recommend selling USD
-										100K.
-									</span>
-								</div>
-								<SelectField
-									label="Source Nostro"
-									options={["Equity USD", "KCB USD", "Stanbic USD"]}
+/* --------------------------------------------------------------------------
+ * Rail configuration — tabbed per-rail editor
+ * ------------------------------------------------------------------------ */
+function RailConfigModal({
+	show,
+	onClose,
+	data,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+	onDone: () => void;
+}) {
+	// Rails are shown as tabs; when a specific rail was requested from the
+	// page (e.g. the SWIFT credential alert), surface that tab first.
+	const ordered = useMemoTabOrder(data.rails, data.activeRail);
+
+	return (
+		<TabbedModal
+			show={show}
+			onClose={onClose}
+			iconCls="bi-train-front"
+			title="Rail configuration"
+			size="xl"
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={onClose}
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						onClick={() => {
+							onDone();
+							onClose();
+						}}
+					>
+						<i className="bi bi-check-lg" aria-hidden="true" /> Save
+						configuration
+					</button>
+				</>
+			}
+			tabs={ordered.map((r) => ({
+				key: r.id,
+				label: r.rail,
+				render: () => (
+					<div style={{ display: "grid", gap: 14 }}>
+						<div
+							className={cx(
+								styles.badge,
+								r.enabled ? styles.badgeSuccess : styles.badgeDanger,
+							)}
+							style={{ justifySelf: "start" }}
+						>
+							<i
+								className={`bi ${r.enabled ? "bi-check-circle-fill" : "bi-x-circle-fill"}`}
+								aria-hidden="true"
+							/>
+							{r.enabled ? "Enabled" : "Disabled"} — {r.statusNote}
+						</div>
+						{!r.enabled && r.id === "swift" && (
+							<p
+								className={styles.hintBox}
+								style={{ borderLeftColor: "#f04438" }}
+							>
+								<i className="bi bi-shield-exclamation" aria-hidden="true" />{" "}
+								MT103 API credentials expire in 3 days. Rotate credentials in
+								the security vault and re-enable SWIFT to resume international
+								USD routing.
+							</p>
+						)}
+						<div
+							style={{
+								display: "grid",
+								gridTemplateColumns: "1fr 1fr",
+								gap: 12,
+							}}
+						>
+							<label
+								className={styles.fieldLabel}
+								htmlFor={`pr-${r.id}-cutoff`}
+							>
+								Cutoff / availability
+								<input
+									id={`pr-${r.id}-cutoff`}
+									className={styles.field}
+									defaultValue={r.cutoff}
 								/>
-								<Field label="Amount (USD)" defaultValue="100000" />
-							</>
-						)}
-						{step === 2 && (
-							<>
-								<SelectField
-									label="Counterparty"
-									options={["Interbank Spot", "CBK Window", "Equity Treasury"]}
+							</label>
+							<label className={styles.fieldLabel} htmlFor={`pr-${r.id}-sla`}>
+								SLA target (minutes)
+								<input
+									id={`pr-${r.id}-sla`}
+									className={styles.field}
+									type="number"
+									defaultValue={r.slaMinutes}
 								/>
-								<Field label="Rate (KES/USD)" defaultValue="129.45" />
-								<div className="mt-3">
-									<ReviewRow label="Sell USD" value="100,000" />
-									<ReviewRow label="Rate" value="129.45" />
-									<ReviewRow label="Receive KES" value="12,945,000" highlight />
-								</div>
-							</>
-						)}
-						{step === 3 && (
-							<>
-								<ReviewRow label="Trade" value="Sell USD 100K @ 129.45" />
-								<ReviewRow label="Settlement" value="T+0 (instant)" />
-								<ReviewRow label="Total" value="KES 12,945,000" highlight />
-								<label className={`${s.fieldLabel} mt-3 d-block`}>
-									Authorisation PIN
-								</label>
-								<PinRow />
-							</>
-						)}
-						{step === 4 && (
-							<div className={s.receipt}>
-								<div className={s.receiptIcon}>
-									<i className="bi bi-check-lg" />
-								</div>
-								<h5 className={s.receiptTitle}>FX Rebalance Executed</h5>
-								<p style={{ fontSize: 14, color: "var(--ink-500)" }}>
-									USD 100K sold @ 129.45. Ref FX-20250627-88301.
-								</p>
+							</label>
+							<label className={styles.fieldLabel} htmlFor={`pr-${r.id}-cost`}>
+								Cost per transaction (KES)
+								<input
+									id={`pr-${r.id}-cost`}
+									className={styles.field}
+									type="number"
+									defaultValue={r.costPerTx}
+								/>
+							</label>
+							<label className={styles.fieldLabel} htmlFor={`pr-${r.id}-limit`}>
+								Transaction limit
+								<input
+									id={`pr-${r.id}-limit`}
+									className={styles.field}
+									defaultValue={r.limit}
+								/>
+							</label>
+						</div>
+						<div
+							style={{
+								display: "grid",
+								gridTemplateColumns: "repeat(3, 1fr)",
+								gap: 10,
+							}}
+						>
+							<Stat
+								label="Current latency"
+								value={r.latencyMs ? `${r.latencyMs.toLocaleString()}ms` : "—"}
+							/>
+							<Stat
+								label="Failure rate"
+								value={`${r.failureRate}%`}
+								warn={r.failureRate >= 2}
+							/>
+							<Stat label="Type" value={r.type} />
+						</div>
+						<div className={styles.switchRow}>
+							<div className={styles.switchLabel}>
+								<strong>Rail enabled</strong>
+								<span className={styles.switchDescription}>
+									Disable to stop routing new payments through this rail
+								</span>
 							</div>
-						)}
+							<div className="form-check form-switch">
+								<input
+									id={`pr-rail-enabled-${r.id}`}
+									className="form-check-input"
+									type="checkbox"
+									role="switch"
+									defaultChecked={r.enabled}
+									aria-checked={r.enabled}
+									aria-label={`${r.rail} enabled`}
+								/>
+							</div>
+						</div>
+					</div>
+				),
+			}))}
+		/>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Nostro / vostro accounts
+ * ------------------------------------------------------------------------ */
+function NostroModal({
+	show,
+	onClose,
+	data,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+}) {
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="lg"
+			iconCls="bi-wallet2"
+			title="Nostro & vostro accounts"
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={() => data.setActiveModal("fxRebalanceModal")}
+					>
+						<i className="bi bi-cash-coin" aria-hidden="true" /> FX rebalance
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						onClick={onClose}
+					>
+						Done
+					</button>
+				</>
+			}
+		>
+			<p className={styles.hintBox}>
+				<i className="bi bi-info-circle" aria-hidden="true" /> Utilization above
+				80% triggers a rebalance recommendation; nostro positions fund outbound
+				SWIFT and card settlements, vostro accounts hold inbound partner funds.
+			</p>
+			<div style={{ overflowX: "auto" }}>
+				<table className={styles.table}>
+					<thead>
+						<tr>
+							<th>Account</th>
+							<th>Correspondent</th>
+							<th>Balance</th>
+							<th>Utilization</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{data.nostro.map((account) => (
+							<tr key={account.id}>
+								<td>
+									<strong>{account.accountName}</strong>
+								</td>
+								<td>
+									{account.bank}
+									<div className="text-muted" style={{ fontSize: "0.72rem" }}>
+										{account.currency}
+									</div>
+								</td>
+								<td style={{ fontWeight: 700 }}>{account.balance}</td>
+								<td style={{ minWidth: 140 }}>
+									<div
+										style={{ display: "flex", alignItems: "center", gap: 8 }}
+									>
+										<div className={styles.progressTrack} style={{ flex: 1 }}>
+											<div
+												style={{
+													height: "100%",
+													borderRadius: 99,
+													width: `${account.utilization}%`,
+													background:
+														account.utilization >= 80 ? "#f79009" : "#12b76a",
+												}}
+											/>
+										</div>
+										<span style={{ fontWeight: 650, fontSize: "0.72rem" }}>
+											{account.utilization}%
+										</span>
+									</div>
+								</td>
+								<td>
+									<span
+										className={cx(
+											styles.badge,
+											account.status === "healthy"
+												? styles.badgeSuccess
+												: account.status === "paused"
+													? styles.badgeNeutral
+													: styles.badgeWarn,
+										)}
+									>
+										{account.status === "healthy"
+											? "Healthy"
+											: account.status === "paused"
+												? "Paused"
+												: account.status === "low"
+													? "Low balance"
+													: "Investigate"}
+									</span>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</ModalShell>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * FX rebalance — FlowModal
+ * ------------------------------------------------------------------------ */
+function FxRebalanceModal({
+	show,
+	onClose,
+	data,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+	onDone: () => void;
+}) {
+	const accounts = data.nostro;
+	const [from, setFrom] = useState(accounts[1]?.id ?? "");
+	const [to, setTo] = useState(accounts[0]?.id ?? "");
+	const [amount, setAmount] = useState("2,000,000");
+
+	useEffect(() => {
+		if (show) {
+			setFrom(accounts[1]?.id ?? "");
+			setTo(accounts[0]?.id ?? "");
+			setAmount("2,000,000");
+		}
+	}, [show, accounts[0]?.id]);
+
+	const fromAccount = accounts.find((a) => a.id === from);
+	const toAccount = accounts.find((a) => a.id === to);
+
+	return (
+		<FlowModal
+			show={show}
+			onClose={() => {
+				onDone();
+				onClose();
+			}}
+			iconCls="bi-cash-coin"
+			title="FX rebalance"
+			steps={["Source & amount", "Confirm & execute"]}
+			confirmLabel="Execute rebalance"
+		>
+			{(step) =>
+				step === 1 ? (
+					<div style={{ display: "grid", gap: 14 }}>
+						<p className={styles.hintBox}>
+							<i className="bi bi-info-circle" aria-hidden="true" /> Move funds
+							between nostro accounts to relieve high-utilization currencies.
+							The treasury desk rate is applied automatically.
+						</p>
+						<label className={styles.fieldLabel} htmlFor="pr-fx-from">
+							Debit account
+							<select
+								id="pr-fx-from"
+								className={styles.field}
+								value={from}
+								onChange={(e) => setFrom(e.target.value)}
+							>
+								{accounts.map((a) => (
+									<option key={a.id} value={a.id}>
+										{a.accountName} — {a.balance} ({a.utilization}% used)
+									</option>
+								))}
+							</select>
+						</label>
+						<label className={styles.fieldLabel} htmlFor="pr-fx-to">
+							Credit account
+							<select
+								id="pr-fx-to"
+								className={styles.field}
+								value={to}
+								onChange={(e) => setTo(e.target.value)}
+							>
+								{accounts
+									.filter((a) => a.id !== from)
+									.map((a) => (
+										<option key={a.id} value={a.id}>
+											{a.accountName} — {a.balance} ({a.utilization}% used)
+										</option>
+									))}
+							</select>
+						</label>
+						<label className={styles.fieldLabel} htmlFor="pr-fx-amount">
+							Amount ({fromAccount?.currency ?? "USD"})
+							<input
+								id="pr-fx-amount"
+								className={styles.field}
+								value={amount}
+								onChange={(e) => setAmount(e.target.value)}
+							/>
+						</label>
+					</div>
+				) : (
+					<div style={{ display: "grid", gap: 12 }}>
+						<ConfirmRow
+							label="Debit"
+							value={`${fromAccount?.accountName} · ${fromAccount?.bank}`}
+						/>
+						<ConfirmRow
+							label="Credit"
+							value={`${toAccount?.accountName} · ${toAccount?.bank}`}
+						/>
+						<ConfirmRow
+							label="Amount"
+							value={`${fromAccount?.currency ?? ""} ${amount}`}
+							strong
+						/>
+						<ConfirmRow
+							label="Estimated rate"
+							value={`Treasury mid-rate ± 0.15%`}
+						/>
+						<p className={styles.hintBox}>
+							<i className="bi bi-shield-check" aria-hidden="true" /> Rebalances
+							above the equivalent of USD 1M require a second treasury approver
+							— this request will be routed for approval.
+						</p>
+					</div>
+				)
+			}
+		</FlowModal>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Rail health check — FlowModal
+ * ------------------------------------------------------------------------ */
+function HealthCheckModal({
+	show,
+	onClose,
+	data,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+	onDone: () => void;
+}) {
+	const [scanned, setScanned] = useState(0);
+	const [reported, setReported] = useState(false);
+	const total = data.healthCheck.total;
+
+	useEffect(() => {
+		if (!show) {
+			setScanned(0);
+			setReported(false);
+			return;
+		}
+		setScanned(0);
+		setReported(false);
+		const timer = window.setInterval(() => {
+			setScanned((prev) => {
+				if (prev >= total) {
+					window.clearInterval(timer);
+					return prev;
+				}
+				return prev + 1;
+			});
+		}, 220);
+		return () => window.clearInterval(timer);
+	}, [show, total]);
+
+	useEffect(() => {
+		if (show && scanned >= total && !reported) {
+			setReported(true);
+			onDone();
+		}
+	}, [show, scanned, total, reported, onDone]);
+
+	const bankNames = Object.keys(data.healthCheck.banks);
+	const done = scanned >= total;
+
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="lg"
+			iconCls="bi-heart-pulse"
+			title="Rail health check"
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={onClose}
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						disabled={!done}
+						onClick={() => {
+							setScanned(0);
+							setReported(false);
+						}}
+					>
+						<i className="bi bi-arrow-repeat" aria-hidden="true" />{" "}
+						{done ? "Re-run check" : "Scanning…"}
+					</button>
+				</>
+			}
+		>
+			<div style={{ display: "grid", gap: 12 }}>
+				<p className={styles.hintBox}>
+					<i className="bi bi-activity" aria-hidden="true" /> Testing
+					connectivity, credentials and latency across {total} bank connections
+					{done ? " — scan complete." : "…"}
+				</p>
+				<div
+					className={styles.progressTrack}
+					role="progressbar"
+					aria-valuenow={scanned}
+					aria-valuemin={0}
+					aria-valuemax={total}
+				>
+					<div
+						style={{
+							height: "100%",
+							borderRadius: 99,
+							width: `${(scanned / total) * 100}%`,
+							background: "#12b76a",
+							transition: "width 200ms ease",
+						}}
+					/>
+				</div>
+				{bankNames.slice(0, scanned).map((name) => {
+					const status = data.healthCheck.banks[name];
+					return (
+						<div
+							key={name}
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								gap: 10,
+								padding: "8px 12px",
+								border: "1px solid #e6e9f0",
+								borderRadius: 10,
+							}}
+						>
+							<span style={{ fontWeight: 600, fontSize: "0.8rem" }}>
+								{name}
+							</span>
+							<span
+								className={cx(
+									styles.badge,
+									status === "active"
+										? styles.badgeSuccess
+										: status === "degraded"
+											? styles.badgeWarn
+											: styles.badgeNeutral,
+								)}
+							>
+								<i
+									className={`bi ${status === "active" ? "bi-check-circle-fill" : status === "degraded" ? "bi-exclamation-triangle-fill" : "bi-pause-circle-fill"}`}
+									aria-hidden="true"
+								/>
+								{status === "active"
+									? "Reachable"
+									: status === "degraded"
+										? "Degraded"
+										: "Paused"}
+							</span>
+						</div>
+					);
+				})}
+				{done && (
+					<>
+						<div
+							className={cx(
+								styles.badge,
+								data.healthCheck.issues
+									? styles.badgeWarn
+									: styles.badgeSuccess,
+							)}
+							style={{ justifySelf: "start" }}
+						>
+							<i
+								className={`bi ${data.healthCheck.issues ? "bi-exclamation-triangle-fill" : "bi-check-circle-fill"}`}
+								aria-hidden="true"
+							/>
+							{total - data.healthCheck.issues} of {total} connections healthy ·{" "}
+							{data.healthCheck.issues} issue needs attention
+						</div>
+						{Object.entries(data.healthCheck.banks)
+							.filter(([, status]) => status !== "active")
+							.map(([name, status]) => (
+								<div key={name} className={styles.switchRow}>
+									<div className={styles.switchLabel}>
+										<strong>{name}</strong>
+										<span className={styles.switchDescription}>
+											{status === "degraded"
+												? "Latency above 800ms — traffic partially failed over to backup banks."
+												: "Connection paused — certificate renewal pending; traffic rerouted."}
+										</span>
+									</div>
+									<button
+										type="button"
+										className={cx(styles.btn, styles.btnSecondary)}
+										onClick={() => {
+											data.setActiveBank(name);
+											data.setActiveModal("bankHealthModal");
+										}}
+									>
+										Inspect
+									</button>
+								</div>
+							))}
+						<p
+							className="text-muted"
+							style={{ fontSize: "0.74rem", margin: 0 }}
+						>
+							Last scheduled run: {data.healthCheck.lastRun}.
+						</p>
 					</>
 				)}
-			</FlowModal>
+			</div>
+		</ModalShell>
+	);
+}
 
-			{/* rail / bank health */}
-			<SimpleModal
-				show={isOpen("healthCheckModal")}
-				onClose={() => close("healthCheckModal")}
-				iconCls="bi bi-heart-pulse"
-				title="Rail Health Dashboard"
-				size="lg"
-			>
-				<div className="row g-2 mb-3">
-					<div className="col-6 col-md-3">
-						<div className={cx(s.softBox, s.softBoxSuccess)}>
-							<div className={s.softLabel}>Healthy</div>
-							<div className={s.softValue}>7</div>
+/* --------------------------------------------------------------------------
+ * Bank health drill-down
+ * ------------------------------------------------------------------------ */
+function BankHealthModal({
+	show,
+	onClose,
+	data,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+}) {
+	const bank =
+		data.banks.find((b) => b.name === data.activeBank) ?? data.banks[0];
+
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="lg"
+			iconCls="bi-heart-pulse"
+			title={`${bank?.name ?? "Bank"} — connection health`}
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={onClose}
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						onClick={() => {
+							data.onToast?.("Health re-test queued for this bank.");
+							onClose();
+						}}
+					>
+						<i className="bi bi-arrow-repeat" aria-hidden="true" /> Re-test
+						connection
+					</button>
+				</>
+			}
+		>
+			{bank && (
+				<div style={{ display: "grid", gap: 14 }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "repeat(3, 1fr)",
+							gap: 10,
+						}}
+					>
+						<Stat
+							label="Health score"
+							value={bank.status === "paused" ? "—" : `${bank.health}%`}
+							warn={bank.status === "degraded"}
+						/>
+						<Stat
+							label="Avg latency"
+							value={bank.status === "paused" ? "—" : `${bank.latencyMs}ms`}
+							warn={bank.latencyMs > 600}
+						/>
+						<Stat
+							label="Monthly cost"
+							value={`KES ${bank.monthlyCost.toLocaleString()}`}
+						/>
+					</div>
+					<div>
+						<strong style={{ ...kickerStyle, marginBottom: 8 }}>
+							Rails enabled
+						</strong>
+						<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+							{bank.rails.map((rail) => (
+								<span
+									key={rail}
+									className={cx(styles.badge, styles.badgeNeutral)}
+								>
+									{rail}
+								</span>
+							))}
 						</div>
 					</div>
-					<div className="col-6 col-md-3">
-						<div className={cx(s.softBox, s.softBoxWarn)}>
-							<div className={s.softLabel}>Degraded</div>
-							<div className={s.softValue}>1</div>
-						</div>
-					</div>
-					<div className="col-6 col-md-3">
-						<div className={cx(s.softBox, s.softBoxInfo)}>
-							<div className={s.softLabel}>Avg Latency</div>
-							<div className={s.softValue}>312ms</div>
-						</div>
-					</div>
-					<div className="col-6 col-md-3">
-						<div className={cx(s.softBox, s.softBoxPurple)}>
-							<div className={s.softLabel}>Uptime (30d)</div>
-							<div className={s.softValue}>99.94%</div>
+					<div>
+						<strong style={{ ...kickerStyle, marginBottom: 8 }}>
+							Last 5 health events
+						</strong>
+						<div style={{ display: "grid", gap: 6 }}>
+							{healthEventsFor(bank.status).map((event) => (
+								<div
+									key={event.message}
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+										gap: 10,
+										padding: "8px 12px",
+										border: "1px solid #e6e9f0",
+										borderRadius: 10,
+										fontSize: "0.78rem",
+									}}
+								>
+									<span>{event.message}</span>
+									<span className="text-muted" style={{ whiteSpace: "nowrap" }}>
+										{event.time}
+									</span>
+								</div>
+							))}
 						</div>
 					</div>
 				</div>
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>Bank</th>
-								<th>Health</th>
-								<th>Rails</th>
-								<th>Last Sync</th>
-							</tr>
-						</thead>
-						<tbody>
-							{data.banks.map((b) => (
-								<tr key={b.name}>
-									<td>{b.name}</td>
+			)}
+		</ModalShell>
+	);
+}
+
+function healthEventsFor(status: string) {
+	if (status === "paused") {
+		return [
+			{
+				message: "Connection paused — TLS certificate expired",
+				time: "Today 05:12",
+			},
+			{
+				message: "Automatic failover routed traffic to Equity Bank",
+				time: "Today 05:13",
+			},
+			{
+				message: "Renewal ticket OPS-4821 opened with bank integrations",
+				time: "Today 06:40",
+			},
+			{
+				message: "Last successful heartbeat before pause",
+				time: "Yesterday 23:58",
+			},
+			{ message: "Scheduled health check passed", time: "Yesterday 06:00" },
+		];
+	}
+	if (status === "degraded") {
+		return [
+			{
+				message: "Latency spike detected (842ms avg, SLA 500ms)",
+				time: "Today 08:15",
+			},
+			{
+				message: "12% of PesaLink calls failed over to KCB",
+				time: "Today 08:16",
+			},
+			{
+				message: "Bank status page reported maintenance window",
+				time: "Today 07:30",
+			},
+			{
+				message: "Latency recovered to 410ms for 40 minutes",
+				time: "Today 06:50",
+			},
+			{
+				message: "Scheduled health check passed with warnings",
+				time: "Today 06:00",
+			},
+		];
+	}
+	return [
+		{ message: "Heartbeat OK — 245ms latency", time: "Today 09:40" },
+		{ message: "Credential vault sync successful", time: "Today 06:05" },
+		{ message: "Scheduled health check passed", time: "Today 06:00" },
+		{ message: "RTGS settlement window opened", time: "Yesterday 08:00" },
+		{ message: "Daily reconciliation matched", time: "Yesterday 05:30" },
+	];
+}
+
+/* --------------------------------------------------------------------------
+ * Performance report
+ * ------------------------------------------------------------------------ */
+function PerformanceModal({
+	show,
+	onClose,
+	data,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+}) {
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="xl"
+			iconCls="bi-file-earmark-bar-graph"
+			title="Rail performance — last 30 days"
+			footer={
+				<>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnSecondary)}
+						onClick={() => data.setActiveModal("exportReportModal")}
+					>
+						<i className="bi bi-file-earmark-spreadsheet" aria-hidden="true" />{" "}
+						Export report
+					</button>
+					<button
+						type="button"
+						className={cx(styles.btn, styles.btnPrimary)}
+						onClick={onClose}
+					>
+						Done
+					</button>
+				</>
+			}
+		>
+			<div style={{ overflowX: "auto" }}>
+				<table className={styles.table}>
+					<thead>
+						<tr>
+							<th>Rail</th>
+							<th>SLA target</th>
+							<th>Uptime</th>
+							<th>Transactions</th>
+							<th>Avg latency</th>
+							<th>Failure rate</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{data.performance.map((perf) => {
+							const meetsSla = perf.uptime >= perf.slaTarget;
+							return (
+								<tr key={perf.id}>
+									<td>
+										<strong>{perf.rail}</strong>
+									</td>
+									<td>{perf.slaTarget}%</td>
+									<td style={{ fontWeight: 700 }}>{perf.uptime}%</td>
+									<td>{perf.txs}</td>
+									<td>{perf.avgLatency}</td>
+									<td
+										className={perf.failureRate >= 2 ? "text-danger" : ""}
+										style={{ fontWeight: 650 }}
+									>
+										{perf.failureRate}%
+									</td>
 									<td>
 										<span
 											className={cx(
-												s.badge,
-												b.health === "healthy"
-													? s.badgeSuccess
-													: b.health === "degraded"
-														? s.badgeWarn
-														: s.badgeDanger,
+												styles.badge,
+												meetsSla ? styles.badgeSuccess : styles.badgeWarn,
 											)}
 										>
-											{b.health}
+											{meetsSla ? "Within SLA" : "SLA watch"}
 										</span>
 									</td>
-									<td>{b.rails}</td>
-									<td>just now</td>
 								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			</SimpleModal>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+			<p className={styles.hintBox}>
+				<i className="bi bi-lightbulb" aria-hidden="true" /> Card-to-bank uptime
+				(98.9%) sits just above its 98.5% SLA but below other rails — monitor
+				after the threshold widening suggested by the routing copilot.
+			</p>
+		</ModalShell>
+	);
+}
 
-			{/* bank health (single bank drill-down) */}
-			<SimpleModal
-				show={isOpen("bankHealthModal")}
-				onClose={() => close("bankHealthModal")}
-				iconCls="bi bi-bank"
-				title="Equity Bank — Health Detail"
-			>
-				<div className={`${s.hintBox} ${s.hintBoxDanger} mb-3`}>
-					<i className="bi bi-exclamation-triangle" />
-					<span>API health degraded. Last successful sync 47 minutes ago.</span>
-				</div>
-				<div className="row g-2">
-					<div className="col-6">
-						<div className={cx(s.softBox, s.softBoxWarn)}>
-							<div className={s.softLabel}>Latency</div>
-							<div className={s.softValue}>2,140ms</div>
+/* --------------------------------------------------------------------------
+ * Reconciliation — FlowModal
+ * ------------------------------------------------------------------------ */
+function ReconcileModal({
+	show,
+	onClose,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	onDone: () => void;
+}) {
+	const accounts = [
+		{ label: "USD Nostro — Equity", count: "1,284 entries" },
+		{ label: "EUR Nostro — Stanbic", count: "642 entries" },
+		{ label: "GBP Nostro — Absa", count: "318 entries" },
+		{ label: "Vostro KES — Stanbic", count: "9,610 entries" },
+	];
+	return (
+		<FlowModal
+			show={show}
+			onClose={() => {
+				onDone();
+				onClose();
+			}}
+			iconCls="bi-clipboard2-check"
+			title="Nostro reconciliation"
+			steps={["Match & review", "Post entries"]}
+			confirmLabel="Post reconciliation"
+		>
+			{(step) =>
+				step === 1 ? (
+					<div style={{ display: "grid", gap: 10 }}>
+						<p className={styles.hintBox}>
+							<i className="bi bi-info-circle" aria-hidden="true" /> Matching
+							nostro ledger entries against bank statements for the last 24
+							hours across all currencies.
+						</p>
+						{accounts.map((account) => (
+							<div key={account.label} className={styles.switchRow}>
+								<div className={styles.switchLabel}>
+									<strong>{account.label}</strong>
+									<span className={styles.switchDescription}>
+										{account.count} matched
+									</span>
+								</div>
+								<span className={cx(styles.badge, styles.badgeSuccess)}>
+									<i className="bi bi-check-circle-fill" aria-hidden="true" />{" "}
+									Matched
+								</span>
+							</div>
+						))}
+						<div
+							style={{
+								padding: 12,
+								border: "1px solid #fedf89",
+								borderRadius: 12,
+								background: "#fffaeb",
+							}}
+						>
+							<strong style={{ display: "block", color: "#93370d" }}>
+								1 pending break — SWIFT MT103 $250,000
+							</strong>
+							<span style={{ color: "#b54708", fontSize: "0.78rem" }}>
+								Inbound credit appears on the Equity statement; the nostro entry
+								is pending cutoff posting and will auto-match at the next sweep.
+							</span>
 						</div>
 					</div>
-					<div className="col-6">
-						<div className={cx(s.softBox, s.softBoxDanger)}>
-							<div className={s.softLabel}>Error Rate</div>
-							<div className={s.softValue}>4.2%</div>
+				) : (
+					<div style={{ display: "grid", gap: 12 }}>
+						<ConfirmRow
+							label="Entries matched"
+							value="11,853 of 11,854"
+							strong
+						/>
+						<ConfirmRow
+							label="Pending breaks"
+							value="1 (auto-match at next sweep)"
+						/>
+						<ConfirmRow label="Value date" value="2026-08-29" />
+						<p className={styles.hintBox}>
+							<i className="bi bi-shield-check" aria-hidden="true" /> Posting
+							locks the reconciled entries and records the action in the audit
+							trail.
+						</p>
+					</div>
+				)
+			}
+		</FlowModal>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Export report
+ * ------------------------------------------------------------------------ */
+function ExportReportModal({
+	show,
+	onClose,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	onDone: () => void;
+}) {
+	return (
+		<SimpleModal
+			show={show}
+			onClose={onClose}
+			iconCls="bi-file-earmark-spreadsheet"
+			title="Export payment rails report"
+			successMsg="Report queued for export"
+			onSubmit={() => onDone()}
+			submitLabel="Export report"
+		>
+			<div style={{ display: "grid", gap: 14 }}>
+				<label className={styles.fieldLabel} htmlFor="pr-export-range">
+					Reporting period
+					<select
+						id="pr-export-range"
+						className={styles.field}
+						defaultValue="30"
+					>
+						<option value="7">Last 7 days</option>
+						<option value="30">Last 30 days</option>
+						<option value="90">Last quarter</option>
+					</select>
+				</label>
+				<fieldset
+					style={{
+						border: "1px solid var(--border, #e6e9f0)",
+						borderRadius: 12,
+						padding: 14,
+					}}
+				>
+					<legend style={{ ...kickerStyle, padding: "0 6px" }}>
+						Include sections
+					</legend>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "1fr 1fr",
+							gap: 8,
+							marginTop: 4,
+						}}
+					>
+						{[
+							"Bank directory",
+							"Routing rules",
+							"Rail config",
+							"Performance",
+							"Nostro positions",
+							"Audit trail",
+						].map((section) => (
+							<label
+								key={section}
+								className="form-check"
+								style={{
+									display: "flex",
+									gap: 8,
+									alignItems: "center",
+									fontWeight: 500,
+								}}
+							>
+								<input
+									className="form-check-input"
+									type="checkbox"
+									defaultChecked
+								/>
+								<span className="form-check-label">{section}</span>
+							</label>
+						))}
+					</div>
+				</fieldset>
+				<label className={styles.fieldLabel} htmlFor="pr-export-format">
+					Format
+					<select
+						id="pr-export-format"
+						className={styles.field}
+						defaultValue="xlsx"
+					>
+						<option value="xlsx">Excel (.xlsx)</option>
+						<option value="csv">CSV</option>
+						<option value="pdf">PDF summary</option>
+					</select>
+				</label>
+			</div>
+		</SimpleModal>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * A/B routing test
+ * ------------------------------------------------------------------------ */
+function AbTestModal({
+	show,
+	onClose,
+	onDone,
+}: {
+	show: boolean;
+	onClose: () => void;
+	onDone: () => void;
+}) {
+	return (
+		<SimpleModal
+			show={show}
+			onClose={onClose}
+			iconCls="bi-bar-chart"
+			title="Routing A/B test"
+			successMsg="A/B test started"
+			onSubmit={() => onDone()}
+			submitLabel="Launch test"
+		>
+			<div style={{ display: "grid", gap: 14 }}>
+				<p className={styles.hintBox}>
+					<i className="bi bi-info-circle" aria-hidden="true" /> Split a share
+					of live traffic between two rails and compare cost, latency and
+					success rate.
+				</p>
+				<div
+					style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+				>
+					<label className={styles.fieldLabel} htmlFor="pr-ab-control">
+						Control rail
+						<select
+							id="pr-ab-control"
+							className={styles.field}
+							defaultValue="PesaLink"
+						>
+							<option>PesaLink</option>
+							<option>RTGS</option>
+							<option>ACH</option>
+							<option>Card-to-Bank</option>
+						</select>
+					</label>
+					<label className={styles.fieldLabel} htmlFor="pr-ab-variant">
+						Variant rail
+						<select
+							id="pr-ab-variant"
+							className={styles.field}
+							defaultValue="RTGS"
+						>
+							<option>RTGS</option>
+							<option>PesaLink</option>
+							<option>Card-to-Bank</option>
+						</select>
+					</label>
+				</div>
+				<label className={styles.fieldLabel} htmlFor="prab-split">
+					Traffic split to variant
+					<input
+						id="prab-split"
+						className={styles.field}
+						type="number"
+						defaultValue={10}
+						min={1}
+						max={50}
+					/>
+				</label>
+				<div className={styles.switchRow}>
+					<div className={styles.switchLabel}>
+						<strong>Auto-rollback on SLA breach</strong>
+						<span className={styles.switchDescription}>
+							End the test automatically if variant failure rate exceeds 2%
+						</span>
+					</div>
+					<div className="form-check form-switch">
+						<input
+							id="pr-ab-rollback"
+							className="form-check-input"
+							type="checkbox"
+							role="switch"
+							defaultChecked
+							aria-checked
+							aria-label="Auto-rollback on SLA breach"
+						/>
+					</div>
+				</div>
+			</div>
+		</SimpleModal>
+	);
+}
+
+/* --------------------------------------------------------------------------
+ * Attention summary
+ * ------------------------------------------------------------------------ */
+function AttentionModal({
+	show,
+	onClose,
+	data,
+	onNavigate,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+	onNavigate: (modal: string) => void;
+}) {
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="lg"
+			iconCls="bi-exclamation-triangle"
+			title="Items requiring attention"
+			footer={
+				<button
+					type="button"
+					className={cx(styles.btn, styles.btnPrimary)}
+					onClick={onClose}
+				>
+					Done
+				</button>
+			}
+		>
+			<div style={{ display: "grid", gap: 10 }}>
+				{data.attention.map((item) => (
+					<div key={item.id} className={styles.switchRow}>
+						<div className={styles.switchLabel}>
+							<strong>
+								<span
+									className={cx(
+										styles.badge,
+										item.severity === "danger"
+											? styles.badgeDanger
+											: item.severity === "warn"
+												? styles.badgeWarn
+												: styles.badgeInfo,
+									)}
+									style={{ marginRight: 8 }}
+								>
+									{item.severity === "danger"
+										? "Critical"
+										: item.severity === "warn"
+											? "Warning"
+											: "Info"}
+								</span>
+								{item.title}
+							</strong>
+							<span className={styles.switchDescription}>{item.detail}</span>
 						</div>
+						<button
+							type="button"
+							className={cx(styles.btn, styles.btnSecondary)}
+							onClick={() => {
+								if (item.action === "bankHealthModal" && item.bank) {
+									data.setActiveBank(item.bank);
+									onNavigate("bankHealthModal");
+								} else if (item.action === "nostroModal") {
+									onNavigate("nostroModal");
+								} else if (item.action === "railConfigModal") {
+									data.setActiveRail("swift");
+									onNavigate("railConfigModal");
+								}
+							}}
+						>
+							Resolve <i className="bi bi-arrow-right" aria-hidden="true" />
+						</button>
 					</div>
-				</div>
-			</SimpleModal>
+				))}
+			</div>
+		</ModalShell>
+	);
+}
 
-			{/* performance */}
-			<SimpleModal
-				show={isOpen("performanceModal")}
-				onClose={() => close("performanceModal")}
-				iconCls="bi bi-bar-chart-line"
-				title="Rail Performance Report"
-				size="lg"
-			>
-				<div className={s.tableWrap}>
-					<table className={s.table}>
-						<thead>
-							<tr>
-								<th>Rail</th>
-								<th>Volume</th>
-								<th>Success</th>
-								<th>Avg Time</th>
-								<th>Cost</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>PesaLink</td>
-								<td>KES 1.24B</td>
+/* --------------------------------------------------------------------------
+ * Audit log
+ * ------------------------------------------------------------------------ */
+function AuditLogModal({
+	show,
+	onClose,
+	data,
+}: {
+	show: boolean;
+	onClose: () => void;
+	data: PaymentRailsData;
+}) {
+	return (
+		<ModalShell
+			show={show}
+			onClose={onClose}
+			size="lg"
+			iconCls="bi-journal-text"
+			title="Configuration audit log"
+			footer={
+				<button
+					type="button"
+					className={cx(styles.btn, styles.btnPrimary)}
+					onClick={onClose}
+				>
+					Close
+				</button>
+			}
+		>
+			<div style={{ overflowX: "auto" }}>
+				<table className={styles.table}>
+					<thead>
+						<tr>
+							<th>Action</th>
+							<th>Rail / bank</th>
+							<th>Actor</th>
+							<th>Timestamp</th>
+						</tr>
+					</thead>
+					<tbody>
+						{data.auditTrail.map((entry) => (
+							<tr key={entry.id}>
+								<td style={{ whiteSpace: "normal" }}>{entry.action}</td>
 								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>99.4%</span>
+									<span className={cx(styles.badge, styles.badgeNeutral)}>
+										{entry.rail}
+									</span>
 								</td>
-								<td>4.2s</td>
-								<td>KES 55K</td>
+								<td>{entry.user}</td>
+								<td className="text-muted">{entry.timestamp}</td>
 							</tr>
-							<tr>
-								<td>RTGS</td>
-								<td>KES 892M</td>
-								<td>
-									<span className={cx(s.badge, s.badgeSuccess)}>99.1%</span>
-								</td>
-								<td>42min</td>
-								<td>KES 28K</td>
-							</tr>
-							<tr>
-								<td>ACH</td>
-								<td>KES 412M</td>
-								<td>
-									<span className={cx(s.badge, s.badgeWarn)}>96.8%</span>
-								</td>
-								<td>2h 11m</td>
-								<td>KES 18K</td>
-							</tr>
-							<tr>
-								<td>SWIFT</td>
-								<td>KES 296M</td>
-								<td>
-									<span className={cx(s.badge, s.badgeWarn)}>94.1%</span>
-								</td>
-								<td>4h 12m</td>
-								<td>KES 83K</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</SimpleModal>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</ModalShell>
+	);
+}
 
-			{/* reconcile */}
-			<SimpleModal
-				show={isOpen("reconcileModal") || isOpen("auditLogModal")}
-				onClose={() => close("auditLogModal")}
-				iconCls="bi bi-check2-square"
-				title="Rail Reconciliation"
-				size="lg"
-				submitLabel="Run Reconciliation"
-				successMsg="Reconciliation complete — 0 exceptions!"
-			>
-				<div className="row g-3 mb-3">
-					<div className="col-md-6">
-						<Field label="From" type="date" defaultValue="2025-06-01" />
-					</div>
-					<div className="col-md-6">
-						<Field label="To" type="date" defaultValue="2025-06-27" />
-					</div>
-				</div>
-				<SelectField
-					label="Rail"
-					options={["All Rails", "PesaLink", "RTGS", "ACH", "SWIFT"]}
-				/>
-			</SimpleModal>
+/* ── Shared small presentational helpers ───────────────────────────────── */
 
-			{/* export */}
-			<SimpleModal
-				show={isOpen("exportReportModal")}
-				onClose={() => close("exportReportModal")}
-				iconCls="bi bi-download"
-				title="Export Rail Report"
-				submitLabel="Generate Export"
-				successMsg="Report generated and downloading!"
+function Stat({
+	label,
+	value,
+	warn,
+}: {
+	label: string;
+	value: string;
+	warn?: boolean;
+}) {
+	return (
+		<div
+			style={{
+				padding: 12,
+				border: "1px solid #e6e9f0",
+				borderRadius: 12,
+				background: "#fafbfd",
+			}}
+		>
+			<Kicker>{label}</Kicker>
+			<strong
+				style={{
+					display: "block",
+					marginTop: 4,
+					fontSize: "1.05rem",
+					color: warn ? "#b42318" : "#101828",
+				}}
 			>
-				<SelectField
-					label="Report Type"
-					options={[
-						"Rail performance summary",
-						"Bank connectivity log",
-						"Routing rule audit",
-						"Cost analysis",
-					]}
-				/>
-				<div className="row g-3">
-					<div className="col-md-6">
-						<Field label="From" type="date" defaultValue="2025-06-01" />
-					</div>
-					<div className="col-md-6">
-						<Field label="To" type="date" defaultValue="2025-06-27" />
-					</div>
-				</div>
-				<SelectField label="Format" options={["PDF", "Excel (XLSX)", "CSV"]} />
-			</SimpleModal>
+				{value}
+			</strong>
+		</div>
+	);
+}
 
-			{/* A/B test */}
-			<SimpleModal
-				show={isOpen("abTestModal")}
-				onClose={() => close("abTestModal")}
-				iconCls="bi bi-graph-up"
-				title="A/B Test — ACH Routing Rule"
-				submitLabel="Start Test"
-				successMsg="A/B test started! Results in 7 days."
-			>
-				<div className={`${s.hintBox} ${s.hintBoxSuccess} mb-3`}>
-					<i className="bi bi-lightning-charge" />
-					<span>Projected 0.8% cost reduction over 7-day test window.</span>
-				</div>
-				<SelectField
-					label="Traffic Split"
-					options={["50 / 50", "70 / 30 (control first)", "20 / 80"]}
-				/>
-				<Field label="Duration (days)" defaultValue="7" />
-			</SimpleModal>
-
-			{/* attention */}
-			<SimpleModal
-				show={isOpen("attentionModal")}
-				onClose={() => close("attentionModal")}
-				iconCls="bi bi-exclamation-circle"
-				title="All Attention Items"
-			>
-				<div className={s.rowItem}>
-					<div>
-						<strong>Equity Bank API health degraded</strong>
-					</div>
-					<button
-						className={cx(s.btn, s.btnSm)}
-						onClick={() => open("bankHealthModal")}
-					>
-						Investigate
-					</button>
-				</div>
-				<div className={s.rowItem}>
-					<div>
-						<strong>RTGS cut-off in 42 minutes</strong>
-					</div>
-					<button
-						className={cx(s.btn, s.btnSm)}
-						onClick={() => open("railConfigModal")}
-					>
-						Manage
-					</button>
-				</div>
-				<div className={s.rowItem}>
-					<div>
-						<strong>SWIFT credential expires in 5 days</strong>
-					</div>
-					<button
-						className={cx(s.btn, s.btnSm)}
-						onClick={() => open("railConfigModal")}
-					>
-						Renew
-					</button>
-				</div>
-			</SimpleModal>
-		</>
+function ConfirmRow({
+	label,
+	value,
+	strong,
+}: {
+	label: string;
+	value: string;
+	strong?: boolean;
+}) {
+	return (
+		<div
+			style={{
+				display: "flex",
+				justifyContent: "space-between",
+				gap: 12,
+				padding: "10px 12px",
+				border: "1px solid #e6e9f0",
+				borderRadius: 10,
+			}}
+		>
+			<span className="text-muted" style={{ fontSize: "0.78rem" }}>
+				{label}
+			</span>
+			<strong style={strong ? { color: "#067647" } : undefined}>{value}</strong>
+		</div>
 	);
 }
