@@ -1,7 +1,7 @@
-# Dashboard A Design System Blueprint
-> Extracted from: `business-dashboard/components/Dashboard/` and `Onlinestore/`
-> Target: `transaction-dashboard/transfer-overview/`
-> Date: August 27, 2026
+# PayMo Business → Transaction Dashboard Design Blueprint
+> Visual sources: `business-dashboard/components/Dashboard/`, `Onlinestore/`, `Books/`, and `business-dashboard/index.css`
+> Implementation targets: `Layouts/shell/` and `transaction-dashboard/transfer-overview/`
+> Last reconciled: August 28, 2026
 
 ---
 
@@ -849,56 +849,147 @@ export const toneOf: Record<string, string> = {
 
 ---
 
-## 19. IMPLEMENTATION CHECKLIST FOR TRANSFER-OVERVIEW
+## 19. IMPLEMENTATION ARCHITECTURE
 
-### Phase 1: CSS Variable Alignment
-- [x] Map all `--pm-*` tokens to Dashboard A exact values
-- [x] Remove cream/warm color tones, use cool grays
-- [x] Add missing tokens: `--pm-card`, `--pm-badge-*` colors
+The transaction workspace deliberately has two styling layers:
 
-### Phase 2: Typography
-- [x] Switch headings to Sora
-- [x] Set body to Inter at 0.925rem
-- [x] Match all font-size scales
+| Layer | Owner | Responsibility |
+|---|---|---|
+| Shared authenticated shell | `src/features/Layouts/shell/` | Fixed navy navigation, compact translucent topbar, account/security panels, toasts, responsive page offset |
+| Transfer overview | `transfer-overview/pages/TransferOverview.tsx` | Transaction hero, KPI pulse, action queue, workflow shortcuts, transfer table, channels, beneficiaries, schedules, analytics |
+| Transaction workflows | `transfer-overview/components/TransferOverviewModals.tsx` | Dialog shell, forms, steppers, receipts, loading states, detail/management workflows |
+| Business theme contract | `shell.module.css` and `transfer-overview.module.css` | Exact shared tokens, spacing, typography, elevation, states and breakpoints |
 
-### Phase 3: Component Styles
-- [x] Card: 16px radius, dual-layer shadow, hover elevation
-- [x] Buttons: 10px radius primary, 8px small, green hover states
-- [x] Badges: badge-soft pattern with correct bg/text colors
-- [x] Tables: uppercase headers, proper cell padding
-- [x] Forms: 10px radius, green focus ring
-- [x] Modals: 18px radius, dark backdrop, proper padding
-- [x] Wizard: 34px dots, green active glow, done state
+Do not add a second local sidebar or page topbar to a transaction route. Routes below `/pm/app` inherit those surfaces from `AppShell`. Page-level CSS must remain scoped and must not redefine the shell position.
 
-### Phase 4: Layout
-- [x] Content: max-width 1500px, centered
-- [x] Topbar: sticky, blur, proper border
-- [x] Responsive: sidebar collapse at 1200px
+### Current reusable mapping
 
-### Phase 5: Animations
-- [x] pmPop for modals
-- [x] pmSlideIn for drawers
-- [x] pmPulse for live dots
-- [x] pmToastIn for notifications
+| Business pattern | Transaction implementation |
+|---|---|
+| Fixed 264px navy rail | `.sidebar.expanded`; 76px compact state |
+| Sticky/translucent compact topbar | `.topHeader`; 62px height and route breadcrumb |
+| `pm-banner-hero` | `.heroBanner`, `.heroContent`, `.heroSnapshot` |
+| Numbered business section title | `.sectionHeading`, `.sectionIndex` (`1.1`–`1.5`) |
+| `pm-card` | `.card`; white, 16px, `#e6e9f0` border, dual-layer shadow |
+| KPI card | `.kpiGrid`, `.kpiCard`, `.kpiIcon*`, `.kpiValue` |
+| Soft status badge | `.badge`, `.badgeS/W/D/I/P` |
+| Primary / secondary button | `.btnPmP` / `.btnPm` |
+| Operational list card | `.listCard`, `.actionRow`, `.actionRowMain` |
+| Business table and toolbar | `.tableCard`, `.tableToolbar`, `.tbl`, `.filterPills` |
+| Channel progress pattern | `.channelRow`, `.progressTrack`, `.channelInsight` |
+| Beneficiary tiles | `.favoriteGrid`, `.favoriteTile`, `.favoriteAvatar` |
+| Schedule rows | `.scheduleList`, `.scheduleRow`, `.scheduleDate` |
+| Analytics card | `.analyticsGrid`, `.chartBars`, `.rankedList`, `.rateList` |
+| Floating quick-action bar | `.floatingBar` |
+| Modal / wizard | `.modalWrap`, `.modalBox`, `.stepper`, `.stepSegment` |
+| Shell toast | `.toastContainer`, `.paymoToast` |
+| Drawer / context panel | `.leftDrawer`, `.rightAside` |
 
 ---
 
-## 20. TRANSFER-OVERVIEW SPECIFIC MAPPING
+## 20. CODE-COMPLETE CHECKLIST
 
-| Dashboard A Pattern | Transfer-Overview Equivalent |
-|---------------------|------------------------------|
-| `pm-card` | `.card` class |
-| `pm-card-hover` | Cards with click handlers |
-| `pm-kpi-label` | `.sl` class |
-| `pm-kpi-value` | `.sv` class |
-| `pm-sec` + `pm-sec-no` | Section headers (no numbered sections in transfer) |
-| `badge-soft` | `.badge`, `.badgeS/W/D/I/P` |
-| `btn-primary` | `.btnPmP` class |
-| `btn-outline-secondary` | `.btnPm` class |
-| `pm-table` | `.tbl` class |
-| `pm-wizard-track` | `.stepper` class |
-| `pm-modal` | `.modalWrap` / `.modalBox` classes |
-| `pm-toast-stack` | Not yet implemented (add) |
-| `pm-chip` | `.pills` / `.pill` classes |
-| `pm-drawer` | Not used (all modals) |
-| `pm-banner-hero` | `.cardAccent` class |
+### Theme and typography
+- [x] Use emerald `#12b76a` as the only primary interaction color.
+- [x] Use `#0b1322` for the navigation rail and `#f2f4f8` for the canvas.
+- [x] Use cool neutral borders `#e6e9f0`; remove warm/cream transaction styling.
+- [x] Use semantic colors only for status: warning `#f79009`, danger `#f04438`, info `#2e90fa`, violet `#7a5af8`.
+- [x] Use Inter for body/control copy and Sora for headings/KPI values.
+- [x] Load Inter and Sora once in `src/routes/__root.tsx`; do not add per-page font imports.
+
+### Shared shell
+- [x] Use a fixed 264px business-style sidebar and a 76px compact desktop state.
+- [x] Collapse to an off-canvas sidebar below 1200px with backdrop and close control.
+- [x] Use an emerald-gradient brand mark, grouped nav labels, matching active state and readable compact icons.
+- [x] Resolve the active item from the segment after `/app/` (not the `app` segment itself).
+- [x] Use a 62px translucent topbar with breadcrumb, global search, live state, linked accounts, security, notifications and user menu.
+- [x] Keep linked-account switch/copy controls functional.
+- [x] Style security/API-key drawers, contextual asides and toasts with the same cards, radii and semantic states.
+- [x] Prevent security/API-key drawer actions from also opening the unrelated right aside.
+
+### Transfer page hierarchy
+- [x] Present one full-width dark executive hero before the dashboard sections.
+- [x] Use five numbered sections: pulse, attention, portfolio, recipients/schedules and analytics.
+- [x] Use four consistent KPI cards and reserve semantic color for icon/status emphasis.
+- [x] Keep attention and suggestion lists scannable with one primary row action.
+- [x] Surface all six frequent transfer workflows in a consistent shortcut card.
+- [x] Provide searchable and status-filterable recent transfers with a useful empty state.
+- [x] Keep channel health, favourite recipients, scheduled payments and analytics visible without opening a dialog.
+- [x] Keep the floating command bar on desktop and adapt it to an icon-first mobile bar.
+- [x] Keep content centred at a maximum width of 1500px.
+
+### Cards, forms, tables and icons
+- [x] Cards use 16px radius, subtle border and restrained business elevation.
+- [x] Controls use 9–10px radius, green focus ring and clear disabled states.
+- [x] Buttons include explicit `type="button"` where they do not submit a native form.
+- [x] Form labels are associated with their controls; grouped choices use group captions.
+- [x] Tables use uppercase compact headers, responsive horizontal overflow and non-colour status text.
+- [x] Use Bootstrap Icons consistently; icons support labels and are never the sole status signal.
+- [x] Icon-only controls include contextual accessible names.
+
+### Modals, drawers and wizards
+- [x] Dialogs use labelled `role="dialog"`, `aria-modal`, initial close-button focus, trapped Tab navigation, a dark blurred backdrop and sticky header/footer.
+- [x] Escape closes the active transfer dialog, focus returns to its trigger, and page scrolling locks while it is open.
+- [x] Mobile dialogs become bottom sheets with a maximum 92dvh height.
+- [x] Wizard steps are a semantic ordered list with completed, current and upcoming states.
+- [x] Completed wizard connectors turn green; active dots use the business focus halo.
+- [x] Preserve loading, receipt, download, tabs, PIN and nested workflow behaviour.
+- [x] Respect `prefers-reduced-motion` in both shell and page layers.
+
+### Responsive implementation
+- [x] `>= 1200px`: full/compact fixed navigation and offset topbar/content.
+- [x] `1100–1199px`: off-canvas shell navigation; portfolio may collapse to one column.
+- [x] `768–1099px`: two-column KPI/analytics composition where space permits.
+- [x] `< 768px`: single-column hero and operational cards, wrapped tools and full-width actions.
+- [x] `< 576px`: single KPI column, one-column beneficiaries, compressed schedules, bottom-sheet dialogs and icon-first command bar.
+
+---
+
+## 21. MANUAL VISUAL-QA CHECKLIST
+
+Run this list against `/pm/app/transfer-overview` before release. These are deliberately left as review gates rather than implementation claims.
+
+### Desktop — 1440 × 900
+- [ ] Sidebar is exactly 264px when open; content has no horizontal jump or overlap.
+- [ ] Topbar controls fit on one line and dropdowns stay within the viewport.
+- [ ] Hero aligns with business Dashboard hero in radius, navy/emerald gradient, type scale and spacing.
+- [ ] Four KPI cards have equal height; long supporting copy truncates rather than moving the grid.
+- [ ] Attention rows, portfolio table and analytics cards align on the 16px card system.
+- [ ] Floating command bar does not cover the footer or table controls at the bottom of the page.
+
+### Compact desktop/tablet — 1024 × 768 and 768 × 1024
+- [ ] Sidebar starts closed and opens above the page with one backdrop.
+- [ ] Search/breadcrumb reduce cleanly without forcing header actions off-screen.
+- [ ] KPI grid becomes two columns; portfolio and relationship areas become one column.
+- [ ] Tables scroll inside their card; the full document does not scroll horizontally.
+- [ ] Drawer and modal layering remains correct above the shell.
+
+### Mobile — 390 × 844 and 360 × 800
+- [ ] Hero copy has no clipping and action buttons meet a 40px minimum target.
+- [ ] KPI, attention, shortcut, recipient and analytics layouts become one logical reading sequence.
+- [ ] The fixed command bar leaves content reachable and uses readable labelled primary action.
+- [ ] Modals open as bottom sheets, remain scrollable and keep footer actions visible.
+- [ ] PIN inputs fit at 320px width; stepper scrolls without shrinking labels into illegibility.
+
+### Interaction and accessibility
+- [ ] Keyboard can reach sidebar, topbar, filters, table actions, floating actions and footer in visual order.
+- [ ] Visible focus is not clipped by cards, drawers, tables or dialogs.
+- [ ] Open each topbar dropdown; click outside and press Escape to close it.
+- [ ] Open Security and API Keys independently; verify no empty right aside appears.
+- [ ] Run Send, Bulk and Schedule steppers through completion and verify completed connectors.
+- [ ] Open each overview action and verify close, processing, receipt and nested-dialog paths.
+- [ ] Search by recipient and reference; test All, Success and Pending including the empty state.
+- [ ] At 200% browser zoom, content remains usable with no two-dimensional page scrolling.
+- [ ] With reduced motion enabled, pulse/pop/slide transitions are effectively disabled.
+- [ ] Run automated contrast/accessibility tooling; manually verify muted text and focus contrast.
+
+---
+
+## 22. RELEASE GATES
+
+- [x] Targeted Biome lint passes for all edited TSX shell and transfer files (August 28, 2026).
+- [x] Vitest suite passes: 1 file, 9 tests (August 28, 2026).
+- [x] Production client/server build passes with Vite 8.2.1 (August 28, 2026).
+- [x] Route responds successfully at `/pm/app/transfer-overview` in the local preview.
+- [ ] Manual visual-QA checklist above signed off by a reviewer.
+- [ ] Real API payload checked against long names, empty arrays, large amounts and non-KES currencies.

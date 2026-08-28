@@ -6,7 +6,7 @@
  *   - Security: session info, authentication items, policy links
  *   - API Keys: placeholder with "Create Key" button
  * ========================================================================== */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AsideKind } from "../data/shellData";
 import { cx, leftDrawerData } from "../data/shellData";
 import styles from "../styles/shell.module.css";
@@ -33,6 +33,10 @@ export default function LeftDrawer({
 	const initialTab: DrawerTab =
 		activePanel === "apiKeysTab" ? "apiKeys" : "security";
 	const [activeTab, setActiveTab] = useState<DrawerTab>(initialTab);
+
+	useEffect(() => {
+		if (isOpen) setActiveTab(initialTab);
+	}, [initialTab, isOpen]);
 
 	const { session, authItems, policies } = leftDrawerData;
 
