@@ -72,15 +72,18 @@
 	/* UI Elements */
 	--pm-sidebar: #0b1322;
 	--pm-radius: 16px;
-	--pm-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+	--pm-shadow:
+		0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
 	--pm-shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
 
 	--radius-lg: 16px;
 	--radius-md: 14px;
 	--radius-sm: 10px;
 	--radius-pill: 999px;
-	--shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
-	--shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+	--shadow-sm:
+		0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+	--shadow:
+		0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
 	--shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
 	--shadow-xl: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
 	--shadow-glow: 0 0 0 3px rgba(18, 183, 106, 0.14);
@@ -89,8 +92,7 @@
 	--sidebar-width: 264px;
 	--sidebar-collapsed: 76px;
 
-	font-family:
-		"Inter", system-ui, -apple-system, sans-serif;
+	font-family: "Inter", system-ui, -apple-system, sans-serif;
 	font-size: 0.925rem;
 	-webkit-font-smoothing: antialiased;
 	background: var(--surface);
@@ -811,7 +813,9 @@
 	display: flex;
 	align-items: center;
 	gap: 0;
-	margin-bottom: 28px;
+	margin: 0 0 28px;
+	padding: 0;
+	list-style: none;
 	flex-wrap: wrap;
 	position: relative;
 }
@@ -883,7 +887,7 @@
 	min-width: 10px;
 }
 
-.stepDone+.step .stepLine {
+.stepDone + .step .stepLine {
 	background: var(--success);
 }
 
@@ -1260,6 +1264,21 @@ input[type="date"].field {
 }
 
 /* ---------- PIN row ---------- */
+.pinFieldset {
+	margin: 12px 0 0;
+	padding: 0;
+	border: 0;
+}
+
+.pinLegend {
+	width: 100%;
+	margin-bottom: 8px;
+	color: var(--ink-700);
+	font-size: 0.8rem;
+	font-weight: 600;
+	text-align: center;
+}
+
 .pinRow {
 	display: flex;
 	gap: 10px;
@@ -1395,7 +1414,6 @@ input[type="date"].field {
 .overlay {
 	position: fixed;
 	inset: 0;
-	background: #0b1322;
 	background: rgba(11, 19, 34, 0.45);
 	display: flex;
 	align-items: center;
@@ -1424,6 +1442,31 @@ input[type="date"].field {
 
 /* ---------- modal overlay + wrapper (used by shared modal components) ---------- */
 .modalOverlay {
+	--pri: #12b76a;
+	--pri-600: #0b8f52;
+	--pm-green: #12b76a;
+	--pm-green-dark: #0b8f52;
+	--pm-green-soft: #e7f8ef;
+	--surface-elev: #ffffff;
+	--surface-2: #f9fafb;
+	--ink-900: #101828;
+	--ink-700: #344054;
+	--ink-500: #667085;
+	--ink-300: #d0d5dd;
+	--ink-100: #f2f4f7;
+	--border: #e6e9f0;
+	--success: #12b76a;
+	--success-bg: #e7f8ef;
+	--warning: #f79009;
+	--warning-bg: #fef0c7;
+	--danger: #f04438;
+	--danger-bg: #fee4e2;
+	--info: #2e90fa;
+	--info-bg: #e8f1fe;
+	--radius-lg: 16px;
+	--radius-sm: 10px;
+	--pm-shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
+
 	position: fixed;
 	inset: 0;
 	background: rgba(11, 19, 34, 0.45);
@@ -1436,7 +1479,20 @@ input[type="date"].field {
 	overflow-y: auto;
 }
 
+.modalBackdrop {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: default;
+}
+
 .modalWrapper {
+	position: relative;
+	z-index: 1;
 	width: 100%;
 	max-width: var(--bs-modal-width, 500px);
 	margin: auto;
@@ -1563,6 +1619,20 @@ input[type="date"].field {
 	min-height: 0;
 }
 
+.modalBodyFrame {
+	position: relative;
+	min-height: 120px;
+}
+
+.modalFlowBody {
+	position: relative;
+	min-height: 200px;
+}
+
+.tabPanel {
+	margin-top: 20px;
+}
+
 .modalFooter {
 	border-top: 1px solid var(--border);
 	padding: 0.9rem 1.4rem;
@@ -1612,11 +1682,6 @@ input[type="date"].field {
 }
 
 /* ---------- query states ---------- */
-
-
-
-
-
 
 /* ---------- chart bars (legacy analytics snapshot) ---------- */
 .chartBars {
@@ -1690,8 +1755,8 @@ input[type="date"].field {
 		width: 100%;
 	}
 
-	.pageBar .d-flex>.btn,
-	.pageBar .d-flex>button {
+	.pageBar .d-flex > .btn,
+	.pageBar .d-flex > button {
 		width: 100%;
 		justify-content: center;
 	}
@@ -1822,7 +1887,18 @@ input[type="date"].field {
 	}
 
 	.modalOverlay {
-		padding: 8px;
+		align-items: flex-end;
+		padding: 0;
+	}
+
+	.modalWrapper,
+	.modalContent {
+		max-height: 92dvh;
+		border-radius: 16px 16px 0 0;
+	}
+
+	.modalWrapper {
+		margin: 0;
 	}
 
 	.modalHeader {
@@ -1900,7 +1976,6 @@ input[type="date"].field {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
 	*,
 	*::before,
 	*::after {

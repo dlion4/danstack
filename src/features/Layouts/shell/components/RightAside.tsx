@@ -32,11 +32,13 @@ export default function RightAside({
 	onToggleTwoFactor,
 	onToggleSandbox,
 }: RightAsideProps) {
+	const isOpen = activePanel === "security" || activePanel === "developers";
+
 	return (
 		<aside
-			className={cx(s.rightAside, activePanel && s.open)}
+			className={cx(s.rightAside, isOpen && s.open)}
 			aria-label="Context panel"
-			aria-hidden={!activePanel}
+			aria-hidden={!isOpen}
 		>
 			{/* ============ SECURITY ============ */}
 			<div className={cx(s.asidePanel, activePanel === "security" && s.active)}>
@@ -246,7 +248,7 @@ function LinkToSettings({
 			onClick={(e) => {
 				e.preventDefault();
 				afterClose();
-				window.location.assign("/app/apikeys");
+				window.location.assign("/pm/app/settings");
 			}}
 		>
 			<i className={`bi ${icon}`} /> {label}

@@ -8,12 +8,28 @@
  *   state lifted into the shell and passed down. Click-outside + Escape are
  *   handled in AppShell. Account switching + copy are wired to real behavior.
  * ========================================================================== */
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import type { AsideKind, LinkedAccount, ShellContent } from "../data/shellData";
 import { cx, linkedAccounts } from "../data/shellData";
 import styles from "../styles/shell.module.css";
 
 const s = styles as Record<string, string>;
+
+const routeLabels: Record<string, string> = {
+        "transfer-overview": "Transfer overview",
+        payments: "Payments & transfers",
+        beneficiaries: "Beneficiaries",
+        approvals: "Approvals",
+        standing: "Standing instructions",
+        track: "Track transfer",
+        favourites: "Favourites",
+        transactions: "Transactions",
+        reports: "Reports & statements",
+        analytics: "Analytics",
+        notifications: "Notifications",
+        support: "Support",
+        settings: "Settings",
+};
 
 export type DropdownName = "accounts" | "notifications" | "user";
 interface TopNavProps {
@@ -43,23 +59,36 @@ export default function TopNav({
         onSearchSubmit,
         unreadCount,
 }: TopNavProps) {
+        const pathname = useRouterState({ select: (state) => state.location.pathname });
+        const section = pathname.split("/").filter(Boolean).at(-1) ?? "transfer-overview";
+        const navLabel = content.navGroups
+                .flatMap((group) => [
+                        ...group.items,
+                        ...(group.subGroups?.flatMap((subGroup) => subGroup.items) ?? []),
+                ])
+                .find((item) => item.key === section)?.label;
+        const pageLabel = navLabel ?? routeLabels[section] ?? section.replaceAll("-", " ");
         const isDropdownOpen = (name: DropdownName) => openDropdown === name;
 
         return (
                 <header className={cx(s.topHeader, expanded && s.sidebarExpanded)}>
-                        {/* ---------- left: toggle + search ---------- */}
+                        {/* ---------- left: navigation context + search ---------- */}
                         <div className={s.headerLeft}>
                                 <button
                                         type="button"
                                         className={s.sidebarToggle}
                                         onClick={onToggleSidebar}
-                                        aria-label="Toggle sidebar"
+                                        aria-label={expanded ? "Collapse navigation" : "Open navigation"}
                                 >
                                         <i className="bi bi-list" />
                                 </button>
+                                <nav className={s.headerCrumb} aria-label="Breadcrumb">
+                                        <span>Transactions</span>
+                                        <i className="bi bi-chevron-right" aria-hidden="true" />
+                                        <strong>{pageLabel}</strong>
+                                </nav>
                                 <form
                                         className={cx(s.globalSearch, "d-none d-md-block")}
-                                        role="search"
                                         onSubmit={(e) => {
                                                 e.preventDefault();
                                                 onSearchSubmit(new FormData(e.currentTarget).get("q") as string);
@@ -78,6 +107,9 @@ export default function TopNav({
 
                         {/* ---------- right: actions ---------- */}
                         <div className={s.headerActions}>
+                                <span className={s.liveChip} title="Transaction services are operational">
+                                        <span className={s.liveDot} /> Live
+                                </span>
 				{/* ===== Accounts dropdown ===== */}
 				<div className="position-relative" data-dropdown="accounts">
 					<button
@@ -102,7 +134,13 @@ export default function TopNav({
 								</div>
 								<div className={s.panelBody}>
 									{linkedAccounts.map((acc: LinkedAccount) => (
-										<div className={s.accountRowLinked} key={acc.key}>
+										<button
+											type="button"
+											className={s.accountRowLinked}
+											key={acc.key}
+											disabled={!acc.linked || !acc.id}
+											onClick={() => acc.id && onSwitchAccount(acc.id, acc.label)}
+										>
 											<div className={s.accountRowLinkedLeft}>
 												<span className={s.accountRowLinkedIcon}><i className={`bi ${acc.icon}`} /></span>
 												<div>
@@ -114,7 +152,7 @@ export default function TopNav({
 											<span className={s.badgeDot} />
 											{acc.linked ? "Linked" : "Not linked"}
 											</span>
-										</div>
+										</button>
 									))}
 								</div>
 								<div className={cx(s.panelFooter, "d-flex justify-content-between")}>
@@ -123,8 +161,11 @@ export default function TopNav({
 											<i className="bi bi-link-45deg" /> Link Account
 										</Link>
 										<Link to="/wallet-activation" className={s.btnUnlinkAccount}>
-											<i className="bi bi-link-break" /> Unlink Account
+											<i className="bi bi-link-break" /> Unlink
 										</Link>
+										<button type="button" className={s.btnLinkAccount} onClick={onCopyAccountId}>
+											<i className="bi bi-copy" /> Copy ID
+										</button>
 										</div>
 									</div>
 								</div>

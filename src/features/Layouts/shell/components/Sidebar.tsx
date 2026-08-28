@@ -12,7 +12,6 @@ import { Link } from "@tanstack/react-router";
 import type { AsideKind, NavItem, ShellContent } from "../data/shellData";
 import { cx } from "../data/shellData";
 import styles from "../styles/shell.module.css";
-import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -89,8 +88,12 @@ export default function Sidebar({
 	return (
 		<aside className={classes} aria-label="Primary navigation">
 			<div className={s.brandRow}>
-				<Link to="/app" className={s.brandLink} aria-label="Go to dashboard">
-					<PaymoLogo expanded={expanded || !isDesktop} />
+				<Link to="/pm/app/transfer-overview" className={s.brandLink} aria-label="Go to transaction overview">
+					<span className={s.brandMark}>P</span>
+					<span className={s.brandCopy}>
+						<span className={s.brandName}>PayMo <span>Transactions</span></span>
+						<span className={s.brandSub}>Banking operations</span>
+					</span>
 				</Link>
 				{!isDesktop && (
 					<button

@@ -5,7 +5,6 @@
  * Each modal is state-driven via the shared modal primitives.
  * ========================================================================== */
 "use client";
-import shared from "../../shared/styles/appPage.module.css";
 import {
 	FlowModal,
 	PinRow,
@@ -14,6 +13,7 @@ import {
 	SimpleModal,
 	TabbedModal,
 } from "../../shared/components/modals.tsx";
+import shared from "../../shared/styles/appPage.module.css";
 
 const s = shared as Record<string, string>;
 
@@ -54,12 +54,23 @@ export function TransferManagementModals({
 								<SelectField label="Bank" options={data.banks} />
 								<div className="row g-3">
 									<div className="col-md-7">
-										<label className={s.fieldLabel}>Account Number</label>
-										<input className={s.field} defaultValue="0123456789" />
+										<label
+											className={s.fieldLabel}
+											htmlFor="tm-account-number-1"
+										>
+											Account Number
+										</label>
+										<input
+											id="tm-account-number-1"
+											className={s.field}
+											defaultValue="0123456789"
+										/>
 									</div>
 									<div className="col-md-5">
-										<label className={s.fieldLabel}>Rail</label>
-										<select className={s.field}>
+										<label className={s.fieldLabel} htmlFor="tm-rail-1">
+											Rail
+										</label>
+										<select id="tm-rail-1" className={s.field}>
 											<option>PesaLink (instant)</option>
 											<option>EFT (same-day)</option>
 											<option>RTGS (real-time)</option>
@@ -71,12 +82,24 @@ export function TransferManagementModals({
 						{step === 2 && (
 							<div className="row g-3">
 								<div className="col-md-6">
-									<label className={s.fieldLabel}>Amount (KES)</label>
-									<input className={s.field} defaultValue="85000" />
+									<label className={s.fieldLabel} htmlFor="tm-amount-kes-1">
+										Amount (KES)
+									</label>
+									<input
+										id="tm-amount-kes-1"
+										className={s.field}
+										defaultValue="85000"
+									/>
 								</div>
 								<div className="col-md-6">
-									<label className={s.fieldLabel}>Reference</label>
-									<input className={s.field} defaultValue="Invoice #4821" />
+									<label className={s.fieldLabel} htmlFor="tm-reference-1">
+										Reference
+									</label>
+									<input
+										id="tm-reference-1"
+										className={s.field}
+										defaultValue="Invoice #4821"
+									/>
 								</div>
 							</div>
 						)}
@@ -86,9 +109,9 @@ export function TransferManagementModals({
 								<ReviewRow label="Amount" value="KES 85,000" />
 								<ReviewRow label="Fee (PesaLink)" value="KES 50" />
 								<ReviewRow label="Total debit" value="KES 85,050" highlight />
-								<label className={`${s.fieldLabel} mt-3 d-block`}>
-									Enter PIN
-								</label>
+								<p className={`${s.fieldLabel} mt-3 mb-0 text-center`}>
+									Confirm with your security PIN
+								</p>
 								<PinRow />
 							</>
 						)}
@@ -139,12 +162,24 @@ export function TransferManagementModals({
 						{step === 2 && (
 							<div className="row g-3">
 								<div className="col-md-6">
-									<label className={s.fieldLabel}>Send Amount (USD)</label>
-									<input className={s.field} defaultValue="2500" />
+									<label
+										className={s.fieldLabel}
+										htmlFor="tm-send-amount-usd-1"
+									>
+										Send Amount (USD)
+									</label>
+									<input
+										id="tm-send-amount-usd-1"
+										className={s.field}
+										defaultValue="2500"
+									/>
 								</div>
 								<div className="col-md-6">
-									<label className={s.fieldLabel}>FX Rate</label>
+									<label className={s.fieldLabel} htmlFor="tm-fx-rate-1">
+										FX Rate
+									</label>
 									<input
+										id="tm-fx-rate-1"
 										className={s.field}
 										defaultValue="1 USD = 3,680 UGX"
 										readOnly
@@ -189,12 +224,25 @@ export function TransferManagementModals({
 				<SelectField label="Bank" options={data.banks} />
 				<div className="row g-3">
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Amount (KES)</label>
-						<input className={s.field} defaultValue="65000" />
+						<label className={s.fieldLabel} htmlFor="tm-amount-kes-2">
+							Amount (KES)
+						</label>
+						<input
+							id="tm-amount-kes-2"
+							className={s.field}
+							defaultValue="65000"
+						/>
 					</div>
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Send Date</label>
-						<input type="date" className={s.field} defaultValue="2025-07-01" />
+						<label className={s.fieldLabel} htmlFor="tm-send-date-1">
+							Send Date
+						</label>
+						<input
+							id="tm-send-date-1"
+							type="date"
+							className={s.field}
+							defaultValue="2025-07-01"
+						/>
 					</div>
 				</div>
 			</SimpleModal>
@@ -211,12 +259,20 @@ export function TransferManagementModals({
 				<SelectField label="Bank" options={data.banks} />
 				<div className="row g-3">
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Amount (KES)</label>
-						<input className={s.field} defaultValue="5999" />
+						<label className={s.fieldLabel} htmlFor="tm-amount-kes-3">
+							Amount (KES)
+						</label>
+						<input
+							id="tm-amount-kes-3"
+							className={s.field}
+							defaultValue="5999"
+						/>
 					</div>
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Frequency</label>
-						<select className={s.field}>
+						<label className={s.fieldLabel} htmlFor="tm-frequency-1">
+							Frequency
+						</label>
+						<select id="tm-frequency-1" className={s.field}>
 							<option>Weekly</option>
 							<option>Monthly</option>
 							<option>Quarterly</option>
@@ -237,12 +293,25 @@ export function TransferManagementModals({
 			>
 				<div className="row g-3">
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Amount (KES)</label>
-						<input className={s.field} defaultValue="65000" />
+						<label className={s.fieldLabel} htmlFor="tm-amount-kes-4">
+							Amount (KES)
+						</label>
+						<input
+							id="tm-amount-kes-4"
+							className={s.field}
+							defaultValue="65000"
+						/>
 					</div>
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Next Run</label>
-						<input type="date" className={s.field} defaultValue="2025-07-01" />
+						<label className={s.fieldLabel} htmlFor="tm-next-run-1">
+							Next Run
+						</label>
+						<input
+							id="tm-next-run-1"
+							type="date"
+							className={s.field}
+							defaultValue="2025-07-01"
+						/>
 					</div>
 				</div>
 			</SimpleModal>
@@ -258,8 +327,17 @@ export function TransferManagementModals({
 				successMsg="Bulk batch queued!"
 			>
 				<div className="mb-3">
-					<label className={s.fieldLabel}>Upload CSV / Excel / ISO 20022</label>
-					<input type="file" className={s.field} />
+					<label
+						className={s.fieldLabel}
+						htmlFor="tm-upload-csv-excel-iso-20022-1"
+					>
+						Upload CSV / Excel / ISO 20022
+					</label>
+					<input
+						id="tm-upload-csv-excel-iso-20022-1"
+						type="file"
+						className={s.field}
+					/>
 				</div>
 				<div className={s.hintBox}>
 					<i className="bi bi-info-circle" />
@@ -537,12 +615,26 @@ export function TransferManagementModals({
 			>
 				<div className="row g-3">
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>From</label>
-						<input type="date" className={s.field} defaultValue="2025-06-01" />
+						<label className={s.fieldLabel} htmlFor="tm-from-1">
+							From
+						</label>
+						<input
+							id="tm-from-1"
+							type="date"
+							className={s.field}
+							defaultValue="2025-06-01"
+						/>
 					</div>
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>To</label>
-						<input type="date" className={s.field} defaultValue="2025-06-30" />
+						<label className={s.fieldLabel} htmlFor="tm-to-1">
+							To
+						</label>
+						<input
+							id="tm-to-1"
+							type="date"
+							className={s.field}
+							defaultValue="2025-06-30"
+						/>
 					</div>
 				</div>
 				<SelectField
@@ -586,12 +678,24 @@ export function TransferManagementModals({
 			>
 				<div className="row g-3">
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Daily Limit (KES)</label>
-						<input className={s.field} defaultValue="5000000" />
+						<label className={s.fieldLabel} htmlFor="tm-daily-limit-kes-1">
+							Daily Limit (KES)
+						</label>
+						<input
+							id="tm-daily-limit-kes-1"
+							className={s.field}
+							defaultValue="5000000"
+						/>
 					</div>
 					<div className="col-md-6">
-						<label className={s.fieldLabel}>Single Transfer (KES)</label>
-						<input className={s.field} defaultValue="2000000" />
+						<label className={s.fieldLabel} htmlFor="tm-single-transfer-kes-1">
+							Single Transfer (KES)
+						</label>
+						<input
+							id="tm-single-transfer-kes-1"
+							className={s.field}
+							defaultValue="2000000"
+						/>
 					</div>
 				</div>
 				<div className={s.hintBox} style={{ marginTop: 12 }}>
