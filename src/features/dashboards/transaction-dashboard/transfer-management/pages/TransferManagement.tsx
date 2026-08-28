@@ -2,43 +2,24 @@
  * TransferManagement.tsx — Page 1.3 "Transfer Management".
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: legacy 1.3.html (single-file HTML/CSS/JS, ~2,700 LOC).
- *   - All repeating blocks (stats, attention/suggestions, tables, FX, limits…)
- *     are extracted into `initialMockData` and rendered with .map().
- *   - Data is loaded through TanStack Query (fetchTransferManagement) with a
- *     bundled fallback so the page never breaks; a Bootstrap spinner shows while
- *     loading and a Bootstrap alert surfaces query errors.
- *   - Legacy openM()/closeM() + Bootstrap-JS modals become React state driven
- *     modals (see TransferManagementModals).
+ *   - Operational datasets remain in `initialMockData` and render as typed,
+ *     responsive cards, tables, queues and governance controls.
+ *   - TanStack Query retains the bundled `data ?? initialMockData` fallback so
+ *     the workspace remains useful when its API is unavailable.
+ *   - Legacy openM()/closeM() workflows are React state-driven and retain their
+ *     existing modal IDs through TransferManagementModals.
  * ========================================================================== */
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { cx } from "@/features/Layouts/shell/data/shellData";
-import s from "../../shared/styles/appPage.module.css";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
 	type TransferManagementData,
 	TransferManagementModals,
 } from "../components/TransferManagementModals";
+import styles from "../styles/transfer-management.module.css";
 
 type Tone = "success" | "warn" | "danger" | "info" | "purple" | "neutral";
-
-const toneBadge: Record<Tone, string> = {
-	success: s.badgeSuccess,
-	warn: s.badgeWarn,
-	danger: s.badgeDanger,
-	info: s.badgeInfo,
-	purple: s.badgePurple,
-	neutral: s.badgeOutline,
-};
-const toneIcon: Record<Tone, string> = {
-	success: s.toneSuccess,
-	warn: s.toneWarn,
-	danger: s.toneDanger,
-	info: s.toneInfo,
-	purple: s.tonePurple,
-	neutral: s.toneNeutral,
-};
 
 interface StatCard {
 	label: string;
@@ -520,31 +501,164 @@ async function fetchTransferManagement(): Promise<TransferManagementContent> {
 	return (await res.json()) as TransferManagementContent;
 }
 
-const softTone: Record<Tone, string> = {
-	success: s.softBoxSuccess,
-	warn: s.softBoxWarn,
-	danger: s.softBoxDanger,
-	info: s.softBoxInfo,
-	purple: s.softBoxPurple,
-	neutral: s.softBox,
+const toneBadge: Record<Tone, string> = {
+	success: styles.badgeSuccess,
+	info: styles.badgeInfo,
+	warn: styles.badgeWarn,
+	danger: styles.badgeDanger,
+	purple: styles.badgePurple,
+	neutral: styles.badgeNeutral,
 };
 
-export default function TransferManagement() {
-	const [modalState, setModalState] = useState<Record<string, boolean>>({});
-	const openModal = (id: string) =>
-		setModalState((p) => ({ ...p, [id]: true }));
-	const closeModal = (id: string) =>
-		setModalState((p) => ({ ...p, [id]: false }));
+const toneIcon: Record<Tone, string> = {
+	success: styles.iconGreen,
+	info: styles.iconBlue,
+	warn: styles.iconAmber,
+	danger: styles.iconRed,
+	purple: styles.iconViolet,
+	neutral: styles.iconNeutral,
+};
 
-	const { data } = useQuery({
+const kpiIcons = [
+	"bi-send-check",
+	"bi-speedometer2",
+	"bi-hourglass-split",
+	"bi-shield-check",
+];
+const kpiIconTones = [
+	styles.iconGreen,
+	styles.iconBlue,
+	styles.iconAmber,
+	styles.iconViolet,
+];
+
+function SectionHeading({
+	index,
+	id,
+	title,
+	description,
+	action,
+}: {
+	index: string;
+	id: string;
+	title: string;
+	description: string;
+	action?: ReactNode;
+}) {
+	return (
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
+			</div>
+			{action ? <div className={styles.sectionAction}>{action}</div> : null}
+		</div>
+	);
+}
+
+export default function TransferManagement() {
+	const {
+		data: remoteData,
+		isFetching,
+		isError,
+	} = useQuery({
 		queryKey: ["paymo-transfer-management"],
 		queryFn: fetchTransferManagement,
 		staleTime: 60_000,
 		retry: 1,
 	});
-	const c = data ?? initialMockData;
+	const data = remoteData ?? initialMockData;
+	const content = useMemo(
+		() => ({
+			...data,
+			stats: [
+				{
+					title: "Transferred today",
+					value: data.heroValue.replace(" transferred today", ""),
+					label: "Live volume",
+					foot: data.heroSub,
+					labelTone: "success" as Tone,
+				},
+				...data.stats.map((stat) => ({
+					title: stat.label,
+					value: stat.value,
+					label: stat.badge?.text ?? "Live",
+					foot: stat.sub ?? "Current transfer performance",
+					labelTone: stat.labelTone,
+				})),
+			],
+			recentTransfers: data.domestic.map((transfer, index) => ({
+				...transfer,
+				ref: `TRF-${transfer.date.replace(" ", "").toUpperCase()}-${88341 + index}`,
+			})),
+			banks: data.bankStatus.map((bank) => ({ ...bank, note: bank.rails })),
+			international: data.intl,
+			limits: {
+				daily: data.limits[0]?.value ?? "—",
+				monthly: data.limits[2]?.value ?? "—",
+				perTransfer: data.limits[1]?.value ?? "—",
+				international: data.limits[3]?.value ?? "—",
+				action: { modal: "limitsModal" },
+			},
+			approvals: {
+				items: data.approvals.map((approval) => ({
+					label: approval.label,
+					value: approval.badge,
+					tone: approval.tone,
+				})),
+				action: { modal: "approvalQueueModal" },
+			},
+		}),
+		[data],
+	);
+	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [historyQuery, setHistoryQuery] = useState("");
+	const [historyStatus, setHistoryStatus] = useState("all");
+
+	const openModal = (id: string) => setModalState({ [id]: true });
+	const closeModal = (id: string) =>
+		setModalState((current) => ({ ...current, [id]: false }));
+
+	const filteredHistory = useMemo(() => {
+		const query = historyQuery.trim().toLowerCase();
+		return content.history.filter((transfer) => {
+			const matchesQuery =
+				!query ||
+				[
+					transfer.ref,
+					transfer.beneficiary,
+					transfer.bank,
+					transfer.amount,
+					transfer.method,
+				]
+					.join(" ")
+					.toLowerCase()
+					.includes(query);
+			const matchesStatus =
+				historyStatus === "all" ||
+				transfer.status.toLowerCase() === historyStatus;
+			return matchesQuery && matchesStatus;
+		});
+	}, [content.history, historyQuery, historyStatus]);
+
+	useEffect(() => {
+		const onShortcut = (event: KeyboardEvent) => {
+			if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+				event.preventDefault();
+				setModalState({ initiateTransferModal: true });
+			}
+		};
+		window.addEventListener("keydown", onShortcut);
+		return () => window.removeEventListener("keydown", onShortcut);
+	}, []);
 
 	return (
+<<<<<<< HEAD
 		<div className={s.pageRoot} style={{ position: "relative" }}>
 			<div className={s.stack}>
 				{/* page bar */}
@@ -641,196 +755,285 @@ export default function TransferManagement() {
 									<span className={cx(s.badge, toneBadge[stat.badge.tone])}>
 										<i className={cx("bi", stat.badge.icon)} />{" "}
 										{stat.badge.text}
+=======
+		<div className={styles.managementPage}>
+			<main className={styles.main}>
+				<div className={styles.content}>
+					<section
+						className={styles.heroBanner}
+						aria-labelledby="management-title"
+					>
+						<div className={styles.heroOrbOne} />
+						<div className={styles.heroOrbTwo} />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-diagram-3" /> Transfer control
+>>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 									</span>
-								)}
-								{stat.sub && <div className={s.statSub}>{stat.sub}</div>}
-							</div>
-						</div>
-					))}
-				</div>
-
-				{/* attention / suggestions / quick actions */}
-				<div className="row g-3">
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Attention Required</h3>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm)}
-									onClick={() => openModal("attentionModal")}
-								>
-									View all
-								</button>
-							</div>
-							{c.attention.map((item) => (
-								<div className={s.rowItem} key={item.title}>
-									<div className={s.rowLead}>
-										<div className={cx(s.rowIcon, toneIcon[item.tone])}>
-											<i className={cx("bi", item.icon)} />
-										</div>
-										<div>
-											<div className={s.rowTitle}>{item.title}</div>
-											<div className={s.rowSub}>{item.sub}</div>
-										</div>
-									</div>
+									<span className={styles.livePill}>
+										<span className={styles.liveDot} aria-hidden="true" />
+										{isFetching ? "Refreshing" : "Rails online"}
+									</span>
+								</div>
+								<h1 id="management-title">
+									Move money at scale, without losing control.
+								</h1>
+								<p>
+									Initiate, approve and reconcile domestic or international
+									transfers from one governed workspace. Every rail, beneficiary
+									and exception stays visible.
+								</p>
+								<div className={styles.heroActions}>
 									<button
 										type="button"
-										className={cx(s.btn, s.btnSm)}
-										onClick={() => openModal(item.modal)}
+										className={styles.heroPrimary}
+										onClick={() => openModal("initiateTransferModal")}
 									>
-										{item.action}
+										<i className="bi bi-plus-lg" /> New transfer
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => openModal("internationalModal")}
+									>
+										<i className="bi bi-globe2" /> International
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => openModal("bulkTransferModal")}
+									>
+										<i className="bi bi-collection" /> Bulk upload
 									</button>
 								</div>
-							))}
+							</div>
+
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="Monthly transfer snapshot"
+							>
+								<span>August transfer value</span>
+								<strong>KES 184.7M</strong>
+								<p>Across local and cross-border rails · 8.4% above July</p>
+								<div className={styles.heroMetricRow}>
+									<div>
+										<strong>47</strong>
+										<span>Kenyan banks</span>
+									</div>
+									<div>
+										<strong>12</strong>
+										<span>FX corridors</span>
+									</div>
+									<div>
+										<strong>99.7%</strong>
+										<span>Rail uptime</span>
+									</div>
+								</div>
+							</aside>
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
-								<span className={cx(s.badge, s.badgePurple)}>
-									<i className="bi bi-stars" /> AI
+					</section>
+
+					{isError ? (
+						<output className={`${styles.card} ${styles.healthSummary}`}>
+							<i className="bi bi-cloud-slash" />
+							<div>
+								<strong>Live transfer feed is temporarily unavailable</strong>
+								<span>
+									Showing the latest locally available operating snapshot.
 								</span>
 							</div>
-							{c.suggestions.map((item) => (
-								<div className={s.rowItem} key={item.title}>
-									<div className={s.rowLead}>
-										<div className={cx(s.rowIcon, toneIcon[item.tone])}>
-											<i className={cx("bi", item.icon)} />
-										</div>
-										<div>
-											<div className={s.rowTitle}>{item.title}</div>
-											<div className={s.rowSub}>{item.sub}</div>
-										</div>
+						</output>
+					) : null}
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="pulse-heading"
+					>
+						<SectionHeading
+							index="01"
+							id="pulse-heading"
+							title="Operational pulse"
+							description="Today’s transfer volume, service quality and approval workload at a glance."
+						/>
+						<div className={styles.kpiGrid}>
+							{content.stats.map((stat, index) => (
+								<article
+									key={stat.title}
+									className={`${styles.card} ${styles.kpiCard} ${
+										index === 0
+											? styles.kpiFeatured
+											: index === 2
+												? styles.kpiWarn
+												: ""
+									}`}
+								>
+									<span className={`${styles.kpiIcon} ${kpiIconTones[index]}`}>
+										<i className={`bi ${kpiIcons[index]}`} aria-hidden="true" />
+									</span>
+									<div className={styles.kpiMeta}>
+										<span>{stat.title}</span>
+										<small>{stat.label}</small>
 									</div>
-									<button
-										type="button"
-										className={cx(s.btn, s.btnSm)}
-										onClick={() => openModal(item.modal)}
-									>
-										{item.action}
-									</button>
-								</div>
+									<strong className={styles.kpiValue}>{stat.value}</strong>
+									<div className={styles.kpiFoot}>
+										<span
+											className={`${styles.badge} ${toneBadge[stat.labelTone]}`}
+										>
+											{stat.label}
+										</span>
+										<span>{stat.foot}</span>
+									</div>
+								</article>
 							))}
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
-							<div style={{ marginBottom: 16 }}>
-								<h3 className={s.sectionTitle}>Quick Actions</h3>
-								<p className={s.sectionSub}>Frequent transfer workflows</p>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="action-heading"
+					>
+						<SectionHeading
+							index="02"
+							id="action-heading"
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+							action={
+								<button
+									type="button"
+									className={styles.btn}
+									onClick={() => openModal("attentionModal")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
+							}
+						/>
+						<div className={styles.attentionGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Requires review</span>
+										<h3>Transfer exceptions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeWarn}`}>
+										{content.attention.length} open
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{content.attention.map((item) => (
+										<div className={styles.actionRow} key={item.title}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={`${styles.rowIcon} ${toneIcon[item.tone]}`}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={styles.btn}
+												onClick={() => openModal(item.modal)}
+											>
+												{item.action}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>PayMo insight</span>
+										<h3>Smart suggestions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgePurple}`}>
+										<i className="bi bi-stars" /> Guided
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{content.suggestions.map((item) => (
+										<div className={styles.actionRow} key={item.title}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={`${styles.rowIcon} ${toneIcon[item.tone]}`}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={styles.btn}
+												onClick={() => openModal(item.modal)}
+											>
+												{item.action}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+
+						<article className={`${styles.card} ${styles.quickActionCard}`}>
+							<div className={styles.quickActionIntro}>
+								<span className={styles.cardKicker}>Workflow launcher</span>
+								<h3>Start with the right rail</h3>
+								<p>
+									Every action opens a guided, reviewable transfer workflow.
+								</p>
 							</div>
-							<div className={s.qaGrid}>
-								{c.quickActions.map((qa) => (
+							<div className={styles.quickGrid}>
+								{content.quickActions.map((action) => (
 									<button
 										type="button"
-										className={s.qaBtn}
-										key={qa.label}
-										onClick={() => openModal(qa.modal)}
+										key={action.label}
+										className={styles.quickBtn}
+										onClick={() => openModal(action.modal)}
 									>
-										<i className={cx("bi", qa.icon)} />
-										{qa.label}
+										<i className={`bi ${action.icon}`} />
+										<span>{action.label}</span>
 									</button>
 								))}
 							</div>
-						</div>
-					</div>
-				</div>
+						</article>
+					</section>
 
-				{/* 1.3.1 domestic */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-bank2" /> Domestic Bank Transfers (PesaLink,
-								EFT, RTGS)
-							</h3>
-							<p className={s.sectionSub}>
-								Instant PesaLink, same-day EFT and real-time RTGS to 47+ Kenyan
-								banks.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("bankDirectoryModal")}
-							>
-								<i className="bi bi-list-ul" /> Bank Directory
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnPrimary, s.btnSm)}
-								onClick={() => openModal("initiateTransferModal")}
-							>
-								<i className="bi bi-plus-lg" /> New Transfer
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Recent Domestic Transfers</h4>
-								<div className={s.tableWrap}>
-									<table className={s.table}>
-										<thead>
-											<tr>
-												<th>Date</th>
-												<th>Beneficiary</th>
-												<th>Bank</th>
-												<th>Amount</th>
-												<th>Method</th>
-												<th>Status</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{c.domestic.map((r) => (
-												<tr key={`${r.date}-${r.beneficiary}`}>
-													<td>{r.date}</td>
-													<td>{r.beneficiary}</td>
-													<td>{r.bank}</td>
-													<td>
-														<strong>{r.amount}</strong>
-													</td>
-													<td>{r.method}</td>
-													<td>
-														<span
-															className={cx(s.badge, toneBadge[r.statusTone])}
-														>
-															{r.status}
-														</span>
-													</td>
-													<td>
-														<button
-															type="button"
-															className={cx(s.btn, s.btnSm)}
-															onClick={() => openModal(r.action.modal)}
-														>
-															{r.action.label}
-														</button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Bank Status (Live)</h4>
-								{c.bankStatus.map((b) => (
-									<div className={s.rowItem} key={b.name}>
-										<div>
-											<div className={s.rowTitle}>{b.name}</div>
-											<div className={s.rowSub}>{b.rails}</div>
-										</div>
-										<span className={cx(s.badge, toneBadge[b.tone])}>
-											{b.status}
-										</span>
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="domestic-heading"
+					>
+						<SectionHeading
+							index="03"
+							id="domestic-heading"
+							title="Domestic transfer rails"
+							description="Manage PesaLink, EFT and RTGS transfers alongside real-time bank connectivity."
+							action={
+								<button
+									type="button"
+									className={`${styles.btn} ${styles.btnPrimary}`}
+									onClick={() => openModal("initiateTransferModal")}
+								>
+									<i className="bi bi-plus-lg" /> New domestic transfer
+								</button>
+							}
+						/>
+						<div className={styles.domesticGrid}>
+							<article className={`${styles.card} ${styles.tableCard}`}>
+								<div className={styles.tableToolbar}>
+									<div className={styles.tableTitle}>
+										<h3>Recent domestic transfers</h3>
+										<span>Latest activity across connected Kenyan banks</span>
 									</div>
+<<<<<<< HEAD
 								))}
 							</div>
 						</div>
@@ -872,43 +1075,72 @@ export default function TransferManagement() {
 								<h4 className={s.blockHead}>Recent International Transfers</h4>
 								<div className={s.tableWrap}>
 									<table className={s.table}>
+=======
+									<button
+										type="button"
+										className={styles.textButton}
+										onClick={() => openModal("transferHistoryModal")}
+									>
+										View history <i className="bi bi-arrow-right" />
+									</button>
+								</div>
+								<div className={styles.tableScroll}>
+									<table className={styles.table}>
+										<caption className={styles.srOnly}>
+											Recent domestic bank transfers
+										</caption>
+>>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 										<thead>
 											<tr>
-												<th>Date</th>
-												<th>Beneficiary</th>
-												<th>Destination</th>
-												<th>Amount</th>
-												<th>FX Rate</th>
-												<th>Method</th>
-												<th>Status</th>
-												<th>Action</th>
+												<th scope="col">Reference</th>
+												<th scope="col">Beneficiary</th>
+												<th scope="col">Bank</th>
+												<th scope="col">Amount</th>
+												<th scope="col">Rail</th>
+												<th scope="col">Status</th>
+												<th scope="col">
+													<span className={styles.srOnly}>Actions</span>
+												</th>
 											</tr>
 										</thead>
 										<tbody>
-											{c.intl.map((r) => (
-												<tr key={`${r.date}-${r.beneficiary}`}>
-													<td>{r.date}</td>
-													<td>{r.beneficiary}</td>
-													<td>{r.dest}</td>
+											{content.recentTransfers.map((transfer) => (
+												<tr key={transfer.ref}>
 													<td>
-														<strong>{r.amount}</strong>
+														<code>{transfer.ref}</code>
 													</td>
-													<td>{r.fx}</td>
-													<td>{r.method}</td>
+													<td>
+														<div className={styles.beneficiaryCell}>
+															<span>
+																{transfer.beneficiary
+																	.split(" ")
+																	.map((part) => part[0])
+																	.join("")
+																	.slice(0, 2)}
+															</span>
+															<strong>{transfer.beneficiary}</strong>
+														</div>
+													</td>
+													<td>{transfer.bank}</td>
+													<td>
+														<strong>{transfer.amount}</strong>
+													</td>
+													<td>{transfer.method}</td>
 													<td>
 														<span
-															className={cx(s.badge, toneBadge[r.statusTone])}
+															className={`${styles.badge} ${toneBadge[transfer.statusTone]}`}
 														>
-															{r.status}
+															{transfer.status}
 														</span>
 													</td>
 													<td>
 														<button
 															type="button"
-															className={cx(s.btn, s.btnSm)}
-															onClick={() => openModal(r.action.modal)}
+															className={styles.iconButton}
+															aria-label={`${transfer.action.label} ${transfer.ref}`}
+															onClick={() => openModal(transfer.action.modal)}
 														>
-															{r.action.label}
+															<i className="bi bi-three-dots" />
 														</button>
 													</td>
 												</tr>
@@ -916,25 +1148,43 @@ export default function TransferManagement() {
 										</tbody>
 									</table>
 								</div>
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Live FX Rates (KES)</h4>
-								{c.fxRates.map((f) => (
-									<div className={s.rowItem} key={f.code}>
-										<strong>{f.code}</strong>
-										<div>
-											<strong>{f.rate}</strong>{" "}
+								<div className={styles.tableFooter}>
+									<span>
+										Showing {content.recentTransfers.length} latest transfers
+									</span>
+									<span>All times EAT</span>
+								</div>
+							</article>
+
+							<aside className={`${styles.card} ${styles.bankCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Live status</span>
+										<h3>Bank connectivity</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.iconButton}
+										aria-label="Open connected bank directory"
+										onClick={() => openModal("bankDirectoryModal")}
+									>
+										<i className="bi bi-bank" aria-hidden="true" />
+									</button>
+								</div>
+								<div className={styles.bankList}>
+									{content.banks.map((bank) => (
+										<div className={styles.bankRow} key={bank.name}>
+											<div className={styles.bankIdentity}>
+												<strong>{bank.name}</strong>
+												<span>{bank.note}</span>
+											</div>
 											<span
-												style={{
-													fontSize: 12,
-													color: f.up ? "var(--danger)" : "var(--pri)",
-												}}
+												className={`${styles.badge} ${toneBadge[bank.tone]}`}
 											>
-												{f.delta}
+												{bank.status}
 											</span>
 										</div>
+<<<<<<< HEAD
 									</div>
 								))}
 							</div>
@@ -1145,35 +1395,537 @@ export default function TransferManagement() {
 										<strong>{a.label}</strong>
 										<span className={cx(s.badge, toneBadge[a.tone])}>
 											{a.badge}
+=======
+									))}
+								</div>
+								<button
+									type="button"
+									className={`${styles.healthSummary} ${styles.healthButton}`}
+									onClick={() => openModal("transferHealthModal")}
+								>
+									<i className="bi bi-check-circle-fill" aria-hidden="true" />
+									<span>
+										<strong>Rail health is within target</strong>
+										<span>
+											47 institutions reachable · RTGS closes 16:00 EAT
+>>>>>>> b71ce59a1d597a45c9b83a7287c1147d020ccfc0
 										</span>
-									</div>
-								))}
-							</div>
+									</span>
+								</button>
+							</aside>
 						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Compliance Status</h4>
-								{c.compliance.map((cb) => (
-									<div
-										className={cx(s.softBox, softTone[cb.tone])}
-										style={{ marginBottom: 8 }}
-										key={cb.label}
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="international-heading"
+					>
+						<SectionHeading
+							index="04"
+							id="international-heading"
+							title="International and FX desk"
+							description="Track SWIFT transfers, corridor status and indicative foreign exchange rates in one view."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => openModal("fxRatesModal")}
 									>
-										<div className={s.softLabel}>{cb.label}</div>
-										<div className={s.softValue}>{cb.value}</div>
+										<i className="bi bi-calculator" /> FX calculator
+									</button>
+									<button
+										type="button"
+										className={`${styles.btn} ${styles.btnPrimary}`}
+										onClick={() => openModal("internationalModal")}
+									>
+										<i className="bi bi-globe2" /> Send internationally
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.internationalGrid}>
+							<article className={`${styles.card} ${styles.tableCard}`}>
+								<div className={styles.tableToolbar}>
+									<div className={styles.tableTitle}>
+										<h3>Cross-border transfers</h3>
+										<span>SWIFT and regional corridor activity</span>
 									</div>
-								))}
-							</div>
+									<span className={`${styles.badge} ${styles.badgeInfo}`}>
+										12 active corridors
+									</span>
+								</div>
+								<div className={styles.tableScroll}>
+									<table className={styles.table}>
+										<caption className={styles.srOnly}>
+											International bank transfers
+										</caption>
+										<thead>
+											<tr>
+												<th scope="col">Date</th>
+												<th scope="col">Beneficiary</th>
+												<th scope="col">Destination</th>
+												<th scope="col">Amount</th>
+												<th scope="col">FX rate</th>
+												<th scope="col">Method</th>
+												<th scope="col">Status</th>
+												<th scope="col">
+													<span className={styles.srOnly}>Actions</span>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{content.international.map((transfer) => (
+												<tr key={`${transfer.date}-${transfer.beneficiary}`}>
+													<td>{transfer.date}</td>
+													<td>
+														<strong>{transfer.beneficiary}</strong>
+													</td>
+													<td>{transfer.dest}</td>
+													<td>
+														<strong>{transfer.amount}</strong>
+													</td>
+													<td>{transfer.fx}</td>
+													<td>{transfer.method}</td>
+													<td>
+														<span
+															className={`${styles.badge} ${toneBadge[transfer.statusTone]}`}
+														>
+															{transfer.status}
+														</span>
+													</td>
+													<td>
+														<button
+															type="button"
+															className={styles.iconButton}
+															aria-label={`${transfer.action.label} transfer to ${transfer.beneficiary}`}
+															onClick={() => openModal(transfer.action.modal)}
+														>
+															<i className="bi bi-arrow-up-right" />
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</article>
+
+							<aside className={`${styles.card} ${styles.fxPanel}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Indicative rates</span>
+										<h3>KES exchange desk</h3>
+									</div>
+									<i className="bi bi-graph-up-arrow" aria-hidden="true" />
+								</div>
+								<div className={styles.fxList}>
+									{content.fxRates.map((rate) => (
+										<div className={styles.fxRow} key={rate.code}>
+											<div className={styles.fxCurrency}>
+												<span>{rate.code}</span>
+												<strong>{rate.code} / KES</strong>
+											</div>
+											<div className={styles.fxValue}>
+												<strong>{rate.rate}</strong>
+												<span
+													className={
+														rate.up ? styles.deltaUp : styles.deltaDown
+													}
+												>
+													{rate.delta}
+												</span>
+											</div>
+										</div>
+									))}
+								</div>
+								<button
+									type="button"
+									className={styles.btn}
+									onClick={() => openModal("fxRatesModal")}
+								>
+									<i className="bi bi-bell" /> Manage rate alerts
+								</button>
+							</aside>
 						</div>
-					</div>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="schedule-heading"
+					>
+						<SectionHeading
+							index="05"
+							id="schedule-heading"
+							title="Scheduled and recurring transfers"
+							description="Control future-dated supplier payments and repeat obligations before their next execution."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => openModal("scheduleTransferModal")}
+									>
+										<i className="bi bi-calendar-plus" /> New schedule
+									</button>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => openModal("recurringModal")}
+									>
+										<i className="bi bi-arrow-repeat" /> Recurring rule
+									</button>
+								</div>
+							}
+						/>
+						<article className={`${styles.card} ${styles.scheduleCard}`}>
+							<div className={styles.cardHeader}>
+								<div>
+									<span className={styles.cardKicker}>Execution calendar</span>
+									<h3>Upcoming runs</h3>
+								</div>
+								<span className={`${styles.badge} ${styles.badgeSuccess}`}>
+									{content.schedules.length} active
+								</span>
+							</div>
+							<div className={styles.scheduleList}>
+								{content.schedules.map((schedule) => {
+									const [day, month] = schedule.next.split(" ");
+									return (
+										<div className={styles.scheduleRow} key={schedule.name}>
+											<div className={styles.scheduleDate}>
+												<strong>{day}</strong>
+												<small>{month}</small>
+											</div>
+											<div className={styles.scheduleName}>
+												<strong>{schedule.name}</strong>
+												<span>{schedule.beneficiary}</span>
+											</div>
+											<div className={styles.scheduleMeta}>
+												<strong>{schedule.frequency}</strong>
+												<span>Frequency</span>
+											</div>
+											<strong className={styles.scheduleAmount}>
+												{schedule.amount}
+											</strong>
+											<span
+												className={`${styles.badge} ${toneBadge[schedule.statusTone]}`}
+											>
+												{schedule.status}
+											</span>
+											<button
+												type="button"
+												className={styles.iconButton}
+												aria-label={`${schedule.action.label} ${schedule.name}`}
+												onClick={() => openModal(schedule.action.modal)}
+											>
+												<i className="bi bi-pencil" />
+											</button>
+										</div>
+									);
+								})}
+							</div>
+						</article>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="history-heading"
+					>
+						<SectionHeading
+							index="06"
+							id="history-heading"
+							title="History and reconciliation"
+							description="Search the audit trail, reopen receipts and export evidence for finance operations."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => openModal("reconciliationModal")}
+									>
+										<i className="bi bi-check2-square" /> Reconcile
+									</button>
+									<button
+										type="button"
+										className={styles.btn}
+										onClick={() => openModal("transferHistoryModal")}
+									>
+										<i className="bi bi-download" /> Export
+									</button>
+								</div>
+							}
+						/>
+						<article className={`${styles.card} ${styles.tableCard}`}>
+							<div className={styles.tableToolbar}>
+								<div className={styles.tableTitle}>
+									<h3>Transfer register</h3>
+									<span>
+										{filteredHistory.length} of {content.history.length} records
+										shown
+									</span>
+								</div>
+								<div className={styles.tableTools}>
+									<label className={styles.tableSearch}>
+										<span className={styles.srOnly}>
+											Search transfer history
+										</span>
+										<i className="bi bi-search" />
+										<input
+											type="search"
+											value={historyQuery}
+											onChange={(event) => setHistoryQuery(event.target.value)}
+											placeholder="Search history"
+										/>
+									</label>
+									<fieldset className={styles.filterPills}>
+										<legend className={styles.srOnly}>
+											Filter transfer history by status
+										</legend>
+										{["all", "success", "processing", "delivered"].map(
+											(status) => (
+												<button
+													type="button"
+													key={status}
+													className={
+														historyStatus === status ? styles.filterActive : ""
+													}
+													aria-pressed={historyStatus === status}
+													onClick={() => setHistoryStatus(status)}
+												>
+													{status === "all" ? "All" : status}
+												</button>
+											),
+										)}
+									</fieldset>
+								</div>
+							</div>
+							{filteredHistory.length ? (
+								<div className={styles.tableScroll}>
+									<table className={styles.table}>
+										<caption className={styles.srOnly}>
+											Searchable transfer history
+										</caption>
+										<thead>
+											<tr>
+												<th scope="col">Date</th>
+												<th scope="col">Reference</th>
+												<th scope="col">Beneficiary</th>
+												<th scope="col">Bank</th>
+												<th scope="col">Amount</th>
+												<th scope="col">Method</th>
+												<th scope="col">Status</th>
+												<th scope="col">Receipt</th>
+											</tr>
+										</thead>
+										<tbody>
+											{filteredHistory.map((transfer) => (
+												<tr key={transfer.ref}>
+													<td>{transfer.date}</td>
+													<td>
+														<code>{transfer.ref}</code>
+													</td>
+													<td>
+														<strong>{transfer.beneficiary}</strong>
+													</td>
+													<td>{transfer.bank}</td>
+													<td>
+														<strong>{transfer.amount}</strong>
+													</td>
+													<td>{transfer.method}</td>
+													<td>
+														<span
+															className={`${styles.badge} ${toneBadge[transfer.statusTone]}`}
+														>
+															{transfer.status}
+														</span>
+													</td>
+													<td>
+														<button
+															type="button"
+															className={styles.textButton}
+															onClick={() => openModal(transfer.action.modal)}
+														>
+															{transfer.action.label}{" "}
+															<i className="bi bi-arrow-up-right" />
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							) : (
+								<div className={styles.emptyState}>
+									<i className="bi bi-search" />
+									<strong>No matching transfers</strong>
+									<span>Adjust the search or status filter.</span>
+								</div>
+							)}
+							<div className={styles.tableFooter}>
+								<span>
+									Audit records reflect the current workspace snapshot
+								</span>
+								<button
+									type="button"
+									className={styles.textButton}
+									onClick={() => {
+										setHistoryQuery("");
+										setHistoryStatus("all");
+									}}
+								>
+									Reset filters
+								</button>
+							</div>
+						</article>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="governance-heading"
+					>
+						<SectionHeading
+							index="07"
+							id="governance-heading"
+							title="Limits, approvals and compliance"
+							description="Keep maker-checker controls, rail limits and regulatory screening visible to operators."
+						/>
+						<div className={styles.governanceGrid}>
+							<article className={`${styles.card} ${styles.governanceCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Policy</span>
+										<h3>Transfer limits</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.iconButton}
+										aria-label="Manage transfer limits"
+										onClick={() => openModal(content.limits.action.modal)}
+									>
+										<i className="bi bi-sliders" />
+									</button>
+								</div>
+								<div className={styles.metricList}>
+									<div className={styles.metricRow}>
+										<span>Daily remaining</span>
+										<strong>{content.limits.daily}</strong>
+									</div>
+									<div className={styles.metricRow}>
+										<span>Monthly remaining</span>
+										<strong>{content.limits.monthly}</strong>
+									</div>
+									<div className={styles.metricRow}>
+										<span>Per transfer</span>
+										<strong>{content.limits.perTransfer}</strong>
+									</div>
+									<div className={styles.metricRow}>
+										<span>International</span>
+										<strong>{content.limits.international}</strong>
+									</div>
+								</div>
+							</article>
+
+							<article className={`${styles.card} ${styles.governanceCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Maker-checker</span>
+										<h3>Approval rules</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.iconButton}
+										aria-label="Manage approval workflows"
+										onClick={() => openModal(content.approvals.action.modal)}
+									>
+										<i className="bi bi-person-check" />
+									</button>
+								</div>
+								<div className={styles.approvalList}>
+									{content.approvals.items.map((approval) => (
+										<div className={styles.approvalRow} key={approval.label}>
+											<span>{approval.label}</span>
+											<span
+												className={`${styles.badge} ${toneBadge[approval.tone]}`}
+											>
+												{approval.value}
+											</span>
+										</div>
+									))}
+								</div>
+							</article>
+
+							<article className={`${styles.card} ${styles.governanceCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Assurance</span>
+										<h3>Compliance controls</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.iconButton}
+										aria-label="Open compliance controls"
+										onClick={() => openModal("complianceModal")}
+									>
+										<i className="bi bi-shield-check" />
+									</button>
+								</div>
+								<div className={styles.complianceGrid}>
+									{content.compliance.map((item) => (
+										<div className={styles.complianceTile} key={item.label}>
+											<div>
+												<i className="bi bi-check-circle-fill" />
+												<span>{item.label}</span>
+											</div>
+											<strong>{item.value}</strong>
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+					</section>
 				</div>
-			</div>
+
+				<nav className={styles.floatingBar} aria-label="Transfer shortcuts">
+					<button
+						type="button"
+						className={styles.floatingPrimary}
+						onClick={() => openModal("initiateTransferModal")}
+					>
+						<i className="bi bi-plus-lg" /> New transfer
+					</button>
+					<button
+						type="button"
+						onClick={() => openModal("scheduleTransferModal")}
+					>
+						<i className="bi bi-calendar3" /> Schedule
+					</button>
+					<button type="button" onClick={() => openModal("bulkTransferModal")}>
+						<i className="bi bi-collection" /> Bulk upload
+					</button>
+					<button type="button" onClick={() => openModal("beneficiaryModal")}>
+						<i className="bi bi-people" /> Beneficiaries
+					</button>
+				</nav>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-shield-check" /> Protected by PayMo approval and
+						compliance controls
+					</span>
+					<nav aria-label="Footer links">
+						<a href="/pm/app/support">Support</a>
+						<Link to="/pm/app/settings">Preferences</Link>
+						<span>v2.4.0</span>
+					</nav>
+				</footer>
+			</main>
 
 			<TransferManagementModals
 				modalState={modalState}
 				openModal={openModal}
 				closeModal={closeModal}
-				data={c}
+				data={{ banks: data.banks }}
 			/>
 		</div>
 	);

@@ -130,7 +130,7 @@ export default function ModulePage({ section }: ModulePageProps) {
 			{/* ---------- back link ---------- */}
 			<div className={d.actionRow}>
 				<Link
-					to="/app"
+					to="/pm/app/transfer-overview"
 					className={s.btnLink}
 					style={{ textDecoration: "none" }}
 				>

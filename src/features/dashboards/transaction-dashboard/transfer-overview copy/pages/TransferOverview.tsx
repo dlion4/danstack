@@ -1,16 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import TransferOverviewModals from "../components/TransferOverviewModals";
+import { useMemo, useState, type ReactNode } from "react";
+import { TransferOverviewModals } from "../components/TransferOverviewModals";
 import styles from "../styles/transfer-overview.module.css";
 
-/* ============================================================================
-   PayMo BaaS — Transfer Overview Command Center (legacy page 1.1)
-   React + TypeScript + TanStack Query, cream + indigo dashboard theme.
-   ========================================================================== */
-
+/* ──────────────────────────────────────────────────────────────────────────
+   Mock data (unchanged)
+   ────────────────────────────────────────────────────────────────────────── */
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
 
 interface NavItem {
@@ -83,15 +79,6 @@ interface TrendBar {
 }
 
 interface TransferConfig {
-	nav: NavItem[];
-	headerTitle: string;
-	headerSub: string;
-	searchPlaceholder: string;
-	user: { initials: string; name: string; role: string };
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
-	pageCode: string;
-	pageTitle: string;
-	pageSub: string;
 	hero: {
 		live: string;
 		value: string;
@@ -120,39 +107,7 @@ interface TransferConfig {
 	trendBars: TrendBar[];
 }
 
-/* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: TransferConfig = {
-	nav: [
-		{ icon: "bi-house", to: "/dashboard", label: "Dashboard" },
-		{ icon: "bi-grid-3x3-gap", to: "/select-dashboard", label: "Hubs" },
-		{
-			icon: "bi-lightning-charge",
-			to: "/initiate-transfer",
-			label: "Transfers",
-			active: true,
-			dot: true,
-		},
-		{ icon: "bi-credit-card-2-front", to: "/cards", label: "Cards" },
-		{ icon: "bi-bank", to: "/banking", label: "Banking" },
-		{ icon: "bi-people-fill", to: "/customers", label: "Customers" },
-		{ icon: "bi-gear", to: "/settings", label: "Settings" },
-	],
-	headerTitle: "Transfer Overview Command Center",
-	headerSub:
-		"Initiate transfers, schedule payments, manage beneficiaries, and monitor money movement",
-	searchPlaceholder: "Search transfers, beneficiaries, references...",
-	user: { initials: "JK", name: "James K.", role: "Relationship Manager" },
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "Transfers", to: "/select-dashboard" },
-		],
-		current: "Command Center",
-	},
-	pageCode: "Transaction banking · Overview",
-	pageTitle: "Transfer overview",
-	pageSub:
-		"Initiate instant transfers, schedule recurring payments, manage beneficiaries, and monitor all money movement across M-Pesa, banks, and internal wallets.",
 	hero: {
 		live: "Transfer center is live",
 		value: "KES 2.84M transferred",
@@ -252,111 +207,19 @@ const initialMockData: TransferConfig = {
 		},
 	],
 	quickActions: [
-		{
-			icon: "bi-send",
-			iconColor: "var(--pm-primary)",
-			label: "Send Money",
-			modal: "initiateTransferModal",
-		},
-		{
-			icon: "bi-collection",
-			iconColor: "var(--pm-info)",
-			label: "Bulk Transfer",
-			modal: "bulkTransferModal",
-		},
-		{
-			icon: "bi-calendar-event",
-			iconColor: "var(--pm-accent)",
-			label: "Schedule",
-			modal: "scheduleTransferModal",
-		},
-		{
-			icon: "bi-person-plus",
-			iconColor: "var(--pm-warning)",
-			label: "Beneficiaries",
-			modal: "manageBeneficiariesModal",
-		},
-		{
-			icon: "bi-clock-history",
-			iconColor: "var(--pm-purple)",
-			label: "History",
-			modal: "transferHistoryModal",
-		},
-		{
-			icon: "bi-sliders",
-			iconColor: "var(--pm-accent)",
-			label: "Limits",
-			modal: "transferLimitsModal",
-		},
-		// {
-		// 	icon: "bi-globe",
-		// 	iconColor: "var(--pm-danger)",
-		// 	label: "International",
-		// 	modal: "internationalTransferModal",
-		// },
-		// {
-		// 	icon: "bi-qr-code",
-		// 	iconColor: "var(--pm-primary)",
-		// 	label: "QR Pay",
-		// 	modal: "qrPayModal",
-		// },
+		{ icon: "bi-send", iconColor: "var(--pm-primary)", label: "Send Money", modal: "initiateTransferModal" },
+		{ icon: "bi-collection", iconColor: "var(--pm-info)", label: "Bulk Transfer", modal: "bulkTransferModal" },
+		{ icon: "bi-calendar-event", iconColor: "var(--pm-accent)", label: "Schedule", modal: "scheduleTransferModal" },
+		{ icon: "bi-person-plus", iconColor: "var(--pm-warning)", label: "Beneficiaries", modal: "manageBeneficiariesModal" },
+		{ icon: "bi-clock-history", iconColor: "var(--pm-purple)", label: "History", modal: "transferHistoryModal" },
+		{ icon: "bi-sliders", iconColor: "var(--pm-accent)", label: "Limits", modal: "transferLimitsModal" },
 	],
 	recentTransfers: [
-		{
-			date: "27 Jun",
-			beneficiary: "Grace Kamau",
-			amount: "KES 12,500",
-			method: "M-Pesa",
-			status: "Success",
-			statusTone: "badgeS",
-			ref: "TRF-448291",
-			actionLabel: "Details",
-			actionModal: "transferDetailModal",
-		},
-		{
-			date: "26 Jun",
-			beneficiary: "Landlord Properties",
-			amount: "KES 45,000",
-			method: "Bank",
-			status: "Success",
-			statusTone: "badgeS",
-			ref: "TRF-447820",
-			actionLabel: "Details",
-			actionModal: "transferDetailModal",
-		},
-		{
-			date: "25 Jun",
-			beneficiary: "James Ochieng",
-			amount: "KES 8,200",
-			method: "Internal",
-			status: "Success",
-			statusTone: "badgeS",
-			ref: "TRF-447103",
-			actionLabel: "Details",
-			actionModal: "transferDetailModal",
-		},
-		{
-			date: "24 Jun",
-			beneficiary: "Equity Bank",
-			amount: "KES 120,000",
-			method: "Bank",
-			status: "Pending",
-			statusTone: "badgeI",
-			ref: "TRF-446991",
-			actionLabel: "Track",
-			actionModal: "retryTransferModal",
-		},
-		{
-			date: "23 Jun",
-			beneficiary: "Safaricom",
-			amount: "KES 1,500",
-			method: "M-Pesa",
-			status: "Success",
-			statusTone: "badgeS",
-			ref: "TRF-446450",
-			actionLabel: "Details",
-			actionModal: "transferDetailModal",
-		},
+		{ date: "27 Jun", beneficiary: "Grace Kamau", amount: "KES 12,500", method: "M-Pesa", status: "Success", statusTone: "badgeS", ref: "TRF-448291", actionLabel: "Details", actionModal: "transferDetailModal" },
+		{ date: "26 Jun", beneficiary: "Landlord Properties", amount: "KES 45,000", method: "Bank", status: "Success", statusTone: "badgeS", ref: "TRF-447820", actionLabel: "Details", actionModal: "transferDetailModal" },
+		{ date: "25 Jun", beneficiary: "James Ochieng", amount: "KES 8,200", method: "Internal", status: "Success", statusTone: "badgeS", ref: "TRF-447103", actionLabel: "Details", actionModal: "transferDetailModal" },
+		{ date: "24 Jun", beneficiary: "Equity Bank", amount: "KES 120,000", method: "Bank", status: "Pending", statusTone: "badgeI", ref: "TRF-446991", actionLabel: "Track", actionModal: "retryTransferModal" },
+		{ date: "23 Jun", beneficiary: "Safaricom", amount: "KES 1,500", method: "M-Pesa", status: "Success", statusTone: "badgeS", ref: "TRF-446450", actionLabel: "Details", actionModal: "transferDetailModal" },
 	],
 	channels: [
 		{ name: "M-Pesa", transfers: "612 transfers", amount: "KES 1.24M" },
@@ -365,62 +228,15 @@ const initialMockData: TransferConfig = {
 		{ name: "International", transfers: "51 transfers", amount: "KES 296K" },
 	],
 	favorites: [
-		{
-			name: "Grace Kamau",
-			account: "0712 345 890",
-			type: "M-Pesa",
-			color: "#10B981",
-		},
-		{
-			name: "Landlord Properties",
-			account: "Bank 0012345678",
-			type: "Bank",
-			color: "#3B82F6",
-		},
-		{
-			name: "James Ochieng",
-			account: "0722 111 222",
-			type: "M-Pesa",
-			color: "#10B981",
-		},
-		{
-			name: "Equity Bank",
-			account: "0012345678",
-			type: "Bank",
-			color: "#3B82F6",
-		},
+		{ name: "Grace Kamau", account: "0712 345 890", type: "M-Pesa", color: "#10B981" },
+		{ name: "Landlord Properties", account: "Bank 0012345678", type: "Bank", color: "#3B82F6" },
+		{ name: "James Ochieng", account: "0722 111 222", type: "M-Pesa", color: "#10B981" },
+		{ name: "Equity Bank", account: "0012345678", type: "Bank", color: "#3B82F6" },
 	],
 	scheduled: [
-		{
-			schedule: "Rent",
-			beneficiary: "Landlord Properties",
-			amount: "KES 45,000",
-			frequency: "Monthly",
-			nextRun: "01 Jul 2025",
-			status: "Active",
-			statusTone: "badgeS",
-			actionLabel: "Edit",
-		},
-		{
-			schedule: "Salary Advance",
-			beneficiary: "Grace Kamau",
-			amount: "KES 15,000",
-			frequency: "Bi-weekly",
-			nextRun: "28 Jun 2025",
-			status: "Active",
-			statusTone: "badgeS",
-			actionLabel: "Edit",
-		},
-		{
-			schedule: "Internet Bill",
-			beneficiary: "Safaricom Fibre",
-			amount: "KES 5,999",
-			frequency: "Monthly",
-			nextRun: "01 Jul 2025",
-			status: "Paused",
-			statusTone: "badgeW",
-			actionLabel: "Resume",
-		},
+		{ schedule: "Rent", beneficiary: "Landlord Properties", amount: "KES 45,000", frequency: "Monthly", nextRun: "01 Jul 2025", status: "Active", statusTone: "badgeS", actionLabel: "Edit" },
+		{ schedule: "Salary Advance", beneficiary: "Grace Kamau", amount: "KES 15,000", frequency: "Bi-weekly", nextRun: "28 Jun 2025", status: "Active", statusTone: "badgeS", actionLabel: "Edit" },
+		{ schedule: "Internet Bill", beneficiary: "Safaricom Fibre", amount: "KES 5,999", frequency: "Monthly", nextRun: "01 Jul 2025", status: "Paused", statusTone: "badgeW", actionLabel: "Resume" },
 	],
 	topRecipients: [
 		{ name: "Grace Kamau", amount: "KES 187,500" },
@@ -444,7 +260,9 @@ const initialMockData: TransferConfig = {
 	],
 };
 
-/* ---------- data fetch (falls back to mock on error) ---------- */
+/* ──────────────────────────────────────────────────────────────────────────
+   Data fetch
+   ────────────────────────────────────────────────────────────────────────── */
 async function fetchTransferOverview(): Promise<TransferConfig> {
 	const res = await fetch("/api/transfer-overview", {
 		headers: { Accept: "application/json" },
@@ -453,6 +271,9 @@ async function fetchTransferOverview(): Promise<TransferConfig> {
 	return (await res.json()) as TransferConfig;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Section heading
+   ────────────────────────────────────────────────────────────────────────── */
 function SectionHeading({
 	id,
 	index,
@@ -469,7 +290,9 @@ function SectionHeading({
 	return (
 		<div className={styles.sectionHeading}>
 			<div className={styles.sectionHeadingCopy}>
-				<span className={styles.sectionIndex}>{index}</span>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
 				<div>
 					<h2 id={id}>{title}</h2>
 					<p>{description}</p>
@@ -480,7 +303,10 @@ function SectionHeading({
 	);
 }
 
-export default function TransferOverview() {
+/* ──────────────────────────────────────────────────────────────────────────
+   Main component
+   ────────────────────────────────────────────────────────────────────────── */
+export function TransferOverview() {
 	const { data } = useQuery({
 		queryKey: ["paymo-transfer-overview"],
 		queryFn: fetchTransferOverview,
@@ -489,33 +315,17 @@ export default function TransferOverview() {
 	});
 	const config = data ?? initialMockData;
 
-	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [modalState, setModalState] = useState<Record<string, boolean>>({});
 	const [transferSearch, setTransferSearch] = useState("");
-	const [statusFilter, setStatusFilter] = useState<
-		"All" | "Success" | "Pending"
-	>("All");
+	const [statusFilter, setStatusFilter] = useState<"All" | "Success" | "Pending">("All");
 
-	useEffect(() => {
-		if (!activeModal) return;
-		const trigger = document.activeElement as HTMLElement | null;
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = "hidden";
-		const closeOnEscape = (event: KeyboardEvent) => {
-			if (event.key === "Escape") setActiveModal(null);
-		};
-		window.addEventListener("keydown", closeOnEscape);
-		return () => {
-			document.body.style.overflow = previousOverflow;
-			window.removeEventListener("keydown", closeOnEscape);
-			trigger?.focus();
-		};
-	}, [activeModal]);
+	const openModal = (id: string) => setModalState({ [id]: true });
+	const closeModal = (id: string) => setModalState((prev) => ({ ...prev, [id]: false }));
 
 	const filteredTransfers = useMemo(() => {
 		const query = transferSearch.trim().toLowerCase();
 		return config.recentTransfers.filter((transfer) => {
-			const matchesStatus =
-				statusFilter === "All" || transfer.status === statusFilter;
+			const matchesStatus = statusFilter === "All" || transfer.status === statusFilter;
 			const matchesSearch =
 				!query ||
 				transfer.beneficiary.toLowerCase().includes(query) ||
@@ -536,11 +346,8 @@ export default function TransferOverview() {
 		<div className={styles.transferPage}>
 			<main className={styles.main}>
 				<div className={styles.content}>
-					{/* Executive hero — follows the PayMo Business page hierarchy. */}
-					<section
-						className={styles.heroBanner}
-						aria-labelledby="transfer-overview-title"
-					>
+					{/* Executive hero */}
+					<section className={styles.heroBanner} aria-labelledby="transfer-overview-title">
 						<div className={styles.heroOrbOne} aria-hidden="true" />
 						<div className={styles.heroOrbTwo} aria-hidden="true" />
 						<div className={styles.heroContent}>
@@ -548,7 +355,7 @@ export default function TransferOverview() {
 								<div className={styles.heroEyebrow}>
 									<span>
 										<i className="bi bi-lightning-charge-fill" />{" "}
-										{config.pageCode}
+										Transaction banking · Overview
 									</span>
 									<span className={styles.heroLive}>
 										<span className={styles.dotLive} /> {config.hero.live}
@@ -557,7 +364,11 @@ export default function TransferOverview() {
 								<h1 id="transfer-overview-title">
 									Move money with complete visibility.
 								</h1>
-								<p>{config.pageSub}</p>
+								<p>
+									Initiate instant transfers, schedule recurring payments, manage
+									beneficiaries, and monitor all money movement across M-Pesa,
+									banks, and internal wallets.
+								</p>
 								<div className={styles.heroActions}>
 									{config.hero.actions.map((action, index) => (
 										<button
@@ -568,10 +379,16 @@ export default function TransferOverview() {
 													? styles.heroPrimaryBtn
 													: styles.heroSecondaryBtn
 											}
-											onClick={() => setActiveModal(action.modal)}
+											onClick={() => openModal(action.modal)}
 										>
 											<i
-												className={`bi ${index === 0 ? "bi-send-fill" : index === 1 ? "bi-collection-fill" : "bi-calendar2-check-fill"}`}
+												className={`bi ${
+													index === 0
+														? "bi-send-fill"
+														: index === 1
+															? "bi-collection-fill"
+															: "bi-calendar2-check-fill"
+												}`}
 											/>
 											{action.label}
 										</button>
@@ -580,7 +397,9 @@ export default function TransferOverview() {
 							</div>
 							<div className={styles.heroSnapshot}>
 								<span>This month</span>
-								<strong>{config.hero.value.replace(" transferred", "")}</strong>
+								<strong>
+									{config.hero.value.replace(" transferred", "")}
+								</strong>
 								<p>{config.hero.detail}</p>
 								<div className={styles.heroMetricRow}>
 									<div>
@@ -600,10 +419,8 @@ export default function TransferOverview() {
 						</div>
 					</section>
 
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="pulse-heading"
-					>
+					{/* 1.1 Transaction pulse */}
+					<section className={styles.dashboardSection} aria-labelledby="pulse-heading">
 						<SectionHeading
 							id="pulse-heading"
 							index="1.1"
@@ -611,9 +428,7 @@ export default function TransferOverview() {
 							description="A concise view of volume, completion and operational exceptions."
 						/>
 						<div className={styles.kpiGrid}>
-							<article
-								className={`${styles.card} ${styles.kpiCard} ${styles.kpiFeatured}`}
-							>
+							<article className={`${styles.card} ${styles.kpiCard} ${styles.kpiFeatured}`}>
 								<div className={`${styles.kpiIcon} ${styles.kpiIconGreen}`}>
 									<i className="bi bi-arrow-left-right" />
 								</div>
@@ -637,11 +452,15 @@ export default function TransferOverview() {
 									className={`${styles.card} ${styles.kpiCard} ${stat.warnBorder ? styles.kpiWarning : ""}`}
 								>
 									<div
-										className={`${styles.kpiIcon} ${stat.key === "completed" ? styles.kpiIconGreen : stat.key === "pending" ? styles.kpiIconBlue : styles.kpiIconAmber}`}
+										className={`${styles.kpiIcon} ${
+											stat.key === "completed"
+												? styles.kpiIconGreen
+												: stat.key === "pending"
+													? styles.kpiIconBlue
+													: styles.kpiIconAmber
+										}`}
 									>
-										<i
-											className={`bi ${statIcons[stat.key] ?? "bi-wallet2"}`}
-										/>
+										<i className={`bi ${statIcons[stat.key] ?? "bi-wallet2"}`} />
 									</div>
 									<div className={styles.kpiMeta}>
 										<span>{stat.label}</span>
@@ -649,11 +468,8 @@ export default function TransferOverview() {
 									</div>
 									<strong className={styles.kpiValue}>{stat.value}</strong>
 									<div className={styles.kpiFoot}>
-										<span
-											className={`${styles.badge} ${styles[stat.badge.tone]}`}
-										>
-											<i className={`bi ${stat.badge.icon}`} />{" "}
-											{stat.badge.text}
+										<span className={`${styles.badge} ${styles[stat.badge.tone]}`}>
+											<i className={`bi ${stat.badge.icon}`} /> {stat.badge.text}
 										</span>
 										<span>{stat.lines[0]}</span>
 									</div>
@@ -662,10 +478,8 @@ export default function TransferOverview() {
 						</div>
 					</section>
 
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="attention-heading"
-					>
+					{/* 1.2 Needs your attention */}
+					<section className={styles.dashboardSection} aria-labelledby="attention-heading">
 						<SectionHeading
 							id="attention-heading"
 							index="1.2"
@@ -675,7 +489,7 @@ export default function TransferOverview() {
 								<button
 									type="button"
 									className={styles.btnPm}
-									onClick={() => setActiveModal("attentionModal")}
+									onClick={() => openModal("attentionModal")}
 								>
 									<i className="bi bi-list-check" /> Review queue
 								</button>
@@ -698,10 +512,7 @@ export default function TransferOverview() {
 											<div className={styles.actionRowMain}>
 												<span
 													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
+													style={{ background: item.iconBg, color: item.iconColor }}
 												>
 													<i className={`bi ${item.icon}`} />
 												</span>
@@ -713,7 +524,7 @@ export default function TransferOverview() {
 											<button
 												type="button"
 												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => setActiveModal(item.modal)}
+												onClick={() => openModal(item.modal)}
 											>
 												{item.actionLabel}
 											</button>
@@ -738,10 +549,7 @@ export default function TransferOverview() {
 											<div className={styles.actionRowMain}>
 												<span
 													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
+													style={{ background: item.iconBg, color: item.iconColor }}
 												>
 													<i className={`bi ${item.icon}`} />
 												</span>
@@ -753,7 +561,7 @@ export default function TransferOverview() {
 											<button
 												type="button"
 												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => setActiveModal(item.modal)}
+												onClick={() => openModal(item.modal)}
 											>
 												{item.actionLabel}
 											</button>
@@ -775,7 +583,7 @@ export default function TransferOverview() {
 										type="button"
 										key={action.label}
 										className={styles.quickBtn}
-										onClick={() => setActiveModal(action.modal)}
+										onClick={() => openModal(action.modal)}
 									>
 										<span style={{ color: action.iconColor }}>
 											<i className={`bi ${action.icon}`} />
@@ -788,10 +596,8 @@ export default function TransferOverview() {
 						</article>
 					</section>
 
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="portfolio-heading"
-					>
+					{/* 1.3 Transfer portfolio */}
+					<section className={styles.dashboardSection} aria-labelledby="portfolio-heading">
 						<SectionHeading
 							id="portfolio-heading"
 							index="1.3"
@@ -802,14 +608,14 @@ export default function TransferOverview() {
 									<button
 										type="button"
 										className={styles.btnPm}
-										onClick={() => setActiveModal("transferAnalyticsModal")}
+										onClick={() => openModal("transferAnalyticsModal")}
 									>
 										<i className="bi bi-bar-chart" /> Analytics
 									</button>
 									<button
 										type="button"
 										className={`${styles.btnPm} ${styles.btnPmP}`}
-										onClick={() => setActiveModal("initiateTransferModal")}
+										onClick={() => openModal("initiateTransferModal")}
 									>
 										<i className="bi bi-plus-lg" /> New transfer
 									</button>
@@ -829,30 +635,22 @@ export default function TransferOverview() {
 											<span className={styles.srOnly}>Search transfers</span>
 											<input
 												value={transferSearch}
-												onChange={(event) =>
-													setTransferSearch(event.target.value)
-												}
+												onChange={(e) => setTransferSearch(e.target.value)}
 												placeholder="Search name or reference"
 											/>
 										</label>
 										<fieldset className={styles.filterPills}>
-											<legend className={styles.srOnly}>
-												Filter transfer status
-											</legend>
-											{(["All", "Success", "Pending"] as const).map(
-												(filter) => (
-													<button
-														type="button"
-														key={filter}
-														className={
-															statusFilter === filter ? styles.filterActive : ""
-														}
-														onClick={() => setStatusFilter(filter)}
-													>
-														{filter}
-													</button>
-												),
-											)}
+											<legend className={styles.srOnly}>Filter transfer status</legend>
+											{(["All", "Success", "Pending"] as const).map((filter) => (
+												<button
+													type="button"
+													key={filter}
+													className={statusFilter === filter ? styles.filterActive : ""}
+													onClick={() => setStatusFilter(filter)}
+												>
+													{filter}
+												</button>
+											))}
 										</fieldset>
 									</div>
 								</div>
@@ -866,9 +664,7 @@ export default function TransferOverview() {
 												<th>Rail</th>
 												<th>Status</th>
 												<th>Reference</th>
-												<th>
-													<span className={styles.srOnly}>Action</span>
-												</th>
+												<th><span className={styles.srOnly}>Action</span></th>
 											</tr>
 										</thead>
 										<tbody>
@@ -881,28 +677,20 @@ export default function TransferOverview() {
 															<strong>{transfer.beneficiary}</strong>
 														</div>
 													</td>
-													<td>
-														<strong>{transfer.amount}</strong>
-													</td>
+													<td><strong>{transfer.amount}</strong></td>
 													<td>{transfer.method}</td>
 													<td>
-														<span
-															className={`${styles.badge} ${styles[transfer.statusTone]}`}
-														>
+														<span className={`${styles.badge} ${styles[transfer.statusTone]}`}>
 															{transfer.status}
 														</span>
 													</td>
-													<td>
-														<code>{transfer.ref}</code>
-													</td>
+													<td><code>{transfer.ref}</code></td>
 													<td>
 														<button
 															type="button"
 															className={styles.iconButton}
 															aria-label={`${transfer.actionLabel} for ${transfer.ref}`}
-															onClick={() =>
-																setActiveModal(transfer.actionModal)
-															}
+															onClick={() => openModal(transfer.actionModal)}
 														>
 															<i className="bi bi-arrow-up-right" />
 														</button>
@@ -915,9 +703,7 @@ export default function TransferOverview() {
 														<div className={styles.emptyState}>
 															<i className="bi bi-search" />
 															<strong>No transfers found</strong>
-															<span>
-																Try a different search or status filter.
-															</span>
+															<span>Try a different search or status filter.</span>
 														</div>
 													</td>
 												</tr>
@@ -932,7 +718,7 @@ export default function TransferOverview() {
 									</span>
 									<button
 										type="button"
-										onClick={() => setActiveModal("transferHistoryModal")}
+										onClick={() => openModal("transferHistoryModal")}
 									>
 										View full history <i className="bi bi-arrow-right" />
 									</button>
@@ -945,9 +731,7 @@ export default function TransferOverview() {
 										<span className={styles.cardKicker}>Rail mix</span>
 										<h3>Transfer channels</h3>
 									</div>
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Healthy
-									</span>
+									<span className={`${styles.badge} ${styles.badgeS}`}>Healthy</span>
 								</div>
 								<div className={styles.channelList}>
 									{config.channels.map((channel, index) => (
@@ -960,9 +744,7 @@ export default function TransferOverview() {
 												<strong>{channel.amount}</strong>
 											</div>
 											<div className={styles.progressTrack}>
-												<span
-													style={{ width: `${channelShares[index] ?? 10}%` }}
-												/>
+												<span style={{ width: `${channelShares[index] ?? 10}%` }} />
 											</div>
 										</div>
 									))}
@@ -978,10 +760,8 @@ export default function TransferOverview() {
 						</div>
 					</section>
 
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="relationships-heading"
-					>
+					{/* 1.4 Recipients & schedules */}
+					<section className={styles.dashboardSection} aria-labelledby="relationships-heading">
 						<SectionHeading
 							id="relationships-heading"
 							index="1.4"
@@ -998,7 +778,7 @@ export default function TransferOverview() {
 									<button
 										type="button"
 										className={styles.textButton}
-										onClick={() => setActiveModal("manageBeneficiariesModal")}
+										onClick={() => openModal("manageBeneficiariesModal")}
 									>
 										Manage <i className="bi bi-arrow-right" />
 									</button>
@@ -1009,7 +789,7 @@ export default function TransferOverview() {
 											type="button"
 											key={favorite.name}
 											className={styles.favoriteTile}
-											onClick={() => setActiveModal("initiateTransferModal")}
+											onClick={() => openModal("initiateTransferModal")}
 										>
 											<span
 												className={styles.favoriteAvatar}
@@ -1027,7 +807,9 @@ export default function TransferOverview() {
 											<strong>{favorite.name}</strong>
 											<small>{favorite.account}</small>
 											<span
-												className={`${styles.badge} ${favorite.type === "M-Pesa" ? styles.badgeS : styles.badgeI}`}
+												className={`${styles.badge} ${
+													favorite.type === "M-Pesa" ? styles.badgeS : styles.badgeI
+												}`}
 											>
 												{favorite.type}
 											</span>
@@ -1045,7 +827,7 @@ export default function TransferOverview() {
 									<button
 										type="button"
 										className={styles.textButton}
-										onClick={() => setActiveModal("scheduleTransferModal")}
+										onClick={() => openModal("scheduleTransferModal")}
 									>
 										Add schedule <i className="bi bi-plus-lg" />
 									</button>
@@ -1065,9 +847,7 @@ export default function TransferOverview() {
 											</div>
 											<div className={styles.scheduleAmount}>
 												<strong>{schedule.amount}</strong>
-												<span
-													className={`${styles.badge} ${styles[schedule.statusTone]}`}
-												>
+												<span className={`${styles.badge} ${styles[schedule.statusTone]}`}>
 													{schedule.status}
 												</span>
 											</div>
@@ -1075,7 +855,7 @@ export default function TransferOverview() {
 												type="button"
 												className={styles.iconButton}
 												aria-label={`${schedule.actionLabel} ${schedule.schedule}`}
-												onClick={() => setActiveModal("editScheduleModal")}
+												onClick={() => openModal("editScheduleModal")}
 											>
 												<i className="bi bi-three-dots" />
 											</button>
@@ -1086,10 +866,8 @@ export default function TransferOverview() {
 						</div>
 					</section>
 
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="analytics-heading"
-					>
+					{/* 1.5 Transfer analytics */}
+					<section className={styles.dashboardSection} aria-labelledby="analytics-heading">
 						<SectionHeading
 							id="analytics-heading"
 							index="1.5"
@@ -1099,7 +877,7 @@ export default function TransferOverview() {
 								<button
 									type="button"
 									className={styles.btnPm}
-									onClick={() => setActiveModal("transferAnalyticsModal")}
+									onClick={() => openModal("transferAnalyticsModal")}
 								>
 									Open analytics <i className="bi bi-arrow-up-right" />
 								</button>
@@ -1119,9 +897,7 @@ export default function TransferOverview() {
 								<div className={styles.chartBars}>
 									{config.trendBars.map((bar) => (
 										<div key={bar.month} className={styles.chartBar}>
-											<i
-												style={{ height: bar.height, background: bar.color }}
-											/>
+											<i style={{ height: bar.height, background: bar.color }} />
 											<span className={styles.barLabel}>{bar.month}</span>
 										</div>
 									))}
@@ -1162,41 +938,29 @@ export default function TransferOverview() {
 									))}
 								</div>
 								<div className={styles.analyticsNote}>
-									<i className="bi bi-shield-check" /> All rails operating
-									within target.
+									<i className="bi bi-shield-check" /> All rails operating within target.
 								</div>
 							</article>
 						</div>
 					</section>
 				</div>
 
-				<nav
-					className={styles.floatingBar}
-					aria-label="Quick transaction actions"
-				>
+				{/* Floating command bar */}
+				<nav className={styles.floatingBar} aria-label="Quick transaction actions">
 					<button
 						type="button"
 						className={styles.floatingPrimary}
-						onClick={() => setActiveModal("initiateTransferModal")}
+						onClick={() => openModal("initiateTransferModal")}
 					>
 						<i className="bi bi-send-fill" /> New transfer
 					</button>
-					<button
-						type="button"
-						onClick={() => setActiveModal("bulkTransferModal")}
-					>
+					<button type="button" onClick={() => openModal("bulkTransferModal")}>
 						<i className="bi bi-collection" /> Bulk
 					</button>
-					<button
-						type="button"
-						onClick={() => setActiveModal("scheduleTransferModal")}
-					>
+					<button type="button" onClick={() => openModal("scheduleTransferModal")}>
 						<i className="bi bi-calendar2-check" /> Schedule
 					</button>
-					<button
-						type="button"
-						onClick={() => setActiveModal("manageBeneficiariesModal")}
-					>
+					<button type="button" onClick={() => openModal("manageBeneficiariesModal")}>
 						<i className="bi bi-people" /> Beneficiaries
 					</button>
 				</nav>
@@ -1215,10 +979,12 @@ export default function TransferOverview() {
 			</main>
 
 			<TransferOverviewModals
-				active={activeModal}
-				onClose={() => setActiveModal(null)}
-				onOpen={setActiveModal}
+				modalState={modalState}
+				openModal={openModal}
+				closeModal={closeModal}
 			/>
 		</div>
 	);
 }
+
+export default TransferOverview;

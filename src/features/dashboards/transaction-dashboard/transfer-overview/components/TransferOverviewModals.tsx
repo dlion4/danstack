@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import styles from "../styles/transfer-overview.module.css";
 
@@ -51,27 +51,59 @@ function MBox({
 	children,
 	footer,
 }: MBoxProps) {
+	const closeRef = useRef<HTMLButtonElement>(null);
+	const boxRef = useRef<HTMLDivElement>(null);
+	const titleId = `${id}-title`;
+
+	useEffect(() => {
+		if (active !== id) return;
+		const frame = window.requestAnimationFrame(() => closeRef.current?.focus());
+		return () => window.cancelAnimationFrame(frame);
+	}, [active, id]);
+
+	const keepFocusInDialog = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+		if (event.key !== "Tab") return;
+		const focusable = boxRef.current?.querySelectorAll<HTMLElement>(
+			'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+		);
+		if (!focusable?.length) return;
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		if (event.shiftKey && document.activeElement === first) {
+			event.preventDefault();
+			last.focus();
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault();
+			first.focus();
+		}
+	};
+
 	if (active !== id) return null;
 	return (
 		<>
-			<div className={styles.backdrop} onClick={onClose} />
-			<div
-				className={styles.modalWrap}
-				role="dialog"
-				aria-modal="true"
-				aria-label={id}
-			>
+			<div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
+			<div className={styles.modalWrap}>
 				<div
+					ref={boxRef}
 					className={`${styles.modalBox} ${size === "lg" ? styles.modalBoxLg : ""} ${size === "xl" ? styles.modalBoxXl : ""}`}
+					role="dialog"
+					onKeyDown={keepFocusInDialog}
+					aria-modal="true"
+					aria-labelledby={titleId}
 				>
 					<div className={styles.modalHeader}>
-						<h5 className={styles.modalTitle}>{title}</h5>
+						<h2 id={titleId} className={styles.modalTitle}>
+							{title}
+						</h2>
 						<button
+							ref={closeRef}
 							type="button"
-							className="btn-close"
-							aria-label="Close"
+							className={styles.modalClose}
+							aria-label="Close dialog"
 							onClick={onClose}
-						/>
+						>
+							<i className="bi bi-x-lg" aria-hidden="true" />
+						</button>
 					</div>
 					<div className={styles.modalBody}>{children}</div>
 					{footer && <div className={styles.modalFooter}>{footer}</div>}
@@ -147,6 +179,7 @@ function Pills({
 		<div className={`${styles.pills} mb-3`}>
 			{tabs.map((t) => (
 				<button
+					type="button"
 					key={t.key}
 					className={`${styles.pill} ${current === t.key ? styles.pillActive : ""}`}
 					onClick={() => onSwitch(prefix, t.key)}
@@ -162,35 +195,39 @@ function Stepper({ flowKey, current }: { flowKey: string; current: number }) {
 	const def = FLOW_DEFS[flowKey];
 	if (!def) return null;
 	return (
-		<div className={styles.stepper}>
+		<ol
+			className={styles.stepper}
+			aria-label={`Step ${current} of ${def.labels.length}`}
+		>
 			{def.labels.map((label, i) => {
 				const stepNum = i + 1;
 				const done = stepNum < current;
 				const active = stepNum === current;
 				return (
-					<div
+					<li
 						key={label}
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 8,
-							flex: 1,
-							minWidth: 80,
-						}}
+						className={`${styles.stepSegment} ${done ? styles.stepSegmentDone : ""}`}
 					>
-						{i > 0 && <div className={styles.stepLine} />}
 						<div
 							className={`${styles.step} ${done ? styles.stepDone : ""} ${active ? styles.stepActive : ""}`}
 						>
-							<div className={styles.stepN}>
-								{done ? <i className="bi bi-check" /> : stepNum}
+							<div
+								className={styles.stepN}
+								aria-current={active ? "step" : undefined}
+							>
+								{done ? (
+									<i className="bi bi-check" aria-hidden="true" />
+								) : (
+									stepNum
+								)}
 							</div>
 							<div className={styles.stepL}>{label}</div>
 						</div>
-					</div>
+						{i < def.labels.length - 1 && <div className={styles.stepLine} />}
+					</li>
 				);
 			})}
-		</div>
+		</ol>
 	);
 }
 
@@ -268,14 +305,18 @@ export default function TransferOverviewModals({
 					Reference: {r.ref}
 				</p>
 			)}
-			<div className={`${styles.flex} ${styles.justifyCenter} ${styles.mt3}`} style={{ gap: 8 }}>
+			<div
+				className={`${styles.flex} ${styles.justifyCenter} ${styles.mt3}`}
+				style={{ gap: 8 }}
+			>
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => downloadFile("receipt.txt", r.msg)}
 				>
 					<i className="bi bi-download" /> Save
 				</button>
-				<button className={`${styles.btnPm} ${styles.btnSm}`}>
+				<button type="button" className={`${styles.btnPm} ${styles.btnSm}`}>
 					<i className="bi bi-share" /> Continue
 				</button>
 			</div>
@@ -301,16 +342,19 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className={`bi bi-send ${styles.iconGreen} ${styles.modalIcon}`} />
+						<i
+							className={`bi bi-send ${styles.iconGreen} ${styles.modalIcon}`}
+						/>
 						Initiate Transfer
 					</>
 				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button type="button" className={styles.btnPm} onClick={onClose}>
 							Cancel
 						</button>
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => nextFlow("init", 4)}
 						>
@@ -334,18 +378,21 @@ export default function TransferOverviewModals({
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Select Beneficiary</h6>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Search or Select</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-01">
+								Search or Select
+							</label>
+							<select className={styles.formControl} id="transfer-field-01">
 								{BENEFICIARIES.map((b) => (
 									<option key={b}>{b}</option>
 								))}
 							</select>
 						</div>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Transfer Type</label>
+							<div className={styles.formLabel}>Transfer Type</div>
 							<div className={styles.pills}>
 								{TRANSFER_TYPES.map((t) => (
 									<button
+										type="button"
 										key={t}
 										className={`${styles.pill} ${initType === t ? styles.pillActive : ""}`}
 										onClick={() => setInitType(t)}
@@ -362,20 +409,31 @@ export default function TransferOverviewModals({
 						<h6 className={styles.stepTitle}>Step 2: Amount & Details</h6>
 						<div className={styles.row3}>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Amount (KES)</label>
-								<input className={styles.formControl} defaultValue="12500" />
+								<label className={styles.formLabel} htmlFor="transfer-field-02">
+									Amount (KES)
+								</label>
+								<input
+									className={styles.formControl}
+									defaultValue="12500"
+									id="transfer-field-02"
+								/>
 							</div>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Reference / Note</label>
+								<label className={styles.formLabel} htmlFor="transfer-field-03">
+									Reference / Note
+								</label>
 								<input
 									className={styles.formControl}
 									defaultValue="Rent June 2025"
+									id="transfer-field-03"
 								/>
 							</div>
 						</div>
 						<div className={styles.mt3}>
-							<label className={styles.formLabel}>Funding Source</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-04">
+								Funding Source
+							</label>
+							<select className={styles.formControl} id="transfer-field-04">
 								{FUNDING_SOURCES.map((f) => (
 									<option key={f}>{f}</option>
 								))}
@@ -406,7 +464,7 @@ export default function TransferOverviewModals({
 								</strong>
 							</div>
 						</div>
-						<label className={`${styles.formLabel} mt-3`}>Enter PIN</label>
+						<div className={`${styles.formLabel} mt-3`}>Enter PIN</div>
 						<div className={styles.pinRow}>
 							{[0, 1, 2, 3].map((i) => (
 								<input
@@ -438,11 +496,15 @@ export default function TransferOverviewModals({
 								className={`${styles.p3} ${styles.rounded} ${styles.textStart} ${styles.mt3}`}
 								style={{ background: "#fff", fontSize: 13 }}
 							>
-								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}>
+								<div
+									className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}
+								>
 									<span className={styles.textMuted}>Reference</span>
 									<strong>TRF-448291</strong>
 								</div>
-								<div className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}>
+								<div
+									className={`${styles.flex} ${styles.justifyBetween} ${styles.mb2}`}
+								>
 									<span className={styles.textMuted}>Transaction ID</span>
 									<strong>MPESA-9K2M4P</strong>
 								</div>
@@ -471,16 +533,19 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className={`bi bi-collection ${styles.iconBlue} ${styles.modalIcon}`} />
+						<i
+							className={`bi bi-collection ${styles.iconBlue} ${styles.modalIcon}`}
+						/>
 						Bulk Transfer
 					</>
 				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button type="button" className={styles.btnPm} onClick={onClose}>
 							Cancel
 						</button>
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => nextFlow("bulk", 4)}
 						>
@@ -500,8 +565,14 @@ export default function TransferOverviewModals({
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Upload Beneficiaries</h6>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Upload CSV</label>
-							<input type="file" className={styles.formControl} />
+							<label className={styles.formLabel} htmlFor="transfer-field-05">
+								Upload CSV
+							</label>
+							<input
+								type="file"
+								className={styles.formControl}
+								id="transfer-field-05"
+							/>
 						</div>
 						<div className={styles.infoCallout}>
 							<i className="bi bi-info-circle me-1" /> CSV format: Name,
@@ -593,16 +664,19 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className={`bi bi-calendar-event ${styles.iconGreen} ${styles.modalIcon}`} />
+						<i
+							className={`bi bi-calendar-event ${styles.iconGreen} ${styles.modalIcon}`}
+						/>
 						Schedule Transfer
 					</>
 				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button type="button" className={styles.btnPm} onClick={onClose}>
 							Cancel
 						</button>
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => nextFlow("sched", 3)}
 						>
@@ -622,20 +696,30 @@ export default function TransferOverviewModals({
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Beneficiary & Amount</h6>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Beneficiary</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-06">
+								Beneficiary
+							</label>
+							<select className={styles.formControl} id="transfer-field-06">
 								<option>Grace Kamau</option>
 								<option>Landlord Properties</option>
 							</select>
 						</div>
 						<div className={styles.row3}>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Amount</label>
-								<input className={styles.formControl} defaultValue="45000" />
+								<label className={styles.formLabel} htmlFor="transfer-field-07">
+									Amount
+								</label>
+								<input
+									className={styles.formControl}
+									defaultValue="45000"
+									id="transfer-field-07"
+								/>
 							</div>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Frequency</label>
-								<select className={styles.formControl}>
+								<label className={styles.formLabel} htmlFor="transfer-field-08">
+									Frequency
+								</label>
+								<select className={styles.formControl} id="transfer-field-08">
 									{FREQUENCIES.map((f) => (
 										<option key={f}>{f}</option>
 									))}
@@ -649,21 +733,32 @@ export default function TransferOverviewModals({
 						<h6 className={styles.stepTitle}>Step 2: Schedule Details</h6>
 						<div className={styles.row3}>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Start Date</label>
+								<label className={styles.formLabel} htmlFor="transfer-field-09">
+									Start Date
+								</label>
 								<input
 									type="date"
 									className={styles.formControl}
 									defaultValue="2025-07-01"
+									id="transfer-field-09"
 								/>
 							</div>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>End Date (optional)</label>
-								<input type="date" className={styles.formControl} />
+								<label className={styles.formLabel} htmlFor="transfer-field-10">
+									End Date (optional)
+								</label>
+								<input
+									type="date"
+									className={styles.formControl}
+									id="transfer-field-10"
+								/>
 							</div>
 						</div>
 						<div className={`${styles.mb3} ${styles.mt3}`}>
-							<label className={styles.formLabel}>Funding Source</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-11">
+								Funding Source
+							</label>
+							<select className={styles.formControl} id="transfer-field-11">
 								<option>PayMo Wallet</option>
 								<option>M-Pesa</option>
 								<option>Bank</option>
@@ -701,16 +796,19 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-person-plus ${styles.iconAmber} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-person-plus ${styles.iconAmber} ${styles.modalIcon}`}
+					/>
 					Manage Beneficiaries
 				</>
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Close
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() => onOpen("addBeneficiaryModal")}
 					>
@@ -748,12 +846,14 @@ export default function TransferOverviewModals({
 									<td>M-Pesa</td>
 									<td>
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => onOpen("editBeneficiaryModal")}
 										>
 											Edit
 										</button>{" "}
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => onOpen("initiateTransferModal")}
 										>
@@ -767,12 +867,14 @@ export default function TransferOverviewModals({
 									<td>Bank</td>
 									<td>
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => onOpen("editBeneficiaryModal")}
 										>
 											Edit
 										</button>{" "}
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => onOpen("initiateTransferModal")}
 										>
@@ -791,7 +893,7 @@ export default function TransferOverviewModals({
 						<div>
 							<strong>Grace Kamau</strong>
 						</div>
-						<button className={`${styles.btnPm} ${styles.btnSm}`}>
+						<button type="button" className={`${styles.btnPm} ${styles.btnSm}`}>
 							Remove from Favorites
 						</button>
 					</div>
@@ -799,7 +901,7 @@ export default function TransferOverviewModals({
 						<div>
 							<strong>Landlord Properties</strong>
 						</div>
-						<button className={`${styles.btnPm} ${styles.btnSm}`}>
+						<button type="button" className={`${styles.btnPm} ${styles.btnSm}`}>
 							Remove from Favorites
 						</button>
 					</div>
@@ -812,6 +914,7 @@ export default function TransferOverviewModals({
 							<strong>James Ochieng</strong>
 						</div>
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnSm}`}
 							onClick={() => onOpen("addBeneficiaryModal")}
 						>
@@ -833,16 +936,19 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-person-plus ${styles.iconGreen} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-person-plus ${styles.iconGreen} ${styles.modalIcon}`}
+					/>
 					Add Beneficiary
 				</>
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction("addBeneficiaryModal", "Beneficiary added successfully!")
@@ -857,16 +963,30 @@ export default function TransferOverviewModals({
 				"addBeneficiaryModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Name</label>
-						<input className={styles.formControl} defaultValue="Mary Wanjiku" />
+						<label className={styles.formLabel} htmlFor="transfer-field-12">
+							Name
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="Mary Wanjiku"
+							id="transfer-field-12"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Phone / Account</label>
-						<input className={styles.formControl} defaultValue="0733 222 111" />
+						<label className={styles.formLabel} htmlFor="transfer-field-13">
+							Phone / Account
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="0733 222 111"
+							id="transfer-field-13"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Type</label>
-						<select className={styles.formControl}>
+						<label className={styles.formLabel} htmlFor="transfer-field-14">
+							Type
+						</label>
+						<select className={styles.formControl} id="transfer-field-14">
 							{BEN_TYPES.map((t) => (
 								<option key={t}>{t}</option>
 							))}
@@ -877,8 +997,13 @@ export default function TransferOverviewModals({
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-01"
 						/>
-						<label className="form-check-label" style={{ fontSize: 13 }}>
+						<label
+							className="form-check-label"
+							style={{ fontSize: 13 }}
+							htmlFor="transfer-check-01"
+						>
 							Add to Favorites
 						</label>
 					</div>
@@ -902,7 +1027,7 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -934,13 +1059,14 @@ export default function TransferOverviewModals({
 				</div>
 			</div>
 			<div className={`${styles.flex} ${styles.justifyCenter} ${styles.gap2}`}>
-				<button className={`${styles.btnPm} ${styles.btnSm}`}>
+				<button type="button" className={`${styles.btnPm} ${styles.btnSm}`}>
 					<i className="bi bi-download" /> Receipt
 				</button>
-				<button className={`${styles.btnPm} ${styles.btnSm}`}>
+				<button type="button" className={`${styles.btnPm} ${styles.btnSm}`}>
 					<i className="bi bi-share" /> Share
 				</button>
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => onOpen("disputeTransferModal")}
 				>
@@ -966,10 +1092,11 @@ export default function TransferOverviewModals({
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction("editScheduleModal", "Schedule updated successfully!")
@@ -984,12 +1111,20 @@ export default function TransferOverviewModals({
 				"editScheduleModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Amount</label>
-						<input className={styles.formControl} defaultValue="45000" />
+						<label className={styles.formLabel} htmlFor="transfer-field-15">
+							Amount
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="45000"
+							id="transfer-field-15"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Frequency</label>
-						<select className={styles.formControl}>
+						<label className={styles.formLabel} htmlFor="transfer-field-16">
+							Frequency
+						</label>
+						<select className={styles.formControl} id="transfer-field-16">
 							<option>Monthly</option>
 							<option>Bi-weekly</option>
 						</select>
@@ -999,12 +1134,21 @@ export default function TransferOverviewModals({
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-02"
 						/>
-						<label className="form-check-label">Active</label>
+						<label className="form-check-label" htmlFor="transfer-check-02">
+							Active
+						</label>
 					</div>
 					<div className="form-check form-switch">
-						<input className="form-check-input" type="checkbox" />
-						<label className="form-check-label">Notify before execution</label>
+						<input
+							className="form-check-input"
+							type="checkbox"
+							id="transfer-check-03"
+						/>
+						<label className="form-check-label" htmlFor="transfer-check-03">
+							Notify before execution
+						</label>
 					</div>
 				</>,
 			)}
@@ -1024,16 +1168,19 @@ export default function TransferOverviewModals({
 				onClose={onClose}
 				title={
 					<>
-						<i className={`bi bi-globe ${styles.iconRed} ${styles.modalIcon}`} />
+						<i
+							className={`bi bi-globe ${styles.iconRed} ${styles.modalIcon}`}
+						/>
 						International Transfer
 					</>
 				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button type="button" className={styles.btnPm} onClick={onClose}>
 							Cancel
 						</button>
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnPmP}`}
 							onClick={() => nextFlow("intl", 4)}
 						>
@@ -1057,22 +1204,33 @@ export default function TransferOverviewModals({
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 1: Recipient Details</h6>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Country</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-17">
+								Country
+							</label>
+							<select className={styles.formControl} id="transfer-field-17">
 								{COUNTRIES.map((c) => (
 									<option key={c}>{c}</option>
 								))}
 							</select>
 						</div>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Recipient Name</label>
-							<input className={styles.formControl} defaultValue="John Smith" />
+							<label className={styles.formLabel} htmlFor="transfer-field-18">
+								Recipient Name
+							</label>
+							<input
+								className={styles.formControl}
+								defaultValue="John Smith"
+								id="transfer-field-18"
+							/>
 						</div>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Account / IBAN</label>
+							<label className={styles.formLabel} htmlFor="transfer-field-19">
+								Account / IBAN
+							</label>
 							<input
 								className={styles.formControl}
 								defaultValue="GB29NWBK60161331926819"
+								id="transfer-field-19"
 							/>
 						</div>
 					</div>
@@ -1082,12 +1240,20 @@ export default function TransferOverviewModals({
 						<h6 className={styles.stepTitle}>Step 2: Amount & Fees</h6>
 						<div className={styles.row3}>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Amount (KES)</label>
-								<input className={styles.formControl} defaultValue="150000" />
+								<label className={styles.formLabel} htmlFor="transfer-field-20">
+									Amount (KES)
+								</label>
+								<input
+									className={styles.formControl}
+									defaultValue="150000"
+									id="transfer-field-20"
+								/>
 							</div>
 							<div className={styles.colMd6}>
-								<label className={styles.formLabel}>Currency</label>
-								<select className={styles.formControl}>
+								<label className={styles.formLabel} htmlFor="transfer-field-21">
+									Currency
+								</label>
+								<select className={styles.formControl} id="transfer-field-21">
 									{CURRENCIES.map((c) => (
 										<option key={c}>{c}</option>
 									))}
@@ -1104,16 +1270,20 @@ export default function TransferOverviewModals({
 					<div className={styles.fstepActive}>
 						<h6 className={styles.stepTitle}>Step 3: Compliance</h6>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Purpose of Transfer</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-22">
+								Purpose of Transfer
+							</label>
+							<select className={styles.formControl} id="transfer-field-22">
 								{PURPOSES.map((p) => (
 									<option key={p}>{p}</option>
 								))}
 							</select>
 						</div>
 						<div className={styles.mb3}>
-							<label className={styles.formLabel}>Source of Funds</label>
-							<select className={styles.formControl}>
+							<label className={styles.formLabel} htmlFor="transfer-field-23">
+								Source of Funds
+							</label>
+							<select className={styles.formControl} id="transfer-field-23">
 								{FUND_SOURCES.map((s) => (
 									<option key={s}>{s}</option>
 								))}
@@ -1151,16 +1321,19 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-qr-code ${styles.iconGreen} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-qr-code ${styles.iconGreen} ${styles.modalIcon}`}
+					/>
 					QR Pay
 				</>
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction(
@@ -1198,14 +1371,23 @@ export default function TransferOverviewModals({
 						</div>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Amount (KES)</label>
-						<input className={styles.formControl} defaultValue="2500" />
+						<label className={styles.formLabel} htmlFor="transfer-field-24">
+							Amount (KES)
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="2500"
+							id="transfer-field-24"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Reference</label>
+						<label className={styles.formLabel} htmlFor="transfer-field-25">
+							Reference
+						</label>
 						<input
 							className={styles.formControl}
 							defaultValue="Lunch payment"
+							id="transfer-field-25"
 						/>
 					</div>
 				</div>,
@@ -1229,10 +1411,11 @@ export default function TransferOverviewModals({
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction(
@@ -1250,24 +1433,43 @@ export default function TransferOverviewModals({
 				"transferLimitsModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Daily Limit</label>
-						<input className={styles.formControl} defaultValue="500000" />
+						<label className={styles.formLabel} htmlFor="transfer-field-26">
+							Daily Limit
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="500000"
+							id="transfer-field-26"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Per Transaction Limit</label>
-						<input className={styles.formControl} defaultValue="200000" />
+						<label className={styles.formLabel} htmlFor="transfer-field-27">
+							Per Transaction Limit
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="200000"
+							id="transfer-field-27"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>International Limit</label>
-						<input className={styles.formControl} defaultValue="100000" />
+						<label className={styles.formLabel} htmlFor="transfer-field-28">
+							International Limit
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="100000"
+							id="transfer-field-28"
+						/>
 					</div>
 					<div className="form-check form-switch mb-2">
 						<input
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-04"
 						/>
-						<label className="form-check-label">
+						<label className="form-check-label" htmlFor="transfer-check-04">
 							Require PIN for transfers above KES 10,000
 						</label>
 					</div>
@@ -1276,8 +1478,9 @@ export default function TransferOverviewModals({
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-05"
 						/>
-						<label className="form-check-label">
+						<label className="form-check-label" htmlFor="transfer-check-05">
 							Require 2FA for international transfers
 						</label>
 					</div>
@@ -1296,16 +1499,19 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-arrow-repeat ${styles.iconAmber} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-arrow-repeat ${styles.iconAmber} ${styles.modalIcon}`}
+					/>
 					Retry Failed Transfer
 				</>
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction("retryTransferModal", "Transfer retried successfully!")
@@ -1331,8 +1537,10 @@ export default function TransferOverviewModals({
 						</div>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>New Funding Source</label>
-						<select className={styles.formControl}>
+						<label className={styles.formLabel} htmlFor="transfer-field-29">
+							New Funding Source
+						</label>
+						<select className={styles.formControl} id="transfer-field-29">
 							<option>PayMo Wallet (KES 24,500)</option>
 							<option>Equity Bank ****4521</option>
 						</select>
@@ -1358,7 +1566,7 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1468,12 +1676,14 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-shield-check ${styles.iconGreen} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-shield-check ${styles.iconGreen} ${styles.modalIcon}`}
+					/>
 					Transfer Security
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1548,7 +1758,7 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1589,7 +1799,7 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1605,22 +1815,22 @@ export default function TransferOverviewModals({
 				<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
 					james.k@email.com · +254 712 345 890
 				</p>
-			<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-				<div className="col-6">
-					<div className={styles.reviewBox}>
-						<span className={styles.reviewLabel}>Transfers</span>
-						<br />
-						<strong>1,248 this month</strong>
+				<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
+					<div className="col-6">
+						<div className={styles.reviewBox}>
+							<span className={styles.reviewLabel}>Transfers</span>
+							<br />
+							<strong>1,248 this month</strong>
+						</div>
+					</div>
+					<div className="col-6">
+						<div className={styles.reviewBox}>
+							<span className={styles.reviewLabel}>Security</span>
+							<br />
+							<strong style={{ color: "var(--pm-accent)" }}>96/100</strong>
+						</div>
 					</div>
 				</div>
-				<div className="col-6">
-					<div className={styles.reviewBox}>
-						<span className={styles.reviewLabel}>Security</span>
-						<br />
-						<strong style={{ color: "var(--pm-accent)" }}>96/100</strong>
-					</div>
-				</div>
-			</div>
 			</div>
 		</MBox>
 	);
@@ -1632,12 +1842,14 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-exclamation-circle ${styles.iconAmber} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-exclamation-circle ${styles.iconAmber} ${styles.modalIcon}`}
+					/>
 					All Attention Items
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1647,6 +1859,7 @@ export default function TransferOverviewModals({
 					<strong>Scheduled transfer failed</strong>
 				</div>
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => onOpen("retryTransferModal")}
 				>
@@ -1658,6 +1871,7 @@ export default function TransferOverviewModals({
 					<strong>3 recurring payments need funding source</strong>
 				</div>
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => onOpen("manageBeneficiariesModal")}
 				>
@@ -1669,6 +1883,7 @@ export default function TransferOverviewModals({
 					<strong>Large transfer pending approval</strong>
 				</div>
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
 					onClick={() => onOpen("initiateTransferModal")}
 				>
@@ -1685,16 +1900,19 @@ export default function TransferOverviewModals({
 			onClose={onClose}
 			title={
 				<>
-					<i className={`bi bi-exclamation-triangle ${styles.iconRed} ${styles.modalIcon}`} />
+					<i
+						className={`bi bi-exclamation-triangle ${styles.iconRed} ${styles.modalIcon}`}
+					/>
 					Report Transfer Issue
 				</>
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction(
@@ -1713,19 +1931,24 @@ export default function TransferOverviewModals({
 				"disputeTransferModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Issue Type</label>
-						<select className={styles.formControl}>
+						<label className={styles.formLabel} htmlFor="transfer-field-30">
+							Issue Type
+						</label>
+						<select className={styles.formControl} id="transfer-field-30">
 							{ISSUE_TYPES.map((t) => (
 								<option key={t}>{t}</option>
 							))}
 						</select>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Description</label>
+						<label className={styles.formLabel} htmlFor="transfer-field-31">
+							Description
+						</label>
 						<textarea
 							className={styles.formControl}
 							rows={3}
 							defaultValue="The transfer was sent to the wrong number."
+							id="transfer-field-31"
 						/>
 					</div>
 				</>,
@@ -1746,10 +1969,11 @@ export default function TransferOverviewModals({
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction(
@@ -1767,20 +1991,37 @@ export default function TransferOverviewModals({
 				"editBeneficiaryModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Name</label>
-						<input className={styles.formControl} defaultValue="Grace Kamau" />
+						<label className={styles.formLabel} htmlFor="transfer-field-32">
+							Name
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="Grace Kamau"
+							id="transfer-field-32"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Phone / Account</label>
-						<input className={styles.formControl} defaultValue="0712 345 890" />
+						<label className={styles.formLabel} htmlFor="transfer-field-33">
+							Phone / Account
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="0712 345 890"
+							id="transfer-field-33"
+						/>
 					</div>
 					<div className="form-check">
 						<input
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-06"
 						/>
-						<label className="form-check-label" style={{ fontSize: 13 }}>
+						<label
+							className="form-check-label"
+							style={{ fontSize: 13 }}
+							htmlFor="transfer-check-06"
+						>
 							Favorite
 						</label>
 					</div>
@@ -1801,18 +2042,26 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
 		>
 			<div className={styles.mb3}>
-				<label className={styles.formLabel}>Amount (KES)</label>
-				<input className={styles.formControl} defaultValue="50000" />
+				<label className={styles.formLabel} htmlFor="transfer-field-34">
+					Amount (KES)
+				</label>
+				<input
+					className={styles.formControl}
+					defaultValue="50000"
+					id="transfer-field-34"
+				/>
 			</div>
 			<div className={styles.mb3}>
-				<label className={styles.formLabel}>Method</label>
-				<select className={styles.formControl}>
+				<label className={styles.formLabel} htmlFor="transfer-field-35">
+					Method
+				</label>
+				<select className={styles.formControl} id="transfer-field-35">
 					{METHODS.map((m) => (
 						<option key={m}>{m}</option>
 					))}
@@ -1840,7 +2089,7 @@ export default function TransferOverviewModals({
 				</>
 			}
 			footer={
-				<button className={styles.btnPm} onClick={onClose}>
+				<button type="button" className={styles.btnPm} onClick={onClose}>
 					Close
 				</button>
 			}
@@ -1913,10 +2162,11 @@ export default function TransferOverviewModals({
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction("favoritesQuickModal", "Transfer sent successfully!")
@@ -1931,14 +2181,23 @@ export default function TransferOverviewModals({
 				"favoritesQuickModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Amount (KES)</label>
-						<input className={styles.formControl} defaultValue="5000" />
+						<label className={styles.formLabel} htmlFor="transfer-field-36">
+							Amount (KES)
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="5000"
+							id="transfer-field-36"
+						/>
 					</div>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Note</label>
+						<label className={styles.formLabel} htmlFor="transfer-field-37">
+							Note
+						</label>
 						<input
 							className={styles.formControl}
 							defaultValue="Quick payment"
+							id="transfer-field-37"
 						/>
 					</div>
 				</>,
@@ -1959,10 +2218,11 @@ export default function TransferOverviewModals({
 			}
 			footer={
 				<>
-					<button className={styles.btnPm} onClick={onClose}>
+					<button type="button" className={styles.btnPm} onClick={onClose}>
 						Cancel
 					</button>
 					<button
+						type="button"
 						className={`${styles.btnPm} ${styles.btnPmP}`}
 						onClick={() =>
 							doAction("addToFavoritesModal", "Added to favorites!")
@@ -1977,16 +2237,27 @@ export default function TransferOverviewModals({
 				"addToFavoritesModal",
 				<>
 					<div className={styles.mb3}>
-						<label className={styles.formLabel}>Nickname</label>
-						<input className={styles.formControl} defaultValue="My Landlord" />
+						<label className={styles.formLabel} htmlFor="transfer-field-38">
+							Nickname
+						</label>
+						<input
+							className={styles.formControl}
+							defaultValue="My Landlord"
+							id="transfer-field-38"
+						/>
 					</div>
 					<div className="form-check">
 						<input
 							className="form-check-input"
 							type="checkbox"
 							defaultChecked
+							id="transfer-check-07"
 						/>
-						<label className="form-check-label" style={{ fontSize: 13 }}>
+						<label
+							className="form-check-label"
+							style={{ fontSize: 13 }}
+							htmlFor="transfer-check-07"
+						>
 							Enable quick-send
 						</label>
 					</div>

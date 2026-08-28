@@ -22,7 +22,6 @@ import { cx } from "../data/shellData";
 import styles from "../styles/shell.module.css";
 import type { ToastRecord } from "./Toasts";
 import Toasts from "./Toasts";
-import PaymoLogo from "../../../../components/shared/PaymoLogo";
 
 const s = styles as Record<string, string>;
 
@@ -35,7 +34,7 @@ interface MinimalShellProps {
 export default function MinimalShell({ children }: MinimalShellProps) {
 	/* ---------- layout state ---------- */
 	const [isDesktop, setIsDesktop] = useState<boolean>(() =>
-		typeof window !== "undefined" ? window.innerWidth >= 992 : true,
+		typeof window !== "undefined" ? window.innerWidth >= 1200 : true,
 	);
 	const [expanded, setExpanded] = useState<boolean>(() => isDesktop);
 	const [mobileOpen, setMobileOpen] = useState(false);
@@ -64,7 +63,8 @@ export default function MinimalShell({ children }: MinimalShellProps) {
 		(toast: ToastInput | string, tone?: ToastTone) => {
 			const input: ToastInput =
 				typeof toast === "string" ? { message: toast } : toast;
-			const id = (toastIdSeq += 1);
+			toastIdSeq += 1;
+			const id = toastIdSeq;
 			const type: ToastTone = input.type ?? tone ?? "info";
 			const record: ToastRecord = {
 				id,
@@ -115,7 +115,7 @@ export default function MinimalShell({ children }: MinimalShellProps) {
 	 * ==================================================================== */
 	useEffect(() => {
 		const onResize = () => {
-			const desktop = window.innerWidth >= 992;
+			const desktop = window.innerWidth >= 1200;
 			if (desktop !== isDesktop) {
 				setIsDesktop(desktop);
 				if (desktop) setMobileOpen(false);
@@ -181,7 +181,11 @@ export default function MinimalShell({ children }: MinimalShellProps) {
 				>
 					<div className={s.brandRow}>
 						<Link to="/" className={s.brandLink} aria-label="Go to home">
-							<PaymoLogo expanded={expanded || !isDesktop} />
+							<span className={s.brandMark}>P</span>
+							<span className={s.brandCopy}>
+								<span className={s.brandName}>PayMo <span>Transactions</span></span>
+								<span className={s.brandSub}>Secure activation</span>
+							</span>
 						</Link>
 						{!isDesktop && (
 							<button
@@ -238,6 +242,7 @@ export default function MinimalShell({ children }: MinimalShellProps) {
 				<main
 					className={cx(
 						s.mainContent,
+						s.minimalMain,
 						expanded && isDesktop && s.sidebarExpanded,
 					)}
 				>

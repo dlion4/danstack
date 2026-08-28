@@ -52,7 +52,7 @@ export default function AppShell() {
 
         /* ---------- layout state ---------- */
         const [isDesktop, setIsDesktop] = useState<boolean>(() =>
-                typeof window !== "undefined" ? window.innerWidth >= 992 : true,
+                typeof window !== "undefined" ? window.innerWidth >= 1200 : true,
         );
         const [expanded, setExpanded] = useState<boolean>(() => isDesktop);
         const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,8 +71,11 @@ export default function AppShell() {
         const pathname = useRouterState({ select: (st) => st.location.pathname });
         const activeSection = useMemo(() => {
                 const segments = pathname.split("/").filter(Boolean);
-                // /app/<section> -> segments[1]; /app -> 'dashboard'
-                return segments.length >= 2 ? segments[1] : "dashboard";
+                const appIndex = segments.indexOf("app");
+                // /pm/app/<section> -> the segment immediately after `app`.
+                return appIndex >= 0 && segments[appIndex + 1]
+                        ? segments[appIndex + 1]
+                        : "transfer-overview";
         }, [pathname]);
 
         /* ======================================================================
@@ -94,7 +97,8 @@ export default function AppShell() {
                 (toast: ToastInput | string, tone?: ToastTone) => {
                         const input: ToastInput =
                                 typeof toast === "string" ? { message: toast } : toast;
-                        const id = (toastIdSeq += 1);
+                        toastIdSeq += 1;
+                        const id = toastIdSeq;
                         const type: ToastTone = input.type ?? tone ?? "info";
                         const record: ToastRecord = {
                                 id,
@@ -212,11 +216,11 @@ export default function AppShell() {
 
         /* ======================================================================
          * LEGACY BRIDGE: window resize -> keep isDesktop in sync (legacy did the
-         * same breakpoint flip and reset expanded/mobileOpen on crossing 992px).
+         * same breakpoint flip and reset expanded/mobileOpen on crossing 1200px).
          * ==================================================================== */
         useEffect(() => {
                 const onResize = () => {
-                        const desktop = window.innerWidth >= 992;
+                        const desktop = window.innerWidth >= 1200;
                         if (desktop !== isDesktop) {
                                 setIsDesktop(desktop);
                                 if (desktop) setMobileOpen(false);
@@ -285,6 +289,7 @@ export default function AppShell() {
         );
 
         const unreadCount = content.notifications.filter((n) => n.unread).length;
+        const isContextAsideOpen = activePanel === "security" || activePanel === "developers";
 
         /* ======================================================================
          * TEMPLATE
@@ -345,7 +350,7 @@ export default function AppShell() {
 
                                         {/* ============ RIGHT ASIDE ============ */}
                                 <div
-                                        className={cx(s.asideBackdrop, activePanel && s.show)}
+                                        className={cx(s.asideBackdrop, isContextAsideOpen && s.show)}
                                         aria-hidden="true"
                                         onClick={closeAside}
                                 />
