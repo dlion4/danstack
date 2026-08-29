@@ -13,6 +13,13 @@
  *   - The rebalance (World B wallet -> World A business float) is the hero flow,
  *     and the RB- refs cross-link to the Reconciliation page.
  *
+ * VISUAL REFINEMENT (see ../DESIGN-BLUEPRINT.md): rebuilt on top of the
+ * navy/emerald PayMo business-dashboard language shared by transfer-overview,
+ * payment-rails and customers — executive hero, numbered dashboard sections,
+ * a queue-style attention/suggestions/quick-actions grid, a floating command
+ * bar and a page footer. All 25 modals continue to run on the shared
+ * SimpleModal / FlowModal / TabbedModal / ModalShell primitives.
+ *
  * STYLES: ../styles/liquidity.module.css (emerald theme = Transfer page theme).
  * ========================================================================== */
 "use client";
@@ -195,7 +202,10 @@ export interface LiquidityContent extends LiquidityData {
 	walletsList: string[];
 }
 
-const fmt = (n: number) => (n >= 1_000_000 ? `KES ${(n / 1_000_000).toFixed(2)}M` : `KES ${(n / 1_000).toFixed(0)}K`);
+const fmt = (n: number) =>
+	n >= 1_000_000
+		? `KES ${(n / 1_000_000).toFixed(2)}M`
+		: `KES ${(n / 1_000).toFixed(0)}K`;
 
 /* --------------------------------------------------------------------------
  * initialMockData — every repeating block from legacy 1.5.html extracted.
@@ -207,7 +217,8 @@ const initialMockData: LiquidityContent = {
 	connSub:
 		"Link your API key to start holding and moving float. You're currently viewing preview data.",
 	totalFloat: "KES 3.84M",
-	totalFloatSub: "Total float held for auto-settlement across your 2 linked businesses",
+	totalFloatSub:
+		"Total float held for auto-settlement across your 2 linked businesses",
 
 	worldStats: [
 		{
@@ -666,7 +677,10 @@ const initialMockData: LiquidityContent = {
 
 	/* option lists consumed by the modal forms */
 	businesses: ["Land Buyers LTD", "Company 2"],
-	businessWallets: ["Business Wallet (KES 8.40M)", "Virtual Wallet (KES 2.10M)"],
+	businessWallets: [
+		"Business Wallet (KES 8.40M)",
+		"Virtual Wallet (KES 2.10M)",
+	],
 	walletsList: ["Business Wallet (KES 8.40M)", "Virtual Wallet (KES 2.10M)"],
 };
 
@@ -692,6 +706,9 @@ export default function Liquidity({
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
 	const [world, setWorld] = useState<"floats" | "wallets">("floats");
 	const [biz, setBiz] = useState(initialBusiness ?? "all");
+	const [toasts, setToasts] = useState<
+		{ id: number; message: string; variant: "success" | "danger" }[]
+	>([]);
 
 	/* keep the business filter in sync when a deep link (e.g. a float-link chip
 	 * from the Reconciliation page) changes the ?business= search param while
@@ -703,6 +720,24 @@ export default function Liquidity({
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
+
+	useEffect(() => {
+		if (!toasts.length) return;
+		const timer = window.setTimeout(
+			() => setToasts((prev) => prev.slice(1)),
+			4200,
+		);
+		return () => window.clearTimeout(timer);
+	}, [toasts]);
+
+	const pushToast = (
+		message: string,
+		variant: "success" | "danger" = "success",
+	) =>
+		setToasts((prev) => [
+			...prev.slice(-4),
+			{ id: Date.now() + Math.random(), message, variant },
+		]);
 
 	const { data } = useQuery({
 		queryKey: ["paymo-liquidity-float"],
@@ -745,49 +780,93 @@ export default function Liquidity({
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
 			<div className={s.stack}>
-				{/* ---------- page bar ---------- */}
+				{/* ---------- executive hero ---------- */}
+				<header className={s.heroBanner}>
+					<div className={s.heroOrbOne} aria-hidden="true" />
+					<div className={s.heroOrbTwo} aria-hidden="true" />
+					<div className={s.heroContent}>
+						<div className={s.heroCopy}>
+							<div className={s.heroEyebrow}>
+								<span>
+									<i className="bi bi-bank2" aria-hidden="true" /> Liquidity
+									&amp; Float
+								</span>
+								<span className={s.livePill}>
+									<span className={s.liveDot} aria-hidden="true" /> 2 floats
+									live
+								</span>
+							</div>
+							<h1>Every shilling that fuels your customer settlements.</h1>
+							<p>{c.totalFloatSub}</p>
+							<div className={s.heroActions}>
+								<button
+									type="button"
+									className={s.heroPrimary}
+									onClick={() => openModal("rebalanceModal")}
+								>
+									<i className="bi bi-arrow-left-right" aria-hidden="true" />{" "}
+									Rebalance float
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("thresholdModal")}
+								>
+									<i className="bi bi-sliders" aria-hidden="true" /> Float rules
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("floatAlertModal")}
+								>
+									<i className="bi bi-bell" aria-hidden="true" /> Alerts
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("liquidityHealthModal")}
+								>
+									<i className="bi bi-heart-pulse" aria-hidden="true" /> Health
+									check
+								</button>
+							</div>
+						</div>
+						<aside className={s.heroSnapshot} aria-label="Float snapshot">
+							<span>Float snapshot</span>
+							<strong>{c.totalFloat}</strong>
+							<p>Held across your 2 linked businesses for auto-settlement.</p>
+							<div className={s.heroMetricRow}>
+								<div>
+									<strong>2 floats</strong>
+									<span>Linked businesses</span>
+								</div>
+								<div>
+									<strong>1 at risk</strong>
+									<span>Below minimum</span>
+								</div>
+								<div>
+									<strong>2.5 days</strong>
+									<span>Worst runway</span>
+								</div>
+							</div>
+						</aside>
+					</div>
+				</header>
+
+				{/* ---------- breadcrumb ---------- */}
 				<div className={s.pageBar}>
-					<div>
-						<div className={s.breadcrumb}>
-							<Link to="/app">Home</Link> /{" "}
-							<Link to="/app/transfers">Transactions Hub</Link> /{" "}
-							<strong>Liquidity &amp; Float</strong>
-						</div>
-						{/* <h1 className={s.pageTitle}>Liquidity &amp; Float</h1>
-						<p className={s.pageCopy}>
-							The money-fuel side of your settlements — what's in the tanks,
-							and how you move it so customers can always auto-settle.
-						</p> */}
-						<div className="d-flex align-items-center mt-2" style={{ gap: 10 }}>
-							<span className={cx(s.badge, s.badgeSuccess)}>
-								<i className="bi bi-bank2" /> Total Float {c.totalFloat}
-							</span>
-							<span className={s.connSub}>{c.totalFloatSub}</span>
-						</div>
+					<div className={s.breadcrumb}>
+						<Link to="/pm/app">Home</Link> /{" "}
+						<Link to="/pm/app/transfers">Transactions Hub</Link> /{" "}
+						<strong>Liquidity &amp; Float</strong>
 					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("floatAlertModal")}
-						>
-							<i className="bi bi-bell" /> Alerts
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("thresholdModal")}
-						>
-							<i className="bi bi-sliders" /> Float Rules
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnPrimary, s.btnSm)}
-							onClick={() => openModal("rebalanceModal")}
-						>
-							<i className="bi bi-arrow-left-right" /> Rebalance
-						</button>
-					</div>
+					<button
+						type="button"
+						className={cx(s.btn, s.btnSm)}
+						onClick={() => openModal("liquidityReportModal")}
+					>
+						<i className="bi bi-download" /> Reports
+					</button>
 				</div>
 
 				{/* ---------- CONNECTION BANNER ---------- */}
@@ -835,7 +914,10 @@ export default function Liquidity({
 						</button>
 						<button
 							type="button"
-							className={cx(s.worldBtn, world === "wallets" && s.worldBtnActive)}
+							className={cx(
+								s.worldBtn,
+								world === "wallets" && s.worldBtnActive,
+							)}
 							onClick={() => setWorld("wallets")}
 						>
 							<i className="bi bi-wallet2" /> My Liquidity
@@ -875,10 +957,13 @@ export default function Liquidity({
 				{world === "floats" && (
 					<>
 						{/* ---------- FLOAT HEALTH STATS ---------- */}
-						<div className="row g-3">
-							{c.worldStats.map((st) => (
-								<div className="col-lg-2 col-md-4 col-6" key={st.label}>
-									<div className={s.card} style={{ minHeight: 150 }}>
+						<section
+							className={s.dashboardSection}
+							aria-label="Float health metrics"
+						>
+							<div className={s.kpiGrid}>
+								{c.worldStats.map((st) => (
+									<div className={cx(s.card, s.kpiCard)} key={st.label}>
 										<div
 											style={{
 												display: "flex",
@@ -904,382 +989,445 @@ export default function Liquidity({
 											{st.badge}
 										</span>
 									</div>
-								</div>
-							))}
-						</div>
+								))}
+							</div>
+						</section>
 
 						{/* ---------- BUSINESS FLOAT CARDS ---------- */}
-						<div className={s.card}>
-							<div className={s.sectionHead}>
-								<div>
-									<h3 className={s.sectionTitle}>
-										<i className="bi bi-bank2" /> Business Settlement Floats
-									</h3>
-									<p className={s.sectionSub}>
-										Pre-funded tanks that auto-settle each business's customer
-										payments. Rebalance from your wallet to keep them topped up.
-									</p>
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-floats"
+						>
+							<SectionHeading
+								index="01"
+								id="liq-sec-floats"
+								title="Business settlement floats"
+								description="Pre-funded tanks that auto-settle each business's customer payments. Rebalance from your wallet to keep them topped up."
+							/>
+							<div className={s.card}>
+								<div className={s.sectionHead}>
+									<div>
+										<h3 className={s.sectionTitle}>
+											<i className="bi bi-bank2" /> Float cards
+										</h3>
+										<p className={s.sectionSub}>
+											{bizFloats.length} of {c.floats.length} business floats in
+											scope
+										</p>
+									</div>
+									<div className="d-flex" style={{ gap: 8 }}>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("thresholdModal")}
+										>
+											<i className="bi bi-sliders" /> Float Rules
+										</button>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm, s.btnPrimary)}
+											onClick={() => openModal("rebalanceModal")}
+										>
+											<i className="bi bi-arrow-left-right" /> Rebalance
+										</button>
+									</div>
 								</div>
-								<div className="d-flex" style={{ gap: 8 }}>
-									<button
-										type="button"
-										className={cx(s.btn, s.btnSm)}
-										onClick={() => openModal("thresholdModal")}
-									>
-										<i className="bi bi-sliders" /> Float Rules
-									</button>
-									<button
-										type="button"
-										className={cx(s.btn, s.btnSm, s.btnPrimary)}
-										onClick={() => openModal("rebalanceModal")}
-									>
-										<i className="bi bi-arrow-left-right" /> Rebalance
-									</button>
-								</div>
-							</div>
-							<div className="row g-3">
-								{bizFloats.map((f) => {
-									const pct = Math.round((f.balance / f.minimum) * 100);
-									const fillCls =
-										pct >= 100
-											? s.floatFill
-											: pct >= 80
-												? s.floatFillLow
-												: s.floatFillCritical;
-									return (
-										<div className="col-lg-6" key={f.id}>
-											<div className={s.floatCard}>
-												<div className={s.floatHead}>
+								<div className="row g-3">
+									{bizFloats.map((f) => {
+										const pct = Math.round((f.balance / f.minimum) * 100);
+										const fillCls =
+											pct >= 100
+												? s.floatFill
+												: pct >= 80
+													? s.floatFillLow
+													: s.floatFillCritical;
+										return (
+											<div className="col-lg-6" key={f.id}>
+												<div className={s.floatCard}>
+													<div className={s.floatHead}>
+														<div>
+															<h4 className={s.floatName}>{f.name}</h4>
+															<div className={s.floatMeta}>{f.type}</div>
+														</div>
+														<span
+															className={cx(s.badge, toneBadge[f.statusTone])}
+														>
+															<i
+																className="bi bi-circle-fill"
+																style={{ fontSize: 7 }}
+															/>{" "}
+															{f.status}
+														</span>
+													</div>
+													<div className={s.floatKpis}>
+														<div className={s.floatKpi}>
+															<div className={s.floatKpiLabel}>Float</div>
+															<div className={s.floatKpiValue}>
+																{fmt(f.balance)}
+															</div>
+														</div>
+														<div className={s.floatKpi}>
+															<div className={s.floatKpiLabel}>Minimum</div>
+															<div className={s.floatKpiValue}>
+																{fmt(f.minimum)}
+															</div>
+														</div>
+													</div>
 													<div>
-														<h4 className={s.floatName}>{f.name}</h4>
-														<div className={s.floatMeta}>{f.type}</div>
-													</div>
-													<span
-														className={cx(s.badge, toneBadge[f.statusTone])}
-													>
-														<i className="bi bi-circle-fill" style={{ fontSize: 7 }} />{" "}
-														{f.status}
-													</span>
-												</div>
-												<div className={s.floatKpis}>
-													<div className={s.floatKpi}>
-														<div className={s.floatKpiLabel}>Float</div>
-														<div className={s.floatKpiValue}>
-															{fmt(f.balance)}
+														<div className={s.floatMeter}>
+															<div
+																className={fillCls}
+																style={{ width: `${Math.min(pct, 100)}%` }}
+															/>
+														</div>
+														<div className={s.floatPct}>
+															<span>
+																{pct}% of minimum • {f.runwayDays} runway
+															</span>
+															<span>
+																<i className="bi bi-lightning-charge" />{" "}
+																{f.autoRule.trigger === "below-minimum"
+																	? "auto-settle ready"
+																	: "manual"}
+															</span>
 														</div>
 													</div>
-													<div className={s.floatKpi}>
-														<div className={s.floatKpiLabel}>Minimum</div>
-														<div className={s.floatKpiValue}>
-															{fmt(f.minimum)}
+													<div>
+														<span className={s.myAccessPill}>
+															<i className="bi bi-shield-check" /> My Access:{" "}
+															{f.role} · {f.roleLimit}
+														</span>
+														<div
+															className={s.floatMeta}
+															style={{ marginTop: 10 }}
+														>
+															Rails:{" "}
+															{f.rails
+																.map((r) => `${r.rail} ${r.share}%`)
+																.join(" · ")}
+														</div>
+														<div className={s.floatMeta}>
+															Auto-rule: {f.autoRule.source} → top-up{" "}
+															{f.autoRule.topUp}
 														</div>
 													</div>
-												</div>
-												<div>
-													<div className={s.floatMeter}>
-														<div className={fillCls} style={{ width: `${Math.min(pct, 100)}%` }} />
-													</div>
-													<div className={s.floatPct}>
-														<span>
-															{pct}% of minimum • {f.runwayDays} runway
-														</span>
-														<span>
-															<i className="bi bi-lightning-charge" />{" "}
-															{f.autoRule.trigger === "below-minimum"
-																? "auto-settle ready"
-																: "manual"}
-														</span>
-													</div>
-												</div>
-												<div>
-													<span className={s.myAccessPill}>
-														<i className="bi bi-shield-check" /> My Access:{" "}
-														{f.role} · {f.roleLimit}
-													</span>
 													<div
-														className={s.floatMeta}
-														style={{ marginTop: 10 }}
+														className="d-flex"
+														style={{
+															gap: 8,
+															flexWrap: "wrap",
+															marginTop: "auto",
+														}}
 													>
-														Rails:{" "}
-														{f.rails
-															.map((r) => `${r.rail} ${r.share}%`)
-															.join(" · ")}
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("thresholdModal")}
+														>
+															<i className="bi bi-sliders" /> Float Rules
+														</button>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("topupBankModal")}
+														>
+															<i className="bi bi-plus-circle" /> Top-up
+														</button>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm, s.btnPrimary)}
+															onClick={() => openModal("rebalanceModal")}
+														>
+															<i className="bi bi-arrow-left-right" /> Rebalance
+														</button>
 													</div>
-													<div className={s.floatMeta}>
-														Auto-rule: {f.autoRule.source} → top-up{" "}
-														{f.autoRule.topUp}
-													</div>
-												</div>
-												<div
-													className="d-flex"
-													style={{ gap: 8, flexWrap: "wrap", marginTop: "auto" }}
-												>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("thresholdModal")}
-													>
-														<i className="bi bi-sliders" /> Float Rules
-													</button>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("topupBankModal")}
-													>
-														<i className="bi bi-plus-circle" /> Top-up
-													</button>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm, s.btnPrimary)}
-														onClick={() => openModal("rebalanceModal")}
-													>
-														<i className="bi bi-arrow-left-right" /> Rebalance
-													</button>
 												</div>
 											</div>
-										</div>
-									);
-								})}
+										);
+									})}
+								</div>
 							</div>
-						</div>
+						</section>
 
 						{/* ---------- FLOAT MOVEMENTS LEDGER ---------- */}
-						<div className={s.card}>
-							<div className={s.sectionHead}>
-								<div>
-									<h3 className={s.sectionTitle}>
-										<i className="bi bi-arrow-left-right" /> Float Movements
-									</h3>
-									<p className={s.sectionSub}>
-										Every top-up, payout, refund and auto-refill — with the RB-
-										refs that reconcile on the Reconciliation page.
-									</p>
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-ledger"
+						>
+							<SectionHeading
+								index="02"
+								id="liq-sec-ledger"
+								title="Float movements ledger"
+								description="Every top-up, payout, refund and auto-refill — with the RB- refs that reconcile on the Reconciliation page."
+							/>
+							<div className={s.card}>
+								<div className={s.sectionHead}>
+									<div>
+										<h3 className={s.sectionTitle}>
+											<i className="bi bi-arrow-left-right" /> Movement log
+										</h3>
+										<p className={s.sectionSub}>
+											{bizMovements.length} entries
+										</p>
+									</div>
+									<div className="d-flex" style={{ gap: 8 }}>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("settlementModal")}
+										>
+											<i className="bi bi-flag" /> Settlement status
+										</button>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("rebalanceModal")}
+										>
+											<i className="bi bi-plus-lg" /> New Movement
+										</button>
+									</div>
 								</div>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm)}
-									onClick={() => openModal("rebalanceModal")}
-								>
-									<i className="bi bi-plus-lg" /> New Movement
-								</button>
-							</div>
-							<div className={s.tableWrap}>
-								<table className={s.table}>
-									<thead>
-										<tr>
-											<th>Ref</th>
-											<th>Time</th>
-											<th>Business</th>
-											<th>Direction</th>
-											<th>From</th>
-											<th>To</th>
-											<th>Amount</th>
-											<th>Trigger</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										{bizMovements.map((m) => (
-											<tr key={m.ref}>
-												<td>
-													<code>{m.ref}</code>
-												</td>
-												<td>{m.time}</td>
-												<td>
-													<strong>{m.business}</strong>
-												</td>
-												<td>{m.direction}</td>
-												<td>{m.from}</td>
-												<td>{m.to}</td>
-												<td>
-													<strong>{m.amount}</strong>
-												</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															m.trigger === "Auto" ? s.badgeInfo : s.badgeOutline,
-														)}
-													>
-														{m.trigger}
-													</span>
-												</td>
-												<td>
-													<span
-														className={cx(s.badge, toneBadge[m.statusTone])}
-													>
-														{m.status}
-													</span>
-												</td>
+								<div className={s.tableWrap}>
+									<table className={s.table}>
+										<thead>
+											<tr>
+												<th>Ref</th>
+												<th>Time</th>
+												<th>Business</th>
+												<th>Direction</th>
+												<th>From</th>
+												<th>To</th>
+												<th>Amount</th>
+												<th>Trigger</th>
+												<th>Status</th>
 											</tr>
-										))}
-									</tbody>
-								</table>
+										</thead>
+										<tbody>
+											{bizMovements.map((m) => (
+												<tr key={m.ref}>
+													<td>
+														<code>{m.ref}</code>
+													</td>
+													<td>{m.time}</td>
+													<td>
+														<strong>{m.business}</strong>
+													</td>
+													<td>{m.direction}</td>
+													<td>{m.from}</td>
+													<td>{m.to}</td>
+													<td>
+														<strong>{m.amount}</strong>
+													</td>
+													<td>
+														<span
+															className={cx(
+																s.badge,
+																m.trigger === "Auto"
+																	? s.badgeInfo
+																	: s.badgeOutline,
+															)}
+														>
+															{m.trigger}
+														</span>
+													</td>
+													<td>
+														<span
+															className={cx(s.badge, toneBadge[m.statusTone])}
+														>
+															{m.status}
+														</span>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
 							</div>
-						</div>
+						</section>
 
 						{/* ---------- PAYOUT RAIL LIQUIDITY ---------- */}
-						<div className={s.card}>
-							<div className={s.sectionHead}>
-								<div>
-									<h3 className={s.sectionTitle}>
-										<i className="bi bi-people-fill" /> Payout Rail Liquidity
-									</h3>
-									<p className={s.sectionSub}>
-										The sinks of your float — how much each rail (M-Pesa, bank,
-										card, wallet) consumed this week, per business.
-									</p>
-								</div>
-							</div>
-							<div className="row g-3">
-								<div className="col-lg-6">
-									{c.rails.map((r) => (
-										<div className={s.railRow} key={r.rail}>
-											<i
-												className="bi bi-diagram-3"
-												style={{ color: toneColor(r.tone), fontSize: 18 }}
-											/>
-											<div style={{ minWidth: 0, flex: 1 }}>
-												<div
-													style={{
-														display: "flex",
-														justifyContent: "space-between",
-														fontSize: 13,
-													}}
-												>
-													<strong>{r.rail}</strong>
-													<span style={{ color: "var(--ink-500)" }}>
-														{r.consumed}
-													</span>
-												</div>
-												<div className={s.railBar} style={{ marginTop: 6 }}>
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-rails"
+						>
+							<SectionHeading
+								index="03"
+								id="liq-sec-rails"
+								title="Payout rail liquidity"
+								description="The sinks of your float — how much each rail (M-Pesa, bank, card, wallet) consumed this week, per business, plus the 48-hour runway forecast."
+							/>
+							<div className={s.card}>
+								<div className="row g-3">
+									<div className="col-lg-6">
+										{c.rails.map((r) => (
+											<div className={s.railRow} key={r.rail}>
+												<i
+													className="bi bi-diagram-3"
+													style={{ color: toneColor(r.tone), fontSize: 18 }}
+												/>
+												<div style={{ minWidth: 0, flex: 1 }}>
 													<div
-														className={s.railFill}
 														style={{
-															width: `${r.share}%`,
-															background: toneColor(r.tone),
+															display: "flex",
+															justifyContent: "space-between",
+															fontSize: 13,
 														}}
-													/>
-												</div>
-												<div className={s.floatMeta}>{r.businesses}</div>
-											</div>
-										</div>
-									))}
-								</div>
-								<div className="col-lg-6">
-									<div className={s.subBlock}>
-										<h4 className={s.blockHead}>48-Hour Float Runway</h4>
-										<div className={s.chartBars}>
-											{c.runwayBars.map((b) => (
-												<div
-													key={b.label}
-													className={s.chartBar}
-													style={{
-														height: `${b.height}%`,
-														background: toneColor(b.color),
-													}}
-												>
-													<span className={s.barLabel}>{b.label}</span>
-												</div>
-											))}
-										</div>
-										<div
-											className={cx(s.tile, s.tileDanger, "mt-4")}
-											style={{ fontSize: 12 }}
-										>
-											<i className="bi bi-exclamation-triangle me-1" />{" "}
-											<strong>Company 2 runway drops below 2 days at +36h</strong>{" "}
-											— recommend rebalancing KES 640K from Business Wallet now.
-										</div>
-										<div className="mt-3">
-											<h4 className={s.blockHead}>Risk Scenarios</h4>
-											{c.scenarios.map((sc) => (
-												<div className={s.rowItem} key={sc.title}>
-													<div style={{ minWidth: 0 }}>
-														<strong>{sc.title}</strong>
-														<div className={s.rowSub}>{sc.sub}</div>
+													>
+														<strong>{r.rail}</strong>
+														<span style={{ color: "var(--ink-500)" }}>
+															{r.consumed}
+														</span>
 													</div>
-													<span className={cx(s.badge, toneBadge[sc.tone])}>
-														{sc.badge}
-													</span>
+													<div className={s.railBar} style={{ marginTop: 6 }}>
+														<div
+															className={s.railFill}
+															style={{
+																width: `${r.share}%`,
+																background: toneColor(r.tone),
+															}}
+														/>
+													</div>
+													<div className={s.floatMeta}>{r.businesses}</div>
 												</div>
-											))}
+											</div>
+										))}
+									</div>
+									<div className="col-lg-6">
+										<div className={s.subBlock}>
+											<h4 className={s.blockHead}>48-Hour Float Runway</h4>
+											<div className={s.chartBars}>
+												{c.runwayBars.map((b) => (
+													<div
+														key={b.label}
+														className={s.chartBar}
+														style={{
+															height: `${b.height}%`,
+															background: toneColor(b.color),
+														}}
+													>
+														<span className={s.barLabel}>{b.label}</span>
+													</div>
+												))}
+											</div>
+											<div
+												className={cx(s.tile, s.tileDanger, "mt-4")}
+												style={{ fontSize: 12 }}
+											>
+												<i className="bi bi-exclamation-triangle me-1" />{" "}
+												<strong>
+													Company 2 runway drops below 2 days at +36h
+												</strong>{" "}
+												— recommend rebalancing KES 640K from Business Wallet
+												now.
+											</div>
+											<div
+												className="mt-3 d-flex align-items-center justify-content-between"
+												style={{ gap: 8 }}
+											>
+												<h4 className={s.blockHead} style={{ margin: 0 }}>
+													Risk Scenarios
+												</h4>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal("scenarioModal")}
+												>
+													<i className="bi bi-sliders" /> Plan scenario
+												</button>
+											</div>
+											<div>
+												{c.scenarios.map((sc) => (
+													<div className={s.rowItem} key={sc.title}>
+														<div style={{ minWidth: 0 }}>
+															<strong>{sc.title}</strong>
+															<div className={s.rowSub}>{sc.sub}</div>
+														</div>
+														<span className={cx(s.badge, toneBadge[sc.tone])}>
+															{sc.badge}
+														</span>
+													</div>
+												))}
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</section>
 
 						{/* ---------- MONITORING & ALERTS ---------- */}
-						<div className={s.card}>
-							<div className={s.sectionHead}>
-								<div>
-									<h3 className={s.sectionTitle}>
-										<i className="bi bi-graph-up-arrow" /> Float Monitoring
-										&amp; Alerts
-									</h3>
-									<p className={s.sectionSub}>
-										Live float levels with per-business thresholds and
-										auto-refill rules.
-									</p>
-								</div>
-								<div className="d-flex" style={{ gap: 8 }}>
-									<button
-										type="button"
-										className={cx(s.btn, s.btnSm)}
-										onClick={() => openModal("floatAlertModal")}
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-monitor"
+						>
+							<SectionHeading
+								index="04"
+								id="liq-sec-monitor"
+								title="Float monitoring & alerts"
+								description="Live float levels with per-business thresholds and auto-refill rules."
+							/>
+							<div className={s.card}>
+								<div className={s.sectionHead}>
+									<div
+										className="d-flex"
+										style={{ gap: 8, marginLeft: "auto" }}
 									>
-										<i className="bi bi-bell" /> Alerts
-									</button>
-									<button
-										type="button"
-										className={cx(s.btn, s.btnSm)}
-										onClick={() => openModal("thresholdModal")}
-									>
-										<i className="bi bi-sliders" /> Thresholds
-									</button>
-								</div>
-							</div>
-							<div className="row g-3">
-								<div className="col-lg-6">
-									<div className={s.subBlock}>
-										<h4 className={s.blockHead}>Active Alerts</h4>
-										{c.activeAlerts.map((a) => (
-											<div className={s.rowItem} key={a.title}>
-												<div style={{ minWidth: 0 }}>
-													<strong>{a.title}</strong>
-													<div className={s.rowSub}>{a.sub}</div>
-												</div>
-												<span className={cx(s.badge, toneBadge[a.tone])}>
-													{a.badge}
-												</span>
-											</div>
-										))}
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("floatAlertModal")}
+										>
+											<i className="bi bi-bell" /> Alerts
+										</button>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("thresholdModal")}
+										>
+											<i className="bi bi-sliders" /> Thresholds
+										</button>
 									</div>
 								</div>
-								<div className="col-lg-6">
-									<div className={s.subBlock}>
-										<h4 className={s.blockHead}>Alert Configuration</h4>
-										{c.alertConfig.map((t) => (
-											<div className={s.switchRow} key={t.label}>
-												<div style={{ minWidth: 0 }}>
-													<div className={s.rowTitle}>{t.label}</div>
-													<div className={s.rowSub}>{t.sub}</div>
+								<div className="row g-3">
+									<div className="col-lg-6">
+										<div className={s.subBlock}>
+											<h4 className={s.blockHead}>Active Alerts</h4>
+											{c.activeAlerts.map((a) => (
+												<div className={s.rowItem} key={a.title}>
+													<div style={{ minWidth: 0 }}>
+														<strong>{a.title}</strong>
+														<div className={s.rowSub}>{a.sub}</div>
+													</div>
+													<span className={cx(s.badge, toneBadge[a.tone])}>
+														{a.badge}
+													</span>
 												</div>
-												<div className="form-check form-switch">
-													<input
-														className="form-check-input"
-														type="checkbox"
-														defaultChecked={t.on}
-														aria-label={t.label}
-													/>
+											))}
+										</div>
+									</div>
+									<div className="col-lg-6">
+										<div className={s.subBlock}>
+											<h4 className={s.blockHead}>Alert Configuration</h4>
+											{c.alertConfig.map((t) => (
+												<div className={s.switchRow} key={t.label}>
+													<div style={{ minWidth: 0 }}>
+														<div className={s.rowTitle}>{t.label}</div>
+														<div className={s.rowSub}>{t.sub}</div>
+													</div>
+													<div className="form-check form-switch">
+														<input
+															className="form-check-input"
+															type="checkbox"
+															defaultChecked={t.on}
+															aria-label={t.label}
+														/>
+													</div>
 												</div>
-											</div>
-										))}
+											))}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</section>
 					</>
 				)}
 
@@ -1287,138 +1435,169 @@ export default function Liquidity({
 				{world === "wallets" && (
 					<>
 						{/* ---------- MY WALLETS ---------- */}
-						<div className="row g-3">
-							{c.wallets.map((w) => (
-								<div className="col-lg-6" key={w.name}>
-									<div className={s.walletCard}>
-										<div
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "space-between",
-											}}
-										>
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-wallets"
+						>
+							<SectionHeading
+								index="01"
+								id="liq-sec-wallets"
+								title="My wallets"
+								description="Your Business Wallet and Virtual Wallet — the source of every float top-up and rebalance."
+							/>
+							<div className="row g-3">
+								{c.wallets.map((w) => (
+									<div className="col-lg-6" key={w.name}>
+										<div className={s.walletCard}>
 											<div
 												style={{
 													display: "flex",
 													alignItems: "center",
-													gap: 12,
+													justifyContent: "space-between",
 												}}
 											>
-												<div className={s.walletIcon}>
-													<i className={cx("bi", w.icon)} />
+												<div
+													style={{
+														display: "flex",
+														alignItems: "center",
+														gap: 12,
+													}}
+												>
+													<div className={s.walletIcon}>
+														<i className={cx("bi", w.icon)} />
+													</div>
+													<div>
+														<h4 className={s.floatName} style={{ margin: 0 }}>
+															{w.name}
+														</h4>
+														<div className={s.floatMeta}>{w.purpose}</div>
+													</div>
 												</div>
-												<div>
-													<h4 className={s.floatName} style={{ margin: 0 }}>
-														{w.name}
-													</h4>
-													<div className={s.floatMeta}>{w.purpose}</div>
+												<span className={cx(s.badge, s.badgeSuccess)}>
+													Active
+												</span>
+											</div>
+											<div className={s.walletBalance}>{w.balance}</div>
+											<div>
+												<div className={s.walletRow}>
+													<span className={s.walletRowLabel}>Available</span>
+													<strong>{w.available}</strong>
+												</div>
+												<div className={s.walletRow}>
+													<span className={s.walletRowLabel}>Pending</span>
+													<strong>{w.pending}</strong>
+												</div>
+												<div className={s.walletRow}>
+													<span className={s.walletRowLabel}>Linked</span>
+													<strong style={{ fontSize: 12 }}>{w.linked}</strong>
 												</div>
 											</div>
-											<span className={cx(s.badge, s.badgeSuccess)}>Active</span>
-										</div>
-										<div className={s.walletBalance}>{w.balance}</div>
-										<div>
-											<div className={s.walletRow}>
-												<span className={s.walletRowLabel}>Available</span>
-												<strong>{w.available}</strong>
-											</div>
-											<div className={s.walletRow}>
-												<span className={s.walletRowLabel}>Pending</span>
-												<strong>{w.pending}</strong>
-											</div>
-											<div className={s.walletRow}>
-												<span className={s.walletRowLabel}>Linked</span>
-												<strong style={{ fontSize: 12 }}>{w.linked}</strong>
-											</div>
-										</div>
-										<div
-											className="d-flex"
-											style={{ gap: 8, flexWrap: "wrap", marginTop: "auto" }}
-										>
-											<button
-												type="button"
-												className={cx(s.btn, s.btnSm)}
-												onClick={() => openModal("internalTransferModal")}
+											<div
+												className="d-flex"
+												style={{ gap: 8, flexWrap: "wrap", marginTop: "auto" }}
 											>
-												<i className="bi bi-arrow-left-right" /> Send
-											</button>
-											<button
-												type="button"
-												className={cx(s.btn, s.btnSm, s.btnPrimary)}
-												onClick={() => openModal("topupBankModal")}
-											>
-												<i className="bi bi-plus-circle" /> Top Up
-											</button>
-											<button
-												type="button"
-												className={cx(s.btn, s.btnSm)}
-												onClick={() => openModal("internalTransferModal")}
-											>
-												<i className="bi bi-bank" /> Withdraw
-											</button>
-										</div>
-									</div>
-								</div>
-							))}
-						</div>
-
-						{/* ---------- FACILITATOR PERMISSIONS ---------- */}
-						<div className={s.card}>
-							<div className={s.sectionHead}>
-								<div>
-									<h3 className={s.sectionTitle}>
-										<i className="bi bi-shield-check" /> Facilitator Permissions
-									</h3>
-									<p className={s.sectionSub}>
-										Your authority over your customers' money and data while it
-										flows through your floats.
-									</p>
-								</div>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm)}
-									onClick={() => openModal("governanceModal")}
-								>
-									<i className="bi bi-arrow-repeat" /> Request Access
-								</button>
-							</div>
-							<div className="row g-3">
-								{c.facilitatorScopes.map((sc) => (
-									<div className="col-lg-4" key={sc.scope}>
-										<div className={s.permItem}>
-											<i
-												className={cx("bi", sc.icon)}
-												style={{
-													color: sc.granted ? "var(--success)" : "var(--warning)",
-													fontSize: 18,
-													marginTop: 2,
-												}}
-											/>
-											<div style={{ minWidth: 0, flex: 1 }}>
-												<div className={s.permTitle}>{sc.scope}</div>
-												<div className={s.permSub}>{sc.desc}</div>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal("internalTransferModal")}
+												>
+													<i className="bi bi-arrow-left-right" /> Send
+												</button>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm, s.btnPrimary)}
+													onClick={() => openModal("topupBankModal")}
+												>
+													<i className="bi bi-plus-circle" /> Top Up
+												</button>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal("internalTransferModal")}
+												>
+													<i className="bi bi-bank" /> Withdraw
+												</button>
 											</div>
-											<span
-												className={cx(
-													s.badge,
-													sc.granted ? s.badgeSuccess : s.badgeWarn,
-												)}
-											>
-												{sc.granted ? "Granted" : "Pending"}
-											</span>
 										</div>
 									</div>
 								))}
 							</div>
-						</div>
+						</section>
+
+						{/* ---------- FACILITATOR PERMISSIONS ---------- */}
+						<section
+							className={s.dashboardSection}
+							aria-labelledby="liq-sec-permissions"
+						>
+							<SectionHeading
+								index="02"
+								id="liq-sec-permissions"
+								title="Facilitator permissions"
+								description="Your authority over your customers' money and data while it flows through your floats."
+							/>
+							<div className={s.card}>
+								<div className={s.sectionHead}>
+									<div
+										className="d-flex"
+										style={{ gap: 8, marginLeft: "auto" }}
+									>
+										<button
+											type="button"
+											className={cx(s.btn, s.btnSm)}
+											onClick={() => openModal("governanceModal")}
+										>
+											<i className="bi bi-arrow-repeat" /> Request Access
+										</button>
+									</div>
+								</div>
+								<div className="row g-3">
+									{c.facilitatorScopes.map((sc) => (
+										<div className="col-lg-4" key={sc.scope}>
+											<div className={s.permItem}>
+												<i
+													className={cx("bi", sc.icon)}
+													style={{
+														color: sc.granted
+															? "var(--success)"
+															: "var(--warning)",
+														fontSize: 18,
+														marginTop: 2,
+													}}
+												/>
+												<div style={{ minWidth: 0, flex: 1 }}>
+													<div className={s.permTitle}>{sc.scope}</div>
+													<div className={s.permSub}>{sc.desc}</div>
+												</div>
+												<span
+													className={cx(
+														s.badge,
+														sc.granted ? s.badgeSuccess : s.badgeWarn,
+													)}
+												>
+													{sc.granted ? "Granted" : "Pending"}
+												</span>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+						</section>
 					</>
 				)}
 
 				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
-				<div className="row g-3">
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="liq-sec-queues"
+				>
+					<SectionHeading
+						index={world === "floats" ? "05" : "03"}
+						id="liq-sec-queues"
+						title="Attention, suggestions & quick actions"
+						description="Open float items, AI liquidity recommendations and the actions you use most — each opens the matching workflow."
+					/>
+					<div className={s.queueGrid}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
 								<button
@@ -1431,9 +1610,7 @@ export default function Liquidity({
 							</div>
 							{c.attention.map(renderRow)}
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
 								<span className={cx(s.badge, s.badgePurple)}>
@@ -1442,9 +1619,7 @@ export default function Liquidity({
 							</div>
 							{c.suggestions.map(renderRow)}
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>
 								<p className={s.sectionSub}>Frequent liquidity workflows</p>
@@ -1467,85 +1642,155 @@ export default function Liquidity({
 							</div>
 						</div>
 					</div>
-				</div>
+				</section>
 
 				{/* ---------- RECENT LIQUIDITY ACTIVITY ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<h3 className={s.sectionTitle}>
-							<i
-								className="bi bi-clock-history"
-								style={{ color: "var(--ink-500)" }}
-							/>{" "}
-							Recent Liquidity Activity
-						</h3>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("liquidityReportModal")}
-						>
-							Full Audit Log
-						</button>
-					</div>
-					<div className={s.tableWrap}>
-						<table className={s.table}>
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>World</th>
-									<th>Action</th>
-									<th>From</th>
-									<th>To</th>
-									<th>Amount</th>
-									<th>Status</th>
-									<th>Ref</th>
-								</tr>
-							</thead>
-							<tbody>
-								{c.activity.map((a) => (
-									<tr key={a.ref}>
-										<td>{a.time}</td>
-										<td>
-											<span
-												className={cx(
-													s.flowTag,
-													a.world === "customer" ? s.flowCustomer : s.flowInternal,
-												)}
-											>
-												<i
-													className={cx(
-														"bi",
-														a.world === "customer"
-															? "bi-people"
-															: "bi-wallet2",
-													)}
-												/>
-												{a.world === "customer"
-													? "Business Float"
-													: "My Liquidity"}
-											</span>
-										</td>
-										<td>{a.action}</td>
-										<td>{a.from}</td>
-										<td>{a.to}</td>
-										<td>
-											<strong>{a.amount}</strong>
-										</td>
-										<td>
-											<span className={cx(s.badge, toneBadge[a.statusTone])}>
-												{a.status}
-											</span>
-										</td>
-										<td>
-											<code>{a.ref}</code>
-										</td>
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="liq-sec-activity"
+				>
+					<SectionHeading
+						index={world === "floats" ? "06" : "04"}
+						id="liq-sec-activity"
+						title="Recent liquidity activity"
+						description="The unified audit trail across both worlds — business float movements and your own wallet transfers."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div className="d-flex" style={{ gap: 8, marginLeft: "auto" }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("liquidityReportModal")}
+								>
+									Full Audit Log
+								</button>
+							</div>
+						</div>
+						<div className={s.tableWrap}>
+							<table className={s.table}>
+								<thead>
+									<tr>
+										<th>Time</th>
+										<th>World</th>
+										<th>Action</th>
+										<th>From</th>
+										<th>To</th>
+										<th>Amount</th>
+										<th>Status</th>
+										<th>Ref</th>
 									</tr>
-								))}
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									{c.activity.map((a) => (
+										<tr key={a.ref}>
+											<td>{a.time}</td>
+											<td>
+												<span
+													className={cx(
+														s.flowTag,
+														a.world === "customer"
+															? s.flowCustomer
+															: s.flowInternal,
+													)}
+												>
+													<i
+														className={cx(
+															"bi",
+															a.world === "customer"
+																? "bi-people"
+																: "bi-wallet2",
+														)}
+													/>
+													{a.world === "customer"
+														? "Business Float"
+														: "My Liquidity"}
+												</span>
+											</td>
+											<td>{a.action}</td>
+											<td>{a.from}</td>
+											<td>{a.to}</td>
+											<td>
+												<strong>{a.amount}</strong>
+											</td>
+											<td>
+												<span className={cx(s.badge, toneBadge[a.statusTone])}>
+													{a.status}
+												</span>
+											</td>
+											<td>
+												<code>{a.ref}</code>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
+				</section>
+
+				{/* ---------- PAGE FOOTER ---------- */}
+				<footer className={s.pageFooter}>
+					<span>
+						Liquidity &amp; Float · Land Buyers LTD &amp; Company 2 · Data
+						refreshes every 60s
+					</span>
+					<div className="d-flex" style={{ gap: 16 }}>
+						<Link to="/pm/app/reconciliation">Reconciliation</Link>
+						<Link to="/pm/app/settlement" search={{ modal: undefined }}>
+							Settlement
+						</Link>
+						<Link to="/pm/app/payment-rails">Payment Rails</Link>
+					</div>
+				</footer>
 			</div>
+
+			{/* ---------- FLOATING COMMAND BAR ---------- */}
+			<div className={s.floatingBar}>
+				<button
+					type="button"
+					className={cx(s.btn, s.btnSm)}
+					onClick={() => openModal("floatAlertModal")}
+				>
+					<i className="bi bi-bell" /> Alerts
+				</button>
+				<button
+					type="button"
+					className={cx(s.btn, s.btnSm)}
+					onClick={() => openModal("forecastModal")}
+				>
+					<i className="bi bi-graph-up" /> Forecast
+				</button>
+				<button
+					type="button"
+					className={s.floatingPrimary}
+					onClick={() => openModal("rebalanceModal")}
+				>
+					<i className="bi bi-arrow-left-right" /> Rebalance float
+				</button>
+			</div>
+
+			{/* ---------- TOAST STACK ---------- */}
+			{toasts.length > 0 && (
+				<div className={s.toastStack} aria-live="polite" aria-atomic="false">
+					{toasts.map((t) => (
+						<div
+							key={t.id}
+							className={cx(s.toast, t.variant === "danger" && s.toastDanger)}
+						>
+							<i
+								className={cx(
+									"bi",
+									t.variant === "danger"
+										? "bi-exclamation-triangle"
+										: "bi-check-circle",
+								)}
+							/>
+							<span>{t.message}</span>
+						</div>
+					))}
+				</div>
+			)}
 
 			{/* ---------- ALL MODALS (state-driven) ---------- */}
 			<LiquidityModals
@@ -1553,7 +1798,32 @@ export default function Liquidity({
 				openModal={openModal}
 				closeModal={closeModal}
 				data={c}
+				onToast={pushToast}
 			/>
+		</div>
+	);
+}
+
+function SectionHeading({
+	index,
+	id,
+	title,
+	description,
+}: {
+	index: string;
+	id: string;
+	title: string;
+	description: string;
+}) {
+	return (
+		<div className={s.sectionHeading}>
+			<span className={s.sectionIndex} aria-hidden="true">
+				{index}
+			</span>
+			<div>
+				<h2 id={id}>{title}</h2>
+				<p>{description}</p>
+			</div>
 		</div>
 	);
 }

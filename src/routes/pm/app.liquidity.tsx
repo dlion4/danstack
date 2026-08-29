@@ -11,7 +11,7 @@ import Liquidity from "@/features/dashboards/transaction-dashboard/liquidity/pag
  * business float workspace filtered to one business.
  */
 export const Route = createFileRoute("/pm/app/liquidity")({
-	validateSearch: (search: Record<string, unknown>) => ({
+	validateSearch: (search: Record<string, unknown>): { business?: "land" | "co2" } => ({
 		business:
 			typeof search.business === "string" &&
 			(search.business === "land" || search.business === "co2")
