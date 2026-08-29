@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import CustomersModals from "../components/CustomersModals";
@@ -689,9 +689,34 @@ export default function Customers() {
 	const [biz, setBiz] = useState<BizId>("all");
 	const [world, setWorld] = useState<"directory" | "billing">("directory");
 	const [kycTab, setKycTab] = useState<"pending" | "all">("pending");
+	const [toasts, setToasts] = useState<
+		{ id: number; message: string; variant: "success" | "danger" }[]
+	>([]);
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	useEffect(() => {
+		if (!toasts.length) return;
+		const timer = window.setTimeout(
+			() => setToasts((prev) => prev.slice(1)),
+			4200,
+		);
+		return () => window.clearTimeout(timer);
+	}, [toasts]);
+
+	const pushToast = (
+		message: string,
+		variant: "success" | "danger" = "success",
+	) =>
+		setToasts((prev) => [
+			...prev.slice(-4),
+			{ id: Date.now() + Math.random(), message, variant },
+		]);
+
+	const scrollToSection = (id: string) => {
+		document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+	};
 
 	const inScope = (bizId: "land" | "co2") => biz === "all" || biz === bizId;
 	const scopedCustomers = config.customers.filter((c) => inScope(c.bizId));
@@ -699,52 +724,92 @@ export default function Customers() {
 	const scopedRefunds = config.refunds.filter((r) => inScope(r.business === "Land Buyers LTD" ? "land" : "co2"));
 	const scopedKyc = config.kycQueue.filter((k) => inScope(k.business === "Land Buyers LTD" ? "land" : "co2"));
 	const bizLabel = biz === "all" ? "all businesses" : BIZ_NAMES[biz];
+	const kycVerifiedCard = config.statCards.find((c) => c.key === "kyc");
 
 	return (
 		<div className={styles.customersPage}>
-			<div className={styles.main}>
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
+			<main className={styles.main} id="main-content">
+				<div className={styles.content}>
+					{/* ======================= EXECUTIVE HERO ======================= */}
+					<header className={styles.heroBanner}>
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-people" aria-hidden="true" /> Customers,
+										Billing &amp; Reminders
+									</span>
+									<span className={styles.livePill}>
+										<span className={styles.liveDot} aria-hidden="true" />{" "}
+										{config.heroLive}
+									</span>
+								</div>
+								<h1>{config.heroValue}</h1>
+								<p>{config.heroDetail}</p>
+								<div className={styles.heroActions}>
+									<button
+										type="button"
+										className={styles.heroPrimary}
+										onClick={() => openM("onboardCustomerModal")}
+									>
+										<i className="bi bi-person-plus" aria-hidden="true" /> Onboard
+										customer
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => openM("bulkUploadModal")}
+									>
+										<i className="bi bi-upload" aria-hidden="true" /> Bulk import
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => openM("sendReminderModal")}
+									>
+										<i className="bi bi-bell" aria-hidden="true" /> Reminders
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondary}
+										onClick={() => openM("profileModal")}
+									>
+										JK
+									</button>
+								</div>
+							</div>
+							<aside className={styles.heroSnapshot} aria-label="Customer base snapshot">
+								<span>Directory snapshot</span>
+								<strong>{config.statCards[0]?.value ?? "239"}</strong>
+								<p>Across Land Buyers LTD and Company 2, refreshed every sync.</p>
+								<div className={styles.heroMetricRow}>
+									<div>
+										<strong>{config.statCards[1]?.value ?? "44"} plans</strong>
+										<span>Recurring billing</span>
+									</div>
+									<div>
+										<strong>{kycVerifiedCard?.value ?? "100%"}</strong>
+										<span>KYC verified</span>
+									</div>
+								</div>
+							</aside>
+						</div>
+					</header>
+
+					{/* ======================= BREADCRUMB ======================= */}
+					<div className={styles.pageBar}>
 						<div className={styles.breadcrumb}>
-							<span>
-								<Link to="/">Home</Link> /{" "}
-							</span>
-							<span>
-								<Link to="/pm/app">PayMo Hub</Link> /{" "}
-							</span>
+							<Link to="/">Home</Link> /{" "}
+							<Link to="/pm/app">PayMo Hub</Link> /{" "}
 							<strong>{config.pageTitle}</strong>
 						</div>
-						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p> */}
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button className={styles.btnPm} onClick={() => openM("sendReminderModal")}>
-							<i className="bi bi-bell" /> Reminders
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("bulkUploadModal")}>
-							<i className="bi bi-upload" /> Bulk Import
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("profileModal")}>
-							JK
-						</button>
-						<button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={() => openM("onboardCustomerModal")}>
-							<i className="bi bi-person-plus" /> Onboard Customer
-						</button>
-					</div>
-				</div>
-
-				<div className={styles.content}>
-					{/* ======================= CONNECTION BANNER ======================= */}
-					<div className={styles.connBanner}>
-						<div className="d-flex align-items-center" style={{ gap: 10 }}>
-							<i className="bi bi-link-45deg" style={{ fontSize: 18 }} />
-							<div>
-								<strong>Customer directory linked</strong>{" "}
-								<small>• M-Pesa &amp; card rails collecting for both businesses</small>
-							</div>
-						</div>
-						<button className={styles.connBannerBtn} onClick={() => openM("linkExternalModal")}>
+						<button
+							type="button"
+							className={`${styles.btnPm} ${styles.btnPmP}`}
+							onClick={() => openM("linkExternalModal")}
+						>
 							<i className="bi bi-wallet2" /> Link Wallet
 						</button>
 					</div>
@@ -774,49 +839,27 @@ export default function Customers() {
 						</button>
 					</div>
 
-					{/* ======================= HERO + STATS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} ${styles.cardAccent}`} style={{ minHeight: 170 }}>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
-									{config.heroLive} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div className={styles.sv} style={{ margin: "8px 0", color: "#fff", fontSize: 24 }}>
-									{config.heroValue}
-								</div>
-								<p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,.78)" }}>
-									{config.heroDetail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									<button className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`} onClick={() => openM("onboardCustomerModal")}>
-										<i className="bi bi-person-plus" /> Onboard
-									</button>
-									<button className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`} onClick={() => openM("kycHealthModal")}>
-										<i className="bi bi-shield-check" /> KYC Queue
-									</button>
-								</div>
-							</div>
-						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div className={`${styles.card} ${card.attention ? styles.attentionCard : ""}`} style={{ minHeight: 170, height: "100%" }}>
-									{card.bars ? (
-										<>
-											<div className="d-flex flex-wrap justify-content-between align-items-start" style={{ gap: 8 }}>
-												<p className={styles.sl} style={{ color: card.labelColor, margin: 0 }}>
-													{card.label}
-												</p>
-												<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
-													<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-												</span>
-											</div>
-											<div className={styles.sv} style={{ margin: "10px 0 12px" }}>
-												{card.value}
-											</div>
-											<div>
+					{/* ======================= KPI ROW ======================= */}
+					<section className={styles.dashboardSection} aria-label="Customer health metrics">
+						<div className={styles.kpiGrid}>
+							{config.statCards.map((card) => (
+								<div className={`${styles.card} ${styles.kpiCard} ${card.attention ? styles.attentionCard : ""}`} key={card.key}>
+									<span className={styles.kpiIcon} style={{ background: `${card.labelColor}1a`, color: card.labelColor }}>
+										<i className={`bi ${card.badge.icon}`} aria-hidden="true" />
+									</span>
+									<div className={styles.kpiMeta}>
+										<span>{card.label}</span>
+									</div>
+									<div className={styles.kpiValue}>{card.value}</div>
+									<div className={styles.kpiFoot}>
+										<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
+											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										</span>
+										{card.bars ? (
+											<div style={{ width: "100%" }}>
 												{card.bars.map((b) => (
-													<div key={b.label} style={{ marginBottom: 10 }}>
-														<div className="d-flex justify-content-between align-items-center" style={{ fontSize: 12, marginBottom: 4 }}>
+													<div key={b.label} style={{ marginTop: 6 }}>
+														<div className="d-flex justify-content-between align-items-center" style={{ fontSize: 11, marginBottom: 3 }}>
 															<span>{b.label}</span>
 															<span style={{ color: "var(--pm-muted)" }}>{b.pct}%</span>
 														</div>
@@ -825,38 +868,27 @@ export default function Customers() {
 														</div>
 													</div>
 												))}
-												{card.foot && (
-													<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>
-														<i className="bi bi-info-circle" style={{ marginRight: 4 }} />{card.foot}
-													</div>
-												)}
 											</div>
-										</>
-									) : (
-										<>
-											<p className={styles.sl} style={{ color: card.labelColor }}>
-												{card.label}
-											</p>
-											<div className={styles.sv} style={{ margin: "6px 0" }}>
-												{card.value}
-											</div>
-											<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
-												<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-											</span>
-											<div className="mt-2" style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}>
-												{card.lines.map((l) => (
-													<div key={l}>{l}</div>
-												))}
-											</div>
-										</>
-									)}
+										) : (
+											card.lines.map((l) => <span key={l}>{l}</span>)
+										)}
+										{card.foot && <span>{card.foot}</span>}
+									</div>
 								</div>
-							</div>
-						))}
-					</div>
+							))}
+						</div>
+					</section>
 
 					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<div className="row g-3 mt-1">
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-queues">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">00</span>
+							<div>
+								<h2 id="cust-sec-queues">Attention, suggestions &amp; quick actions</h2>
+								<p>Open items that need a decision, AI-style suggestions to grow collections, and the actions you use most — each opens the matching workflow.</p>
+							</div>
+						</div>
+						<div className="row g-3 mt-1">
 						<div className="col-lg-8">
 							<div className={styles.card} style={{ height: "100%" }}>
 								<div className="d-flex align-items-center justify-content-between" style={{ gap: 10 }}>
@@ -921,17 +953,18 @@ export default function Customers() {
 							))}
 						</div>
 					</div>
+					</section>
 
-					{/* ======================= WORLD SWITCH ======================= */}
-					<div className="mt-4 d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 12 }}>
-						<div>
-							<h3 className={styles.fwBold13} style={{ fontSize: 16, margin: 0 }}>
-								<i className="bi bi-people" style={{ color: "var(--pm-accent)" }} /> Customer Directory — {bizLabel}
-							</h3>
-							<small style={{ color: "var(--pm-muted)" }}>
-								Every customer across your businesses with their KYC, billing and payment health.
-							</small>
+					{/* ======================= SECTION 01: DIRECTORY / BILLING ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-directory">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">01</span>
+							<div>
+								<h2 id="cust-sec-directory">Customer directory &amp; billing — {bizLabel}</h2>
+								<p>Every customer across your businesses with their KYC, billing model and payment health. Switch to Billing &amp; Payments for recurring plans and collection schedules.</p>
+							</div>
 						</div>
+					<div className="d-flex flex-wrap align-items-center justify-content-end mb-2" style={{ gap: 12 }}>
 						<div className={styles.worldSwitch}>
 							<button
 								type="button"
@@ -1160,9 +1193,18 @@ export default function Customers() {
 							</div>
 						</>
 					)}
+					</section>
 
-					{/* ======================= KYC RECORDS & LOCATION ======================= */}
-					<div className="row g-3 mt-4">
+					{/* ======================= SECTION 02: KYC RECORDS & LOCATION ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-kyc">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">02</span>
+							<div>
+								<h2 id="cust-sec-kyc">KYC records &amp; location</h2>
+								<p>Verification queue, document status and confirmed addresses for every customer, with bulk approve and AML escalation shortcuts.</p>
+							</div>
+						</div>
+					<div className="row g-3">
 						<div className="col-lg-7">
 							<div className={styles.card} style={{ height: "100%" }}>
 								<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
@@ -1283,9 +1325,18 @@ export default function Customers() {
 							</div>
 						</div>
 					</div>
+					</section>
 
-					{/* ======================= REMINDERS & COMMUNICATION ======================= */}
-					<div className="row g-3 mt-1">
+					{/* ======================= SECTION 03: REMINDERS & COMMUNICATION ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-reminders">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">03</span>
+							<div>
+								<h2 id="cust-sec-reminders">Reminders &amp; communication</h2>
+								<p>Automated renewal and failed-payment triggers, plus a full log of every SMS, email and WhatsApp sent to your customers.</p>
+							</div>
+						</div>
+					<div className="row g-3">
 						<div className="col-lg-7">
 							<div className={styles.card} style={{ height: "100%" }}>
 								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
@@ -1341,9 +1392,18 @@ export default function Customers() {
 							</div>
 						</div>
 					</div>
+					</section>
 
-					{/* ======================= REFUNDS ======================= */}
-					<div className={styles.card} style={{ marginTop: 16 }}>
+					{/* ======================= SECTION 04: REFUNDS ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-refunds">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">04</span>
+							<div>
+								<h2 id="cust-sec-refunds">Refunds</h2>
+								<p>Full and partial refunds against original payments, linked back to the Fees page profit math.</p>
+							</div>
+						</div>
+					<div className={styles.card}>
 						<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
 							<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
 								<i className="bi bi-arrow-counterclockwise" style={{ color: "var(--pm-purple)" }} /> Refunds — {bizLabel}
@@ -1384,9 +1444,18 @@ export default function Customers() {
 							<i className="bi bi-info-circle" /> Refunds reduce your Fees-page profit by the refunded amount + PayMo fee.
 						</small>
 					</div>
+					</section>
 
-					{/* ======================= PERMISSIONS & REPORTS ======================= */}
-					<div className="row g-3 mt-1">
+					{/* ======================= SECTION 05: PERMISSIONS, REPORTS & RECEIPTS ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-permissions">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">05</span>
+							<div>
+								<h2 id="cust-sec-permissions">Permissions, reports &amp; receipts</h2>
+								<p>What you're allowed to do for your customers, plus one-click statements, receipts and audit exports.</p>
+							</div>
+						</div>
+					<div className="row g-3">
 						<div className="col-lg-6">
 							<div className={styles.card} style={{ height: "100%" }}>
 								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
@@ -1448,9 +1517,18 @@ export default function Customers() {
 							</div>
 						</div>
 					</div>
+					</section>
 
-					{/* ======================= SUPPORT TICKETS ======================= */}
-					<div className={styles.card} style={{ marginTop: 16 }}>
+					{/* ======================= SECTION 06: SUPPORT TICKETS ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-support">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">06</span>
+							<div>
+								<h2 id="cust-sec-support">Support tickets</h2>
+								<p>Customer-raised issues — failed payments, KYC re-uploads and refund status queries.</p>
+							</div>
+						</div>
+					<div className={styles.card}>
 						<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
 							<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
 								<i className="bi bi-headset" style={{ color: "var(--pm-warning)" }} /> Support Tickets
@@ -1491,9 +1569,18 @@ export default function Customers() {
 							</table>
 						</div>
 					</div>
+					</section>
 
-					{/* ======================= LINKED WALLETS ======================= */}
-					<div className={`${styles.card} mt-4`}>
+					{/* ======================= SECTION 07: LINKED WALLETS & PAYOUTS ======================= */}
+					<section className={styles.dashboardSection} aria-labelledby="cust-sec-wallets">
+						<div className={styles.sectionHeading}>
+							<span className={styles.sectionIndex} aria-hidden="true">07</span>
+							<div>
+								<h2 id="cust-sec-wallets">Linked wallets &amp; payouts</h2>
+								<p>External destinations for refunds and PSP settlements — M-Pesa, bank and internal business wallets.</p>
+							</div>
+						</div>
+					<div className={styles.card}>
 						<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
 							<i className="bi bi-wallet2" style={{ color: "var(--pm-accent)" }} /> Linked Wallets &amp; Payouts
 						</h3>
@@ -1522,11 +1609,72 @@ export default function Customers() {
 							</button>
 						</div>
 					</div>
+					</section>
+
+					{/* ======================= FOOTER ======================= */}
+					<footer className={styles.pageFooter}>
+						<span>
+							<i className="bi bi-shield-lock" aria-hidden="true" /> PayMo Business ·
+							Customers workspace
+						</span>
+						<nav aria-label="Workspace sections">
+							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-directory")}>
+								Directory
+							</button>
+							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-kyc")}>
+								KYC
+							</button>
+							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-reminders")}>
+								Reminders
+							</button>
+							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-refunds")}>
+								Refunds
+							</button>
+							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-support")}>
+								Support
+							</button>
+						</nav>
+					</footer>
 				</div>
+			</main>
+
+			{/* ======================= FLOATING COMMAND BAR ======================= */}
+			<div className={styles.floatingBar} role="toolbar" aria-label="Customer quick actions">
+				<button type="button" className={styles.floatingPrimary} onClick={() => openM("onboardCustomerModal")}>
+					<i className="bi bi-person-plus" aria-hidden="true" /> Onboard
+				</button>
+				<button type="button" onClick={() => openM("sendReminderModal")}>
+					<i className="bi bi-bell" aria-hidden="true" /> Remind
+				</button>
+				<button type="button" onClick={() => openM("issueRefundModal")}>
+					<i className="bi bi-arrow-counterclockwise" aria-hidden="true" /> Refund
+				</button>
+				<button type="button" onClick={() => openM("kycHealthModal")}>
+					<i className="bi bi-shield-check" aria-hidden="true" /> KYC queue
+				</button>
+				<button type="button" onClick={() => openM("statementModal")}>
+					<i className="bi bi-file-earmark-text" aria-hidden="true" /> Statement
+				</button>
+			</div>
+
+			{/* ======================= TOASTS ======================= */}
+			<div className={styles.toastStack} aria-live="polite" aria-atomic="false">
+				{toasts.map((toast) => (
+					<output
+						key={toast.id}
+						className={`${styles.toast} ${toast.variant === "danger" ? styles.toastDanger : ""}`}
+					>
+						<i
+							className={`bi ${toast.variant === "danger" ? "bi-x-circle-fill" : "bi-check-circle-fill"}`}
+							aria-hidden="true"
+						/>
+						<span>{toast.message}</span>
+					</output>
+				))}
 			</div>
 
 			{/* ======================= MODAL LAYER ======================= */}
-			<CustomersModals active={activeModal} onClose={closeM} onOpen={openM} />
+			<CustomersModals active={activeModal} onClose={closeM} onOpen={openM} onToast={pushToast} />
 		</div>
 	);
 }

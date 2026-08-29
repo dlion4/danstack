@@ -28,7 +28,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	type ReconciliationData,
@@ -55,7 +55,14 @@ const toneIcon: Record<Tone, string> = {
 	purple: s.tonePurple,
 	neutral: s.toneNeutral,
 };
-type ToneColor = "pri" | "warn" | "danger" | "info" | "purple" | "muted";
+type ToneColor =
+	| "pri"
+	| "warn"
+	| "danger"
+	| "info"
+	| "purple"
+	| "muted"
+	| "success";
 function toneColor(t: ToneColor): string {
 	switch (t) {
 		case "pri":
@@ -68,16 +75,27 @@ function toneColor(t: ToneColor): string {
 			return "var(--info)";
 		case "purple":
 			return "var(--purple)";
+		case "success":
+			return "var(--pri)";
 		default:
 			return "var(--ink-500)";
 	}
 }
 
-const streamMeta: Record<Stream, { icon: string; cls: string; label: string }> = {
-	collection: { icon: "bi-arrow-down-circle", cls: s.streamCollection, label: "Collection" },
-	payout: { icon: "bi-arrow-up-circle", cls: s.streamPayout, label: "Payout" },
-	float: { icon: "bi-arrow-left-right", cls: s.streamFloat, label: "Float" },
-};
+const streamMeta: Record<Stream, { icon: string; cls: string; label: string }> =
+	{
+		collection: {
+			icon: "bi-arrow-down-circle",
+			cls: s.streamCollection,
+			label: "Collection",
+		},
+		payout: {
+			icon: "bi-arrow-up-circle",
+			cls: s.streamPayout,
+			label: "Payout",
+		},
+		float: { icon: "bi-arrow-left-right", cls: s.streamFloat, label: "Float" },
+	};
 
 /* --------------------------------------------------------------------------
  * Types for the extracted content model.
@@ -653,10 +671,31 @@ async function fetchReconciliationCenter(): Promise<ReconciliationContent> {
 export default function Reconciliation() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
 	const [biz, setBiz] = useState("all");
+	const [toasts, setToasts] = useState<
+		{ id: number; message: string; variant: "success" | "danger" }[]
+	>([]);
 	const openModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
+
+	useEffect(() => {
+		if (!toasts.length) return;
+		const timer = window.setTimeout(
+			() => setToasts((prev) => prev.slice(1)),
+			4200,
+		);
+		return () => window.clearTimeout(timer);
+	}, [toasts]);
+
+	const pushToast = (
+		message: string,
+		variant: "success" | "danger" = "success",
+	) =>
+		setToasts((prev) => [
+			...prev.slice(-4),
+			{ id: Date.now() + Math.random(), message, variant },
+		]);
 
 	const { data } = useQuery({
 		queryKey: ["paymo-reconciliation-center"],
@@ -706,12 +745,90 @@ export default function Reconciliation() {
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
 			<div className={s.stack}>
-				{/* ---------- page bar ---------- */}
+				{/* ---------- executive hero ---------- */}
+				<header className={s.heroBanner}>
+					<div className={s.heroOrbOne} aria-hidden="true" />
+					<div className={s.heroOrbTwo} aria-hidden="true" />
+					<div className={s.heroContent}>
+						<div className={s.heroCopy}>
+							<div className={s.heroEyebrow}>
+								<span>
+									<i className="bi bi-clipboard2-check" aria-hidden="true" />{" "}
+									Reconciliation Center
+								</span>
+								<span className={s.livePill}>
+									<span className={s.liveDot} aria-hidden="true" />{" "}
+									{c.heroValue}
+								</span>
+							</div>
+							<h1>Every payment matched to the money that actually moved.</h1>
+							<p>{c.heroSub}</p>
+							<div className={s.heroActions}>
+								<button
+									type="button"
+									className={s.heroPrimary}
+									onClick={() => openModal("runAutoReconModal")}
+								>
+									<i className="bi bi-magic" aria-hidden="true" /> Run
+									Auto-Recon
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("teamAccessModal")}
+								>
+									<i className="bi bi-shield-check" aria-hidden="true" /> My
+									Recon Access
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("manualMatchModal")}
+								>
+									<i className="bi bi-hand-index" aria-hidden="true" /> Manual
+									Match
+								</button>
+								<button
+									type="button"
+									className={s.heroSecondary}
+									onClick={() => openModal("healthCheckModal")}
+								>
+									<i className="bi bi-heart-pulse" aria-hidden="true" /> Health
+									check
+								</button>
+							</div>
+						</div>
+						<aside
+							className={s.heroSnapshot}
+							aria-label="Reconciliation snapshot"
+						>
+							<span>Match rate snapshot</span>
+							<strong>{c.matchedStat.value} matched</strong>
+							<p>Across your 2 linked businesses today, {scopeTag} in view.</p>
+							<div className={s.heroMetricRow}>
+								<div>
+									<strong>2 businesses</strong>
+									<span>Tracked streams</span>
+								</div>
+								<div>
+									<strong>{c.pendingStat.value} open</strong>
+									<span>Pending / exceptions</span>
+								</div>
+								<div>
+									<strong>{c.healthTiles[2]?.value ?? "14 min"}</strong>
+									<span>Avg resolution</span>
+								</div>
+							</div>
+						</aside>
+					</div>
+				</header>
+
+				{/* ---------- breadcrumb + scope selector ---------- */}
 				<div className={s.pageBar}>
 					<div>
 						<div className={s.breadcrumb}>
-							<Link to="/app">Home</Link> /{" "}
-							<Link to="/app/transfers">B2B Transactions</Link> /{" "}
+							<Link to="/pm/app">Home</Link> /{" "}
+							<Link to="/pm/app/transfers">Transactions Hub</Link> /{" "}
 							<strong>Reconciliation Center</strong>
 						</div>
 						<div className={cx(s.bizBar, "mt-2")}>
@@ -745,145 +862,155 @@ export default function Reconciliation() {
 						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("runAutoReconModal")}
+							onClick={() => openModal("profileModal")}
 						>
-							<i className="bi bi-magic" /> Run Auto-Recon
+							<i className="bi bi-person-circle" /> Profile
 						</button>
 						<button
 							type="button"
 							className={cx(s.btn, s.btnSm)}
-							onClick={() => openModal("teamAccessModal")}
+							onClick={() => openModal("exportReportModal")}
 						>
-							<i className="bi bi-shield-check" /> My Recon Access
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnPrimary, s.btnSm)}
-							onClick={() => openModal("manualMatchModal")}
-						>
-							<i className="bi bi-hand-index" /> Manual Match
+							<i className="bi bi-download" /> Reports
 						</button>
 					</div>
 				</div>
 
 				{/* ---------- HERO STATS ---------- */}
-				<div className="row g-3">
-					<div className="col-lg-4">
-						<div
-							className={cx(s.card, s.cardAccent)}
-							style={{ minHeight: 170 }}
-						>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
-							>
-								{c.heroTitle} <span style={{ color: "#86efac" }}>●</span>
-							</p>
+				<section className={s.dashboardSection} aria-labelledby="rec-sec-kpi">
+					<SectionHeading
+						index="01"
+						id="rec-sec-kpi"
+						title="Reconciliation KPIs"
+						description="Live coverage across matched transactions, pending exceptions and the audit trail — refreshed every run."
+					/>
+					<div className="row g-3">
+						<div className="col-lg-4">
 							<div
-								className={s.statValue}
-								style={{ margin: "8px 0", color: "#fff" }}
+								className={cx(s.card, s.cardAccent)}
+								style={{ minHeight: 170 }}
 							>
-								{c.heroValue}
-							</div>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
-							>
-								{c.heroSub}
-							</p>
-							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("runAutoReconModal")}
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
 								>
-									Auto-Reconcile
-								</button>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
-									onClick={() => openModal("ruleEngineModal")}
-								>
-									Rules
-								</button>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-2 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.statLabel} style={{ color: "var(--pri)" }}>
-								{c.matchedStat.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.matchedStat.value}
-							</div>
-							<span className={cx(s.badge, s.badgeSuccess)}>
-								<i className="bi bi-check-circle" /> {c.matchedStat.badge}
-							</span>
-							<div className={cx(s.progress, "mt-2")}>
+									{c.heroTitle} <span style={{ color: "#86efac" }}>●</span>
+								</p>
 								<div
-									className={s.progressBar}
-									style={{ width: `${c.matchedStat.pct}%` }}
-								/>
+									className={s.statValue}
+									style={{ margin: "8px 0", color: "#fff" }}
+								>
+									{c.heroValue}
+								</div>
+								<p
+									style={{
+										margin: 0,
+										fontSize: 12,
+										color: "rgba(255,255,255,.78)",
+									}}
+								>
+									{c.heroSub}
+								</p>
+								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+										onClick={() => openModal("runAutoReconModal")}
+									>
+										Auto-Reconcile
+									</button>
+									<button
+										type="button"
+										className={cx(s.btn, s.btnSm, s.btnGlassOnAccent)}
+										onClick={() => openModal("ruleEngineModal")}
+									>
+										Rules
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="col-lg-3 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.statLabel} style={{ color: "var(--warning)" }}>
-								{c.pendingStat.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.pendingStat.value}
+						<div className="col-lg-2 col-md-4 col-6">
+							<div className={s.card} style={{ minHeight: 170 }}>
+								<p className={s.statLabel} style={{ color: "var(--pri)" }}>
+									{c.matchedStat.label}
+								</p>
+								<div className={s.statValue} style={{ margin: "6px 0" }}>
+									{c.matchedStat.value}
+								</div>
+								<span className={cx(s.badge, s.badgeSuccess)}>
+									<i className="bi bi-check-circle" /> {c.matchedStat.badge}
+								</span>
+								<div className={cx(s.progress, "mt-2")}>
+									<div
+										className={s.progressBar}
+										style={{ width: `${c.matchedStat.pct}%` }}
+									/>
+								</div>
 							</div>
-							<span className={cx(s.badge, s.badgeWarn)}>
-								<i className="bi bi-exclamation-triangle" />{" "}
-								{c.pendingStat.badge}
-							</span>
+						</div>
+						<div className="col-lg-3 col-md-4 col-6">
+							<div className={s.card} style={{ minHeight: 170 }}>
+								<p className={s.statLabel} style={{ color: "var(--warning)" }}>
+									{c.pendingStat.label}
+								</p>
+								<div className={s.statValue} style={{ margin: "6px 0" }}>
+									{c.pendingStat.value}
+								</div>
+								<span className={cx(s.badge, s.badgeWarn)}>
+									<i className="bi bi-exclamation-triangle" />{" "}
+									{c.pendingStat.badge}
+								</span>
+								<div
+									className="mt-2"
+									style={{ fontSize: 12, color: "var(--ink-700)" }}
+								>
+									{c.pendingStat.line1}
+									<br />
+									{c.pendingStat.line2}
+								</div>
+							</div>
+						</div>
+						<div className="col-lg-3 col-md-4">
 							<div
-								className="mt-2"
-								style={{ fontSize: 12, color: "var(--ink-700)" }}
+								className={cx(s.card, s.cardInfoEdge)}
+								style={{ minHeight: 170 }}
 							>
-								{c.pendingStat.line1}
-								<br />
-								{c.pendingStat.line2}
+								<p className={s.statLabel} style={{ color: "var(--info)" }}>
+									{c.auditStat.label}
+								</p>
+								<div className={s.statValue} style={{ margin: "6px 0" }}>
+									{c.auditStat.value}
+								</div>
+								<span className={cx(s.badge, s.badgeInfo)}>
+									<i className="bi bi-clock-history" /> {c.auditStat.badge}
+								</span>
+								<div
+									className="mt-2"
+									style={{ fontSize: 12, color: "var(--ink-700)" }}
+								>
+									{c.auditStat.lastRun}
+								</div>
 							</div>
 						</div>
 					</div>
-					<div className="col-lg-3 col-md-4">
-						<div
-							className={cx(s.card, s.cardInfoEdge)}
-							style={{ minHeight: 170 }}
-						>
-							<p className={s.statLabel} style={{ color: "var(--info)" }}>
-								{c.auditStat.label}
-							</p>
-							<div className={s.statValue} style={{ margin: "6px 0" }}>
-								{c.auditStat.value}
-							</div>
-							<span className={cx(s.badge, s.badgeInfo)}>
-								<i className="bi bi-clock-history" /> {c.auditStat.badge}
-							</span>
-							<div
-								className="mt-2"
-								style={{ fontSize: 12, color: "var(--ink-700)" }}
-							>
-								{c.auditStat.lastRun}
-							</div>
-						</div>
-					</div>
-				</div>
+				</section>
 
 				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
-				<div className="row g-3">
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-queues"
+				>
+					<SectionHeading
+						index="02"
+						id="rec-sec-queues"
+						title="Attention, suggestions & quick actions"
+						description="Unmatched items, AI-suggested rules and the workflows your reconciliation desk uses most."
+					/>
+					<div className={s.queueGrid}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Attention Required</h3>
 								<button
@@ -896,9 +1023,7 @@ export default function Reconciliation() {
 							</div>
 							{c.attention.map(renderRow)}
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div className={s.sectionHead}>
 								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
 								<span className={cx(s.badge, s.badgePurple)}>
@@ -907,9 +1032,7 @@ export default function Reconciliation() {
 							</div>
 							{c.suggestions.map(renderRow)}
 						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={cx(s.card, "h-100")}>
+						<div className={cx(s.card, s.queueCard)}>
 							<div style={{ marginBottom: 16 }}>
 								<h3 className={s.sectionTitle}>Quick Actions</h3>
 								<p className={s.sectionSub}>
@@ -934,588 +1057,545 @@ export default function Reconciliation() {
 							</div>
 						</div>
 					</div>
-				</div>
+				</section>
 
 				{/* ---------- SECTION Overview Dashboard ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-speedometer2" /> Reconciliation Overview
-								Dashboard
-							</h3>
-							<p className={s.sectionSub}>
-								Real-time coverage across your linked businesses and payout
-								rails — {scopeTag}.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("healthCheckModal")}
-							>
-								<i className="bi bi-heart-pulse" /> Health
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnPrimary)}
-								onClick={() => openModal("runAutoReconModal")}
-							>
-								<i className="bi bi-play-fill" /> Run Now
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-3 col-md-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Business &amp; Rail Coverage</h4>
-								{c.coverage.map((b) => (
-									<div className={s.rowItem} key={b.name}>
-										<div>{b.name}</div>
-										<span className={cx(s.badge, toneBadge[b.tone])}>
-											{b.rate}
-										</span>
-									</div>
-								))}
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-overview"
+				>
+					<SectionHeading
+						index="03"
+						id="rec-sec-overview"
+						title="Reconciliation overview dashboard"
+						description="Real-time coverage across your linked businesses and payout rails."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i className="bi bi-speedometer2" /> Coverage Snapshot
+								</h3>
+								<p className={s.sectionSub}>
+									Business, rail and exception health at a glance — {scopeTag}.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("healthCheckModal")}
+								>
+									<i className="bi bi-heart-pulse" /> Health
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm, s.btnPrimary)}
+									onClick={() => openModal("runAutoReconModal")}
+								>
+									<i className="bi bi-play-fill" /> Run Now
+								</button>
 							</div>
 						</div>
-						<div className="col-lg-3 col-md-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Today's Activity</h4>
-								<div className={s.chartBars} style={{ height: 80 }}>
-									{c.activityBars.map((b) => (
+						<div className="row g-3">
+							<div className="col-lg-3 col-md-6">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Business &amp; Rail Coverage</h4>
+									{c.coverage.map((b) => (
+										<div className={s.rowItem} key={b.name}>
+											<div>{b.name}</div>
+											<span className={cx(s.badge, toneBadge[b.tone])}>
+												{b.rate}
+											</span>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="col-lg-3 col-md-6">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Today's Activity</h4>
+									<div className={s.chartBars} style={{ height: 80 }}>
+										{c.activityBars.map((b) => (
+											<div
+												key={b.label}
+												className={s.chartBar}
+												style={{
+													height: `${b.height}%`,
+													background: toneColor(b.color),
+												}}
+											>
+												<span className={s.barLabel}>{b.label}</span>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+							<div className="col-lg-3 col-md-6">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Exception Breakdown</h4>
+									{c.exceptionBreakdown.map((e) => (
+										<div className={s.rowItem} key={e.label}>
+											<span className={cx(s.badge, toneBadge[e.tone])}>
+												{e.label}
+											</span>
+											<strong>{e.count}</strong>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="col-lg-3 col-md-6">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Reconciliation Health</h4>
+									{c.healthTiles.map((t) => (
 										<div
-											key={b.label}
-											className={s.chartBar}
-											style={{
-												height: `${b.height}%`,
-												background: toneColor(b.color),
-											}}
+											key={t.label}
+											className={cx(
+												s.tile,
+												t.tone === "success"
+													? s.tileSuccess
+													: t.tone === "info"
+														? s.tileInfo
+														: s.tileWarn,
+												"mb-2",
+											)}
 										>
-											<span className={s.barLabel}>{b.label}</span>
+											<div className={s.tileTitle}>{t.label}</div>
+											<div className={s.tileValue} style={{ fontSize: 24 }}>
+												{t.value}
+											</div>
 										</div>
 									))}
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-3 col-md-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Exception Breakdown</h4>
-								{c.exceptionBreakdown.map((e) => (
-									<div className={s.rowItem} key={e.label}>
-										<span className={cx(s.badge, toneBadge[e.tone])}>
-											{e.label}
-										</span>
-										<strong>{e.count}</strong>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-3 col-md-6">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Reconciliation Health</h4>
-								{c.healthTiles.map((t) => (
-									<div
-										key={t.label}
-										className={cx(
-											s.tile,
-											t.tone === "success"
-												? s.tileSuccess
-												: t.tone === "info"
-													? s.tileInfo
-													: s.tileWarn,
-											"mb-2",
-										)}
-									>
-										<div className={s.tileTitle}>{t.label}</div>
-										<div className={s.tileValue} style={{ fontSize: 24 }}>
-											{t.value}
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
 					</div>
-				</div>
+				</section>
 
 				{/* ---------- SECTION Pending Reconciliations Workbench ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--warning)" }}
-								/>{" "}
-								Pending Reconciliations Workbench
-							</h3>
-							<p className={s.sectionSub}>
-								Unmatched customer payments, payouts and float movements
-								requiring attention — {scopeTag}.
-							</p>
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-pending"
+				>
+					<SectionHeading
+						index="04"
+						id="rec-sec-pending"
+						title="Pending reconciliations workbench"
+						description="Unmatched customer payments, payouts and float movements requiring attention."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i
+										className="bi bi-clock-history"
+										style={{ color: "var(--warning)" }}
+									/>{" "}
+									Pending Reconciliations Workbench
+								</h3>
+								<p className={s.sectionSub}>
+									Unmatched customer payments, payouts and float movements
+									requiring attention — {scopeTag}.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("filterModal")}
+								>
+									<i className="bi bi-funnel" /> Filters
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm, s.btnPrimary)}
+									onClick={() => openModal("bulkMatchModal")}
+								>
+									<i className="bi bi-check2-all" /> Bulk Match
+								</button>
+							</div>
 						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("filterModal")}
-							>
-								<i className="bi bi-funnel" /> Filters
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm, s.btnPrimary)}
-								onClick={() => openModal("bulkMatchModal")}
-							>
-								<i className="bi bi-check2-all" /> Bulk Match
-							</button>
-						</div>
-					</div>
-					<div className={s.tableWrap}>
-						<table className={s.table}>
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>Business</th>
-									<th>Customer Ref</th>
-									<th>Stream</th>
-									<th>Rail</th>
-									<th>Expected</th>
-									<th>Received</th>
-									<th>Variance</th>
-									<th>Status</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{bizPending.map((p) => {
-									const sm = streamMeta[p.stream];
-									return (
-										<tr key={`${p.customerRef}-${p.date}`}>
-											<td>{p.date}</td>
-											<td>
-												<strong>{p.business}</strong>
-											</td>
-											<td>
-												<code>{p.customerRef}</code>
-											</td>
-											<td>
-												<span className={cx(s.streamTag, sm.cls)}>
-													<i className={cx("bi", sm.icon)} /> {sm.label}
-												</span>
-											</td>
-											<td>{p.rail}</td>
-											<td>{p.expected}</td>
-											<td>{p.received}</td>
-											<td>
-												<strong>{p.variance}</strong>
-											</td>
-											<td>
-												<span
-													className={cx(s.badge, toneBadge[p.statusTone])}
-												>
-													{p.status}
-												</span>
-											</td>
-											<td>
-												<div
-													className="d-flex"
-													style={{ gap: 4, flexWrap: "wrap" }}
-												>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("manualMatchModal")}
-													>
-														Match
-													</button>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("discrepancyModal")}
-													>
-														Flag
-													</button>
-												</div>
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Matched Transactions ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-check2-circle" /> Matched Transactions
-							</h3>
-							<p className={s.sectionSub}>
-								Verified items — Paymo record vs rail statement, with the float
-								movement each one funded — {scopeTag}.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("matchedFilterModal")}
-							>
-								<i className="bi bi-funnel" /> Filter
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("exportReportModal")}
-							>
-								<i className="bi bi-download" /> Export
-							</button>
-						</div>
-					</div>
-					<div className={s.tableWrap}>
-						<table className={s.table}>
-							<thead>
-								<tr>
-									<th>Match ID</th>
-									<th>Date</th>
-									<th>Business</th>
-									<th>Paymo Record</th>
-									<th>Statement</th>
-									<th>Amount</th>
-									<th>Matched By</th>
-									<th>Float Link</th>
-									<th>View</th>
-								</tr>
-							</thead>
-							<tbody>
-								{bizMatched.map((m) => (
-									<tr key={m.id}>
-										<td>
-											<code>{m.id}</code>
-										</td>
-										<td>{m.date}</td>
-										<td>
-											<strong>{m.business}</strong>
-										</td>
-										<td>{m.recordSide}</td>
-										<td>{m.statementSide}</td>
-										<td>
-											<strong>{m.amount}</strong>
-										</td>
-										<td>{m.by}</td>
-										<td>
-											<Link
-												to="/pm/app/liquidity"
-												search={{
-													business:
-														m.business === "Land Buyers LTD" ? "land" : "co2",
-												}}
-												className={s.floatLink}
-												title={`View float movements for ${m.business}`}
-											>
-												<i className="bi bi-arrow-left-right" /> {m.floatLink}
-											</Link>
-										</td>
-										<td>
-											<button
-												type="button"
-												className={cx(s.btn, s.btnSm)}
-												onClick={() => openModal("auditLogModal")}
-											>
-												View
-											</button>
-										</td>
+						<div className={s.tableWrap}>
+							<table className={s.table}>
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Business</th>
+										<th>Customer Ref</th>
+										<th>Stream</th>
+										<th>Rail</th>
+										<th>Expected</th>
+										<th>Received</th>
+										<th>Variance</th>
+										<th>Status</th>
+										<th>Actions</th>
 									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Discrepancies & Exceptions ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-exclamation-triangle"
-									style={{ color: "var(--danger)" }}
-								/>{" "}
-								Discrepancies &amp; Exceptions
-							</h3>
-							<p className={s.sectionSub}>
-								Investigate, flag, refund, dispute or re-match unmatched items —
-								{scopeTag}.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("discrepancyModal")}
-							>
-								<i className="bi bi-plus-lg" /> New Exception
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("disputeModal")}
-							>
-								<i className="bi bi-flag" /> Dispute
-							</button>
-						</div>
-					</div>
-					<div className={s.tableWrap}>
-						<table className={s.table}>
-							<thead>
-								<tr>
-									<th>Exception ID</th>
-									<th>Ref</th>
-									<th>Business</th>
-									<th>Stream</th>
-									<th>Issue</th>
-									<th>Amount</th>
-									<th>Priority</th>
-									<th>Assigned</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{bizExceptions.map((e) => {
-									const sm = streamMeta[e.stream];
-									return (
-										<tr key={e.id}>
-											<td>
-												<code>{e.id}</code>
-											</td>
-											<td>{e.ref}</td>
-											<td>
-												<strong>{e.business}</strong>
-											</td>
-											<td>
-												<span className={cx(s.streamTag, sm.cls)}>
-													<i className={cx("bi", sm.icon)} /> {sm.label}
-												</span>
-											</td>
-											<td>{e.issue}</td>
-											<td>
-												<strong>{e.amount}</strong>
-											</td>
-											<td>
-												<span
-													className={cx(s.badge, toneBadge[e.priorityTone])}
-												>
-													{e.priority}
-												</span>
-											</td>
-											<td>{e.assigned}</td>
-											<td>
-												<div
-													className="d-flex"
-													style={{ gap: 4, flexWrap: "wrap" }}
-												>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("manualMatchModal")}
-													>
-														Resolve
-													</button>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("disputeModal")}
-													>
-														Dispute
-													</button>
-												</div>
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				{/* ---------- SECTION Auto-Reconciliation Rules Engine ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i className="bi bi-magic" style={{ color: "var(--purple)" }} />{" "}
-								Auto-Reconciliation Rules Engine
-							</h3>
-							<p className={s.sectionSub}>
-								Per-business matching rules for collections, payouts and float
-								refills — {scopeTag}.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("ruleEngineModal")}
-							>
-								<i className="bi bi-plus-lg" /> New Rule
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("rulePerformanceModal")}
-							>
-								<i className="bi bi-graph-up" /> Performance
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-8">
-							<div className={s.tableWrap}>
-								<table className={s.table}>
-									<thead>
-										<tr>
-											<th>Rule Name</th>
-											<th>Business</th>
-											<th>Conditions</th>
-											<th>Match Rate</th>
-											<th>Last Run</th>
-											<th>Status</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{bizRules.map((r) => (
-											<tr key={r.name}>
-												<td>{r.name}</td>
+								</thead>
+								<tbody>
+									{bizPending.map((p) => {
+										const sm = streamMeta[p.stream];
+										return (
+											<tr key={`${p.customerRef}-${p.date}`}>
+												<td>{p.date}</td>
 												<td>
-													<strong>{r.business}</strong>
+													<strong>{p.business}</strong>
 												</td>
-												<td>{r.conditions}</td>
-												<td>{r.rate}</td>
-												<td>{r.lastRun}</td>
+												<td>
+													<code>{p.customerRef}</code>
+												</td>
+												<td>
+													<span className={cx(s.streamTag, sm.cls)}>
+														<i className={cx("bi", sm.icon)} /> {sm.label}
+													</span>
+												</td>
+												<td>{p.rail}</td>
+												<td>{p.expected}</td>
+												<td>{p.received}</td>
+												<td>
+													<strong>{p.variance}</strong>
+												</td>
 												<td>
 													<span
-														className={cx(s.badge, toneBadge[r.statusTone])}
+														className={cx(s.badge, toneBadge[p.statusTone])}
 													>
-														{r.status}
+														{p.status}
 													</span>
 												</td>
 												<td>
-													<button
-														type="button"
-														className={cx(s.btn, s.btnSm)}
-														onClick={() => openModal("rulePerformanceModal")}
+													<div
+														className="d-flex"
+														style={{ gap: 4, flexWrap: "wrap" }}
 													>
-														View
-													</button>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("manualMatchModal")}
+														>
+															Match
+														</button>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("discrepancyModal")}
+														>
+															Flag
+														</button>
+														{p.status === "Exception" && (
+															<button
+																type="button"
+																className={cx(s.btn, s.btnSm)}
+																onClick={() => openModal("fxRateModal")}
+															>
+																Resolve
+															</button>
+														)}
+													</div>
 												</td>
 											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Top Performing Rules</h4>
-								{c.topRules.map((r) => (
-									<div className={s.rowItem} key={r.name}>
-										<div style={{ minWidth: 0 }}>
-											<strong>{r.name}</strong>
-											<div className={s.rowSub}>{r.sub}</div>
-										</div>
-										<span className={cx(s.badge, s.badgeSuccess)}>
-											{r.rate}
-										</span>
-									</div>
-								))}
-							</div>
+										);
+									})}
+								</tbody>
+							</table>
 						</div>
 					</div>
-				</div>
+				</section>
 
-				{/* ---------- SECTION Reports, Exports & Audit Trail ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-file-earmark-bar-graph"
-									style={{ color: "var(--info)" }}
-								/>{" "}
-								Reports, Exports &amp; Audit Trail
-							</h3>
-							<p className={s.sectionSub}>
-								Per-business reconciliation statements, audit logs and
-								certificates.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("exportReportModal")}
-							>
-								<i className="bi bi-download" /> Export
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("auditLogModal")}
-							>
-								<i className="bi bi-clock-history" /> Audit Log
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Quick Reports</h4>
-								<div className={s.qaGrid}>
-									{c.quickReports.map((q) => (
-										<button
-											key={q.label}
-											type="button"
-											className={s.qaBtn}
-											onClick={() => openModal(q.modal)}
-										>
-											{q.label}
-										</button>
-									))}
-								</div>
+				{/* ---------- SECTION Matched Transactions ---------- */}
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-matched"
+				>
+					<SectionHeading
+						index="05"
+						id="rec-sec-matched"
+						title="Matched transactions"
+						description="Verified items — Paymo record vs rail statement, with the float movement each one funded."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i className="bi bi-check2-circle" /> Matched Transactions
+								</h3>
+								<p className={s.sectionSub}>
+									Verified items — Paymo record vs rail statement, with the
+									float movement each one funded — {scopeTag}.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("matchedFilterModal")}
+								>
+									<i className="bi bi-funnel" /> Filter
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("exportReportModal")}
+								>
+									<i className="bi bi-download" /> Export
+								</button>
 							</div>
 						</div>
-						<div className="col-lg-8">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Recent Audit Activity</h4>
+						<div className={s.tableWrap}>
+							<table className={s.table}>
+								<thead>
+									<tr>
+										<th>Match ID</th>
+										<th>Date</th>
+										<th>Business</th>
+										<th>Paymo Record</th>
+										<th>Statement</th>
+										<th>Amount</th>
+										<th>Matched By</th>
+										<th>Float Link</th>
+										<th>View</th>
+									</tr>
+								</thead>
+								<tbody>
+									{bizMatched.map((m) => (
+										<tr key={m.id}>
+											<td>
+												<code>{m.id}</code>
+											</td>
+											<td>{m.date}</td>
+											<td>
+												<strong>{m.business}</strong>
+											</td>
+											<td>{m.recordSide}</td>
+											<td>{m.statementSide}</td>
+											<td>
+												<strong>{m.amount}</strong>
+											</td>
+											<td>{m.by}</td>
+											<td>
+												<Link
+													to="/pm/app/liquidity"
+													search={{
+														business:
+															m.business === "Land Buyers LTD" ? "land" : "co2",
+													}}
+													className={s.floatLink}
+													title={`View float movements for ${m.business}`}
+												>
+													<i className="bi bi-arrow-left-right" /> {m.floatLink}
+												</Link>
+											</td>
+											<td>
+												<button
+													type="button"
+													className={cx(s.btn, s.btnSm)}
+													onClick={() => openModal("auditLogModal")}
+												>
+													View
+												</button>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+
+				{/* ---------- SECTION Discrepancies & Exceptions ---------- */}
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-exceptions"
+				>
+					<SectionHeading
+						index="06"
+						id="rec-sec-exceptions"
+						title="Discrepancies & exceptions"
+						description="Investigate, flag, refund, dispute or re-match unmatched items."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i
+										className="bi bi-exclamation-triangle"
+										style={{ color: "var(--danger)" }}
+									/>{" "}
+									Discrepancies &amp; Exceptions
+								</h3>
+								<p className={s.sectionSub}>
+									Investigate, flag, refund, dispute or re-match unmatched items
+									—{scopeTag}.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("discrepancyModal")}
+								>
+									<i className="bi bi-plus-lg" /> New Exception
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("disputeModal")}
+								>
+									<i className="bi bi-flag" /> Dispute
+								</button>
+							</div>
+						</div>
+						<div className={s.tableWrap}>
+							<table className={s.table}>
+								<thead>
+									<tr>
+										<th>Exception ID</th>
+										<th>Ref</th>
+										<th>Business</th>
+										<th>Stream</th>
+										<th>Issue</th>
+										<th>Amount</th>
+										<th>Priority</th>
+										<th>Assigned</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{bizExceptions.map((e) => {
+										const sm = streamMeta[e.stream];
+										return (
+											<tr key={e.id}>
+												<td>
+													<code>{e.id}</code>
+												</td>
+												<td>{e.ref}</td>
+												<td>
+													<strong>{e.business}</strong>
+												</td>
+												<td>
+													<span className={cx(s.streamTag, sm.cls)}>
+														<i className={cx("bi", sm.icon)} /> {sm.label}
+													</span>
+												</td>
+												<td>{e.issue}</td>
+												<td>
+													<strong>{e.amount}</strong>
+												</td>
+												<td>
+													<span
+														className={cx(s.badge, toneBadge[e.priorityTone])}
+													>
+														{e.priority}
+													</span>
+												</td>
+												<td>{e.assigned}</td>
+												<td>
+													<div
+														className="d-flex"
+														style={{ gap: 4, flexWrap: "wrap" }}
+													>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("manualMatchModal")}
+														>
+															Resolve
+														</button>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("disputeModal")}
+														>
+															Dispute
+														</button>
+													</div>
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+
+				{/* ---------- SECTION Auto-Reconciliation Rules Engine ---------- */}
+				<section className={s.dashboardSection} aria-labelledby="rec-sec-rules">
+					<SectionHeading
+						index="07"
+						id="rec-sec-rules"
+						title="Auto-reconciliation rules engine"
+						description="Per-business matching rules for collections, payouts and float refills."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i
+										className="bi bi-magic"
+										style={{ color: "var(--purple)" }}
+									/>{" "}
+									Auto-Reconciliation Rules Engine
+								</h3>
+								<p className={s.sectionSub}>
+									Per-business matching rules for collections, payouts and float
+									refills — {scopeTag}.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("ruleEngineModal")}
+								>
+									<i className="bi bi-plus-lg" /> New Rule
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("rulePerformanceModal")}
+								>
+									<i className="bi bi-graph-up" /> Performance
+								</button>
+							</div>
+						</div>
+						<div className="row g-3">
+							<div className="col-lg-8">
 								<div className={s.tableWrap}>
 									<table className={s.table}>
 										<thead>
 											<tr>
-												<th>Time</th>
-												<th>User</th>
-												<th>Action</th>
-												<th>Item</th>
-												<th>Result</th>
+												<th>Rule Name</th>
+												<th>Business</th>
+												<th>Conditions</th>
+												<th>Match Rate</th>
+												<th>Last Run</th>
+												<th>Status</th>
+												<th>Actions</th>
 											</tr>
 										</thead>
 										<tbody>
-											{c.auditActivity.map((a) => (
-												<tr key={`${a.time}-${a.action}`}>
-													<td>{a.time}</td>
-													<td>{a.user}</td>
-													<td>{a.action}</td>
-													<td>{a.item}</td>
+											{bizRules.map((r) => (
+												<tr key={r.name}>
+													<td>{r.name}</td>
+													<td>
+														<strong>{r.business}</strong>
+													</td>
+													<td>{r.conditions}</td>
+													<td>{r.rate}</td>
+													<td>{r.lastRun}</td>
 													<td>
 														<span
-															className={cx(s.badge, toneBadge[a.resultTone])}
+															className={cx(s.badge, toneBadge[r.statusTone])}
 														>
-															{a.result}
+															{r.status}
 														</span>
+													</td>
+													<td>
+														<button
+															type="button"
+															className={cx(s.btn, s.btnSm)}
+															onClick={() => openModal("rulePerformanceModal")}
+														>
+															View
+														</button>
 													</td>
 												</tr>
 											))}
@@ -1523,107 +1603,296 @@ export default function Reconciliation() {
 									</table>
 								</div>
 							</div>
+							<div className="col-lg-4">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Top Performing Rules</h4>
+									{c.topRules.map((r) => (
+										<div className={s.rowItem} key={r.name}>
+											<div style={{ minWidth: 0 }}>
+												<strong>{r.name}</strong>
+												<div className={s.rowSub}>{r.sub}</div>
+											</div>
+											<span className={cx(s.badge, s.badgeSuccess)}>
+												{r.rate}
+											</span>
+										</div>
+									))}
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				</section>
+
+				{/* ---------- SECTION Reports, Exports & Audit Trail ---------- */}
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-reports"
+				>
+					<SectionHeading
+						index="08"
+						id="rec-sec-reports"
+						title="Reports, exports & audit trail"
+						description="Per-business reconciliation statements, audit logs and certificates."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i
+										className="bi bi-file-earmark-bar-graph"
+										style={{ color: "var(--info)" }}
+									/>{" "}
+									Reports, Exports &amp; Audit Trail
+								</h3>
+								<p className={s.sectionSub}>
+									Per-business reconciliation statements, audit logs and
+									certificates.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("exportReportModal")}
+								>
+									<i className="bi bi-download" /> Export
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("auditLogModal")}
+								>
+									<i className="bi bi-clock-history" /> Audit Log
+								</button>
+							</div>
+						</div>
+						<div className="row g-3">
+							<div className="col-lg-4">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Quick Reports</h4>
+									<div className={s.qaGrid}>
+										{c.quickReports.map((q) => (
+											<button
+												key={q.label}
+												type="button"
+												className={s.qaBtn}
+												onClick={() => openModal(q.modal)}
+											>
+												{q.label}
+											</button>
+										))}
+									</div>
+								</div>
+							</div>
+							<div className="col-lg-8">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Recent Audit Activity</h4>
+									<div className={s.tableWrap}>
+										<table className={s.table}>
+											<thead>
+												<tr>
+													<th>Time</th>
+													<th>User</th>
+													<th>Action</th>
+													<th>Item</th>
+													<th>Result</th>
+												</tr>
+											</thead>
+											<tbody>
+												{c.auditActivity.map((a) => (
+													<tr key={`${a.time}-${a.action}`}>
+														<td>{a.time}</td>
+														<td>{a.user}</td>
+														<td>{a.action}</td>
+														<td>{a.item}</td>
+														<td>
+															<span
+																className={cx(s.badge, toneBadge[a.resultTone])}
+															>
+																{a.result}
+															</span>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
 
 				{/* ---------- SECTION Settings & Automation ---------- */}
-				<div className={s.card}>
-					<div className={s.sectionHead}>
-						<div>
-							<h3 className={s.sectionTitle}>
-								<i
-									className="bi bi-gear-fill"
-									style={{ color: "var(--ink-500)" }}
-								/>{" "}
-								Reconciliation Settings &amp; Automation
-							</h3>
-							<p className={s.sectionSub}>
-								Matching tolerances, notifications and your facilitator access
-								to customer data.
-							</p>
-						</div>
-						<div className="d-flex" style={{ gap: 8 }}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("reconSettingsModal")}
-							>
-								<i className="bi bi-sliders" /> Settings
-							</button>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => openModal("teamAccessModal")}
-							>
-								<i className="bi bi-shield-check" /> My Recon Access
-							</button>
-						</div>
-					</div>
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Matching Tolerances</h4>
-								{c.tolerances.map((t) => (
-									<div className={s.rowItem} key={t.label}>
-										<div>{t.label}</div>
-										<strong>{t.value}</strong>
-									</div>
-								))}
+				<section
+					className={s.dashboardSection}
+					aria-labelledby="rec-sec-settings"
+				>
+					<SectionHeading
+						index="09"
+						id="rec-sec-settings"
+						title="Reconciliation settings & automation"
+						description="Matching tolerances, notifications and your facilitator access to customer data."
+					/>
+					<div className={s.card}>
+						<div className={s.sectionHead}>
+							<div>
+								<h3 className={s.sectionTitle}>
+									<i
+										className="bi bi-gear-fill"
+										style={{ color: "var(--ink-500)" }}
+									/>{" "}
+									Reconciliation Settings &amp; Automation
+								</h3>
+								<p className={s.sectionSub}>
+									Matching tolerances, notifications and your facilitator access
+									to customer data.
+								</p>
+							</div>
+							<div className="d-flex" style={{ gap: 8 }}>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("reconSettingsModal")}
+								>
+									<i className="bi bi-sliders" /> Settings
+								</button>
+								<button
+									type="button"
+									className={cx(s.btn, s.btnSm)}
+									onClick={() => openModal("teamAccessModal")}
+								>
+									<i className="bi bi-shield-check" /> My Recon Access
+								</button>
 							</div>
 						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>Notifications</h4>
-								{c.notifications.map((n) => (
-									<div className="form-check form-switch mb-2" key={n.label}>
-										<input
-											className="form-check-input"
-											type="checkbox"
-											defaultChecked={n.on}
-											id={`notif-${n.label}`}
-										/>
-										<label
-											className="form-check-label"
-											style={{ fontSize: 13 }}
-											htmlFor={`notif-${n.label}`}
-										>
-											{n.label}
-										</label>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={s.subBlock}>
-								<h4 className={s.blockHead}>My Recon Access</h4>
-								{c.reconAccess.map((sc) => (
-									<div className={s.permItem} key={sc.scope}>
-										<span
-											className={cx(
-												s.permDot,
-												sc.granted ? s.permOk : s.permPending,
-											)}
-										/>
-										<div style={{ minWidth: 0 }}>
-											<div className={s.permTitle}>{sc.scope}</div>
-											<div className={s.permSub}>{sc.desc}</div>
+						<div className="row g-3">
+							<div className="col-lg-4">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Matching Tolerances</h4>
+									{c.tolerances.map((t) => (
+										<div className={s.rowItem} key={t.label}>
+											<div>{t.label}</div>
+											<strong>{t.value}</strong>
 										</div>
-										<span
-											className={cx(
-												s.badge,
-												sc.granted ? s.badgeSuccess : s.badgeWarn,
-											)}
-										>
-											{sc.granted ? "Granted" : "Pending"}
-										</span>
-									</div>
-								))}
+									))}
+								</div>
+							</div>
+							<div className="col-lg-4">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>Notifications</h4>
+									{c.notifications.map((n) => (
+										<div className="form-check form-switch mb-2" key={n.label}>
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={n.on}
+												id={`notif-${n.label}`}
+											/>
+											<label
+												className="form-check-label"
+												style={{ fontSize: 13 }}
+												htmlFor={`notif-${n.label}`}
+											>
+												{n.label}
+											</label>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="col-lg-4">
+								<div className={s.subBlock}>
+									<h4 className={s.blockHead}>My Recon Access</h4>
+									{c.reconAccess.map((sc) => (
+										<div className={s.permItem} key={sc.scope}>
+											<span
+												className={cx(
+													s.permDot,
+													sc.granted ? s.permOk : s.permPending,
+												)}
+											/>
+											<div style={{ minWidth: 0 }}>
+												<div className={s.permTitle}>{sc.scope}</div>
+												<div className={s.permSub}>{sc.desc}</div>
+											</div>
+											<span
+												className={cx(
+													s.badge,
+													sc.granted ? s.badgeSuccess : s.badgeWarn,
+												)}
+											>
+												{sc.granted ? "Granted" : "Pending"}
+											</span>
+										</div>
+									))}
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				</section>
+
+				{/* ---------- PAGE FOOTER ---------- */}
+				<footer className={s.pageFooter}>
+					<span>
+						<i className="bi bi-clipboard2-check" /> Reconciliation Center ·
+						Land Buyers LTD &amp; Company 2 · Data refreshes every run
+					</span>
+					<div className="d-flex" style={{ gap: 16 }}>
+						<Link to="/pm/app/liquidity">Liquidity &amp; Float</Link>
+						<Link to="/pm/app/settlement" search={{ modal: undefined }}>
+							Settlement
+						</Link>
+						<Link to="/pm/app/payment-rails">Payment Rails</Link>
+					</div>
+				</footer>
 			</div>
+
+			{/* ---------- FLOATING COMMAND BAR ---------- */}
+			<div className={s.floatingBar}>
+				<button
+					type="button"
+					className={cx(s.btn, s.btnSm)}
+					onClick={() => openModal("reconcileNotifModal")}
+				>
+					<i className="bi bi-bell" /> Alerts
+				</button>
+				<button
+					type="button"
+					className={cx(s.btn, s.btnSm)}
+					onClick={() => openModal("healthCheckModal")}
+				>
+					<i className="bi bi-heart-pulse" /> Health
+				</button>
+				<button
+					type="button"
+					className={s.floatingPrimary}
+					onClick={() => openModal("manualMatchModal")}
+				>
+					<i className="bi bi-hand-index" /> Manual Match
+				</button>
+			</div>
+
+			{/* ---------- TOAST STACK ---------- */}
+			{toasts.length > 0 && (
+				<div className={s.toastStack} aria-live="polite" aria-atomic="false">
+					{toasts.map((t) => (
+						<div
+							key={t.id}
+							className={cx(s.toast, t.variant === "danger" && s.toastDanger)}
+						>
+							<i
+								className={cx(
+									"bi",
+									t.variant === "danger"
+										? "bi-exclamation-triangle"
+										: "bi-check-circle",
+								)}
+							/>
+							<span>{t.message}</span>
+						</div>
+					))}
+				</div>
+			)}
 
 			{/* ---------- ALL MODALS (state-driven) ---------- */}
 			<ReconciliationModals
@@ -1631,7 +1900,32 @@ export default function Reconciliation() {
 				openModal={openModal}
 				closeModal={closeModal}
 				data={c}
+				onToast={pushToast}
 			/>
+		</div>
+	);
+}
+
+function SectionHeading({
+	index,
+	id,
+	title,
+	description,
+}: {
+	index: string;
+	id: string;
+	title: string;
+	description: string;
+}) {
+	return (
+		<div className={s.sectionHeading}>
+			<span className={s.sectionIndex} aria-hidden="true">
+				{index}
+			</span>
+			<div>
+				<h2 id={id}>{title}</h2>
+				<p>{description}</p>
+			</div>
 		</div>
 	);
 }

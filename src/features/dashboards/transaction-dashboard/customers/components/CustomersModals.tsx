@@ -18,6 +18,7 @@ interface ModalsProps {
 	active: string | null;
 	onClose: () => void;
 	onOpen: (id: string) => void;
+	onToast?: (message: string, variant?: "success" | "danger") => void;
 }
 
 type Size = "md" | "lg" | "xl";
@@ -221,6 +222,7 @@ export default function CustomersModals({
 	active,
 	onClose,
 	onOpen,
+	onToast,
 }: ModalsProps) {
 	/* ---------- doAction / nextFlow / busy state ---------- */
 	const [results, setResults] = useState<Record<string, Result>>({});
@@ -251,6 +253,7 @@ export default function CustomersModals({
 		busyTimer.current = window.setTimeout(() => {
 			setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }));
 			setBusy(null);
+			onToast?.(msg, "success");
 		}, 1500);
 	};
 
@@ -261,6 +264,7 @@ export default function CustomersModals({
 			busyTimer.current = window.setTimeout(() => {
 				setFlow(ONBOARD_LABELS.length);
 				setBusy(null);
+				onToast?.("Customer onboarded successfully.", "success");
 			}, 1500);
 			return;
 		}

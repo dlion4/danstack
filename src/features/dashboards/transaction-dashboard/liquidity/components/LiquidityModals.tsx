@@ -1,12 +1,11 @@
 /* ============================================================================
- * LiquidityModals.tsx — all 25 modals for Page 1.5 "Liquidity & Float".
+ * LiquidityModals.tsx — 15 modals for Page 1.5 "Liquidity & Float".
  * ----------------------------------------------------------------------------
  * MIGRATED FROM: legacy 1.5.html modal blocks (openM/closeM + Bootstrap-JS).
  * Every modal is state-driven (no global openM()/closeM()/innerHTML):
  *
- *   rebal / emerg flows ......... flows{} + renderStepper() + nextFlow() became
- *                                 <FlowModal> (and a danger-styled flow for the
- *                                 emergency activation, which had a red header)
+ *   rebal flow ................... flows{} + renderStepper() + nextFlow()
+ *                                  became <FlowModal>
  *   doAction() loading+success .. <SimpleModal> phase state (form→loading→done)
  *   sw() pill tab switching ..... <TabbedModal> active-key state
  *   cacheAndReset() 420 restores  React remounts each modal cleanly on open
@@ -14,9 +13,18 @@
  *
  * Modals that open other modals (legacy stacked Bootstrap instances) now close
  * the current modal and open the next — same destination, no backdrop pile-up.
+ *
+ * VISUAL REFINEMENT (this pass): the standalone agent/agent-pool/partner/
+ * bulk-topup/emergency-line/profile/quick-rebalance modals from the old
+ * bank-treasury console were removed (0 inbound triggers after the
+ * LIQUIDITY_REBUILD_PLAN.md reframe to a payment-facilitator float
+ * workspace) — see ../DESIGN-BLUEPRINT.md Modal Inventory for the full
+ * keep/delete rationale. The remaining 15 modals all run on the shared
+ * SimpleModal / FlowModal / TabbedModal / ModalShell primitives and accept
+ * an optional onToast() callback to surface a page-level toast on submit.
  * ========================================================================== */
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import {
 	FlowModal,
@@ -25,7 +33,6 @@ import {
 	ReviewRow,
 	SimpleModal,
 	TabbedModal,
-	useReactModal,
 	// } from "../../shared/components/modals.tsx";
 } from "../../shared/components/modals";
 import styles from "../styles/liquidity.module.css";
@@ -54,6 +61,7 @@ export interface LiquidityModalsProps {
 	openModal: (id: string) => void;
 	closeModal: (id: string) => void;
 	data: LiquidityData;
+	onToast?: (message: string, variant?: "success" | "danger") => void;
 }
 
 /* --------------------------------------------------------------------------
@@ -104,317 +112,6 @@ function SelectField({
 	);
 }
 
-function SwitchRow({
-	label,
-	sub,
-	defaultChecked = true,
-}: {
-	label: string;
-	sub: string;
-	defaultChecked?: boolean;
-}) {
-	return (
-		<div className={s.switchRow}>
-			<div style={{ minWidth: 0 }}>
-				<div className={s.rowTitle}>{label}</div>
-				<div className={s.rowSub}>{sub}</div>
-			</div>
-			<div className="form-check form-switch">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					defaultChecked={defaultChecked}
-					aria-label={label}
-				/>
-			</div>
-		</div>
-	);
-}
-
-/* ==========================================================================
- * DangerFlowModal — the legacy Emergency Liquidity wizard (red header).
- * Legacy: flows.emerg + nextFlow('emerg', 4) inside #emergencyLiquidityModal.
- * ======================================================================== */
-function DangerFlowModal({
-	show,
-	onClose,
-	children,
-}: {
-	show: boolean;
-	onClose: () => void;
-	children: (step: number) => React.ReactNode;
-}) {
-	const mounted = useReactModal(show, onClose);
-	const labels = ["Facility", "Amount", "Approve", "Done"];
-	const total = labels.length;
-	const [step, setStep] = useState(1);
-	const [loading, setLoading] = useState(false);
-	const [done, setDone] = useState(false);
-
-	// reset whenever (re)opened — replaces legacy cacheAndReset()
-	useEffect(() => {
-		if (show) {
-			setStep(1);
-			setLoading(false);
-			setDone(false);
-		}
-	}, [show]);
-
-	if (!mounted || !show) return null;
-
-	const isLast = step === total;
-	const next = () => {
-		if (step === total - 1) {
-			setLoading(true);
-			setTimeout(() => {
-				setLoading(false);
-				setDone(true);
-				setStep(total);
-			}, 1500);
-			return;
-		}
-		if (isLast) {
-			onClose();
-			return;
-		}
-		setStep((p) => Math.min(total, p + 1));
-	};
-
-	return (
-		<div
-			style={{
-				position: "fixed",
-				inset: 0,
-				background: "rgba(0,0,0,.5)",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				zIndex: 9999,
-				padding: 16,
-				backdropFilter: "blur(4px)",
-				overflowY: "auto",
-			}}
-			onClick={onClose}
-		>
-			<div
-				style={{ width: "100%", maxWidth: 800, margin: "auto", flexShrink: 0 }}
-				onClick={(e) => e.stopPropagation()}
-			>
-				<div
-					style={{
-						background: "var(--surface-elev)",
-						borderRadius: "var(--radius-lg)",
-						color: "var(--ink-900)",
-						boxShadow: "var(--shadow-xl)",
-						maxHeight: "90vh",
-						overflow: "hidden",
-						display: "flex",
-						flexDirection: "column",
-						animation: "modalSlideIn 0.3s ease-out",
-					}}
-				>
-					{/* legacy red danger header */}
-					<div
-						style={{
-							background: "var(--danger)",
-							color: "#fff",
-							padding: "20px 24px",
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							flexShrink: 0,
-							gap: 12,
-						}}
-					>
-						<h5
-							style={{
-								fontWeight: 700,
-								display: "inline-flex",
-								alignItems: "center",
-								gap: 10,
-								fontSize: 18,
-								margin: 0,
-							}}
-						>
-							<i className="bi bi-lightning-charge" /> Emergency Liquidity
-							Activation
-						</h5>
-						<button
-							type="button"
-							onClick={onClose}
-							aria-label="Close"
-							style={{
-								width: 36,
-								height: 36,
-								border: "none",
-								background: "transparent",
-								borderRadius: 8,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								cursor: "pointer",
-								color: "#fff",
-							}}
-						>
-							<i className="bi bi-x-lg" />
-						</button>
-					</div>
-					<div
-						style={{
-							padding: 24,
-							overflowY: "auto",
-							flex: 1,
-							minHeight: 0,
-							position: "relative",
-						}}
-					>
-						{!done && (
-							<>
-								<div className={s.stepper}>
-									{labels.map((label, i) => {
-										const n = i + 1;
-										const state =
-											n < step ? "stepDone" : n === step ? "stepActive" : "";
-										return (
-											<div className={cx(s.step, s[state])} key={label}>
-												<div className={s.stepNum}>
-													{n < step ? <i className="bi bi-check" /> : n}
-												</div>
-												<div className={s.stepLabel}>{label}</div>
-												{i < labels.length - 1 && (
-													<div className={s.stepLine} />
-												)}
-											</div>
-										);
-									})}
-								</div>
-								{children(step)}
-							</>
-						)}
-						{done && (
-							<div className={s.receipt}>
-								<div className={s.receiptIcon}>
-									<i className="bi bi-shield-check" />
-								</div>
-								<h5 className={s.receiptTitle}>
-									Emergency Liquidity Activated
-								</h5>
-								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									KES 120M credited to Stanbic Bank from Standby Line. Full
-									audit trail recorded.
-								</p>
-								<div className={cx(s.reviewBox, "text-start mt-3")}>
-									<ReviewRow label="Reference" value="EM-44279" />
-									<ReviewRow label="Activated" value="27 Jun 2025, 14:45" />
-									<ReviewRow label="Approved by" value="CFO + CEO (Dual)" />
-								</div>
-							</div>
-						)}
-						{loading && (
-							<div className={s.loadingOverlay}>
-								<div
-									className="spinner-border"
-									role="status"
-									style={{ width: "3rem", height: "3rem" }}
-								/>
-								<p
-									style={{
-										marginTop: 16,
-										fontSize: 14,
-										fontWeight: 600,
-										color: "var(--pri)",
-									}}
-								>
-									Processing…
-								</p>
-							</div>
-						)}
-					</div>
-					<div
-						style={{
-							borderTop: "1px solid var(--border)",
-							padding: "16px 24px",
-							display: "flex",
-							justifyContent: "flex-end",
-							gap: 10,
-							flexShrink: 0,
-							flexWrap: "wrap",
-						}}
-					>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSecondary)}
-							onClick={onClose}
-						>
-							Cancel
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnDanger)}
-							onClick={next}
-						>
-							{isLast
-								? "Done"
-								: step === total - 1
-									? "Activate Emergency"
-									: "Continue"}{" "}
-							{!isLast && (
-								<i
-									className={
-										step === total - 1
-											? "bi bi-lightning-charge"
-											: "bi bi-arrow-right"
-									}
-								/>
-							)}
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-/* ==========================================================================
- * FacilityPicker — legacy emergency Step 1 radio cards (checked = red border).
- * ======================================================================== */
-function FacilityPicker() {
-	const [choice, setChoice] = useState<"standby" | "partner">("standby");
-	return (
-		<>
-			<h6 style={{ fontWeight: 700 }}>Step 1: Select Facility</h6>
-			<label
-				className={cx(s.radioCard, choice === "standby" && s.radioCardChecked)}
-			>
-				<input
-					type="radio"
-					name="emerg"
-					checked={choice === "standby"}
-					onChange={() => setChoice("standby")}
-				/>
-				<strong>Standby Line — KES 200M</strong>
-				<div className={s.radioCardSub}>
-					Pre-approved • Instant activation • 0% fee
-				</div>
-			</label>
-			<label
-				className={cx(s.radioCard, choice === "partner" && s.radioCardChecked)}
-			>
-				<input
-					type="radio"
-					name="emerg"
-					checked={choice === "partner"}
-					onChange={() => setChoice("partner")}
-				/>
-				<strong>Partner Credit Line — KES 150M</strong>
-				<div className={s.radioCardSub}>
-					Equity Bank • 2-hour activation • 2% fee
-				</div>
-			</label>
-		</>
-	);
-}
-
 /* ==========================================================================
  * Public component — renders every modal driven by the page's modalState map.
  * ======================================================================== */
@@ -423,9 +120,12 @@ export function LiquidityModals({
 	openModal,
 	closeModal,
 	data,
+	onToast,
 }: LiquidityModalsProps) {
 	const isOpen = (id: string) => Boolean(modalState[id]);
 	const close = (id: string) => closeModal(id);
+	const notify = (message: string, variant?: "success" | "danger") =>
+		onToast?.(message, variant);
 	/** close current modal then open the next (legacy stacked instances) */
 	const swap = (from: string, to: string) => {
 		closeModal(from);
@@ -452,16 +152,16 @@ export function LiquidityModals({
 								</h6>
 								<div className="row g-3">
 									<div className="col-md-6">
-								<SelectField
-									label="From (Source Wallet)"
-									options={data.walletsList}
-								/>
+										<SelectField
+											label="From (Source Wallet)"
+											options={data.walletsList}
+										/>
 									</div>
 									<div className="col-md-6">
-								<SelectField
-									label="To (Business Float)"
-									options={data.businesses}
-								/>
+										<SelectField
+											label="To (Business Float)"
+											options={data.businesses}
+										/>
 									</div>
 								</div>
 							</>
@@ -519,8 +219,8 @@ export function LiquidityModals({
 									Rebalance Executed Successfully
 								</h5>
 								<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-									KES 640,000 transferred from Business Wallet to Company 2 Float.
-									New balance: KES 1.28M.
+									KES 640,000 transferred from Business Wallet to Company 2
+									Float. New balance: KES 1.28M.
 								</p>
 								<div className={cx(s.reviewBox, "text-start mt-3")}>
 									<ReviewRow label="Reference" value="RB-9924" />
@@ -532,7 +232,6 @@ export function LiquidityModals({
 					</>
 				)}
 			</FlowModal>
-
 			{/* ============ M2: Top-up Bank ============ */}
 			<SimpleModal
 				show={isOpen("topupBankModal")}
@@ -541,16 +240,11 @@ export function LiquidityModals({
 				title="Top-up Business Float"
 				submitLabel="Execute Top-up"
 				successMsg="Business float topped up successfully! Reference: TP-44292"
+				onSubmit={() => notify("Business float topped up. Reference TP-44292.")}
 			>
-				<SelectField
-					label="Business Float"
-					options={data.businesses}
-				/>
+				<SelectField label="Business Float" options={data.businesses} />
 				<Field label="Amount (KES)" defaultValue="640000" />
-				<SelectField
-					label="Source"
-					options={data.walletsList}
-				/>
+				<SelectField label="Source" options={data.walletsList} />
 				<SelectField
 					label="Reason"
 					options={[
@@ -560,292 +254,6 @@ export function LiquidityModals({
 					]}
 				/>
 			</SimpleModal>
-
-			{/* ============ M3: Agent Float (tabbed) ============ */}
-			<TabbedModal
-				show={isOpen("agentFloatModal")}
-				onClose={() => close("agentFloatModal")}
-				iconCls="bi bi-people"
-				title="Agent Float Management"
-				tabs={[
-					{
-						key: "low",
-						label: "Low Float",
-						render: () => (
-							<div className={s.tableWrap}>
-								<table className={s.table}>
-									<thead>
-										<tr>
-											<th>Agent</th>
-											<th>Location</th>
-											<th>Current</th>
-											<th>Min</th>
-											<th>Status</th>
-											<th>Action</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>
-												<button
-													type="button"
-													className={s.btnLink}
-													onClick={() =>
-														swap("agentFloatModal", "agentDetailModal")
-													}
-												>
-													John's M-Pesa
-												</button>
-											</td>
-											<td>Kawangware</td>
-											<td>KES 18,400</td>
-											<td>KES 50,000</td>
-											<td>
-												<span className={cx(s.badge, s.badgeDanger)}>
-													Critical
-												</span>
-											</td>
-											<td>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
-													onClick={() =>
-														swap("agentFloatModal", "agentTopupModal")
-													}
-												>
-													Top-up
-												</button>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<button
-													type="button"
-													className={s.btnLink}
-													onClick={() =>
-														swap("agentFloatModal", "agentDetailModal")
-													}
-												>
-													Peter Agent
-												</button>
-											</td>
-											<td>Embakasi</td>
-											<td>KES 12,800</td>
-											<td>KES 35,000</td>
-											<td>
-												<span className={cx(s.badge, s.badgeDanger)}>
-													Critical
-												</span>
-											</td>
-											<td>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm, s.btnDangerGhost)}
-													onClick={() =>
-														swap("agentFloatModal", "agentTopupModal")
-													}
-												>
-													Top-up
-												</button>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<button
-													type="button"
-													className={s.btnLink}
-													onClick={() =>
-														swap("agentFloatModal", "agentDetailModal")
-													}
-												>
-													Grace Kiosk
-												</button>
-											</td>
-											<td>Kayole</td>
-											<td>KES 29,100</td>
-											<td>KES 40,000</td>
-											<td>
-												<span className={cx(s.badge, s.badgeWarn)}>Low</span>
-											</td>
-											<td>
-												<button
-													type="button"
-													className={cx(s.btn, s.btnSm)}
-													onClick={() =>
-														swap("agentFloatModal", "agentTopupModal")
-													}
-												>
-													Top-up
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						),
-					},
-					{
-						key: "rules",
-						label: "Auto Rules",
-						render: () => (
-							<>
-								<SwitchRow label="Auto top-up when below" sub="KES 30,000" />
-								<SwitchRow label="Top-up amount" sub="KES 50,000" />
-								<SwitchRow label="Max daily top-ups per agent" sub="3" />
-							</>
-						),
-					},
-					{
-						key: "history",
-						label: "History",
-						render: () => (
-							<div className={s.tableWrap}>
-								<table className={s.table}>
-									<thead>
-										<tr>
-											<th>Time</th>
-											<th>Agent</th>
-											<th>Amount</th>
-											<th>Method</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>27 Jun 09:10</td>
-											<td>John's M-Pesa</td>
-											<td>KES 50,000</td>
-											<td>Auto</td>
-											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>
-													Success
-												</span>
-											</td>
-										</tr>
-										<tr>
-											<td>26 Jun 18:45</td>
-											<td>Peter Agent</td>
-											<td>KES 35,000</td>
-											<td>Manual</td>
-											<td>
-												<span className={cx(s.badge, s.badgeSuccess)}>
-													Success
-												</span>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						),
-					},
-				]}
-			/>
-
-			{/* ============ M4: Agent Top-up ============ */}
-			<SimpleModal
-				show={isOpen("agentTopupModal")}
-				onClose={() => close("agentTopupModal")}
-				iconCls="bi bi-people"
-				title="Top-up Float"
-				submitLabel="Top-up Float"
-				successMsg="Float topped up successfully! Reference: TP-44293"
-			>
-				<SelectField label="Business Float" options={data.businesses} />
-				<Field label="Amount (KES)" defaultValue="500000" />
-				<SelectField
-					label="Source"
-					options={data.walletsList}
-				/>
-			</SimpleModal>
-
-			{/* ============ M5: Bulk Top-up ============ */}
-			<SimpleModal
-				show={isOpen("bulkTopupModal")}
-				onClose={() => close("bulkTopupModal")}
-				iconCls="bi bi-upload"
-				title="Bulk Float Top-up"
-				size="lg"
-				submitLabel="Execute Bulk Top-up"
-				successMsg="Bulk top-up of 47 agents completed successfully! Reference: BLK-44294"
-			>
-				<div className="mb-3">
-					<label className={s.fieldLabel}>Upload CSV (Agent ID, Amount)</label>
-					<input type="file" className={s.field} />
-				</div>
-				<div className={s.reviewBox} style={{ fontSize: 12 }}>
-					<strong>Preview (first 5 rows):</strong>
-					<br />
-					AG-001,50000
-					<br />
-					AG-007,35000
-					<br />
-					AG-012,50000
-					<br />
-					AG-019,25000
-					<br />
-					AG-023,50000
-				</div>
-				<div className="mt-3">
-					<label className={s.fieldLabel}>
-						Total Agents: 47 | Total Amount: KES 1,875,000
-					</label>
-				</div>
-			</SimpleModal>
-
-			{/* ============ M6: Emergency Liquidity (danger multi-step) ============ */}
-			<DangerFlowModal
-				show={isOpen("emergencyLiquidityModal")}
-				onClose={() => close("emergencyLiquidityModal")}
-			>
-				{(step) => (
-					<>
-						{step === 1 && <FacilityPicker />}
-						{step === 2 && (
-							<>
-								<h6 style={{ fontWeight: 700 }}>
-									Step 2: Amount &amp; Destination
-								</h6>
-								<Field label="Amount (KES)" defaultValue="120000000" />
-								<SelectField
-									label="Destination"
-									options={[
-										"Stanbic Bank Float",
-										"Co-op Bank Float",
-										"Agent Float Pool",
-									]}
-								/>
-								<div className="mb-3">
-									<label className={s.fieldLabel}>Justification</label>
-									<textarea
-										className={s.field}
-										rows={2}
-										defaultValue="Critical shortfall predicted at +36h due to weekend salary run. Immediate action required to prevent agent outages."
-									/>
-								</div>
-							</>
-						)}
-						{step === 3 && (
-							<>
-								<h6 style={{ fontWeight: 700 }}>Step 3: Executive Approval</h6>
-								<div className={cx(s.hintBox, s.hintBoxDanger, "mb-3")}>
-									<i className="bi bi-exclamation-triangle" />
-									<span>
-										<strong>
-											Emergency activation requires CFO + CEO dual approval.
-										</strong>{" "}
-										System will notify both executives immediately.
-									</span>
-								</div>
-								<label className={cx(s.fieldLabel, "d-block text-center")}>
-									Enter Executive PIN
-								</label>
-								<PinRow />
-							</>
-						)}
-					</>
-				)}
-			</DangerFlowModal>
-
 			{/* ============ M7: Forecast (tabbed + apply action) ============ */}
 			<ModalShell
 				show={isOpen("forecastModal")}
@@ -874,7 +282,6 @@ export function LiquidityModals({
 			>
 				<ForecastTabs />
 			</ModalShell>
-
 			{/* ============ M8: Settlement (tabbed) ============ */}
 			<TabbedModal
 				show={isOpen("settlementModal")}
@@ -1012,7 +419,6 @@ export function LiquidityModals({
 					},
 				]}
 			/>
-
 			{/* ============ M9: Reconciliation Investigation ============ */}
 			<SimpleModal
 				show={isOpen("reconciliationModal")}
@@ -1061,7 +467,8 @@ export function LiquidityModals({
 						"Schedule full reconciliation meeting",
 					]}
 				/>
-			</SimpleModal>				{/* ============ M10: Float Rules (editable, per business) ============ */}
+			</SimpleModal>{" "}
+			{/* ============ M10: Float Rules (editable, per business) ============ */}
 			<SimpleModal
 				show={isOpen("thresholdModal")}
 				onClose={() => close("thresholdModal")}
@@ -1069,6 +476,7 @@ export function LiquidityModals({
 				title="Float Rules & Thresholds"
 				submitLabel="Save Rules"
 				successMsg="Float rules updated successfully!"
+				onSubmit={() => notify("Float rules saved for this business.")}
 			>
 				<SelectField label="Business" options={data.businesses} />
 				<Field label="Minimum Float (KES)" defaultValue="500000" />
@@ -1118,7 +526,6 @@ export function LiquidityModals({
 					</label>
 				</div>
 			</SimpleModal>
-
 			{/* ============ M11: Scenario Planning ============ */}
 			<SimpleModal
 				show={isOpen("scenarioModal")}
@@ -1127,15 +534,16 @@ export function LiquidityModals({
 				title="Scenario Planning"
 				size="lg"
 				submitLabel="Save Scenario"
-				successMsg="Scenario plan saved and added to calendar."
+				successMsg="Scenario plan saved and added to your rebalance calendar."
+				onSubmit={() => notify("Scenario plan saved.")}
 			>
 				<SelectField
 					label="Scenario"
 					options={[
-						"Weekend salary run (+40% volume)",
-						"Partner outage (Safaricom)",
+						"Land Buyers weekly batch due Fri",
+						"Company 2 weekend surge",
+						"M-Pesa payout rail delay",
 						"Bank holiday (all banks closed)",
-						"Black Friday surge (+80% volume)",
 					]}
 				/>
 				<div className={cx(s.tile, s.tileInfo, "mb-3")}>
@@ -1145,21 +553,20 @@ export function LiquidityModals({
 						Impact Analysis
 					</div>
 					<div style={{ fontSize: 12 }}>
-						Float requirement increases to KES 2.45B. Recommended buffer: KES
-						450M.
+						Land Buyers LTD float requirement rises to KES 3.2M for this
+						scenario. Recommended pre-emptive top-up: KES 400K.
 					</div>
 				</div>
 				<SelectField
 					label="Pre-emptive Action"
 					options={[
-						"Increase all bank float by 25%",
-						"Activate emergency line",
-						"Notify all agents of possible delays",
-						"Schedule manual rebalancing",
+						"Top-up Land Buyers LTD float by KES 400K",
+						"Top-up Company 2 float by KES 200K",
+						"Tighten auto-rebalance trigger to daily 06:00",
+						"No action — monitor only",
 					]}
 				/>
 			</SimpleModal>
-
 			{/* ============ M12: Governance (tabbed) ============ */}
 			<ModalShell
 				show={isOpen("governanceModal")}
@@ -1200,13 +607,14 @@ export function LiquidityModals({
 							<div className={s.permTitle}>{sc.scope}</div>
 							<div className={s.permSub}>{sc.desc}</div>
 						</div>
-						<span className={cx(s.badge, sc.granted ? s.badgeSuccess : s.badgeWarn)}>
+						<span
+							className={cx(s.badge, sc.granted ? s.badgeSuccess : s.badgeWarn)}
+						>
 							{sc.granted ? "Granted" : "Pending"}
 						</span>
 					</div>
 				))}
 			</ModalShell>
-
 			{/* ============ M13: Liquidity Health ============ */}
 			<ModalShell
 				show={isOpen("liquidityHealthModal")}
@@ -1271,32 +679,32 @@ export function LiquidityModals({
 						</thead>
 						<tbody>
 							<tr>
-								<td>Stanbic Bank</td>
-								<td>KES 12.4M</td>
+								<td>Land Buyers LTD Float</td>
+								<td>KES 8.40M</td>
 								<td>
 									<span className={cx(s.badge, s.badgeDanger)}>Critical</span>
 								</td>
-								<td>High</td>
+								<td>High — Friday batch due</td>
 							</tr>
 							<tr>
-								<td>Co-op Bank</td>
-								<td>KES 41.2M</td>
+								<td>Company 2 Float</td>
+								<td>KES 2.10M</td>
 								<td>
 									<span className={cx(s.badge, s.badgeWarn)}>Warning</span>
 								</td>
-								<td>Medium</td>
+								<td>Medium — weekend surge</td>
 							</tr>
 							<tr>
-								<td>Agent Pool</td>
-								<td>KES 119.3M</td>
+								<td>M-Pesa payout rail</td>
+								<td>KES 5.20M consumed</td>
 								<td>
 									<span className={cx(s.badge, s.badgeWarn)}>Warning</span>
 								</td>
-								<td>Medium</td>
+								<td>Medium — payout delay risk</td>
 							</tr>
 							<tr>
-								<td>KCB Bank</td>
-								<td>KES 142.8M</td>
+								<td>Bank transfer rail</td>
+								<td>KES 3.60M consumed</td>
 								<td>
 									<span className={cx(s.badge, s.badgeSuccess)}>Healthy</span>
 								</td>
@@ -1306,7 +714,6 @@ export function LiquidityModals({
 					</table>
 				</div>
 			</ModalShell>
-
 			{/* ============ M14: Float Alerts (notification list) ============ */}
 			<ModalShell
 				show={isOpen("floatAlertModal")}
@@ -1335,23 +742,30 @@ export function LiquidityModals({
 				<div style={{ maxHeight: 500, overflowY: "auto" }}>
 					<div className={cx(s.tile, s.tileDanger, "mb-2")}>
 						<strong>Company 2 float below minimum</strong>
-						<div className={s.tileSub}>KES 640K / KES 500K min • auto-settle at risk</div>
+						<div className={s.tileSub}>
+							KES 640K / KES 500K min • auto-settle at risk
+						</div>
 					</div>
 					<div className={cx(s.tile, s.tileWarn, "mb-2")}>
 						<strong>Land Buyers weekly payout due Friday</strong>
-						<div className={s.tileSub}>Projected draw KES 2.8M • float short by KES 2.8M</div>
+						<div className={s.tileSub}>
+							Projected draw KES 2.8M • float short by KES 2.8M
+						</div>
 					</div>
 					<div className={cx(s.tile, s.tileInfo, "mb-2")}>
 						<strong>Auto-refill rule paused</strong>
-						<div className={s.tileSub}>Land Buyers • manual top-up required</div>
+						<div className={s.tileSub}>
+							Land Buyers • manual top-up required
+						</div>
 					</div>
 					<div className={cx(s.tile, "mb-2")}>
 						<strong>Float movement RB-9919 unmatched</strong>
-						<div className={s.rowSub}>KES 2.25M payout awaiting reconciliation</div>
+						<div className={s.rowSub}>
+							KES 2.25M payout awaiting reconciliation
+						</div>
 					</div>
 				</div>
 			</ModalShell>
-
 			{/* ============ M15: Internal Transfer ============ */}
 			<SimpleModal
 				show={isOpen("internalTransferModal")}
@@ -1360,6 +774,7 @@ export function LiquidityModals({
 				title="Wallet Transfer"
 				submitLabel="Execute Transfer"
 				successMsg="Wallet transfer completed successfully! Reference: TN-9924"
+				onSubmit={() => notify("Wallet transfer completed. Reference TN-9924.")}
 			>
 				<SelectField label="From Wallet" options={data.walletsList} />
 				<SelectField label="To Wallet" options={data.walletsList} />
@@ -1373,21 +788,6 @@ export function LiquidityModals({
 					]}
 				/>
 			</SimpleModal>
-
-			{/* ============ M16: Partner Top-up ============ */}
-			<SimpleModal
-				show={isOpen("partnerTopupModal")}
-				onClose={() => close("partnerTopupModal")}
-				iconCls="bi bi-building"
-				title="Float Top-up"
-				submitLabel="Top-up Float"
-				successMsg="Float topped up successfully! Reference: TP-44296"
-			>
-				<SelectField label="Business Float" options={data.businesses} />
-				<Field label="Amount (KES)" defaultValue="500000" />
-				<SelectField label="Source" options={data.walletsList} />
-			</SimpleModal>
-
 			{/* ============ M17: Liquidity Report ============ */}
 			<SimpleModal
 				show={isOpen("liquidityReportModal")}
@@ -1396,6 +796,7 @@ export function LiquidityModals({
 				title="Export Liquidity Report"
 				submitLabel="Generate Report"
 				successMsg="Report generated and downloading…"
+				onSubmit={() => notify("Liquidity report generated.")}
 			>
 				<SelectField
 					label="Report Type"
@@ -1419,7 +820,6 @@ export function LiquidityModals({
 				</div>
 				<SelectField label="Format" options={["PDF", "Excel", "CSV"]} />
 			</SimpleModal>
-
 			{/* ============ M18: All Attention Items ============ */}
 			<ModalShell
 				show={isOpen("attentionModal")}
@@ -1451,7 +851,9 @@ export function LiquidityModals({
 				</div>
 				<div className={s.rowItem}>
 					<div style={{ minWidth: 0 }}>
-						<div className={s.rowTitle}>Land Buyers payout batch due Friday</div>
+						<div className={s.rowTitle}>
+							Land Buyers payout batch due Friday
+						</div>
 						<div className={s.rowSub}>Projected draw KES 2.8M</div>
 					</div>
 					<button
@@ -1489,86 +891,6 @@ export function LiquidityModals({
 					</button>
 				</div>
 			</ModalShell>
-
-			{/* ============ M19: Profile ============ */}
-			<ModalShell
-				show={isOpen("profileModal")}
-				onClose={() => close("profileModal")}
-				iconCls="bi bi-person-circle"
-				title="Profile"
-				footer={
-					<button
-						type="button"
-						className={cx(s.btn, s.btnSecondary)}
-						onClick={() => close("profileModal")}
-					>
-						Close
-					</button>
-				}
-			>
-				<div className="text-center">
-					<div className={cx(s.avatar, s.avatarLg)}>JK</div>
-					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
-					<p style={{ fontSize: 13, color: "var(--ink-500)" }}>
-						james.kamau@email.com · +254 712 345 890
-					</p>
-					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-						<div className="col-6">
-							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
-									Float Managed
-								</span>
-								<br />
-								<strong>KES 1.84B</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
-									Health Score
-								</span>
-								<br />
-								<strong style={{ color: "var(--pri)" }}>87/100</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
-									Alerts Today
-								</span>
-								<br />
-								<strong>14</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={s.softBox}>
-								<span style={{ fontSize: 12, color: "var(--ink-500)" }}>
-									Rebalances
-								</span>
-								<br />
-								<strong>23 this week</strong>
-							</div>
-						</div>
-					</div>
-				</div>
-			</ModalShell>
-
-			{/* ============ M20: Quick Agent Top-up ============ */}
-			<SimpleModal
-				show={isOpen("agentTopupQuickModal")}
-				onClose={() => close("agentTopupQuickModal")}
-				iconCls="bi bi-people"
-				title="Quick Agent Top-up"
-				submitLabel="Top-up"
-				successMsg="Agent topped up successfully! Reference: AG-44297"
-			>
-				<SelectField
-					label="Agent"
-					options={["John's M-Pesa (KES 18,400)", "Peter Agent (KES 12,800)"]}
-				/>
-				<Field label="Amount (KES)" defaultValue="50000" />
-			</SimpleModal>
-
 			{/* ============ M21: Forecast Apply ============ */}
 			<SimpleModal
 				show={isOpen("forecastApplyModal")}
@@ -1577,6 +899,7 @@ export function LiquidityModals({
 				title="Apply Forecast Recommendations"
 				submitLabel="Apply All"
 				successMsg="Recommendations applied to your task list!"
+				onSubmit={() => notify("Forecast recommendations applied.")}
 			>
 				<div className={cx(s.tile, s.tileInfo, "mb-3")}>
 					<div
@@ -1591,7 +914,6 @@ export function LiquidityModals({
 					</ul>
 				</div>
 			</SimpleModal>
-
 			{/* ============ M22: Settlement Detail ============ */}
 			<ModalShell
 				show={isOpen("settlementDetailModal")}
@@ -1628,87 +950,6 @@ export function LiquidityModals({
 						<span style={{ color: "var(--ink-500)" }}>Variance</span>
 						<strong style={{ color: "var(--danger)" }}>KES 1,820,000</strong>
 					</div>
-				</div>
-			</ModalShell>
-
-			{/* ============ M23: Quick Rebalance ============ */}
-			<SimpleModal
-				show={isOpen("quickRebalanceModal")}
-				onClose={() => close("quickRebalanceModal")}
-				iconCls="bi bi-arrow-left-right"
-				title="Quick Rebalance"
-				submitLabel="Execute"
-				successMsg="Quick rebalance completed! Reference: QR-44298"
-			>
-				<SelectField label="From" options={["PayMo Main Pool", "KCB Bank"]} />
-				<SelectField label="To" options={["Stanbic Bank", "Co-op Bank"]} />
-				<Field label="Amount (KES)" defaultValue="25000000" />
-			</SimpleModal>
-
-			{/* ============ M24: Agent Detail ============ */}
-			<ModalShell
-				show={isOpen("agentDetailModal")}
-				onClose={() => close("agentDetailModal")}
-				iconCls="bi bi-person-badge"
-				title="Agent Detail"
-				footer={
-					<>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSecondary)}
-							onClick={() => close("agentDetailModal")}
-						>
-							Close
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnPrimary)}
-							onClick={() => swap("agentDetailModal", "agentTopupModal")}
-						>
-							Top-up Now
-						</button>
-					</>
-				}
-			>
-				<div className={s.reviewBox}>
-					<ReviewRow label="Agent" value="John's M-Pesa" />
-					<ReviewRow label="Location" value="Kawangware" />
-					<ReviewRow label="Current Float" value="KES 18,400" />
-					<ReviewRow label="Minimum" value="KES 50,000" />
-					<ReviewRow label="Last Top-up" value="26 Jun 2025" />
-				</div>
-			</ModalShell>
-
-			{/* ============ M25: Internal Pool Detail ============ */}
-			<ModalShell
-				show={isOpen("internalPoolModal")}
-				onClose={() => close("internalPoolModal")}
-				iconCls="bi bi-droplet"
-				title="Internal Pool Detail"
-				footer={
-					<>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnSecondary)}
-							onClick={() => close("internalPoolModal")}
-						>
-							Close
-						</button>
-						<button
-							type="button"
-							className={cx(s.btn, s.btnPrimary)}
-							onClick={() => swap("internalPoolModal", "internalTransferModal")}
-						>
-							Transfer
-						</button>
-					</>
-				}
-			>
-				<div className={s.reviewBox}>
-					<ReviewRow label="Pool" value="PayMo Main Pool" />
-					<ReviewRow label="Current Balance" value="KES 284,600,000" />
-					<ReviewRow label="Reserved" value="KES 45,000,000" />
-					<ReviewRow label="Available" value="KES 239,600,000" />
 				</div>
 			</ModalShell>
 		</>
