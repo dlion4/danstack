@@ -7,7 +7,7 @@
  * ========================================================================== */
 
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import styles from "../styles/systemHealth.module.css";
 
@@ -454,33 +454,6 @@ function IncidentQueueModal() {
 
 /* M3: Run Health Check */
 function RunHealthCheckModalContent() {
-	const [loading, setLoading] = useState(false);
-	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(null);
-
-	const handleStart = () => {
-		setLoading(true);
-		setTimeout(() => {
-			setLoading(false);
-			setReceipt({
-				message: "Health check started. Results will appear in the Operations Log within 3 minutes.",
-				reference: "HC-20250627-9914",
-			});
-		}, 1500);
-	};
-
-	if (loading) {
-		return (
-			<div className={s.loadingOv}>
-				<div className={s.spinner} />
-				<p className={s.loadingLabel}>Processing...</p>
-			</div>
-		);
-	}
-
-	if (receipt) {
-		return <Receipt message={receipt.message} reference={receipt.reference} />;
-	}
-
 	return (
 		<>
 			<div className="mb-3">
@@ -707,46 +680,6 @@ function SettlementDetailModalContent() {
 	);
 }
 
-function SettlementDetailModal() {
-	const flow = useFlow(4, ["Overview", "Reconciliation", "Resolution", "Done"]);
-	useEffect(() => {
-		flow.reset();
-		const t = setTimeout(() => flow.next("settle"), 0);
-		return () => clearTimeout(t);
-	}, []);
-
-	return (
-		<>
-			<div className={s.stepper}>{flow.renderStepper()}</div>
-			<SettlementDetailModalContent />
-			<div id="settleS4" className={s.fstepActive} style={{ display: "none" }}>
-				{flow.loading ? (
-					<div className={s.loadingOv}>
-						<div className={s.spinner} />
-						<p className={s.loadingLabel}>Processing...</p>
-					</div>
-				) : flow.receipt ? (
-					<Receipt
-						message={flow.receipt.message}
-						reference={flow.receipt.reference}
-					/>
-				) : (
-					<div className={s.receipt}>
-						<div className={s.ri}>
-							<i className="bi bi-check-lg" />
-						</div>
-						<h5 className={s.receiptTitle}>Resolution Logged</h5>
-						<p className={s.receiptSub}>
-							Manual push request sent to Stanbic. ETA updated to +4h. Ticket
-							INC-88219 updated.
-						</p>
-					</div>
-				)}
-			</div>
-		</>
-	);
-}
-
 function SettlementDetailModalWrapper() {
 	const flow = useFlow(4, ["Overview", "Reconciliation", "Resolution", "Done"]);
 	useEffect(() => {
@@ -816,7 +749,7 @@ function SettlementDetailModalWrapper() {
 }
 
 /* M5: Fraud Model Console */
-function FraudModelModal({ onApply }: { onApply: () => void }) {
+function FraudModelModal() {
 	const [tab, setTab] = useState("rules");
 	const [loading, setLoading] = useState(false);
 	const [receipt, setReceipt] = useState<{ message: string; reference?: string } | null>(null);
@@ -1332,45 +1265,6 @@ function IncidentDetailModalContent() {
 	);
 }
 
-function IncidentDetailModal() {
-	const flow = useFlow(4, ["Summary", "Timeline", "Resolution", "Done"]);
-	useEffect(() => {
-		flow.reset();
-		const t = setTimeout(() => flow.next("inc"), 0);
-		return () => clearTimeout(t);
-	}, []);
-
-	return (
-		<>
-			<div className={s.stepper}>{flow.renderStepper()}</div>
-			<IncidentDetailModalContent />
-			<div id="incS4" className={s.fstepActive} style={{ display: "none" }}>
-				{flow.loading ? (
-					<div className={s.loadingOv}>
-						<div className={s.spinner} />
-						<p className={s.loadingLabel}>Processing...</p>
-					</div>
-				) : flow.receipt ? (
-					<Receipt
-						message={flow.receipt.message}
-						reference={flow.receipt.reference}
-					/>
-				) : (
-					<div className={s.receipt}>
-						<div className={s.ri}>
-							<i className="bi bi-check-lg" />
-						</div>
-						<h5 className={s.receiptTitle}>Incident Closed</h5>
-						<p className={s.receiptSub}>
-							INC-88219 marked as resolved. Post-mortem scheduled for 30 Jun 2025.
-						</p>
-					</div>
-				)}
-			</div>
-		</>
-	);
-}
-
 function IncidentDetailModalWrapper() {
 	const flow = useFlow(4, ["Summary", "Timeline", "Resolution", "Done"]);
 	useEffect(() => {
@@ -1631,7 +1525,6 @@ function PartnerApiDetailModal() {
 }
 
 function PartnerApiDetailModalWrapper() {
-	const [tab, setTab] = useState("health");
 	const { loading, receipt, execute } = useActionModal();
 
 	if (loading) {
@@ -2679,7 +2572,7 @@ export default function OpsSystemModals({
 				title="Fraud Detection Model Console"
 				icon="bi-shield-exclamation"
 			>
-				<FraudModelModal onApply={() => {}} />
+				<FraudModelModal />
 			</Modal>
 
 			<Modal

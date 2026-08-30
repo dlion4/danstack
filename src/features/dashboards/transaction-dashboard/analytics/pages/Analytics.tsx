@@ -7,8 +7,16 @@ import AnalyticsModals from "../components/AnalyticsModals";
 import styles from "../styles/analytics.module.css";
 
 /* ============================================================================
-   PayMo BaaS — Transaction Analytics & Reporting (legacy page 1.8)
+   PayMo BaaS — Transaction Analytics & Reporting
    React + TypeScript + TanStack Query, emerald-glass dashboard theme.
+
+   Refined surface: rebuilt on the PayMo business-dashboard composition —
+   executive hero, numbered sections (pulse → attention → volume & merchant →
+   trends → failure analysis → merchant & category → report builder → export),
+   KPI pulse, action centre, quick actions, chart/heatmap panels, table cards,
+   floating command bar and footer. Shell chrome is owned by AppShell; this
+   page renders content only. All 12 modals remain reachable from the page
+   (notifModal/profileModal re-wired from the hero snapshot).
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -24,26 +32,8 @@ interface SrRow {
 }
 
 interface AnalyticsConfig {
-	nav: {
-		icon: string;
-		to: string;
-		label: string;
-		active?: boolean;
-		dot?: boolean;
-	}[];
-	headerTitle: string;
-	headerSub: string;
-	searchPlaceholder: string;
-	user: {
-		initials: string;
-		name: string;
-		role: string;
-		headerInitials: string;
-	};
-	pageCode: string;
 	pageTitle: string;
 	pageSub: string;
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
 	hero: {
 		live: string;
 		value: string;
@@ -119,19 +109,9 @@ interface AnalyticsConfig {
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: AnalyticsConfig = {
-
-
-	pageCode: "",
-	// // pageTitle: "Transaction Analytics & Reporting",
-	// pageSub:
-	// 	"Deep-dive analytics on volumes, success rates, failure patterns, merchant insights, custom report builder and automated delivery.",
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "Transactions", to: "/settlement" },
-		],
-		current: "Analytics & Reporting",
-	},
+	pageTitle: "Transaction Analytics & Reporting",
+	pageSub:
+		"Deep-dive analytics on volumes, success rates, failure patterns, merchant insights, custom report builder and automated delivery.",
 	hero: {
 		live: "Analytics engine live",
 		value: "KES 2.84B analyzed",
@@ -551,8 +531,93 @@ function downloadFile(name: string, content: string, type = "text/plain") {
 	URL.revokeObjectURL(a.href);
 }
 
+/* ---------- section heading (business numbered pattern) ---------- */
+function SectionHeading({
+	id,
+	index,
+	title,
+	description,
+	action,
+}: {
+	id: string;
+	index: string;
+	title: string;
+	description: string;
+	action?: React.ReactNode;
+}) {
+	return (
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
+			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
+		</div>
+	);
+}
+
+/* ---------- utility box (subtle panel inside cards) ---------- */
+function Ub({
+	title,
+	children,
+	action,
+}: {
+	title: string;
+	children: React.ReactNode;
+	action?: React.ReactNode;
+}) {
+	return (
+		<div className={styles.ub}>
+			<div
+				className="d-flex justify-content-between align-items-center flex-wrap"
+				style={{ gap: 8 }}
+			>
+				<h4 className={styles.ubTitle} style={{ margin: 0 }}>
+					{title}
+				</h4>
+				{action}
+			</div>
+			<div style={{ marginTop: 12 }}>{children}</div>
+		</div>
+	);
+}
+
+/* ---------- KPI visual metadata (keyed by stat key) ---------- */
+const STAT_META: Record<
+	string,
+	{
+		icon: string;
+		bg: string;
+		color: string;
+		accent?: "kpiFeatured" | "kpiDanger";
+	}
+> = {
+	success: {
+		icon: "bi-check2-circle",
+		bg: "var(--pm-green-soft)",
+		color: "#067647",
+		accent: "kpiFeatured",
+	},
+	avg: {
+		icon: "bi-arrow-left-right",
+		bg: "var(--pm-info-soft)",
+		color: "#175cd3",
+	},
+	failed: {
+		icon: "bi-x-octagon",
+		bg: "var(--pm-danger-soft)",
+		color: "#b42318",
+		accent: "kpiDanger",
+	},
+};
+
 export default function Analytics() {
-	const { data } = useQuery({
+	const { data, isFetching, error } = useQuery({
 		queryKey: ["paymo-analytics"],
 		queryFn: fetchAnalytics,
 		retry: 1,
@@ -561,6 +626,23 @@ export default function Analytics() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+
+	/* Modal hygiene: scroll lock, Escape to close, focus returns to trigger. */
+	useEffect(() => {
+		if (!activeModal) return;
+		const trigger = document.activeElement as HTMLElement | null;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setActiveModal(null);
+		};
+		window.addEventListener("keydown", closeOnEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", closeOnEscape);
+			trigger?.focus();
+		};
+	}, [activeModal]);
 
 	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
 	const openM = (id: string) => setActiveModal(id);
@@ -586,313 +668,261 @@ export default function Analytics() {
 	return (
 		<div className={styles.analyticsPage}>
 			{notice && (
-				<div
-					className="alert alert-dismissible"
-					role="alert"
-					style={{
-						position: "fixed",
-						top: "1rem",
-						left: "50%",
-						transform: "translateX(-50%)",
-						zIndex: 2200,
-						width: "min(560px, calc(100vw - 2rem))",
-						background: "rgba(4, 40, 24, 0.95)",
-						border: "1px solid rgba(46, 230, 160, 0.4)",
-						color: "#bdf5d8",
-						borderRadius: 14,
-						backdropFilter: "blur(8px)",
-					}}
-				>
-					<i className="bi bi-check-circle me-2" />
+				<output className={styles.pageNotice}>
+					<i className="bi bi-check-circle" />
 					{notice}
 					<button
 						type="button"
 						className="btn-close"
-						aria-label="Close"
+						aria-label="Dismiss"
 						onClick={() => setNotice(null)}
 					/>
-				</div>
+				</output>
 			)}
-
-
-			{/* ======================= SIDEBAR ======================= */}
-			{/* <aside className={styles.sidebar}>
-				<div className={styles.sidebarLogo}>P</div>
-				<nav className={styles.sidebarNav}>
-					{config.nav.map((item) => (
-						<Link
-							key={item.label}
-							to={item.to}
-							className={`${styles.navItem} ${item.active ? styles.navItemActive : ""}`}
-							title={item.label}
-							aria-label={item.label}
-						>
-							<i className={`bi ${item.icon}`} />
-							{item.dot && <span className={styles.badgeDot} />}
-						</Link>
-					))}
-				</nav>
-				<Link
-					to="/support"
-					className={styles.navItem}
-					style={{ marginTop: "auto" }}
-					title="Help & Support"
-					aria-label="Help & Support"
-				>
-					<i className="bi bi-question-circle" />
-				</Link>
-			</aside> */}
-
-			<div className={styles.main}>
-				{/* ======================= HEADER ======================= */}
-				{/* <header className={styles.header}>
-					<div className={styles.headerTitle} style={{ flexShrink: 0 }}>
-						<div className="d-flex align-items-center gap-2">
-							<div
-								className={styles.avatar}
-								style={{ width: 36, height: 36, fontSize: 13 }}
-							>
-								{config.user.headerInitials}
-							</div>
-							<div>
-								<h1>{config.headerTitle}</h1>
-								<p>{config.headerSub}</p>
-							</div>
-						</div>
-					</div>
-					<div className={styles.headerSearch}>
-						<i className="bi bi-search" />
-						<input
-							type="text"
-							placeholder={config.searchPlaceholder}
-							aria-label="Search analytics"
-						/>
-					</div>
-					<div className={styles.headerActions}>
-						<button
-							className={styles.headerBtn}
-							onClick={() => openM("healthCheckModal")}
-							title="Health check"
-							aria-label="Health check"
-						>
-							<i className="bi bi-heart-pulse" />
-						</button>
-						<button
-							className={styles.headerBtn}
-							onClick={() => openM("scheduledReportsModal")}
-							title="Scheduled reports"
-							aria-label="Scheduled reports"
-						>
-							<i className="bi bi-calendar-event" />
-							<span className={styles.counter}>4</span>
-						</button>
-						<button
-							className={styles.headerBtn}
-							onClick={() => openM("notifModal")}
-							title="Notifications"
-							aria-label="Notifications"
-						>
-							<i className="bi bi-bell" />
-							<span className={styles.counter}>9</span>
-						</button>
-						<button
-							className={styles.profileBtn}
-							onClick={() => openM("profileModal")}
-						>
-							<div className={styles.avatar}>{config.user.initials}</div>
-							<div className={styles.profileMeta}>
-								<div className={styles.profileName}>{config.user.name}</div>
-								<div className={styles.profileRole}>{config.user.role}</div>
-							</div>
-						</button>
-					</div>
-				</header> */}
-
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
-						</div>
-						<h2 className={styles.pageH2}>
-							{config.pageTitle}
-						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p>
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("healthCheckModal")}
-						>
-							<i className="bi bi-heart-pulse" /> Health Check
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("scheduledReportsModal")}
-						>
-							<i className="bi bi-calendar-event" /> Scheduled
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("reportBuilderModal")}
-						>
-							<i className="bi bi-plus-lg" /> New Report
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => openM("exportModal")}
-						>
-							<i className="bi bi-download" /> Export
-						</button>
-					</div>
-				</div>
-
+			<main className={styles.main}>
 				<div className={styles.content}>
-					{/* ======================= HERO ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 170 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff" }}
-								>
-									{config.hero.value}
+					{/* ======================= EXECUTIVE HERO ======================= */}
+					<section
+						className={styles.heroBanner}
+						aria-labelledby="analytics-page-title"
+					>
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-graph-up" /> Transaction analytics
+									</span>
+									<span className={styles.heroLive}>
+										<span className={styles.dotLive} /> {config.hero.live}
+										{isFetching ? (
+											<small className={styles.heroRefreshing}>
+												Refreshing…
+											</small>
+										) : null}
+									</span>
 								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.actions.map((a) => (
+								<h1 id="analytics-page-title">{config.pageTitle}</h1>
+								<p>{config.pageSub}</p>
+								<div className={styles.heroActions}>
+									{config.hero.actions.map((a, i) => (
 										<button
+											type="button"
 											key={a.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+											className={
+												i === 0
+													? styles.heroPrimaryBtn
+													: styles.heroSecondaryBtn
+											}
 											onClick={() => openM(a.modal)}
 										>
+											<i
+												className={`bi ${
+													i === 0
+														? "bi-file-earmark-plus"
+														: i === 1
+															? "bi-calendar-event"
+															: "bi-download"
+												}`}
+											/>{" "}
 											{a.label}
 										</button>
 									))}
 								</div>
 							</div>
-						</div>
-						{config.statCards.map((card) => (
-							<div
-								className={`${card.key === "success" ? "col-lg-2" : "col-lg-3"} col-md-4 col-6`}
-								key={card.key}
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="Analytics command center snapshot"
 							>
-								<div
-									className={`${styles.card} ${card.bordered ? styles.attentionCard : ""}`}
-									style={{ minHeight: 170 }}
-								>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div className={styles.sv} style={{ margin: "6px 0" }}>
-										{card.value}
-									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-									{card.progress && (
-										<div className={`${styles.pmProgress} mt-2`}>
-											<div
-												className={styles.pmProgressBar}
-												style={{
-													width: card.progress.width,
-													background: card.progress.color,
-												}}
-											/>
-										</div>
-									)}
-									{card.note && (
-										<div
-											className="mt-2"
-											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
+								<div className={styles.heroSnapshotTop}>
+									<span>Live snapshot</span>
+									<div className={styles.heroSnapshotActions}>
+										<button
+											type="button"
+											className={styles.heroIconBtn}
+											onClick={() => openM("notifModal")}
+											aria-label="Notifications"
+											title="Notifications"
 										>
-											{card.note.map((n) => (
-												<div key={n}>{n}</div>
-											))}
-										</div>
-									)}
-								</div>
-							</div>
-						))}
-					</div>
-
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ======================= */}
-					<div className="row g-3">
-						{[
-							{
-								title: "Attention Required",
-								rows: config.attention,
-								tail: { label: "View all", modal: "attentionModal" },
-							},
-							{
-								title: "Smart Suggestions",
-								rows: config.suggestions,
-								ai: true,
-							},
-						].map((block) => (
-							<div className="col-lg-4" key={block.title}>
-								<div className={`${styles.card} h-100`}>
-									<div className="d-flex justify-content-between align-items-center mb-2">
-										<h3 className={styles.st}>{block.title}</h3>
-										{block.tail ? (
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM(block.tail!.modal)}
-											>
-												{block.tail!.label}
-											</button>
-										) : (
-											<span className={`${styles.badge} ${styles.badgeP}`}>
-												<i className="bi bi-stars" /> AI
-											</span>
-										)}
+											<i className="bi bi-bell" />
+										</button>
+										<button
+											type="button"
+											className={styles.heroAvatar}
+											onClick={() => openM("profileModal")}
+											aria-label="Profile"
+											title="Profile"
+										>
+											AD
+										</button>
 									</div>
-									{block.rows.map((item) => (
-										<div className={styles.sr} key={item.title}>
-											<div className="d-flex align-items-center gap-3">
-												<div
+								</div>
+								<strong>{config.hero.value}</strong>
+								<p>{config.hero.detail}</p>
+								<div className={styles.heroMetricRow}>
+									{config.trendSummary.map((t) => (
+										<div key={t.label}>
+											<strong>{t.value}</strong>
+											<span>{t.label}</span>
+										</div>
+									))}
+								</div>
+							</aside>
+						</div>
+					</section>
+
+					{error ? (
+						<output className={styles.statusNotice}>
+							<i className="bi bi-cloud-slash" />
+							<span>
+								<strong>Live analytics data is temporarily unavailable</strong>
+								<small>Using the latest local operating snapshot.</small>
+							</span>
+						</output>
+					) : null}
+
+					{/* ======================= 1.1 ANALYTICS PULSE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-pulse-heading"
+					>
+						<SectionHeading
+							id="analytics-pulse-heading"
+							index="1.1"
+							title="Analytics pulse"
+							description="A concise view of success rates, average values and failure pressure across the month."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("healthCheckModal")}
+									>
+										<i className="bi bi-heart-pulse" /> Health check
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("reportBuilderModal")}
+									>
+										<i className="bi bi-file-earmark-plus" /> New report
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.kpiGrid}>
+							{config.statCards.map((card) => {
+								const meta = STAT_META[card.key] ?? {
+									icon: "bi-bar-chart",
+									bg: "var(--pm-surface-2)",
+									color: "#475467",
+								};
+								return (
+									<article
+										key={card.key}
+										className={`${styles.card} ${styles.kpiCard} ${meta.accent ? styles[meta.accent] : ""}`}
+									>
+										<div
+											className={styles.kpiIcon}
+											style={{ background: meta.bg, color: meta.color }}
+										>
+											<i className={`bi ${meta.icon}`} />
+										</div>
+										<div className={styles.kpiMeta}>
+											<span>{card.label}</span>
+											<small>Live</small>
+										</div>
+										<strong className={styles.kpiValue}>{card.value}</strong>
+										<div className={styles.kpiFoot}>
+											<span
+												className={`${styles.badge} ${styles[card.badge.tone]}`}
+											>
+												<i className={`bi ${card.badge.icon}`} />{" "}
+												{card.badge.text}
+											</span>
+											{card.progress ? (
+												<span
+													className={styles.pmProgress}
+													style={{ width: 110 }}
+												>
+													<span
+														className={styles.pmProgressBar}
+														style={{
+															display: "block",
+															width: card.progress.width,
+															background: card.progress.color,
+														}}
+													/>
+												</span>
+											) : null}
+										</div>
+										{card.note && (
+											<div className={styles.kpiLines}>
+												{card.note.map((n) => (
+													<div key={n} className={styles.kpiLine}>
+														<span>{n}</span>
+													</div>
+												))}
+											</div>
+										)}
+									</article>
+								);
+							})}
+						</div>
+					</section>
+
+					{/* ======================= 1.2 NEEDS YOUR ATTENTION ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-attention-heading"
+					>
+						<SectionHeading
+							id="analytics-attention-heading"
+							index="1.2"
+							title="Needs your attention"
+							description="Resolve reporting anomalies and act on smart analytics recommendations without leaving the dashboard."
+							action={
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openM("attentionModal")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
+							}
+						/>
+						<div className={styles.attentionGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Action center</span>
+										<h3>Attention required</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeD}`}>
+										{config.attention.length} open
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.attention.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
 													className={styles.iconCircle}
 													style={{
 														background: item.iconBg,
 														color: item.iconColor,
-														fontSize: 14,
 													}}
 												>
 													<i className={`bi ${item.icon}`} />
-												</div>
+												</span>
 												<div>
-													<div className={styles.fwBold13}>{item.title}</div>
-													<div className={styles.mutedSmall}>{item.sub}</div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
 												</div>
 											</div>
 											<button
+												type="button"
 												className={`${styles.btnPm} ${styles.btnSm}`}
 												onClick={() => openM(item.modal)}
 											>
@@ -901,85 +931,119 @@ export default function Analytics() {
 										</div>
 									))}
 								</div>
-							</div>
-						))}
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent analytics workflows</p>
+							</article>
+
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Smart guidance</span>
+										<h3>Smart suggestions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" /> AI
+									</span>
 								</div>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											className={styles.quickBtn}
-											key={qa.label}
-											onClick={() => openM(qa.modal)}
-										>
-											<i
-												className={`bi ${qa.icon} me-1`}
-												style={{ color: qa.color }}
-											/>{" "}
-											{qa.label}
-										</button>
+								<div className={styles.listBody}>
+									{config.suggestions.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
 									))}
 								</div>
-							</div>
+							</article>
 						</div>
-					</div>
 
-					{/* ======================= 1.8.1 OVERVIEW ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-speedometer2"
-										style={{ color: "var(--pm-primary-light)" }}
-									/>{" "}
-									Analytics Overview Dashboard
-								</h3>
-								<p className={styles.ss}>
-									Real-time KPIs, volume trends, success rates and top merchants
-									at a glance.
-								</p>
+						<article className={`${styles.card} ${styles.quickActionCard}`}>
+							<div className={styles.quickActionIntro}>
+								<span className={styles.cardKicker}>Shortcuts</span>
+								<h3>Start a workflow</h3>
+								<p>Frequent analytics tasks, one click away.</p>
 							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => openM("healthCheckModal")}
-								>
-									<i className="bi bi-heart-pulse" /> Health
-								</button>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
-									onClick={() => openM("reportBuilderModal")}
-								>
-									<i className="bi bi-plus-lg" /> Custom Report
-								</button>
+							<div className={styles.quickGrid}>
+								{config.quickActions.map((action) => (
+									<button
+										type="button"
+										key={action.label}
+										className={styles.quickBtn}
+										onClick={() => openM(action.modal)}
+									>
+										<span style={{ color: action.color }}>
+											<i className={`bi ${action.icon}`} />
+										</span>
+										{action.label}
+										<i className="bi bi-arrow-right" />
+									</button>
+								))}
 							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										30-Day Transaction Volume Trend
-									</h4>
+						</article>
+					</section>
+
+					{/* ======================= 1.3 VOLUME & MERCHANT OVERVIEW ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-overview-heading"
+					>
+						<SectionHeading
+							id="analytics-overview-heading"
+							index="1.3"
+							title="Volume & merchant overview"
+							description="Real-time KPIs, volume trends, success rates and top merchants at a glance."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("healthCheckModal")}
+									>
+										<i className="bi bi-heart-pulse" /> Health
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("reportBuilderModal")}
+									>
+										<i className="bi bi-file-earmark-plus" /> Custom report
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.card}>
+							<div className={styles.panelGridWide}>
+								<Ub title="30-Day Transaction Volume Trend">
 									<div className={styles.chartBars}>
 										{config.trendBars.map((b) => (
-											<div
+											<button
+												type="button"
 												key={b.label}
 												className={styles.chartBar}
 												style={{ height: b.height, background: b.color }}
 												onClick={() => openM("trendModal")}
-												role="button"
-												tabIndex={0}
+												aria-label={`${b.label}: open trend drill-down`}
+												title="Drill down"
 											>
 												<span className={styles.barLabel}>{b.label}</span>
-											</div>
+											</button>
 										))}
 									</div>
 									<div
@@ -992,11 +1056,8 @@ export default function Analytics() {
 											</div>
 										))}
 									</div>
-								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Top 5 Merchants</h4>
+								</Ub>
+								<Ub title="Top 5 Merchants">
 									{config.topMerchants.map((m) => (
 										<div className={styles.sr} key={m.name}>
 											<div>
@@ -1009,604 +1070,587 @@ export default function Analytics() {
 										</div>
 									))}
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
 										onClick={() => openM("merchantDrillModal")}
 									>
-										View All Merchants
+										View all merchants
 									</button>
-								</div>
+								</Ub>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= 1.8.2 TRENDS ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-graph-up"
-										style={{ color: "var(--pm-info)" }}
-									/>{" "}
-									Transaction Trends & Patterns
-								</h3>
-								<p className={styles.ss}>
-									Time-series analysis, peak hours, weekend vs weekday, seasonal
-									patterns.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+					{/* ======================= 1.4 TRENDS & PATTERNS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-trends-heading"
+					>
+						<SectionHeading
+							id="analytics-trends-heading"
+							index="1.4"
+							title="Trends & patterns"
+							description="Time-series analysis, peak hours, weekend vs weekday and seasonal patterns."
+							action={
 								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
+									type="button"
+									className={styles.btnPm}
 									onClick={() => openM("trendModal")}
 								>
-									Drill-down
+									<i className="bi bi-search" /> Drill-down
 								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-6">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Hourly Volume Heatmap (Last 7 Days)
-									</h4>
-									<div className="d-flex flex-wrap" style={{ gap: 4 }}>
-										{config.heatmap.map((h) => (
-											<div
-												key={h.label}
-												className={styles.heatCell}
-												style={{ background: h.bg, color: h.color }}
-											>
-												{h.label}
-												<br />
-												<strong>{h.value}</strong>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-6">
+									<Ub title="Hourly Volume Heatmap (Last 7 Days)">
+										<div className={styles.heatmapGrid}>
+											{config.heatmap.map((h) => (
+												<div
+													key={h.label}
+													className={styles.heatCell}
+													style={{ background: h.bg, color: h.color }}
+												>
+													{h.label}
+													<strong>{h.value}</strong>
+												</div>
+											))}
+										</div>
+									</Ub>
+								</div>
+								<div className="col-lg-3">
+									<Ub title="Weekday vs Weekend">
+										{config.weekdays.map((w) => (
+											<div className={styles.sr} key={w.label}>
+												<div>
+													<strong>{w.label}</strong>
+												</div>
+												<strong style={{ color: w.color }}>{w.value}</strong>
 											</div>
 										))}
-									</div>
-								</div>
-							</div>
-							<div className="col-lg-3">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Weekday vs Weekend</h4>
-									{config.weekdays.map((w) => (
-										<div className={styles.sr} key={w.label}>
-											<div>
-												<strong>{w.label}</strong>
+										<div className={`${styles.summaryBox} mt-2`}>
+											<div className={styles.mutedSmall}>
+												{config.bestDay.label}
 											</div>
-											<strong style={{ color: w.color }}>{w.value}</strong>
-										</div>
-									))}
-									<div className={`${styles.summaryBox} mt-2`}>
-										<div className={styles.mutedSmall}>
-											{config.bestDay.label}
-										</div>
-										<div style={{ fontWeight: 700 }}>{config.bestDay.day}</div>
-										<div style={{ fontSize: 12, color: "var(--pm-accent)" }}>
-											{config.bestDay.note}
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-lg-3">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Seasonal Trends</h4>
-									{config.seasonal.map((s) => (
-										<div className={styles.sr} key={s.label}>
-											<div>
-												<strong>{s.label}</strong>
+											<div style={{ fontWeight: 700 }}>
+												{config.bestDay.day}
 											</div>
-											<span className={`${styles.badge} ${styles[s.tone]}`}>
-												{s.badge}
-											</span>
+											<div style={{ fontSize: 12, color: "var(--pm-accent)" }}>
+												{config.bestDay.note}
+											</div>
 										</div>
-									))}
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
-										onClick={() => openM("trendModal")}
-									>
-										Full Analysis
-									</button>
+									</Ub>
+								</div>
+								<div className="col-lg-3">
+									<Ub title="Seasonal Trends">
+										{config.seasonal.map((s) => (
+											<div className={styles.sr} key={s.label}>
+												<div>
+													<strong>{s.label}</strong>
+												</div>
+												<span className={`${styles.badge} ${styles[s.tone]}`}>
+													{s.badge}
+												</span>
+											</div>
+										))}
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+											onClick={() => openM("trendModal")}
+										>
+											Full analysis
+										</button>
+									</Ub>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= 1.8.3 FAILURE ANALYSIS ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-x-circle"
-										style={{ color: "var(--pm-danger)" }}
-									/>{" "}
-									Failed & Declined Transaction Analysis
-								</h3>
-								<p className={styles.ss}>
-									Root cause breakdown, retry success rates, merchant-level
-									failure patterns.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
+					{/* ======================= 1.5 FAILURE & DECLINE ANALYSIS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-failure-heading"
+					>
+						<SectionHeading
+							id="analytics-failure-heading"
+							index="1.5"
+							title="Failure & decline analysis"
+							description="Root cause breakdown, retry success rates and merchant-level failure patterns."
+							action={
 								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
+									type="button"
+									className={styles.btnPm}
 									onClick={() => openM("failureDrillModal")}
 								>
-									Explore
+									<i className="bi bi-x-circle" /> Explore
 								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Failure Reason Distribution
-									</h4>
-									{config.failureReasons.map((f) => (
-										<div className={styles.sr} key={f.label}>
-											<div>
-												<strong>{f.label}</strong>
-											</div>
-											<div>
-												<span className={`${styles.badge} ${styles[f.tone]}`}>
-													{f.badge}
-												</span>{" "}
-												<small className={styles.mutedSmall}>{f.count}</small>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Top Failing Merchants</h4>
-									{config.topFailing.map((m) => (
-										<div className={styles.sr} key={m.name}>
-											<div>
-												<strong>{m.name}</strong>
-											</div>
-											<span className={`${styles.badge} ${styles[m.tone]}`}>
-												{m.badge}
-											</span>
-										</div>
-									))}
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
-										onClick={() => openM("merchantDrillModal")}
-									>
-										Merchant Failure Report
-									</button>
-								</div>
-							</div>
-							<div className="col-lg-3">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Retry Performance</h4>
-									{config.retryPerf.map((r) => (
-										<div
-											className={`${styles.miniStat} mb-2`}
-											style={{ background: r.bg, textAlign: "left" }}
-											key={r.label}
-										>
-											<div
-												style={{
-													fontSize: 11,
-													color: r.labelColor,
-													fontWeight: 700,
-												}}
-											>
-												{r.label}
-											</div>
-											<div
-												style={{
-													fontSize: 22,
-													fontWeight: 700,
-													color: r.color,
-												}}
-											>
-												{r.value}
-											</div>
-										</div>
-									))}
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-1`}
-										onClick={() => openM("autoRetryModal")}
-									>
-										Configure Auto-Retry
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= 1.8.4 MERCHANT & CATEGORY ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-shop"
-										style={{ color: "var(--pm-warning)" }}
-									/>{" "}
-									Merchant & Category Insights
-								</h3>
-								<p className={styles.ss}>
-									Concentration risk, category performance, loyalty and
-									cross-sell opportunities.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => openM("merchantDrillModal")}
-								>
-									Merchant Drill
-								</button>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => openM("categoryModal")}
-								>
-									Category Analysis
-								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-7">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Category Performance (Last 30 Days)
-									</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													<th>Category</th>
-													<th>Volume</th>
-													<th>Txns</th>
-													<th>Success</th>
-													<th>Avg Value</th>
-												</tr>
-											</thead>
-											<tbody>
-												{config.categories.map((c) => (
-													<tr key={c.name}>
-														<td>{c.name}</td>
-														<td>{c.volume}</td>
-														<td>{c.txns}</td>
-														<td>
-															<span
-																className={`${styles.badge} ${styles[c.successTone]}`}
-															>
-																{c.success}
-															</span>
-														</td>
-														<td>{c.avg}</td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Merchant Concentration Risk
-									</h4>
-									<div className={`${styles.summaryBoxDanger} mb-2`}>
-										<div
-											style={{
-												fontSize: 11,
-												color: "#fca5a5",
-												fontWeight: 700,
-											}}
-										>
-											{config.concentration.title}
-										</div>
-										<div
-											style={{
-												fontSize: 20,
-												fontWeight: 700,
-												color: "var(--pm-danger)",
-											}}
-										>
-											{config.concentration.value}
-										</div>
-										<div style={{ fontSize: 12, color: "#fecaca" }}>
-											{config.concentration.sub}
-										</div>
-									</div>
-									<div className={styles.sr}>
-										<div>
-											<strong>Diversification Score</strong>
-										</div>
-										<span className={`${styles.badge} ${styles.badgeW}`}>
-											{config.concentration.score}
-										</span>
-									</div>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
-										onClick={() => openM("merchantDrillModal")}
-									>
-										Risk Mitigation Plan
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= 1.8.5 CUSTOM REPORT BUILDER ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-file-earmark-plus"
-										style={{ color: "var(--pm-purple)" }}
-									/>{" "}
-									Custom Report Builder
-								</h3>
-								<p className={styles.ss}>
-									Drag-and-drop report creation with filters, groupings,
-									scheduling and delivery.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
-									onClick={() => openM("reportBuilderModal")}
-								>
-									Launch Builder
-								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Quick Templates</h4>
-									{config.templates.map((t) => (
-										<div
-											className={styles.sr}
-											key={t.title}
-											style={{ cursor: "pointer" }}
-											onClick={() => openM("reportBuilderModal")}
-											role="button"
-											tabIndex={0}
-										>
-											<div>
-												<strong>{t.title}</strong>
-												<div className={styles.mutedSmall}>{t.sub}</div>
-											</div>
-											<i
-												className="bi bi-chevron-right"
-												style={{ color: "var(--pm-muted)" }}
-											/>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Recent Custom Reports</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													<th>Report Name</th>
-													<th>Created</th>
-													<th>Filters</th>
-													<th>Status</th>
-													<th>Action</th>
-												</tr>
-											</thead>
-											<tbody>
-												{config.recentReports.map((r) => (
-													<tr key={r.name}>
-														<td>{r.name}</td>
-														<td>{r.created}</td>
-														<td>{r.filters}</td>
-														<td>
-															<span
-																className={`${styles.badge} ${styles[r.tone]}`}
-															>
-																{r.status}
-															</span>
-														</td>
-														<td>
-															<button
-																className={`${styles.btnPm} ${styles.btnSm}`}
-																onClick={() => openM(r.modal)}
-															>
-																{r.action}
-															</button>
-														</td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= 1.8.6 SCHEDULED REPORTS ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-calendar-check"
-										style={{ color: "var(--pm-accent)" }}
-									/>{" "}
-									Scheduled & Automated Reports
-								</h3>
-								<p className={styles.ss}>
-									Manage recurring reports, delivery schedules, recipients and
-									pause/resume controls.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => openM("scheduledReportsModal")}
-								>
-									Manage All
-								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-12">
-								<div className={styles.ub}>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													<th>Report</th>
-													<th>Frequency</th>
-													<th>Next Run</th>
-													<th>Recipients</th>
-													<th>Status</th>
-													<th>Actions</th>
-												</tr>
-											</thead>
-											<tbody>
-												{config.scheduled.map((r) => (
-													<tr key={r.name}>
-														<td>{r.name}</td>
-														<td>{r.freq}</td>
-														<td>{r.next}</td>
-														<td>{r.recipients}</td>
-														<td>
-															<span
-																className={`${styles.badge} ${styles[r.tone]}`}
-															>
-																{r.status}
-															</span>
-														</td>
-														<td>
-															<div
-																className="d-flex flex-wrap"
-																style={{ gap: 6 }}
-															>
-																<button
-																	className={`${styles.btnPm} ${styles.btnSm}`}
-																	onClick={() => openM("scheduledReportsModal")}
-																>
-																	Edit
-																</button>
-																<button
-																	className={`${styles.btnPm} ${styles.btnSm} ${r.paused ? styles.btnPmA : ""}`}
-																	onClick={() => notify(r.msg)}
-																>
-																	{r.paused ? "Resume" : "Pause"}
-																</button>
-															</div>
-														</td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= 1.8.7 EXPORT CENTER ======================= */}
-					<div className={styles.card}>
-						<div
-							className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-							style={{ gap: 8 }}
-						>
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-download"
-										style={{ color: "var(--pm-primary-light)" }}
-									/>{" "}
-									Export & Delivery Center
-								</h3>
-								<p className={styles.ss}>
-									One-time and bulk exports, format options, compression and
-									delivery methods.
-								</p>
-							</div>
-							<div className="d-flex" style={{ gap: 8 }}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
-									onClick={() => openM("exportModal")}
-								>
-									New Export
-								</button>
-							</div>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Recent Exports</h4>
-									{config.recentExports.map((e) => (
-										<div className={styles.sr} key={e.name}>
-											<div>
-												<strong>{e.name}</strong>
-												<div className={styles.mutedSmall}>{e.meta}</div>
-											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => downloadExport(e.name)}
-												aria-label={`Download ${e.name}`}
-											>
-												<i className="bi bi-download" />
-											</button>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Export Options</h4>
-									<div className="row g-3">
-										{config.exportOptions.map((o) => (
-											<div className="col-md-4" key={o.label}>
-												<div
-													className="p-3 rounded text-center"
-													style={{
-														cursor: "pointer",
-														border: "1px solid var(--pm-border)",
-													}}
-													onClick={() => openM("exportModal")}
-													role="button"
-													tabIndex={0}
-												>
-													<i
-														className={`bi ${o.icon} d-block mb-1`}
-														style={{ fontSize: 22, color: o.color }}
-													/>
-													<strong style={{ fontSize: 12 }}>{o.label}</strong>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-5">
+									<Ub title="Failure Reason Distribution">
+										{config.failureReasons.map((f) => (
+											<div className={styles.sr} key={f.label}>
+												<div>
+													<strong>{f.label}</strong>
+												</div>
+												<div>
+													<span className={`${styles.badge} ${styles[f.tone]}`}>
+														{f.badge}
+													</span>{" "}
+													<small className={styles.mutedSmall}>{f.count}</small>
 												</div>
 											</div>
 										))}
-									</div>
+									</Ub>
+								</div>
+								<div className="col-lg-4">
+									<Ub title="Top Failing Merchants">
+										{config.topFailing.map((m) => (
+											<div className={styles.sr} key={m.name}>
+												<div>
+													<strong>{m.name}</strong>
+												</div>
+												<span className={`${styles.badge} ${styles[m.tone]}`}>
+													{m.badge}
+												</span>
+											</div>
+										))}
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+											onClick={() => openM("merchantDrillModal")}
+										>
+											Merchant failure report
+										</button>
+									</Ub>
+								</div>
+								<div className="col-lg-3">
+									<Ub title="Retry Performance">
+										{config.retryPerf.map((r) => (
+											<div
+												className={`${styles.miniStat} mb-2`}
+												style={{ background: r.bg, textAlign: "left" }}
+												key={r.label}
+											>
+												<div
+													style={{
+														fontSize: 11,
+														color: r.labelColor,
+														fontWeight: 700,
+													}}
+												>
+													{r.label}
+												</div>
+												<div
+													style={{
+														fontSize: 22,
+														fontWeight: 700,
+														color: r.color,
+													}}
+												>
+													{r.value}
+												</div>
+											</div>
+										))}
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-1`}
+											onClick={() => openM("autoRetryModal")}
+										>
+											Configure auto-retry
+										</button>
+									</Ub>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
+
+					{/* ======================= 1.6 MERCHANT & CATEGORY INSIGHTS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-merchant-heading"
+					>
+						<SectionHeading
+							id="analytics-merchant-heading"
+							index="1.6"
+							title="Merchant & category insights"
+							description="Concentration risk, category performance and cross-sell opportunities."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("merchantDrillModal")}
+									>
+										<i className="bi bi-shop" /> Merchant drill
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("categoryModal")}
+									>
+										<i className="bi bi-tags" /> Category analysis
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-7">
+									<Ub title="Category Performance (Last 30 Days)">
+										<div className={styles.tableScroll}>
+											<table className={styles.tbl}>
+												<thead>
+													<tr>
+														<th>Category</th>
+														<th>Volume</th>
+														<th>Txns</th>
+														<th>Success</th>
+														<th>Avg Value</th>
+													</tr>
+												</thead>
+												<tbody>
+													{config.categories.map((c) => (
+														<tr key={c.name}>
+															<td>{c.name}</td>
+															<td>{c.volume}</td>
+															<td>{c.txns}</td>
+															<td>
+																<span
+																	className={`${styles.badge} ${styles[c.successTone]}`}
+																>
+																	{c.success}
+																</span>
+															</td>
+															<td>{c.avg}</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									</Ub>
+								</div>
+								<div className="col-lg-5">
+									<Ub title="Merchant Concentration Risk">
+										<div className={`${styles.summaryBoxDanger} mb-2`}>
+											<div
+												style={{
+													fontSize: 11,
+													color: "#b42318",
+													fontWeight: 700,
+												}}
+											>
+												{config.concentration.title}
+											</div>
+											<div
+												style={{
+													fontSize: 20,
+													fontWeight: 700,
+													color: "var(--pm-danger)",
+												}}
+											>
+												{config.concentration.value}
+											</div>
+											<div style={{ fontSize: 12, color: "#b42318" }}>
+												{config.concentration.sub}
+											</div>
+										</div>
+										<div className={styles.sr}>
+											<div>
+												<strong>Diversification Score</strong>
+											</div>
+											<span className={`${styles.badge} ${styles.badgeW}`}>
+												{config.concentration.score}
+											</span>
+										</div>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+											onClick={() => openM("merchantDrillModal")}
+										>
+											Risk mitigation plan
+										</button>
+									</Ub>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					{/* ======================= 1.7 REPORT BUILDER & SCHEDULES ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-reports-heading"
+					>
+						<SectionHeading
+							id="analytics-reports-heading"
+							index="1.7"
+							title="Report builder & schedules"
+							description="Drag-and-drop report creation with filters, groupings, scheduling and delivery."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnPmP}`}
+									onClick={() => openM("reportBuilderModal")}
+								>
+									<i className="bi bi-file-earmark-plus" /> Launch builder
+								</button>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-4">
+									<Ub title="Quick Templates">
+										{config.templates.map((t) => (
+											<button
+												type="button"
+												key={t.title}
+												className={`${styles.sr} w-100 text-start`}
+												style={{
+													cursor: "pointer",
+													border: 0,
+													background: "transparent",
+													fontFamily: "inherit",
+												}}
+												onClick={() => openM("reportBuilderModal")}
+											>
+												<span>
+													<strong>{t.title}</strong>
+													<span className={`${styles.mutedSmall} d-block`}>
+														{t.sub}
+													</span>
+												</span>
+												<i
+													className="bi bi-chevron-right"
+													style={{ color: "var(--pm-muted)" }}
+												/>
+											</button>
+										))}
+									</Ub>
+								</div>
+								<div className="col-lg-8">
+									<Ub title="Recent Custom Reports">
+										<div className={styles.tableScroll}>
+											<table className={styles.tbl}>
+												<thead>
+													<tr>
+														<th>Report Name</th>
+														<th>Created</th>
+														<th>Filters</th>
+														<th>Status</th>
+														<th>Action</th>
+													</tr>
+												</thead>
+												<tbody>
+													{config.recentReports.map((r) => (
+														<tr key={r.name}>
+															<td>{r.name}</td>
+															<td>{r.created}</td>
+															<td>{r.filters}</td>
+															<td>
+																<span
+																	className={`${styles.badge} ${styles[r.tone]}`}
+																>
+																	{r.status}
+																</span>
+															</td>
+															<td>
+																<button
+																	type="button"
+																	className={`${styles.btnPm} ${styles.btnSm}`}
+																	onClick={() => openM(r.modal)}
+																>
+																	{r.action}
+																</button>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									</Ub>
+								</div>
+							</div>
+						</div>
+
+						<article
+							className={`${styles.card} ${styles.tableCard}`}
+							style={{ marginTop: "1rem" }}
+						>
+							<div className={styles.tableToolbar}>
+								<div className={styles.tableTitle}>
+									<h3>Scheduled & automated reports</h3>
+									<span>
+										Recurring reports, delivery schedules and recipients.
+									</span>
+								</div>
+								<div className={styles.tableTools}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("scheduledReportsModal")}
+									>
+										<i className="bi bi-calendar-event" /> Manage all
+									</button>
+								</div>
+							</div>
+							<div className={styles.tableScroll}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Report</th>
+											<th>Frequency</th>
+											<th>Next Run</th>
+											<th>Recipients</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{config.scheduled.map((r) => (
+											<tr key={r.name}>
+												<td>{r.name}</td>
+												<td>{r.freq}</td>
+												<td>{r.next}</td>
+												<td>{r.recipients}</td>
+												<td>
+													<span className={`${styles.badge} ${styles[r.tone]}`}>
+														{r.status}
+													</span>
+												</td>
+												<td>
+													<div className="d-flex flex-wrap" style={{ gap: 6 }}>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openM("scheduledReportsModal")}
+														>
+															Edit
+														</button>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm} ${r.paused ? styles.btnPmA : ""}`}
+															onClick={() => notify(r.msg)}
+														>
+															{r.paused ? "Resume" : "Pause"}
+														</button>
+													</div>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</article>
+					</section>
+
+					{/* ======================= 1.8 EXPORT & DELIVERY CENTER ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-export-heading"
+					>
+						<SectionHeading
+							id="analytics-export-heading"
+							index="1.8"
+							title="Export & delivery center"
+							description="One-time and bulk exports, format options, compression and delivery methods."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnPmP}`}
+									onClick={() => openM("exportModal")}
+								>
+									<i className="bi bi-download" /> New export
+								</button>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-4">
+									<Ub title="Recent Exports">
+										{config.recentExports.map((e) => (
+											<div className={styles.sr} key={e.name}>
+												<div>
+													<strong>{e.name}</strong>
+													<div className={styles.mutedSmall}>{e.meta}</div>
+												</div>
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => downloadExport(e.name)}
+													aria-label={`Download ${e.name}`}
+												>
+													<i className="bi bi-download" />
+												</button>
+											</div>
+										))}
+									</Ub>
+								</div>
+								<div className="col-lg-8">
+									<Ub title="Export Options">
+										<div className={styles.exportGrid}>
+											{config.exportOptions.map((o) => (
+												<button
+													type="button"
+													key={o.label}
+													className={styles.exportTile}
+													onClick={() => openM("exportModal")}
+												>
+													<i
+														className={`bi ${o.icon}`}
+														style={{ color: o.color }}
+													/>
+													<strong>{o.label}</strong>
+												</button>
+											))}
+										</div>
+									</Ub>
+								</div>
+							</div>
+						</div>
+					</section>
 				</div>
-			</div>
+
+				{/* ======================= FLOATING COMMAND BAR ======================= */}
+				<nav
+					className={styles.floatingBar}
+					aria-label="Quick analytics actions"
+				>
+					<button
+						type="button"
+						className={styles.floatingPrimary}
+						onClick={() => openM("reportBuilderModal")}
+					>
+						<i className="bi bi-file-earmark-plus" /> New report
+					</button>
+					<button type="button" onClick={() => openM("exportModal")}>
+						<i className="bi bi-download" /> Export
+					</button>
+					<button type="button" onClick={() => openM("failureDrillModal")}>
+						<i className="bi bi-x-circle" /> Failures
+					</button>
+					<button type="button" onClick={() => openM("scheduledReportsModal")}>
+						<i className="bi bi-calendar-event" /> Schedules
+					</button>
+					<button type="button" onClick={() => openM("healthCheckModal")}>
+						<i className="bi bi-heart-pulse" /> Health
+					</button>
+				</nav>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-bar-chart-line" /> PayMo transaction analytics
+						engine
+					</span>
+					<nav aria-label="Footer links">
+						<a href="/pm/app/support">Support</a>
+						<Link to="/pm/app/settings">Preferences</Link>
+						<span>v1.8.0</span>
+					</nav>
+				</footer>
+			</main>
 
 			{/* ======================= ALL MODALS ======================= */}
 			<AnalyticsModals active={activeModal} onClose={closeM} onOpen={openM} />

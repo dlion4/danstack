@@ -1053,6 +1053,18 @@
 	color: #fff;
 }
 
+.buttonOutline {
+	background: transparent;
+	color: var(--ink-700);
+	border: 1px dashed var(--border-strong);
+}
+
+.buttonOutline:hover {
+	background: var(--surface-2);
+	border-color: var(--pri);
+	color: var(--pri-700);
+}
+
 /* ---------- summary row (used in modals) ---------- */
 .summaryRow {
 	display: flex;
@@ -1265,6 +1277,18 @@ input[type="date"].field {
 	background: var(--success-bg);
 	border-color: rgba(18, 183, 106, 0.2);
 	color: var(--success);
+}
+
+.hintBoxWarning {
+	background: var(--warning-bg);
+	border-color: rgba(247, 144, 9, 0.2);
+	color: var(--warning);
+}
+
+.hintBoxInfo {
+	background: var(--info-bg);
+	border-color: rgba(46, 144, 250, 0.2);
+	color: var(--info);
 }
 
 /* ---------- PIN row ---------- */
@@ -1896,10 +1920,21 @@ input[type="date"].field {
 		padding: 0;
 	}
 
+	.overlay {
+		align-items: flex-end;
+		padding: 0;
+	}
+
 	.modalWrapper,
 	.modalContent {
 		max-height: 92dvh;
 		border-radius: 16px 16px 0 0;
+	}
+
+	.dialog {
+		max-height: 92dvh;
+		border-radius: 16px 16px 0 0;
+		margin: 0;
 	}
 
 	.modalWrapper {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ComplianceModals from "../components/ComplianceModals";
@@ -10,12 +10,12 @@ import styles from "../styles/compliance.module.css";
    PayMo BaaS — Compliance & AML Command Center
    React + TypeScript + TanStack Query, emerald-glass dashboard theme.
 
-   Refined surface: five focused sections —
-   1. Real-time transaction monitoring (live feed + risk distribution)
-   2. AML rules engine & threshold configuration
-   3. Sanctions & PEP screening
-   4. Investigation case management
-   5. Regulatory reporting (STR / CTR / SAR)
+   Refined surface: rebuilt on the PayMo business-dashboard composition —
+   executive hero, numbered sections (pulse → attention → monitoring → rules →
+   screening → cases & reporting), KPI pulse with sparklines, action centre,
+   quick actions, table cards, floating command bar and footer. Shell chrome
+   is owned by AppShell; this page renders content only. All 17 modals remain
+   reachable from the page.
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -734,6 +734,7 @@ function CellValue({
 		);
 	return (
 		<button
+			type="button"
 			className={`${styles.btnPm} ${styles.btnSm} ${cell.tone ? styles[cell.tone as "btnPmD"] : ""}`}
 			onClick={() => onOpen(cell.modal)}
 		>
@@ -742,56 +743,88 @@ function CellValue({
 	);
 }
 
-/* ---------- section header (refined pattern) ---------- */
-function SectionHead({
-	icon,
-	iconColor,
+/* ---------- stable keys: zip columns with cells / dedupe spark heights ---------- */
+function zipCells(
+	cols: readonly TableCol[],
+	row: readonly Cell[],
+): Array<[TableCol, Cell]> {
+	return cols.map((col, i) => [col, row[i] ?? ""] as [TableCol, Cell]);
+}
+
+function sparkBars(spark: readonly string[]): Array<[string, string]> {
+	const seen = new Map<string, number>();
+	return spark.map((h) => {
+		const n = seen.get(h) ?? 0;
+		seen.set(h, n + 1);
+		return [h, `${h}#${n}`] as [string, string];
+	});
+}
+
+/* ---------- section heading (business numbered pattern) ---------- */
+function SectionHeading({
+	id,
+	index,
 	title,
-	sub,
-	actions,
-	onOpen,
+	description,
+	action,
 }: {
-	icon: string;
-	iconColor: string;
+	id: string;
+	index: string;
 	title: string;
-	sub: string;
-	actions: {
-		label: string;
-		icon: string;
-		modal: string;
-		tone?: "btnPmP" | "btnPmD";
-	}[];
-	onOpen: (id: string) => void;
+	description: string;
+	action?: React.ReactNode;
 }) {
 	return (
-		<div
-			className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-			style={{ gap: 8 }}
-		>
-			<div>
-				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} />
-					{title}
-				</h3>
-				<p className={styles.ss}>{sub}</p>
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
 			</div>
-			<div className="d-flex" style={{ gap: 8 }}>
-				{actions.map((a) => (
-					<button
-						key={a.label}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						<i className={`bi ${a.icon}`} /> {a.label}
-					</button>
-				))}
-			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
 		</div>
 	);
 }
 
+/* ---------- utility box (subtle panel inside cards) ---------- */
+function Ub({
+	title,
+	children,
+	action,
+}: {
+	title: string;
+	children: React.ReactNode;
+	action?: React.ReactNode;
+}) {
+	return (
+		<div className={styles.ub}>
+			<div
+				className="d-flex justify-content-between align-items-center flex-wrap"
+				style={{ gap: 8 }}
+			>
+				<h4 className={styles.ubTitle} style={{ margin: 0 }}>
+					{title}
+				</h4>
+				{action}
+			</div>
+			<div style={{ marginTop: 12 }}>{children}</div>
+		</div>
+	);
+}
+
+/* ---------- KPI visual metadata (keyed by stat key) ---------- */
+const STAT_ICONS: Record<string, string> = {
+	alerts: "bi-exclamation-triangle",
+	detection: "bi-graph-up-arrow",
+	filings: "bi-file-earmark-check",
+};
+
 export default function Compliance() {
-	const { data } = useQuery({
+	const { data, isFetching, error } = useQuery({
 		queryKey: ["paymo-compliance"],
 		queryFn: fetchCompliance,
 		retry: 1,
@@ -800,294 +833,439 @@ export default function Compliance() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [feedSearch, setFeedSearch] = useState("");
+	const [feedFilter, setFeedFilter] = useState<
+		"All" | "Alert" | "Cleared" | "Hold"
+	>("All");
+
+	/* Modal hygiene: scroll lock, Escape to close, focus returns to trigger. */
+	useEffect(() => {
+		if (!activeModal) return;
+		const trigger = document.activeElement as HTMLElement | null;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setActiveModal(null);
+		};
+		window.addEventListener("keydown", closeOnEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", closeOnEscape);
+			trigger?.focus();
+		};
+	}, [activeModal]);
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
 
+	const feedQuery = feedSearch.trim().toLowerCase();
+	const feedRows = config.liveFeed.rows.filter((row) => {
+		const statusCell = row[6];
+		const statusText =
+			typeof statusCell === "object" && "badge" in statusCell
+				? statusCell.badge
+				: "";
+		const matchesFilter = feedFilter === "All" || statusText === feedFilter;
+		const matchesSearch =
+			!feedQuery ||
+			row.some(
+				(cell) =>
+					typeof cell === "string" && cell.toLowerCase().includes(feedQuery),
+			);
+		return matchesFilter && matchesSearch;
+	});
+
 	return (
 		<div className={styles.compliancePage}>
-			<div className={styles.main}>
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
-						</div>
-						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p> */}
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("regReportModal")}
-						>
-							<i className="bi bi-file-earmark-text" /> Regulatory Reports
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => openM("newCaseModal")}
-						>
-							<i className="bi bi-folder-plus" /> New Case
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmD}`}
-							onClick={() => openM("emergencyBlockModal")}
-						>
-							<i className="bi bi-exclamation-triangle" /> Emergency Block
-						</button>
-					</div>
-				</div>
-
-				<div className={styles.content}>					{/* ======================= HERO STATS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div
-								className={`${styles.card} ${styles.cardAccent} ${styles.heroCard}`}
-								style={{ minHeight: 196 }}
+			<main className={styles.main}>
+				<div className={styles.content}>
+					{/* ======================= EXECUTIVE HERO ======================= */}
+					<section
+						className={styles.heroBanner}
+						aria-labelledby="compliance-page-title"
+					>
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-shield-check" /> Compliance &amp; AML
+									</span>
+									<span className={styles.heroLive}>
+										<span className={styles.dotLive} /> {config.hero.live}
+										{isFetching ? (
+											<small className={styles.heroRefreshing}>
+												Refreshing…
+											</small>
+										) : null}
+									</span>
+								</div>
+								<h1 id="compliance-page-title">
+									Watch every transaction. Stay ahead of risk.
+								</h1>
+								<p>{config.pageSub}</p>
+								<div className={styles.heroActions}>
+									<button
+										type="button"
+										className={styles.heroPrimaryBtn}
+										onClick={() => openM("newCaseModal")}
+									>
+										<i className="bi bi-folder-plus" /> New case
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("amlRulesModal")}
+									>
+										<i className="bi bi-sliders" /> Rules
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("sanctionsSearchModal")}
+									>
+										<i className="bi bi-globe" /> Sanctions
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("riskScoringModal")}
+									>
+										<i className="bi bi-speedometer2" /> Risk engine
+									</button>
+								</div>
+							</div>
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="AML command center snapshot"
 							>
-								<i
-									className={`bi bi-shield-check ${styles.heroWatermark}`}
-									aria-hidden="true"
-								/>
-								<div className={styles.heroGrid} aria-hidden="true" />
-								<div className="position-relative">
+								<span>Transactions monitored today</span>
+								<strong>{config.hero.value}</strong>
+								<p>{config.hero.detail}</p>
+								<div className={styles.heroMetricRow}>
+									{config.statCards.map((stat) => (
+										<div key={stat.key}>
+											<strong>{stat.value}</strong>
+											<span>{stat.label.replace(/_/g, " ").toLowerCase()}</span>
+										</div>
+									))}
+								</div>
+								<div className={styles.throughputWrap}>
 									<div className="d-flex justify-content-between align-items-center">
-										<p className={styles.heroLive}>
-											<span className={styles.liveDot} /> {config.hero.live}
-										</p>
-										<span className={styles.livePill}>
-											<i className="bi bi-radio" /> LIVE
+										<span className={styles.throughputLabel}>
+											Screening load · today
+										</span>
+										<span className={styles.throughputCount}>
+											{config.hero.rails.length} rails
 										</span>
 									</div>
-									<div className={styles.heroValue}>{config.hero.value}</div>
-									<p className={styles.heroDetail}>{config.hero.detail}</p>
-									<div className={styles.throughputWrap}>
-										<div className="d-flex justify-content-between align-items-center">
-											<span className={styles.throughputLabel}>
-												Screening load · today
-											</span>
-											<span className={styles.throughputCount}>
-												{config.hero.rails.length} rails
-											</span>
-										</div>
-										<div className={styles.throughputStrip}>
-											{config.hero.rails.map((r) => (
-												<div
-													key={r.label}
-													className={styles.throughputBar}
-													style={{ height: r.pct }}
-													title={`${r.label} · ${r.pct}`}
-												/>
-											))}
-										</div>
-									</div>
-									<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-										{config.hero.buttons.map((b) => (
-											<button
-												key={b.label}
-												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-												onClick={() => openM(b.modal)}
-											>
-												{b.label}
-											</button>
+									<div className={styles.throughputStrip}>
+										{config.hero.rails.map((r) => (
+											<div
+												key={r.label}
+												className={styles.throughputBar}
+												style={{ height: r.pct }}
+												title={`${r.label} · ${r.pct}`}
+											/>
 										))}
 									</div>
 								</div>
-							</div>
+							</aside>
 						</div>
-						{config.statCards.map((card) => (
-							<div className={card.colClass} key={card.key}>
-								<div
-									className={`${styles.card} ${styles.statCard}`}
-									style={{
-										minHeight: 196,
-										borderTop: `3px solid ${card.accent}`,
-									}}
+					</section>
+
+					{error ? (
+						<output className={styles.statusNotice}>
+							<i className="bi bi-cloud-slash" />
+							<span>
+								<strong>Live compliance data is temporarily unavailable</strong>
+								<small>Using the latest local operating snapshot.</small>
+							</span>
+						</output>
+					) : null}
+
+					{/* ======================= 1.1 COMPLIANCE PULSE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-pulse-heading"
+					>
+						<SectionHeading
+							id="compliance-pulse-heading"
+							index="1.1"
+							title="Compliance pulse"
+							description="A concise view of risk alerts, detection quality and regulatory filing momentum."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("liveAlertsModal")}
+									>
+										<i className="bi bi-bell" /> Live alerts
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}
+										onClick={() => openM("emergencyBlockModal")}
+									>
+										<i className="bi bi-exclamation-triangle" /> Emergency block
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.kpiGrid}>
+							{config.statCards.map((stat, index) => (
+								<article
+									key={stat.key}
+									className={`${styles.card} ${styles.kpiCard} ${index === 0 ? styles.kpiDanger : index === 1 ? styles.kpiFeatured : ""}`}
 								>
-									<div className="d-flex justify-content-between align-items-start">
-										<p
-											className={styles.sl}
-											style={{ color: card.labelColor, paddingTop: 6 }}
-										>
-											{card.label}
-										</p>
-										<div
-											className={styles.statChip}
-											style={{ background: card.chipBg, color: card.chipColor }}
-										>
-											<i className={`bi ${card.icon}`} />
-										</div>
+									<div
+										className={styles.kpiIcon}
+										style={{
+											background: stat.chipBg,
+											color: stat.chipColor,
+										}}
+									>
+										<i className={`bi ${STAT_ICONS[stat.key] ?? stat.icon}`} />
 									</div>
-									<div className="d-flex align-items-end justify-content-between mt-3">
-										<div className={styles.sv} style={{ margin: 0, fontSize: 30 }}>
-											{card.value}
-										</div>
+									<div className={styles.kpiMeta}>
+										<span>{stat.label}</span>
+										<small>Live</small>
+									</div>
+									<strong className={styles.kpiValue}>{stat.value}</strong>
+									<div className={styles.kpiFoot}>
+										<span
+											className={`${styles.badge} ${styles[stat.badge.tone]}`}
+										>
+											<i className={`bi ${stat.badge.icon}`} />{" "}
+											{stat.badge.text}
+										</span>
 										<div className={styles.sparkline} aria-hidden="true">
-											{card.spark.map((h, idx) => (
+											{sparkBars(stat.spark).map(([h, k]) => (
 												<div
-													key={idx}
+													key={k}
 													className={styles.sparkBar}
-													style={{ height: h, background: card.chipColor }}
+													style={{ height: h, background: stat.chipColor }}
 												/>
 											))}
 										</div>
 									</div>
-									<div className="mt-3">
-										<span
-											className={`${styles.badge} ${styles[card.badge.tone]}`}
-										>
-											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-										</span>
-									</div>
-									<div className={styles.statFooter}>
-										{card.lines.map((li) => (
-											<div key={li.label} className={styles.statFootRow}>
+									<div className={styles.kpiLines}>
+										{stat.lines.map((li) => (
+											<div key={li.label} className={styles.kpiLine}>
 												<span>{li.label}</span>
 												{li.value && <strong>{li.value}</strong>}
 											</div>
 										))}
 									</div>
-								</div>
-							</div>
-						))}
-					</div>
-
-					{/* ========== ATTENTION / SUGGESTIONS / QUICK ACTIONS ========== */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Attention Required</h3>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("attentionFullModal")}
-									>
-										View all
-									</button>
-								</div>
-								{config.attention.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
-									</div>
-								))}
-							</div>
+								</article>
+							))}
 						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Smart Suggestions</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> AI
+					</section>
+
+					{/* ======================= 1.2 NEEDS YOUR ATTENTION ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-attention-heading"
+					>
+						<SectionHeading
+							id="compliance-attention-heading"
+							index="1.2"
+							title="Needs your attention"
+							description="Resolve AML exceptions and act on intelligent compliance recommendations without leaving the dashboard."
+							action={
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openM("attentionFullModal")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
+							}
+						/>
+						<div className={styles.attentionGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Action center</span>
+										<h3>AML exceptions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeD}`}>
+										{config.attention.length} open
 									</span>
 								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
+								<div className={styles.listBody}>
+									{config.attention.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
+												onClick={() => openM(item.modal)}
 											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
+												{item.actionLabel}
+											</button>
 										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent compliance workflows</p>
-								</div>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											key={qa.label}
-											className={styles.quickBtn}
-											onClick={() => openM(qa.modal)}
-										>
-											<i
-												className={`bi ${qa.icon} me-1`}
-												style={{ color: qa.color }}
-											/>{" "}
-											{qa.label}
-										</button>
 									))}
 								</div>
-							</div>
-						</div>
-					</div>
+							</article>
 
-					{/* ========== SECTION 1: Real-Time Transaction Monitoring ========== */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-activity"
-							iconColor="var(--pm-primary)"
-							title="Real-Time Transaction Monitoring"
-							sub="Live feed of all bank-to-bank transactions with risk scoring, alerts, and immediate action capabilities."
-							actions={[
-								{
-									label: "Settings",
-									icon: "bi-gear",
-									modal: "monitorSettingsModal",
-								},
-								{
-									label: "Live Alerts (17)",
-									icon: "bi-bell",
-									modal: "liveAlertsModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Smart guidance</span>
+										<h3>Suggested next moves</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" /> Insights
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.suggestions.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+
+						<article className={`${styles.card} ${styles.quickActionCard}`}>
+							<div className={styles.quickActionIntro}>
+								<span className={styles.cardKicker}>Shortcuts</span>
+								<h3>Start a workflow</h3>
+								<p>Frequent compliance tasks, one click away.</p>
+							</div>
+							<div className={styles.quickGrid}>
+								{config.quickActions.map((action) => (
+									<button
+										type="button"
+										key={action.label}
+										className={styles.quickBtn}
+										onClick={() => openM(action.modal)}
+									>
+										<span style={{ color: action.color }}>
+											<i className={`bi ${action.icon}`} />
+										</span>
+										{action.label}
+										<i className="bi bi-arrow-right" />
+									</button>
+								))}
+							</div>
+						</article>
+					</section>
+
+					{/* ======================= 1.3 REAL-TIME MONITORING ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-monitoring-heading"
+					>
+						<SectionHeading
+							id="compliance-monitoring-heading"
+							index="1.3"
+							title="Real-time monitoring"
+							description="Live feed of every transaction with risk scoring, alerts and immediate action capabilities."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("monitorSettingsModal")}
+									>
+										<i className="bi bi-gear" /> Settings
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("liveAlertsModal")}
+									>
+										<i className="bi bi-bell" /> Live alerts
+									</button>
+								</div>
+							}
 						/>
-						<div className="row g-3">
-							<div className="col-lg-8">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Live Transaction Feed</h4>
+						<div className={styles.card}>
+							<div className={styles.panelGridWide}>
+								<Ub
+									title="Live transaction feed"
+									action={
+										<span className={`${styles.badge} ${styles.badgeS}`}>
+											<i className="bi bi-radio" /> Streaming
+										</span>
+									}
+								>
 									<div
-										className="table-responsive"
-										style={{ maxHeight: 320, overflowY: "auto" }}
+										className="d-flex flex-wrap justify-content-between align-items-center mb-2"
+										style={{ gap: 8 }}
+									>
+										<label className={styles.tableSearch}>
+											<i className="bi bi-search" />
+											<span className={styles.srOnly}>Search live feed</span>
+											<input
+												value={feedSearch}
+												onChange={(event) => setFeedSearch(event.target.value)}
+												placeholder="Search ref, route or amount"
+											/>
+										</label>
+										<fieldset className={styles.filterPills}>
+											<legend className={styles.srOnly}>
+												Filter feed status
+											</legend>
+											{(["All", "Alert", "Cleared", "Hold"] as const).map(
+												(filter) => (
+													<button
+														type="button"
+														key={filter}
+														className={
+															feedFilter === filter ? styles.filterActive : ""
+														}
+														onClick={() => setFeedFilter(filter)}
+													>
+														{filter}
+													</button>
+												),
+											)}
+										</fieldset>
+									</div>
+									<div
+										className={styles.tableScroll}
+										style={{ maxHeight: 320 }}
 									>
 										<table className={styles.tbl}>
 											<thead>
@@ -1098,30 +1276,56 @@ export default function Compliance() {
 												</tr>
 											</thead>
 											<tbody>
-												{config.liveFeed.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
+												{feedRows.map((row) => (
+													<tr key={String(row[0])}>
+														{zipCells(config.liveFeed.cols, row).map(
+															([col, cell]) => (
+																<td
+																	key={`${col.key}-${typeof cell === "string" ? cell : "obj"}`}
+																>
+																	<CellValue cell={cell} onOpen={openM} />
+																</td>
+															),
+														)}
 													</tr>
 												))}
+												{feedRows.length === 0 && (
+													<tr>
+														<td colSpan={config.liveFeed.cols.length}>
+															<div className={styles.emptyState}>
+																<i className="bi bi-search" />
+																<strong>No matching transactions</strong>
+																<span>
+																	Try a different search or status filter.
+																</span>
+															</div>
+														</td>
+													</tr>
+												)}
 											</tbody>
 										</table>
 									</div>
-								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Risk Distribution (Today)</h4>
+									<div className={styles.tableFooter}>
+										<span>
+											Showing {feedRows.length} of {config.liveFeed.rows.length}{" "}
+											transactions
+										</span>
+										<button
+											type="button"
+											onClick={() => openM("liveAlertsModal")}
+										>
+											View all alerts <i className="bi bi-arrow-right" />
+										</button>
+									</div>
+								</Ub>
+								<Ub title="Risk distribution (today)">
 									{config.riskDistribution.map((b) => (
-										<div key={b.label}>
+										<div key={b.label} style={{ marginBottom: 14 }}>
 											<div className="d-flex justify-content-between mb-2">
-												<span>{b.label}</span>
-												<strong>{b.value}</strong>
+												<span className={styles.mutedSmall}>{b.label}</span>
+												<strong style={{ fontSize: 12 }}>{b.value}</strong>
 											</div>
-											<div className={`${styles.pmProgress} mb-3`}>
+											<div className={styles.pmProgress}>
 												<div
 													className={styles.pmProgressBar}
 													style={{ width: b.width, background: b.color }}
@@ -1133,241 +1337,320 @@ export default function Compliance() {
 										className={`${styles.summaryBoxDanger} mt-3`}
 										style={{ fontSize: 12 }}
 									>
+										<i className="bi bi-exclamation-octagon me-1" />
 										<strong>{config.riskFlagged.title}</strong>{" "}
 										{config.riskFlagged.body}{" "}
 										<strong>{config.riskFlagged.score}</strong>
 									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ========== SECTION 2: AML Rules Engine ========== */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-sliders"
-							iconColor="var(--pm-purple)"
-							title="AML Rules Engine & Threshold Configuration"
-							sub="Create, tune, and A/B test detection rules for structuring, velocity, round-tripping, and sanctions evasion."
-							actions={[
-								{
-									label: "New Rule",
-									icon: "bi-plus-lg",
-									modal: "amlRulesModal",
-								},
-								{
-									label: "Test Rules",
-									icon: "bi-play",
-									modal: "ruleTestModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-7">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Active Detection Rules</h4>
-									{config.rules.map((r) => (
-										<div className={styles.sr} key={r.title}>
-											<div>
-												<strong>{r.title}</strong>
-												<div className={styles.mutedSmall}>{r.sub}</div>
-											</div>
-											<div>
-												<span
-													className={`${styles.badge} ${styles[r.statusTone]}`}
-												>
-													{r.status}
-												</span>{" "}
-												<span
-													className={`${styles.badge} ${styles.badgeP}`}
-												>
-													{r.precision}
-												</span>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Rule Performance (30 days)
-									</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.rulePerformance.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.rulePerformance.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ========== SECTION 3: Sanctions & PEP Screening ========== */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-globe"
-							iconColor="var(--pm-info)"
-							title="Sanctions & PEP Screening"
-							sub="Real-time and batch screening against UN, OFAC, EU, UK, and local sanctions lists plus PEP databases."
-							actions={[
-								{
-									label: "Search",
-									icon: "bi-search",
-									modal: "sanctionsSearchModal",
-								},
-								{
-									label: "Bulk Screen",
-									icon: "bi-people",
-									modal: "bulkScreeningModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>
-										Screening Summary (Today)
-									</h4>
-									{config.screeningSummary.map((r) => (
-										<div className={styles.sr} key={r.label}>
-											<div>
-												<strong>{r.label}</strong>
-											</div>
-											<strong>{r.value}</strong>
-										</div>
-									))}
-									<div
-										className={`${styles.summaryBoxInfo} mt-3`}
-										style={{ fontSize: 12 }}
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
+										onClick={() => openM("attentionFullModal")}
 									>
-										<i className="bi bi-info-circle me-1" /> Last full
-										sanctions list refresh:{" "}
-										<strong>{config.screeningRefresh}</strong>
-									</div>
-								</div>
+										<i className="bi bi-arrow-right" /> Review flagged
+										transactions
+									</button>
+								</Ub>
 							</div>
-							<div className="col-lg-7">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Recent Matches</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.recentMatches.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.recentMatches.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
+						</div>
+					</section>
+
+					{/* ======================= 1.4 AML RULES ENGINE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-rules-heading"
+					>
+						<SectionHeading
+							id="compliance-rules-heading"
+							index="1.4"
+							title="AML rules engine"
+							description="Create, tune and A/B test detection rules for structuring, velocity, round-tripping and sanctions evasion."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("ruleTestModal")}
+									>
+										<i className="bi bi-play" /> Test rules
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("amlRulesModal")}
+									>
+										<i className="bi bi-plus-lg" /> New rule
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-7">
+									<Ub title="Active detection rules">
+										{config.rules.map((r) => (
+											<div className={styles.sr} key={r.title}>
+												<div>
+													<strong>{r.title}</strong>
+													<div className={styles.mutedSmall}>{r.sub}</div>
+												</div>
+												<div className="d-flex flex-wrap" style={{ gap: 6 }}>
+													<span
+														className={`${styles.badge} ${styles[r.statusTone]}`}
+													>
+														{r.status}
+													</span>
+													<span className={`${styles.badge} ${styles.badgeP}`}>
+														<i className="bi bi-bullseye" /> {r.precision}
+													</span>
+												</div>
+											</div>
+										))}
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+											onClick={() => openM("amlRulesModal")}
+										>
+											<i className="bi bi-sliders" /> Manage all rules
+										</button>
+									</Ub>
+								</div>
+								<div className="col-lg-5">
+									<Ub
+										title="Rule performance (30 days)"
+										action={
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("ruleTestModal")}
+											>
+												<i className="bi bi-play" /> A/B test
+											</button>
+										}
+									>
+										<div
+											className={styles.tableScroll}
+											style={{ maxHeight: 320 }}
+										>
+											<table className={styles.tbl} style={{ minWidth: 420 }}>
+												<thead>
+													<tr>
+														{config.rulePerformance.cols.map((c) => (
+															<th key={c.key}>{c.label}</th>
 														))}
 													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
+												</thead>
+												<tbody>
+													{config.rulePerformance.rows.map((row) => (
+														<tr key={String(row[0])}>
+															{zipCells(config.rulePerformance.cols, row).map(
+																([col, cell]) => (
+																	<td
+																		key={`${col.key}-${typeof cell === "string" ? cell : "obj"}`}
+																	>
+																		<CellValue cell={cell} onOpen={openM} />
+																	</td>
+																),
+															)}
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									</Ub>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ========== SECTION 4: Investigation Case Management ========== */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-folder-check"
-							iconColor="var(--pm-info)"
-							title="Investigation Case Management"
-							sub="End-to-end case lifecycle: creation, evidence gathering, collaboration, escalation, and regulatory filing."
-							actions={[
-								{
-									label: "New Case",
-									icon: "bi-folder-plus",
-									modal: "newCaseModal",
-								},
-								{
-									label: "Export",
-									icon: "bi-download",
-									modal: "caseExportModal",
-								},
-							]}
-							onOpen={openM}
+					{/* ======================= 1.5 SANCTIONS & PEP SCREENING ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-screening-heading"
+					>
+						<SectionHeading
+							id="compliance-screening-heading"
+							index="1.5"
+							title="Sanctions & PEP screening"
+							description="Real-time and batch screening against UN, OFAC, EU, UK and local sanctions lists plus PEP databases."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("bulkScreeningModal")}
+									>
+										<i className="bi bi-people" /> Bulk screen
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("sanctionsSearchModal")}
+									>
+										<i className="bi bi-search" /> Search
+									</button>
+								</div>
+							}
 						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.cases.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-5">
+									<Ub title="Screening summary (today)">
+										{config.screeningSummary.map((r) => (
+											<div className={styles.sr} key={r.label}>
+												<strong>{r.label}</strong>
+												<strong>{r.value}</strong>
+											</div>
 										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.cases.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
+										<div
+											className={`${styles.summaryBoxInfo} mt-3`}
+											style={{ fontSize: 12 }}
+										>
+											<i className="bi bi-info-circle me-1" /> Last full
+											sanctions list refresh:{" "}
+											<strong>{config.screeningRefresh}</strong>
+										</div>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
+											onClick={() => openM("bulkScreeningModal")}
+										>
+											<i className="bi bi-people" /> Screen a new batch
+										</button>
+									</Ub>
+								</div>
+								<div className="col-lg-7">
+									<Ub title="Recent matches">
+										<div className={styles.tableScroll}>
+											<table className={styles.tbl} style={{ minWidth: 520 }}>
+												<thead>
+													<tr>
+														{config.recentMatches.cols.map((c) => (
+															<th key={c.key}>{c.label}</th>
+														))}
+													</tr>
+												</thead>
+												<tbody>
+													{config.recentMatches.rows.map((row) => (
+														<tr key={String(row[0])}>
+															{zipCells(config.recentMatches.cols, row).map(
+																([col, cell]) => (
+																	<td
+																		key={`${col.key}-${typeof cell === "string" ? cell : "obj"}`}
+																	>
+																		<CellValue cell={cell} onOpen={openM} />
+																	</td>
+																),
+															)}
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									</Ub>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					{/* ======================= 1.6 CASES & REGULATORY REPORTING ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-cases-heading"
+					>
+						<SectionHeading
+							id="compliance-cases-heading"
+							index="1.6"
+							title="Cases & regulatory reporting"
+							description="End-to-end investigation lifecycle — creation, evidence, escalation — and STR / CTR / SAR filing with deadline tracking."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("caseExportModal")}
+									>
+										<i className="bi bi-download" /> Export
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("newCaseModal")}
+									>
+										<i className="bi bi-folder-plus" /> New case
+									</button>
+								</div>
+							}
+						/>
+						<article className={`${styles.card} ${styles.tableCard}`}>
+							<div className={styles.tableToolbar}>
+								<div className={styles.tableTitle}>
+									<h3>Investigation cases</h3>
+									<span>Active, escalated and closed AML cases.</span>
+								</div>
+								<div className={styles.tableTools}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("newCaseModal")}
+									>
+										<i className="bi bi-folder-plus" /> New case
+									</button>
+								</div>
+							</div>
+							<div className={styles.tableScroll}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											{config.cases.cols.map((c) => (
+												<th key={c.key}>{c.label}</th>
 											))}
 										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
+									</thead>
+									<tbody>
+										{config.cases.rows.map((row) => (
+											<tr key={String(row[0])}>
+												{zipCells(config.cases.cols, row).map(([col, cell]) => (
+													<td
+														key={`${col.key}-${typeof cell === "string" ? cell : "obj"}`}
+													>
+														<CellValue cell={cell} onOpen={openM} />
+													</td>
+												))}
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</article>
 
-					{/* ========== SECTION 5: Regulatory Reporting ========== */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-file-earmark-text"
-							iconColor="var(--pm-purple)"
-							title="Regulatory Reporting (STR / CTR / SAR)"
-							sub="Automated generation, review, and submission of Suspicious Transaction Reports, Currency Transaction Reports, and Suspicious Activity Reports."
-							actions={[
-								{
-									label: "New Filing",
-									icon: "bi-plus-lg",
-									modal: "regReportModal",
-								},
-								{
-									label: "Calendar",
-									icon: "bi-calendar",
-									modal: "reportCalendarModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
+						<div className="row g-3" style={{ marginTop: "0.25rem" }}>
 							<div className="col-lg-7">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Recent Filings</h4>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
+								<div className={styles.card}>
+									<div className={styles.cardHeader}>
+										<div>
+											<span className={styles.cardKicker}>Filings</span>
+											<h3>Recent filings (STR / CTR / SAR)</h3>
+										</div>
+										<div className={styles.headerButtonRow}>
+											<button
+												type="button"
+												className={styles.textButton}
+												onClick={() => openM("reportCalendarModal")}
+											>
+												<i className="bi bi-calendar" /> Calendar
+											</button>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+												onClick={() => openM("regReportModal")}
+											>
+												<i className="bi bi-plus-lg" /> New filing
+											</button>
+										</div>
+									</div>
+									<div className={styles.tableScroll}>
+										<table className={styles.tbl} style={{ minWidth: 520 }}>
 											<thead>
 												<tr>
 													{config.filings.cols.map((c) => (
@@ -1376,13 +1659,17 @@ export default function Compliance() {
 												</tr>
 											</thead>
 											<tbody>
-												{config.filings.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
-														))}
+												{config.filings.rows.map((row) => (
+													<tr key={String(row[0])}>
+														{zipCells(config.filings.cols, row).map(
+															([col, cell]) => (
+																<td
+																	key={`${col.key}-${typeof cell === "string" ? cell : "obj"}`}
+																>
+																	<CellValue cell={cell} onOpen={openM} />
+																</td>
+															),
+														)}
 													</tr>
 												))}
 											</tbody>
@@ -1391,32 +1678,87 @@ export default function Compliance() {
 								</div>
 							</div>
 							<div className="col-lg-5">
-								<div className={styles.ub}>
-									<h4 className={styles.ubTitle}>Filing Deadlines</h4>
-									{config.deadlines.map((d) => (
-										<div className={styles.sr} key={d.title}>
-											<div>
-												<strong>{d.title}</strong>
-												<div className={styles.mutedSmall}>{d.sub}</div>
-											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm} ${d.actionTone ? styles[d.actionTone] : ""}`}
-												onClick={() => openM(d.modal)}
-											>
-												{d.actionLabel}
-											</button>
+								<div className={styles.card}>
+									<div className={styles.cardHeader}>
+										<div>
+											<span className={styles.cardKicker}>Deadlines</span>
+											<h3>Filing deadlines</h3>
 										</div>
-									))}
+										<span className={`${styles.badge} ${styles.badgeW}`}>
+											<i className="bi bi-clock" /> {config.deadlines.length}{" "}
+											due
+										</span>
+									</div>
+									<div style={{ paddingTop: "0.4rem" }}>
+										{config.deadlines.map((d) => (
+											<div className={styles.sr} key={d.title}>
+												<div>
+													<strong>{d.title}</strong>
+													<div className={styles.mutedSmall}>{d.sub}</div>
+												</div>
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm} ${d.actionTone ? styles[d.actionTone] : ""}`}
+													onClick={() => openM(d.modal)}
+												>
+													{d.actionLabel}
+												</button>
+											</div>
+										))}
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 				</div>
-				{/* content */}
-			</div>
-			{/* main */}
 
-			{/* ======================= MODALS ======================= */}
+				{/* ======================= FLOATING COMMAND BAR ======================= */}
+				<nav
+					className={styles.floatingBar}
+					aria-label="Quick compliance actions"
+				>
+					<button
+						type="button"
+						className={styles.floatingPrimary}
+						onClick={() => openM("newCaseModal")}
+					>
+						<i className="bi bi-folder-plus" /> New case
+					</button>
+					<button type="button" onClick={() => openM("sanctionsSearchModal")}>
+						<i className="bi bi-globe" /> Sanctions
+					</button>
+					<button type="button" onClick={() => openM("amlRulesModal")}>
+						<i className="bi bi-sliders" /> Rules
+					</button>
+					<button type="button" onClick={() => openM("regReportModal")}>
+						<i className="bi bi-file-earmark-text" /> File STR/CTR
+					</button>
+					<button type="button" onClick={() => openM("liveAlertsModal")}>
+						<i className="bi bi-bell" /> Alerts
+					</button>
+					<button
+						type="button"
+						className={styles.floatingDanger}
+						onClick={() => openM("emergencyBlockModal")}
+					>
+						<i className="bi bi-exclamation-triangle" /> Emergency
+					</button>
+				</nav>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-shield-check" /> Protected by PayMo secure
+						transaction controls
+					</span>
+					<nav aria-label="Footer links">
+						<a href="/pm/app/support">Support</a>
+						<Link to="/pm/app/settings">Preferences</Link>
+						<span>v2.4.0</span>
+					</nav>
+				</footer>
+			</main>
+
+			{/* ======================= ALL MODALS ======================= */}
 			<ComplianceModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);

@@ -264,7 +264,7 @@ export function FlowModal({
   }, [show]);
 
   const renderFn = typeof children === "function" ? (children as (step: number) => ReactNode) : null;
-  const renderBody = renderFn ? renderFn(step) : children;
+  const renderBody = renderFn ? renderFn(step) : (children as ReactNode);
 
   const submitBtnClass =
     submitVariant === "danger"

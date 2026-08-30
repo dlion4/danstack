@@ -6,20 +6,27 @@
  *   performance, settlement reconciliation, fraud detection, infrastructure
  *   scaling, and support ticket queues — all in real time.
  *
+ * Refined surface: rebuilt on the PayMo business-dashboard composition —
+ * executive hero with live status snapshot, numbered sections (system status,
+ * attention centre, transaction health, API & integrations, settlement,
+ * fraud operations, infrastructure, operations queue & audit), floating
+ * command bar and footer. Shell chrome is owned by AppShell; this page
+ * renders content only. All 30 modals remain reachable from the page
+ * (8 orphaned shells re-wired through hero snapshot, attention, quick
+ * actions and section actions).
+ *
  * STACK ........: Vite + React + TypeScript + TanStack Query
  * ARCHITECTURE .: Child of routes/app.tsx, renders INSIDE the app shell.
  * ========================================================================== */
 
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
-import { cx } from "@/features/Layouts/shell/data/shellData";
+import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
 import OpsSystemModals, {
 	initialModalsState,
 	type ModalKey,
 } from "../components/OpsSystemModals";
 import styles from "../styles/systemHealth.module.css";
-
-const s = styles as Record<string, string>;
 
 /* ============================================================
    MOCK DATA — extracted from the legacy HTML template
@@ -38,15 +45,6 @@ interface Corridor {
 	count: string;
 	success: string;
 	avgTime: string;
-}
-
-interface Incident {
-	id: string;
-	title: string;
-	severity: "High" | "Medium";
-	started: string;
-	owner: string;
-	status: string;
 }
 
 interface FraudRule {
@@ -371,6 +369,97 @@ async function fetchOpsData(): Promise<OpsData> {
 /* ============================================================
    MAIN COMPONENT
    ============================================================ */
+
+/* ---------- section heading (business numbered pattern) ---------- */
+function SectionHeading({
+	id,
+	index,
+	title,
+	description,
+	action,
+}: {
+	id: string;
+	index: string;
+	title: string;
+	description: string;
+	action?: React.ReactNode;
+}) {
+	return (
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
+			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
+		</div>
+	);
+}
+
+/* ---------- utility box (subtle panel inside cards) ---------- */
+function Ub({
+	title,
+	children,
+	action,
+}: {
+	title: string;
+	children: React.ReactNode;
+	action?: React.ReactNode;
+}) {
+	return (
+		<div className={styles.ub}>
+			<div
+				className="d-flex justify-content-between align-items-center flex-wrap"
+				style={{ gap: 8 }}
+			>
+				<h4 className={styles.ubTitle} style={{ margin: 0 }}>
+					{title}
+				</h4>
+				{action}
+			</div>
+			<div style={{ marginTop: 12 }}>{children}</div>
+		</div>
+	);
+}
+
+/* ---------- KPI visual metadata (keyed by stat key) ---------- */
+const STAT_META: Record<
+	string,
+	{
+		icon: string;
+		bg: string;
+		color: string;
+		accent?: "kpiFeatured" | "kpiDanger";
+	}
+> = {
+	uptime: {
+		icon: "bi-shield-check",
+		bg: "var(--pm-green-soft)",
+		color: "#067647",
+		accent: "kpiFeatured",
+	},
+	success: {
+		icon: "bi-check2-circle",
+		bg: "var(--pm-green-soft)",
+		color: "#067647",
+	},
+	p95: {
+		icon: "bi-speedometer2",
+		bg: "var(--pm-info-soft)",
+		color: "#175cd3",
+	},
+	incidents: {
+		icon: "bi-exclamation-triangle",
+		bg: "var(--pm-danger-soft)",
+		color: "#b42318",
+		accent: "kpiDanger",
+	},
+};
+
 export default function OpsSystem() {
 	const [modals, setModals] = useState(initialModalsState);
 
@@ -382,1115 +471,1143 @@ export default function OpsSystem() {
 		setModals((prev: typeof initialModalsState) => ({ ...prev, [key]: false }));
 	}, []);
 
-	const { data } = useQuery<OpsData>({
+	const { data, isFetching, error } = useQuery<OpsData>({
 		queryKey: ["paymo-ops-system"],
 		queryFn: fetchOpsData,
 		staleTime: 30_000,
 		retry: 1,
 		initialData: initialMockData,
 	});
+	const config = data ?? initialMockData;
 
-	if (!data) return null;
+	/* Modal hygiene: scroll lock, Escape to close, focus returns to trigger. */
+	const anyModalOpen = Object.values(modals).some(Boolean);
+	useEffect(() => {
+		if (!anyModalOpen) return;
+		const trigger = document.activeElement as HTMLElement | null;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setModals(initialModalsState);
+		};
+		window.addEventListener("keydown", closeOnEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", closeOnEscape);
+			trigger?.focus();
+		};
+	}, [anyModalOpen]);
 
 	return (
-		<div className={s.systemHealthPage}>
-
-			<div className={s.content}>
-				{/* ===== HERO STATS ===== */}
-				<div className="row g-3">
-					<div className="col-lg-4">
-						<div className={cx(s.card, s.cardAccent)} style={{ minHeight: 170 }}>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
-							>
-								Platform status <span style={{ color: "#86efac" }}>●</span>{" "}
-								{data.platformStatus}
-							</p>
-							<div className={s.sv} style={{ margin: "8px 0", color: "#fff" }}>
-								{data.platformUptime} Uptime
+		<div className={styles.systemHealthPage}>
+			<div className={styles.content}>
+				{/* ======================= EXECUTIVE HERO ======================= */}
+				<section
+					className={styles.heroBanner}
+					aria-labelledby="ops-health-page-title"
+				>
+					<div className={styles.heroOrbOne} aria-hidden="true" />
+					<div className={styles.heroOrbTwo} aria-hidden="true" />
+					<div className={styles.heroContent}>
+						<div className={styles.heroCopy}>
+							<div className={styles.heroEyebrow}>
+								<span>
+									<i className="bi bi-activity" /> Operations command center
+								</span>
+								<span className={styles.heroLive}>
+									<span className={styles.dotLive} /> {config.platformStatus}
+									{isFetching ? (
+										<small className={styles.heroRefreshing}>Refreshing…</small>
+									) : null}
+								</span>
 							</div>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "rgba(255,255,255,.78)",
-								}}
-							>
-								Last 30 days • {data.incidents30d} minor incidents resolved •{" "}
-								{data.criticalOutages} critical outages
+							<h1 id="ops-health-page-title">System Health &amp; Operations</h1>
+							<p>
+								Real-time platform uptime, transaction health, API performance,
+								settlement reconciliation, fraud operations, infrastructure
+								scaling and support queues — all in one command center.
 							</p>
-							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+							<div className={styles.heroActions}>
 								<button
 									type="button"
-									className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
+									className={styles.heroPrimaryBtn}
+									onClick={() => openModal("runHealthCheck")}
+								>
+									<i className="bi bi-play-circle" /> Run health check
+								</button>
+								<button
+									type="button"
+									className={styles.heroSecondaryBtn}
+									onClick={() => openModal("globalStatus")}
+								>
+									<i className="bi bi-globe" /> Global status
+								</button>
+								<button
+									type="button"
+									className={styles.heroSecondaryBtn}
+									onClick={() => openModal("createIncident")}
+								>
+									<i className="bi bi-plus-circle" /> Create incident
+								</button>
+							</div>
+						</div>
+						<aside
+							className={styles.heroSnapshot}
+							aria-label="Operations live status snapshot"
+						>
+							<div className={styles.heroSnapshotTop}>
+								<span>Live snapshot</span>
+								<div className={styles.heroSnapshotActions}>
+									<button
+										type="button"
+										className={styles.heroIconBtn}
+										onClick={() => openModal("opsNotif")}
+										aria-label="Operations notifications"
+										title="Operations notifications"
+									>
+										<i className="bi bi-bell" />
+									</button>
+									<button
+										type="button"
+										className={styles.heroIconBtn}
+										onClick={() => openModal("notifSettings")}
+										aria-label="Notification settings"
+										title="Notification settings"
+									>
+										<i className="bi bi-gear" />
+									</button>
+									<button
+										type="button"
+										className={styles.heroAvatar}
+										onClick={() => openModal("profile")}
+										aria-label="Profile"
+										title="Profile"
+									>
+										MN
+									</button>
+								</div>
+							</div>
+							<strong>{config.platformUptime}</strong>
+							<p>
+								Uptime · Last 30 days — {config.incidents30d} minor incidents
+								resolved, {config.criticalOutages} critical outages
+							</p>
+							<div className={styles.heroMetricRow}>
+								<div>
+									<strong>{config.txnSuccess}</strong>
+									<span>Success rate</span>
+								</div>
+								<div>
+									<strong>{config.apiP95}</strong>
+									<span>API P95</span>
+								</div>
+								<div>
+									<strong>{config.openIncidents}</strong>
+									<span>Open incidents</span>
+								</div>
+							</div>
+						</aside>
+					</div>
+				</section>
+
+				{error ? (
+					<output className={styles.statusNotice}>
+						<i className="bi bi-cloud-slash" />
+						<span>
+							<strong>Live operations data is temporarily unavailable</strong>
+							<small>Using the latest local operating snapshot.</small>
+						</span>
+					</output>
+				) : null}
+
+				{/* ======================= 1.1 SYSTEM STATUS & UPTIME ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-status-heading"
+				>
+					<SectionHeading
+						id="ops-status-heading"
+						index="1.1"
+						title="System status & uptime"
+						description="Real-time health of every B2B transaction service, API, settlement engine and fraud system."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
 									onClick={() => openModal("uptimeHistory")}
 								>
-									History
+									<i className="bi bi-clock-history" /> History
 								</button>
 								<button
 									type="button"
-									className={`${s.btnPm} ${s.btnSm} ${s.btnGhost}`}
+									className={styles.btnPm}
 									onClick={() => openModal("slaReport")}
 								>
-									SLA Report
+									<i className="bi bi-file-earmark-bar-graph" /> SLA report
 								</button>
 							</div>
-						</div>
-					</div>
-					<div className="col-lg-2 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.sl} style={{ color: "var(--pm-accent)" }}>
-								TRANSACTION SUCCESS
-							</p>
-							<div className={s.sv} style={{ margin: "6px 0" }}>
-								{data.txnSuccess}
-							</div>
-							<span className={cx(s.badge, s.badgeS)}>
-								<i className="bi bi-check-circle" /> {data.txnCount} txns today
-							</span>
-							<div className="mt-2">
-								<div
-									className="d-flex justify-content-between"
-									style={{ fontSize: 11, color: "var(--pm-muted)" }}
+						}
+					/>
+					<div className={styles.kpiGrid}>
+						{[
+							{
+								key: "uptime",
+								label: "Platform uptime",
+								value: config.platformUptime,
+								badge: {
+									tone: "badgeS",
+									icon: "bi-check-circle",
+									text: "Operational",
+								},
+								progress: { width: "99.97%", color: "var(--pm-green)" },
+								note: [
+									`${config.incidents30d} minor incidents (30d)`,
+									"0 critical outages",
+								],
+							},
+							{
+								key: "success",
+								label: "Transaction success",
+								value: config.txnSuccess,
+								badge: {
+									tone: "badgeS",
+									icon: "bi-check2-circle",
+									text: `${config.txnCount} txns today`,
+								},
+								progress: { width: "99.4%", color: "var(--pm-green)" },
+								note: [`${config.txnFailed} failed (${config.txnFailedPct})`],
+							},
+							{
+								key: "p95",
+								label: "API response (P95)",
+								value: config.apiP95,
+								badge: {
+									tone: "badgeI",
+									icon: "bi-speedometer2",
+									text: "Within SLA",
+								},
+								note: [`Load ${config.apiLoad}`, `Peak ${config.apiPeak}`],
+							},
+							{
+								key: "incidents",
+								label: "Open incidents",
+								value: String(config.openIncidents),
+								badge: {
+									tone: "badgeW",
+									icon: "bi-exclamation-triangle",
+									text: `${config.highPriority} high priority`,
+								},
+								note: [
+									`${config.settlementDelay} settlement delays`,
+									`${config.fraudSpike} fraud spike`,
+									`${config.apiDegradation} API degradations`,
+								],
+							},
+						].map((card) => {
+							const meta = STAT_META[card.key] ?? {
+								icon: "bi-bar-chart",
+								bg: "var(--pm-surface-2)",
+								color: "#475467",
+							};
+							return (
+								<article
+									key={card.key}
+									className={`${styles.card} ${styles.kpiCard} ${meta.accent ? styles[meta.accent] : ""}`}
 								>
-									<span>Failed</span>
-									<span>
-										{data.txnFailed} ({data.txnFailedPct})
-									</span>
-								</div>
-								<div className={s.pmProgress} style={{ marginTop: 6 }}>
 									<div
-										className={s.pmProgressBar}
-										style={{
-											width: data.txnSuccess,
-											background: "var(--pm-accent)",
-										}}
-									/>
-								</div>
-							</div>
-						</div>
+										className={styles.kpiIcon}
+										style={{ background: meta.bg, color: meta.color }}
+									>
+										<i className={`bi ${meta.icon}`} />
+									</div>
+									<div className={styles.kpiMeta}>
+										<span>{card.label}</span>
+										<small>Live</small>
+									</div>
+									<strong className={styles.kpiValue}>{card.value}</strong>
+									<div className={styles.kpiFoot}>
+										<span
+											className={`${styles.badge} ${styles[card.badge.tone]}`}
+										>
+											<i className={`bi ${card.badge.icon}`} />{" "}
+											{card.badge.text}
+										</span>
+										{card.progress ? (
+											<span
+												className={styles.pmProgress}
+												style={{ width: 110 }}
+											>
+												<span
+													className={styles.pmProgressBar}
+													style={{
+														display: "block",
+														width: card.progress.width,
+														background: card.progress.color,
+													}}
+												/>
+											</span>
+										) : null}
+									</div>
+									{card.note && (
+										<div className={styles.kpiLines}>
+											{card.note.map((n) => (
+												<div key={n} className={styles.kpiLine}>
+													<span>{n}</span>
+												</div>
+											))}
+										</div>
+									)}
+								</article>
+							);
+						})}
 					</div>
-					<div className="col-lg-3 col-md-4 col-6">
-						<div className={s.card} style={{ minHeight: 170 }}>
-							<p className={s.sl} style={{ color: "var(--pm-info)" }}>
-								API RESPONSE (P95)
-							</p>
-							<div className={s.sv} style={{ margin: "6px 0" }}>
-								{data.apiP95}
-							</div>
-							<span className={cx(s.badge, s.badgeI)}>
-								<i className="bi bi-speedometer2" /> Within SLA
-							</span>
-							<div
-								className="mt-2"
-								style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-							>
-								<div>
-									Current load: <strong>{data.apiLoad}</strong>
-								</div>
-								<div>
-									Peak today: <strong>{data.apiPeak}</strong>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-3 col-md-4">
-						<div
-							className={s.card}
-							style={{
-								minHeight: 170,
-								borderLeft: "3px solid var(--pm-warning)",
-							}}
-						>
-							<p className={s.sl} style={{ color: "var(--pm-warning)" }}>
-								OPEN INCIDENTS
-							</p>
-						<div className={s.sv} style={{ margin: "6px 0" }}>
-							{data.openIncidents}
-						</div>
-						<span className={cx(s.badge, s.badgeW)}>
-							<i className="bi bi-exclamation-triangle" /> {data.highPriority}{" "}
-							high priority
-						</span>
-						<div
-							className="mt-2"
-							style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-						>
-							<div>
-								Settlement delay: <strong>{data.settlementDelay}</strong>
-							</div>
-							<div>
-								Fraud alert spike: <strong>{data.fraudSpike}</strong>
-							</div>
-							<div>
-								API degradation: <strong>{data.apiDegradation}</strong>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 
-			{/* ===== ATTENTION / SUGGESTIONS / QUICK ACTIONS ===== */}
-			<div className="row g-3">
-				<div className="col-lg-4">
-					<div className={cx(s.card, "h-100")}>
-						<div className="d-flex justify-content-between align-items-center mb-3">
-							<h3 className={s.st}>Attention Required</h3>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("incidentQueue")}
-							>
-								View all
-							</button>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-danger-soft)",
-										color: "var(--pm-danger)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-exclamation-triangle" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										Settlement batch #S-88219 delayed
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										2h 14m behind SLA • KES 184M
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} ${s.btnPmD}`}
-								onClick={() => openModal("settlementDetail")}
-							>
-								Investigate
-							</button>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-warning-soft)",
-										color: "var(--pm-warning)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-graph-up" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										Fraud detection false positive rate 4.2%
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										Above threshold (2.5%)
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("fraudModel")}
-							>
-								Tune Model
-							</button>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-info-soft)",
-										color: "var(--pm-info)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-server" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										API Gateway P99 latency 420ms
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										SLA breach risk (SLA: 300ms)
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("apiPerformance")}
-							>
-								Scale
-							</button>
-						</div>
-					</div>
-				</div>
-
-				<div className="col-lg-4">
-					<div className={cx(s.card, "h-100")}>
-						<div className="d-flex justify-content-between align-items-center mb-3">
-							<h3 className={s.st}>Smart Suggestions</h3>
-							<span className={cx(s.badge, s.badgeP)}>
-								<i className="bi bi-stars" /> AI
-							</span>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-accent-soft)",
-										color: "var(--pm-accent)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-lightning-charge" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										Enable auto-scaling on API Gateway
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										Reduce P99 latency by 35%
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("infraScaling")}
-							>
-								Enable
-							</button>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-purple-soft)",
-										color: "var(--pm-purple)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-shield-check" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										Update fraud rules for weekend patterns
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										Reduce false positives by 1.8%
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("fraudModel")}
-							>
-								Apply
-							</button>
-						</div>
-						<div className={s.sr}>
-							<div className="d-flex align-items-center gap-3">
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: "50%",
-										background: "var(--pm-warning-soft)",
-										color: "var(--pm-warning)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										fontSize: 14,
-										flexShrink: 0,
-									}}
-								>
-									<i className="bi bi-clock-history" />
-								</div>
-								<div>
-									<div style={{ fontWeight: 600, fontSize: 13 }}>
-										Schedule reconciliation catch-up job
-									</div>
-									<div style={{ fontSize: 11, color: "var(--pm-muted)" }}>
-										Clear 4 pending settlement batches
-									</div>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm}`}
-								onClick={() => openModal("reconciliation")}
-							>
-								Schedule
-							</button>
-						</div>
-					</div>
-				</div>
-
-				<div className="col-lg-4">
-					<div className={cx(s.card, "h-100")}>
-						<div className="mb-3">
-							<h3 className={s.st}>Quick Actions</h3>
-							<p className={s.ss}>Frequent operations workflows</p>
-						</div>
-						<div className={s.qaGrid}>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("runHealthCheck")}
-							>
-								<i className="bi bi-play-circle textAccent me-1" /> Run Health
-								Check
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("incidentQueue")}
-							>
-								<i className="bi bi-exclamation-triangle textDanger me-1" />{" "}
-								View Incidents
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("settlementDetail")}
-							>
-								<i className="bi bi-bank textInfo me-1" /> Settlement Status
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("fraudModel")}
-							>
-								<i className="bi bi-shield-exclamation textWarn me-1" /> Fraud
-								Console
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("apiPerformance")}
-							>
-								<i className="bi bi-speedometer2 textInfo me-1" /> API Metrics
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("auditLog")}
-							>
-								<i className="bi bi-file-earmark-text textPurple me-1" /> Audit
-								Logs
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("ticketDetail")}
-							>
-								<i className="bi bi-headset textAccent me-1" /> Support Queue
-							</button>
-							<button
-								type="button"
-								className={s.qaBtn}
-								onClick={() => openModal("infraScaling")}
-							>
-								<i className="bi bi-server textInfo me-1" /> Scale Services
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* ===== SECTION 1: System Status Dashboard ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
-				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-heart-pulse-fill"
-								style={{ color: "var(--pm-primary)" }}
-							/>{" "}
-							System Status Dashboard
-						</h3>
-						<p className={s.ss}>
-							Real-time health of all B2B transaction services, APIs, settlement
-							engines and fraud systems.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("globalStatus")}
-						>
-							<i className="bi bi-globe" /> Global View
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm} ${s.btnPmP}`}
-							onClick={() => openModal("runHealthCheck")}
-						>
-							<i className="bi bi-play" /> Run Full Check
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-8">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Service Health Overview
-							</h4>
-							<div className="table-responsive">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Service</th>
-											<th>Status</th>
-											<th>Uptime</th>
-											<th>Latency (P95)</th>
-											<th>Error Rate</th>
-											<th>Last Incident</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.services.map((svc) => (
-											<tr key={svc.name}>
-												<td>
-													<strong>{svc.name}</strong>
-												</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															svc.status === "Healthy" ? s.badgeS : s.badgeW,
-														)}
-													>
-														<i
-															className={`bi ${svc.status === "Healthy" ? "bi-check-circle" : "bi-exclamation-triangle"}`}
-														/>
-														{svc.status}
-													</span>
-												</td>
-												<td>{svc.uptime}</td>
-												<td>{svc.latency}</td>
-												<td>{svc.errorRate}</td>
-												<td>{svc.lastIncident}</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
-														onClick={() => openModal("serviceDetail")}
-													>
-														Details
-													</button>
-												</td>
+					<div className={`${styles.card} mt-3`}>
+						<div className={styles.panelGridWide}>
+							<Ub title="Service health overview">
+								<div className={styles.tableScroll}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Service</th>
+												<th>Status</th>
+												<th>Uptime</th>
+												<th>Latency (P95)</th>
+												<th>Error Rate</th>
+												<th>Last Incident</th>
+												<th>Actions</th>
 											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Regional Status
-							</h4>
-							{data.regions.map((region) => (
-								<div className={s.sr} key={region.name}>
-									<div>
-										<strong>{region.name}</strong>
-									</div>
-									<span
-										className={cx(
-											s.badge,
-											region.status === "All Green" ? s.badgeS : s.badgeW,
-										)}
-									>
-										{region.status}
-									</span>
+										</thead>
+										<tbody>
+											{config.services.map((svc) => (
+												<tr key={svc.name}>
+													<td>
+														<strong>{svc.name}</strong>
+													</td>
+													<td>
+														<span
+															className={`${styles.badge} ${svc.status === "Healthy" ? styles.badgeS : styles.badgeW}`}
+														>
+															<i
+																className={`bi ${svc.status === "Healthy" ? "bi-check-circle" : "bi-exclamation-triangle"}`}
+															/>
+															{svc.status}
+														</span>
+													</td>
+													<td>{svc.uptime}</td>
+													<td>{svc.latency}</td>
+													<td>{svc.errorRate}</td>
+													<td>{svc.lastIncident}</td>
+													<td>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openModal("serviceDetail")}
+														>
+															Details
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
 								</div>
-							))}
+							</Ub>
+							<Ub title="Regional status">
+								{config.regions.map((region) => (
+									<div className={styles.sr} key={region.name}>
+										<div>
+											<strong>{region.name}</strong>
+										</div>
+										<span
+											className={`${styles.badge} ${region.status === "All Green" ? styles.badgeS : styles.badgeW}`}
+										>
+											{region.status}
+										</span>
+									</div>
+								))}
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("globalStatus")}
+								>
+									<i className="bi bi-globe" /> Global view
+								</button>
+							</Ub>
 						</div>
 					</div>
-				</div>
-			</div>
+				</section>
 
-			{/* ===== SECTION 2: Transaction Health Monitor ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
+				{/* ======================= 1.2 NEEDS YOUR ATTENTION ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-attention-heading"
 				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-activity"
-								style={{ color: "var(--pm-accent)" }}
-							/>{" "}
-							Transaction Health Monitor
-						</h3>
-						<p className={s.ss}>
-							Live transaction volume, success rates, failure reasons, and
-							channel performance across all corridors.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("liveTransactionFeed")}
-						>
-							Live Feed
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("failureAnalysis")}
-						>
-							Failure Analysis
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-7">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Live Transaction Metrics (Last 60 min)
-							</h4>
-							<div className="row g-3">
-								<div className="col-4">
-									<div
-										className="p-3 rounded text-center"
-										style={{ background: "var(--pm-accent-soft)" }}
-									>
-										<div
+					<SectionHeading
+						id="ops-attention-heading"
+						index="1.2"
+						title="Needs your attention"
+						description="Resolve operational anomalies and act on smart recommendations without leaving the command center."
+						action={
+							<button
+								type="button"
+								className={styles.btnPm}
+								onClick={() => openModal("incidentQueue")}
+							>
+								<i className="bi bi-list-check" /> Incident queue
+							</button>
+						}
+					/>
+					<div className={styles.attentionGrid}>
+						<article className={`${styles.card} ${styles.listCard}`}>
+							<div className={styles.cardHeader}>
+								<div>
+									<span className={styles.cardKicker}>Action center</span>
+									<h3>Attention required</h3>
+								</div>
+								<span className={`${styles.badge} ${styles.badgeD}`}>
+									3 open
+								</span>
+							</div>
+							<div className={styles.listBody}>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
 											style={{
-												fontSize: 22,
-												fontWeight: 700,
-												color: "var(--pm-accent)",
+												background: "var(--pm-danger-soft)",
+												color: "var(--pm-danger)",
 											}}
 										>
-											42,811
-										</div>
-										<div
-											style={{
-												fontSize: 11,
-												fontWeight: 600,
-												color: "#047857",
-											}}
-										>
-											Transactions
+											<i className="bi bi-exclamation-triangle" />
+										</span>
+										<div>
+											<strong>Settlement batch #S-88219 delayed</strong>
+											<span>2h 14m behind SLA · KES 184M</span>
 										</div>
 									</div>
-								</div>
-								<div className="col-4">
-									<div
-										className="p-3 rounded text-center"
-										style={{ background: "var(--pm-info-soft)" }}
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}
+										onClick={() => openModal("settlementDetail")}
 									>
-										<div
+										Investigate
+									</button>
+								</div>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
 											style={{
-												fontSize: 22,
-												fontWeight: 700,
+												background: "var(--pm-warning-soft)",
+												color: "var(--pm-warning)",
+											}}
+										>
+											<i className="bi bi-graph-up" />
+										</span>
+										<div>
+											<strong>Fraud detection false positive rate 4.2%</strong>
+											<span>Above threshold (2.5%)</span>
+										</div>
+									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("fraudModel")}
+									>
+										Tune model
+									</button>
+								</div>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
+											style={{
+												background: "var(--pm-info-soft)",
 												color: "var(--pm-info)",
 											}}
 										>
-											KES 8.42B
-										</div>
-										<div
-											style={{
-												fontSize: 11,
-												fontWeight: 600,
-												color: "#1D4ED8",
-											}}
-										>
-											Volume
+											<i className="bi bi-server" />
+										</span>
+										<div>
+											<strong>API Gateway P99 latency 420ms</strong>
+											<span>SLA breach risk (SLA: 300ms)</span>
 										</div>
 									</div>
-								</div>
-								<div className="col-4">
-									<div
-										className="p-3 rounded text-center"
-										style={{ background: "var(--pm-purple-soft)" }}
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("apiPerformance")}
 									>
-										<div
+										Scale
+									</button>
+								</div>
+							</div>
+						</article>
+
+						<article className={`${styles.card} ${styles.listCard}`}>
+							<div className={styles.cardHeader}>
+								<div>
+									<span className={styles.cardKicker}>Smart guidance</span>
+									<h3>Smart suggestions</h3>
+								</div>
+								<span className={`${styles.badge} ${styles.badgeP}`}>
+									<i className="bi bi-stars" /> AI
+								</span>
+							</div>
+							<div className={styles.listBody}>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
 											style={{
-												fontSize: 22,
-												fontWeight: 700,
+												background: "var(--pm-accent-soft)",
+												color: "var(--pm-accent)",
+											}}
+										>
+											<i className="bi bi-lightning-charge" />
+										</span>
+										<div>
+											<strong>Enable auto-scaling on API Gateway</strong>
+											<span>Reduce P99 latency by 35%</span>
+										</div>
+									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("infraScaling")}
+									>
+										Enable
+									</button>
+								</div>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
+											style={{
+												background: "var(--pm-purple-soft)",
 												color: "var(--pm-purple)",
 											}}
 										>
-											99.41%
+											<i className="bi bi-shield-check" />
+										</span>
+										<div>
+											<strong>Update fraud rules for weekend patterns</strong>
+											<span>Reduce false positives by 1.8%</span>
 										</div>
-										<div
+									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("fraudModel")}
+									>
+										Apply
+									</button>
+								</div>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
 											style={{
-												fontSize: 11,
-												fontWeight: 600,
-												color: "#6D28D9",
+												background: "var(--pm-warning-soft)",
+												color: "var(--pm-warning)",
 											}}
 										>
-											Success Rate
+											<i className="bi bi-clock-history" />
+										</span>
+										<div>
+											<strong>Schedule reconciliation catch-up job</strong>
+											<span>Clear 4 pending settlement batches</span>
 										</div>
 									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("reconciliation")}
+									>
+										Schedule
+									</button>
+								</div>
+								<div className={styles.actionRow}>
+									<div className={styles.actionRowMain}>
+										<span
+											className={styles.iconCircle}
+											style={{
+												background: "var(--pm-danger-soft)",
+												color: "var(--pm-danger)",
+											}}
+										>
+											<i className="bi bi-bug" />
+										</span>
+										<div>
+											<strong>Incident INC-88219 awaiting owner action</strong>
+											<span>Settlement engine degraded · escalated</span>
+										</div>
+									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("incidentDetail")}
+									>
+										Open
+									</button>
 								</div>
 							</div>
-							<div className="table-responsive mt-3">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Corridor</th>
-											<th>Count</th>
-											<th>Success</th>
-											<th>Avg Time</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.corridors.map((cor) => (
-											<tr key={cor.name}>
-												<td>{cor.name}</td>
-												<td>{cor.count}</td>
-												<td>{cor.success}</td>
-												<td>{cor.avgTime}</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
-														onClick={() => openModal("corridorDetail")}
-													>
-														View
-													</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+						</article>
+					</div>
+
+					<article className={`${styles.card} ${styles.quickActionCard}`}>
+						<div className={styles.quickActionIntro}>
+							<span className={styles.cardKicker}>Shortcuts</span>
+							<h3>Start a workflow</h3>
+							<p>Frequent operations tasks, one click away.</p>
+						</div>
+						<div className={styles.quickGrid}>
+							{[
+								{
+									label: "Run health check",
+									icon: "bi-play-circle",
+									color: "var(--pm-accent)",
+									modal: "runHealthCheck",
+								},
+								{
+									label: "View incidents",
+									icon: "bi-exclamation-triangle",
+									color: "var(--pm-danger)",
+									modal: "incidentQueue",
+								},
+								{
+									label: "Settlement status",
+									icon: "bi-bank",
+									color: "var(--pm-info)",
+									modal: "settlementDetail",
+								},
+								{
+									label: "Fraud console",
+									icon: "bi-shield-exclamation",
+									color: "var(--pm-warning)",
+									modal: "fraudModel",
+								},
+								{
+									label: "API metrics",
+									icon: "bi-speedometer2",
+									color: "var(--pm-info)",
+									modal: "apiPerformance",
+								},
+								{
+									label: "Audit logs",
+									icon: "bi-file-earmark-text",
+									color: "var(--pm-purple)",
+									modal: "auditLog",
+								},
+								{
+									label: "Support queue",
+									icon: "bi-headset",
+									color: "var(--pm-accent)",
+									modal: "ticketDetail",
+								},
+								{
+									label: "Scale services",
+									icon: "bi-server",
+									color: "var(--pm-info)",
+									modal: "infraScaling",
+								},
+							].map((action) => (
+								<button
+									type="button"
+									key={action.label}
+									className={styles.quickBtn}
+									onClick={() => openModal(action.modal as ModalKey)}
+								>
+									<span style={{ color: action.color }}>
+										<i className={`bi ${action.icon}`} />
+									</span>
+									{action.label}
+									<i className="bi bi-arrow-right" />
+								</button>
+							))}
+						</div>
+					</article>
+				</section>
+
+				{/* ======================= 1.3 TRANSACTION HEALTH MONITOR ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-transactions-heading"
+				>
+					<SectionHeading
+						id="ops-transactions-heading"
+						index="1.3"
+						title="Transaction health monitor"
+						description="Live transaction volume, success rates, failure reasons and corridor performance."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("liveTransactionFeed")}
+								>
+									<i className="bi bi-broadcast" /> Live feed
+								</button>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("failureAnalysis")}
+								>
+									<i className="bi bi-search" /> Failure analysis
+								</button>
+							</div>
+						}
+					/>
+					<div className={styles.card}>
+						<div className={styles.metricTiles}>
+							<div
+								className={`${styles.miniStat} mb-2`}
+								style={{
+									background: "var(--pm-accent-soft)",
+									textAlign: "center",
+								}}
+							>
+								<div
+									style={{
+										fontSize: 22,
+										fontWeight: 700,
+										color: "var(--pm-accent)",
+									}}
+								>
+									42,811
+								</div>
+								<div
+									style={{
+										fontSize: 11,
+										fontWeight: 600,
+										color: "#047857",
+									}}
+								>
+									Transactions (last 60 min)
+								</div>
+							</div>
+							<div
+								className={`${styles.miniStat} mb-2`}
+								style={{
+									background: "var(--pm-info-soft)",
+									textAlign: "center",
+								}}
+							>
+								<div
+									style={{
+										fontSize: 22,
+										fontWeight: 700,
+										color: "var(--pm-info)",
+									}}
+								>
+									KES 8.42B
+								</div>
+								<div
+									style={{
+										fontSize: 11,
+										fontWeight: 600,
+										color: "#1D4ED8",
+									}}
+								>
+									Volume (last 60 min)
+								</div>
+							</div>
+							<div
+								className={`${styles.miniStat} mb-2`}
+								style={{
+									background: "var(--pm-purple-soft)",
+									textAlign: "center",
+								}}
+							>
+								<div
+									style={{
+										fontSize: 22,
+										fontWeight: 700,
+										color: "var(--pm-purple)",
+									}}
+								>
+									99.41%
+								</div>
+								<div
+									style={{
+										fontSize: 11,
+										fontWeight: 600,
+										color: "#6D28D9",
+									}}
+								>
+									Success rate (last 60 min)
+								</div>
 							</div>
 						</div>
+						<div className={styles.panelGridWide} style={{ marginTop: 12 }}>
+							<Ub title="Corridor performance">
+								<div className={styles.tableScroll}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Corridor</th>
+												<th>Count</th>
+												<th>Success</th>
+												<th>Avg Time</th>
+												<th>Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											{config.corridors.map((cor) => (
+												<tr key={cor.name}>
+													<td>{cor.name}</td>
+													<td>{cor.count}</td>
+													<td>{cor.success}</td>
+													<td>{cor.avgTime}</td>
+													<td>
+														<div
+															className="d-flex flex-wrap"
+															style={{ gap: 6 }}
+														>
+															<button
+																type="button"
+																className={`${styles.btnPm} ${styles.btnSm}`}
+																onClick={() => openModal("corridorDetail")}
+															>
+																View
+															</button>
+															<button
+																type="button"
+																className={`${styles.btnPm} ${styles.btnSm}`}
+																onClick={() => openModal("corridorPerformance")}
+															>
+																Perf
+															</button>
+														</div>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</Ub>
+							<Ub title="Failure breakdown (last hour)">
+								{config.failureReasons.map((reason) => (
+									<div className={styles.sr} key={reason.reason}>
+										<div>
+											<strong>{reason.reason}</strong>
+										</div>
+										<div>
+											<span
+												className={`${styles.badge} ${reason.pct > 20 ? styles.badgeD : reason.pct > 10 ? styles.badgeW : styles.badgeI}`}
+											>
+												{reason.count.toLocaleString()}
+											</span>{" "}
+											<small className={styles.mutedSmall}>{reason.pct}%</small>
+										</div>
+									</div>
+								))}
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("failureAnalysis")}
+								>
+									Explore failures
+								</button>
+							</Ub>
+						</div>
 					</div>
-					<div className="col-lg-5">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Failure Breakdown (Last Hour)
-							</h4>
-							{data.failureReasons.map((reason) => (
-								<div className={s.sr} key={reason.reason}>
+				</section>
+
+				{/* ======================= 1.4 API & INTEGRATION HEALTH ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-api-heading"
+				>
+					<SectionHeading
+						id="ops-api-heading"
+						index="1.4"
+						title="API & integration health"
+						description="Partner API performance, webhook delivery, integration status and rate limiting."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("apiPerformance")}
+								>
+									<i className="bi bi-speedometer2" /> Performance
+								</button>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("webhookMonitor")}
+								>
+									<i className="bi bi-broadcast" /> Webhooks
+								</button>
+							</div>
+						}
+					/>
+					<div className={styles.card}>
+						<div className={styles.panelGridWide}>
+							<Ub title="Partner API status">
+								<div className={styles.tableScroll}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Partner</th>
+												<th>Status</th>
+												<th>Latency</th>
+												<th>Success</th>
+												<th>Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											{config.partnerApis.map((api) => (
+												<tr key={api.name}>
+													<td>
+														<strong>{api.name}</strong>
+													</td>
+													<td>
+														<span
+															className={`${styles.badge} ${api.status === "Healthy" ? styles.badgeS : styles.badgeW}`}
+														>
+															{api.status}
+														</span>
+													</td>
+													<td>{api.latency}</td>
+													<td>{api.success}</td>
+													<td>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openModal("partnerApiDetail")}
+														>
+															Logs
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</Ub>
+							<Ub title="Webhook delivery">
+								<div className={styles.sr}>
 									<div>
-										<strong>{reason.reason}</strong>
+										<strong>Delivered (last 24h)</strong>
 									</div>
 									<div>
-										<span
-											className={cx(
-												s.badge,
-												reason.pct > 20
-													? s.badgeD
-													: reason.pct > 10
-														? s.badgeW
-														: s.badgeI,
-											)}
-										>
-											{reason.count.toLocaleString()}
+										<span className={`${styles.badge} ${styles.badgeS}`}>
+											{config.webhookDelivered.toLocaleString()}
 										</span>
 									</div>
 								</div>
-							))}
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} w-100 mt-3`}
-								onClick={() => openModal("failureAnalysis")}
-							>
-								Explore Failures
-							</button>
+								<div className={styles.sr}>
+									<div>
+										<strong>Failed (retries exhausted)</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeD}`}>
+											{config.webhookFailed.toLocaleString()}
+										</span>
+									</div>
+								</div>
+								<div className={styles.sr}>
+									<div>
+										<strong>Pending retry queue</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeW}`}>
+											{config.webhookRetry.toLocaleString()}
+										</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("webhookMonitor")}
+								>
+									Monitor queue
+								</button>
+							</Ub>
 						</div>
 					</div>
-				</div>
-			</div>
+				</section>
 
-			{/* ===== SECTION 3: API & Integration Health ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
+				{/* ======================= 1.5 SETTLEMENT & RECONCILIATION ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-settlement-heading"
 				>
-					<div>
-						<h3 className={s.st}>
-							<i className="bi bi-plug" style={{ color: "var(--pm-info)" }} />{" "}
-							API & Integration Health
-						</h3>
-						<p className={s.ss}>
-							Partner API performance, webhook delivery, integration status and
-							rate limiting.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("apiPerformance")}
-						>
-							Performance
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("webhookMonitor")}
-						>
-							Webhooks
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-6">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Partner API Status
-							</h4>
-							<div className="table-responsive">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Partner</th>
-											<th>Status</th>
-											<th>Latency</th>
-											<th>Success</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.partnerApis.map((api) => (
-											<tr key={api.name}>
-												<td>
-													<strong>{api.name}</strong>
-												</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															api.status === "Healthy" ? s.badgeS : s.badgeW,
-														)}
-													>
-														{api.status}
-													</span>
-												</td>
-												<td>{api.latency}</td>
-												<td>{api.success}</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
-														onClick={() => openModal("partnerApiDetail")}
-													>
-														Logs
-													</button>
-												</td>
+					<SectionHeading
+						id="ops-settlement-heading"
+						index="1.5"
+						title="Settlement & reconciliation"
+						description="Real-time settlement status, batch reconciliation, pending items and dispute resolution."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("settlementDetail")}
+								>
+									<i className="bi bi-bank2" /> Settlement batches
+								</button>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("reconciliation")}
+								>
+									<i className="bi bi-arrow-repeat" /> Run reconciliation
+								</button>
+							</div>
+						}
+					/>
+					<div className={styles.card}>
+						<div className={styles.panelGridWide}>
+							<Ub title="Active settlement batches">
+								<div className={styles.tableScroll}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Batch ID</th>
+												<th>Corridor</th>
+												<th>Amount</th>
+												<th>Status</th>
+												<th>Progress</th>
+												<th>ETA</th>
+												<th>Actions</th>
 											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+										</thead>
+										<tbody>
+											{config.settlementBatches.map((batch) => (
+												<tr key={batch.id}>
+													<td>
+														<code>{batch.id}</code>
+													</td>
+													<td>{batch.corridor}</td>
+													<td>{batch.amount}</td>
+													<td>
+														<span
+															className={`${styles.badge} ${batch.status === "Delayed" ? styles.badgeW : styles.badgeS}`}
+														>
+															{batch.status}
+														</span>
+													</td>
+													<td>
+														<div className={styles.pmProgress}>
+															<div
+																className={styles.pmProgressBar}
+																style={{
+																	width: `${batch.progress}%`,
+																	background:
+																		batch.status === "Delayed"
+																			? "var(--pm-warning)"
+																			: "var(--pm-accent)",
+																}}
+															/>
+														</div>
+													</td>
+													<td>{batch.eta}</td>
+													<td>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}${batch.status === "Delayed" ? ` ${styles.btnPmD}` : ""}`}
+															onClick={() => openModal("settlementDetail")}
+														>
+															{batch.status === "Delayed"
+																? "Investigate"
+																: batch.status === "Completed"
+																	? "Receipt"
+																	: "Details"}
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</Ub>
+							<Ub title="Reconciliation summary">
+								<div className={styles.sr}>
+									<div>
+										<strong>Matched today</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeS}`}>
+											{config.reconciliationMatched.toLocaleString()}
+										</span>
+									</div>
+								</div>
+								<div className={styles.sr}>
+									<div>
+										<strong>Unmatched</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeW}`}>
+											{config.reconciliationUnmatched.toLocaleString()}
+										</span>
+									</div>
+								</div>
+								<div className={styles.sr}>
+									<div>
+										<strong>Disputed items</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeD}`}>
+											{config.reconciliationDisputed.toLocaleString()}
+										</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("reconciliation")}
+								>
+									Run full reconciliation
+								</button>
+							</Ub>
 						</div>
 					</div>
-					<div className="col-lg-6">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Webhook Delivery
-							</h4>
-							<div className={s.sr}>
-								<div>
-									<strong>Delivered (Last 24h)</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeS)}>
-										{data.webhookDelivered.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Failed (Retries exhausted)</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeD)}>
-										{data.webhookFailed.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Pending Retry Queue</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeW)}>
-										{data.webhookRetry.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} w-100 mt-3`}
-								onClick={() => openModal("webhookMonitor")}
-							>
-								Monitor Queue
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
+				</section>
 
-			{/* ===== SECTION 4: Settlement & Reconciliation ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
+				{/* ======================= 1.6 FRAUD & SECURITY OPERATIONS ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-fraud-heading"
 				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-bank2"
-								style={{ color: "var(--pm-primary)" }}
-							/>{" "}
-							Settlement & Reconciliation
-						</h3>
-						<p className={s.ss}>
-							Real-time settlement status, batch reconciliation, pending items
-							and dispute resolution.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("settlementDetail")}
-						>
-							Settlement Batches
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("reconciliation")}
-						>
-							Run Reconciliation
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-8">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Active Settlement Batches
-							</h4>
-							<div className="table-responsive">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Batch ID</th>
-											<th>Corridor</th>
-											<th>Amount</th>
-											<th>Status</th>
-											<th>Progress</th>
-											<th>ETA</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.settlementBatches.map((batch) => (
-											<tr key={batch.id}>
-												<td>{batch.id}</td>
-												<td>{batch.corridor}</td>
-												<td>{batch.amount}</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															batch.status === "Completed"
-																? s.badgeS
-																: batch.status === "Delayed"
-																	? s.badgeW
-																	: s.badgeS,
-														)}
-													>
-														{batch.status}
-													</span>
-												</td>
-												<td>
-													<div className={s.pmProgress}>
-														<div
-															className={s.pmProgressBar}
-															style={{
-																width: `${batch.progress}%`,
-																background:
-																	batch.status === "Delayed"
-																		? "var(--pm-warning)"
-																		: "var(--pm-accent)",
-															}}
-														/>
-													</div>
-												</td>
-												<td>{batch.eta}</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}${
-															batch.status === "Delayed" ? ` ${s.btnPmD}` : ""
-														}`}
-														onClick={() => openModal("settlementDetail")}
-													>
-														{batch.status === "Delayed"
-															? "Investigate"
-															: batch.status === "Completed"
-																? "Receipt"
-																: "Details"}
-													</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+					<SectionHeading
+						id="ops-fraud-heading"
+						index="1.6"
+						title="Fraud & security operations"
+						description="Real-time fraud detection, alert queue, model performance and manual review cases."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("fraudModel")}
+								>
+									<i className="bi bi-sliders" /> Model console
+								</button>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnPmD}`}
+									onClick={() => openModal("fraudAlertQueue")}
+								>
+									<i className="bi bi-bell-slash" /> Alert queue
+								</button>
 							</div>
-						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Reconciliation Summary
-							</h4>
-							<div className={s.sr}>
-								<div>
-									<strong>Matched Today</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeS)}>
-										{data.reconciliationMatched.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Unmatched</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeW)}>
-										{data.reconciliationUnmatched.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Disputed Items</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeD)}>
-										{data.reconciliationDisputed.toLocaleString()}
-									</span>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} w-100 mt-3`}
-								onClick={() => openModal("reconciliation")}
-							>
-								Run Full Reconciliation
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* ===== SECTION 5: Fraud & Security Operations ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
-				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-shield-exclamation"
-								style={{ color: "var(--pm-danger)" }}
-							/>{" "}
-							Fraud & Security Operations
-						</h3>
-						<p className={s.ss}>
-							Real-time fraud detection, alert queue, model performance and
-							manual review cases.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("fraudModel")}
-						>
-							Model Console
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm} ${s.btnPmD}`}
-							onClick={() => openModal("fraudAlertQueue")}
-						>
-							Alert Queue
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-7">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Fraud Detection Performance
-							</h4>
-							<div className="row g-3">
-								<div className="col-6">
+						}
+					/>
+					<div className={styles.card}>
+						<div className={styles.panelGridWide}>
+							<Ub title="Fraud detection performance">
+								<div className={styles.metricTiles}>
 									<div
-										className="p-3 rounded"
-										style={{ background: "var(--pm-danger-soft)" }}
+										className={`${styles.miniStat} mb-2`}
+										style={{
+											background: "var(--pm-danger-soft)",
+											textAlign: "center",
+										}}
 									>
 										<div
 											style={{
@@ -1508,14 +1625,15 @@ export default function OpsSystem() {
 												color: "var(--pm-danger)",
 											}}
 										>
-											{data.fraudAlerts.toLocaleString()}
+											{config.fraudAlerts.toLocaleString()}
 										</div>
 									</div>
-								</div>
-								<div className="col-6">
 									<div
-										className="p-3 rounded"
-										style={{ background: "var(--pm-accent-soft)" }}
+										className={`${styles.miniStat} mb-2`}
+										style={{
+											background: "var(--pm-accent-soft)",
+											textAlign: "center",
+										}}
 									>
 										<div
 											style={{
@@ -1533,321 +1651,423 @@ export default function OpsSystem() {
 												color: "var(--pm-accent)",
 											}}
 										>
-											{data.blockedTxns.toLocaleString()}
+											{config.blockedTxns.toLocaleString()}
+										</div>
+									</div>
+									<div
+										className={`${styles.miniStat} mb-2`}
+										style={{
+											background: "var(--pm-purple-soft)",
+											textAlign: "center",
+										}}
+									>
+										<div
+											style={{
+												fontSize: 11,
+												fontWeight: 700,
+												color: "#6D28D9",
+											}}
+										>
+											REVIEW QUEUE
+										</div>
+										<div
+											style={{
+												fontSize: 26,
+												fontWeight: 700,
+												color: "var(--pm-purple)",
+											}}
+										>
+											{config.manualReviewHigh +
+												config.manualReviewMedium +
+												config.manualReviewLow}
 										</div>
 									</div>
 								</div>
-							</div>
-							<div className="table-responsive mt-3">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Rule</th>
-											<th>Triggered</th>
-											<th>Blocked</th>
-											<th>FP Rate</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.fraudRules.map((rule) => (
-											<tr key={rule.name}>
-												<td>{rule.name}</td>
-												<td>{rule.triggered.toLocaleString()}</td>
-												<td>{rule.blocked.toLocaleString()}</td>
-												<td>{rule.fpRate}</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
-														onClick={() => openModal("fraudModel")}
-													>
-														Tune
-													</button>
-												</td>
+								<div className={styles.tableScroll} style={{ marginTop: 12 }}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Rule</th>
+												<th>Triggered</th>
+												<th>Blocked</th>
+												<th>FP Rate</th>
+												<th>Actions</th>
 											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-5">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Manual Review Queue
-							</h4>
-							<div className={s.sr}>
-								<div>
-									<strong>High Risk Cases</strong>
+										</thead>
+										<tbody>
+											{config.fraudRules.map((rule) => (
+												<tr key={rule.name}>
+													<td>{rule.name}</td>
+													<td>{rule.triggered.toLocaleString()}</td>
+													<td>{rule.blocked.toLocaleString()}</td>
+													<td>{rule.fpRate}</td>
+													<td>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openModal("fraudModel")}
+														>
+															Tune
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
 								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeD)}>
-										{data.manualReviewHigh}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Medium Risk Cases</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeW)}>
-										{data.manualReviewMedium}
-									</span>
-								</div>
-							</div>
-							<div className={s.sr}>
-								<div>
-									<strong>Low Risk Cases</strong>
-								</div>
-								<div>
-									<span className={cx(s.badge, s.badgeI)}>
-										{data.manualReviewLow}
-									</span>
-								</div>
-							</div>
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} w-100 mt-3 ${s.btnPmD}`}
-								onClick={() => openModal("fraudAlertQueue")}
-							>
-								Review Queue
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* ===== SECTION 6: Infrastructure & Uptime ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
-				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-server"
-								style={{ color: "var(--pm-primary)" }}
-							/>{" "}
-							Infrastructure & Uptime
-						</h3>
-						<p className={s.ss}>
-							Server health, database performance, queue depths, auto-scaling
-							events and capacity planning.
-						</p>
-					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("infraScaling")}
-						>
-							Scaling
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("capacityPlanning")}
-						>
-							Capacity
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-8">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Infrastructure Metrics
-							</h4>
-							<div className="table-responsive">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Component</th>
-											<th>CPU</th>
-											<th>Memory</th>
-											<th>Disk</th>
-											<th>Status</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.infra.map((comp) => (
-											<tr key={comp.name}>
-												<td>
-													<strong>{comp.name}</strong>
-												</td>
-												<td>{comp.cpu}</td>
-												<td>{comp.memory}</td>
-												<td>{comp.disk}</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															comp.status === "Healthy" ? s.badgeS : s.badgeW,
-														)}
-													>
-														{comp.status}
-													</span>
-												</td>
-												<td>
-													<button
-														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
-														onClick={() => openModal("infraDetail")}
-													>
-														Metrics
-													</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div className="col-lg-4">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Auto-Scaling Events (24h)
-							</h4>
-							{data.scalingEvents.map((evt) => (
-								<div className={s.sr} key={evt.component}>
+							</Ub>
+							<Ub title="Manual review queue">
+								<div className={styles.sr}>
 									<div>
-										<strong>{evt.component}</strong>
+										<strong>High risk cases</strong>
 									</div>
 									<div>
-										<span className={cx(s.badge, s.badgeI)}>{evt.count}</span>
+										<span className={`${styles.badge} ${styles.badgeD}`}>
+											{config.manualReviewHigh}
+										</span>
 									</div>
 								</div>
-							))}
-							<button
-								type="button"
-								className={`${s.btnPm} ${s.btnSm} w-100 mt-3`}
-								onClick={() => openModal("infraScaling")}
-							>
-								Manage Scaling Policies
-							</button>
+								<div className={styles.sr}>
+									<div>
+										<strong>Medium risk cases</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeW}`}>
+											{config.manualReviewMedium}
+										</span>
+									</div>
+								</div>
+								<div className={styles.sr}>
+									<div>
+										<strong>Low risk cases</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeI}`}>
+											{config.manualReviewLow}
+										</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2 ${styles.btnPmD}`}
+									onClick={() => openModal("fraudReview")}
+								>
+									Review queue
+								</button>
+							</Ub>
 						</div>
 					</div>
-				</div>
-			</div>
+				</section>
 
-			{/* ===== SECTION 7: Operations Queue & Support Tickets ===== */}
-			<div className={s.card}>
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
+				{/* ======================= 1.7 INFRASTRUCTURE & UPTIME ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-infra-heading"
 				>
-					<div>
-						<h3 className={s.st}>
-							<i
-								className="bi bi-headset"
-								style={{ color: "var(--pm-purple)" }}
-							/>{" "}
-							Operations Queue & Support Tickets
-						</h3>
-						<p className={s.ss}>
-							Internal operations tickets, partner support requests, SLA
-							tracking and escalation management.
-						</p>
+					<SectionHeading
+						id="ops-infra-heading"
+						index="1.7"
+						title="Infrastructure & uptime"
+						description="Server health, database performance, queue depths, auto-scaling events and capacity planning."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("infraScaling")}
+								>
+									<i className="bi bi-arrows-expand" /> Scaling
+								</button>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("capacityPlanning")}
+								>
+									<i className="bi bi-graph-up-arrow" /> Capacity
+								</button>
+							</div>
+						}
+					/>
+					<div className={styles.card}>
+						<div className={styles.panelGridWide}>
+							<Ub title="Infrastructure metrics">
+								<div className={styles.tableScroll}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												<th>Component</th>
+												<th>CPU</th>
+												<th>Memory</th>
+												<th>Disk</th>
+												<th>Status</th>
+												<th>Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											{config.infra.map((comp) => (
+												<tr key={comp.name}>
+													<td>
+														<strong>{comp.name}</strong>
+													</td>
+													<td>{comp.cpu}</td>
+													<td>{comp.memory}</td>
+													<td>{comp.disk}</td>
+													<td>
+														<span
+															className={`${styles.badge} ${comp.status === "Healthy" ? styles.badgeS : styles.badgeW}`}
+														>
+															{comp.status}
+														</span>
+													</td>
+													<td>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openModal("infraDetail")}
+														>
+															Metrics
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</Ub>
+							<Ub title="Auto-scaling events (24h)">
+								{config.scalingEvents.map((evt) => (
+									<div className={styles.sr} key={evt.component}>
+										<div>
+											<strong>{evt.component}</strong>
+										</div>
+										<div>
+											<span className={`${styles.badge} ${styles.badgeI}`}>
+												{evt.count}
+											</span>
+										</div>
+									</div>
+								))}
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("infraScaling")}
+								>
+									Manage scaling policies
+								</button>
+							</Ub>
+						</div>
 					</div>
-					<div className="d-flex" style={{ gap: 8 }}>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("ticketDetail")}
-						>
-							Support Queue
-						</button>
-						<button
-							type="button"
-							className={`${s.btnPm} ${s.btnSm}`}
-							onClick={() => openModal("escalation")}
-						>
-							Escalations
-						</button>
-					</div>
-				</div>
-				<div className="row g-3">
-					<div className="col-lg-12">
-						<div className={s.ub}>
-							<h4 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px" }}>
-								Operations Ticket Queue
-							</h4>
-							<div className="table-responsive">
-								<table className={s.tbl}>
-									<thead>
-										<tr>
-											<th>Ticket</th>
-											<th>Type</th>
-											<th>Priority</th>
-											<th>Assignee</th>
-											<th>SLA</th>
-											<th>Status</th>
-											<th>Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{data.tickets.map((ticket) => (
-											<tr key={ticket.id}>
-												<td>
-													<code>{ticket.id}</code>
-												</td>
-												<td>{ticket.type}</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															ticket.priority === "High"
-																? s.badgeD
-																: ticket.priority === "Medium"
-																	? s.badgeW
-																	: s.badgeI,
-														)}
-													>
-														{ticket.priority}
-													</span>
-												</td>
-												<td>{ticket.assignee}</td>
-												<td>{ticket.sla}</td>
-												<td>
-													<span
-														className={cx(
-															s.badge,
-															ticket.status === "Resolved"
-																? s.badgeS
-																: ticket.status === "In Progress"
-																	? s.badgeW
-																	: s.badgeI,
-														)}
-													>
-														{ticket.status}
-													</span>
-												</td>
-												<td>
+				</section>
+
+				{/* ======================= 1.8 OPERATIONS QUEUE, SUPPORT & AUDIT ======================= */}
+				<section
+					className={styles.dashboardSection}
+					aria-labelledby="ops-queue-heading"
+				>
+					<SectionHeading
+						id="ops-queue-heading"
+						index="1.8"
+						title="Operations queue, support & audit"
+						description="Internal operations tickets, partner support requests, SLA tracking, escalation and audit trails."
+						action={
+							<div className={styles.headerButtonRow}>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("ticketDetail")}
+								>
+									<i className="bi bi-headset" /> Support queue
+								</button>
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openModal("escalation")}
+								>
+									<i className="bi bi-arrow-up-circle" /> Escalations
+								</button>
+							</div>
+						}
+					/>
+					<article className={`${styles.card} ${styles.tableCard}`}>
+						<div className={styles.tableToolbar}>
+							<div className={styles.tableTitle}>
+								<h3>Operations ticket queue</h3>
+								<span>
+									Internal tickets, partner requests and SLA tracking.
+								</span>
+							</div>
+							<div className={styles.tableTools}>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openModal("ticketDetail")}
+								>
+									<i className="bi bi-plus-lg" /> New ticket
+								</button>
+							</div>
+						</div>
+						<div className={styles.tableScroll}>
+							<table className={styles.tbl}>
+								<thead>
+									<tr>
+										<th>Ticket</th>
+										<th>Type</th>
+										<th>Priority</th>
+										<th>Assignee</th>
+										<th>SLA</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{config.tickets.map((ticket) => (
+										<tr key={ticket.id}>
+											<td>
+												<code>{ticket.id}</code>
+											</td>
+											<td>{ticket.type}</td>
+											<td>
+												<span
+													className={`${styles.badge} ${ticket.priority === "High" ? styles.badgeD : ticket.priority === "Medium" ? styles.badgeW : styles.badgeI}`}
+												>
+													{ticket.priority}
+												</span>
+											</td>
+											<td>{ticket.assignee}</td>
+											<td>{ticket.sla}</td>
+											<td>
+												<span
+													className={`${styles.badge} ${ticket.status === "Resolved" ? styles.badgeS : ticket.status === "In Progress" ? styles.badgeW : styles.badgeI}`}
+												>
+													{ticket.status}
+												</span>
+											</td>
+											<td>
+												<div className="d-flex flex-wrap" style={{ gap: 6 }}>
 													<button
 														type="button"
-														className={`${s.btnPm} ${s.btnSm}`}
+														className={`${styles.btnPm} ${styles.btnSm}`}
 														onClick={() => openModal("ticketDetail")}
 													>
 														Open
 													</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openModal("escalation")}
+													>
+														Escalate
+													</button>
+												</div>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</article>
+
+					<div className={`${styles.card} mt-3`}>
+						<div className={styles.panelGridWide}>
+							<Ub title="System audit log">
+								<p className={styles.mutedSmall} style={{ margin: 0 }}>
+									Full audit trail of operations actions — incidents, scaling
+									events, reconciliation runs, model changes and configuration
+									updates.
+								</p>
+								<div
+									className="d-flex flex-wrap"
+									style={{ gap: 8, marginTop: 12 }}
+								>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("auditLog")}
+									>
+										<i className="bi bi-file-earmark-text" /> View logs
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openModal("caseExport")}
+									>
+										<i className="bi bi-download" /> Export logs
+									</button>
+								</div>
+							</Ub>
+							<Ub title="Notification preferences">
+								<div className={styles.sr}>
+									<div>
+										<strong>Ops alerts</strong>
+									</div>
+									<div>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openModal("notifSettings")}
+										>
+											Configure
+										</button>
+									</div>
+								</div>
+								<div className={styles.sr}>
+									<div>
+										<strong>On-call rotation</strong>
+									</div>
+									<div>
+										<span className={`${styles.badge} ${styles.badgeS}`}>
+											<i className="bi bi-phone" /> Active
+										</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+									onClick={() => openModal("opsNotif")}
+								>
+									View operations notifications
+								</button>
+							</Ub>
 						</div>
 					</div>
-				</div>
-			</div>
+				</section>
 			</div>
 
-			{/* ===== MODALS ===== */}
+			{/* ======================= FLOATING COMMAND BAR ======================= */}
+			<nav className={styles.floatingBar} aria-label="Quick operations actions">
+				<button
+					type="button"
+					className={styles.floatingPrimary}
+					onClick={() => openModal("runHealthCheck")}
+				>
+					<i className="bi bi-play-circle" /> Run health check
+				</button>
+				<button type="button" onClick={() => openModal("incidentQueue")}>
+					<i className="bi bi-exclamation-triangle" /> Incidents
+				</button>
+				<button type="button" onClick={() => openModal("liveTransactionFeed")}>
+					<i className="bi bi-broadcast" /> Live feed
+				</button>
+				<button type="button" onClick={() => openModal("fraudAlertQueue")}>
+					<i className="bi bi-bell-slash" /> Fraud queue
+				</button>
+				<button type="button" onClick={() => openModal("auditLog")}>
+					<i className="bi bi-file-earmark-text" /> Audit log
+				</button>
+			</nav>
+
+			<footer className={styles.pageFooter}>
+				<span>
+					<i className="bi bi-activity" /> PayMo operations command center
+				</span>
+				<nav aria-label="Footer links">
+					<a href="/pm/app/support">Support</a>
+					<Link to="/pm/app/settings">Preferences</Link>
+					<span>v1.17.0</span>
+				</nav>
+			</footer>
+
+			{/* ======================= ALL MODALS ======================= */}
 			<OpsSystemModals state={modals} onClose={closeModal} />
 		</div>
 	);

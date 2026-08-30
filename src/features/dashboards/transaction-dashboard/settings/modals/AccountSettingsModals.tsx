@@ -40,9 +40,6 @@ export function AccountSettingsModals({
   /* ---- shared local state ---- */
   const [editTab, setEditTab] = useState(0);
   const [kycTab, setKycTab] = useState(0);
-  const [notifTab, setNotifTab] = useState(0);
-  const [prefTab, setPrefTab] = useState(0);
-  const [apiTab, setApiTab] = useState(0);
 
   const fieldGrid: React.CSSProperties = {
     display: "grid",
@@ -1391,7 +1388,7 @@ export function AccountSettingsModals({
                 color: "var(--success)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: center,
+                justifyContent: "center",
                 fontSize: 40,
                 marginBottom: 8,
               }}
