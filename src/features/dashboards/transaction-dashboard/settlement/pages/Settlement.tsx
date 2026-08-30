@@ -2,15 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import { type ReactNode, useEffect, useState } from "react";
 import SettlementModals from "../components/SettlementModals";
 import styles from "../styles/settlement.module.css";
 
 /* ============================================================================
-   PayMo Settlement & Clearing — merchant settlement workspace (v2)
-   Two worlds: CUSTOMER SETTLEMENTS and MY INTERNAL WALLETS
+   PayMo Settlement & Clearing — payment-facilitator settlement workspace
+   Two worlds: CUSTOMER SETTLEMENTS and MY INTERNAL WALLETS.
+   Business-dashboard design language (navy/emerald, Sora + Inter, 16px cards).
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -112,7 +111,6 @@ interface RebalanceRow {
 }
 
 interface SettlementConfig {
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
 	pageTitle: string;
 	pageSub: string;
 	heroTag: string;
@@ -202,13 +200,6 @@ function perms(...statuses: PermStatus[]): BizPermission[] {
 
 /* ---------- typed mock data ---------- */
 const initialMockData: SettlementConfig = {
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "BaaS Transactions", to: "/select-dashboard" },
-		],
-		current: "Settlement & Clearing",
-	},
 	paymoConnected: false,
 	pageTitle: "Settlement & Clearing",
 	pageSub:
@@ -216,7 +207,7 @@ const initialMockData: SettlementConfig = {
 	heroTag: "Preview mode",
 	attention: [
 		{
-			icon: "fa-solid fa-file-circle-xmark",
+			icon: "bi bi-file-earmark-x",
 			iconBg: "var(--pm-danger-soft)",
 			iconColor: "var(--pm-danger)",
 			title: "Land Buyers LTD missing KYC doc",
@@ -226,7 +217,7 @@ const initialMockData: SettlementConfig = {
 			modal: "businessDetailModal",
 		},
 		{
-			icon: "fa-solid fa-plug",
+			icon: "bi bi-plug",
 			iconBg: "var(--pm-warning-soft)",
 			iconColor: "var(--pm-warning)",
 			title: "Paymo API key not linked",
@@ -235,7 +226,7 @@ const initialMockData: SettlementConfig = {
 			modal: "linkApiModal",
 		},
 		{
-			icon: "fa-solid fa-triangle-exclamation",
+			icon: "bi bi-exclamation-triangle",
 			iconBg: "var(--pm-purple-soft)",
 			iconColor: "var(--pm-purple)",
 			title: "Company 2 float below minimum",
@@ -246,7 +237,7 @@ const initialMockData: SettlementConfig = {
 	],
 	suggestions: [
 		{
-			icon: "fa-solid fa-calendar-check",
+			icon: "bi bi-calendar-check",
 			iconBg: "var(--pm-accent-soft)",
 			iconColor: "var(--pm-accent)",
 			title: "Auto-settle Land Buyers LTD on Fridays",
@@ -255,7 +246,7 @@ const initialMockData: SettlementConfig = {
 			modal: "autoRulesModal",
 		},
 		{
-			icon: "fa-solid fa-rotate-left",
+			icon: "bi bi-arrow-counterclockwise",
 			iconBg: "var(--pm-info-soft)",
 			iconColor: "var(--pm-info)",
 			title: "Enable instant refunds for Company 2",
@@ -264,7 +255,7 @@ const initialMockData: SettlementConfig = {
 			modal: "refundModal",
 		},
 		{
-			icon: "fa-solid fa-chart-line",
+			icon: "bi bi-graph-up",
 			iconBg: "var(--pm-warning-soft)",
 			iconColor: "var(--pm-warning)",
 			title: "Schedule daily float top-up at 6 AM",
@@ -275,49 +266,49 @@ const initialMockData: SettlementConfig = {
 	],
 	quickActions: [
 		{
-			icon: "fa-solid fa-plug",
+			icon: "bi bi-plug",
 			label: "Link Paymo API",
 			color: "var(--pm-primary)",
 			modal: "linkApiModal",
 		},
 		{
-			icon: "fa-solid fa-paper-plane",
+			icon: "bi bi-send",
 			label: "New Payout",
 			color: "var(--pm-info)",
 			modal: "payoutModal",
 		},
 		{
-			icon: "fa-solid fa-rotate",
+			icon: "bi bi-arrow-clockwise",
 			label: "Rebalance Float",
 			color: "var(--pm-accent)",
 			modal: "rebalanceModal",
 		},
 		{
-			icon: "fa-solid fa-rotate-left",
+			icon: "bi bi-arrow-counterclockwise",
 			label: "Issue Refund",
 			color: "var(--pm-warning)",
 			modal: "refundModal",
 		},
 		{
-			icon: "fa-solid fa-wallet",
+			icon: "bi bi-wallet2",
 			label: "My Wallets",
 			color: "var(--pm-purple)",
 			modal: "internalTransferModal",
 		},
 		{
-			icon: "fa-solid fa-building",
+			icon: "bi bi-building",
 			label: "Businesses",
 			color: "var(--pm-primary-light)",
 			modal: "businessDetailModal",
 		},
 		{
-			icon: "fa-solid fa-download",
+			icon: "bi bi-download",
 			label: "Statements",
 			color: "var(--pm-muted)",
 			modal: "generateReportModal",
 		},
 		{
-			icon: "fa-solid fa-gear",
+			icon: "bi bi-gear",
 			label: "Auto Rules",
 			color: "var(--pm-purple)",
 			modal: "autoRulesModal",
@@ -384,7 +375,7 @@ const initialMockData: SettlementConfig = {
 			balance: 4820000,
 			available: 4820000,
 			pending: 1150000,
-			icon: "fa-solid fa-briefcase",
+			icon: "bi bi-briefcase",
 			color: "var(--pm-primary)",
 			purpose: "Funds payouts and business float",
 		},
@@ -395,7 +386,7 @@ const initialMockData: SettlementConfig = {
 			balance: 1240000,
 			available: 1240000,
 			pending: 0,
-			icon: "fa-solid fa-wallet",
+			icon: "bi bi-wallet2",
 			color: "var(--pm-purple)",
 			purpose: "Your money — withdraw or transfer anytime",
 		},
@@ -607,6 +598,24 @@ async function fetchSettlement(): Promise<SettlementConfig> {
 	return { ...initialMockData, ...json };
 }
 
+function ledgerTone(status: string): BadgeTone {
+	if (status === "Paid Out" || status === "Collected" || status === "Completed")
+		return "badgeS";
+	if (
+		status === "Pending" ||
+		status === "Scheduled" ||
+		status === "Pending Approval"
+	)
+		return "badgeW";
+	return "badgeI";
+}
+
+function cellKey(cell: Cell): string {
+	if (typeof cell === "string") return cell;
+	if ("badge" in cell) return `b:${cell.badge}`;
+	return `a:${cell.action}`;
+}
+
 function CellValue({
 	cell,
 	onOpen,
@@ -621,7 +630,10 @@ function CellValue({
 				<span
 					className={`${styles.flowTag} ${isCustomer ? styles.flowCustomer : styles.flowInternal}`}
 				>
-					<i className={`fa-solid ${isCustomer ? "fa-users" : "fa-wallet"}`} />
+					<i
+						className={`bi ${isCustomer ? "bi-people" : "bi-wallet2"}`}
+						aria-hidden="true"
+					/>
 					{isCustomer ? "Customer" : "Internal"}
 				</span>
 			);
@@ -652,11 +664,42 @@ function CellValue({
 		);
 	return (
 		<button
+			type="button"
 			className={`${styles.btnPm} ${styles.btnSm} ${cell.tone ? styles[cell.tone as "btnPmD"] : ""}`}
 			onClick={() => onOpen(cell.modal)}
 		>
 			{cell.action}
 		</button>
+	);
+}
+
+/* ---------- numbered section heading (business-dashboard language) ---------- */
+function SectionHeading({
+	id,
+	index,
+	title,
+	description,
+	action,
+}: {
+	id: string;
+	index: string;
+	title: string;
+	description: string;
+	action?: ReactNode;
+}) {
+	return (
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
+			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
+		</div>
 	);
 }
 
@@ -675,27 +718,15 @@ export default function Settlement() {
 	const [ledgerTab, setLedgerTab] = useState<
 		"collections" | "payouts" | "refunds"
 	>("collections");
-	const [toasts, setToasts] = useState<
-		{ id: number; message: string; variant: "success" | "danger" }[]
-	>([]);
+
+	const openM = (id: string) => setActiveModal(id);
+	const closeM = () => setActiveModal(null);
 
 	useEffect(() => {
-		if (!toasts.length) return;
-		const timer = window.setTimeout(
-			() => setToasts((prev) => prev.slice(1)),
-			4200,
-		);
-		return () => window.clearTimeout(timer);
-	}, [toasts]);
-
-	const pushToast = (
-		message: string,
-		variant: "success" | "danger" = "success",
-	) =>
-		setToasts((prev) => [
-			...prev.slice(-4),
-			{ id: Date.now() + Math.random(), message, variant },
-		]);
+		const params = new URLSearchParams(window.location.search);
+		const modalId = params.get("modal");
+		if (modalId) setActiveModal(modalId);
+	}, []);
 
 	const bizData =
 		biz === "all"
@@ -714,106 +745,119 @@ export default function Settlement() {
 		color: string;
 		value: string;
 		icon: string;
+		iconCls: string;
 		sub: string;
 		tone: BadgeTone;
 	}[] =
 		world === "customers"
 			? [
 					{
-						label: "COLLECTED (RECOVERED)",
+						label: "Collected (recovered)",
 						color: "var(--pm-accent)",
 						value: fmtKES(sum("collected")),
-						icon: "fa-solid fa-arrow-down",
+						icon: "bi-arrow-down",
+						iconCls: styles.kpiIconGreen,
 						sub: `${bizLabel} · ${totalCustomers} customers`,
 						tone: "badgeS",
 					},
 					{
-						label: "PAID OUT TO BUSINESSES",
+						label: "Paid out to businesses",
 						color: "var(--pm-info)",
 						value: fmtKES(sum("payouts")),
-						icon: "fa-solid fa-paper-plane",
+						icon: "bi-send",
+						iconCls: styles.kpiIconBlue,
 						sub: `next ${fmtKES(sum("pending"))}`,
 						tone: "badgeI",
 					},
 					{
-						label: "REFUNDS ISSUED",
+						label: "Refunds issued",
 						color: "var(--pm-warning)",
 						value: fmtKES(sum("refunds")),
-						icon: "fa-solid fa-rotate-left",
+						icon: "bi-arrow-counterclockwise",
+						iconCls: styles.kpiIconAmber,
 						sub: `${config.refunds.length} recent`,
 						tone: "badgeW",
 					},
 					{
-						label: "NET EARNED (FEES)",
+						label: "Net earned (fees)",
 						color: "var(--pm-primary)",
 						value: fmtKES(sum("fees")),
-						icon: "fa-solid fa-piggy-bank",
+						icon: "bi-piggy-bank",
+						iconCls: styles.kpiIconGreen,
 						sub: "your earnings MTD",
 						tone: "badgeS",
 					},
 					{
-						label: "PENDING PAYOUT",
+						label: "Pending payout",
 						color: "var(--pm-purple)",
 						value: fmtKES(sum("pending")),
-						icon: "fa-solid fa-hourglass-half",
+						icon: "bi-hourglass-split",
+						iconCls: styles.kpiIconPurple,
 						sub: `${bizData.length} business(es)`,
 						tone: "badgeP",
 					},
 					{
-						label: "FLOAT AVAILABLE",
+						label: "Float available",
 						color: "var(--pm-warning)",
 						value: fmtKES(sum("float")),
-						icon: "fa-solid fa-droplet",
+						icon: "bi-droplet",
+						iconCls: styles.kpiIconAmber,
 						sub: "auto-settle ready",
 						tone: "badgeS",
 					},
 				]
 			: [
 					{
-						label: "TOTAL WALLET BALANCE",
+						label: "Total wallet balance",
 						color: "var(--pm-accent)",
 						value: fmtKES(config.wallets.reduce((a, w) => a + w.balance, 0)),
-						icon: "fa-solid fa-wallet",
+						icon: "bi-wallet2",
+						iconCls: styles.kpiIconGreen,
 						sub: "Business + Virtual",
 						tone: "badgeS",
 					},
 					{
-						label: "AVAILABLE NOW",
+						label: "Available now",
 						color: "var(--pm-info)",
 						value: fmtKES(config.wallets.reduce((a, w) => a + w.available, 0)),
-						icon: "fa-solid fa-circle-check",
+						icon: "bi-check-circle",
+						iconCls: styles.kpiIconBlue,
 						sub: "no holds",
 						tone: "badgeS",
 					},
 					{
-						label: "PENDING SETTLEMENT",
+						label: "Pending settlement",
 						color: "var(--pm-warning)",
 						value: fmtKES(config.wallets.reduce((a, w) => a + w.pending, 0)),
-						icon: "fa-solid fa-hourglass-half",
+						icon: "bi-hourglass-split",
+						iconCls: styles.kpiIconAmber,
 						sub: "clearing",
 						tone: "badgeW",
 					},
 					{
-						label: "FLOAT COMMITTED",
+						label: "Float committed",
 						color: "var(--pm-purple)",
 						value: fmtKES(sum("float")),
-						icon: "fa-solid fa-droplet",
+						icon: "bi-droplet",
+						iconCls: styles.kpiIconPurple,
 						sub: `${config.businesses.length} businesses`,
 						tone: "badgeP",
 					},
 					{
-						label: "TRANSFERS (MTD)",
+						label: "Transfers (MTD)",
 						color: "var(--pm-primary)",
 						value: `${config.transfers.length + 15}`,
-						icon: "fa-solid fa-arrows-left-right",
+						icon: "bi-arrow-left-right",
+						iconCls: styles.kpiIconGreen,
 						sub: "KES 4.2M moved",
 						tone: "badgeS",
 					},
 					{
-						label: "WITHDRAWALS (MTD)",
+						label: "Withdrawals (MTD)",
 						color: "var(--pm-muted)",
 						value: "3",
-						icon: "fa-solid fa-building-columns",
+						icon: "bi-bank",
+						iconCls: styles.kpiIconSlate,
 						sub: "KES 620K to bank",
 						tone: "badgeI",
 					},
@@ -942,14 +986,16 @@ export default function Settlement() {
 		(r) => biz === "all" || r[1] === (bizData[0]?.name ?? ""),
 	);
 
-	const openM = (id: string) => setActiveModal(id);
-	const closeM = () => setActiveModal(null);
-
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		const modalId = params.get("modal");
-		if (modalId) openM(modalId);
-	}, [openM]);
+	const kpiToneClass = (tone: BadgeTone) =>
+		tone === "badgeS"
+			? styles.badgeS
+			: tone === "badgeW"
+				? styles.badgeW
+				: tone === "badgeD"
+					? styles.badgeD
+					: tone === "badgeI"
+						? styles.badgeI
+						: styles.badgeP;
 
 	return (
 		<div className={styles.settlementPage}>
@@ -961,10 +1007,7 @@ export default function Settlement() {
 						<div className={styles.heroCopy}>
 							<div className={styles.heroEyebrow}>
 								<span>
-									<i
-										className="fa-solid fa-arrows-left-right"
-										aria-hidden="true"
-									/>{" "}
+									<i className="bi bi-arrow-left-right" aria-hidden="true" />{" "}
 									Settlement &amp; Clearing
 								</span>
 								<span className={styles.livePill}>
@@ -972,7 +1015,7 @@ export default function Settlement() {
 									{config.heroTag}
 								</span>
 							</div>
-							<h1>
+							<h1 id="settlement-title">
 								Every collection, payout and refund settled with full
 								traceability.
 							</h1>
@@ -980,33 +1023,31 @@ export default function Settlement() {
 							<div className={styles.heroActions}>
 								<button
 									type="button"
-									className={styles.heroPrimary}
+									className={styles.heroPrimaryBtn}
 									onClick={() => openM("payoutModal")}
 								>
-									<i className="fa-solid fa-paper-plane" aria-hidden="true" />{" "}
-									New Payout
+									<i className="bi bi-send" aria-hidden="true" /> New Payout
 								</button>
 								<button
 									type="button"
-									className={styles.heroSecondary}
+									className={styles.heroSecondaryBtn}
 									onClick={() => openM("linkApiModal")}
 								>
-									<i className="fa-solid fa-plug" aria-hidden="true" /> Link API
+									<i className="bi bi-plug" aria-hidden="true" /> Link API
 								</button>
 								<button
 									type="button"
-									className={styles.heroSecondary}
+									className={styles.heroSecondaryBtn}
 									onClick={() => openM("generateReportModal")}
 								>
-									<i className="fa-solid fa-download" aria-hidden="true" />{" "}
-									Statements
+									<i className="bi bi-download" aria-hidden="true" /> Statements
 								</button>
 								<button
 									type="button"
-									className={styles.heroSecondary}
+									className={styles.heroSecondaryBtn}
 									onClick={() => openM("rebalanceModal")}
 								>
-									<i className="fa-solid fa-rotate" aria-hidden="true" />{" "}
+									<i className="bi bi-arrow-clockwise" aria-hidden="true" />{" "}
 									Rebalance
 								</button>
 							</div>
@@ -1038,49 +1079,75 @@ export default function Settlement() {
 						</aside>
 					</div>
 				</header>
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
+
+				<div className={styles.controlStrip}>
+					<div className={styles.controlGroup}>
+						<span className={styles.controlLabel}>
+							<i className="bi bi-layers" aria-hidden="true" /> View
+						</span>
+						<div className={styles.segmented}>
+							<button
+								type="button"
+								className={world === "customers" ? styles.segmentActive : ""}
+								onClick={() => setWorld("customers")}
+							>
+								<i className="bi bi-people" aria-hidden="true" /> Customer
+								Settlements
+							</button>
+							<button
+								type="button"
+								className={world === "internal" ? styles.segmentActive : ""}
+								onClick={() => setWorld("internal")}
+							>
+								<i className="bi bi-wallet2" aria-hidden="true" /> My Wallets
+								&amp; Internal
+							</button>
 						</div>
 					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("profileModal")}
-						>
-							<i className="fa-regular fa-user" /> Profile
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("notifModal")}
-						>
-							<i className="fa-regular fa-bell" /> Notifications
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("attentionModal")}
-						>
-							<i className="fa-solid fa-circle-exclamation" /> Attention
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("activityLogModal")}
-						>
-							<i className="fa-solid fa-clock-rotate-left" /> Activity Log
-						</button>
-					</div>
+					{world === "customers" && (
+						<div className={styles.controlGroup}>
+							<span className={styles.controlLabel}>
+								<i className="bi bi-building" aria-hidden="true" /> Business
+							</span>
+							<div className={styles.filterPills}>
+								<button
+									type="button"
+									className={biz === "all" ? styles.filterActive : ""}
+									onClick={() => setBiz("all")}
+								>
+									All Businesses <span className={styles.bizCount}>2</span>
+								</button>
+								{config.businesses.map((b) => (
+									<button
+										type="button"
+										key={b.id}
+										className={biz === b.id ? styles.filterActive : ""}
+										onClick={() => setBiz(b.id)}
+									>
+										{b.name}{" "}
+										<span className={styles.bizCount}>{b.customers}</span>
+									</button>
+								))}
+							</div>
+							<button
+								type="button"
+								className={`${styles.btnPm} ${styles.btnSm}`}
+								onClick={() => openM("businessDetailModal")}
+							>
+								<i className="bi bi-plus" aria-hidden="true" /> Link Business
+							</button>
+						</div>
+					)}
+					<span className={styles.scopeNote}>
+						<i className="bi bi-funnel" aria-hidden="true" /> {bizLabel} in view
+					</span>
 				</div>
+
 				<div className={styles.content}>
 					{!config.paymoConnected && (
 						<div className={styles.connBanner}>
 							<div className={styles.connIcon}>
-								<i className="fa-solid fa-plug" />
+								<i className="bi bi-plug" aria-hidden="true" />
 							</div>
 							<div className={styles.connText}>
 								<div className={styles.connTitle}>Paymo not connected yet</div>
@@ -1090,442 +1157,412 @@ export default function Settlement() {
 								</div>
 							</div>
 							<button
-								className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+								type="button"
+								className={`${styles.btnPm} ${styles.btnSm} ${styles.heroSecondaryBtn}`}
 								onClick={() => openM("linkApiModal")}
 							>
-								<i className="fa-solid fa-key" /> Link API Key
+								<i className="bi bi-key" aria-hidden="true" /> Link API Key
 							</button>
 							<span className={styles.connTag}>
-								<i
-									className="fa-solid fa-circle"
-									style={{ fontSize: 8, color: "#86efac" }}
-								/>{" "}
-								Sandbox preview
+								<i className="bi bi-circle-fill" aria-hidden="true" /> Sandbox
+								preview
 							</span>
 						</div>
 					)}
-					<div
-						className="d-flex flex-wrap justify-content-between align-items-center"
-						style={{ gap: 12 }}
-					>
-						<div className={styles.worldSwitch}>
-							<button
-								className={`${styles.worldBtn} ${world === "customers" ? styles.worldBtnActive : ""}`}
-								onClick={() => setWorld("customers")}
-							>
-								<i className="fa-solid fa-users" /> Customer Settlements
-							</button>
-							<button
-								className={`${styles.worldBtn} ${world === "internal" ? styles.worldBtnActive : ""}`}
-								onClick={() => setWorld("internal")}
-							>
-								<i className="fa-solid fa-wallet" /> My Wallets & Internal
-							</button>
-						</div>
-						{world === "customers" && (
-							<div className={styles.bizBar}>
-								<button
-									className={`${styles.bizPill} ${biz === "all" ? styles.bizPillActive : ""}`}
-									onClick={() => setBiz("all")}
-								>
-									All Businesses <span className={styles.bizCount}>2</span>
-								</button>
-								{config.businesses.map((b) => (
-									<button
-										key={b.id}
-										className={`${styles.bizPill} ${biz === b.id ? styles.bizPillActive : ""}`}
-										onClick={() => setBiz(b.id)}
-									>
-										{b.name}{" "}
-										<span className={styles.bizCount}>{b.customers}</span>
-									</button>
-								))}
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => openM("businessDetailModal")}
-								>
-									<i className="fa-solid fa-plus" /> Link Business
-								</button>
-							</div>
-						)}
-					</div>
+
 					<section
 						className={styles.dashboardSection}
-						aria-labelledby="set-sec-kpi"
+						aria-labelledby="set-sec-pulse"
 					>
 						<SectionHeading
-							index="01"
-							id="set-sec-kpi"
+							index="1.1"
+							id="set-sec-pulse"
 							title={
 								world === "customers"
-									? "Customer settlement metrics"
-									: "Internal wallet metrics"
+									? "Settlement pulse"
+									: "Internal wallet pulse"
 							}
 							description={`${bizLabel} — headline figures for the current settlement cycle.`}
 						/>
-						<div className="row g-3">
-							{worldStats.map((s) => (
-								<div className="col-lg-2 col-md-4 col-6" key={s.label}>
-									<div className={styles.card} style={{ minHeight: 128 }}>
-										<p className={styles.sl} style={{ color: s.color }}>
-											{s.label}
-										</p>
-										<div
-											className={styles.sv}
-											style={{ margin: "6px 0", fontSize: 18 }}
+						<div className={styles.kpiGrid}>
+							{worldStats.map((stat) => (
+								<div className={styles.kpiCard} key={stat.label}>
+									<div
+										className={`${styles.kpiIcon} ${stat.iconCls}`}
+										aria-hidden="true"
+									>
+										<i className={`bi ${stat.icon}`} />
+									</div>
+									<div
+										style={{
+											fontSize: "0.72rem",
+											fontWeight: 600,
+											color: "var(--pm-muted)",
+											textTransform: "uppercase",
+											letterSpacing: "0.06em",
+										}}
+									>
+										{stat.label}
+									</div>
+									<div className={styles.kpiValue}>{stat.value}</div>
+									<div className={styles.kpiMeta}>
+										<span
+											className={`${styles.badge} ${kpiToneClass(stat.tone)}`}
 										>
-											{s.value}
-										</div>
-										<span className={`${styles.badge} ${styles[s.tone]}`}>
-											<i className={s.icon} /> {s.sub}
+											{stat.sub}
 										</span>
 									</div>
 								</div>
 							))}
 						</div>
 					</section>
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-queue"
 					>
 						<SectionHeading
-							index="02"
+							index="1.2"
 							id="set-sec-queue"
-							title="Attention, suggestions & quick actions"
-							description="Everything that needs a decision right now, plus one-click settlement workflows."
+							title="Needs your attention"
+							description="Resolve exceptions and act on smart recommendations without leaving the dashboard."
 						/>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<div className={`${styles.card} h-100`}>
-									<div className="d-flex justify-content-between align-items-center mb-2">
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-exclamation-circle"
-												style={{ color: "var(--pm-warning)" }}
-											/>{" "}
-											Attention Required
-										</h3>
+						<div className={styles.attentionGrid}>
+							<div className={styles.listCard}>
+								<div className={styles.listCardHeader}>
+									<h3 className={styles.listCardTitle}>
+										<i
+											className="bi bi-exclamation-circle"
+											aria-hidden="true"
+										/>{" "}
+										Attention Required
+									</h3>
+									<div className={styles.headerButtonRow}>
 										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("notifModal")}
+											aria-label="Notifications"
+										>
+											<i className="bi bi-bell" aria-hidden="true" />
+										</button>
+										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => openM("attentionModal")}
 										>
 											View all
 										</button>
 									</div>
-									{config.attention.map((item) => (
-										<div className={styles.sr} key={item.title}>
-											<div className="d-flex align-items-center gap-3">
-												<div
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-														fontSize: 12,
-													}}
-												>
-													<i className={item.icon} />
-												</div>
-												<div>
-													<div className={styles.fwBold13}>{item.title}</div>
-													<div className={styles.mutedSmall}>{item.sub}</div>
-												</div>
-											</div>
+								</div>
+								{config.attention.map((item) => (
+									<div className={styles.actionRow} key={item.title}>
+										<div
+											className={styles.iconCircle}
+											style={{
+												background: item.iconBg,
+												color: item.iconColor,
+											}}
+											aria-hidden="true"
+										>
+											<i className={item.icon} />
+										</div>
+										<div className={styles.actionRowMain}>
+											<div className={styles.actionRowTitle}>{item.title}</div>
+											<div className={styles.actionRowSub}>{item.sub}</div>
+										</div>
+										<div className={styles.actionRowActions}>
 											<button
+												type="button"
 												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
 												onClick={() => openM(item.modal)}
 											>
 												{item.actionLabel}
 											</button>
 										</div>
-									))}
-								</div>
-							</div>
-							<div className="col-lg-4">
-								<div className={`${styles.card} h-100`}>
-									<div className="d-flex justify-content-between align-items-center mb-2">
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-lightbulb"
-												style={{ color: "var(--pm-primary)" }}
-											/>{" "}
-											Smart Suggestions
-										</h3>
-										<span className={`${styles.badge} ${styles.badgeP}`}>
-											<i className="fa-solid fa-sparkles" /> AI
-										</span>
 									</div>
-									{config.suggestions.map((item) => (
-										<div className={styles.sr} key={item.title}>
-											<div className="d-flex align-items-center gap-3">
-												<div
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-														fontSize: 12,
-													}}
-												>
-													<i className={item.icon} />
-												</div>
-												<div>
-													<div className={styles.fwBold13}>{item.title}</div>
-													<div className={styles.mutedSmall}>{item.sub}</div>
-												</div>
-											</div>
+								))}
+							</div>
+							<div className={styles.listCard}>
+								<div className={styles.listCardHeader}>
+									<h3 className={styles.listCardTitle}>
+										<i className="bi bi-lightbulb" aria-hidden="true" /> Smart
+										Suggestions
+									</h3>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" aria-hidden="true" /> AI
+									</span>
+								</div>
+								{config.suggestions.map((item) => (
+									<div className={styles.actionRow} key={item.title}>
+										<div
+											className={styles.iconCircle}
+											style={{
+												background: item.iconBg,
+												color: item.iconColor,
+											}}
+											aria-hidden="true"
+										>
+											<i className={item.icon} />
+										</div>
+										<div className={styles.actionRowMain}>
+											<div className={styles.actionRowTitle}>{item.title}</div>
+											<div className={styles.actionRowSub}>{item.sub}</div>
+										</div>
+										<div className={styles.actionRowActions}>
 											<button
+												type="button"
 												className={`${styles.btnPm} ${styles.btnSm}`}
 												onClick={() => openM(item.modal)}
 											>
 												{item.actionLabel}
 											</button>
 										</div>
-									))}
-								</div>
+									</div>
+								))}
 							</div>
-							<div className="col-lg-4">
-								<div className={`${styles.card} h-100`}>
-									<div className="mb-3">
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-bolt"
-												style={{ color: "var(--pm-accent)" }}
-											/>{" "}
-											Quick Actions
-										</h3>
-										<p className={styles.ss}>Frequent settlement workflows</p>
-									</div>
-									<div className={styles.qaGrid}>
-										{config.quickActions.map((qa) => (
-											<button
-												className={styles.qaBtn}
-												key={qa.label}
-												onClick={() => openM(qa.modal)}
-											>
-												<i className={qa.icon} style={{ color: qa.color }} />
-												<span>{qa.label}</span>
-											</button>
-										))}
-									</div>
+							<div className={styles.listCard}>
+								<h3 className={styles.listCardTitle}>
+									<i className="bi bi-lightning-charge" aria-hidden="true" />{" "}
+									Quick Actions
+								</h3>
+								<p className={styles.listCardSub}>
+									Frequent settlement workflows
+								</p>
+								<div className={styles.quickGrid}>
+									{config.quickActions.map((qa) => (
+										<button
+											type="button"
+											className={styles.quickActionCard}
+											key={qa.label}
+											onClick={() => openM(qa.modal)}
+										>
+											<i className={qa.icon} style={{ color: qa.color }} />
+											<span>{qa.label}</span>
+										</button>
+									))}
 								</div>
 							</div>
 						</div>
 					</section>
+
 					{world === "customers" && (
 						<section
 							className={styles.dashboardSection}
 							aria-labelledby="set-sec-businesses"
 						>
 							<SectionHeading
-								index="03"
+								index="1.3"
 								id="set-sec-businesses"
 								title="Linked businesses"
 								description={`${config.businesses.length} businesses collecting through your Paymo account. Manage customers, permissions and ledgers.`}
-							/>
-							<div className={styles.card}>
-								<div
-									className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-									style={{ gap: 8 }}
-								>
-									<div>
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-building"
-												style={{ color: "var(--pm-primary-light)" }}
-											/>{" "}
-											Linked Businesses
-										</h3>
-										<p className={styles.ss}>
-											{config.businesses.length} businesses collecting through
-											your Paymo account. Manage customers, permissions and
-											ledgers.
-										</p>
-									</div>
+								action={
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
 										onClick={() => openM("businessDetailModal")}
 									>
-										<i className="fa-solid fa-plus" /> Link New Business
+										<i className="bi bi-plus" aria-hidden="true" /> Link New
+										Business
 									</button>
-								</div>
-								<div className="row g-3">
-									{config.businesses.map((b) => {
-										const granted = b.permission.filter(
-											(p) => p.status === "granted",
-										).length;
-										const permPct = Math.round(
-											(granted / b.permission.length) * 100,
-										);
-										const floatPct = Math.min(
-											100,
-											Math.round((b.float / b.minFloat) * 100),
-										);
-										const lowFloat = b.float <= b.minFloat * 1.1;
-										return (
-											<div className="col-lg-6" key={b.id}>
-												<div
-													className={`${styles.card} ${styles.bizCard} h-100`}
-												>
-													<div className={styles.bizHead}>
-														<div>
-															<h4 className={styles.bizName}>{b.name}</h4>
-															<p className={styles.bizType}>
-																{b.type} • {b.customers} customers •{" "}
-																{b.schedule}
-															</p>
-														</div>
-														<span
-															className={`${styles.badge} ${lowFloat ? styles.badgeW : styles.badgeS}`}
+								}
+							/>
+							<div className="row g-3">
+								{config.businesses.map((b) => {
+									const granted = b.permission.filter(
+										(p) => p.status === "granted",
+									).length;
+									const permPct = Math.round(
+										(granted / b.permission.length) * 100,
+									);
+									const floatPct = Math.min(
+										100,
+										Math.round((b.float / b.minFloat) * 100),
+									);
+									const lowFloat = b.float <= b.minFloat * 1.1;
+									return (
+										<div className="col-lg-6" key={b.id}>
+											<div className={`${styles.card} ${styles.bizCard} h-100`}>
+												<div className={styles.bizHead}>
+													<div>
+														<h4 className={styles.bizName}>{b.name}</h4>
+														<p className={styles.bizType}>
+															{b.type} • {b.customers} customers • {b.schedule}
+														</p>
+													</div>
+													<span
+														className={`${styles.badge} ${lowFloat ? styles.badgeW : styles.badgeS}`}
+													>
+														<i
+															className={`bi ${lowFloat ? "bi-exclamation-triangle" : "bi-check-circle"}`}
+															aria-hidden="true"
+														/>{" "}
+														{b.status}
+													</span>
+												</div>
+												<div className={styles.bizKpis}>
+													<div className={styles.bizKpi}>
+														<div className={styles.bizKpiLabel}>Collected</div>
+														<div
+															className={styles.bizKpiValue}
+															style={{ color: "var(--pm-accent)" }}
 														>
-															<i
-																className={`fa-solid ${lowFloat ? "fa-triangle-exclamation" : "fa-circle-check"}`}
-															/>{" "}
-															{b.status}
-														</span>
-													</div>
-													<div className={styles.bizKpis}>
-														<div className={styles.bizKpi}>
-															<div className={styles.bizKpiLabel}>
-																Collected
-															</div>
-															<div
-																className={styles.bizKpiValue}
-																style={{ color: "var(--pm-accent)" }}
-															>
-																{fmtKES(b.collected)}
-															</div>
-														</div>
-														<div className={styles.bizKpi}>
-															<div className={styles.bizKpiLabel}>Paid Out</div>
-															<div
-																className={styles.bizKpiValue}
-																style={{ color: "var(--pm-info)" }}
-															>
-																{fmtKES(b.payouts)}
-															</div>
-														</div>
-														<div className={styles.bizKpi}>
-															<div className={styles.bizKpiLabel}>Refunds</div>
-															<div
-																className={styles.bizKpiValue}
-																style={{ color: "var(--pm-warning)" }}
-															>
-																{fmtKES(b.refunds)}
-															</div>
-														</div>
-														<div className={styles.bizKpi}>
-															<div className={styles.bizKpiLabel}>
-																Fee ({b.feePct})
-															</div>
-															<div
-																className={styles.bizKpiValue}
-																style={{ color: "var(--pm-primary)" }}
-															>
-																{fmtKES(b.fees)}
-															</div>
+															{fmtKES(b.collected)}
 														</div>
 													</div>
-													<div className={styles.permTrack}>
-														<i
-															className="fa-solid fa-shield-halved"
-															style={{ color: "var(--pm-primary)" }}
-														/>
-														<span>
-															Permissions {granted}/{b.permission.length}
-														</span>
-														<div className={styles.permBar}>
-															<div
-																className={styles.permFill}
-																style={{ width: `${permPct}%` }}
-															/>
-														</div>
-													</div>
-													<div className={styles.floatMeter}>
-														<i
-															className="fa-solid fa-droplet"
+													<div className={styles.bizKpi}>
+														<div className={styles.bizKpiLabel}>Paid Out</div>
+														<div
+															className={styles.bizKpiValue}
 															style={{ color: "var(--pm-info)" }}
-														/>
-														<span>
-															Float {fmtKES(b.float)} / min {fmtKES(b.minFloat)}
-														</span>
-														<div className={styles.permBar}>
-															<div
-																className={`${styles.floatFill} ${lowFloat ? styles.floatLow : ""}`}
-																style={{ width: `${floatPct}%` }}
-															/>
+														>
+															{fmtKES(b.payouts)}
 														</div>
 													</div>
-													<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-														<button
-															className={`${styles.btnPm} ${styles.btnSm}`}
-															onClick={() => openM("businessDetailModal")}
+													<div className={styles.bizKpi}>
+														<div className={styles.bizKpiLabel}>Refunds</div>
+														<div
+															className={styles.bizKpiValue}
+															style={{ color: "var(--pm-warning)" }}
 														>
-															<i className="fa-solid fa-eye" /> Manage
-														</button>
-														<button
-															className={`${styles.btnPm} ${styles.btnSm}`}
-															onClick={() => openM("payoutModal")}
+															{fmtKES(b.refunds)}
+														</div>
+													</div>
+													<div className={styles.bizKpi}>
+														<div className={styles.bizKpiLabel}>
+															Fee ({b.feePct})
+														</div>
+														<div
+															className={styles.bizKpiValue}
+															style={{ color: "var(--pm-primary)" }}
 														>
-															<i className="fa-solid fa-paper-plane" /> Payout
-														</button>
-														<button
-															className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
-															onClick={() => openM("rebalanceModal")}
-														>
-															<i className="fa-solid fa-rotate" /> Rebalance
-														</button>
+															{fmtKES(b.fees)}
+														</div>
 													</div>
 												</div>
+												<div className={styles.permTrack}>
+													<i
+														className="bi bi-shield-check"
+														style={{ color: "var(--pm-primary)" }}
+														aria-hidden="true"
+													/>
+													<span>
+														Permissions {granted}/{b.permission.length}
+													</span>
+													<div className={styles.permBar}>
+														<div
+															className={styles.permFill}
+															style={{ width: `${permPct}%` }}
+														/>
+													</div>
+												</div>
+												<div className={styles.floatMeter}>
+													<i
+														className="bi bi-droplet"
+														style={{ color: "var(--pm-info)" }}
+														aria-hidden="true"
+													/>
+													<span>
+														Float {fmtKES(b.float)} / min {fmtKES(b.minFloat)}
+													</span>
+													<div className={styles.permBar}>
+														<div
+															className={`${styles.floatFill} ${lowFloat ? styles.floatLow : ""}`}
+															style={{ width: `${floatPct}%` }}
+														/>
+													</div>
+												</div>
+												<div className="d-flex flex-wrap" style={{ gap: 8 }}>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("businessDetailModal")}
+													>
+														<i className="bi bi-eye" aria-hidden="true" />{" "}
+														Manage
+													</button>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("payoutModal")}
+													>
+														<i className="bi bi-send" aria-hidden="true" />{" "}
+														Payout
+													</button>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+														onClick={() => openM("rebalanceModal")}
+													>
+														<i
+															className="bi bi-arrow-clockwise"
+															aria-hidden="true"
+														/>{" "}
+														Rebalance
+													</button>
+												</div>
 											</div>
-										);
-									})}
-								</div>
+										</div>
+									);
+								})}
 							</div>
 						</section>
 					)}
+
 					{world === "customers" && (
 						<section
 							className={styles.dashboardSection}
 							aria-labelledby="set-sec-ledger"
 						>
 							<SectionHeading
-								index="04"
+								index="1.4"
 								id="set-sec-ledger"
 								title="Collections, payouts & refunds"
 								description={`${bizLabel} — clear split between money recovered from customers and money sent to your businesses.`}
+								action={
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("refundModal")}
+									>
+										<i
+											className="bi bi-arrow-counterclockwise"
+											aria-hidden="true"
+										/>{" "}
+										Issue Refund
+									</button>
+								}
 							/>
-							<div className={styles.card}>
-								<div
-									className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-									style={{ gap: 8 }}
-								>
+							<div className={styles.tableCard}>
+								<div className={styles.tableToolbar}>
 									<div>
-										<h3 className={styles.st}>
+										<h3 className={styles.tableTitle}>
 											<i
-												className="fa-solid fa-arrows-left-right"
-												style={{ color: "var(--pm-info)" }}
+												className="bi bi-arrow-left-right"
+												aria-hidden="true"
 											/>{" "}
-											Collections, Payouts & Refunds
+											Collections, Payouts &amp; Refunds
 										</h3>
-										<p className={styles.ss}>
-											{bizLabel} — clear split between money recovered from
-											customers and money sent to your businesses.
+										<p className={styles.tableSub}>
+											{bizLabel} — every movement, traceable.
 										</p>
 									</div>
 									<div className={styles.pills}>
 										{(["collections", "payouts", "refunds"] as const).map(
-											(t) => (
+											(tab) => (
 												<button
-													key={t}
-													className={`${styles.pill} ${ledgerTab === t ? styles.pillActive : ""}`}
-													onClick={() => setLedgerTab(t)}
+													type="button"
+													key={tab}
+													className={`${styles.pill} ${ledgerTab === tab ? styles.pillActive : ""}`}
+													onClick={() => setLedgerTab(tab)}
 												>
-													{t.charAt(0).toUpperCase() + t.slice(1)}
+													{tab.charAt(0).toUpperCase() + tab.slice(1)}
 												</button>
 											),
 										)}
 									</div>
 								</div>
-								<div className="table-responsive">
+								<div className={styles.tableWrap}>
 									<table className={styles.tbl}>
 										<thead>
 											<tr>
@@ -1535,8 +1572,8 @@ export default function Settlement() {
 											</tr>
 										</thead>
 										<tbody>
-											{ledgerRows.map((r, i) => (
-												<tr key={i}>
+											{ledgerRows.map((r) => (
+												<tr key={r[0]}>
 													<td>{r[0]}</td>
 													<td>{r[1]}</td>
 													<td>{r[2]}</td>
@@ -1546,13 +1583,14 @@ export default function Settlement() {
 													</td>
 													<td>
 														<span
-															className={`${styles.badge} ${styles[r[5] as BadgeTone]}`}
+															className={`${styles.badge} ${styles[ledgerTone(r[5])]}`}
 														>
 															{r[5]}
 														</span>
 													</td>
 													<td>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm}`}
 															onClick={() => openM(r[6])}
 														>
@@ -1564,49 +1602,50 @@ export default function Settlement() {
 										</tbody>
 									</table>
 								</div>
+								<div className={styles.tableFooter}>
+									<span>{ledgerRows.length} rows in view</span>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("generateReportModal")}
+									>
+										<i className="bi bi-download" aria-hidden="true" /> Export
+										Ledger
+									</button>
+								</div>
 							</div>
 						</section>
 					)}
+
 					{world === "customers" && (
 						<section
 							className={styles.dashboardSection}
 							aria-labelledby="set-sec-rebalance"
 						>
 							<SectionHeading
-								index="05"
+								index="1.5"
 								id="set-sec-rebalance"
 								title="Rebalance & float"
 								description="Fund auto-settlement — move money from your wallets into each business's settlement float."
-							/>
-							<div className={styles.card}>
-								<div
-									className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-									style={{ gap: 8 }}
-								>
-									<div>
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-droplet"
-												style={{ color: "var(--pm-info)" }}
-											/>{" "}
-											Rebalance & Float
-										</h3>
-										<p className={styles.ss}>
-											Fund auto-settlement — move money from your wallets into
-											each business's settlement float.
-										</p>
-									</div>
+								action={
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
 										onClick={() => openM("rebalanceModal")}
 									>
-										<i className="fa-solid fa-rotate" /> Rebalance Now
+										<i className="bi bi-arrow-clockwise" aria-hidden="true" />{" "}
+										Rebalance Now
 									</button>
-								</div>
+								}
+							/>
+							<div className={styles.tableCard}>
 								<div className="row g-3">
 									<div className="col-lg-7">
-										<div className={styles.ub}>
-											<h4 className={styles.ubTitle}>Float Levels</h4>
+										<div className={styles.panel}>
+											<h4 className={styles.panelTitle}>
+												<i className="bi bi-droplet" aria-hidden="true" /> Float
+												Levels
+											</h4>
 											{config.businesses.map((b) => {
 												const floatPct = Math.min(
 													100,
@@ -1614,8 +1653,8 @@ export default function Settlement() {
 												);
 												const low = b.float <= b.minFloat * 1.1;
 												return (
-													<div className={styles.sr} key={b.id}>
-														<div style={{ flex: 1 }}>
+													<div className={styles.floatRow} key={b.id}>
+														<div className={styles.floatRowMain}>
 															<strong>{b.name}</strong>
 															<div
 																className={styles.floatMeter}
@@ -1633,10 +1672,15 @@ export default function Settlement() {
 															</div>
 														</div>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm} ${low ? styles.btnPmD : ""}`}
 															onClick={() => openM("rebalanceModal")}
 														>
-															<i className="fa-solid fa-rotate" /> Rebalance
+															<i
+																className="bi bi-arrow-clockwise"
+																aria-hidden="true"
+															/>{" "}
+															Rebalance
 														</button>
 													</div>
 												);
@@ -1644,17 +1688,20 @@ export default function Settlement() {
 										</div>
 									</div>
 									<div className="col-lg-5">
-										<div className={styles.ub}>
-											<h4 className={styles.ubTitle}>Recent Rebalances</h4>
+										<div className={styles.panel}>
+											<h4 className={styles.panelTitle}>
+												<i className="bi bi-clock-history" aria-hidden="true" />{" "}
+												Recent Rebalances
+											</h4>
 											{config.rebalances.map((r) => (
-												<div className={styles.sr} key={r.time + r.biz}>
-													<div>
+												<div className={styles.floatRow} key={r.time + r.biz}>
+													<div className={styles.floatRowMain}>
 														<strong>{r.biz}</strong>
 														<div className={styles.mutedSmall}>
 															{r.from} • {r.trigger} • {r.time}
 														</div>
 													</div>
-													<div style={{ textAlign: "right" }}>
+													<div className={styles.floatRowValue}>
 														<strong>{r.amount}</strong>
 														<div>
 															<span
@@ -1672,140 +1719,128 @@ export default function Settlement() {
 							</div>
 						</section>
 					)}
+
 					{world === "internal" && (
 						<section
 							className={styles.dashboardSection}
 							aria-labelledby="set-sec-wallets"
 						>
 							<SectionHeading
-								index="06"
+								index="1.3"
 								id="set-sec-wallets"
 								title="My wallets & internal transfers"
-								description="Your own money on Paymo — fund floats, pay yourself, or withdraw to your bank."
-							/>
-							<div className={styles.card}>
-								<div
-									className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-									style={{ gap: 8 }}
-								>
-									<div>
-										<h3 className={styles.st}>
-											<i
-												className="fa-solid fa-wallet"
-												style={{ color: "var(--pm-purple)" }}
-											/>{" "}
-											My Wallets
-										</h3>
-										<p className={styles.ss}>
-											Your own money on Paymo — fund floats, pay yourself, or
-											withdraw to your bank.
-										</p>
-									</div>
-									<div className="d-flex" style={{ gap: 8 }}>
+								description="Your own money on PayMo — fund floats, pay yourself, or withdraw to your bank."
+								action={
+									<div className={styles.headerButtonRow}>
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm}`}
 											onClick={() => openM("walletTopUpModal")}
 										>
-											<i className="fa-solid fa-plus" /> Top Up
+											<i className="bi bi-plus" aria-hidden="true" /> Top Up
 										</button>
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
 											onClick={() => openM("internalTransferModal")}
 										>
-											<i className="fa-solid fa-paper-plane" /> Send Money
+											<i className="bi bi-send" aria-hidden="true" /> Send Money
 										</button>
 									</div>
-								</div>
-								<div className="row g-3">
-									{config.wallets.map((w) => (
-										<div className="col-lg-6" key={w.id}>
-											<div
-												className={`${styles.card} ${styles.walletCard} h-100`}
-											>
-												<div className={styles.bizHead}>
-													<div className="d-flex align-items-center gap-3">
-														<div
-															className={styles.walletIcon}
-															style={{
-																background: "var(--pm-accent-soft)",
-																color: w.color,
-															}}
-														>
-															<i className={w.icon} />
-														</div>
-														<div>
-															<h4
-																className={styles.bizName}
-																style={{ margin: 0 }}
-															>
-																{w.name}
-															</h4>
-															<p
-																className={styles.bizType}
-																style={{ margin: 0 }}
-															>
-																{w.type} • {w.purpose}
-															</p>
-														</div>
+								}
+							/>
+							<div className="row g-3 mb-3">
+								{config.wallets.map((w) => (
+									<div className="col-lg-6" key={w.id}>
+										<div
+											className={`${styles.card} ${styles.walletCard} h-100`}
+										>
+											<div className={styles.bizHead}>
+												<div className="d-flex align-items-center gap-3">
+													<div
+														className={styles.walletIcon}
+														style={{
+															background: "var(--pm-accent-soft)",
+															color: w.color,
+														}}
+														aria-hidden="true"
+													>
+														<i className={w.icon} />
 													</div>
-													<span className={`${styles.badge} ${styles.badgeS}`}>
-														<i className="fa-solid fa-circle-check" /> Active
-													</span>
+													<div>
+														<h4
+															className={styles.bizName}
+															style={{ margin: 0 }}
+														>
+															{w.name}
+														</h4>
+														<p className={styles.bizType} style={{ margin: 0 }}>
+															{w.type} • {w.purpose}
+														</p>
+													</div>
 												</div>
-												<div className={styles.walletBalance}>
-													{fmtKES(w.balance)}
-												</div>
-												<div className={styles.walletRow}>
-													<span>Available</span>
-													<strong>{fmtKES(w.available)}</strong>
-												</div>
-												<div className={styles.walletRow}>
-													<span>Pending settlement</span>
-													<strong>{fmtKES(w.pending)}</strong>
-												</div>
-												<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-													<button
-														className={`${styles.btnPm} ${styles.btnSm}`}
-														onClick={() => openM("walletTopUpModal")}
-													>
-														<i className="fa-solid fa-plus" /> Top Up
-													</button>
-													<button
-														className={`${styles.btnPm} ${styles.btnSm}`}
-														onClick={() => openM("internalTransferModal")}
-													>
-														<i className="fa-solid fa-paper-plane" /> Send
-													</button>
-													<button
-														className={`${styles.btnPm} ${styles.btnSm}`}
-														onClick={() => openM("internalTransferModal")}
-													>
-														<i className="fa-solid fa-building-columns" />{" "}
-														Withdraw
-													</button>
-												</div>
+												<span className={`${styles.badge} ${styles.badgeS}`}>
+													<i
+														className="bi bi-check-circle"
+														aria-hidden="true"
+													/>{" "}
+													Active
+												</span>
+											</div>
+											<div className={styles.walletBalance}>
+												{fmtKES(w.balance)}
+											</div>
+											<div className={styles.walletRow}>
+												<span>Available</span>
+												<strong>{fmtKES(w.available)}</strong>
+											</div>
+											<div className={styles.walletRow}>
+												<span>Pending settlement</span>
+												<strong>{fmtKES(w.pending)}</strong>
+											</div>
+											<div className="d-flex flex-wrap" style={{ gap: 8 }}>
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM("walletTopUpModal")}
+												>
+													<i className="bi bi-plus" aria-hidden="true" /> Top Up
+												</button>
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM("internalTransferModal")}
+												>
+													<i className="bi bi-send" aria-hidden="true" /> Send
+												</button>
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM("internalTransferModal")}
+												>
+													<i className="bi bi-bank" aria-hidden="true" />{" "}
+													Withdraw
+												</button>
 											</div>
 										</div>
-									))}
-								</div>
+									</div>
+								))}
 							</div>
-							<div className={styles.card}>
-								<div className="d-flex justify-content-between align-items-center mb-3">
-									<h3 className={styles.st}>
-										<i
-											className="fa-solid fa-arrows-left-right"
-											style={{ color: "var(--pm-info)" }}
-										/>{" "}
+							<div className={styles.tableCard}>
+								<div className={styles.tableToolbar}>
+									<h3 className={styles.tableTitle}>
+										<i className="bi bi-arrow-left-right" aria-hidden="true" />{" "}
 										Internal Transfers
 									</h3>
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm}`}
 										onClick={() => openM("internalTransferModal")}
 									>
-										<i className="fa-solid fa-plus" /> New Transfer
+										<i className="bi bi-plus" aria-hidden="true" /> New Transfer
 									</button>
 								</div>
-								<div className="table-responsive">
+								<div className={styles.tableWrap}>
 									<table className={styles.tbl}>
 										<thead>
 											<tr>
@@ -1840,54 +1875,49 @@ export default function Settlement() {
 							</div>
 						</section>
 					)}
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-recon"
 					>
 						<SectionHeading
-							index="07"
+							index="1.6"
 							id="set-sec-recon"
 							title="Reconciliation & dispute resolution"
 							description="Match collections against payouts, handle exceptions, and manage the full dispute lifecycle."
-						/>
-						<div className={styles.card}>
-							<div
-								className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-								style={{ gap: 8 }}
-							>
-								<div>
-									<h3 className={styles.st}>
-										<i
-											className="fa-solid fa-list-check"
-											style={{ color: "var(--pm-purple)" }}
-										/>{" "}
-										Reconciliation & Dispute Resolution
-									</h3>
-									<p className={styles.ss}>
-										Match collections against payouts, handle exceptions, and
-										manage the full dispute lifecycle.
-									</p>
-								</div>
-								<div className="d-flex" style={{ gap: 8 }}>
+							action={
+								<div className={styles.headerButtonRow}>
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm}`}
 										onClick={() => openM("reconciliationWizardModal")}
 									>
-										Start Reconciliation
+										<i className="bi bi-list-check" aria-hidden="true" /> Start
+										Reconciliation
 									</button>
 									<button
+										type="button"
 										className={`${styles.btnPm} ${styles.btnSm}`}
 										onClick={() => openM("disputeModal")}
 									>
+										<i
+											className="bi bi-exclamation-triangle"
+											aria-hidden="true"
+										/>{" "}
 										New Dispute
 									</button>
 								</div>
-							</div>
+							}
+						/>
+						<div className={styles.tableCard}>
 							<div className="row g-3">
 								<div className="col-lg-7">
-									<div className={styles.ub}>
-										<h4 className={styles.ubTitle}>Reconciliation Summary</h4>
-										<div className="table-responsive">
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-list-check" aria-hidden="true" />{" "}
+											Reconciliation Summary
+										</h4>
+										<div className={styles.tableWrap}>
 											<table className={styles.tbl}>
 												<thead>
 													<tr>
@@ -1897,10 +1927,10 @@ export default function Settlement() {
 													</tr>
 												</thead>
 												<tbody>
-													{config.reconRows.rows.map((row, i) => (
-														<tr key={i}>
-															{row.map((cell, j) => (
-																<td key={j}>
+													{config.reconRows.rows.map((row) => (
+														<tr key={cellKey(row[0])}>
+															{row.map((cell) => (
+																<td key={cellKey(cell)}>
 																	<CellValue cell={cell} onOpen={openM} />
 																</td>
 															))}
@@ -1912,15 +1942,22 @@ export default function Settlement() {
 									</div>
 								</div>
 								<div className="col-lg-5">
-									<div className={styles.ub}>
-										<h4 className={styles.ubTitle}>Open Disputes</h4>
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i
+												className="bi bi-shield-exclamation"
+												aria-hidden="true"
+											/>{" "}
+											Open Disputes
+										</h4>
 										{config.openDisputes.map((d) => (
-											<div className={styles.sr} key={d.ref}>
-												<div>
+											<div className={styles.floatRow} key={d.ref}>
+												<div className={styles.floatRowMain}>
 													<strong>{d.ref}</strong>
 													<div className={styles.mutedSmall}>{d.sub}</div>
 												</div>
 												<button
+													type="button"
 													className={`${styles.btnPm} ${styles.btnSm}`}
 													onClick={() => openM(d.modal)}
 												>
@@ -1933,47 +1970,35 @@ export default function Settlement() {
 							</div>
 						</div>
 					</section>
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-reports"
 					>
 						<SectionHeading
-							index="08"
+							index="1.7"
 							id="set-sec-reports"
 							title="Settlement reports & analytics"
 							description="Per-business statements, fee earnings, refund analysis and rebalance history."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("generateReportModal")}
+								>
+									<i className="bi bi-download" aria-hidden="true" /> Generate
+									Report
+								</button>
+							}
 						/>
-						<div className={styles.card}>
-							<div
-								className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-								style={{ gap: 8 }}
-							>
-								<div>
-									<h3 className={styles.st}>
-										<i
-											className="fa-solid fa-chart-bar"
-											style={{ color: "var(--pm-info)" }}
-										/>{" "}
-										Settlement Reports & Analytics
-									</h3>
-									<p className={styles.ss}>
-										Per-business statements, fee earnings, refund analysis and
-										rebalance history.
-									</p>
-								</div>
-								<div className="d-flex" style={{ gap: 8 }}>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("generateReportModal")}
-									>
-										Generate Report
-									</button>
-								</div>
-							</div>
+						<div className={styles.tableCard}>
 							<div className="row g-3">
 								<div className="col-lg-8">
-									<div className={styles.ub}>
-										<h4 className={styles.ubTitle}>7-Day Settlement Trend</h4>
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-bar-chart" aria-hidden="true" /> 7-Day
+											Settlement Trend
+										</h4>
 										<div className={styles.chartBars}>
 											{config.trendBars.map((b) => (
 												<div
@@ -1988,20 +2013,28 @@ export default function Settlement() {
 									</div>
 								</div>
 								<div className="col-lg-4">
-									<div className={styles.ub}>
-										<h4 className={styles.ubTitle}>Key Metrics</h4>
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-speedometer2" aria-hidden="true" />{" "}
+											Key Metrics
+										</h4>
 										{config.keyMetrics.map((m) => (
-											<div className={styles.sr} key={m.label}>
-												<div>
+											<div className={styles.floatRow} key={m.label}>
+												<div className={styles.floatRowMain}>
 													<strong>{m.label}</strong>
 												</div>
 												<strong>{m.value}</strong>
 											</div>
 										))}
 										<button
+											type="button"
 											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
 											onClick={() => openM("complianceReportModal")}
 										>
+											<i
+												className="bi bi-file-earmark-check"
+												aria-hidden="true"
+											/>{" "}
 											View Compliance
 										</button>
 									</div>
@@ -2009,99 +2042,67 @@ export default function Settlement() {
 							</div>
 						</div>
 					</section>
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-rules"
 					>
 						<SectionHeading
-							index="09"
+							index="1.8"
 							id="set-sec-rules"
 							title="Automated settlement rules"
 							description="Auto-settle payouts, rebalance floats, and route refunds — per business."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("autoRulesModal")}
+								>
+									<i className="bi bi-gear" aria-hidden="true" /> Manage Rules
+								</button>
+							}
 						/>
-						<div className={styles.card}>
-							<div
-								className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-								style={{ gap: 8 }}
-							>
-								<div>
-									<h3 className={styles.st}>
-										<i
-											className="fa-solid fa-gear"
-											style={{ color: "var(--pm-warning)" }}
-										/>{" "}
-										Automated Settlement Rules
-									</h3>
-									<p className={styles.ss}>
-										Auto-settle payouts, rebalance floats, and route refunds —
-										per business.
-									</p>
-								</div>
-								<div className="d-flex" style={{ gap: 8 }}>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("autoRulesModal")}
-									>
-										Manage Rules
-									</button>
-								</div>
-							</div>
-							<div className="row g-3">
-								<div className="col-12">
-									<div className={styles.ub}>
-										<h4 className={styles.ubTitle}>Active Automation Rules</h4>
-										{config.autoRules.map((r) => (
-											<div className={styles.sr} key={r.title}>
-												<div>
-													<strong>{r.title}</strong>
-													<div className={styles.mutedSmall}>{r.sub}</div>
-												</div>
-												<span className={`${styles.badge} ${styles[r.tone]}`}>
-													{r.status}
-												</span>
-											</div>
-										))}
+						<div className={styles.tableCard}>
+							<h3 className={styles.tableTitle} style={{ marginBottom: 12 }}>
+								<i className="bi bi-gear" aria-hidden="true" /> Active
+								Automation Rules
+							</h3>
+							{config.autoRules.map((r) => (
+								<div className={styles.floatRow} key={r.title}>
+									<div className={styles.floatRowMain}>
+										<strong>{r.title}</strong>
+										<div className={styles.mutedSmall}>{r.sub}</div>
 									</div>
+									<span className={`${styles.badge} ${styles[r.tone]}`}>
+										{r.status}
+									</span>
 								</div>
-							</div>
+							))}
 						</div>
 					</section>
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-onboarding"
 					>
 						<SectionHeading
-							index="10"
+							index="1.9"
 							id="set-sec-onboarding"
 							title="Business onboarding & permissions"
 							description="Track what every linked business must grant before settlement runs for their customers."
-						/>
-						<div className={styles.card}>
-							<div
-								className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-								style={{ gap: 8 }}
-							>
-								<div>
-									<h3 className={styles.st}>
-										<i
-											className="fa-solid fa-shield-halved"
-											style={{ color: "var(--pm-purple)" }}
-										/>{" "}
-										Business Onboarding & Permissions
-									</h3>
-									<p className={styles.ss}>
-										Track what every linked business must grant before
-										settlement runs for their customers.
-									</p>
-								</div>
+							action={
 								<button
+									type="button"
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => openM("businessDetailModal")}
 								>
-									<i className="fa-solid fa-eye" /> View Permissions
+									<i className="bi bi-eye" aria-hidden="true" /> View
+									Permissions
 								</button>
-							</div>
-							<div className="table-responsive">
+							}
+						/>
+						<div className={styles.tableCard}>
+							<div className={styles.tableWrap}>
 								<table className={styles.tbl}>
 									<thead>
 										<tr>
@@ -2161,6 +2162,7 @@ export default function Settlement() {
 													<td>{b.schedule}</td>
 													<td>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm}`}
 															onClick={() => openM("businessDetailModal")}
 														>
@@ -2175,33 +2177,29 @@ export default function Settlement() {
 							</div>
 						</div>
 					</section>
+
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="set-sec-activity"
 					>
 						<SectionHeading
-							index="11"
+							index="1.10"
 							id="set-sec-activity"
 							title="Recent settlement activity"
 							description="Every settlement action across customer and internal flows, most recent first."
-						/>
-						<div className={styles.card}>
-							<div className="d-flex justify-content-between align-items-center mb-3">
-								<h3 className={styles.st}>
-									<i
-										className="fa-solid fa-clock-rotate-left"
-										style={{ color: "var(--pm-muted)" }}
-									/>{" "}
-									Recent Settlement Activity
-								</h3>
+							action={
 								<button
+									type="button"
 									className={`${styles.btnPm} ${styles.btnSm}`}
 									onClick={() => openM("activityLogModal")}
 								>
-									Full Log
+									<i className="bi bi-clock-history" aria-hidden="true" /> Full
+									Log
 								</button>
-							</div>
-							<div className="table-responsive">
+							}
+						/>
+						<div className={styles.tableCard}>
+							<div className={styles.tableWrap}>
 								<table className={styles.tbl}>
 									<thead>
 										<tr>
@@ -2211,10 +2209,10 @@ export default function Settlement() {
 										</tr>
 									</thead>
 									<tbody>
-										{config.activity.rows.map((row, i) => (
-											<tr key={i}>
-												{row.map((cell, j) => (
-													<td key={j}>
+										{config.activity.rows.map((row) => (
+											<tr key={cellKey(row[0])}>
+												{row.map((cell) => (
+													<td key={cellKey(cell)}>
 														<CellValue cell={cell} onOpen={openM} />
 													</td>
 												))}
@@ -2226,13 +2224,14 @@ export default function Settlement() {
 						</div>
 					</section>
 				</div>
+
 				<footer className={styles.pageFooter}>
 					<span>
-						<i className="fa-solid fa-arrows-left-right" /> Settlement &amp;
-						Clearing · {config.businesses.length} linked businesses · Data
-						refreshes every run
+						<i className="bi bi-arrow-left-right" aria-hidden="true" />{" "}
+						Settlement &amp; Clearing · {config.businesses.length} linked
+						businesses · Data refreshes every run
 					</span>
-					<nav className="d-flex" style={{ gap: 16 }}>
+					<nav aria-label="Footer links">
 						<Link to="/pm/app/liquidity">Liquidity &amp; Float</Link>
 						<Link to="/pm/app/reconciliation">Reconciliation</Link>
 						<Link to="/pm/app/payment-rails">Payment Rails</Link>
@@ -2240,87 +2239,27 @@ export default function Settlement() {
 				</footer>
 			</div>
 
-			<div className={styles.floatingBar}>
-				<button
-					type="button"
-					className={styles.btnPm}
-					onClick={() => openM("attentionModal")}
-				>
-					<i className="fa-solid fa-circle-exclamation" /> Attention
+			<nav className={styles.floatingBar} aria-label="Quick settlement actions">
+				<button type="button" onClick={() => openM("attentionModal")}>
+					<i className="bi bi-exclamation-circle" aria-hidden="true" />{" "}
+					Attention
 				</button>
-				<button
-					type="button"
-					className={styles.btnPm}
-					onClick={() => openM("activityLogModal")}
-				>
-					<i className="fa-solid fa-clock-rotate-left" /> Activity
+				<button type="button" onClick={() => openM("activityLogModal")}>
+					<i className="bi bi-clock-history" aria-hidden="true" /> Activity
 				</button>
-				<button
-					type="button"
-					className={styles.btnPm}
-					onClick={() => openM("healthCheckModal")}
-				>
-					<i className="fa-solid fa-heart-pulse" /> Health
+				<button type="button" onClick={() => openM("healthCheckModal")}>
+					<i className="bi bi-heart-pulse" aria-hidden="true" /> Health
 				</button>
 				<button
 					type="button"
 					className={styles.floatingPrimary}
 					onClick={() => openM("payoutModal")}
 				>
-					<i className="fa-solid fa-paper-plane" /> New Payout
+					<i className="bi bi-send" aria-hidden="true" /> New Payout
 				</button>
-			</div>
+			</nav>
 
-			{toasts.length > 0 && (
-				<div
-					className={styles.toastStack}
-					aria-live="polite"
-					aria-atomic="false"
-				>
-					{toasts.map((t) => (
-						<div
-							key={t.id}
-							className={`${styles.toast} ${t.variant === "danger" ? styles.toastDanger : ""}`}
-						>
-							<i
-								className={`fa-solid ${t.variant === "danger" ? "fa-triangle-exclamation" : "fa-circle-check"}`}
-							/>
-							<span>{t.message}</span>
-						</div>
-					))}
-				</div>
-			)}
-
-			<SettlementModals
-				active={activeModal}
-				onClose={closeM}
-				onOpen={openM}
-				onToast={pushToast}
-			/>
-		</div>
-	);
-}
-
-function SectionHeading({
-	index,
-	id,
-	title,
-	description,
-}: {
-	index: string;
-	id: string;
-	title: string;
-	description: string;
-}) {
-	return (
-		<div className={styles.sectionHeading}>
-			<span className={styles.sectionIndex} aria-hidden="true">
-				{index}
-			</span>
-			<div>
-				<h2 id={id}>{title}</h2>
-				<p>{description}</p>
-			</div>
+			<SettlementModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);
 }

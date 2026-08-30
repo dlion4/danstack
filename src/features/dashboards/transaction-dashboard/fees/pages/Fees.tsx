@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import FeesModals from "../components/FeesModals";
@@ -12,6 +12,7 @@ import styles from "../styles/fees.module.css";
      Direction 1 — what PayMo charges you (your costs per service)
      Direction 2 — what you charge your customers (your fee models)
    Signature: Profit Pot auto-channels net profit to your wallets instantly.
+   Rebuilt on the shared PayMo business-dashboard visual language.
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -42,7 +43,7 @@ interface QuickAction {
 }
 
 interface FeesConfig {
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
+	pageCode: string;
 	pageTitle: string;
 	pageSub: string;
 	hero: {
@@ -52,10 +53,11 @@ interface FeesConfig {
 		buttons: { label: string; modal: string }[];
 	};
 	stats: {
+		key: string;
 		label: string;
-		labelColor: string;
 		value: string;
 		badge: { icon: string; text: string; tone: BadgeTone };
+		line: string;
 	}[];
 	attention: SrItem[];
 	suggestions: SrItem[];
@@ -113,13 +115,18 @@ interface FeesConfig {
 	}[];
 	costBars: { height: string; color: string; label: string }[];
 	keyMetrics: { label: string; value: string; color: string }[];
+	profitLeaders: {
+		name: string;
+		value: string;
+		trend: string;
+		tone: BadgeTone;
+	}[];
 	waivers: {
 		id: string;
 		name: string;
 		type: string;
 		discount: string;
 		used: string;
-		actionLabel: string;
 	}[];
 	compliance: { label: string; status: string; tone: BadgeTone }[];
 	profitAccess: { scope: string; desc: string; granted: boolean }[];
@@ -136,19 +143,13 @@ interface FeesConfig {
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: FeesConfig = {
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "BaaS Transactions", to: "/pm/app" },
-		],
-		current: "Fees, Charges & Profit",
-	},
+	pageCode: "Transaction banking · Fees & profit",
 	pageTitle: "Fees, Charges & Profit Channeling",
 	pageSub:
-		"What PayMo charges you, what you charge your customers, and where your profit lands.",
+		"What PayMo charges you, what you charge your customers, and where your profit lands — with every net shilling auto-delivered to your wallet.",
 	hero: {
 		live: "Profit engine is live",
-		value: "KES 1.34M profit in your pot",
+		value: "KES 1.34M profit",
 		detail:
 			"This month: KES 18.4M collected · your charges KES 2.31M · PayMo fees KES 968K · net delivered KES 1.34M.",
 		buttons: [
@@ -159,64 +160,70 @@ const initialMockData: FeesConfig = {
 	},
 	stats: [
 		{
-			label: "PROFIT IN POT",
-			labelColor: "var(--pm-primary)",
+			key: "pot",
+			label: "Profit in pot",
 			value: "KES 1.34M",
 			badge: {
 				icon: "bi-lightning-charge",
 				text: "auto-delivering · next KES 84,500",
 				tone: "badgeS",
 			},
+			line: "2 active · 1 paused rule",
 		},
 		{
-			label: "YOUR CHARGES (MTD)",
-			labelColor: "var(--pm-info)",
+			key: "charges",
+			label: "Your charges (MTD)",
 			value: "KES 2.31M",
 			badge: {
 				icon: "bi-receipt",
 				text: "avg 1.75% on customer money",
 				tone: "badgeS",
 			},
+			line: "across 2 businesses",
 		},
 		{
-			label: "PAYMO FEES (MTD)",
-			labelColor: "var(--pm-warning)",
+			key: "paymo",
+			label: "PayMo fees (MTD)",
 			value: "KES 968K",
 			badge: {
 				icon: "bi-wallet2",
 				text: "1.42% blended cost",
 				tone: "badgeW",
 			},
+			line: "6 services billed",
 		},
 		{
-			label: "NET PROFIT (MTD)",
-			labelColor: "var(--pm-accent)",
+			key: "net",
+			label: "Net profit (MTD)",
 			value: "KES 1.34M",
 			badge: {
 				icon: "bi-bank2",
 				text: "delivered to Business Wallet",
 				tone: "badgeS",
 			},
+			line: "58% profit share",
 		},
 		{
-			label: "DELIVERY RULES",
-			labelColor: "var(--pm-purple)",
+			key: "rules",
+			label: "Delivery rules",
 			value: "3",
 			badge: {
 				icon: "bi-arrow-left-right",
 				text: "2 active · 1 paused",
 				tone: "badgeP",
 			},
+			line: "instant + weekly + external",
 		},
 		{
-			label: "AVG FEE RATE",
-			labelColor: "var(--pm-danger)",
+			key: "rate",
+			label: "Avg fee rate",
 			value: "1.75%",
 			badge: {
 				icon: "bi-percent",
 				text: "Land Buyers flat · Company 2 %",
 				tone: "badgeS",
 			},
+			line: "2 models in use",
 		},
 	],
 	attention: [
@@ -288,7 +295,7 @@ const initialMockData: FeesConfig = {
 		{
 			icon: "bi-plus-circle",
 			label: "New Fee Model",
-			color: "var(--pm-primary-light)",
+			color: "var(--pm-primary)",
 			modal: "addFeeRuleModal",
 		},
 		{
@@ -439,10 +446,26 @@ const initialMockData: FeesConfig = {
 		},
 	],
 	paymoCosts: [
-		{ service: "M-Pesa collection", rate: "0.75% · min KES 5", paidMTD: "KES 412,300" },
-		{ service: "Bank transfer payout", rate: "KES 25 flat", paidMTD: "KES 61,200" },
-		{ service: "International transfer", rate: "1.5% + KES 150", paidMTD: "KES 98,400" },
-		{ service: "Card settlement (USD)", rate: "2.2% + FX 1.2%", paidMTD: "KES 176,800" },
+		{
+			service: "M-Pesa collection",
+			rate: "0.75% · min KES 5",
+			paidMTD: "KES 412,300",
+		},
+		{
+			service: "Bank transfer payout",
+			rate: "KES 25 flat",
+			paidMTD: "KES 61,200",
+		},
+		{
+			service: "International transfer",
+			rate: "1.5% + KES 150",
+			paidMTD: "KES 98,400",
+		},
+		{
+			service: "Card settlement (USD)",
+			rate: "2.2% + FX 1.2%",
+			paidMTD: "KES 176,800",
+		},
 		{ service: "FX conversion", rate: "0.9%", paidMTD: "KES 86,400" },
 		{ service: "Refund (reverse)", rate: "KES 10", paidMTD: "KES 3,400" },
 	],
@@ -498,17 +521,37 @@ const initialMockData: FeesConfig = {
 		},
 	],
 	costBars: [
-		{ height: "65%", color: "var(--pm-primary-light)", label: "Jan" },
-		{ height: "72%", color: "var(--pm-primary-light)", label: "Feb" },
-		{ height: "58%", color: "var(--pm-primary-light)", label: "Mar" },
+		{ height: "65%", color: "var(--pm-primary)", label: "Jan" },
+		{ height: "72%", color: "var(--pm-primary)", label: "Feb" },
+		{ height: "58%", color: "var(--pm-primary)", label: "Mar" },
 		{ height: "81%", color: "var(--pm-warning)", label: "Apr" },
-		{ height: "67%", color: "var(--pm-primary-light)", label: "May" },
+		{ height: "67%", color: "var(--pm-primary)", label: "May" },
 		{ height: "49%", color: "var(--pm-accent)", label: "Jun" },
 	],
 	keyMetrics: [
 		{ label: "Blended Cost", value: "1.42%", color: "var(--pm-warning)" },
 		{ label: "Profit Share", value: "58%", color: "var(--pm-accent)" },
 		{ label: "Profit Delivered", value: "72%", color: "var(--pm-info)" },
+	],
+	profitLeaders: [
+		{
+			name: "Installments (Land Buyers)",
+			value: "KES 864K",
+			trend: "Top",
+			tone: "badgeS",
+		},
+		{
+			name: "Orders (Company 2)",
+			value: "KES 178K",
+			trend: "Rising",
+			tone: "badgeP",
+		},
+		{
+			name: "International transfers",
+			value: "KES 62K",
+			trend: "Rising",
+			tone: "badgeP",
+		},
 	],
 	waivers: [
 		{
@@ -517,7 +560,6 @@ const initialMockData: FeesConfig = {
 			type: "Promotional",
 			discount: "100% off",
 			used: "3 / 5",
-			actionLabel: "Edit",
 		},
 		{
 			id: "WV-102",
@@ -525,7 +567,6 @@ const initialMockData: FeesConfig = {
 			type: "Hardship",
 			discount: "Full charge waived",
 			used: "1 / 1",
-			actionLabel: "Edit",
 		},
 		{
 			id: "WV-103",
@@ -533,7 +574,6 @@ const initialMockData: FeesConfig = {
 			type: "Bulk discount",
 			discount: "20% off charge",
 			used: "12 / 20",
-			actionLabel: "Edit",
 		},
 	],
 	compliance: [
@@ -605,56 +645,40 @@ const initialMockData: FeesConfig = {
 
 /* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
 async function fetchFees(): Promise<FeesConfig> {
-	const res = await fetch("/api/fees");
+	const res = await fetch("/api/fees", {
+		headers: { Accept: "application/json" },
+	});
 	if (!res.ok) throw new Error(`Request failed with ${res.status}`);
 	const json = (await res.json()) as Partial<FeesConfig>;
 	return { ...initialMockData, ...json };
 }
 
-/* ---------- section header ---------- */
-function SectionHead({
-	icon,
-	iconColor,
+/* ---------- numbered section heading (business-dashboard language) ---------- */
+function SectionHeading({
+	id,
+	index,
 	title,
-	sub,
-	actions,
-	onOpen,
+	description,
+	action,
 }: {
-	icon: string;
-	iconColor: string;
+	id: string;
+	index: string;
 	title: string;
-	sub: string;
-	actions: {
-		label: string;
-		icon?: string;
-		modal: string;
-		tone?: "btnPmP" | "btnPmD";
-	}[];
-	onOpen: (id: string) => void;
+	description: string;
+	action?: ReactNode;
 }) {
 	return (
-		<div
-			className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-			style={{ gap: 8 }}
-		>
-			<div>
-				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} />
-					{title}
-				</h3>
-				<p className={styles.ss}>{sub}</p>
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
 			</div>
-			<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-				{actions.map((a) => (
-					<button
-						key={a.label}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						{a.icon && <i className={`bi ${a.icon}`} />} {a.label}
-					</button>
-				))}
-			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
 		</div>
 	);
 }
@@ -675,424 +699,457 @@ export default function Fees() {
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
 
-	const bizName = biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
-	const inScope = (b: string) => biz === "all" || b === bizName;
+	const bizName =
+		biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
 	const scopeTag = biz === "all" ? "All businesses" : bizName;
 
-	const charges = config.charges.filter((c) => inScope(c.business));
+	const charges = useMemo(
+		() =>
+			config.charges.filter(
+				(c) =>
+					biz === "all" ||
+					c.business === (biz === "land" ? BIZ_NAMES.land : BIZ_NAMES.co2),
+			),
+		[config.charges, biz],
+	);
+	const businesses = useMemo(
+		() =>
+			config.businesses.filter(
+				(b) =>
+					biz === "all" ||
+					b.name === (biz === "land" ? BIZ_NAMES.land : BIZ_NAMES.co2),
+			),
+		[config.businesses, biz],
+	);
+
+	const statIcon: Record<string, string> = {
+		pot: "bi-lightning-charge",
+		charges: "bi-receipt",
+		paymo: "bi-wallet2",
+		net: "bi-bank2",
+		rules: "bi-arrow-left-right",
+		rate: "bi-percent",
+	};
+	const statTone: Record<string, string> = {
+		pot: styles.kpiIconGreen,
+		charges: styles.kpiIconBlue,
+		paymo: styles.kpiIconAmber,
+		net: styles.kpiIconGreen,
+		rules: styles.kpiIconPurple,
+		rate: styles.kpiIconRed,
+	};
 
 	return (
 		<div className={styles.feesPage}>
-			<div className={styles.main}>
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
-						</div>
-						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p> */}
-						<div className={styles.bizBar} style={{ marginTop: 10 }}>
-							<span className={styles.bizLabel}>
-								<i className="bi bi-arrow-left-right me-1" />
-								Direction
-							</span>
-							<div className={styles.worldSwitch}>
-								<button
-									type="button"
-									className={`${styles.worldBtn} ${world === "charges" ? styles.worldBtnActive : ""}`}
-									onClick={() => setWorld("charges")}
-								>
-									<i className="bi bi-receipt me-1" /> Customer Charges
-								</button>
-								<button
-									type="button"
-									className={`${styles.worldBtn} ${world === "profit" ? styles.worldBtnActive : ""}`}
-									onClick={() => setWorld("profit")}
-								>
-									<i className="bi bi-bank2 me-1" /> My Costs &amp; Profit
-								</button>
-							</div>
-							{world === "charges" && (
-								<div className={styles.bizBar}>
-									<span className={styles.bizLabel}>Scope</span>
-									<div className={styles.pills}>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "all" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("all")}
-										>
-											All
-										</button>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "land" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("land")}
-										>
-											Land Buyers LTD <span className="ms-1">30</span>
-										</button>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "co2" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("co2")}
-										>
-											Company 2 <span className="ms-1">209</span>
-										</button>
-									</div>
-								</div>
-							)}
-						</div>
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button className={styles.btnPm} onClick={() => openM("feeCalculatorModal")}>
-							<i className="bi bi-calculator" /> Calculator
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("potDetailModal")}>
-							<i className="bi bi-cash-stack" /> Profit Pot
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("profitAccessModal")}>
-							<i className="bi bi-shield-check" /> Profit Access
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => openM("addFeeRuleModal")}
-						>
-							<i className="bi bi-plus-lg" /> New Fee Model
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("profileModal")}>
-							<i className="bi bi-person-circle me-1" /> JK
-						</button>
-					</div>
-				</div>
-
+			<main className={styles.main}>
 				<div className={styles.content}>
-					{/* ======================= CONNECTION BANNER ======================= */}
-					<div className={styles.connBanner}>
-						<div className={styles.connIcon}>
-							<i className="bi bi-plug" />
-						</div>
-						<div style={{ flex: "1 1 260px" }}>
-							<div className={styles.connTitle}>
-								Paymo not connected yet
-							</div>
-							<div className={styles.connSub}>
-								Link your API key to start charging customers and receiving
-								your profit instantly. You're currently viewing preview data.
-							</div>
-						</div>
-						<div className="d-flex align-items-center" style={{ gap: 10 }}>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("feeNotifModal")}
-							>
-								<i className="bi bi-bell" /> Notifications
-							</button>
-							<span className={styles.connTag}>Sandbox preview</span>
-						</div>
-					</div>
-
-					{/* ======================= HERO ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 190 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff", fontSize: 24 }}
-								>
-									{config.hero.value}
+					{/* ======================= EXECUTIVE HERO ======================= */}
+					<section className={styles.heroBanner} aria-labelledby="fees-title">
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-lightning-charge-fill" />{" "}
+										{config.pageCode}
+									</span>
+									<span className={styles.heroLive}>
+										<span className={styles.dotLive} /> {config.hero.live}
+									</span>
 								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.buttons.map((b) => (
+								<h1 id="fees-title">
+									Every charge. Every cost. Your profit, delivered.
+								</h1>
+								<p>{config.pageSub}</p>
+								<div className={styles.heroActions}>
+									{config.hero.buttons.map((action, index) => (
 										<button
-											key={b.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-											onClick={() => openM(b.modal)}
-										>
-											{b.label}
-										</button>
-									))}
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={styles.card} style={{ minHeight: 190 }}>
-								<p className={styles.sl} style={{ color: "var(--pm-muted)" }}>
-									PROFIT CHANNEL
-								</p>
-								<div className={styles.channelFlow}>
-									<span className={styles.flowNode}>
-										<i className="bi bi-people" /> Customer pays
-									</span>
-									<span className={styles.flowArrow}>
-										<i className="bi bi-arrow-right" />
-									</span>
-									<span className={styles.flowNode}>
-										<i className="bi bi-receipt" /> Your charge
-									</span>
-									<span className={styles.flowArrow}>
-										<i className="bi bi-arrow-right" />
-									</span>
-									<span className={styles.flowNode}>
-										<i className="bi bi-wallet2" /> PayMo fee
-									</span>
-									<span className={styles.flowArrow}>
-										<i className="bi bi-arrow-right" />
-									</span>
-									<span className={styles.flowNode}>
-										<i className="bi bi-lightning-charge" /> Profit →
-										Wallet
-									</span>
-								</div>
-								<div
-									className={`${styles.summaryBox} mt-3`}
-									style={{ fontSize: 12.5 }}
-								>
-									<div className="d-flex justify-content-between mb-2">
-										<span>Customer pays (KES 50,000 order)</span>
-										<strong>KES 51,000</strong>
-									</div>
-									<div className="d-flex justify-content-between mb-2">
-										<span>PayMo fee (deducted)</span>
-										<strong style={{ color: "var(--pm-warning)" }}>
-											− KES 723
-										</strong>
-									</div>
-									<div className="d-flex justify-content-between">
-										<span>Your profit → delivered instantly</span>
-										<strong style={{ color: "var(--pm-accent)" }}>
-											+ KES 277
-										</strong>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= STATS ======================= */}
-					<div className="row g-3 mt-1">
-						{config.stats.map((card) => (
-							<div className="col-lg-2 col-md-4 col-6" key={card.label}>
-								<div className={styles.card} style={{ minHeight: 150 }}>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div
-										className={styles.sv}
-										style={{ margin: "6px 0", fontSize: 18 }}
-									>
-										{card.value}
-									</div>
-									<span
-										className={`${styles.badge} ${styles[card.badge.tone]}`}
-									>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
-									</span>
-								</div>
-							</div>
-						))}
-					</div>
-
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Attention Required</h3>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("attentionFullModal")}
-									>
-										View all
-									</button>
-								</div>
-								{config.attention.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Smart Suggestions</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> AI
-									</span>
-								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent fee &amp; profit workflows</p>
-								</div>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											key={qa.label}
-											className={styles.quickBtn}
-											onClick={() => openM(qa.modal)}
+											type="button"
+											key={action.label}
+											className={
+												index === 2
+													? styles.heroPrimaryBtn
+													: styles.heroSecondaryBtn
+											}
+											onClick={() => openM(action.modal)}
 										>
 											<i
-												className={`bi ${qa.icon} me-1`}
-												style={{ color: qa.color }}
-											/>{" "}
-											{qa.label}
+												className={`bi ${index === 0 ? "bi-calculator" : index === 1 ? "bi-cash-stack" : "bi-plus-lg"}`}
+											/>
+											{action.label}
 										</button>
 									))}
 								</div>
 							</div>
+							<div className={styles.heroSnapshot}>
+								<span>This month</span>
+								<strong>{config.hero.value}</strong>
+								<p>{config.hero.detail}</p>
+								<div className={styles.heroMetricRow}>
+									<div>
+										<strong>KES 18.4M</strong>
+										<span>Collected</span>
+									</div>
+									<div>
+										<strong>KES 2.31M</strong>
+										<span>Your charges</span>
+									</div>
+									<div>
+										<strong>KES 968K</strong>
+										<span>PayMo fees</span>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ============================================================
-					    WORLD A — CUSTOMER CHARGES (your revenue)
-					    ============================================================ */}
-					{world === "charges" && (
-						<>
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-grid-3x3-gap"
-									iconColor="var(--pm-info)"
-									title="Fee Models & Business Pricing"
-									sub="Pick the model that works for your business — flat, percentage, tiered, discounts or zero-fee."
-									actions={[
-										{
-											label: "New Model",
-											icon: "bi-plus-lg",
-											modal: "addFeeRuleModal",
-											tone: "btnPmP",
-										},
-										{
-											label: "Add Tier",
-											icon: "bi-layers",
-											modal: "addCommissionTierModal",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="row g-3 mb-3">
-									{config.models.map((m) => (
-										<div className="col-lg-2 col-md-4 col-6" key={m.name}>
-											<div
-												className={styles.modelCard}
-												onClick={() => openM("feeModelDetailModal")}
-											>
-												<div className="d-flex justify-content-between align-items-start">
-													<div className={styles.modelName}>{m.name}</div>
-													<span className={`${styles.badge} ${styles[m.tone]}`}>
-														{m.state}
-													</span>
+					{/* ======================= DIRECTION + SCOPE CONTROL ======================= */}
+					<section
+						className={styles.controlStrip}
+						aria-label="Fee workspace controls"
+					>
+						<div className={styles.controlGroup}>
+							<span className={styles.controlLabel}>
+								<i className="bi bi-arrow-left-right" /> Direction
+							</span>
+							<fieldset className={styles.segmented}>
+								<legend className={styles.srOnly}>Fee money direction</legend>
+								<button
+									type="button"
+									className={world === "charges" ? styles.segmentActive : ""}
+									onClick={() => setWorld("charges")}
+								>
+									<i className="bi bi-receipt" /> Customer Charges
+								</button>
+								<button
+									type="button"
+									className={world === "profit" ? styles.segmentActive : ""}
+									onClick={() => setWorld("profit")}
+								>
+									<i className="bi bi-bank2" /> My Costs &amp; Profit
+								</button>
+							</fieldset>
+						</div>
+						{world === "charges" && (
+							<div className={styles.controlGroup}>
+								<span className={styles.controlLabel}>
+									<i className="bi bi-briefcase" /> Scope
+								</span>
+								<fieldset className={styles.filterPills}>
+									<legend className={styles.srOnly}>Business scope</legend>
+									<button
+										type="button"
+										className={biz === "all" ? styles.filterActive : ""}
+										onClick={() => setBiz("all")}
+									>
+										All
+									</button>
+									<button
+										type="button"
+										className={biz === "land" ? styles.filterActive : ""}
+										onClick={() => setBiz("land")}
+									>
+										Land Buyers LTD <span className="ms-1">30</span>
+									</button>
+									<button
+										type="button"
+										className={biz === "co2" ? styles.filterActive : ""}
+										onClick={() => setBiz("co2")}
+									>
+										Company 2 <span className="ms-1">209</span>
+									</button>
+								</fieldset>
+							</div>
+						)}
+						<span className={styles.scopeNote}>
+							<i className="bi bi-shield-check" /> {scopeTag} · sandbox preview
+							data
+						</span>
+					</section>
+
+					{/* ======================= 1.1 FEE PULSE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="pulse-heading"
+					>
+						<SectionHeading
+							id="pulse-heading"
+							index="1.1"
+							title="Fee pulse"
+							description="What you collect, what PayMo keeps, and what lands in your pot."
+						/>
+						<div className={styles.kpiGrid}>
+							{config.stats.map((stat) => (
+								<article
+									key={stat.key}
+									className={`${styles.card} ${styles.kpiCard} ${
+										stat.key === "pot" ? styles.kpiFeatured : ""
+									} ${stat.key === "paymo" ? styles.kpiWarning : ""}`}
+								>
+									<div
+										className={`${styles.kpiIcon} ${statTone[stat.key] ?? styles.kpiIconGreen}`}
+									>
+										<i className={`bi ${statIcon[stat.key] ?? "bi-wallet2"}`} />
+									</div>
+									<div className={styles.kpiMeta}>
+										<span>{stat.label}</span>
+										<small>Live · MTD</small>
+									</div>
+									<strong className={styles.kpiValue}>{stat.value}</strong>
+									<div className={styles.kpiFoot}>
+										<span
+											className={`${styles.badge} ${styles[stat.badge.tone]}`}
+										>
+											<i className={`bi ${stat.badge.icon}`} />{" "}
+											{stat.badge.text}
+										</span>
+										<span>{stat.line}</span>
+									</div>
+								</article>
+							))}
+						</div>
+					</section>
+
+					{/* ======================= 1.2 ATTENTION & GUIDED ACTIONS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="attention-heading"
+					>
+						<SectionHeading
+							id="attention-heading"
+							index="1.2"
+							title="Needs your attention"
+							description="Resolve exceptions and act on intelligent recommendations without leaving the dashboard."
+							action={
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openM("attentionFullModal")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
+							}
+						/>
+						<div className={styles.attentionGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Action center</span>
+										<h3>Fee exceptions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeW}`}>
+										{config.attention.length} open
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.attention.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
 												</div>
-												<div className={styles.modelExample}>{m.example}</div>
-												{m.biz !== "—" && (
-													<div className={styles.mutedSmall} style={{ marginTop: 6 }}>
-														<i className="bi bi-briefcase me-1" />
-														{m.biz}
-													</div>
-												)}
 											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${
+													item.actionTone ? styles[item.actionTone] : ""
+												}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
 										</div>
 									))}
 								</div>
-								<div className="table-responsive">
-									<table className={styles.tbl}>
-										<thead>
-											<tr>
-												<th>Business</th>
-												<th>Model</th>
-												<th>Your Charge</th>
-												<th>PayMo Fee</th>
-												<th>Profit (MTD)</th>
-												<th>Status</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{config.businesses
-												.filter((b) => inScope(b.name))
-												.map((b) => (
+							</article>
+
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Smart guidance</span>
+										<h3>Suggested next moves</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" /> Insights
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.suggestions.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+
+						<article className={`${styles.card} ${styles.quickActionCard}`}>
+							<div className={styles.quickActionIntro}>
+								<span className={styles.cardKicker}>Shortcuts</span>
+								<h3>Start a workflow</h3>
+								<p>Frequent fee &amp; profit tasks, one click away.</p>
+							</div>
+							<div className={styles.quickGrid}>
+								{config.quickActions.map((action) => (
+									<button
+										type="button"
+										key={action.label}
+										className={styles.quickBtn}
+										onClick={() => openM(action.modal)}
+									>
+										<span style={{ color: action.color }}>
+											<i className={`bi ${action.icon}`} />
+										</span>
+										{action.label}
+										<i className="bi bi-arrow-right" aria-hidden="true" />
+									</button>
+								))}
+							</div>
+						</article>
+					</section>
+
+					{/* ================================================================
+					    WORLD A — CUSTOMER CHARGES (your revenue)
+					    ================================================================ */}
+					{world === "charges" && (
+						<>
+							<section
+								className={styles.dashboardSection}
+								aria-labelledby="models-heading"
+							>
+								<SectionHeading
+									id="models-heading"
+									index="1.3"
+									title="Fee models & business pricing"
+									description="Pick the model that works for each business — flat, percentage, tiered, discounts or zero-fee."
+									action={
+										<div className={styles.headerButtonRow}>
+											<button
+												type="button"
+												className={styles.btnPm}
+												onClick={() => openM("addCommissionTierModal")}
+											>
+												<i className="bi bi-layers" /> Add Tier
+											</button>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnPmP}`}
+												onClick={() => openM("addFeeRuleModal")}
+											>
+												<i className="bi bi-plus-lg" /> New Model
+											</button>
+										</div>
+									}
+								/>
+								<div className={styles.modelGrid}>
+									{config.models.map((model) => (
+										<button
+											type="button"
+											key={model.name}
+											className={styles.modelTile}
+											onClick={() => openM("feeModelDetailModal")}
+										>
+											<div className={styles.modelTileTop}>
+												<span className={styles.modelName}>{model.name}</span>
+												<span
+													className={`${styles.badge} ${styles[model.tone]}`}
+												>
+													{model.state}
+												</span>
+											</div>
+											<span className={styles.modelExample}>
+												{model.example}
+											</span>
+											{model.biz !== "—" && (
+												<span className={styles.modelBiz}>
+													<i className="bi bi-briefcase" /> {model.biz}
+												</span>
+											)}
+										</button>
+									))}
+								</div>
+								<article className={`${styles.card} ${styles.tableCard}`}>
+									<div className={styles.tableToolbar}>
+										<div className={styles.tableTitle}>
+											<h3>Pricing by business</h3>
+											<span>
+												{scopeTag} — your charge vs the PayMo fee vs your
+												profit.
+											</span>
+										</div>
+										<div className={styles.tableTools}>
+											<span className={`${styles.badge} ${styles.badgeI}`}>
+												<i className="bi bi-graph-up" /> {businesses.length}{" "}
+												active models
+											</span>
+										</div>
+									</div>
+									<div className={styles.tableScroll}>
+										<table className={styles.tbl}>
+											<thead>
+												<tr>
+													<th>Business</th>
+													<th>Model</th>
+													<th>Your Charge</th>
+													<th>PayMo Fee</th>
+													<th>Profit (MTD)</th>
+													<th>Status</th>
+													<th>
+														<span className={styles.srOnly}>Action</span>
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+												{businesses.map((b) => (
 													<tr key={b.id}>
 														<td>
-															<strong>{b.name}</strong>
+															<div className={styles.beneficiaryCell}>
+																<span>
+																	{b.name
+																		.split(" ")
+																		.map((part) => part[0])
+																		.join("")
+																		.slice(0, 2)}
+																</span>
+																<strong>{b.name}</strong>
+															</div>
 														</td>
 														<td>
-															<span className={`${styles.badge} ${styles.badgeI}`}>
+															<span
+																className={`${styles.badge} ${styles.badgeI}`}
+															>
 																{b.model}
 															</span>
 														</td>
@@ -1102,19 +1159,23 @@ export default function Fees() {
 															<strong>{b.profit}</strong>
 														</td>
 														<td>
-															<span className={`${styles.badge} ${styles.badgeS}`}>
+															<span
+																className={`${styles.badge} ${styles.badgeS}`}
+															>
 																{b.status}
 															</span>
 														</td>
 														<td>
 															<div className="d-flex" style={{ gap: 4 }}>
 																<button
+																	type="button"
 																	className={`${styles.btnPm} ${styles.btnSm}`}
 																	onClick={() => openM("editFeeRuleModal")}
 																>
 																	Edit
 																</button>
 																<button
+																	type="button"
 																	className={`${styles.btnPm} ${styles.btnSm}`}
 																	onClick={() => openM("feeCompareModal")}
 																>
@@ -1124,111 +1185,174 @@ export default function Fees() {
 														</td>
 													</tr>
 												))}
-										</tbody>
-									</table>
-								</div>
-							</div>
+											</tbody>
+										</table>
+									</div>
+								</article>
+							</section>
 
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-receipt"
-									iconColor="var(--pm-primary)"
-									title="Customer Charges Ledger"
-									sub={`${scopeTag} — what you bill vs what PayMo keeps vs what you profit.`}
-									actions={[
-										{
-											label: "Charge a Customer",
-											icon: "bi-receipt",
-											modal: "chargeCustomerModal",
-											tone: "btnPmP",
-										},
-										{
-											label: "Bulk Upload",
-											icon: "bi-upload",
-											modal: "bulkUploadModal",
-										},
-									]}
-									onOpen={openM}
+							<section
+								className={styles.dashboardSection}
+								aria-labelledby="ledger-heading"
+							>
+								<SectionHeading
+									id="ledger-heading"
+									index="1.4"
+									title="Customer charges ledger"
+									description={`${scopeTag} — what you bill vs what PayMo keeps vs what you profit.`}
+									action={
+										<div className={styles.headerButtonRow}>
+											<button
+												type="button"
+												className={styles.btnPm}
+												onClick={() => openM("bulkUploadModal")}
+											>
+												<i className="bi bi-upload" /> Bulk Upload
+											</button>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnPmP}`}
+												onClick={() => openM("chargeCustomerModal")}
+											>
+												<i className="bi bi-receipt" /> Charge a Customer
+											</button>
+										</div>
+									}
 								/>
-								<div className={styles.chargePreview} style={{ marginBottom: 14 }}>
-									<i className="bi bi-lightbulb me-1" />
-									<strong>How it works:</strong> Charge a customer KES 50,000
-									→ you bill 2.0% = KES 1,000 → PayMo takes KES 723 →{" "}
-									<strong>you keep KES 277, delivered instantly</strong>.
-								</div>
-								<div className="table-responsive">
-									<table className={styles.tbl}>
-										<thead>
-											<tr>
-												<th>Ref</th>
-												<th>Business</th>
-												<th>Customer</th>
-												<th>Service</th>
-												<th>You Charged</th>
-												<th>PayMo Fee</th>
-												<th>Your Profit</th>
-												<th>Status</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{charges.map((c) => (
-												<tr key={c.ref}>
-													<td>
-														<strong>{c.ref}</strong>
-													</td>
-													<td>{c.business}</td>
-													<td>{c.customer}</td>
-													<td>{c.service}</td>
-													<td>{c.charged}</td>
-													<td>{c.paymoFee}</td>
-													<td>
-														<strong style={{ color: "var(--pm-accent)" }}>
-															{c.profit}
-														</strong>
-													</td>
-													<td>
-														<span className={`${styles.badge} ${styles[c.tone]}`}>
-															{c.status}
-														</span>
-													</td>
-													<td>
-														<div className="d-flex" style={{ gap: 4 }}>
-															<button
-																className={`${styles.btnPm} ${styles.btnSm}`}
-																onClick={() => openM("chargeCustomerModal")}
-															>
-																Receipt
-															</button>
-															<button
-																className={`${styles.btnPm} ${styles.btnSm}`}
-																onClick={() => openM("waiverModal")}
-															>
-																Waive
-															</button>
-														</div>
-													</td>
+								<article className={`${styles.card} ${styles.tableCard}`}>
+									<div className={styles.chargePreview}>
+										<i className="bi bi-lightbulb" />
+										<span>
+											<strong>How it works:</strong> Charge a customer KES
+											50,000 → you bill 2.0% = KES 1,000 → PayMo takes KES 723 →{" "}
+											<strong>you keep KES 277, delivered instantly</strong>.
+										</span>
+									</div>
+									<div className={styles.tableScroll} style={{ marginTop: 14 }}>
+										<table className={styles.tbl}>
+											<thead>
+												<tr>
+													<th>Ref</th>
+													<th>Business</th>
+													<th>Customer</th>
+													<th>Service</th>
+													<th>You Charged</th>
+													<th>PayMo Fee</th>
+													<th>Your Profit</th>
+													<th>Status</th>
+													<th>
+														<span className={styles.srOnly}>Action</span>
+													</th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
+											</thead>
+											<tbody>
+												{charges.map((c) => (
+													<tr key={c.ref}>
+														<td>
+															<code>{c.ref}</code>
+														</td>
+														<td>{c.business}</td>
+														<td>{c.customer}</td>
+														<td>{c.service}</td>
+														<td>{c.charged}</td>
+														<td>{c.paymoFee}</td>
+														<td>
+															<strong style={{ color: "var(--pm-accent)" }}>
+																{c.profit}
+															</strong>
+														</td>
+														<td>
+															<span
+																className={`${styles.badge} ${styles[c.tone]}`}
+															>
+																{c.status}
+															</span>
+														</td>
+														<td>
+															<div className="d-flex" style={{ gap: 4 }}>
+																<button
+																	type="button"
+																	className={styles.iconButton}
+																	aria-label={`Receipt for ${c.ref}`}
+																	onClick={() => openM("chargeCustomerModal")}
+																>
+																	<i className="bi bi-receipt" />
+																</button>
+																<button
+																	type="button"
+																	className={styles.iconButton}
+																	aria-label={`Waive charge ${c.ref}`}
+																	onClick={() => openM("waiverModal")}
+																>
+																	<i className="bi bi-tag" />
+																</button>
+															</div>
+														</td>
+													</tr>
+												))}
+												{charges.length === 0 && (
+													<tr>
+														<td colSpan={9}>
+															<div className={styles.emptyState}>
+																<i className="bi bi-inbox" />
+																<strong>No charges found</strong>
+																<span>Try a different business scope.</span>
+															</div>
+														</td>
+													</tr>
+												)}
+											</tbody>
+										</table>
+									</div>
+									<div className={styles.tableFooter}>
+										<span>
+											Showing {charges.length} of {config.charges.length}{" "}
+											charges · {scopeTag}
+										</span>
+										<button
+											type="button"
+											onClick={() => openM("feeReportModal")}
+										>
+											Full fee report <i className="bi bi-arrow-right" />
+										</button>
+									</div>
+								</article>
+							</section>
 						</>
 					)}
 
-					{/* ============================================================
+					{/* ================================================================
 					    WORLD B — MY COSTS & PROFIT (Direction 1 + Pot)
-					    ============================================================ */}
+					    ================================================================ */}
 					{world === "profit" && (
 						<>
-							<div className="row g-3">
-								<div className="col-lg-4">
-									<div className={styles.potCard}>
-										<p style={{ margin: 0, fontSize: 12, opacity: 0.85 }}>
-											<i className="bi bi-cash-stack me-1" /> PROFIT POT
-										</p>
-										<div className={styles.potValue}>{config.profitPot.balance}</div>
+							<section
+								className={styles.dashboardSection}
+								aria-labelledby="pot-heading"
+							>
+								<SectionHeading
+									id="pot-heading"
+									index="1.3"
+									title="Profit pot & channeling"
+									description="Every net shilling accumulates here, then auto-delivers to your wallets on your rules."
+									action={
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnPmP}`}
+											onClick={() => openM("channelRuleModal")}
+										>
+											<i className="bi bi-plus-lg" /> New Rule
+										</button>
+									}
+								/>
+								<div className={styles.potGrid}>
+									<article className={styles.potCard}>
+										<span className={styles.potKicker}>
+											<i className="bi bi-cash-stack" /> Profit pot
+										</span>
+										<div className={styles.potValue}>
+											{config.profitPot.balance}
+										</div>
 										<div className={styles.potRow}>
 											<span>Pending (this batch)</span>
 											<strong>{config.profitPot.pending}</strong>
@@ -1237,437 +1361,635 @@ export default function Fees() {
 											<span>Delivered MTD</span>
 											<strong>{config.profitPot.deliveredMTD}</strong>
 										</div>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-										onClick={() => openM("settlementModal")}
-									>
-										<i className="bi bi-send" /> Deliver Now
-									</button>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-										onClick={() => openM("potDetailModal")}
-									>
-										<i className="bi bi-eye" /> Detail
-									</button>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-										onClick={() => openM("finalConfirmModal")}
-									>
-										<i className="bi bi-check2-square" /> Approve Batch
-									</button>
-								</div>
-									</div>
-								</div>
-								<div className="col-lg-8">
-									<div className={styles.card} style={{ height: "100%" }}>
-										<div className="d-flex justify-content-between align-items-center mb-2">
-											<h3 className={styles.st}>Channel Rules</h3>
+										<div className={styles.potActions}>
 											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM("channelRuleModal")}
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+												onClick={() => openM("settlementModal")}
 											>
-												<i className="bi bi-plus-lg me-1" /> New Rule
+												<i className="bi bi-send" /> Deliver Now
+											</button>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+												onClick={() => openM("potDetailModal")}
+											>
+												<i className="bi bi-eye" /> Detail
+											</button>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
+												onClick={() => openM("finalConfirmModal")}
+											>
+												<i className="bi bi-check2-square" /> Approve Batch
 											</button>
 										</div>
-										{config.channelRules.map((r) => (
-											<div className={styles.sr} key={r.title}>
-												<div>
-													<strong>{r.title}</strong>
-													<div className={styles.mutedSmall}>{r.sub}</div>
-												</div>
-												<div className="d-flex align-items-center" style={{ gap: 8 }}>
-													<span className={`${styles.badge} ${styles[r.badge.tone]}`}>
-														{r.badge.text}
-													</span>
-													<button
-														className={`${styles.btnPm} ${styles.btnSm}`}
-														onClick={() => openM(r.modal)}
-													>
-														Edit
-													</button>
-												</div>
+									</article>
+									<article className={`${styles.card}`}>
+										<div className={styles.cardHeader}>
+											<div>
+												<span className={styles.cardKicker}>Automation</span>
+												<h3>Channel rules</h3>
 											</div>
-										))}
-									</div>
-								</div>
-							</div>
-
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-wallet2"
-									iconColor="var(--pm-warning)"
-									title="What PayMo Charges You"
-									sub="Your per-service cost schedule — deducted from customer settlements."
-									actions={[
-										{
-											label: "Fee Report",
-											icon: "bi-download",
-											modal: "feeReportModal",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="row g-3">
-									{config.paymoCosts.map((c) => (
-										<div className="col-lg-4 col-md-6" key={c.service}>
-											<div className={styles.costRow}>
+											<span className={`${styles.badge} ${styles.badgeS}`}>
+												<i className="bi bi-arrow-repeat" /> 2 active
+											</span>
+										</div>
+										<div className={styles.channelList}>
+											{config.channelRules.map((rule) => (
+												<div key={rule.title} className={styles.channelRow}>
+													<div className={styles.channelRowMain}>
+														<div>
+															<strong>{rule.title}</strong>
+															<span>{rule.sub}</span>
+														</div>
+													</div>
+													<div className={styles.channelRowActions}>
+														<span
+															className={`${styles.badge} ${styles[rule.badge.tone]}`}
+														>
+															{rule.badge.text}
+														</span>
+														<button
+															type="button"
+															className={`${styles.btnPm} ${styles.btnSm}`}
+															onClick={() => openM(rule.modal)}
+														>
+															Edit
+														</button>
+													</div>
+												</div>
+											))}
+										</div>
+										<div className={styles.channelInsight}>
+											<i className="bi bi-lightning-charge" />
+											<div>
+												<strong>Instant micro-profit delivery</strong>
 												<span>
-													<i className="bi bi-arrow-right-circle me-1" />
-													{c.service}
+													Even KES 2 of profit lands the moment it is earned.
 												</span>
-												<strong>{c.rate}</strong>
 											</div>
-											<div className={styles.mutedSmall} style={{ marginTop: 2 }}>
-												Paid MTD: <strong>{c.paidMTD}</strong>
+										</div>
+									</article>
+								</div>
+							</section>
+
+							<section
+								className={styles.dashboardSection}
+								aria-labelledby="costs-heading"
+							>
+								<SectionHeading
+									id="costs-heading"
+									index="1.4"
+									title="What PayMo charges you"
+									description="Your per-service cost schedule — deducted from customer settlements before profit is delivered."
+									action={
+										<button
+											type="button"
+											className={styles.btnPm}
+											onClick={() => openM("feeReportModal")}
+										>
+											<i className="bi bi-download" /> Fee Report
+										</button>
+									}
+								/>
+								<div className={styles.costGrid}>
+									{config.paymoCosts.map((cost) => (
+										<div className={styles.costRow} key={cost.service}>
+											<div className={styles.costRowTop}>
+												<span className={styles.costName}>
+													<i className="bi bi-arrow-right-circle" />{" "}
+													{cost.service}
+												</span>
+												<span className={styles.costRate}>{cost.rate}</span>
+											</div>
+											<div className={styles.costPaid}>
+												Paid MTD: <strong>{cost.paidMTD}</strong>
 											</div>
 										</div>
 									))}
 								</div>
-							</div>
-
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-truck"
-									iconColor="var(--pm-primary)"
-									title="Profit Delivery History"
-									sub="Every delivery — even KES 2 — recorded and traceable to the charge that earned it."
-									actions={[
-										{
-											label: "Deliver Now",
-											icon: "bi-send",
-											modal: "settlementModal",
-											tone: "btnPmP",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="table-responsive">
-									<table className={styles.tbl}>
-										<thead>
-											<tr>
-												<th>Time</th>
-												<th>Source</th>
-												<th>Profit</th>
-												<th>Channel</th>
-												<th>Status</th>
-												<th>Action</th>
-											</tr>
-										</thead>
-										<tbody>
-											{config.deliveries.map((d) => (
-												<tr key={`${d.time}-${d.source}`}>
-													<td>{d.time}</td>
-													<td>{d.source}</td>
-													<td>
-														<strong>{d.profit}</strong>
-													</td>
-													<td>
-														<span className={styles.deliveryTag + " " + styles.deliveryOk}>
-															<i className="bi bi-wallet2" /> {d.channel}
-														</span>
-													</td>
-													<td>
-														<span className={`${styles.badge} ${styles[d.tone]}`}>
-															{d.status}
-														</span>
-													</td>
-													<td>
-														<button
-															className={`${styles.btnPm} ${styles.btnSm}`}
-															onClick={() => openM("potDetailModal")}
-														>
-															Receipt
-														</button>
-													</td>
+								<article className={`${styles.card} ${styles.tableCard}`}>
+									<div className={styles.tableToolbar}>
+										<div className={styles.tableTitle}>
+											<h3>Delivery history</h3>
+											<span>
+												Every delivery — even KES 2 — traced to its charge.
+											</span>
+										</div>
+										<div className={styles.tableTools}>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+												onClick={() => openM("settlementModal")}
+											>
+												<i className="bi bi-send" /> Deliver Now
+											</button>
+										</div>
+									</div>
+									<div className={styles.tableScroll}>
+										<table className={styles.tbl}>
+											<thead>
+												<tr>
+													<th>Time</th>
+													<th>Source</th>
+													<th>Profit</th>
+													<th>Channel</th>
+													<th>Status</th>
+													<th>
+														<span className={styles.srOnly}>Action</span>
+													</th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</div>
+											</thead>
+											<tbody>
+												{config.deliveries.map((delivery) => (
+													<tr key={`${delivery.time}-${delivery.source}`}>
+														<td>{delivery.time}</td>
+														<td>{delivery.source}</td>
+														<td>
+															<strong>{delivery.profit}</strong>
+														</td>
+														<td>
+															<span
+																className={`${styles.deliveryTag} ${styles.deliveryOk}`}
+															>
+																<i className="bi bi-wallet2" />{" "}
+																{delivery.channel}
+															</span>
+														</td>
+														<td>
+															<span
+																className={`${styles.badge} ${styles[delivery.tone]}`}
+															>
+																{delivery.status}
+															</span>
+														</td>
+														<td>
+															<button
+																type="button"
+																className={styles.iconButton}
+																aria-label={`Receipt for ${delivery.source}`}
+																onClick={() => openM("potDetailModal")}
+															>
+																<i className="bi bi-receipt" />
+															</button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								</article>
+							</section>
 						</>
 					)}
 
-					{/* ============================================================
-					    WORLD C — REPORTS, WAIVERS & COMPLIANCE (shared)
-					    ============================================================ */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-bar-chart-line"
-							iconColor="var(--pm-info)"
-							title="Fee Analytics & Reports"
-							sub="Monthly fee costs, profit share and delivery performance."
-							actions={[
-								{
-									label: "Export",
-									icon: "bi-download",
-									modal: "feeReportModal",
-								},
-								{
-									label: "Profit by Service",
-									icon: "bi-trophy",
-									modal: "agentLeaderboardModal",
-								},
-								{
-									label: "Model Performance",
-									icon: "bi-speedometer2",
-									modal: "tierPerformanceModal",
-								},
-							]}
-							onOpen={openM}
+					{/* ======================= 1.5 FEE ANALYTICS & REPORTS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="analytics-heading"
+					>
+						<SectionHeading
+							id="analytics-heading"
+							index="1.5"
+							title="Fee analytics & reports"
+							description="Monthly fee costs, profit share and delivery performance."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("tierPerformanceModal")}
+									>
+										<i className="bi bi-speedometer2" /> Model Performance
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("agentLeaderboardModal")}
+									>
+										<i className="bi bi-trophy" /> Profit by Service
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("feeReportModal")}
+									>
+										<i className="bi bi-download" /> Export
+									</button>
+								</div>
+							}
 						/>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<div className={styles.chartBars} style={{ height: 100 }}>
-									{config.costBars.map((b) => (
-										<div
-											key={b.label}
-											className={styles.chartBar}
-											style={{ height: b.height, background: b.color }}
-										>
-											<span className={styles.barLabel}>{b.label}</span>
+						<div className={styles.analyticsGrid}>
+							<article className={`${styles.card} ${styles.analyticsCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Cost trend</span>
+										<h3>Six-month fees paid to PayMo</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										<i className="bi bi-arrow-down" /> −8.2%
+									</span>
+								</div>
+								<div className={styles.chartBars}>
+									{config.costBars.map((bar) => (
+										<div key={bar.label} className={styles.chartBar}>
+											<i
+												style={{ height: bar.height, background: bar.color }}
+											/>
+											<span className={styles.barLabel}>{bar.label}</span>
 										</div>
 									))}
 								</div>
-								<p className={styles.mutedSmall} style={{ marginTop: 8 }}>
-									Monthly fees paid to PayMo (KES)
-								</p>
-							</div>
-							<div className="col-lg-7">
-								<div className="row g-3">
-									{config.keyMetrics.map((m) => (
-										<div className="col-md-4" key={m.label}>
-											<div className={styles.summaryBox}>
-												<div className={styles.mutedSmall}>{m.label}</div>
-												<div
-													style={{
-														fontSize: 22,
-														fontWeight: 700,
-														color: m.color,
-														fontFamily: "var(--pm-font-display)",
-													}}
-												>
-													{m.value}
-												</div>
+							</article>
+							<article className={`${styles.card} ${styles.analyticsCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Efficiency</span>
+										<h3>Key metrics</h3>
+									</div>
+								</div>
+								<div className={styles.rankedList}>
+									{config.keyMetrics.map((metric) => (
+										<div key={metric.label} className={styles.metricBox}>
+											<div className={styles.metricLabel}>{metric.label}</div>
+											<div
+												className={styles.metricValue}
+												style={{ color: metric.color }}
+											>
+												{metric.value}
 											</div>
 										</div>
 									))}
 								</div>
-								<div className={`${styles.summaryBoxInfo} mt-3`} style={{ fontSize: 12.5 }}>
-									<i className="bi bi-stars me-1" />
-									Moving Company 2 to a tiered model adds ≈{" "}
-									<strong>KES 46K/mo</strong> in recovered profit.
+								<div className={styles.analyticsNote}>
+									<i className="bi bi-stars" />
+									<span>
+										Moving Company 2 to a tiered model recovers ≈{" "}
+										<strong>KES 46K/mo</strong>.
+									</span>
 								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-tag"
-							iconColor="var(--pm-warning)"
-							title="Waivers, Discounts & Promos"
-							sub="Waive a charge, run a 0% promo month, or give a bulk rebate to win customers."
-							actions={[
-								{ label: "New Waiver", icon: "bi-plus-lg", modal: "waiverModal" },
-								{
-									label: "New Promo",
-									icon: "bi-megaphone",
-									modal: "promoModal",
-									tone: "btnPmP",
-								},
-								{ label: "Hardship", icon: "bi-heart", modal: "hardshipWaiverModal" },
-								{ label: "Exemptions", icon: "bi-shield", modal: "exemptionModal" },
-							]}
-							onOpen={openM}
-						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Ref</th>
-										<th>Name</th>
-										<th>Type</th>
-										<th>Discount</th>
-										<th>Used</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									{config.waivers.map((w) => (
-										<tr key={w.id}>
-											<td>
-												<strong>{w.id}</strong>
-											</td>
-											<td>{w.name}</td>
-											<td>{w.type}</td>
-											<td>{w.discount}</td>
-											<td>{w.used}</td>
-											<td>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm}`}
-													onClick={() => openM("editWaiverModal")}
-												>
-													{w.actionLabel}
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-shield-check"
-							iconColor="var(--pm-purple)"
-							title="Compliance, Audit & Profit Access"
-							sub="Fee disclosure filings, audit trail of your charge edits, and what you may do with your profit."
-							actions={[
-								{
-									label: "Compliance Check",
-									icon: "bi-clipboard-check",
-									modal: "complianceCheckModal",
-								},
-								{
-									label: "Regulatory Report",
-									icon: "bi-file-earmark-check",
-									modal: "regulatoryReportModal",
-								},
-								{
-									label: "Audit Log",
-									icon: "bi-clock-history",
-									modal: "auditDetailModal",
-								},
-								{
-									label: "Policy Config",
-									icon: "bi-file-earmark-text",
-									modal: "policyConfigModal",
-								},
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<h4 className={styles.ubTitle} style={{ marginBottom: 10 }}>
-									Filings
-								</h4>
-								{config.compliance.map((c) => (
-									<div className={styles.sr} key={c.label}>
-										<strong>{c.label}</strong>
-										<span className={`${styles.badge} ${styles[c.tone]}`}>
-											{c.status}
-										</span>
+							</article>
+							<article className={`${styles.card} ${styles.analyticsCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Profit leaders</span>
+										<h3>Top services</h3>
 									</div>
-								))}
-							</div>
-							<div className="col-lg-8">
-								<h4 className={styles.ubTitle} style={{ marginBottom: 10 }}>
-									Profit Permissions &amp; Access
-								</h4>
-								{config.profitAccess.map((p) => (
-									<div className={styles.permItem} key={p.scope}>
-										<div
-											className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`}
-										/>
-										<div style={{ flex: "1 1 auto" }}>
-											<div className={styles.permTitle}>{p.scope}</div>
-											<div className={styles.permSub}>{p.desc}</div>
-										</div>
-										{p.granted ? (
-											<span className={`${styles.badge} ${styles.badgeS}`}>
-												<i className="bi bi-check-lg" /> Granted
-											</span>
-										) : (
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM("profitAccessModal")}
+								</div>
+								<div className={styles.rankedList}>
+									{config.profitLeaders.map((leader, index) => (
+										<div key={leader.name} className={styles.metricBox}>
+											<div className={styles.metricLabel}>
+												{index + 1}. {leader.name}
+											</div>
+											<div className={styles.metricValue}>{leader.value}</div>
+											<span
+												className={`${styles.badge} ${styles[leader.tone]}`}
 											>
-												Request Access
-											</button>
-										)}
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= RECENT FEE ACTIVITY ======================= */}
-					<div className={styles.card}>
-						<div className="d-flex justify-content-between align-items-center mb-3">
-							<h3 className={styles.st}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--pm-muted)" }}
-								/>{" "}
-								Recent Fee Activity
-							</h3>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("feeNotifModal")}
-							>
-								Notifications
-							</button>
-						</div>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>World</th>
-										<th>Ref</th>
-										<th>Activity</th>
-										<th>Amount</th>
-										<th>Result</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									{config.activity.map((a) => (
-										<tr key={a.ref}>
-											<td>{a.date}</td>
-											<td>
-												<span
-													className={`${styles.worldTag} ${a.world === "cust" ? styles.worldTagCust : styles.worldTagMy}`}
-												>
-													<i
-														className={`bi ${a.world === "cust" ? "bi-receipt" : "bi-bank2"}`}
-													/>{" "}
-													{a.world === "cust" ? "Customer Charge" : "My Profit"}
-												</span>
-											</td>
-											<td>
-												<strong>{a.ref}</strong>
-											</td>
-											<td>{a.activity}</td>
-											<td>
-												<strong>{a.amount}</strong>
-											</td>
-											<td>
-												<span className={`${styles.badge} ${styles[a.tone]}`}>
-													{a.status}
-												</span>
-											</td>
-											<td>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm}`}
-													onClick={() => openM("potDetailModal")}
-												>
-													Receipt
-												</button>
-											</td>
-										</tr>
+												{leader.trend}
+											</span>
+										</div>
 									))}
-								</tbody>
-							</table>
+								</div>
+							</article>
 						</div>
-					</div>
+					</section>
+
+					{/* ======================= 1.6 WAIVERS, DISCOUNTS & PROMOS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="waivers-heading"
+					>
+						<SectionHeading
+							id="waivers-heading"
+							index="1.6"
+							title="Waivers, discounts & promos"
+							description="Waive a charge, run a 0% promo month, or give a bulk rebate to win customers."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("exemptionModal")}
+									>
+										<i className="bi bi-shield" /> Exemptions
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("hardshipWaiverModal")}
+									>
+										<i className="bi bi-heart" /> Hardship
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("waiverModal")}
+									>
+										<i className="bi bi-plus-lg" /> New Waiver
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("promoModal")}
+									>
+										<i className="bi bi-megaphone" /> New Promo
+									</button>
+								</div>
+							}
+						/>
+						<article className={`${styles.card} ${styles.tableCard}`}>
+							<div className={styles.tableScroll}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Ref</th>
+											<th>Name</th>
+											<th>Type</th>
+											<th>Discount</th>
+											<th>Used</th>
+											<th>
+												<span className={styles.srOnly}>Action</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{config.waivers.map((waiver) => (
+											<tr key={waiver.id}>
+												<td>
+													<code>{waiver.id}</code>
+												</td>
+												<td>{waiver.name}</td>
+												<td>
+													<span className={`${styles.badge} ${styles.badgeI}`}>
+														{waiver.type}
+													</span>
+												</td>
+												<td>{waiver.discount}</td>
+												<td>{waiver.used}</td>
+												<td>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("editWaiverModal")}
+													>
+														Edit
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</article>
+					</section>
+
+					{/* ======================= 1.7 COMPLIANCE, AUDIT & PROFIT ACCESS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="compliance-heading"
+					>
+						<SectionHeading
+							id="compliance-heading"
+							index="1.7"
+							title="Compliance, audit & profit access"
+							description="Fee disclosure filings, an audit trail of your charge edits, and what you may do with your profit."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("policyConfigModal")}
+									>
+										<i className="bi bi-file-earmark-text" /> Policy Config
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("auditDetailModal")}
+									>
+										<i className="bi bi-clock-history" /> Audit Log
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("regulatoryReportModal")}
+									>
+										<i className="bi bi-file-earmark-check" /> Regulatory Report
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("complianceCheckModal")}
+									>
+										<i className="bi bi-clipboard-check" /> Compliance Check
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.complianceGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Filings</span>
+										<h3>Compliance status</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeS}`}>
+										<i className="bi bi-check-lg" /> On track
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.compliance.map((item) => (
+										<div key={item.label} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<div>
+													<strong>{item.label}</strong>
+													<span>Regulatory fee disclosure</span>
+												</div>
+											</div>
+											<span className={`${styles.badge} ${styles[item.tone]}`}>
+												{item.status}
+											</span>
+										</div>
+									))}
+								</div>
+							</article>
+							<article className={`${styles.card}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Permissions</span>
+										<h3>Profit permissions &amp; access</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.textButton}
+										onClick={() => openM("profitAccessModal")}
+									>
+										Manage <i className="bi bi-arrow-right" />
+									</button>
+								</div>
+								<div style={{ paddingTop: "0.4rem" }}>
+									{config.profitAccess.map((permission) => (
+										<div className={styles.permItem} key={permission.scope}>
+											<span
+												className={`${styles.permDot} ${
+													permission.granted
+														? styles.permOk
+														: styles.permPending
+												}`}
+											/>
+											<div className={styles.permCopy}>
+												<div className={styles.permTitle}>
+													{permission.scope}
+												</div>
+												<div className={styles.permSub}>{permission.desc}</div>
+											</div>
+											{permission.granted ? (
+												<span className={`${styles.badge} ${styles.badgeS}`}>
+													<i className="bi bi-check-lg" /> Granted
+												</span>
+											) : (
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM("profitAccessModal")}
+												>
+													Request Access
+												</button>
+											)}
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+					</section>
+
+					{/* ======================= 1.8 RECENT FEE ACTIVITY ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="activity-heading"
+					>
+						<SectionHeading
+							id="activity-heading"
+							index="1.8"
+							title="Recent fee activity"
+							description="Customer charges and profit deliveries — every movement, traceable."
+							action={
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openM("feeNotifModal")}
+								>
+									<i className="bi bi-bell" /> Notifications
+								</button>
+							}
+						/>
+						<article className={`${styles.card} ${styles.tableCard}`}>
+							<div className={styles.tableScroll}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Date</th>
+											<th>World</th>
+											<th>Ref</th>
+											<th>Activity</th>
+											<th>Amount</th>
+											<th>Result</th>
+											<th>
+												<span className={styles.srOnly}>Action</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{config.activity.map((entry) => (
+											<tr key={entry.ref}>
+												<td>{entry.date}</td>
+												<td>
+													<span
+														className={`${styles.worldTag} ${
+															entry.world === "cust"
+																? styles.worldTagCust
+																: styles.worldTagMy
+														}`}
+													>
+														<i
+															className={`bi ${
+																entry.world === "cust"
+																	? "bi-receipt"
+																	: "bi-bank2"
+															}`}
+														/>{" "}
+														{entry.world === "cust"
+															? "Customer Charge"
+															: "My Profit"}
+													</span>
+												</td>
+												<td>
+													<code>{entry.ref}</code>
+												</td>
+												<td>{entry.activity}</td>
+												<td>
+													<strong>{entry.amount}</strong>
+												</td>
+												<td>
+													<span
+														className={`${styles.badge} ${styles[entry.tone]}`}
+													>
+														{entry.status}
+													</span>
+												</td>
+												<td>
+													<button
+														type="button"
+														className={styles.iconButton}
+														aria-label={`Receipt for ${entry.ref}`}
+														onClick={() => openM("potDetailModal")}
+													>
+														<i className="bi bi-receipt" />
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</article>
+					</section>
 				</div>
-				{/* content */}
-			</div>
-			{/* main */}
+
+				{/* ======================= FLOATING COMMAND BAR ======================= */}
+				<nav className={styles.floatingBar} aria-label="Quick fee actions">
+					<button
+						type="button"
+						className={styles.floatingPrimary}
+						onClick={() => openM("addFeeRuleModal")}
+					>
+						<i className="bi bi-plus-circle" /> New model
+					</button>
+					<button type="button" onClick={() => openM("feeCalculatorModal")}>
+						<i className="bi bi-calculator" /> Calculator
+					</button>
+					<button type="button" onClick={() => openM("chargeCustomerModal")}>
+						<i className="bi bi-receipt" /> Charge
+					</button>
+					<button type="button" onClick={() => openM("potDetailModal")}>
+						<i className="bi bi-cash-stack" /> Profit pot
+					</button>
+				</nav>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-shield-check" /> Protected by PayMo secure
+						transaction controls
+					</span>
+					<nav aria-label="Footer links">
+						<Link to="/pm/app/support">Support</Link>
+						<Link to="/pm/app/settings">Preferences</Link>
+						<span>v2.4.0</span>
+					</nav>
+				</footer>
+			</main>
 
 			{/* ======================= ALL MODALS ======================= */}
 			<FeesModals active={activeModal} onClose={closeM} onOpen={openM} />

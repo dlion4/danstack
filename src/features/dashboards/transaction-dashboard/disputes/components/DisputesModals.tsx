@@ -1,109 +1,43 @@
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+"use client";
+
+import { useState } from "react";
+import {
+	Field,
+	FlowModal,
+	InfoBox,
+	ModalShell,
+	SelectField,
+	SimpleModal,
+	TabbedModal,
+} from "../../shared/components/modals";
+import s from "../../shared/styles/appPage.module.css";
 import styles from "../styles/disputes.module.css";
 
 /* ============================================================================
-   Dispute & Chargeback Management — modal layer (legacy page 1.16, 21 modals)
-   LEGACY BRIDGE:
-     openM(id)           → parent lifts `active` state into this component
-     doAction(id,msg)    → `results` state; legacy showLoading 1400ms spinner,
-                           then swaps body to a receipt (legacy 1.16 receipt has
-                           a single Save button — kept exactly)
-     nextFlow(key,total) → `flows` state; UNLABELED steppers ("Step N"):
-                           disp(4), ev(3), bulk(3); close via closeM(key+'Modal')
-     sw(prefix,key,btn)  → `tabs` state (evpkg / mrisk / ran / drule)
-     quickDispute(type)  → closeM('disputeModal') then openM('quickDisputeModal')
-     cacheAndReset()     → useEffect on close resets flows + results + tabs
-   Legacy defects documented (kept non-breaking):
-     - M18–M20 in legacy HTML are TRUNCATED duplicate stubs of quickDisputeModal /
-       disputeDetailModal / chargebackTrackerModal — first definitions win in the
-       DOM, so the stubs were dead code. Only the real modals are rendered here.
-     - feeCalcModal / branchSupportModal / securityCheckModal were truncated in
-       legacy markup; completed below with their observed content.
+   Dispute & Chargeback Management — modal layer on the SHARED primitives
+   (ModalShell / SimpleModal / FlowModal / TabbedModal). No legacy MBox.
+   19 modals, all reachable (17 via page triggers — incl. caseNotifModal bell —
+   + 2 nested-only via in-modal onOpen navigation: feeCalcModal, securityCheckModal).
+   Legacy dead/duplicate ids removed: profileModal (shell chrome),
+   disputeRulesModal2 (duplicate stub), branchSupportModal (no consumer nav);
+   feeCalcModal re-homed under arbitration, securityCheckModal under health check.
    ========================================================================== */
 
-interface ModalsProps {
-	active: string | null;
-	onClose: () => void;
-	onOpen: (id: string) => void;
-}
+const shared = s as Record<string, string>;
 
-type Size = "md" | "lg" | "xl";
-
-interface MBoxProps {
-	id: string;
-	active: string | null;
-	title: ReactNode;
-	size?: Size;
-	onClose: () => void;
-	children: ReactNode;
-	footer?: ReactNode;
-}
-
-/* ---------- LEGACY BRIDGE: file download helper (receipt "Save" button) ---------- */
 function downloadFile(name: string, content: string, type = "text/plain") {
+	const blob = new Blob([content], { type });
+	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
-	a.href = URL.createObjectURL(new Blob([content], { type }));
+	a.href = url;
 	a.download = name;
+	document.body.appendChild(a);
 	a.click();
-	URL.revokeObjectURL(a.href);
+	a.remove();
+	URL.revokeObjectURL(url);
 }
 
-/* ---------- modal shell (Bootstrap look, React state driven) ---------- */
-function MBox({
-	id,
-	active,
-	title,
-	size = "md",
-	onClose,
-	children,
-	footer,
-}: MBoxProps) {
-	if (active !== id) return null;
-	return (
-		<>
-			<div className={styles.backdrop} onClick={onClose} />
-			<div
-				className={styles.modalWrap}
-				role="dialog"
-				aria-modal="true"
-				aria-label={id}
-			>
-				<div
-					className={`${styles.modalBox} ${size === "lg" ? styles.modalBoxLg : ""} ${
-						size === "xl" ? styles.modalBoxXl : ""
-					}`}
-				>
-					<div className={styles.modalHeader}>
-						<h5 className={styles.modalTitle}>{title}</h5>
-						<button
-							type="button"
-							className="btn-close"
-							aria-label="Close"
-							onClick={onClose}
-						/>
-					</div>
-					<div className={styles.modalBody}>{children}</div>
-					{footer && <div className={styles.modalFooter}>{footer}</div>}
-				</div>
-			</div>
-		</>
-	);
-}
-
-function BusyOverlay() {
-	return (
-		<div className={styles.loadingOv}>
-			<div className={styles.spinner} />
-			<p className={styles.loadingLabel}>Processing...</p>
-		</div>
-	);
-}
-
-/* ---------- LEGACY BRIDGE: flows from page JS (unlabeled steppers) ---------- */
-type FlowKey = "disp" | "ev" | "bulk";
-const FLOWS: Record<FlowKey, number> = { disp: 4, ev: 3, bulk: 3 };
-
+/* ---------- option lists ---------- */
 const CARDS = ["Visa ****4521", "MC ****3392", "Prepaid ****8890"];
 const DISPUTE_TXNS = [
 	"12 Jun 2025 — Amazon Kenya — KES 87,400 — Ref: AMZ-882910",
@@ -156,850 +90,377 @@ const EXPORT_TYPES = [
 ];
 const FORMATS = ["PDF", "Excel", "CSV"];
 
-interface Result {
-	msg: string;
-	ref?: string;
-}
-
-function Pills({
-	prefix,
-	tabs,
-	first,
-	tabsState,
-	onSwitch,
-}: {
-	prefix: string;
-	tabs: { key: string; label: string }[];
-	first: string;
-	tabsState: Record<string, string>;
-	onSwitch: (prefix: string, key: string) => void;
-}) {
-	const currentTab = tabsState[prefix] ?? first;
-	return (
-		<div className={`${styles.pills} mb-3`}>
-			{tabs.map((t) => (
-				<button
-					key={t.key}
-					className={`${styles.pill} ${currentTab === t.key ? styles.pillActive : ""}`}
-					onClick={() => onSwitch(prefix, t.key)}
-				>
-					{t.label}
-				</button>
-			))}
-		</div>
-	);
-}
+const toneBadge = (tone: string) =>
+	tone === "badgeS"
+		? shared.badgeSuccess
+		: tone === "badgeW"
+			? shared.badgeWarning
+			: tone === "badgeD"
+				? shared.badgeDanger
+				: tone === "badgeI"
+					? shared.badgeInfo
+					: shared.badgePurple;
 
 export default function DisputesModals({
 	active,
 	onClose,
 	onOpen,
-}: ModalsProps) {
-	/* ---------- doAction / nextFlow / busy state ---------- */
-	const [results, setResults] = useState<Record<string, Result>>({});
-	const [busy, setBusy] = useState<string | null>(null);
-	const [flows, setFlows] = useState<Record<FlowKey, number>>({
-		disp: 1,
-		ev: 1,
-		bulk: 1,
-	});
-	const [tabs, setTabs] = useState<Record<string, string>>({});
+}: {
+	active: string | null;
+	onClose: () => void;
+	onOpen: (id: string) => void;
+}) {
+	const isOpen = (id: string) => active === id;
 
-	/* ---------- LEGACY BRIDGE: cacheAndReset → fresh state on next open ---------- */
-	useEffect(() => {
-		if (active === null) {
-			setResults({});
-			setFlows({ disp: 1, ev: 1, bulk: 1 });
-			setBusy(null);
-			setTabs({});
-		}
-	}, [active]);
-
-	const busyTimer = useRef<number | undefined>(undefined);
-	useEffect(() => () => window.clearTimeout(busyTimer.current), []);
-
-	/* ---------- LEGACY BRIDGE: doAction(modalId, msg, ref) — 1400ms ---------- */
-	const doAction = (modalId: string, msg: string, ref?: string) => {
-		setBusy(modalId);
-		busyTimer.current = window.setTimeout(() => {
-			setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }));
-			setBusy(null);
-		}, 1400);
-	};
-
-	/* ---------- LEGACY BRIDGE: nextFlow(key,total) — closeM(key+'Modal') ---------- */
-	const nextFlow = (key: FlowKey) => {
-		const total = FLOWS[key];
-		const cur = flows[key];
-		const modalId = `${key === "disp" ? "dispute" : key === "ev" ? "evidenceUpload" : "bulkDispute"}Modal`;
-		if (cur === total - 1) {
-			setBusy(modalId);
-			busyTimer.current = window.setTimeout(() => {
-				setFlows((prev) => ({ ...prev, [key]: total }));
-				setBusy(null);
-			}, 1400);
-			return;
-		}
-		if (cur >= total) {
-			onClose();
-			return;
-		}
-		setFlows((prev) => ({ ...prev, [key]: cur + 1 }));
-	};
-
-	/* ---------- LEGACY BRIDGE: sw(prefix,key,btn) ---------- */
-	const sw = (prefix: string, key: string) =>
-		setTabs((prev) => ({ ...prev, [prefix]: key }));
-	const tabOf = (prefix: string, first: string) => tabs[prefix] ?? first;
-
-	/* ---------- receipt (legacy 1.16 doAction body: single Save button) ---------- */
-	const receipt = (id: string) => {
-		const r = results[id];
-		if (!r) return null;
-		return (
-			<div className={styles.receipt}>
-				<div className={styles.ri}>
-					<i className="bi bi-check-lg" />
-				</div>
-				<h5 className={styles.receiptTitle}>{r.msg}</h5>
-				{r.ref && <p className={styles.receiptSub}>Ref: {r.ref}</p>}
-				<div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
-					<button
-						className={`${styles.btnPm} ${styles.btnSm}`}
-						onClick={() =>
-							downloadFile(
-								`${r.ref ?? "paymo-receipt"}.txt`,
-								`PayMo — Dispute & Chargeback Management\n${r.msg}${r.ref ? `\nRef: ${r.ref}` : ""}\nGenerated: ${new Date().toLocaleString()}`,
-							)
-						}
-					>
-						<i className="bi bi-download" /> Save
-					</button>
-				</div>
-			</div>
-		);
-	};
-
-	const actionBody = (id: string, form: ReactNode) => (
-		<div style={{ position: "relative" }}>
-			{busy === id && <BusyOverlay />}
-			{results[id] ? receipt(id) : form}
-		</div>
-	);
-
-	const actionFooter = (
-		id: string,
-		label: ReactNode,
-		msg: string,
-		ref?: string,
-		cancelLabel = "Cancel",
-	) =>
-		results[id] ? (
-			<button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={onClose}>
-				Done
-			</button>
-		) : (
-			<>
-				<button className={styles.btnPm} onClick={onClose}>
-					{cancelLabel}
-				</button>
-				<button
-					className={`${styles.btnPm} ${styles.btnPmP}`}
-					onClick={() => doAction(id, msg, ref)}
-				>
-					{label}
-				</button>
-			</>
-		);
-
-	/* ---------- flow stepper (legacy renderStepper: "Step N" labels) ---------- */
-	const stepper = (key: FlowKey) => {
-		const total = FLOWS[key];
-		const cur = flows[key];
-		return (
-			<div className={styles.stepper}>
-				{Array.from({ length: total }, (_, i) => {
-					const n = i + 1;
-					return (
-						<div key={n} style={{ display: "contents" }}>
-							<div
-								className={`${styles.step} ${n < cur ? styles.stepDone : ""} ${n === cur ? styles.stepActive : ""}`}
-							>
-								<div className={styles.stepN}>
-									{n < cur ? <i className="bi bi-check" /> : n}
-								</div>
-								<div className={styles.stepL}>Step {n}</div>
-							</div>
-							{i < total - 1 && <div className={styles.stepLine} />}
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
-
-	const flowFooter = (key: FlowKey) => {
-		const total = FLOWS[key];
-		const cur = flows[key];
-		const modalId = `${key === "disp" ? "dispute" : key === "ev" ? "evidenceUpload" : "bulkDispute"}Modal`;
-		return (
-			<>
-				<button className={styles.btnPm} onClick={onClose}>
-					Cancel
-				</button>
-				<button
-					className={`${styles.btnPm} ${styles.btnPmP}`}
-					onClick={() => nextFlow(key)}
-					disabled={busy === modalId}
-				>
-					{cur >= total ? (
-						"Done"
-					) : (
-						<>
-							Continue <i className="bi bi-arrow-right" />
-						</>
-					)}
-				</button>
-			</>
-		);
-	};
-
-	const evpkgFiles = [
-		{
-			file: "receipt_amz.pdf",
-			caseId: "CDP-44892",
-			type: "Receipt",
-			uploaded: "27 Jun",
-			size: "1.2 MB",
-		},
-		{
-			file: "police_88291.pdf",
-			caseId: "CDP-44892",
-			type: "Police",
-			uploaded: "26 Jun",
-			size: "3.4 MB",
-		},
-		{
-			file: "id_jk.jpg",
-			caseId: "CDP-44915",
-			type: "ID",
-			uploaded: "25 Jun",
-			size: "0.8 MB",
-		},
-	];
-	const evpkgReceipts = [
-		{ file: "receipt_amz.pdf", sub: "CDP-44892 · 1.2 MB" },
-		{ file: "receipt_jumia.pdf", sub: "CB-99102 · 0.9 MB" },
-	];
-	const ranTiles = [
-		{
-			value: "68%",
-			label: "OVERALL WIN RATE",
-			vColor: "var(--pm-accent)",
-			bg: "var(--pm-accent-soft)",
-			big: true,
-		},
-		{
-			value: "41 days",
-			label: "AVG RESOLUTION",
-			vColor: "var(--pm-info)",
-			bg: "var(--pm-info-soft)",
-		},
-		{
-			value: "KES 129k",
-			label: "AVG RECOVERED",
-			vColor: "var(--pm-purple)",
-			bg: "var(--pm-purple-soft)",
-		},
-	];
-	const healthTiles = [
-		{
-			value: "84",
-			label: "HEALTH SCORE",
-			vColor: "var(--pm-accent)",
-			bg: "var(--pm-accent-soft)",
-			big: true,
-		},
-		{
-			value: "11",
-			label: "EXPIRING",
-			vColor: "var(--pm-warning)",
-			bg: "var(--pm-warning-soft)",
-		},
-		{
-			value: "41d",
-			label: "AVG TIME",
-			vColor: "var(--pm-info)",
-			bg: "var(--pm-info-soft)",
-		},
-		{
-			value: "68%",
-			label: "WIN RATE",
-			vColor: "var(--pm-purple)",
-			bg: "var(--pm-purple-soft)",
-		},
-	];
-	const healthRows: [string, string, string, string, "badgeS" | "badgeW"][] = [
-		["Evidence completeness", "78%", "95%", "Below", "badgeW"],
-		["On-time filing", "94%", "100%", "Good", "badgeS"],
-		["Merchant blacklisting", "3", "5", "Below", "badgeW"],
-		["Arbitration win rate", "52%", "65%", "Below", "badgeW"],
-	];
-	const caseNotifs = [
-		{
-			box: "summaryBoxDanger",
-			title: "CDP-44892 evidence deadline in 2 days",
-			sub: "Upload remaining documents before 29 Jun.",
-		},
-		{
-			box: "summaryBoxWarn",
-			title: "CB-99102 representment response due today",
-			sub: "Visa deadline: 27 Jun 2025.",
-		},
-		{
-			box: "summaryBoxInfo",
-			title: "CDP-44923 evidence package complete",
-			sub: "Submitted to Visa successfully.",
-		},
-		{
-			box: "summaryBoxAccent",
-			title: "CDP-44915 resolved — won",
-			sub: "KES 124,800 recovered.",
-		},
-		{
-			box: "summaryBox",
-			title: "Merchant blacklisting applied",
-			sub: "Local Vendor X — 3 new disputes prevented.",
-		},
-	] as const;
-	const activityRows = [
-		[
-			"27 Jun 14:32",
-			"CDP-44923",
-			"Evidence uploaded",
-			"James K.",
-			"receipt_amz.pdf, police_88291.pdf",
-		],
-		[
-			"27 Jun 11:15",
-			"CB-99102",
-			"Representment filed",
-			"Grace M.",
-			"Response submitted to Visa",
-		],
-		[
-			"26 Jun 09:40",
-			"CDP-44892",
-			"Merchant flagged",
-			"System",
-			"Local Vendor X — risk score 94",
-		],
-		[
-			"25 Jun 16:20",
-			"CDP-44915",
-			"Case resolved — won",
-			"James K.",
-			"KES 124,800 recovered",
-		],
-	];
-	const attentionRows = [
-		{
-			title: "CDP-44892 evidence due in 2 days",
-			sub: "KES 1.85M — 4 files remaining",
-			label: "Upload",
-			modal: "evidenceUploadModal",
-		},
-		{
-			title: "CB-99102 representment due today",
-			sub: "Visa — KES 87,400",
-			label: "Respond",
-			modal: "chargebackResponseModal",
-		},
-		{
-			title: "Local Vendor X blacklisting review",
-			sub: "6 cases — 17% win rate",
-			label: "Blacklist",
-			modal: "merchantRiskModal",
-			danger: true,
-		},
-		{
-			title: "CDP-44923 evidence package complete",
-			sub: "Ready for submission",
-			label: "Submit",
-			modal: "disputeDetailModal",
-		},
-	];
-	const branchRows = [
-		["Sarit Centre, Level 2", "Dispute filing, Evidence upload", "1.2 km"],
-		["Koinange / Kenyatta", "Full dispute support", "3.4 km"],
-	];
-	const profileStats: [string, string, boolean?][] = [
-		["Disputes Managed", "142 this month"],
-		["Win Rate", "68%", true],
-		["Recovery", "KES 18.4M"],
-		["Health Score", "84/100", true],
-	];
-
-	const downloadBtn = (modalId: string) => (
-		<button
-			className={`${styles.btnPm} ${styles.btnSm}`}
-			onClick={() => doAction(modalId, "File downloaded.", "")}
-		>
-			Download
-		</button>
-	);
+	const [druleTab, setDruleTab] = useState("auto");
+	const [druleSaved, setDruleSaved] = useState(false);
+	const [riskNote, setRiskNote] = useState("");
 
 	return (
 		<>
-			{/* ============ M1: New Dispute (flow: disp, 4 steps) ============ */}
-			<MBox
-				id="disputeModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   FILE NEW DISPUTE (4-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("disputeModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-file-earmark-plus"
-							style={{ color: "var(--pm-info)" }}
-						/>{" "}
-						File New Dispute
-					</>
-				}
-				footer={flowFooter("disp")}
+				iconCls="bi bi-file-earmark-plus"
+				title="File New Dispute"
+				steps={["Select", "Reason", "Evidence", "Done"]}
+				confirmLabel="File Dispute"
 			>
-				<div style={{ position: "relative" }}>
-					{busy === "disputeModal" && <BusyOverlay />}
-					{stepper("disp")}
-					{flows.disp === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Select Transaction
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Card / Account</label>
-								<select className={styles.fc}>
-									{CARDS.map((c) => (
-										<option key={c}>{c}</option>
-									))}
-								</select>
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Transaction</label>
-								<select className={styles.fc}>
-									{DISPUTE_TXNS.map((t) => (
-										<option key={t}>{t}</option>
-									))}
-								</select>
-							</div>
-						</div>
-					)}
-					{flows.disp === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Reason &amp; Details
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Reason Code</label>
-								<select className={styles.fc}>
-									{REASON_CODES.map((r) => (
-										<option key={r}>{r}</option>
-									))}
-								</select>
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Description</label>
-								<textarea
-									className={styles.fc}
-									rows={3}
-									defaultValue="I did not authorise this transaction. Card was in my possession at all times."
-								/>
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Requested Amount</label>
-								<input className={styles.fc} defaultValue="87400" />
-							</div>
-						</div>
-					)}
-					{flows.disp === 3 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 3: Initial Evidence
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Upload Supporting Documents</label>
-								<input type="file" className={styles.fc} multiple />
-							</div>
-							<div className="form-check mb-2">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked
-									id="disp-police"
-								/>
-								<label
-									className="form-check-label"
-									style={{ fontSize: 13 }}
-									htmlFor="disp-police"
-								>
-									Police report will be uploaded within 48 hours
-								</label>
-							</div>
-							<div className="form-check">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked
-									id="disp-id"
-								/>
-								<label
-									className="form-check-label"
-									style={{ fontSize: 13 }}
-									htmlFor="disp-id"
-								>
-									ID verification attached
-								</label>
-							</div>
-						</div>
-					)}
-					{flows.disp === 4 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>
-								Dispute Filed Successfully
-							</h5>
-							<p className={styles.receiptSub}>
-								Case CDP-44923 created. Network deadline: 11 Jul 2025.
-							</p>
-							<div
-								className={`${styles.summaryBox} text-start mt-3`}
-								style={{ fontSize: 13 }}
-							>
-								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Case ID</span>
-									<strong>CDP-44923</strong>
-								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Amount</span>
-									<strong>KES 87,400</strong>
-								</div>
-								<div className="d-flex justify-content-between">
-									<span className={styles.mutedSmall}>Status</span>
-									<span className={`${styles.badge} ${styles.badgeI}`}>
-										Under Review
-									</span>
-								</div>
-							</div>
-						</div>
-					)}
-				</div>
-			</MBox>
-
-			{/* ============ M2: Evidence Upload (flow: ev, 3 steps) ============ */}
-			<MBox
-				id="evidenceUploadModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
+				{(step) => (
 					<>
-						<i className="bi bi-upload" style={{ color: "var(--pm-accent)" }} />{" "}
-						Upload Evidence Package
-					</>
-				}
-				footer={flowFooter("ev")}
-			>
-				<div style={{ position: "relative" }}>
-					{busy === "evidenceUploadModal" && <BusyOverlay />}
-					{stepper("ev")}
-					{flows.ev === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Select Case
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Case</label>
-								<select className={styles.fc}>
-									{EV_CASES.map((c) => (
-										<option key={c}>{c}</option>
-									))}
-								</select>
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Select the card and transaction in dispute
+								</p>
+								<SelectField label="Card / Account" options={CARDS} />
+								<SelectField label="Transaction" options={DISPUTE_TXNS} />
 							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Evidence Type</label>
-								<select className={styles.fc}>
-									{EV_TYPES.map((t) => (
-										<option key={t}>{t}</option>
-									))}
-								</select>
-							</div>
-						</div>
-					)}
-					{flows.ev === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Upload Files
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Files</label>
-								<input type="file" className={styles.fc} multiple />
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Description / Notes</label>
-								<textarea
-									className={styles.fc}
-									rows={2}
-									defaultValue="Receipt from merchant dated 12 Jun 2025 showing full payment."
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Reason &amp; details
+								</p>
+								<SelectField
+									label="Reason Code"
+									options={REASON_CODES}
+									defaultValue="01 — Unauthorised Transaction"
 								/>
-							</div>
-							<div className={styles.summaryBoxInfo} style={{ fontSize: 12 }}>
-								<i className="bi bi-info-circle me-1" /> Accepted formats: PDF,
-								JPG, PNG, DOCX. Max 10MB per file.
-							</div>
-						</div>
-					)}
-					{flows.ev === 3 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Evidence Uploaded</h5>
-							<p className={styles.receiptSub}>
-								3 files attached to CDP-44892. Package completeness: 6/6.
-							</p>
-							<div
-								className={`${styles.summaryBox} text-start mt-3`}
-								style={{ fontSize: 13 }}
-							>
-								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Files</span>
-									<strong>receipt.pdf, police.pdf, id.jpg</strong>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="disp-desc">
+										Description
+									</label>
+									<textarea
+										id="disp-desc"
+										className={`${shared.field} form-control`}
+										rows={3}
+										defaultValue="I did not authorise this transaction. Card was in my possession at all times."
+									/>
 								</div>
-								<div className="d-flex justify-content-between">
-									<span className={styles.mutedSmall}>Deadline</span>
-									<strong>29 Jun 2025</strong>
+								<Field label="Requested Amount (KES)" defaultValue="87400" />
+							</div>
+						)}
+						{step === 3 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 3: Initial evidence
+								</p>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="disp-files">
+										Upload Supporting Documents
+									</label>
+									<input
+										id="disp-files"
+										type="file"
+										multiple
+										className={`${shared.field} form-control`}
+									/>
+								</div>
+								<div className="form-check mb-2">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										defaultChecked
+										id="disp-police"
+									/>
+									<label
+										className="form-check-label"
+										style={{ fontSize: 13 }}
+										htmlFor="disp-police"
+									>
+										Police report will be uploaded within 48 hours
+									</label>
+								</div>
+								<div className="form-check mb-3">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										defaultChecked
+										id="disp-id"
+									/>
+									<label
+										className="form-check-label"
+										style={{ fontSize: 13 }}
+										htmlFor="disp-id"
+									>
+										ID verification attached
+									</label>
+								</div>
+								<div className={styles.summaryBoxInfo}>
+									<div className="d-flex justify-content-between mb-1">
+										<span className={styles.mutedSmall}>New case</span>
+										<strong>CDP-44923</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-1">
+										<span className={styles.mutedSmall}>Amount</span>
+										<strong>KES 87,400</strong>
+									</div>
+									<div className="d-flex justify-content-between">
+										<span className={styles.mutedSmall}>Network deadline</span>
+										<strong>11 Jul 2025</strong>
+									</div>
 								</div>
 							</div>
-						</div>
-					)}
-				</div>
-			</MBox>
-
-			{/* ============ M3: Chargeback Response ============ */}
-			<MBox
-				id="chargebackResponseModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-reply" style={{ color: "var(--pm-info)" }} />{" "}
-						Respond to Chargeback
+						)}
 					</>
-				}
-				footer={actionFooter(
-					"chargebackResponseModal",
-					"Submit Response",
-					"Chargeback response submitted successfully. Case updated to Pre-Arbitration stage.",
-					"CB-99102-R1",
 				)}
+			</FlowModal>
+
+			{/* ============================================================
+			   UPLOAD EVIDENCE PACKAGE (3-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("evidenceUploadModal")}
+				onClose={onClose}
+				iconCls="bi bi-upload"
+				title="Upload Evidence Package"
+				steps={["Select", "Files", "Done"]}
+				confirmLabel="Upload"
 			>
-				{actionBody(
-					"chargebackResponseModal",
+				{(step) => (
 					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Chargeback</label>
-							<select className={styles.fc}>
-								{CB_LIST.map((c) => (
-									<option key={c}>{c}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Response Type</label>
-							<select className={styles.fc}>
-								{CB_RESPONSE_TYPES.map((t) => (
-									<option key={t}>{t}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Evidence / Notes</label>
-							<textarea
-								className={styles.fc}
-								rows={4}
-								defaultValue="Merchant provided signed delivery confirmation and CCTV footage showing cardholder at pickup location."
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Additional Files</label>
-							<input type="file" className={styles.fc} multiple />
-						</div>
-					</>,
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Select the case and evidence type
+								</p>
+								<SelectField label="Case" options={EV_CASES} />
+								<SelectField
+									label="Evidence Type"
+									options={EV_TYPES}
+									defaultValue="Receipt / Invoice"
+								/>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Upload files
+								</p>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="ev-files">
+										Files
+									</label>
+									<input
+										id="ev-files"
+										type="file"
+										multiple
+										className={`${shared.field} form-control`}
+									/>
+								</div>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="ev-notes">
+										Description / Notes
+									</label>
+									<textarea
+										id="ev-notes"
+										className={`${shared.field} form-control`}
+										rows={2}
+										defaultValue="Receipt from merchant dated 12 Jun 2025 showing full payment."
+									/>
+								</div>
+								<InfoBox>
+									<i className="bi bi-info-circle" aria-hidden="true" />{" "}
+									Accepted formats: PDF, JPG, PNG, DOCX. Max 10MB per file.
+								</InfoBox>
+							</div>
+						)}
+					</>
 				)}
-			</MBox>
+			</FlowModal>
 
-			{/* ============ M4: Bulk Dispute (flow: bulk, 3 steps) ============ */}
-			<MBox
-				id="bulkDisputeModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   RESPOND TO CHARGEBACK
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("chargebackResponseModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-collection"
-							style={{ color: "var(--pm-purple)" }}
-						/>{" "}
-						Bulk Dispute Actions
-					</>
-				}
-				footer={flowFooter("bulk")}
+				iconCls="bi bi-reply"
+				title="Respond to Chargeback"
+				size="lg"
+				submitLabel="Submit Response"
+				successMsg="Chargeback response submitted successfully. Case updated to Pre-Arbitration stage."
 			>
-				<div style={{ position: "relative" }}>
-					{busy === "bulkDisputeModal" && <BusyOverlay />}
-					{stepper("bulk")}
-					{flows.bulk === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Select Cases
-							</h6>
-							<div className="form-check p-3 border rounded mb-2">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked
-									id="bulk-c1"
-								/>
-								<label
-									className="form-check-label ms-2 d-flex justify-content-between w-100"
-									htmlFor="bulk-c1"
-								>
-									<span>
-										<strong>CDP-44892</strong> — Visa — KES 1.85M
-									</span>
-									<span className={`${styles.badge} ${styles.badgeD}`}>
-										Expiring
-									</span>
-								</label>
-							</div>
-							<div className="form-check p-3 border rounded mb-2">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									id="bulk-c2"
-								/>
-								<label
-									className="form-check-label ms-2 d-flex justify-content-between w-100"
-									htmlFor="bulk-c2"
-								>
-									<span>
-										<strong>CB-99087</strong> — MC — KES 312k
-									</span>
-									<span className={`${styles.badge} ${styles.badgeI}`}>
-										Pre-Arbitration
-									</span>
-								</label>
-							</div>
-							<hr className={styles.divider} />
-							<div className="d-flex justify-content-between">
-								<span className={styles.fwBold13}>Selected</span>
-								<strong>2 cases</strong>
-							</div>
-						</div>
-					)}
-					{flows.bulk === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Action
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Bulk Action</label>
-								<select className={styles.fc}>
-									{BULK_ACTIONS.map((a) => (
-										<option key={a}>{a}</option>
-									))}
-								</select>
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Notes (applies to all)</label>
-								<textarea
-									className={styles.fc}
-									rows={3}
-									defaultValue="Bulk evidence package attached for all selected cases."
-								/>
-							</div>
-						</div>
-					)}
-					{flows.bulk === 3 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-all" />
-							</div>
-							<h5 className={styles.receiptTitle}>Bulk Action Completed</h5>
-							<p className={styles.receiptSub}>
-								Evidence uploaded to 2 cases. Deadlines extended where
-								applicable.
-							</p>
-						</div>
-					)}
+				<SelectField label="Chargeback" options={CB_LIST} />
+				<SelectField
+					label="Response Type"
+					options={CB_RESPONSE_TYPES}
+					defaultValue="Representment (provide evidence)"
+				/>
+				<div className="mb-3">
+					<label className={shared.fieldLabel} htmlFor="cb-notes">
+						Evidence / Notes
+					</label>
+					<textarea
+						id="cb-notes"
+						className={`${shared.field} form-control`}
+						rows={4}
+						defaultValue="Merchant provided signed delivery confirmation and CCTV footage showing cardholder at pickup location."
+					/>
 				</div>
-			</MBox>
+				<div className="mb-3">
+					<label className={shared.fieldLabel} htmlFor="cb-files">
+						Additional Files
+					</label>
+					<input
+						id="cb-files"
+						type="file"
+						multiple
+						className={`${shared.field} form-control`}
+					/>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M5: Evidence Package Manager ============ */}
-			<MBox
-				id="evidencePackageModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   BULK DISPUTE ACTIONS (3-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("bulkDisputeModal")}
 				onClose={onClose}
-				title={
+				iconCls="bi bi-collection"
+				title="Bulk Dispute Actions"
+				steps={["Select", "Action", "Done"]}
+				confirmLabel="Run Bulk Action"
+			>
+				{(step) => (
 					<>
-						<i className="bi bi-archive" /> Evidence Package Manager
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Select cases
+								</p>
+								{[
+									{
+										id: "bulk-c1",
+										label: "CDP-44892",
+										sub: "Visa — KES 1.85M",
+										badge: "Expiring",
+										tone: shared.badgeDanger,
+										checked: true,
+									},
+									{
+										id: "bulk-c2",
+										label: "CB-99087",
+										sub: "MC — KES 312k",
+										badge: "Pre-Arbitration",
+										tone: shared.badgeInfo,
+										checked: false,
+									},
+								].map((c) => (
+									<div
+										className="form-check p-3 border rounded mb-2"
+										key={c.id}
+									>
+										<input
+											className="form-check-input"
+											type="checkbox"
+											defaultChecked={c.checked}
+											id={c.id}
+										/>
+										<label
+											className="form-check-label ms-2 d-flex justify-content-between w-100"
+											htmlFor={c.id}
+										>
+											<span>
+												<strong>{c.label}</strong> — {c.sub}
+											</span>
+											<span className={`${shared.badge} ${c.tone}`}>
+												{c.badge}
+											</span>
+										</label>
+									</div>
+								))}
+								<div className="d-flex justify-content-between">
+									<span className={shared.fieldLabel}>Selected</span>
+									<strong>2 cases</strong>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Choose the bulk action
+								</p>
+								<SelectField
+									label="Bulk Action"
+									options={BULK_ACTIONS}
+									defaultValue="Upload evidence to all"
+								/>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="bulk-notes">
+										Notes (applies to all)
+									</label>
+									<textarea
+										id="bulk-notes"
+										className={`${shared.field} form-control`}
+										rows={3}
+										defaultValue="Bulk evidence package attached for all selected cases."
+									/>
+								</div>
+							</div>
+						)}
 					</>
-				}
+				)}
+			</FlowModal>
+
+			{/* ============================================================
+			   EVIDENCE PACKAGE MANAGER (tabs)
+			   ============================================================ */}
+			<TabbedModal
+				show={isOpen("evidencePackageModal")}
+				onClose={onClose}
+				iconCls="bi bi-archive"
+				title="Evidence Package Manager"
+				size="lg"
 				footer={
-					results.evidencePackageModal ? (
+					<>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
 							onClick={onClose}
 						>
-							Done
+							Close
 						</button>
-					) : (
-						<>
-							<button className={styles.btnPm} onClick={onClose}>
-								Close
-							</button>
-							<button
-								className={`${styles.btnPm} ${styles.btnPmP}`}
-								onClick={() => onOpen("evidenceUploadModal")}
-							>
-								Upload More
-							</button>
-						</>
-					)
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
+							onClick={() => onOpen("evidenceUploadModal")}
+						>
+							<i className="bi bi-upload" aria-hidden="true" /> Upload More
+						</button>
+					</>
 				}
-			>
-				{actionBody(
-					"evidencePackageModal",
-					<>
-						<Pills
-							prefix="evpkg"
-							first="all"
-							tabs={[
-								{ key: "all", label: "All Files" },
-								{ key: "receipt", label: "Receipts" },
-								{ key: "police", label: "Police" },
-								{ key: "delivery", label: "Delivery" },
-							]}
-							tabsState={tabs}
-							onSwitch={sw}
-						/>
-						{tabOf("evpkg", "all") === "all" && (
-							<div className="table-responsive">
-								<table className={styles.tbl}>
+				tabs={[
+					{
+						key: "all",
+						label: "All Files",
+						render: () => (
+							<div className={shared.tableWrap}>
+								<table className={shared.table}>
 									<thead>
 										<tr>
 											<th>File</th>
@@ -1011,628 +472,823 @@ export default function DisputesModals({
 										</tr>
 									</thead>
 									<tbody>
-										{evpkgFiles.map((f) => (
-											<tr key={f.file}>
-												<td>{f.file}</td>
-												<td>{f.caseId}</td>
-												<td>{f.type}</td>
-												<td>{f.uploaded}</td>
-												<td>{f.size}</td>
-												<td>{downloadBtn("evidencePackageModal")}</td>
+										{[
+											[
+												"receipt_amz.pdf",
+												"CDP-44892",
+												"Receipt",
+												"27 Jun",
+												"1.2 MB",
+											],
+											[
+												"police_88291.pdf",
+												"CDP-44892",
+												"Police",
+												"26 Jun",
+												"3.4 MB",
+											],
+											["id_jk.jpg", "CDP-44915", "ID", "25 Jun", "0.8 MB"],
+										].map((row) => (
+											<tr key={row[0]}>
+												{row.map((cell) => (
+													<td key={cell}>{cell}</td>
+												))}
+												<td>
+													<button
+														type="button"
+														className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+														onClick={() =>
+															downloadFile(
+																"evidence.txt",
+																`PayMo evidence file: ${row[0]} (${row[4]}, uploaded ${row[3]})`,
+															)
+														}
+													>
+														Download
+													</button>
+												</td>
 											</tr>
 										))}
 									</tbody>
 								</table>
 							</div>
-						)}
-						{tabOf("evpkg", "all") === "receipt" &&
-							evpkgReceipts.map((f) => (
-								<div className={styles.sr} key={f.file}>
-									<div>
-										<strong>{f.file}</strong>
-										<div className={styles.mutedSmall}>{f.sub}</div>
+						),
+					},
+					{
+						key: "receipt",
+						label: "Receipts",
+						render: () => (
+							<div>
+								{[
+									["receipt_amz.pdf", "CDP-44892 · 1.2 MB"],
+									["receipt_jumia.pdf", "CB-99102 · 0.9 MB"],
+								].map(([file, sub]) => (
+									<div className={styles.sr} key={file}>
+										<div>
+											<strong>{file}</strong>
+											<div className={styles.mutedSmall}>{sub}</div>
+										</div>
+										<button
+											type="button"
+											className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+											onClick={() =>
+												downloadFile(file, `PayMo evidence: ${file}`)
+											}
+										>
+											Download
+										</button>
 									</div>
-									{downloadBtn("evidencePackageModal")}
-								</div>
-							))}
-						{tabOf("evpkg", "all") === "police" && (
+								))}
+							</div>
+						),
+					},
+					{
+						key: "police",
+						label: "Police",
+						render: () => (
 							<div className={styles.sr}>
 								<div>
 									<strong>police_88291.pdf</strong>
 									<div className={styles.mutedSmall}>CDP-44892 · 3.4 MB</div>
 								</div>
-								{downloadBtn("evidencePackageModal")}
+								<button
+									type="button"
+									className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+									onClick={() =>
+										downloadFile(
+											"police_88291.pdf",
+											"PayMo police report: CDP-44892",
+										)
+									}
+								>
+									Download
+								</button>
 							</div>
-						)}
-						{tabOf("evpkg", "all") === "delivery" && (
+						),
+					},
+					{
+						key: "delivery",
+						label: "Delivery",
+						render: () => (
 							<div className={styles.sr}>
 								<div>
 									<strong>delivery_booking.jpg</strong>
 									<div className={styles.mutedSmall}>CDP-44915 · 2.1 MB</div>
 								</div>
-								{downloadBtn("evidencePackageModal")}
+								<button
+									type="button"
+									className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+									onClick={() =>
+										downloadFile(
+											"delivery_booking.jpg",
+											"PayMo delivery proof: CDP-44915",
+										)
+									}
+								>
+									Download
+								</button>
 							</div>
-						)}
-					</>,
-				)}
-			</MBox>
+						),
+					},
+				]}
+			/>
 
-			{/* ============ M6: Merchant Risk ============ */}
-			<MBox
-				id="merchantRiskModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   MERCHANT RISK MANAGEMENT (tabs)
+			   ============================================================ */}
+			<TabbedModal
+				show={isOpen("merchantRiskModal")}
 				onClose={onClose}
-				title={
+				iconCls="bi bi-building"
+				title="Merchant Risk Management"
+				size="lg"
+				tabs={[
+					{
+						key: "high",
+						label: "High Risk",
+						render: () => (
+							<div>
+								{riskNote && (
+									<div
+										className={`${shared.badge} ${shared.badgeSuccess}`}
+										style={{
+											display: "flex",
+											marginBottom: 10,
+											padding: "8px 10px",
+										}}
+									>
+										<i className="bi bi-check-circle" aria-hidden="true" />{" "}
+										{riskNote}
+									</div>
+								)}
+								<div className={shared.tableWrap}>
+									<table className={shared.table}>
+										<thead>
+											<tr>
+												<th>Merchant</th>
+												<th>Cases (30d)</th>
+												<th>Win Rate</th>
+												<th>Risk Score</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>Local Vendor X</td>
+												<td>6</td>
+												<td>17%</td>
+												<td>
+													<span
+														className={`${shared.badge} ${shared.badgeDanger}`}
+													>
+														94
+													</span>
+												</td>
+												<td>
+													<button
+														type="button"
+														className={`${shared.btn} ${shared.btnSm} ${shared.btnDanger}`}
+														onClick={() =>
+															setRiskNote(
+																"Merchant blacklisted. All future transactions will be blocked.",
+															)
+														}
+													>
+														Blacklist
+													</button>
+												</td>
+											</tr>
+											<tr>
+												<td>Booking.com</td>
+												<td>9</td>
+												<td>44%</td>
+												<td>
+													<span
+														className={`${shared.badge} ${shared.badgeWarning}`}
+													>
+														72
+													</span>
+												</td>
+												<td>
+													<button
+														type="button"
+														className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+														onClick={() =>
+															setRiskNote(
+																"Merchant flagged for review. Monitoring enabled.",
+															)
+														}
+													>
+														Monitor
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						),
+					},
+					{
+						key: "repeat",
+						label: "Repeat Offenders",
+						render: () => (
+							<div>
+								{[
+									{ name: "Amazon Kenya", sub: "18 cases · 61% win rate" },
+									{ name: "Jumia Pay", sub: "12 cases · 75% win rate" },
+								].map((m) => (
+									<div className={styles.sr} key={m.name}>
+										<div>
+											<strong>{m.name}</strong>
+											<div className={styles.mutedSmall}>{m.sub}</div>
+										</div>
+										<button
+											type="button"
+											className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+											onClick={() =>
+												setRiskNote(
+													"Merchant flagged for review. Monitoring enabled.",
+												)
+											}
+										>
+											Monitor
+										</button>
+									</div>
+								))}
+							</div>
+						),
+					},
+					{
+						key: "blacklist",
+						label: "Blacklist",
+						render: () => (
+							<div>
+								{[
+									{ name: "Local Vendor X", sub: "Blacklisted 24 Jun 2025" },
+									{ name: "Scam Merchant Y", sub: "Blacklisted 12 May 2025" },
+								].map((m) => (
+									<div className={styles.sr} key={m.name}>
+										<div>
+											<strong>{m.name}</strong>
+											<div className={styles.mutedSmall}>{m.sub}</div>
+										</div>
+										<button
+											type="button"
+											className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+											onClick={() =>
+												setRiskNote(
+													"Merchant removed from blacklist. Transactions will be allowed.",
+												)
+											}
+										>
+											Remove
+										</button>
+									</div>
+								))}
+							</div>
+						),
+					},
+				]}
+			/>
+
+			{/* ============================================================
+			   RESOLUTION ANALYTICS DASHBOARD (tabs, xl)
+			   ============================================================ */}
+			<TabbedModal
+				show={isOpen("resolutionAnalyticsModal")}
+				onClose={onClose}
+				iconCls="bi bi-graph-up-arrow"
+				title="Resolution Analytics Dashboard"
+				size="xl"
+				footer={
 					<>
-						<i
-							className="bi bi-building"
-							style={{ color: "var(--pm-warning)" }}
-						/>{" "}
-						Merchant Risk Management
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={onClose}
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
+							onClick={() => onOpen("exportReportModal")}
+						>
+							<i className="bi bi-download" aria-hidden="true" /> Export Report
+						</button>
 					</>
 				}
+				tabs={[
+					{
+						key: "win",
+						label: "Win Rate",
+						render: () => (
+							<div className="row g-3">
+								{[
+									{
+										value: "68%",
+										label: "OVERALL WIN RATE",
+										color: "var(--pm-accent)",
+										bg: "var(--pm-accent-soft)",
+										big: true,
+									},
+									{
+										value: "41 days",
+										label: "AVG RESOLUTION",
+										color: "var(--pm-info)",
+										bg: "var(--pm-info-soft)",
+									},
+									{
+										value: "KES 129k",
+										label: "AVG RECOVERED",
+										color: "var(--pm-purple)",
+										bg: "var(--pm-purple-soft)",
+									},
+								].map((t) => (
+									<div className="col-md-4" key={t.label}>
+										<div
+											className={styles.miniStat}
+											style={{ background: t.bg }}
+										>
+											<div
+												className={t.big ? styles.miniStatBig : undefined}
+												style={
+													t.big
+														? { color: t.color }
+														: { fontSize: 24, fontWeight: 700, color: t.color }
+												}
+											>
+												{t.value}
+											</div>
+											<div className={styles.miniStatLabel}>{t.label}</div>
+										</div>
+									</div>
+								))}
+							</div>
+						),
+					},
+					{
+						key: "merchant",
+						label: "Merchant",
+						render: () => (
+							<div className={shared.tableWrap}>
+								<table className={shared.table}>
+									<thead>
+										<tr>
+											<th>Merchant</th>
+											<th>Cases</th>
+											<th>Win Rate</th>
+											<th>Avg Amount</th>
+											<th>Trend</th>
+										</tr>
+									</thead>
+									<tbody>
+										{[
+											["Amazon Kenya", "18", "61%", "KES 87k", "↑", "badgeS"],
+											["Jumia Pay", "12", "75%", "KES 23k", "↑", "badgeS"],
+											["Booking.com", "9", "44%", "KES 125k", "↓", "badgeW"],
+										].map((row) => (
+											<tr key={row[0]}>
+												<td>{row[0]}</td>
+												<td>{row[1]}</td>
+												<td>{row[2]}</td>
+												<td>{row[3]}</td>
+												<td>
+													<span
+														className={`${shared.badge} ${toneBadge(row[5])}`}
+													>
+														{row[4]}
+													</span>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						),
+					},
+					{
+						key: "reason",
+						label: "Reason Code",
+						render: () => (
+							<div className={shared.tableWrap}>
+								<table className={shared.table}>
+									<thead>
+										<tr>
+											<th>Reason Code</th>
+											<th>Cases</th>
+											<th>Win Rate</th>
+											<th>Avg Days</th>
+										</tr>
+									</thead>
+									<tbody>
+										{[
+											["Unauthorised", "16", "82%", "32"],
+											["Not Received", "9", "71%", "48"],
+											["Duplicate", "7", "89%", "21"],
+										].map((row) => (
+											<tr key={row[0]}>
+												{row.map((cell) => (
+													<td key={cell}>{cell}</td>
+												))}
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						),
+					},
+					{
+						key: "time",
+						label: "Time to Resolve",
+						render: () => (
+							<div className={styles.summaryBox}>
+								<div className={styles.fwBold13}>
+									Resolution Time Distribution
+								</div>
+								{[
+									["0-30 days", "42%", "badgeS"],
+									["31-60 days", "38%", "badgeW"],
+									["61-90 days", "15%", "badgeI"],
+									["90+ days", "5%", "badgeD"],
+								].map(([range, pct, tone], i) => (
+									<div
+										className={`${styles.sr} ${i === 0 ? "mt-2" : ""}`}
+										key={range}
+									>
+										<div>{range}</div>
+										<div>
+											<span className={`${shared.badge} ${toneBadge(tone)}`}>
+												{pct}
+											</span>
+										</div>
+									</div>
+								))}
+							</div>
+						),
+					},
+				]}
+			/>
+
+			{/* ============================================================
+			   DISPUTE AUTOMATION RULES (tabs + toggles + save receipt)
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("disputeRulesModal")}
+				onClose={onClose}
+				iconCls="bi bi-sliders"
+				title="Dispute Automation Rules"
+				size="lg"
 				footer={
-					results.merchantRiskModal ? (
+					druleSaved ? (
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
 							onClick={onClose}
 						>
 							Done
 						</button>
 					) : (
-						<button className={styles.btnPm} onClick={onClose}>
-							Close
-						</button>
+						<>
+							<button
+								type="button"
+								className={`${shared.btn} ${shared.btnSecondary}`}
+								onClick={onClose}
+							>
+								Cancel
+							</button>
+							<button
+								type="button"
+								className={`${shared.btn} ${shared.btnPrimary}`}
+								onClick={() => setDruleSaved(true)}
+							>
+								Save Rules
+							</button>
+						</>
 					)
 				}
 			>
-				{actionBody(
-					"merchantRiskModal",
+				{druleSaved ? (
+					<output className={shared.receipt}>
+						<div className={shared.receiptIcon}>
+							<i className="bi bi-check-lg" aria-hidden="true" />
+						</div>
+						<h3 className={shared.receiptTitle}>Automation rules updated</h3>
+						<p className={shared.receiptMsg}>
+							Changes take effect immediately.
+						</p>
+					</output>
+				) : (
 					<>
-						<Pills
-							prefix="mrisk"
-							first="high"
-							tabs={[
-								{ key: "high", label: "High Risk" },
-								{ key: "repeat", label: "Repeat Offenders" },
-								{ key: "blacklist", label: "Blacklist" },
-							]}
-							tabsState={tabs}
-							onSwitch={sw}
-						/>
-						{tabOf("mrisk", "high") === "high" && (
-							<div className="table-responsive">
-								<table className={styles.tbl}>
-									<thead>
-										<tr>
-											<th>Merchant</th>
-											<th>Cases (30d)</th>
-											<th>Win Rate</th>
-											<th>Risk Score</th>
-											<th>Action</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Local Vendor X</td>
-											<td>6</td>
-											<td>17%</td>
-											<td>
-												<span className={`${styles.badge} ${styles.badgeD}`}>
-													94
-												</span>
-											</td>
-											<td>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmD}`}
-													onClick={() =>
-														doAction(
-															"merchantRiskModal",
-															"Merchant blacklisted. All future transactions will be blocked.",
-															"",
-														)
-													}
-												>
-													Blacklist
-												</button>
-											</td>
-										</tr>
-										<tr>
-											<td>Booking.com</td>
-											<td>9</td>
-											<td>44%</td>
-											<td>
-												<span className={`${styles.badge} ${styles.badgeW}`}>
-													72
-												</span>
-											</td>
-											<td>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm}`}
-													onClick={() =>
-														doAction(
-															"merchantRiskModal",
-															"Merchant flagged for review. Monitoring enabled.",
-															"",
-														)
-													}
-												>
-													Monitor
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+						<div className={`${shared.pills} mb-3`}>
+							{(["auto", "evidence", "merchant"] as const).map((tab) => (
+								<button
+									type="button"
+									key={tab}
+									className={`${shared.pill} ${druleTab === tab ? shared.pillActive : ""}`}
+									onClick={() => setDruleTab(tab)}
+								>
+									{tab === "auto"
+										? "Auto-Escalation"
+										: tab === "evidence"
+											? "Evidence Rules"
+											: "Merchant Rules"}
+								</button>
+							))}
+						</div>
+						{druleTab === "auto" && (
+							<div>
+								{[
+									{
+										label: "Auto-escalate disputes > KES 500,000",
+										sub: "Current: Disabled",
+										on: false,
+									},
+									{
+										label: "Auto-file chargeback if no response in 10 days",
+										on: true,
+									},
+									{
+										label: "Auto-blacklist merchant after 5 lost cases",
+										on: false,
+									},
+								].map((r) => (
+									<div className={styles.sr} key={r.label}>
+										<div>
+											<strong>{r.label}</strong>
+											{"sub" in r && r.sub && (
+												<div className={styles.mutedSmall}>{r.sub}</div>
+											)}
+										</div>
+										<div className="form-check form-switch">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={r.on}
+												aria-label={r.label}
+											/>
+										</div>
+									</div>
+								))}
 							</div>
 						)}
-						{tabOf("mrisk", "high") === "repeat" &&
-							[
-								{ name: "Amazon Kenya", sub: "18 cases · 61% win rate" },
-								{ name: "Jumia Pay", sub: "12 cases · 75% win rate" },
-							].map((m) => (
-								<div className={styles.sr} key={m.name}>
-									<div>
-										<strong>{m.name}</strong>
-										<div className={styles.mutedSmall}>{m.sub}</div>
+						{druleTab === "evidence" && (
+							<div>
+								{[
+									{
+										label: "Require police report for unauthorised > KES 100k",
+										on: true,
+									},
+									{
+										label: 'Require delivery proof for "not received"',
+										on: true,
+									},
+								].map((r) => (
+									<div className={styles.sr} key={r.label}>
+										<div>
+											<strong>{r.label}</strong>
+										</div>
+										<div className="form-check form-switch">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={r.on}
+												aria-label={r.label}
+											/>
+										</div>
 									</div>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() =>
-											doAction(
-												"merchantRiskModal",
-												"Merchant flagged for review. Monitoring enabled.",
-												"",
-											)
-										}
-									>
-										Monitor
-									</button>
-								</div>
-							))}
-						{tabOf("mrisk", "high") === "blacklist" &&
-							[
-								{ name: "Local Vendor X", sub: "Blacklisted 24 Jun 2025" },
-								{ name: "Scam Merchant Y", sub: "Blacklisted 12 May 2025" },
-							].map((m) => (
-								<div className={styles.sr} key={m.name}>
-									<div>
-										<strong>{m.name}</strong>
-										<div className={styles.mutedSmall}>{m.sub}</div>
+								))}
+							</div>
+						)}
+						{druleTab === "merchant" && (
+							<div>
+								{[
+									{
+										label: "Auto-flag merchants with win rate < 40%",
+										on: true,
+									},
+									{
+										label: "Auto-block transactions from blacklisted merchants",
+										on: true,
+									},
+								].map((r) => (
+									<div className={styles.sr} key={r.label}>
+										<div>
+											<strong>{r.label}</strong>
+										</div>
+										<div className="form-check form-switch">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={r.on}
+												aria-label={r.label}
+											/>
+										</div>
 									</div>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() =>
-											doAction(
-												"merchantRiskModal",
-												"Merchant removed from blacklist. Transactions will be allowed.",
-												"",
-											)
-										}
-									>
-										Remove
-									</button>
-								</div>
-							))}
-					</>,
+								))}
+							</div>
+						)}
+					</>
 				)}
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M7: Resolution Analytics ============ */}
-			<MBox
-				id="resolutionAnalyticsModal"
-				active={active}
-				size="xl"
+			{/* ============================================================
+			   ARBITRATION MANAGEMENT
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("arbitrationModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-graph-up-arrow"
-							style={{ color: "var(--pm-accent)" }}
-						/>{" "}
-						Resolution Analytics Dashboard
-					</>
-				}
-				footer={
-					<>
-						<button className={styles.btnPm} onClick={onClose}>
-							Close
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => onOpen("exportReportModal")}
-						>
-							Export Report
-						</button>
-					</>
-				}
+				iconCls="bi bi-gavel"
+				title="Arbitration Management"
+				size="lg"
+				submitLabel="Save"
+				successMsg="Arbitration notes saved. Case updated."
 			>
-				<Pills
-					prefix="ran"
-					first="win"
-					tabs={[
-						{ key: "win", label: "Win Rate" },
-						{ key: "merchant", label: "Merchant" },
-						{ key: "reason", label: "Reason Code" },
-						{ key: "time", label: "Time to Resolve" },
-					]}
-					tabsState={tabs}
-					onSwitch={sw}
+				<SelectField
+					label="Case"
+					options={["CB-99065 — Visa — KES 1,240,000 — Arbitration"]}
 				/>
-				{tabOf("ran", "win") === "win" && (
-					<div className="row g-3">
-						{ranTiles.map((t) => (
-							<div className="col-md-4" key={t.label}>
-								<div className={styles.miniStat} style={{ background: t.bg }}>
-									<div
-										className={t.big ? styles.miniStatBig : undefined}
-										style={
-											t.big
-												? { color: t.vColor }
-												: { fontSize: 24, fontWeight: 700, color: t.vColor }
-										}
-									>
-										{t.value}
-									</div>
-									<div className={styles.miniStatLabel}>{t.label}</div>
-								</div>
-							</div>
-						))}
+				<div className={styles.summaryBox} style={{ marginBottom: 12 }}>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Stage</span>
+						<strong>Arbitration Filed</strong>
 					</div>
-				)}
-				{tabOf("ran", "win") === "merchant" && (
-					<div className="table-responsive">
-						<table className={styles.tbl}>
-							<thead>
-								<tr>
-									<th>Merchant</th>
-									<th>Cases</th>
-									<th>Win Rate</th>
-									<th>Avg Amount</th>
-									<th>Trend</th>
-								</tr>
-							</thead>
-							<tbody>
-								{[
-									["Amazon Kenya", "18", "61%", "KES 87k", "↑", "badgeS"],
-									["Jumia Pay", "12", "75%", "KES 23k", "↑", "badgeS"],
-									["Booking.com", "9", "44%", "KES 125k", "↓", "badgeW"],
-								].map(([m, c, w, a, t, tone]) => (
-									<tr key={m}>
-										<td>{m}</td>
-										<td>{c}</td>
-										<td>{w}</td>
-										<td>{a}</td>
-										<td>
-											<span
-												className={`${styles.badge} ${styles[tone as "badgeS" | "badgeW"]}`}
-											>
-												{t}
-											</span>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Network</span>
+						<strong>Visa</strong>
 					</div>
-				)}
-				{tabOf("ran", "win") === "reason" && (
-					<div className="table-responsive">
-						<table className={styles.tbl}>
-							<thead>
-								<tr>
-									<th>Reason Code</th>
-									<th>Cases</th>
-									<th>Win Rate</th>
-									<th>Avg Days</th>
-								</tr>
-							</thead>
-							<tbody>
-								{[
-									["Unauthorised", "16", "82%", "32"],
-									["Not Received", "9", "71%", "48"],
-									["Duplicate", "7", "89%", "21"],
-								].map(([r, c, w, d]) => (
-									<tr key={r}>
-										<td>{r}</td>
-										<td>{c}</td>
-										<td>{w}</td>
-										<td>{d}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+					<div className="d-flex justify-content-between">
+						<span className={styles.mutedSmall}>Decision Due</span>
+						<strong>15 Aug 2025</strong>
 					</div>
-				)}
-				{tabOf("ran", "win") === "time" && (
-					<div className={styles.summaryBox}>
-						<div className={styles.fwBold13}>Resolution Time Distribution</div>
-						{[
-							["0-30 days", "42%", "badgeS"],
-							["31-60 days", "38%", "badgeW"],
-							["61-90 days", "15%", "badgeI"],
-							["90+ days", "5%", "badgeD"],
-						].map(([r, p, tone], i) => (
-							<div className={`${styles.sr} ${i === 0 ? "mt-2" : ""}`} key={r}>
-								<div>{r}</div>
-								<div>
-									<span
-										className={`${styles.badge} ${styles[tone as "badgeS" | "badgeW" | "badgeI" | "badgeD"]}`}
-									>
-										{p}
-									</span>
-								</div>
-							</div>
-						))}
-					</div>
-				)}
-			</MBox>
+				</div>
+				<div className="mb-3">
+					<label className={shared.fieldLabel} htmlFor="arb-notes">
+						Notes
+					</label>
+					<textarea
+						id="arb-notes"
+						className={`${shared.field} form-control`}
+						rows={3}
+						defaultValue="Strong evidence package submitted. Merchant has poor compliance history."
+					/>
+				</div>
+				<InfoBox>
+					<i className="bi bi-calculator" aria-hidden="true" /> Arbitration
+					filing fee applies.{" "}
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+						onClick={() => onOpen("feeCalcModal")}
+						style={{ marginLeft: 4 }}
+					>
+						Calculate Fee
+					</button>
+				</InfoBox>
+			</SimpleModal>
 
-			{/* ============ M8: Dispute Automation Rules ============ */}
-			<MBox
-				id="disputeRulesModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   DISPUTE FEE CALCULATOR
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("feeCalcModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-sliders" style={{ color: "var(--pm-info)" }} />{" "}
-						Dispute Automation Rules
-					</>
-				}
-				footer={actionFooter(
-					"disputeRulesModal",
-					"Save Rules",
-					"Automation rules updated. Changes take effect immediately.",
-				)}
+				iconCls="bi bi-calculator"
+				title="Dispute Fee Calculator"
+				submitLabel="Calculate Fee"
+				successMsg="Estimated fee: KES 1,500 — dispute filing fee."
 			>
-				{actionBody(
-					"disputeRulesModal",
-					<>
-						<Pills
-							prefix="drule"
-							first="auto"
-							tabs={[
-								{ key: "auto", label: "Auto-Escalation" },
-								{ key: "evidence", label: "Evidence Rules" },
-								{ key: "merchant", label: "Merchant Rules" },
-							]}
-							tabsState={tabs}
-							onSwitch={sw}
-						/>
-						{(
-							[
-								{
-									key: "auto",
-									rows: [
-										{
-											label: "Auto-escalate disputes > KES 500,000",
-											sub: "Current: Disabled",
-											on: false,
-										},
-										{
-											label: "Auto-file chargeback if no response in 10 days",
-											on: true,
-										},
-										{
-											label: "Auto-blacklist merchant after 5 lost cases",
-											on: false,
-										},
-									],
-								},
-								{
-									key: "evidence",
-									rows: [
-										{
-											label:
-												"Require police report for unauthorised > KES 100k",
-											on: true,
-										},
-										{
-											label: 'Require delivery proof for "not received"',
-											on: true,
-										},
-									],
-								},
-								{
-									key: "merchant",
-									rows: [
-										{
-											label: "Auto-flag merchants with win rate < 40%",
-											on: true,
-										},
-										{
-											label:
-												"Auto-block transactions from blacklisted merchants",
-											on: true,
-										},
-									],
-								},
-							] as const
-						).map(
-							(panel) =>
-								tabOf("drule", "auto") === panel.key && (
-									<div key={panel.key}>
-										{panel.rows.map((r, i) => (
-											<div className={styles.sr} key={r.label}>
-												<div>
-													<strong>{r.label}</strong>
-													{"sub" in r && r.sub && (
-														<div className={styles.mutedSmall}>{r.sub}</div>
-													)}
-												</div>
-												<div className="form-check form-switch">
-													<input
-														className="form-check-input"
-														type="checkbox"
-														defaultChecked={r.on}
-														id={`drule-${panel.key}-${i}`}
-														aria-label={r.label}
-													/>
-												</div>
-											</div>
-										))}
-									</div>
-								),
-						)}
-					</>,
-				)}
-			</MBox>
+				<SelectField
+					label="Action"
+					options={[
+						"Dispute filing fee",
+						"Arbitration filing fee",
+						"Evidence courier / notarisation",
+					]}
+					defaultValue="Dispute filing fee"
+				/>
+				<div className={styles.summaryBox}>
+					<div className="d-flex justify-content-between">
+						<span>Fee</span>
+						<strong>KES 1,500</strong>
+					</div>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M9: Arbitration ============ */}
-			<MBox
-				id="arbitrationModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   EXPORT DISPUTE REPORT
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("exportReportModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-gavel" style={{ color: "var(--pm-purple)" }} />{" "}
-						Arbitration Management
-					</>
+				iconCls="bi bi-download"
+				title="Export Dispute Report"
+				submitLabel="Generate"
+				successMsg="Report generated and downloading..."
+				onSubmit={() =>
+					downloadFile(
+						"paymo-disputes-report.csv",
+						"case,network,stage,amount,status\nCDP-44923,Visa,Under Review,87400,Open\nCB-99102,Visa,Representment,87400,Due 27 Jun\nCDP-44915,PesaLink,Resolved,124800,Won\n",
+						"text/csv",
+					)
 				}
-				footer={actionFooter(
-					"arbitrationModal",
-					"Save",
-					"Arbitration notes saved. Case updated.",
-					undefined,
-					"Close",
-				)}
 			>
-				{actionBody(
-					"arbitrationModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Case</label>
-							<select className={styles.fc}>
-								<option>CB-99065 — Visa — KES 1,240,000 — Arbitration</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Arbitration Status</label>
-							<div className={styles.summaryBox}>
-								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Stage</span>
-									<strong>Arbitration Filed</strong>
-								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span className={styles.mutedSmall}>Network</span>
-									<strong>Visa</strong>
-								</div>
-								<div className="d-flex justify-content-between">
-									<span className={styles.mutedSmall}>Decision Due</span>
-									<strong>15 Aug 2025</strong>
-								</div>
-							</div>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Notes</label>
-							<textarea
-								className={styles.fc}
-								rows={3}
-								defaultValue="Strong evidence package submitted. Merchant has poor compliance history."
+				<SelectField label="Report Type" options={EXPORT_TYPES} />
+				<div className="mb-3">
+					<span className={shared.fieldLabel}>Date Range</span>
+					<div className="row g-2 mt-1">
+						<div className="col-6">
+							<input
+								type="date"
+								className={`${shared.field} form-control`}
+								defaultValue="2025-01-01"
 							/>
 						</div>
-					</>,
-				)}
-			</MBox>
+						<div className="col-6">
+							<input
+								type="date"
+								className={`${shared.field} form-control`}
+								defaultValue="2025-06-27"
+							/>
+						</div>
+					</div>
+				</div>
+				<SelectField label="Format" options={FORMATS} />
+			</SimpleModal>
 
-			{/* ============ M10: Export Report ============ */}
-			<MBox
-				id="exportReportModal"
-				active={active}
+			{/* ============================================================
+			   DISPUTE HEALTH CHECK
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("healthCheckModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-download" /> Export Dispute Report
-					</>
-				}
-				footer={actionFooter(
-					"exportReportModal",
-					"Generate",
-					"Report generated and downloading...",
-				)}
-			>
-				{actionBody(
-					"exportReportModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Report Type</label>
-							<select className={styles.fc}>
-								{EXPORT_TYPES.map((t) => (
-									<option key={t}>{t}</option>
-								))}
-							</select>
-						</div>
-						<div className="row g-3 mb-3">
-							<div className="col-6">
-								<label className={styles.fl}>From</label>
-								<input
-									type="date"
-									className={styles.fc}
-									defaultValue="2025-01-01"
-								/>
-							</div>
-							<div className="col-6">
-								<label className={styles.fl}>To</label>
-								<input
-									type="date"
-									className={styles.fc}
-									defaultValue="2025-06-27"
-								/>
-							</div>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Format</label>
-							<select className={styles.fc}>
-								{FORMATS.map((f) => (
-									<option key={f}>{f}</option>
-								))}
-							</select>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M11: Health Check ============ */}
-			<MBox
-				id="healthCheckModal"
-				active={active}
+				iconCls="bi bi-heart-pulse"
+				title="Dispute Health Check"
 				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-heart-pulse"
-							style={{ color: "var(--pm-danger)" }}
-						/>{" "}
-						Dispute Health Check
-					</>
-				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={() => onOpen("securityCheckModal")}
+						>
+							<i className="bi bi-shield-check" aria-hidden="true" /> Security
+							Check
+						</button>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
 							onClick={() => onOpen("disputeRulesModal")}
 						>
-							Improve Score
+							<i className="bi bi-sliders" aria-hidden="true" /> Improve Score
 						</button>
 					</>
 				}
 			>
-				<div className="row g-3 mb-3">
-					{healthTiles.map((t) => (
+				<div className="row g-3 mb-1">
+					{[
+						{
+							value: "84",
+							label: "HEALTH SCORE",
+							bg: "var(--pm-accent-soft)",
+							color: "var(--pm-accent)",
+							big: true,
+						},
+						{
+							value: "11",
+							label: "EXPIRING",
+							bg: "var(--pm-warning-soft)",
+							color: "var(--pm-warning)",
+						},
+						{
+							value: "41d",
+							label: "AVG TIME",
+							bg: "var(--pm-info-soft)",
+							color: "var(--pm-info)",
+						},
+						{
+							value: "68%",
+							label: "WIN RATE",
+							bg: "var(--pm-purple-soft)",
+							color: "var(--pm-purple)",
+						},
+					].map((t) => (
 						<div className="col-md-3 col-6" key={t.label}>
 							<div className={styles.miniStat} style={{ background: t.bg }}>
 								<div
 									className={t.big ? styles.miniStatBig : undefined}
 									style={
 										t.big
-											? { color: t.vColor }
-											: { fontSize: 24, fontWeight: 700, color: t.vColor }
+											? { color: t.color }
+											: { fontSize: 24, fontWeight: 700, color: t.color }
 									}
 								>
 									{t.value}
@@ -1642,8 +1298,8 @@ export default function DisputesModals({
 						</div>
 					))}
 				</div>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
 						<thead>
 							<tr>
 								<th>Metric</th>
@@ -1653,14 +1309,19 @@ export default function DisputesModals({
 							</tr>
 						</thead>
 						<tbody>
-							{healthRows.map(([m, c, t, s, tone]) => (
-								<tr key={m}>
-									<td>{m}</td>
-									<td>{c}</td>
-									<td>{t}</td>
+							{[
+								["Evidence completeness", "78%", "95%", "Below", "badgeW"],
+								["On-time filing", "94%", "100%", "Good", "badgeS"],
+								["Merchant blacklisting", "3", "5", "Below", "badgeW"],
+								["Arbitration win rate", "52%", "65%", "Below", "badgeW"],
+							].map((row) => (
+								<tr key={row[0]}>
+									<td>{row[0]}</td>
+									<td>{row[1]}</td>
+									<td>{row[2]}</td>
 									<td>
-										<span className={`${styles.badge} ${styles[tone]}`}>
-											{s}
+										<span className={`${shared.badge} ${toneBadge(row[4])}`}>
+											{row[3]}
 										</span>
 									</td>
 								</tr>
@@ -1668,37 +1329,108 @@ export default function DisputesModals({
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M12: Case Notifications ============ */}
-			<MBox
-				id="caseNotifModal"
-				active={active}
+			{/* ============================================================
+			   DISPUTE SECURITY CHECK
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("securityCheckModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-bell" /> Dispute Notifications (14)
-					</>
+				iconCls="bi bi-shield-check"
+				title="Dispute Security Check"
+				footer={
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
+						Close
+					</button>
 				}
+			>
+				<div
+					className={`${styles.summaryBoxAccent} mb-3`}
+					style={{ fontSize: 13 }}
+				>
+					<i className="bi bi-check-circle me-1" aria-hidden="true" /> All
+					dispute workflows pass security validation. Evidence files are
+					encrypted at rest and in transit.
+				</div>
+				{[
+					["Evidence encryption (AES-256)", "Enabled"],
+					["Two-person rule for arbitration filings", "Enabled"],
+					["Network webhook signature validation", "Passing"],
+				].map(([label, value]) => (
+					<div className={styles.sr} key={label}>
+						<div>
+							<strong>{label}</strong>
+						</div>
+						<span className={`${shared.badge} ${shared.badgeSuccess}`}>
+							{value}
+						</span>
+					</div>
+				))}
+			</ModalShell>
+
+			{/* ============================================================
+			   CASE NOTIFICATIONS
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("caseNotifModal")}
+				onClose={onClose}
+				iconCls="bi bi-bell"
+				title="Dispute Notifications (14)"
 				footer={
 					<>
 						<button
-							className={styles.btnPm}
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
 							onClick={() => onOpen("disputeRulesModal")}
 						>
-							Automation
+							<i className="bi bi-sliders" aria-hidden="true" /> Automation
 						</button>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 					</>
 				}
 			>
 				<div style={{ maxHeight: 500, overflowY: "auto" }}>
-					{caseNotifs.map((n) => (
+					{[
+						{
+							box: "summaryBoxDanger",
+							title: "CDP-44892 evidence deadline in 2 days",
+							sub: "Upload remaining documents before 29 Jun.",
+						},
+						{
+							box: "summaryBoxWarn",
+							title: "CB-99102 representment response due today",
+							sub: "Visa deadline: 27 Jun 2025.",
+						},
+						{
+							box: "summaryBoxInfo",
+							title: "CDP-44923 evidence package complete",
+							sub: "Submitted to Visa successfully.",
+						},
+						{
+							box: "summaryBoxAccent",
+							title: "CDP-44915 resolved — won",
+							sub: "KES 124,800 recovered.",
+						},
+						{
+							box: "summaryBox",
+							title: "Merchant blacklisting applied",
+							sub: "Local Vendor X — 3 new disputes prevented.",
+						},
+					].map((n) => (
 						<div
 							key={n.title}
-							className={`${styles[n.box]} mb-2`}
+							className={`${styles[n.box as "summaryBox"]} mb-2`}
 							style={{ fontSize: 13 }}
 						>
 							<strong>{n.title}</strong>
@@ -1706,81 +1438,30 @@ export default function DisputesModals({
 						</div>
 					))}
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M13: Profile ============ */}
-			<MBox
-				id="profileModal"
-				active={active}
+			{/* ============================================================
+			   FULL ACTIVITY LOG
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("activityLogModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-person-circle" /> Profile
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className="text-center">
-					<div
-						className={`${styles.avatar} mx-auto mb-3`}
-						style={{ width: 64, height: 64, fontSize: 24 }}
-					>
-						JK
-					</div>
-					<h5
-						className={styles.fwBold13}
-						style={{ fontSize: 16, marginBottom: 2 }}
-					>
-						James Kamau
-					</h5>
-					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
-						james.kamau@email.com · +254 712 345 890
-					</p>
-					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-						{profileStats.map(([l, v, accent]) => (
-							<div className="col-6" key={l}>
-								<div
-									className="p-2 rounded"
-									style={{ background: "var(--pm-surface-2)" }}
-								>
-									<span className={styles.mutedSmall}>{l}</span>
-									<br />
-									<strong
-										style={accent ? { color: "var(--pm-accent)" } : undefined}
-									>
-										{v}
-									</strong>
-								</div>
-							</div>
-						))}
-					</div>
-				</div>
-			</MBox>
-
-			{/* ============ M14: Activity Log ============ */}
-			<MBox
-				id="activityLogModal"
-				active={active}
+				iconCls="bi bi-clock-history"
+				title="Full Activity Log"
 				size="xl"
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-clock-history" /> Full Activity Log
-					</>
-				}
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
 				<div className="d-flex gap-2 mb-3 flex-wrap">
 					<select
-						className={styles.fc}
+						className={`${shared.field} form-control`}
 						style={{ width: "auto" }}
 						aria-label="Filter by case"
 						defaultValue="All Cases"
@@ -1790,14 +1471,14 @@ export default function DisputesModals({
 						<option>CB-99102</option>
 					</select>
 					<input
-						className={styles.fc}
+						className={`${shared.field} form-control`}
 						style={{ width: 200 }}
 						placeholder="Search activity..."
 						aria-label="Search activity"
 					/>
 				</div>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
 						<thead>
 							<tr>
 								<th>Timestamp</th>
@@ -1808,120 +1489,161 @@ export default function DisputesModals({
 							</tr>
 						</thead>
 						<tbody>
-							{activityRows.map(([ts, c, a, u, d]) => (
-								<tr key={`${ts}-${c}`}>
-									<td>{ts}</td>
-									<td>{c}</td>
-									<td>{a}</td>
-									<td>{u}</td>
-									<td>{d}</td>
+							{[
+								[
+									"27 Jun 14:32",
+									"CDP-44923",
+									"Evidence uploaded",
+									"James K.",
+									"receipt_amz.pdf, police_88291.pdf",
+								],
+								[
+									"27 Jun 11:15",
+									"CB-99102",
+									"Representment filed",
+									"Grace M.",
+									"Response submitted to Visa",
+								],
+								[
+									"26 Jun 09:40",
+									"CDP-44892",
+									"Merchant flagged",
+									"System",
+									"Local Vendor X — risk score 94",
+								],
+								[
+									"25 Jun 16:20",
+									"CDP-44915",
+									"Case resolved — won",
+									"James K.",
+									"KES 124,800 recovered",
+								],
+							].map((row) => (
+								<tr key={row[1] + row[0]}>
+									{row.map((cell) => (
+										<td key={cell}>{cell}</td>
+									))}
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M15: Attention ============ */}
-			<MBox
-				id="attentionModal"
-				active={active}
+			{/* ============================================================
+			   ALL ITEMS REQUIRING ATTENTION
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("attentionModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-exclamation-circle"
-							style={{ color: "var(--pm-warning)" }}
-						/>{" "}
-						All Items Requiring Attention
-					</>
-				}
+				iconCls="bi bi-exclamation-circle"
+				title="All Items Requiring Attention"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				{attentionRows.map((r) => (
+				{[
+					{
+						title: "CDP-44892 evidence due in 2 days",
+						sub: "KES 1.85M — 4 files remaining",
+						label: "Upload",
+						modal: "evidenceUploadModal",
+						danger: false,
+					},
+					{
+						title: "CB-99102 representment due today",
+						sub: "Visa — KES 87,400",
+						label: "Respond",
+						modal: "chargebackResponseModal",
+						danger: false,
+					},
+					{
+						title: "Local Vendor X blacklisting review",
+						sub: "6 cases — 17% win rate",
+						label: "Blacklist",
+						modal: "merchantRiskModal",
+						danger: true,
+					},
+					{
+						title: "CDP-44923 evidence package complete",
+						sub: "Ready for submission",
+						label: "Submit",
+						modal: "disputeDetailModal",
+						danger: false,
+					},
+				].map((r) => (
 					<div className={styles.sr} key={r.title}>
 						<div>
 							<strong>{r.title}</strong>
 							<div className={styles.mutedSmall}>{r.sub}</div>
 						</div>
 						<button
-							className={`${styles.btnPm} ${styles.btnSm} ${"danger" in r && r.danger ? styles.btnPmD : ""}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnSm} ${r.danger ? shared.btnDanger : shared.btnSecondary}`}
 							onClick={() => onOpen(r.modal)}
 						>
 							{r.label}
 						</button>
 					</div>
 				))}
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M16: Quick Dispute Helper ============ */}
-			<MBox
-				id="quickDisputeModal"
-				active={active}
+			{/* ============================================================
+			   QUICK DISPUTE
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("quickDisputeModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-lightning-charge" /> Quick Dispute
-					</>
-				}
-				footer={actionFooter(
-					"quickDisputeModal",
-					"File Dispute",
-					"Quick dispute filed successfully. Case CDP-44924 created.",
-					"CDP-44924",
-				)}
+				iconCls="bi bi-lightning-charge"
+				title="Quick Dispute"
+				submitLabel="File Dispute"
+				successMsg="Quick dispute filed successfully. Case CDP-44924 created."
 			>
-				{actionBody(
-					"quickDisputeModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Transaction</label>
-							<select className={styles.fc}>
-								<option>Amazon Kenya — KES 87,400 — 12 Jun</option>
-								<option>Jumia Pay — KES 23,150 — 10 Jun</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Reason</label>
-							<select className={styles.fc}>
-								<option>Unauthorised</option>
-								<option>Not Received</option>
-								<option>Duplicate</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Amount</label>
-							<input className={styles.fc} defaultValue="87400" />
-						</div>
-					</>,
-				)}
-			</MBox>
+				<SelectField
+					label="Transaction"
+					options={[
+						"Amazon Kenya — KES 87,400 — 12 Jun",
+						"Jumia Pay — KES 23,150 — 10 Jun",
+					]}
+				/>
+				<SelectField
+					label="Reason"
+					options={["Unauthorised", "Not Received", "Duplicate"]}
+					defaultValue="Unauthorised"
+				/>
+				<Field label="Amount (KES)" defaultValue="87400" />
+			</SimpleModal>
 
-			{/* ============ M17: Dispute Details ============ */}
-			<MBox
-				id="disputeDetailModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   DISPUTE DETAILS
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("disputeDetailModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-file-earmark-text" /> Dispute Details
-					</>
-				}
+				iconCls="bi bi-file-earmark-text"
+				title="Dispute Details"
+				size="lg"
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
 							onClick={() => onOpen("evidenceUploadModal")}
 						>
-							Upload Evidence
+							<i className="bi bi-upload" aria-hidden="true" /> Upload Evidence
 						</button>
 					</>
 				}
@@ -1933,7 +1655,7 @@ export default function DisputesModals({
 					</div>
 					<div className="d-flex justify-content-between mb-2">
 						<span className={styles.mutedSmall}>Status</span>
-						<span className={`${styles.badge} ${styles.badgeI}`}>
+						<span className={`${shared.badge} ${shared.badgeInfo}`}>
 							Under Review
 						</span>
 					</div>
@@ -1946,34 +1668,34 @@ export default function DisputesModals({
 						<strong>11 Jul 2025</strong>
 					</div>
 				</div>
-				<div className="mb-3">
-					<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-						Timeline
-					</h6>
-					<div className={styles.sr}>
-						<div>27 Jun 14:32</div>
-						<div>Evidence uploaded</div>
-					</div>
-					<div className={styles.sr}>
-						<div>27 Jun 09:15</div>
-						<div>Dispute filed</div>
-					</div>
+				<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
+					Timeline
+				</h6>
+				<div className={styles.sr}>
+					<div>27 Jun 14:32</div>
+					<div>Evidence uploaded</div>
 				</div>
-			</MBox>
+				<div className={styles.sr}>
+					<div>27 Jun 09:15</div>
+					<div>Dispute filed</div>
+				</div>
+			</ModalShell>
 
-			{/* ============ M18: Chargeback Tracker ============ */}
-			<MBox
-				id="chargebackTrackerModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   CHARGEBACK TRACKER
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("chargebackTrackerModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-graph-up" /> Chargeback Tracker
-					</>
-				}
+				iconCls="bi bi-graph-up"
+				title="Chargeback Tracker"
+				size="lg"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
@@ -1981,7 +1703,7 @@ export default function DisputesModals({
 				<div className={`${styles.summaryBox} mb-3`}>
 					<div className="d-flex justify-content-between mb-2">
 						<span className={styles.mutedSmall}>CB-99102</span>
-						<span className={`${styles.badge} ${styles.badgeW}`}>
+						<span className={`${shared.badge} ${shared.badgeWarning}`}>
 							Representment
 						</span>
 					</div>
@@ -1990,175 +1712,22 @@ export default function DisputesModals({
 						<strong>Visa → Pre-Arbitration</strong>
 					</div>
 				</div>
-				<div className="mb-3">
-					<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-						Stage Timeline
-					</h6>
-					<div className={styles.sr}>
-						<div>20 Jun</div>
-						<div>First chargeback filed</div>
-					</div>
-					<div className={styles.sr}>
-						<div>25 Jun</div>
-						<div>Representment submitted</div>
-					</div>
-					<div className={styles.sr}>
-						<div>27 Jun</div>
-						<div>Response due</div>
-					</div>
+				<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
+					Stage Timeline
+				</h6>
+				<div className={styles.sr}>
+					<div>20 Jun</div>
+					<div>First chargeback filed</div>
 				</div>
-			</MBox>
-
-			{/* ============ M19: Dispute Rules (legacy quick variant) ============ */}
-			<MBox
-				id="disputeRulesModal2"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-sliders" /> Dispute Rules
-					</>
-				}
-				footer={actionFooter("disputeRulesModal2", "Save", "Rules saved.")}
-			>
-				{actionBody(
-					"disputeRulesModal2",
-					<>
-						{[
-							{ label: "Auto-escalate > KES 500k", on: true },
-							{ label: "Auto-file chargeback after 10 days", on: true },
-							{ label: "Auto-blacklist after 5 lost cases", on: false },
-						].map((r, i) => (
-							<div
-								className={`form-check ${i < 2 ? "mb-2" : ""}`}
-								key={r.label}
-							>
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked={r.on}
-									id={`dr2-${i}`}
-								/>
-								<label className="form-check-label" htmlFor={`dr2-${i}`}>
-									{r.label}
-								</label>
-							</div>
-						))}
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M20: Dispute Fee Calculator (legacy truncated — completed) ============ */}
-			<MBox
-				id="feeCalcModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-calculator" /> Dispute Fee Calculator
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className="mb-3">
-					<label className={styles.fl}>Action</label>
-					<select className={styles.fc}>
-						<option>Dispute filing fee</option>
-						<option>Arbitration filing fee</option>
-						<option>Evidence courier / notarisation</option>
-					</select>
+				<div className={styles.sr}>
+					<div>25 Jun</div>
+					<div>Representment submitted</div>
 				</div>
-				<div className={styles.summaryBox}>
-					<div className="d-flex justify-content-between">
-						<span>Fee</span>
-						<strong>KES 1,500</strong>
-					</div>
+				<div className={styles.sr}>
+					<div>27 Jun</div>
+					<div>Response due</div>
 				</div>
-			</MBox>
-
-			{/* ============ M21: Branch Support Locator (legacy truncated — completed) ============ */}
-			<MBox
-				id="branchSupportModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-geo-alt" /> Branch Support Locator
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
-						<thead>
-							<tr>
-								<th>Branch</th>
-								<th>Services</th>
-								<th>Distance</th>
-							</tr>
-						</thead>
-						<tbody>
-							{branchRows.map(([b, s, d]) => (
-								<tr key={b}>
-									<td>{b}</td>
-									<td>{s}</td>
-									<td>{d}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			</MBox>
-
-			{/* ============ M22: Dispute Security Check (legacy truncated — completed) ============ */}
-			<MBox
-				id="securityCheckModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-shield-check"
-							style={{ color: "var(--pm-accent)" }}
-						/>{" "}
-						Dispute Security Check
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div
-					className={`${styles.summaryBoxAccent} mb-3`}
-					style={{ fontSize: 13 }}
-				>
-					<i className="bi bi-check-circle me-1" /> All dispute workflows pass
-					security validation. Evidence files are encrypted at rest and in
-					transit.
-				</div>
-				{[
-					["Evidence encryption (AES-256)", "Enabled"],
-					["Two-person rule for arbitration filings", "Enabled"],
-					["Network webhook signature validation", "Passing"],
-				].map(([l, v]) => (
-					<div className={styles.sr} key={l}>
-						<div>
-							<strong>{l}</strong>
-						</div>
-						<span className={`${styles.badge} ${styles.badgeS}`}>{v}</span>
-					</div>
-				))}
-			</MBox>
+			</ModalShell>
 		</>
 	);
 }

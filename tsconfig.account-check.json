@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/features/dashboards/transaction-dashboard/account/page/AccountProfile.tsx",
+    "src/features/dashboards/transaction-dashboard/account/modals/AccountProfileModals.tsx",
+    "src/features/dashboards/transaction-dashboard/shared/components/modals.tsx",
+    "src/features/dashboards/transaction-dashboard/shared/styles/appPage.module.css",
+    "src/features/Layouts/shell/data/shellData.ts",
+    "src/routeTree.gen.ts"
+  ]
+}

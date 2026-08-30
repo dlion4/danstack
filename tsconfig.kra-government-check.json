@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/features/dashboards/transaction-dashboard/kra-government/pages/KraGovernment.tsx",
+    "src/features/dashboards/transaction-dashboard/kra-government/components/KraGovernmentModals.tsx",
+    "src/features/dashboards/transaction-dashboard/shared/components/modals.tsx",
+    "src/features/dashboards/transaction-dashboard/shared/styles/appPage.module.css",
+    "src/features/Layouts/shell/data/shellData.ts",
+    "src/routeTree.gen.ts"
+  ]
+}

@@ -215,7 +215,7 @@ export const initialMockData: ShellContent = {
                                                         label: "FX & Currencies",
                                                         icon: "bi-currency-exchange",
                                                 },
-                                                { key: "fees", label: "Fees & Commissions", icon: "bi-receipt" },
+                                                { key: "fees", label: "Fees & Profit", icon: "bi-receipt" },
                                         ],
                                 },
                                 {

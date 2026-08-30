@@ -1,96 +1,45 @@
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+"use client";
+
+import {
+	Field,
+	FlowModal,
+	InfoBox,
+	ModalShell,
+	PinRow,
+	SelectField,
+	SimpleModal,
+} from "../../shared/components/modals";
+import s from "../../shared/styles/appPage.module.css";
 import styles from "../styles/kraGovernment.module.css";
 
 /* ============================================================================
-   KRA & Government Integration — modal layer (legacy page 1.12, 21 modals)
-   LEGACY BRIDGE:
-     openM(id)          → parent lifts `active` state into this component
-     doAction(id,msg)   → `results` state; legacy showLoading spinner → receipt
-     nextFlow(key,total)→ `flows` state with labeled stepper + receipt step
-                          confirm-step labels kept: kra='Pay Now 🔒',
-                          file='Submit & Pay 📨', bulk='Execute ✔'
-     nf(el) PIN advance → pinRefs focus chain
-     cacheAndReset()    → useEffect on close resets flows + results
+   KRA & Government — modal layer on the SHARED primitives
+   (ModalShell / SimpleModal / FlowModal / TabbedModal). No legacy MBox.
+   19 modals, all reachable from the page (18 via direct triggers — incl.
+   govNotifModal bell — + govReceiptModal via government-service rows);
+   cross-modal navigation via onOpen (health → pay, optimizer → file,
+   history → receipt/track, attention → file/pay/eCitizen).
+   Legacy dead/duplicate ids removed: profileModal (shell chrome),
+   taxOptimizerModal2 (duplicate stub of taxOptimizerModal); orphaned legacy
+   payECitizen / payCounty / payArdhisasa / trackGov / govReceipt / govNotif
+   modals are now wired into page workflows.
    ========================================================================== */
 
-interface ModalsProps {
-	active: string | null;
-	onClose: () => void;
-	onOpen: (id: string) => void;
-}
+const shared = s as Record<string, string>;
 
-type Size = "md" | "lg" | "xl";
-
-interface MBoxProps {
-	id: string;
-	active: string | null;
-	title: ReactNode;
-	size?: Size;
-	onClose: () => void;
-	children: ReactNode;
-	footer?: ReactNode;
-}
-
-/* ---------- LEGACY BRIDGE: file download helper (receipt "Save" / template) ---------- */
 function downloadFile(name: string, content: string, type = "text/plain") {
+	const blob = new Blob([content], { type });
+	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
-	a.href = URL.createObjectURL(new Blob([content], { type }));
+	a.href = url;
 	a.download = name;
+	document.body.appendChild(a);
 	a.click();
-	URL.revokeObjectURL(a.href);
+	a.remove();
+	URL.revokeObjectURL(url);
 }
 
-/* ---------- modal shell (Bootstrap look, React state driven) ---------- */
-function MBox({
-	id,
-	active,
-	title,
-	size = "md",
-	onClose,
-	children,
-	footer,
-}: MBoxProps) {
-	if (active !== id) return null;
-	return (
-		<>
-			<div className={styles.backdrop} onClick={onClose} />
-			<div
-				className={styles.modalWrap}
-				role="dialog"
-				aria-modal="true"
-				aria-label={id}
-			>
-				<div
-					className={`${styles.modalBox} ${size === "lg" ? styles.modalBoxLg : ""} ${size === "xl" ? styles.modalBoxXl : ""}`}
-				>
-					<div className={styles.modalHeader}>
-						<h5 className={styles.modalTitle}>{title}</h5>
-						<button
-							type="button"
-							className="btn-close"
-							aria-label="Close"
-							onClick={onClose}
-						/>
-					</div>
-					<div className={styles.modalBody}>{children}</div>
-					{footer && <div className={styles.modalFooter}>{footer}</div>}
-				</div>
-			</div>
-		</>
-	);
-}
-
-function BusyOverlay() {
-	return (
-		<div className={styles.loadingOv}>
-			<div className={styles.spinner} />
-			<p className={styles.loadingLabel}>Processing...</p>
-		</div>
-	);
-}
-
-/* ---------- static option lists ---------- */
+/* ---------- option lists ---------- */
 const KRA_ENTITIES = [
 	"A012345678Y — James Kamau (PAYE)",
 	"P987654321Z — JK Holdings (VAT)",
@@ -145,1276 +94,795 @@ const FREQUENCIES = ["Monthly", "Quarterly", "Annual"];
 const ENTITY_TYPES = ["Individual", "Company", "Partnership", "Trust"];
 const LINK_SOURCES = ["PayMo Wallet", "M-Pesa", "Bank"];
 
-type FlowKey = "kra" | "file" | "bulk";
-interface Result {
-	msg: string;
-	ref?: string;
-}
+const toneBadge = (tone: string) =>
+	tone === "badgeS"
+		? shared.badgeSuccess
+		: tone === "badgeW"
+			? shared.badgeWarning
+			: tone === "badgeD"
+				? shared.badgeDanger
+				: tone === "badgeI"
+					? shared.badgeInfo
+					: shared.badgePurple;
 
 export default function KraGovernmentModals({
 	active,
 	onClose,
 	onOpen,
-}: ModalsProps) {
-	/* ---------- doAction / nextFlow / busy state ---------- */
-	const [results, setResults] = useState<Record<string, Result>>({});
-	const [busy, setBusy] = useState<string | null>(null);
-	const [flows, setFlows] = useState<Record<FlowKey, number>>({
-		kra: 1,
-		file: 1,
-		bulk: 1,
-	});
-	const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-	/* ---------- LEGACY BRIDGE: cacheAndReset → fresh state on next open ---------- */
-	useEffect(() => {
-		if (active === null) {
-			setResults({});
-			setFlows({ kra: 1, file: 1, bulk: 1 });
-			setBusy(null);
-		}
-	}, [active]);
-
-	const busyTimer = useRef<number | undefined>(undefined);
-	useEffect(() => () => window.clearTimeout(busyTimer.current), []);
-
-	/* ---------- LEGACY BRIDGE: nf(el) PIN auto-advance ---------- */
-	const nf = (i: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length === 1) pinRefs.current[i + 1]?.focus();
-	};
-
-	/* ---------- LEGACY BRIDGE: doAction(modalId, msg, ref) ---------- */
-	const doAction = (modalId: string, msg: string, ref?: string) => {
-		setBusy(modalId);
-		busyTimer.current = window.setTimeout(() => {
-			setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }));
-			setBusy(null);
-		}, 1500);
-	};
-
-	/* ---------- LEGACY BRIDGE: nextFlow(key, total) ---------- */
-	const flowTotals: Record<FlowKey, number> = { kra: 4, file: 4, bulk: 3 };
-	const flowLabels: Record<FlowKey, string[]> = {
-		kra: ["Obligation", "Details", "Confirm", "Done"],
-		file: ["Select", "Upload", "Submit", "Done"],
-		bulk: ["Upload", "Validate", "Done"],
-	};
-	const flowModals: Record<FlowKey, string> = {
-		kra: "payKRAModal",
-		file: "fileReturnModal",
-		bulk: "bulkTaxModal",
-	};
-	const confirmLabels: Record<FlowKey, ReactNode> = {
-		kra: (
-			<>
-				Pay Now <i className="bi bi-lock" />
-			</>
-		),
-		file: (
-			<>
-				Submit &amp; Pay <i className="bi bi-send" />
-			</>
-		),
-		bulk: (
-			<>
-				Execute <i className="bi bi-check-lg" />
-			</>
-		),
-	};
-	const nextFlow = (key: FlowKey) => {
-		const total = flowTotals[key];
-		const current = flows[key];
-		if (current >= total) {
-			onClose();
-			return;
-		}
-		if (current === total - 1) {
-			setBusy(key);
-			busyTimer.current = window.setTimeout(() => {
-				setFlows((prev) => ({ ...prev, [key]: total }));
-				setBusy(null);
-			}, 1400);
-			return;
-		}
-		setFlows((prev) => ({ ...prev, [key]: current + 1 }));
-	};
-
-	/* ---------- shared UI fragments ---------- */
-	const stepper = (key: FlowKey) => {
-		const total = flowTotals[key];
-		const current = flows[key];
-		return (
-			<div className={styles.stepper}>
-				{flowLabels[key].map((label, i) => {
-					const n = i + 1;
-					const cls =
-						n < current
-							? styles.stepDone
-							: n === current
-								? styles.stepActive
-								: "";
-					return (
-						<div
-							key={n}
-							className={styles.step}
-							style={{ display: "contents" }}
-						>
-							<div
-								className={`${styles.step} ${cls}`}
-								style={{ display: "flex" }}
-							>
-								<div className={styles.stepN}>
-									{n < current ? <i className="bi bi-check" /> : n}
-								</div>
-								<div className={styles.stepL}>{label}</div>
-							</div>
-							{n < total && <div className={styles.stepLine} />}
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
-
-	const receipt = (modalId: string, r: Result) => (
-		<div className={styles.receipt}>
-			<div className={styles.ri}>
-				<i className="bi bi-check-lg" />
-			</div>
-			<h5 className={styles.receiptTitle}>{r.msg}</h5>
-			{r.ref && (
-				<p style={{ fontSize: 12, color: "var(--pm-muted)" }}>
-					Reference: {r.ref}
-				</p>
-			)}
-			<div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
-				<button
-					className={`${styles.btnPm} ${styles.btnSm}`}
-					onClick={() =>
-						downloadFile(
-							`${modalId}-receipt.txt`,
-							`${r.msg}${r.ref ? `\nReference: ${r.ref}` : ""}`,
-						)
-					}
-				>
-					<i className="bi bi-download" /> Save
-				</button>
-				<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={onClose}>
-					<i className="bi bi-share" /> Continue
-				</button>
-			</div>
-		</div>
-	);
-
-	const actionBody = (id: string, children: ReactNode) => (
-		<>
-			{busy === id && <BusyOverlay />}
-			{results[id] ? receipt(id, results[id]) : children}
-		</>
-	);
-
-	const actionFooter = (
-		id: string,
-		label: string,
-		msg: string,
-		ref?: string,
-		cancelLabel = "Cancel",
-	) =>
-		results[id] ? (
-			<button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={onClose}>
-				Done
-			</button>
-		) : (
-			<>
-				<button className={styles.btnPm} onClick={onClose}>
-					{cancelLabel}
-				</button>
-				<button
-					className={`${styles.btnPm} ${styles.btnPmP}`}
-					disabled={busy === id}
-					onClick={() => doAction(id, msg, ref)}
-				>
-					{label}
-				</button>
-			</>
-		);
-
-	const flowFooter = (key: FlowKey) => (
-		<>
-			<button className={styles.btnPm} onClick={onClose}>
-				Cancel
-			</button>
-			<button
-				className={`${styles.btnPm} ${styles.btnPmP}`}
-				disabled={busy === key}
-				onClick={() => nextFlow(key)}
-			>
-				{flows[key] >= flowTotals[key] ? (
-					"Done"
-				) : busy === key ? (
-					<>
-						<span
-							className="spinner-border spinner-border-sm me-1"
-							aria-hidden="true"
-						/>{" "}
-						Processing
-					</>
-				) : flows[key] === flowTotals[key] - 1 ? (
-					confirmLabels[key]
-				) : (
-					<>
-						Continue <i className="bi bi-arrow-right" />
-					</>
-				)}
-			</button>
-		</>
-	);
-
-	const showFlow = (key: FlowKey) => active === flowModals[key];
-
-	/* ---------- summary box row helper ---------- */
-	const BoxRow = ({
-		label,
-		value,
-		last,
-		tone,
-	}: {
-		label: string;
-		value: ReactNode;
-		last?: boolean;
-		tone?: string;
-	}) => (
-		<div className={`d-flex justify-content-between ${last ? "" : "mb-2"}`}>
-			<span className={styles.mutedSmall}>{label}</span>
-			<strong style={tone ? { color: tone } : undefined}>{value}</strong>
-		</div>
-	);
+}: {
+	active: string | null;
+	onClose: () => void;
+	onOpen: (id: string) => void;
+}) {
+	const isOpen = (id: string) => active === id;
 
 	return (
 		<>
-			{/* ============ M1: Pay KRA Tax (multi-step) ============ */}
-			<MBox
-				id="payKRAModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   PAY KRA TAX (4-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("payKRAModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-receipt-cutoff me-2"
-							style={{ color: "var(--pm-danger)" }}
-						/>
-						Pay KRA Tax
-					</>
-				}
-				footer={flowFooter("kra")}
+				iconCls="bi bi-receipt-cutoff"
+				title="Pay KRA Tax"
+				steps={["Obligation", "Details", "Confirm", "Done"]}
+				confirmLabel="Pay Now"
 			>
-				{stepper("kra")}
-				{busy === "kra" && <BusyOverlay />}
-				{showFlow("kra") && flows.kra === 1 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Select Obligation</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>KRA PIN / Entity</label>
-							<select className={styles.fc} defaultValue={KRA_ENTITIES[0]}>
-								{KRA_ENTITIES.map((e) => (
-									<option key={e}>{e}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Tax Type</label>
-							<select className={styles.fc} defaultValue={TAX_TYPES[0]}>
-								{TAX_TYPES.map((t) => (
-									<option key={t}>{t}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBoxInfo} style={{ fontSize: 12 }}>
-							<i className="bi bi-info-circle me-1" /> Current due:{" "}
-							<strong>KES 42,800</strong> • Due date: 15 Jul 2025
-						</div>
-					</div>
-				)}
-				{showFlow("kra") && flows.kra === 2 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Payment Details</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>Amount (KES)</label>
-							<input className={styles.fc} defaultValue="42800" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Payment Method</label>
-							<select className={styles.fc} defaultValue={PAY_METHODS[0]}>
-								{PAY_METHODS.map((m) => (
-									<option key={m}>{m}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Schedule</label>
-							<select className={styles.fc} defaultValue={PAY_SCHEDULES[0]}>
-								{PAY_SCHEDULES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-					</div>
-				)}
-				{showFlow("kra") && flows.kra === 3 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Confirm &amp; Pay</h6>
-						<div className={`${styles.summaryBox} mb-3`}>
-							<BoxRow label="Tax Type" value="PAYE" />
-							<BoxRow label="Amount" value="KES 42,800" />
-							<BoxRow label="Method" value="Wallet" />
-							<BoxRow label="Fee" value="KES 0" last />
-						</div>
-						<label className={styles.fl}>Enter Wallet PIN</label>
-						<div className={styles.pinRow}>
-							{[0, 1, 2, 3].map((i) => (
-								<input
-									key={i}
-									ref={(el) => {
-										pinRefs.current[i] = el;
-									}}
-									type="password"
-									maxLength={1}
-									onChange={nf(i)}
-									className={styles.pinInput}
-									aria-label={`PIN digit ${i + 1}`}
+				{(step) => (
+					<>
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Select the obligation to settle
+								</p>
+								<SelectField label="KRA PIN / Entity" options={KRA_ENTITIES} />
+								<SelectField label="Tax Type" options={TAX_TYPES} />
+								<InfoBox>
+									<i className="bi bi-info-circle" aria-hidden="true" /> Current
+									due: <strong>KES 42,800</strong> · Due date: 15 Jul 2025
+								</InfoBox>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Payment details
+								</p>
+								<Field label="Amount (KES)" defaultValue="42800" />
+								<SelectField label="Payment Method" options={PAY_METHODS} />
+								<SelectField
+									label="Schedule"
+									options={PAY_SCHEDULES}
+									defaultValue="Pay immediately"
 								/>
-							))}
-						</div>
-					</div>
-				)}
-				{showFlow("kra") && flows.kra === 4 && (
-					<div className={styles.fstepActive}>
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
 							</div>
-							<h5 className={styles.receiptTitle}>Tax Payment Successful</h5>
-							<p className={styles.receiptSub}>
-								Your KRA payment has been processed. Receipt and iTax
-								confirmation have been sent.
-							</p>
-							<div
-								className={`${styles.summaryBox} text-start mt-3`}
-								style={{ fontSize: 13 }}
-							>
-								<BoxRow label="KRA PIN" value="A012345678Y" />
-								<BoxRow label="Amount" value="KES 42,800" />
-								<BoxRow label="iTax Ref" value="ITX-883421" />
-								<BoxRow label="Date" value="27 Jun 2025, 14:32" last />
+						)}
+						{step === 3 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 3: Confirm &amp; pay
+								</p>
+								<div className={styles.summaryBox} style={{ marginBottom: 12 }}>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Tax Type</span>
+										<strong>PAYE</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Amount</span>
+										<strong>KES 42,800</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Method</span>
+										<strong>Wallet</strong>
+									</div>
+									<div className="d-flex justify-content-between">
+										<span className={styles.mutedSmall}>Fee</span>
+										<strong>KES 0</strong>
+									</div>
+								</div>
+								<span className={shared.fieldLabel}>Enter Wallet PIN</span>
+								<PinRow />
 							</div>
-						</div>
-					</div>
+						)}
+						{step === 4 && (
+							<div className={styles.summaryBox} style={{ marginTop: 8 }}>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>KRA PIN</span>
+									<strong>A012345678Y</strong>
+								</div>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>Amount</span>
+									<strong>KES 42,800</strong>
+								</div>
+								<div className="d-flex justify-content-between mb-2">
+									<span className={styles.mutedSmall}>iTax Ref</span>
+									<strong>ITX-883421</strong>
+								</div>
+								<div className="d-flex justify-content-between">
+									<span className={styles.mutedSmall}>Date</span>
+									<strong>27 Jun 2025, 14:32</strong>
+								</div>
+							</div>
+						)}
+					</>
 				)}
-			</MBox>
+			</FlowModal>
 
-			{/* ============ M2: File Tax Return (multi-step) ============ */}
-			<MBox
-				id="fileReturnModal"
-				active={active}
+			{/* ============================================================
+			   FILE TAX RETURN (4-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("fileReturnModal")}
+				onClose={onClose}
+				iconCls="bi bi-file-earmark-text"
+				title="File Tax Return"
+				steps={["Select", "Upload", "Submit", "Done"]}
+				confirmLabel="Submit & Pay"
+			>
+				{(step) => (
+					<>
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Select the return to file
+								</p>
+								<SelectField label="KRA PIN" options={FILE_PINS} />
+								<SelectField
+									label="Return Period"
+									options={RETURN_PERIODS}
+									defaultValue="June 2025"
+								/>
+								<InfoBox variant="warning">
+									<i className="bi bi-clock" aria-hidden="true" /> Due in{" "}
+									<strong>2 days</strong>. File early to avoid late penalties.
+								</InfoBox>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Upload &amp; review
+								</p>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="fr-upload">
+										Upload Supporting Documents
+									</label>
+									<input
+										id="fr-upload"
+										type="file"
+										multiple
+										className={`${shared.field} form-control`}
+									/>
+								</div>
+								<div className={styles.summaryBox}>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Gross Sales</span>
+										<strong>KES 4,200,000</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Input VAT</span>
+										<strong>KES 672,000</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Output VAT</span>
+										<strong>KES 756,200</strong>
+									</div>
+									<hr className="my-2" />
+									<div className="d-flex justify-content-between">
+										<span className={styles.fwBold13}>Net VAT Payable</span>
+										<strong className={styles.textDanger}>KES 84,200</strong>
+									</div>
+								</div>
+							</div>
+						)}
+						{step === 3 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 3: Submit &amp; pay
+								</p>
+								<div className={`${styles.summaryBoxAccent} mb-3`}>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Return Type</span>
+										<strong>VAT — June 2025</strong>
+									</div>
+									<div className="d-flex justify-content-between mb-2">
+										<span className={styles.mutedSmall}>Amount Due</span>
+										<strong>KES 84,200</strong>
+									</div>
+									<div className="d-flex justify-content-between">
+										<span className={styles.mutedSmall}>iTax Confirmation</span>
+										<strong>Will be emailed</strong>
+									</div>
+								</div>
+								<div className="form-check mb-2">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										defaultChecked
+										id="fr-pay-now"
+									/>
+									<label
+										className="form-check-label"
+										style={{ fontSize: 13 }}
+										htmlFor="fr-pay-now"
+									>
+										Pay immediately after filing
+									</label>
+								</div>
+								<div className="form-check">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										defaultChecked
+										id="fr-auto-next"
+									/>
+									<label
+										className="form-check-label"
+										style={{ fontSize: 13 }}
+										htmlFor="fr-auto-next"
+									>
+										Auto-file next month
+									</label>
+								</div>
+							</div>
+						)}
+					</>
+				)}
+			</FlowModal>
+
+			{/* ============================================================
+			   BULK TAX FILING (3-step wizard)
+			   ============================================================ */}
+			<FlowModal
+				show={isOpen("bulkTaxModal")}
+				onClose={onClose}
+				iconCls="bi bi-collection"
+				title="Bulk Tax Filing & Payment"
+				steps={["Upload", "Validate", "Done"]}
+				confirmLabel="Execute"
+			>
+				{(step) => (
+					<>
+						{step === 1 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 1: Upload the bulk file
+								</p>
+								<div className="mb-3">
+									<label className={shared.fieldLabel} htmlFor="bulk-file">
+										Upload CSV/Excel
+									</label>
+									<input
+										id="bulk-file"
+										type="file"
+										className={`${shared.field} form-control`}
+									/>
+								</div>
+								<InfoBox>
+									<i className="bi bi-info-circle" aria-hidden="true" />{" "}
+									Download template:{" "}
+									<button
+										type="button"
+										className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+										style={{ marginLeft: 4 }}
+										onClick={() =>
+											downloadFile(
+												"KRA_Bulk_Template.csv",
+												"kra_pin,tax_type,period,amount,method\nA012345678Y,PAYE,2025-06,42800,wallet\n",
+												"text/csv",
+											)
+										}
+									>
+										<i className="bi bi-download" aria-hidden="true" /> Template
+									</button>
+								</InfoBox>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${shared.fieldLabel} mb-3`}>
+									Step 2: Preview &amp; validate
+								</p>
+								<div className={shared.tableWrap}>
+									<table className={shared.table}>
+										<thead>
+											<tr>
+												<th>PIN</th>
+												<th>Tax Type</th>
+												<th>Amount</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											{[
+												[
+													"A012345678Y",
+													"PAYE",
+													"KES 42,800",
+													"Valid",
+													"badgeS",
+												],
+												["P987654321Z", "VAT", "KES 84,200", "Valid", "badgeS"],
+												[
+													"R445566778X",
+													"TOT",
+													"KES 18,600",
+													"Warning",
+													"badgeW",
+												],
+											].map((row) => (
+												<tr key={row[0]}>
+													{row.slice(0, 3).map((cell) => (
+														<td key={cell}>{cell}</td>
+													))}
+													<td>
+														<span
+															className={`${shared.badge} ${toneBadge(row[4])}`}
+														>
+															{row[3]}
+														</span>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+					</>
+				)}
+			</FlowModal>
+
+			{/* ============================================================
+			   PAY eCITIZEN SERVICE
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("payECitizenModal")}
+				onClose={onClose}
+				iconCls="bi bi-globe"
+				title="Pay eCitizen Service"
+				submitLabel="Pay KES 4,500"
+				successMsg="eCitizen payment successful! Receipt sent to your email."
+			>
+				<SelectField
+					label="Service"
+					options={ECITIZEN_SERVICES}
+					defaultValue="Passport Renewal — KES 4,500"
+				/>
+				<Field label="Application / Ref Number" defaultValue="P-449281" />
+				<SelectField label="Payment Method" options={ECITIZEN_METHODS} />
+				<InfoBox>
+					<i className="bi bi-info-circle" aria-hidden="true" /> Payment is
+					processed instantly. You will receive a confirmation SMS and email
+					with the receipt.
+				</InfoBox>
+			</SimpleModal>
+
+			{/* ============================================================
+			   PAY COUNTY REVENUE
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("payCountyModal")}
+				onClose={onClose}
+				iconCls="bi bi-building"
+				title="Pay County Revenue"
+				submitLabel="Pay Now"
+				successMsg="County payment successful! Permit updated in your records."
+			>
+				<SelectField label="County" options={COUNTIES} />
+				<SelectField
+					label="Service / Permit"
+					options={COUNTY_SERVICES}
+					defaultValue="Single Business Permit — KES 18,500"
+				/>
+				<Field label="Account / Plot Number" defaultValue="NCC-882910" />
+				<SelectField
+					label="Payment Method"
+					options={ECITIZEN_METHODS.filter((m) => m !== "Bank Transfer")}
+				/>
+			</SimpleModal>
+
+			{/* ============================================================
+			   PAY ARDHISASA LAND SERVICES
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("payArdhisasaModal")}
+				onClose={onClose}
+				iconCls="bi bi-map"
+				title="Pay Ardhisasa Land Services"
+				submitLabel="Pay Now"
+				successMsg="Ardhisasa payment successful! Receipt and confirmation sent."
+			>
+				<SelectField
+					label="Service"
+					options={ARDHISASA_SERVICES}
+					defaultValue="Title Deed Processing — KES 28,500"
+				/>
+				<Field label="LR / Plot Number" defaultValue="LR-209/881" />
+				<SelectField label="Payment Method" options={ARD_METHODS} />
+				<InfoBox>
+					<i className="bi bi-info-circle" aria-hidden="true" /> Payments are
+					processed through the Ministry of Lands portal. You will receive an
+					official receipt.
+				</InfoBox>
+			</SimpleModal>
+
+			{/* ============================================================
+			   SCHEDULE TAX PAYMENT
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("scheduleTaxModal")}
+				onClose={onClose}
+				iconCls="bi bi-calendar-event"
+				title="Schedule Tax Payment"
+				submitLabel="Schedule"
+				successMsg="Tax payment scheduled successfully!"
+			>
+				<SelectField label="KRA PIN / Tax Type" options={SCHED_TYPES} />
+				<Field label="Amount" defaultValue="84200" />
+				<SelectField label="Frequency" options={FREQUENCIES} />
+				<div className="mb-3">
+					<span className={shared.fieldLabel}>Start Date</span>
+					<input
+						type="date"
+						className={`${shared.field} form-control mt-1`}
+						defaultValue="2025-07-05"
+					/>
+				</div>
+				<SelectField
+					label="Payment Method"
+					options={["PayMo Wallet", "M-Pesa"]}
+				/>
+			</SimpleModal>
+
+			{/* ============================================================
+			   TAX OPTIMIZER
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("taxOptimizerModal")}
+				onClose={onClose}
+				iconCls="bi bi-lightbulb"
+				title="Tax Optimizer"
 				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-file-earmark-text me-2"
-							style={{ color: "var(--pm-primary-light)" }}
-						/>
-						File Tax Return
-					</>
-				}
-				footer={flowFooter("file")}
+				submitLabel="Claim All"
+				successMsg="All identified reliefs and deductions submitted to KRA."
 			>
-				{stepper("file")}
-				{busy === "file" && <BusyOverlay />}
-				{showFlow("file") && flows.file === 1 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Select Return</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>KRA PIN</label>
-							<select className={styles.fc} defaultValue={FILE_PINS[0]}>
-								{FILE_PINS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Return Period</label>
-							<select className={styles.fc} defaultValue={RETURN_PERIODS[0]}>
-								{RETURN_PERIODS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBoxWarn} style={{ fontSize: 12 }}>
-							<i className="bi bi-clock me-1" /> Due in <strong>2 days</strong>.
-							File early to avoid late penalties.
-						</div>
+				<div className={`${styles.summaryBoxAccent} mb-3`}>
+					<div
+						style={{
+							fontSize: 11,
+							fontWeight: 700,
+							color: "var(--pm-accent)",
+							textTransform: "uppercase",
+							letterSpacing: "0.08em",
+						}}
+					>
+						Potential Savings Identified
 					</div>
-				)}
-				{showFlow("file") && flows.file === 2 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Upload &amp; Review</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>Upload Supporting Documents</label>
-							<input type="file" className={styles.fc} />
-						</div>
-						<div className={`${styles.summaryBox} mb-3`}>
-							<BoxRow label="Gross Sales" value="KES 4,200,000" />
-							<BoxRow label="Input VAT" value="KES 672,000" />
-							<BoxRow label="Output VAT" value="KES 756,200" />
-							<hr className={styles.divider} />
-							<div className="d-flex justify-content-between">
-								<span style={{ fontWeight: 700 }}>Net VAT Payable</span>
-								<strong style={{ color: "var(--pm-danger)" }}>
-									KES 84,200
-								</strong>
-							</div>
-						</div>
+					<div
+						style={{
+							fontSize: 28,
+							fontWeight: 800,
+							color: "var(--pm-accent)",
+							fontFamily: "var(--pm-font-display)",
+						}}
+					>
+						KES 47,800
 					</div>
-				)}
-				{showFlow("file") && flows.file === 3 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 3: Submit &amp; Pay</h6>
-						<div className={`${styles.summaryBoxAccent} mb-3`}>
-							<BoxRow label="Return Type" value="VAT — June 2025" />
-							<BoxRow label="Amount Due" value="KES 84,200" />
-							<BoxRow label="iTax Confirmation" value="Will be emailed" last />
-						</div>
-						<div className="form-check mb-2">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="fr1"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="fr1"
-								style={{ fontSize: 13 }}
-							>
-								Pay immediately after filing
-							</label>
-						</div>
-						<div className="form-check">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="fr2"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="fr2"
-								style={{ fontSize: 13 }}
-							>
-								Auto-file next month
-							</label>
-						</div>
-					</div>
-				)}
-				{showFlow("file") && flows.file === 4 && (
-					<div className={styles.fstepActive}>
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Return Filed Successfully</h5>
-							<p className={styles.receiptSub}>
-								VAT return for June 2025 has been submitted to iTax. Payment of
-								KES 84,200 processed.
-							</p>
-							<div
-								className={`${styles.summaryBox} text-start mt-3`}
-								style={{ fontSize: 13 }}
-							>
-								<BoxRow label="iTax Ref" value="VAT-202506-99182" />
-								<BoxRow label="Filed By" value="James Kamau" />
-								<BoxRow label="Date" value="27 Jun 2025, 14:45" last />
-							</div>
-						</div>
-					</div>
-				)}
-			</MBox>
-
-			{/* ============ M3: Pay eCitizen ============ */}
-			<MBox
-				id="payECitizenModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-globe me-2"
-							style={{ color: "var(--pm-info)" }}
-						/>
-						Pay eCitizen Service
-					</>
-				}
-				footer={actionFooter(
-					"payECitizenModal",
-					"Pay KES 4,500",
-					"eCitizen payment successful! Receipt sent to your email.",
-					"EC-449281",
-				)}
-			>
-				{actionBody(
-					"payECitizenModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Service</label>
-							<select className={styles.fc} defaultValue={ECITIZEN_SERVICES[0]}>
-								{ECITIZEN_SERVICES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Application / Ref Number</label>
-							<input className={styles.fc} defaultValue="P-449281" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Payment Method</label>
-							<select className={styles.fc} defaultValue={ECITIZEN_METHODS[0]}>
-								{ECITIZEN_METHODS.map((m) => (
-									<option key={m}>{m}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBoxInfo} style={{ fontSize: 12 }}>
-							<i className="bi bi-info-circle me-1" /> Payment will be processed
-							instantly. You will receive a confirmation SMS and email with the
-							receipt.
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M4: Pay County ============ */}
-			<MBox
-				id="payCountyModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-building me-2"
-							style={{ color: "var(--pm-warning)" }}
-						/>
-						Pay County Revenue
-					</>
-				}
-				footer={actionFooter(
-					"payCountyModal",
-					"Pay Now",
-					"County payment successful! Permit updated in your records.",
-					"CCN-772910",
-				)}
-			>
-				{actionBody(
-					"payCountyModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>County</label>
-							<select className={styles.fc} defaultValue={COUNTIES[0]}>
-								{COUNTIES.map((c) => (
-									<option key={c}>{c}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Service / Permit</label>
-							<select className={styles.fc} defaultValue={COUNTY_SERVICES[0]}>
-								{COUNTY_SERVICES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Account / Plot Number</label>
-							<input className={styles.fc} defaultValue="NCC-882910" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Payment Method</label>
-							<select className={styles.fc} defaultValue={ECITIZEN_METHODS[0]}>
-								{ECITIZEN_METHODS.filter((m) => m !== "Bank Transfer").map(
-									(m) => (
-										<option key={m}>{m}</option>
-									),
-								)}
-							</select>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M5: Pay Ardhisasa ============ */}
-			<MBox
-				id="payArdhisasaModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-map me-2"
-							style={{ color: "var(--pm-accent)" }}
-						/>
-						Pay Ardhisasa Land Services
-					</>
-				}
-				footer={actionFooter(
-					"payArdhisasaModal",
-					"Pay Now",
-					"Ardhisasa payment successful! Receipt and confirmation sent.",
-					"ARD-20250627-1192",
-				)}
-			>
-				{actionBody(
-					"payArdhisasaModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Service</label>
-							<select
-								className={styles.fc}
-								defaultValue={ARDHISASA_SERVICES[0]}
-							>
-								{ARDHISASA_SERVICES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>LR / Plot Number</label>
-							<input className={styles.fc} defaultValue="LR-209/881" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Payment Method</label>
-							<select className={styles.fc} defaultValue={ARD_METHODS[0]}>
-								{ARD_METHODS.map((m) => (
-									<option key={m}>{m}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBoxAccent} style={{ fontSize: 12 }}>
-							<i className="bi bi-info-circle me-1" /> Payments are processed
-							through the Ministry of Lands portal. You will receive an official
-							receipt.
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M6: Bulk Tax Filing (multi-step) ============ */}
-			<MBox
-				id="bulkTaxModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-collection me-2" />
-						Bulk Tax Filing &amp; Payment
-					</>
-				}
-				footer={flowFooter("bulk")}
-			>
-				{stepper("bulk")}
-				{busy === "bulk" && <BusyOverlay />}
-				{showFlow("bulk") && flows.bulk === 1 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 1: Upload File</h6>
-						<div className="mb-3">
-							<label className={styles.fl}>Upload CSV/Excel</label>
-							<input type="file" className={styles.fc} />
-						</div>
-						<div className={styles.summaryBoxInfo} style={{ fontSize: 12 }}>
-							<i className="bi bi-info-circle me-1" /> Download template:{" "}
-							{/* LEGACY BRIDGE: legacy alert('Template downloaded') → real CSV template download */}
-							<a
-								href="#"
-								onClick={(e) => {
-									e.preventDefault();
-									downloadFile(
-										"KRA_Bulk_Template.csv",
-										"kra_pin,tax_type,period,amount,method\nA012345678Y,PAYE,2025-06,42800,wallet\n",
-										"text/csv",
-									);
-								}}
-							>
-								KRA_Bulk_Template.csv
-							</a>
-						</div>
-					</div>
-				)}
-				{showFlow("bulk") && flows.bulk === 2 && (
-					<div className={styles.fstepActive}>
-						<h6 style={{ fontWeight: 700 }}>Step 2: Preview &amp; Validate</h6>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>PIN</th>
-										<th>Tax Type</th>
-										<th>Amount</th>
-										<th>Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									{(
-										[
-											[
-												"A012345678Y",
-												"PAYE",
-												"KES 42,800",
-												"Valid",
-												styles.badgeS,
-											],
-											[
-												"P987654321Z",
-												"VAT",
-												"KES 84,200",
-												"Valid",
-												styles.badgeS,
-											],
-											[
-												"R445566778X",
-												"TOT",
-												"KES 18,600",
-												"Warning",
-												styles.badgeW,
-											],
-										] as const
-									).map(([pin, type, amt, status, tone]) => (
-										<tr key={pin}>
-											<td>{pin}</td>
-											<td>{type}</td>
-											<td>{amt}</td>
-											<td>
-												<span className={`${styles.badge} ${tone}`}>
-													{status}
-												</span>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				)}
-				{showFlow("bulk") && flows.bulk >= 3 && (
-					<div className={styles.fstepActive}>
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-all" />
-							</div>
-							<h5 className={styles.receiptTitle}>Bulk Filing Complete</h5>
-							<p className={styles.receiptSub}>
-								3 returns filed and 2 payments processed successfully.
-							</p>
-						</div>
-					</div>
-				)}
-			</MBox>
-
-			{/* ============ M7: Schedule Tax Payment ============ */}
-			<MBox
-				id="scheduleTaxModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-calendar-event me-2" />
-						Schedule Tax Payment
-					</>
-				}
-				footer={actionFooter(
-					"scheduleTaxModal",
-					"Schedule",
-					"Tax payment scheduled successfully!",
-					"SCH-20250627-4421",
-				)}
-			>
-				{actionBody(
-					"scheduleTaxModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>KRA PIN / Tax Type</label>
-							<select className={styles.fc} defaultValue={SCHED_TYPES[0]}>
-								{SCHED_TYPES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Amount</label>
-							<input className={styles.fc} defaultValue="84200" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Frequency</label>
-							<select className={styles.fc} defaultValue={FREQUENCIES[0]}>
-								{FREQUENCIES.map((f) => (
-									<option key={f}>{f}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Start Date</label>
-							<input
-								type="date"
-								className={styles.fc}
-								defaultValue="2025-07-05"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Payment Method</label>
-							<select className={styles.fc} defaultValue={ARD_METHODS[0]}>
-								{["PayMo Wallet", "M-Pesa"].map((m) => (
-									<option key={m}>{m}</option>
-								))}
-							</select>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M8: Tax Optimizer ============ */}
-			<MBox
-				id="taxOptimizerModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-lightbulb me-2"
-							style={{ color: "var(--pm-warning)" }}
-						/>
-						Tax Optimizer
-					</>
-				}
-				footer={
-					results.taxOptimizerModal ? (
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={onClose}
-						>
-							Done
-						</button>
-					) : (
-						<button className={styles.btnPm} onClick={onClose}>
-							Close
-						</button>
-					)
-				}
-			>
-				{actionBody(
-					"taxOptimizerModal",
-					<>
-						<div className={`${styles.summaryBoxAccent} mb-3`}>
-							<div
-								style={{
-									fontSize: 11,
-									fontWeight: 700,
-									color: "var(--pm-accent)",
-								}}
-							>
-								POTENTIAL SAVINGS IDENTIFIED
-							</div>
-							<div
-								style={{
-									fontSize: 28,
-									fontWeight: 700,
-									color: "var(--pm-accent)",
-									fontFamily: "var(--pm-font-display)",
-								}}
-							>
-								KES 47,800
-							</div>
-						</div>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Opportunity</th>
-										<th>Estimated Saving</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Claim additional rental income relief</td>
-										<td>KES 31,200</td>
-										<td>
+				</div>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
+						<thead>
+							<tr>
+								<th>Opportunity</th>
+								<th>Estimated Saving</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{[
+								["Claim additional rental income relief", "KES 31,200"],
+								["Investment deduction (solar)", "KES 12,400"],
+								["Early filing penalty avoidance", "KES 4,200"],
+							].map((row) => (
+								<tr key={row[0]}>
+									<td>{row[0]}</td>
+									<td>
+										<strong>{row[1]}</strong>
+									</td>
+									<td>
+										{row[0].startsWith("Early filing") ? (
 											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() =>
-													doAction(
-														"taxOptimizerModal",
-														"Relief claim submitted to KRA.",
-													)
-												}
-											>
-												Claim
-											</button>
-										</td>
-									</tr>
-									<tr>
-										<td>Investment deduction (solar)</td>
-										<td>KES 12,400</td>
-										<td>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() =>
-													doAction(
-														"taxOptimizerModal",
-														"Deduction added to next return.",
-													)
-												}
-											>
-												Add
-											</button>
-										</td>
-									</tr>
-									<tr>
-										<td>Early filing penalty avoidance</td>
-										<td>KES 4,200</td>
-										<td>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm}`}
+												type="button"
+												className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
 												onClick={() => onOpen("fileReturnModal")}
 											>
 												File Early
 											</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</>,
-				)}
-			</MBox>
+										) : (
+											<span
+												className={`${shared.badge} ${shared.badgeSuccess}`}
+											>
+												<i className="bi bi-check-lg" aria-hidden="true" />{" "}
+												Ready
+											</span>
+										)}
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M9: Link New KRA PIN ============ */}
-			<MBox
-				id="addKRAModal"
-				active={active}
+			{/* ============================================================
+			   LINK NEW KRA PIN
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("addKRAModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-plus-circle me-2"
-							style={{ color: "var(--pm-primary-light)" }}
-						/>
-						Link New KRA PIN
-					</>
-				}
-				footer={actionFooter(
-					"addKRAModal",
-					"Link PIN",
-					"KRA PIN linked successfully! Syncing obligations...",
-					"KRA-20250627-1192",
-				)}
+				iconCls="bi bi-plus-circle"
+				title="Link New KRA PIN"
+				submitLabel="Link PIN"
+				successMsg="KRA PIN linked successfully! Syncing obligations..."
 			>
-				{actionBody(
-					"addKRAModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>KRA PIN</label>
-							<input className={styles.fc} placeholder="A012345678Y" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Entity Type</label>
-							<select className={styles.fc} defaultValue={ENTITY_TYPES[0]}>
-								{ENTITY_TYPES.map((t) => (
-									<option key={t}>{t}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Entity Name</label>
-							<input
-								className={styles.fc}
-								placeholder="Company or Individual Name"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Default Payment Source</label>
-							<select className={styles.fc} defaultValue={LINK_SOURCES[0]}>
-								{LINK_SOURCES.map((s) => (
-									<option key={s}>{s}</option>
-								))}
-							</select>
-						</div>
-						<div className="form-check">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="ak1"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="ak1"
-								style={{ fontSize: 13 }}
-							>
-								Enable auto-sync with iTax
-							</label>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M10: Sync iTax ============ */}
-			<MBox
-				id="syncItaxModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-arrow-repeat me-2" />
-						Sync with iTax
-					</>
-				}
-				footer={actionFooter(
-					"syncItaxModal",
-					"Sync Now",
-					"iTax sync completed successfully! 3 new obligations found.",
-				)}
-			>
-				{actionBody(
-					"syncItaxModal",
-					<>
-						<div className={`${styles.summaryBoxInfo} mb-3`}>
-							<div style={{ fontSize: 13 }}>Last sync: 27 Jun 2025, 09:14</div>
-							<div style={{ fontSize: 13 }}>Obligations synced: 12</div>
-						</div>
-						<div className="form-check mb-2">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="sy1"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="sy1"
-								style={{ fontSize: 13 }}
-							>
-								Full obligation sync
-							</label>
-						</div>
-						<div className="form-check mb-2">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="sy2"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="sy2"
-								style={{ fontSize: 13 }}
-							>
-								Payment history
-							</label>
-						</div>
-						<div className="form-check">
-							<input className="form-check-input" type="checkbox" id="sy3" />
-							<label
-								className="form-check-label"
-								htmlFor="sy3"
-								style={{ fontSize: 13 }}
-							>
-								Refund status
-							</label>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M11: Tax Receipt ============ */}
-			<MBox
-				id="taxReceiptModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-receipt me-2" />
-						Tax Payment Receipt
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className={styles.receipt}>
-					<div className={styles.ri}>
-						<i className="bi bi-check-lg" />
-					</div>
-					<h5 className={styles.receiptTitle}>Official Receipt</h5>
-					<div
-						className={`${styles.summaryBox} text-start mt-3`}
+				<Field label="KRA PIN" placeholder="A012345678Y" />
+				<SelectField label="Entity Type" options={ENTITY_TYPES} />
+				<Field label="Entity Name" placeholder="Company or Individual Name" />
+				<SelectField label="Default Payment Source" options={LINK_SOURCES} />
+				<div className="form-check">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="ak-auto-sync"
+					/>
+					<label
+						className="form-check-label"
 						style={{ fontSize: 13 }}
+						htmlFor="ak-auto-sync"
 					>
-						<BoxRow label="KRA PIN" value="A012345678Y" />
-						<BoxRow label="Tax Type" value="PAYE" />
-						<BoxRow label="Amount" value="KES 42,800" />
-						<BoxRow label="iTax Ref" value="ITX-882341" />
-						<BoxRow label="Date" value="27 Jun 2025" last />
+						Enable auto-sync with iTax
+					</label>
+				</div>
+			</SimpleModal>
+
+			{/* ============================================================
+			   SYNC WITH iTax
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("syncItaxModal")}
+				onClose={onClose}
+				iconCls="bi bi-arrow-repeat"
+				title="Sync with iTax"
+				submitLabel="Sync Now"
+				successMsg="iTax sync completed successfully! 3 new obligations found."
+			>
+				<div className={`${styles.summaryBoxInfo} mb-3`}>
+					<div className="d-flex justify-content-between mb-1">
+						<span className={styles.mutedSmall}>Last sync</span>
+						<strong>27 Jun 2025, 09:14</strong>
 					</div>
-					<div
-						className="d-flex justify-content-center mt-3"
-						style={{ gap: 8 }}
-					>
-						{/* LEGACY BRIDGE: dead PDF/Share buttons in legacy → real file download */}
-						<button
-							className={`${styles.btnPm} ${styles.btnSm}`}
-							onClick={() =>
-								downloadFile(
-									"KRA-Receipt-ITX-882341.txt",
-									"KRA Tax Payment Receipt\nPIN: A012345678Y\nType: PAYE\nAmount: KES 42,800\niTax Ref: ITX-882341\nDate: 27 Jun 2025",
-								)
-							}
-						>
-							<i className="bi bi-download" /> PDF
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnSm}`}
-							onClick={() =>
-								downloadFile(
-									"KRA-Receipt-ITX-882341-share.txt",
-									"KRA receipt ITX-882341 — KES 42,800 PAYE paid 27 Jun 2025 via PayMo.",
-								)
-							}
-						>
-							<i className="bi bi-whatsapp" /> Share
-						</button>
+					<div className="d-flex justify-content-between">
+						<span className={styles.mutedSmall}>Obligations synced</span>
+						<strong>12</strong>
 					</div>
 				</div>
-			</MBox>
-
-			{/* ============ M12: Government Service Receipt ============ */}
-			<MBox
-				id="govReceiptModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-receipt me-2" />
-						Government Service Receipt
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className={styles.receipt}>
-					<div className={styles.ri}>
-						<i className="bi bi-check-lg" />
-					</div>
-					<h5 className={styles.receiptTitle}>Payment Confirmed</h5>
-					<div
-						className={`${styles.summaryBox} text-start mt-3`}
+				<div className="form-check mb-2">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="sy-full"
+					/>
+					<label
+						className="form-check-label"
 						style={{ fontSize: 13 }}
+						htmlFor="sy-full"
 					>
-						<BoxRow label="Service" value="Passport Renewal" />
-						<BoxRow label="Ref" value="P-449281" />
-						<BoxRow label="Amount" value="KES 4,500" />
-						<BoxRow label="Date" value="27 Jun 2025" last />
-					</div>
+						Full obligation sync
+					</label>
 				</div>
-			</MBox>
+				<div className="form-check mb-2">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="sy-history"
+					/>
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="sy-history"
+					>
+						Payment history
+					</label>
+				</div>
+				<div className="form-check">
+					<input className="form-check-input" type="checkbox" id="sy-refunds" />
+					<label
+						className="form-check-label"
+						style={{ fontSize: 13 }}
+						htmlFor="sy-refunds"
+					>
+						Refund status
+					</label>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M13: Track Government Service ============ */}
-			<MBox
-				id="trackGovModal"
-				active={active}
+			{/* ============================================================
+			   TAX PAYMENT RECEIPT
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("taxReceiptModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-truck me-2" />
-						Track Government Service
-					</>
-				}
+				iconCls="bi bi-receipt"
+				title="Tax Payment Receipt"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className="mb-3">
-					<label className={styles.fl}>Application Ref</label>
-					<input className={styles.fc} defaultValue="P-449281" />
+				<div className={styles.summaryBox}>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>KRA PIN</span>
+						<strong>A012345678Y</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Tax Type</span>
+						<strong>PAYE</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Amount</span>
+						<strong>KES 42,800</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>iTax Ref</span>
+						<strong>ITX-882341</strong>
+					</div>
+					<div className="d-flex justify-content-between">
+						<span className={styles.mutedSmall}>Date</span>
+						<strong>27 Jun 2025</strong>
+					</div>
 				</div>
+				<div className="d-flex justify-content-center gap-2 mt-3">
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+						onClick={() =>
+							downloadFile(
+								"KRA-Receipt-ITX-882341.txt",
+								"KRA Tax Payment Receipt\nPIN: A012345678Y\nType: PAYE\nAmount: KES 42,800\niTax Ref: ITX-882341\nDate: 27 Jun 2025",
+							)
+						}
+					>
+						<i className="bi bi-download" aria-hidden="true" /> PDF
+					</button>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+						onClick={() =>
+							downloadFile(
+								"KRA-Receipt-ITX-882341-share.txt",
+								"KRA receipt ITX-882341 — KES 42,800 PAYE paid 27 Jun 2025 via PayMo.",
+							)
+						}
+					>
+						<i className="bi bi-whatsapp" aria-hidden="true" /> Share
+					</button>
+				</div>
+			</ModalShell>
+
+			{/* ============================================================
+			   GOVERNMENT SERVICE RECEIPT (nested-only)
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("govReceiptModal")}
+				onClose={onClose}
+				iconCls="bi bi-receipt"
+				title="Government Service Receipt"
+				footer={
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
+						Close
+					</button>
+				}
+			>
+				<div className={styles.summaryBox}>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Service</span>
+						<strong>Passport Renewal</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Ref</span>
+						<strong>P-449281</strong>
+					</div>
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Amount</span>
+						<strong>KES 4,500</strong>
+					</div>
+					<div className="d-flex justify-content-between">
+						<span className={styles.mutedSmall}>Date</span>
+						<strong>27 Jun 2025</strong>
+					</div>
+				</div>
+			</ModalShell>
+
+			{/* ============================================================
+			   TRACK GOVERNMENT SERVICE
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("trackGovModal")}
+				onClose={onClose}
+				iconCls="bi bi-truck"
+				title="Track Government Service"
+				submitLabel="Refresh Status"
+				successMsg="Status refreshed: Biometric Verification — est. completion 02 Jul 2025."
+			>
+				<Field label="Application Ref" defaultValue="P-449281" />
 				<div className={styles.summaryBox}>
 					<div className="d-flex justify-content-between mb-2">
 						<span className={styles.mutedSmall}>Status</span>
-						<span className={`${styles.badge} ${styles.badgeI}`}>
+						<span className={`${shared.badge} ${shared.badgeInfo}`}>
 							Under Processing
 						</span>
 					</div>
-					<BoxRow label="Stage" value="Biometric Verification" />
-					<BoxRow label="Est. Completion" value="02 Jul 2025" last />
+					<div className="d-flex justify-content-between mb-2">
+						<span className={styles.mutedSmall}>Stage</span>
+						<strong>Biometric Verification</strong>
+					</div>
+					<div className="d-flex justify-content-between">
+						<span className={styles.mutedSmall}>Est. Completion</span>
+						<strong>02 Jul 2025</strong>
+					</div>
 				</div>
-			</MBox>
+			</SimpleModal>
 
-			{/* ============ M14: Compliance Health Dashboard ============ */}
-			<MBox
-				id="complianceHealthModal"
-				active={active}
-				size="lg"
+			{/* ============================================================
+			   COMPLIANCE HEALTH DASHBOARD
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("complianceHealthModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-heart-pulse me-2"
-							style={{ color: "var(--pm-accent)" }}
-						/>
-						Compliance Health Dashboard
-					</>
-				}
+				iconCls="bi bi-heart-pulse"
+				title="Compliance Health Dashboard"
+				size="lg"
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${shared.btn} ${shared.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${shared.btn} ${shared.btnPrimary}`}
 							onClick={() => onOpen("payKRAModal")}
 						>
-							Resolve Issues
+							<i className="bi bi-receipt-cutoff" aria-hidden="true" /> Resolve
+							Issues
 						</button>
 					</>
 				}
 			>
 				<div className="row g-3 mb-3">
-					{(
-						[
-							["94", "COMPLIANCE", "var(--pm-accent-soft)", "var(--pm-accent)"],
-							["0", "PENALTIES", "var(--pm-info-soft)", "var(--pm-info)"],
-							[
-								"2",
-								"RETURNS DUE",
-								"var(--pm-warning-soft)",
-								"var(--pm-warning)",
-							],
-							[
-								"18",
-								"MONTHS CLEAN",
-								"var(--pm-purple-soft)",
-								"var(--pm-purple)",
-							],
-						] as const
-					).map(([value, label, bg, color]) => (
+					{[
+						["94", "COMPLIANCE", "var(--pm-accent-soft)", "var(--pm-accent)"],
+						["0", "PENALTIES", "var(--pm-info-soft)", "var(--pm-info)"],
+						["2", "RETURNS DUE", "var(--pm-warning-soft)", "var(--pm-warning)"],
+						["18", "MONTHS CLEAN", "var(--pm-purple-soft)", "var(--pm-purple)"],
+					].map(([value, label, bg, color]) => (
 						<div className="col-md-3 col-6" key={label}>
 							<div className={styles.miniStat} style={{ background: bg }}>
 								<div className={styles.miniStatBig} style={{ color }}>
@@ -1427,8 +895,8 @@ export default function KraGovernmentModals({
 						</div>
 					))}
 				</div>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
 						<thead>
 							<tr>
 								<th>Entity</th>
@@ -1438,115 +906,113 @@ export default function KraGovernmentModals({
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>James Kamau</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>98</span>
-								</td>
-								<td>None</td>
-								<td>PAYE 15 Jul</td>
-							</tr>
-							<tr>
-								<td>JK Holdings</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>92</span>
-								</td>
-								<td>VAT due soon</td>
-								<td>File 05 Jul</td>
-							</tr>
-							<tr>
-								<td>JK Investments</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeW}`}>78</span>
-								</td>
-								<td>CGT overdue</td>
-								<td>Pay immediately</td>
-							</tr>
+							{[
+								["James Kamau", "98", "None", "PAYE 15 Jul", "badgeS"],
+								["JK Holdings", "92", "VAT due soon", "File 05 Jul", "badgeS"],
+								[
+									"JK Investments",
+									"78",
+									"CGT overdue",
+									"Pay immediately",
+									"badgeW",
+								],
+							].map((row) => (
+								<tr key={row[0]}>
+									<td>{row[0]}</td>
+									<td>
+										<span className={`${shared.badge} ${toneBadge(row[4])}`}>
+											{row[1]}
+										</span>
+									</td>
+									<td>{row[2]}</td>
+									<td>
+										<strong>{row[3]}</strong>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M15: All Items Requiring Attention ============ */}
-			<MBox
-				id="attentionModal"
-				active={active}
+			{/* ============================================================
+			   ALL ITEMS REQUIRING ATTENTION
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("attentionModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-exclamation-circle me-2"
-							style={{ color: "var(--pm-warning)" }}
-						/>
-						All Items Requiring Attention
-					</>
-				}
+				iconCls="bi bi-exclamation-circle"
+				title="All Items Requiring Attention"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				{(
-					[
-						[
-							"VAT return due in 2 days",
-							"P987654321Z · KES 84,200",
-							"File",
-							"fileReturnModal",
-							true,
-						],
-						[
-							"CGT overdue",
-							"C112233445W · KES 62,000",
-							"Pay",
-							"payKRAModal",
-							true,
-						],
-						[
-							"Passport renewal ready",
-							"P-449281 · KES 4,500",
-							"Pay",
-							"payECitizenModal",
-							false,
-						],
-					] as const
-				).map(([title, sub, label, modal, danger]) => (
-					<div className={styles.sr} key={title}>
+				{[
+					{
+						title: "VAT return due in 2 days",
+						sub: "P987654321Z · KES 84,200",
+						label: "File",
+						modal: "fileReturnModal",
+						danger: true,
+					},
+					{
+						title: "CGT overdue",
+						sub: "C112233445W · KES 62,000",
+						label: "Pay",
+						modal: "payKRAModal",
+						danger: true,
+					},
+					{
+						title: "Passport renewal ready",
+						sub: "P-449281 · KES 4,500",
+						label: "Pay",
+						modal: "payECitizenModal",
+						danger: false,
+					},
+				].map((r) => (
+					<div className={styles.sr} key={r.title}>
 						<div>
-							<strong>{title}</strong>
-							<div className={styles.mutedSmall}>{sub}</div>
+							<strong>{r.title}</strong>
+							<div className={styles.mutedSmall}>{r.sub}</div>
 						</div>
 						<button
-							className={`${styles.btnPm} ${styles.btnSm} ${danger ? styles.btnPmD : ""}`}
-							onClick={() => onOpen(modal)}
+							type="button"
+							className={`${shared.btn} ${shared.btnSm} ${r.danger ? shared.btnDanger : shared.btnSecondary}`}
+							onClick={() => onOpen(r.modal)}
 						>
-							{label}
+							{r.label}
 						</button>
 					</div>
 				))}
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M16: Full Tax Payment History ============ */}
-			<MBox
-				id="taxHistoryModal"
-				active={active}
-				size="xl"
+			{/* ============================================================
+			   FULL TAX PAYMENT HISTORY
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("taxHistoryModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-clock-history me-2" />
-						Full Tax Payment History
-					</>
-				}
+				iconCls="bi bi-clock-history"
+				title="Full Tax Payment History"
+				size="xl"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
 						<thead>
 							<tr>
 								<th>Date</th>
@@ -1560,94 +1026,90 @@ export default function KraGovernmentModals({
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>25 Jun</td>
-								<td>A012345678Y</td>
-								<td>PAYE</td>
-								<td>KES 42,800</td>
-								<td>M-Pesa</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Paid
-									</span>
-								</td>
-								<td>ITX-882341</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("taxReceiptModal")}
-									>
-										Receipt
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>22 Jun</td>
-								<td>P987654321Z</td>
-								<td>VAT</td>
-								<td>KES 84,200</td>
-								<td>Wallet</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Filed
-									</span>
-								</td>
-								<td>ITX-881902</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("fileReturnModal")}
-									>
-										View
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>15 Jun</td>
-								<td>R445566778X</td>
-								<td>TOT</td>
-								<td>KES 18,600</td>
-								<td>Bank</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Paid
-									</span>
-								</td>
-								<td>ITX-880991</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("taxReceiptModal")}
-									>
-										Receipt
-									</button>
-								</td>
-							</tr>
+							{[
+								{
+									date: "25 Jun",
+									pin: "A012345678Y",
+									type: "PAYE",
+									amount: "KES 42,800",
+									method: "M-Pesa",
+									status: "Paid",
+									tone: "badgeS",
+									ref: "ITX-882341",
+									action: ["Receipt", "taxReceiptModal"],
+								},
+								{
+									date: "22 Jun",
+									pin: "P987654321Z",
+									type: "VAT",
+									amount: "KES 84,200",
+									method: "Wallet",
+									status: "Filed",
+									tone: "badgeS",
+									ref: "ITX-881902",
+									action: ["View", "fileReturnModal"],
+								},
+								{
+									date: "15 Jun",
+									pin: "R445566778X",
+									type: "TOT",
+									amount: "KES 18,600",
+									method: "Bank",
+									status: "Paid",
+									tone: "badgeS",
+									ref: "ITX-880991",
+									action: ["Receipt", "taxReceiptModal"],
+								},
+							].map((row) => (
+								<tr key={row.ref}>
+									<td>{row.date}</td>
+									<td>{row.pin}</td>
+									<td>{row.type}</td>
+									<td>{row.amount}</td>
+									<td>{row.method}</td>
+									<td>
+										<span className={`${shared.badge} ${toneBadge(row.tone)}`}>
+											{row.status}
+										</span>
+									</td>
+									<td>{row.ref}</td>
+									<td>
+										<button
+											type="button"
+											className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+											onClick={() => onOpen(row.action[1])}
+										>
+											{row.action[0]}
+										</button>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M17: Government Services History ============ */}
-			<MBox
-				id="govHistoryModal"
-				active={active}
-				size="xl"
+			{/* ============================================================
+			   GOVERNMENT SERVICES HISTORY
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("govHistoryModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-clock-history me-2" />
-						Government Services History
-					</>
-				}
+				iconCls="bi bi-clock-history"
+				title="Government Services History"
+				size="xl"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={shared.tableWrap}>
+					<table className={shared.table}>
 						<thead>
 							<tr>
 								<th>Date</th>
@@ -1660,233 +1122,147 @@ export default function KraGovernmentModals({
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>18 Jun</td>
-								<td>Passport Renewal</td>
-								<td>eCitizen</td>
-								<td>KES 4,500</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeI}`}>
-										Processing
-									</span>
-								</td>
-								<td>P-449281</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("trackGovModal")}
-									>
-										Track
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>15 Jun</td>
-								<td>Land Rates</td>
-								<td>Nairobi County</td>
-								<td>KES 42,300</td>
-								<td>
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Paid
-									</span>
-								</td>
-								<td>CCN-772910</td>
-								<td>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => onOpen("govReceiptModal")}
-									>
-										Receipt
-									</button>
-								</td>
-							</tr>
+							{[
+								{
+									date: "18 Jun",
+									service: "Passport Renewal",
+									provider: "eCitizen",
+									amount: "KES 4,500",
+									status: "Processing",
+									tone: "badgeI",
+									ref: "P-449281",
+									action: ["Track", "trackGovModal"],
+								},
+								{
+									date: "15 Jun",
+									service: "Land Rates",
+									provider: "Nairobi County",
+									amount: "KES 42,300",
+									status: "Paid",
+									tone: "badgeS",
+									ref: "CCN-772910",
+									action: ["Receipt", "govReceiptModal"],
+								},
+							].map((row) => (
+								<tr key={row.ref}>
+									<td>{row.date}</td>
+									<td>{row.service}</td>
+									<td>{row.provider}</td>
+									<td>{row.amount}</td>
+									<td>
+										<span className={`${shared.badge} ${toneBadge(row.tone)}`}>
+											{row.status}
+										</span>
+									</td>
+									<td>{row.ref}</td>
+									<td>
+										<button
+											type="button"
+											className={`${shared.btn} ${shared.btnSm} ${shared.btnSecondary}`}
+											onClick={() => onOpen(row.action[1])}
+										>
+											{row.action[0]}
+										</button>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M18: Dispute KRA Assessment ============ */}
-			<MBox
-				id="disputeKRAModal"
-				active={active}
+			{/* ============================================================
+			   DISPUTE KRA ASSESSMENT
+			   ============================================================ */}
+			<SimpleModal
+				show={isOpen("disputeKRAModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-exclamation-triangle me-2"
-							style={{ color: "var(--pm-warning)" }}
-						/>
-						Dispute KRA Assessment
-					</>
-				}
-				footer={actionFooter(
-					"disputeKRAModal",
-					"Submit Dispute",
-					"Dispute filed successfully. Case #KRA-DSP-99182 created.",
-					"KRA-DSP-99182",
-				)}
+				iconCls="bi bi-exclamation-triangle"
+				title="Dispute KRA Assessment"
+				submitLabel="Submit Dispute"
+				successMsg="Dispute filed successfully. Case #KRA-DSP-99182 created."
 			>
-				{actionBody(
-					"disputeKRAModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>KRA PIN</label>
-							<select
-								className={styles.fc}
-								defaultValue="C112233445W — JK Investments"
-							>
-								<option>C112233445W — JK Investments</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Assessment Ref</label>
-							<input className={styles.fc} defaultValue="CGT-2025-6621" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Dispute Reason</label>
-							<textarea
-								className={styles.fc}
-								rows={3}
-								defaultValue="The capital gains calculation does not account for improvement costs of KES 1.2M incurred in 2023."
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Upload Supporting Documents</label>
-							<input type="file" className={styles.fc} />
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M19: Profile ============ */}
-			<MBox
-				id="profileModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-person-circle me-2" />
-						Profile
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<div className="text-center">
-					<div
-						className={`${styles.avatar} mx-auto mb-3`}
-						style={{ width: 64, height: 64, fontSize: 24 }}
-					>
-						JK
-					</div>
-					<h5 style={{ fontWeight: 700, marginBottom: 2 }}>James Kamau</h5>
-					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
-						james.kamau@email.com · +254 712 345 890
-					</p>
-					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-						<div className="col-6">
-							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>KRA PINs</span>
-								<br />
-								<strong>4 linked</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>Compliance</span>
-								<br />
-								<strong style={{ color: "var(--pm-accent)" }}>94/100</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>Member Since</span>
-								<br />
-								<strong>Mar 2022</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className={`${styles.summaryBox} p-2`}>
-								<span className={styles.mutedSmall}>Open Cases</span>
-								<br />
-								<strong>2</strong>
-							</div>
-						</div>
-					</div>
+				<SelectField
+					label="KRA PIN"
+					options={["C112233445W — JK Investments"]}
+				/>
+				<Field label="Assessment Ref" defaultValue="CGT-2025-6621" />
+				<div className="mb-3">
+					<label className={shared.fieldLabel} htmlFor="dk-reason">
+						Dispute Reason
+					</label>
+					<textarea
+						id="dk-reason"
+						className={`${shared.field} form-control`}
+						rows={3}
+						defaultValue="The capital gains calculation does not account for improvement costs of KES 1.2M incurred in 2023."
+					/>
 				</div>
-			</MBox>
+				<div className="mb-3">
+					<label className={shared.fieldLabel} htmlFor="dk-files">
+						Upload Supporting Documents
+					</label>
+					<input
+						id="dk-files"
+						type="file"
+						multiple
+						className={`${shared.field} form-control`}
+					/>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M20: Government Notifications ============ */}
-			<MBox
-				id="govNotifModal"
-				active={active}
+			{/* ============================================================
+			   GOVERNMENT NOTIFICATIONS
+			   ============================================================ */}
+			<ModalShell
+				show={isOpen("govNotifModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-bell me-2" />
-						Government Notifications (9)
-					</>
-				}
+				iconCls="bi bi-bell"
+				title="Government Notifications (9)"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${shared.btn} ${shared.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
 				<div style={{ maxHeight: 500, overflowY: "auto" }}>
-					<div
-						className={`${styles.summaryBoxDanger} mb-2`}
-						style={{ fontSize: 13 }}
-					>
-						<strong>VAT return due in 2 days</strong>
-						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							P987654321Z · File before 05 Jul
+					{[
+						{
+							box: "summaryBoxDanger",
+							title: "VAT return due in 2 days",
+							sub: "P987654321Z · File before 05 Jul",
+						},
+						{
+							box: "summaryBoxWarn",
+							title: "CGT overdue",
+							sub: "C112233445W · Pay immediately",
+						},
+						{
+							box: "summaryBoxInfo",
+							title: "Passport application update",
+							sub: "P-449281 · Biometric stage",
+						},
+						{
+							box: "summaryBoxAccent",
+							title: "Land rates payment confirmed",
+							sub: "Nairobi County · Receipt available",
+						},
+					].map((n) => (
+						<div
+							key={n.title}
+							className={`${styles[n.box as "summaryBox"]} mb-2`}
+							style={{ fontSize: 13 }}
+						>
+							<strong>{n.title}</strong>
+							<div className={styles.mutedSmall}>{n.sub}</div>
 						</div>
-					</div>
-					<div
-						className={`${styles.summaryBoxWarn} mb-2`}
-						style={{ fontSize: 13 }}
-					>
-						<strong>CGT overdue</strong>
-						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							C112233445W · Pay immediately
-						</div>
-					</div>
-					<div
-						className={`${styles.summaryBoxInfo} mb-2`}
-						style={{ fontSize: 13 }}
-					>
-						<strong>Passport application update</strong>
-						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							P-449281 · Biometric stage
-						</div>
-					</div>
-					<div className={styles.summaryBoxAccent} style={{ fontSize: 13 }}>
-						<strong>Land rates payment confirmed</strong>
-						<div style={{ fontSize: 11, color: "var(--pm-ink-soft)" }}>
-							Nairobi County · Receipt available
-						</div>
-					</div>
+					))}
 				</div>
-			</MBox>
-
-			{/* ============ M21: Tax Optimizer (legacy placeholder duplicate — kept for parity) ============ */}
-			<MBox
-				id="taxOptimizerModal2"
-				active={active}
-				onClose={onClose}
-				title="Tax Optimizer"
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
-			>
-				<p>Additional optimization opportunities available.</p>
-			</MBox>
+			</ModalShell>
 		</>
 	);
 }
