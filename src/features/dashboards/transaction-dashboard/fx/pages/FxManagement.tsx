@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Fragment, useState } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import FxModals from "../components/FxModals";
@@ -12,6 +12,10 @@ import styles from "../styles/fx.module.css";
      World A — Customer FX & Collections  (diaspora / card settlements → KES → floats)
      World B — My Multi-Currency Wallets  (wallet structure + your own conversions)
      World C — Rates, Locks, Rules & Permissions
+   Refined: rebuilt on the PayMo business-dashboard composition (hero banner,
+   numbered sections, KPI pulse, action centre, quick actions, table cards,
+   floating command bar). Shell chrome is owned by AppShell; this page renders
+   content only. All 25 modals remain reachable from the page.
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
@@ -123,15 +127,37 @@ interface FxConfig {
 		actionLabel: string;
 		actionModal: string;
 	}[];
-	liveRates: { pair: string; buy: string; sell: string; spread: string; change: string }[];
-	rateAlerts: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
-	rateLocks: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
+	liveRates: {
+		pair: string;
+		buy: string;
+		sell: string;
+		spread: string;
+		change: string;
+	}[];
+	rateAlerts: {
+		title: string;
+		sub: string;
+		badge: { text: string; tone: BadgeTone };
+	}[];
+	rateLocks: {
+		title: string;
+		sub: string;
+		badge: { text: string; tone: BadgeTone };
+	}[];
 	lockStrip: { text: string; strong: string; btnLabel: string; modal: string };
 	costBars: { height: string; color: string; label: string }[];
 	keyMetrics: { label: string; value: string; color: string }[];
-	autoRules: { title: string; sub: string; badge: { text: string; tone: BadgeTone } }[];
+	autoRules: {
+		title: string;
+		sub: string;
+		badge: { text: string; tone: BadgeTone };
+	}[];
 	alertSettings: { title: string; badge: { text: string; tone: BadgeTone } }[];
-	walletPrefs: { title: string; value?: string; badge?: { text: string; tone: BadgeTone } }[];
+	walletPrefs: {
+		title: string;
+		value?: string;
+		badge?: { text: string; tone: BadgeTone };
+	}[];
 	fxAccess: { scope: string; desc: string; granted: boolean }[];
 	activity: {
 		date: string;
@@ -196,8 +222,16 @@ const initialMockData: FxConfig = {
 				tone: "badgeS",
 			},
 			lines: [
-				{ text: "USD/EUR: 0.92 ", strong: "+0.4%", strongColor: "var(--pm-accent)" },
-				{ text: "USD/GBP: 0.78 ", strong: "-0.2%", strongColor: "var(--pm-danger)" },
+				{
+					text: "USD/EUR: 0.92 ",
+					strong: "+0.4%",
+					strongColor: "var(--pm-accent)",
+				},
+				{
+					text: "USD/GBP: 0.78 ",
+					strong: "-0.2%",
+					strongColor: "var(--pm-danger)",
+				},
 			],
 		},
 		{
@@ -563,10 +597,34 @@ const initialMockData: FxConfig = {
 		},
 	],
 	liveRates: [
-		{ pair: "USD/KES", buy: "129.35", sell: "129.85", spread: "0.50", change: "+0.42%" },
-		{ pair: "EUR/KES", buy: "139.10", sell: "139.80", spread: "0.70", change: "-0.18%" },
-		{ pair: "GBP/KES", buy: "165.40", sell: "166.20", spread: "0.80", change: "+0.65%" },
-		{ pair: "ZAR/KES", buy: "7.12", sell: "7.22", spread: "0.10", change: "-1.12%" },
+		{
+			pair: "USD/KES",
+			buy: "129.35",
+			sell: "129.85",
+			spread: "0.50",
+			change: "+0.42%",
+		},
+		{
+			pair: "EUR/KES",
+			buy: "139.10",
+			sell: "139.80",
+			spread: "0.70",
+			change: "-0.18%",
+		},
+		{
+			pair: "GBP/KES",
+			buy: "165.40",
+			sell: "166.20",
+			spread: "0.80",
+			change: "+0.65%",
+		},
+		{
+			pair: "ZAR/KES",
+			buy: "7.12",
+			sell: "7.22",
+			spread: "0.10",
+			change: "-1.12%",
+		},
 	],
 	rateAlerts: [
 		{
@@ -609,7 +667,8 @@ const initialMockData: FxConfig = {
 	],
 	lockStrip: {
 		text: "Worth locking: USD/KES",
-		strong: "129.20 vs spot 129.45 — saves ≈ KES 21,000 on your August payouts.",
+		strong:
+			"129.20 vs spot 129.45 — saves ≈ KES 21,000 on your August payouts.",
 		btnLabel: "Lock Now",
 		modal: "hedgeModal",
 	},
@@ -624,7 +683,11 @@ const initialMockData: FxConfig = {
 	keyMetrics: [
 		{ label: "Avg Spread", value: "0.48%", color: "var(--pm-accent)" },
 		{ label: "Best Execution", value: "99.2%", color: "var(--pm-info)" },
-		{ label: "Rate-Lock Savings", value: "KES 41,200", color: "var(--pm-purple)" },
+		{
+			label: "Rate-Lock Savings",
+			value: "KES 41,200",
+			color: "var(--pm-purple)",
+		},
 	],
 	autoRules: [
 		{
@@ -644,14 +707,23 @@ const initialMockData: FxConfig = {
 		},
 	],
 	alertSettings: [
-		{ title: "USD/KES > 130.50", badge: { text: "SMS + Push", tone: "badgeS" } },
+		{
+			title: "USD/KES > 130.50",
+			badge: { text: "SMS + Push", tone: "badgeS" },
+		},
 		{ title: "EUR/KES < 138.00", badge: { text: "Push", tone: "badgeS" } },
-		{ title: "GBP/KES volatility > 2%", badge: { text: "Email", tone: "badgeS" } },
+		{
+			title: "GBP/KES volatility > 2%",
+			badge: { text: "Email", tone: "badgeS" },
+		},
 	],
 	walletPrefs: [
 		{ title: "Default display currency", value: "KES" },
 		{ title: "Show equivalent in", value: "USD" },
-		{ title: "Auto-hide small balances", badge: { text: "On", tone: "badgeS" } },
+		{
+			title: "Auto-hide small balances",
+			badge: { text: "On", tone: "badgeS" },
+		},
 	],
 	fxAccess: [
 		{
@@ -736,54 +808,37 @@ async function fetchFx(): Promise<FxConfig> {
 	return { ...initialMockData, ...json };
 }
 
-/* ---------- section header ---------- */
-function SectionHead({
-	icon,
-	iconColor,
+/* ---------- section heading (business numbered pattern) ---------- */
+function SectionHeading({
+	id,
+	index,
 	title,
-	sub,
-	actions,
-	onOpen,
+	description,
+	action,
 }: {
-	icon: string;
-	iconColor: string;
+	id: string;
+	index: string;
 	title: string;
-	sub: string;
-	actions: {
-		label: string;
-		icon?: string;
-		modal: string;
-		tone?: "btnPmP" | "btnPmD";
-	}[];
-	onOpen: (id: string) => void;
+	description: string;
+	action?: React.ReactNode;
 }) {
 	return (
-		<div
-			className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-			style={{ gap: 8 }}
-		>
-			<div>
-				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} />
-					{title}
-				</h3>
-				<p className={styles.ss}>{sub}</p>
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
+				</div>
 			</div>
-			<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-				{actions.map((a) => (
-					<button
-						key={a.label}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						{a.icon && <i className={`bi ${a.icon}`} />} {a.label}
-					</button>
-				))}
-			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
 		</div>
 	);
 }
 
+/* ---------- utility box (subtle panel inside cards) ---------- */
 function Ub({
 	title,
 	children,
@@ -843,8 +898,11 @@ function SrRowList({
 						<strong>{r.value}</strong>
 					) : r.action ? (
 						<button
+							type="button"
 							className={`${styles.btnPm} ${styles.btnSm}`}
-							onClick={() => onOpen(r.action!.modal)}
+							onClick={() => {
+								if (r.action) onOpen(r.action.modal);
+							}}
 						>
 							{r.action.label}
 						</button>
@@ -853,6 +911,7 @@ function SrRowList({
 			))}
 			{wideButton && (
 				<button
+					type="button"
 					className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
 					onClick={() => onOpen(wideButton.modal)}
 				>
@@ -863,8 +922,22 @@ function SrRowList({
 	);
 }
 
+/* ---------- KPI visual metadata (keyed by stat label) ---------- */
+const STAT_META: Record<string, { icon: string; tone: string }> = {
+	"FOREIGN CURRENCY HELD": {
+		icon: "bi-currency-exchange",
+		tone: "kpiIconBlue",
+	},
+	"BEST RATE TODAY": { icon: "bi-graph-up-arrow", tone: "kpiIconGreen" },
+	"DIASPORA → FLOAT (MTD)": { icon: "bi-bank2", tone: "kpiIconGreen" },
+	"FX FEES PAID (MTD)": { icon: "bi-piggy-bank", tone: "kpiIconAmber" },
+	"RATE LOCKS ACTIVE": { icon: "bi-shield-lock", tone: "kpiIconViolet" },
+	"AWAITING CONVERSION": { icon: "bi-hourglass-split", tone: "kpiIconRed" },
+};
+const STAT_FALLBACK = { icon: "bi-wallet2", tone: "kpiIconBlue" };
+
 export default function FxManagement() {
-	const { data } = useQuery({
+	const { data, isFetching, error } = useQuery({
 		queryKey: ["paymo-fx"],
 		queryFn: fetchFx,
 		retry: 1,
@@ -875,11 +948,30 @@ export default function FxManagement() {
 	const [activeModal, setActiveModal] = useState<string | null>(null);
 	const [world, setWorld] = useState<World>("cust");
 	const [biz, setBiz] = useState<BizId>("all");
+	const [diasporaSearch, setDiasporaSearch] = useState("");
+
+	/* Modal hygiene: scroll lock, Escape to close, focus returns to trigger. */
+	useEffect(() => {
+		if (!activeModal) return;
+		const trigger = document.activeElement as HTMLElement | null;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setActiveModal(null);
+		};
+		window.addEventListener("keydown", closeOnEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", closeOnEscape);
+			trigger?.focus();
+		};
+	}, [activeModal]);
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
 
-	const bizName = biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
+	const bizName =
+		biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
 	const inScope = (b: string) => biz === "all" || b === bizName;
 	const scopeTag = biz === "all" ? "All businesses" : bizName;
 
@@ -887,395 +979,450 @@ export default function FxManagement() {
 	const conversions = config.conversions.filter((c) => inScope(c.business));
 	const crossBorder = config.crossBorder;
 
+	const diasporaQuery = diasporaSearch.trim().toLowerCase();
+	const filteredDiaspora = diaspora.filter(
+		(d) =>
+			!diasporaQuery ||
+			d.ref.toLowerCase().includes(diasporaQuery) ||
+			d.business.toLowerCase().includes(diasporaQuery) ||
+			d.payer.toLowerCase().includes(diasporaQuery) ||
+			d.from.toLowerCase().includes(diasporaQuery),
+	);
+
 	return (
 		<div className={styles.fxPage}>
-			<div className={styles.main}>
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
-								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
-						</div>
-						{/* <h2 className={styles.pageH2}>{config.pageTitle}</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p> */}
-						<div className={styles.bizBar} style={{ marginTop: 10 }}>
-							<span className={styles.bizLabel}>
-								<i className="bi bi-diagram-3 me-1" />
-								World
-							</span>
-							<div className={styles.worldSwitch}>
-								<button
-									type="button"
-									className={`${styles.worldBtn} ${world === "cust" ? styles.worldBtnActive : ""}`}
-									onClick={() => setWorld("cust")}
-								>
-									<i className="bi bi-people me-1" /> Customer FX
-								</button>
-								<button
-									type="button"
-									className={`${styles.worldBtn} ${world === "my" ? styles.worldBtnActive : ""}`}
-									onClick={() => setWorld("my")}
-								>
-									<i className="bi bi-wallet2 me-1" /> My Wallets &amp; FX
-								</button>
-							</div>
-							{world === "cust" && (
-								<div className={styles.bizBar}>
-									<span className={styles.bizLabel}>Scope</span>
-									<div className={styles.pills}>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "all" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("all")}
-										>
-											All
-										</button>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "land" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("land")}
-										>
-											Land Buyers LTD <span className="ms-1">30</span>
-										</button>
-										<button
-											type="button"
-											className={`${styles.pill} ${biz === "co2" ? styles.pillActive : ""}`}
-											onClick={() => setBiz("co2")}
-										>
-											Company 2 <span className="ms-1">209</span>
-										</button>
-									</div>
-								</div>
-							)}
-						</div>
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button className={styles.btnPm} onClick={() => openM("fxHealthModal")}>
-							<i className="bi bi-heart-pulse" /> Health Check
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("rateAlertsModal")}>
-							<i className="bi bi-bell" /> Rate Alerts
-						</button>
-						<button className={styles.btnPm} onClick={() => openM("fxAccessModal")}>
-							<i className="bi bi-shield-check" /> FX Access
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
-							onClick={() => openM("newWalletModal")}
-						>
-							<i className="bi bi-plus-lg" /> New Wallet
-						</button>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("profileModal")}
-						>
-							<i className="bi bi-person-circle me-1" /> JK
-						</button>
-					</div>
-				</div>
-
+			<main className={styles.main}>
 				<div className={styles.content}>
-					{/* ======================= CONNECTION BANNER ======================= */}
-					<div className={styles.connBanner}>
-						<div className={styles.connIcon}>
-							<i className="bi bi-plug" />
-						</div>
-						<div style={{ flex: "1 1 260px" }}>
-							<div className={styles.connTitle}>
-								Paymo not connected yet
-							</div>
-							<div className={styles.connSub}>
-								Link your API key to start converting customer payments and
-								running multi-currency wallets. You're currently viewing
-								preview data.
-							</div>
-						</div>
-						<div className="d-flex align-items-center" style={{ gap: 10 }}>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("fxNotifModal")}
-							>
-								<i className="bi bi-bell" /> Notifications
-							</button>
-							<span className={styles.connTag}>Sandbox preview</span>
-						</div>
-					</div>
-
-					{/* ======================= HERO ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div
-								className={`${styles.card} ${styles.cardAccent}`}
-								style={{ minHeight: 190 }}
-							>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.live} <span style={{ color: "#86efac" }}>●</span>
-								</p>
-								<div
-									className={styles.sv}
-									style={{ margin: "8px 0", color: "#fff", fontSize: 24 }}
-								>
-									{config.hero.value}
-								</div>
-								<p
-									style={{
-										margin: 0,
-										fontSize: 12,
-										color: "rgba(255,255,255,.82)",
-									}}
-								>
-									{config.hero.detail}
-								</p>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.buttons.map((b) => (
-										<button
-											key={b.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-											onClick={() => openM(b.modal)}
-										>
-											{b.label}
-										</button>
-									))}
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={styles.card} style={{ minHeight: 190 }}>
-								<p className={styles.sl} style={{ color: "var(--pm-muted)" }}>
-									WALLET STRUCTURE
-								</p>
-									<div className={styles.walletTree}>
-										{config.walletTree.map((n, i) => (
-											<Fragment key={n.name}>
-												<div
-													className={styles.walletNode}
-												onClick={() => openM("walletDetailModal")}
-											>
-												<div className={styles.walletNodeHead}>
-													<i className={`bi ${n.icon}`} /> {n.name}
-												</div>
-												<div className={styles.walletNodeVal}>{n.value}</div>												<div className={styles.walletNodeMeta}>{n.meta}</div>
-												</div>
-												{i < config.walletTree.length - 1 && (
-													<div className={styles.walletArrow}>
-														<i className="bi bi-chevron-right" />															</div>
-														)}
-														</Fragment>
-													))}
-												</div>
-								<p className={styles.mutedSmall} style={{ marginTop: 10 }}>
-									<i className="bi bi-info-circle me-1" />
-									Tap any wallet to manage, top up or withdraw.
-								</p>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= STATS ======================= */}
-					<div className="row g-3 mt-1">
-						{config.stats.map((card) => (
-							<div className="col-lg-2 col-md-4 col-6" key={card.label}>
-								<div className={styles.card} style={{ minHeight: 160 }}>
-									<p className={styles.sl} style={{ color: card.labelColor }}>
-										{card.label}
-									</p>
-									<div
-										className={styles.sv}
-										style={{ margin: "6px 0", fontSize: 18 }}
-									>
-										{card.value}
-									</div>
-									<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
-										<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+					{/* ======================= EXECUTIVE HERO ======================= */}
+					<section
+						className={styles.heroBanner}
+						aria-labelledby="fx-page-title"
+					>
+						<div className={styles.heroOrbOne} aria-hidden="true" />
+						<div className={styles.heroOrbTwo} aria-hidden="true" />
+						<div className={styles.heroContent}>
+							<div className={styles.heroCopy}>
+								<div className={styles.heroEyebrow}>
+									<span>
+										<i className="bi bi-currency-exchange" /> Multi-Currency ·
+										Wallets &amp; FX
 									</span>
-									{card.progress && (
-										<div className="mt-2">
-											<div
-												className="d-flex justify-content-between"
-												style={{ fontSize: 11, color: "var(--pm-muted)" }}
-											>
-												<span>{card.progress.label}</span>
-												<span>{card.progress.value}</span>
-											</div>
-											<div className={`${styles.pmProgress} mt-1`}>
-												<div
-													className={styles.pmProgressBar}
-													style={{
-														width: card.progress.width,
-														background: card.progress.color,
-													}}
-												/>
-											</div>
-										</div>
-									)}
-									{card.lines && card.lines.length > 0 && (
-										<div
-											className="mt-2"
-											style={{ fontSize: 12, color: "var(--pm-ink-soft)" }}
-										>
-											{card.lines.map((li, i) => (
-												<div key={i}>
-													{li.text}
-													{li.strong && (
-														<strong
-															style={
-																li.strongColor
-																	? { color: li.strongColor }
-																	: undefined
-															}
-														>
-															{li.strong}
-														</strong>
-													)}
-												</div>
-											))}
-										</div>
-									)}
+									<span className={styles.heroLive}>
+										<span className={styles.dotLive} />{" "}
+										{isFetching ? "Refreshing rates" : config.hero.live}
+									</span>
 								</div>
-							</div>
-						))}
-					</div>
-
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Attention Required</h3>
+								<h1 id="fx-page-title">
+									Turn foreign currency into settlement fuel.
+								</h1>
+								<p>{config.pageSub}</p>
+								<div className={styles.heroActions}>
 									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("attentionModal")}
+										type="button"
+										className={styles.heroPrimaryBtn}
+										onClick={() => openM("convertModal")}
 									>
-										View all
+										<i className="bi bi-arrow-left-right" /> Convert
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("hedgeModal")}
+									>
+										<i className="bi bi-shield-lock" /> Rate Lock
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("newWalletModal")}
+									>
+										<i className="bi bi-plus-lg" /> New Wallet
+									</button>
+									<button
+										type="button"
+										className={styles.heroSecondaryBtn}
+										onClick={() => openM("fxNotifModal")}
+									>
+										<i className="bi bi-bell" /> Notifications
 									</button>
 								</div>
-								{config.attention.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
+							</div>
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="FX command center snapshot"
+							>
+								<span>Foreign currency held</span>
+								<strong>
+									{config.hero.value.replace(" in foreign currency", "")}
+								</strong>
+								<p>{config.hero.detail}</p>
+								<div className={styles.heroMetricRow}>
+									<div>
+										<strong>4</strong>
+										<span>Sub-wallets</span>
 									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Smart Suggestions</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> AI
-									</span>
-								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
-										>
-											{item.actionLabel}
-										</button>
+									<div>
+										<strong>129.45</strong>
+										<span>Best USD/KES rate</span>
 									</div>
-								))}
-							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>Frequent FX &amp; wallet workflows</p>
+									<div>
+										<strong>KES 8.42M</strong>
+										<span>Converted MTD</span>
+									</div>
 								</div>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											key={qa.label}
-											className={styles.quickBtn}
-											onClick={() => openM(qa.modal)}
-										>
-											<i
-												className={`bi ${qa.icon} me-1`}
-												style={{ color: qa.color }}
-											/>{" "}
-											{qa.label}
-										</button>
-									))}
+							</aside>
+						</div>
+					</section>
+
+					{/* ======================= SCOPE BAR ======================= */}
+					<div className={`${styles.card} ${styles.scopeBar}`}>
+						<span className={styles.scopeBarLabel}>
+							<i className="bi bi-diagram-3" /> World
+						</span>
+						<div className={styles.worldSwitch}>
+							<button
+								type="button"
+								className={`${styles.worldBtn} ${world === "cust" ? styles.worldBtnActive : ""}`}
+								onClick={() => setWorld("cust")}
+							>
+								<i className="bi bi-people" /> Customer FX
+							</button>
+							<button
+								type="button"
+								className={`${styles.worldBtn} ${world === "my" ? styles.worldBtnActive : ""}`}
+								onClick={() => setWorld("my")}
+							>
+								<i className="bi bi-wallet2" /> My Wallets &amp; FX
+							</button>
+						</div>
+						{world === "cust" && (
+							<div className={styles.bizBar}>
+								<span className={styles.bizLabel}>Scope</span>
+								<div className={styles.pills}>
+									<button
+										type="button"
+										className={`${styles.pill} ${biz === "all" ? styles.pillActive : ""}`}
+										onClick={() => setBiz("all")}
+									>
+										All
+									</button>
+									<button
+										type="button"
+										className={`${styles.pill} ${biz === "land" ? styles.pillActive : ""}`}
+										onClick={() => setBiz("land")}
+									>
+										Land Buyers LTD · 30
+									</button>
+									<button
+										type="button"
+										className={`${styles.pill} ${biz === "co2" ? styles.pillActive : ""}`}
+										onClick={() => setBiz("co2")}
+									>
+										Company 2 · 209
+									</button>
 								</div>
 							</div>
-						</div>
+						)}
+						<span className={styles.scopeTag}>
+							<i className="bi bi-check-circle" /> {scopeTag}
+						</span>
+						{!data && (
+							<span
+								className={styles.scopeTag}
+								style={{
+									background: "#f2f4f8",
+									borderColor: "#e6e9f0",
+									color: "#667085",
+								}}
+							>
+								<i className="bi bi-stars" /> Sandbox preview
+							</span>
+						)}
+						<button
+							type="button"
+							className={styles.scopeAvatar}
+							aria-label="Open profile"
+							onClick={() => openM("profileModal")}
+						>
+							JK
+						</button>
 					</div>
 
+					{error ? (
+						<output className={styles.statusNotice}>
+							<i className="bi bi-cloud-slash" />
+							<span>
+								<strong>Live FX data is temporarily unavailable</strong>
+								<small>Using the latest local operating snapshot.</small>
+							</span>
+						</output>
+					) : null}
+
+					{/* ======================= 1.1 FX PULSE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="fx-pulse-heading"
+					>
+						<SectionHeading
+							id="fx-pulse-heading"
+							index="1.1"
+							title="FX pulse"
+							description="A concise view of currency held, live rates, conversion fuel and lock protection."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxHealthModal")}
+									>
+										<i className="bi bi-heart-pulse" /> Health check
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxAccessModal")}
+									>
+										<i className="bi bi-shield-check" /> FX access
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.kpiGrid}>
+							{config.stats.map((stat, index) => {
+								const meta = STAT_META[stat.label] ?? STAT_FALLBACK;
+								return (
+									<article
+										key={stat.label}
+										className={`${styles.card} ${styles.kpiCard} ${index === 0 ? styles.kpiFeatured : ""} ${index === config.stats.length - 1 ? styles.kpiWarning : ""}`}
+									>
+										<div className={`${styles.kpiIcon} ${styles[meta.tone]}`}>
+											<i className={`bi ${meta.icon}`} />
+										</div>
+										<div className={styles.kpiMeta}>
+											<span>{stat.label}</span>
+											<small>Live</small>
+										</div>
+										<strong className={styles.kpiValue}>{stat.value}</strong>
+										{stat.progress && (
+											<div className={styles.kpiProgress}>
+												<div className={styles.pmProgress}>
+													<div
+														className={styles.pmProgressBar}
+														style={{
+															width: stat.progress.width,
+															background: stat.progress.color,
+														}}
+													/>
+												</div>
+											</div>
+										)}
+										<div className={styles.kpiFoot}>
+											<span
+												className={`${styles.badge} ${styles[stat.badge.tone]}`}
+											>
+												<i className={`bi ${stat.badge.icon}`} />{" "}
+												{stat.badge.text}
+											</span>
+											<span>
+												{stat.progress?.value ??
+													stat.lines?.[0]?.text ??
+													"FX command center"}
+											</span>
+										</div>
+									</article>
+								);
+							})}
+						</div>
+					</section>
+
+					{/* ======================= 1.2 ATTENTION & ACTIONS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="fx-attention-heading"
+					>
+						<SectionHeading
+							id="fx-attention-heading"
+							index="1.2"
+							title="Needs your attention"
+							description="Resolve conversion exceptions and act on intelligent FX recommendations without leaving the dashboard."
+							action={
+								<button
+									type="button"
+									className={styles.btnPm}
+									onClick={() => openM("attentionModal")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
+							}
+						/>
+						<div className={styles.attentionGrid}>
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Action center</span>
+										<h3>FX exceptions</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeW}`}>
+										{config.attention.length} open
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.attention.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+
+							<article className={`${styles.card} ${styles.listCard}`}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Smart guidance</span>
+										<h3>Suggested next moves</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeP}`}>
+										<i className="bi bi-stars" /> Insights
+									</span>
+								</div>
+								<div className={styles.listBody}>
+									{config.suggestions.map((item) => (
+										<div key={item.title} className={styles.actionRow}>
+											<div className={styles.actionRowMain}>
+												<span
+													className={styles.iconCircle}
+													style={{
+														background: item.iconBg,
+														color: item.iconColor,
+													}}
+												>
+													<i className={`bi ${item.icon}`} />
+												</span>
+												<div>
+													<strong>{item.title}</strong>
+													<span>{item.sub}</span>
+												</div>
+											</div>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
+									))}
+								</div>
+							</article>
+						</div>
+
+						<article className={`${styles.card} ${styles.quickActionCard}`}>
+							<div className={styles.quickActionIntro}>
+								<span className={styles.cardKicker}>Shortcuts</span>
+								<h3>Start a workflow</h3>
+								<p>Frequent FX &amp; wallet tasks, one click away.</p>
+							</div>
+							<div className={styles.quickGrid}>
+								{config.quickActions.map((action) => (
+									<button
+										type="button"
+										key={action.label}
+										className={styles.quickBtn}
+										onClick={() => openM(action.modal)}
+									>
+										<span style={{ color: action.color }}>
+											<i className={`bi ${action.icon}`} />
+										</span>
+										{action.label}
+										<i className="bi bi-arrow-right" />
+									</button>
+								))}
+							</div>
+						</article>
+					</section>
+
 					{/* ============================================================
-					    WORLD A — CUSTOMER FX & COLLECTIONS
+					    1.3 WORLD A — CUSTOMER FX & COLLECTIONS
 					    ============================================================ */}
 					{world === "cust" && (
-						<>
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-people"
-									iconColor="var(--pm-info)"
-									title="Diaspora & Card Settlements"
-									sub={`${scopeTag} — foreign-currency payments from your customers, awaiting or already converted into KES float fuel.`}
-									actions={[
-										{
-											label: "Convert Batch",
-											icon: "bi-arrow-left-right",
-											modal: "diasporaConvertModal",
-											tone: "btnPmP",
-										},
-										{
-											label: "Bulk FX",
-											icon: "bi-collection",
-											modal: "bulkFxModal",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="table-responsive">
+						<section
+							className={styles.dashboardSection}
+							aria-labelledby="fx-collections-heading"
+						>
+							<SectionHeading
+								id="fx-collections-heading"
+								index="1.3"
+								title="Customer FX & collections"
+								description={`${scopeTag} — foreign-currency payments from your customers, awaiting or already converted into KES float fuel.`}
+								action={
+									<div className={styles.headerButtonRow}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnPmP}`}
+											onClick={() => openM("diasporaConvertModal")}
+										>
+											<i className="bi bi-arrow-left-right" /> Convert batch
+										</button>
+										<button
+											type="button"
+											className={styles.btnPm}
+											onClick={() => openM("bulkFxModal")}
+										>
+											<i className="bi bi-collection" /> Bulk FX
+										</button>
+									</div>
+								}
+							/>
+
+							<article className={`${styles.card} ${styles.tableCard}`}>
+								<div className={styles.tableToolbar}>
+									<div className={styles.tableTitle}>
+										<h3>Diaspora &amp; card settlements</h3>
+										<span>Incoming foreign-currency payments per business</span>
+									</div>
+									<div className={styles.tableTools}>
+										<label className={styles.tableSearch}>
+											<i className="bi bi-search" />
+											<span className={styles.srOnly}>Search settlements</span>
+											<input
+												value={diasporaSearch}
+												onChange={(event) =>
+													setDiasporaSearch(event.target.value)
+												}
+												placeholder="Search reference or payer"
+											/>
+										</label>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+											onClick={() => openM("diasporaConvertModal")}
+										>
+											<i className="bi bi-arrow-left-right" /> Convert to float
+										</button>
+									</div>
+								</div>
+								<div className={styles.tableScroll}>
 									<table className={styles.tbl}>
 										<thead>
 											<tr>
@@ -1283,32 +1430,39 @@ export default function FxManagement() {
 												<th>Business</th>
 												<th>Payer / Order</th>
 												<th>From</th>
-												<th>KES Value</th>
+												<th>KES value</th>
 												<th>Rate</th>
 												<th>Status</th>
-												<th>Action</th>
+												<th>
+													<span className={styles.srOnly}>Action</span>
+												</th>
 											</tr>
 										</thead>
 										<tbody>
-											{diaspora.map((d) => (
+											{filteredDiaspora.map((d) => (
 												<tr key={d.ref}>
 													<td>
-														<strong>{d.ref}</strong>
+														<code>{d.ref}</code>
 													</td>
 													<td>{d.business}</td>
 													<td>{d.payer}</td>
-													<td>{d.from}</td>
+													<td>
+														<strong>{d.from}</strong>
+													</td>
 													<td>
 														<strong>{d.kes}</strong>
 													</td>
 													<td>{d.rate}</td>
 													<td>
-														<span className={`${styles.badge} ${styles[d.tone]}`}>
+														<span
+															className={`${styles.badge} ${styles[d.tone]}`}
+														>
 															{d.status}
 														</span>
 													</td>
 													<td>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm}`}
 															onClick={() => openM(d.actionModal)}
 														>
@@ -1317,28 +1471,70 @@ export default function FxManagement() {
 													</td>
 												</tr>
 											))}
+											{diaspora.length === 0 && (
+												<tr>
+													<td colSpan={8}>
+														<div className={styles.emptyState}>
+															<i className="bi bi-currency-exchange" />
+															<strong>No settlements in this scope</strong>
+															<span>
+																Switch the business scope to see more
+																collections.
+															</span>
+														</div>
+													</td>
+												</tr>
+											)}
+											{diaspora.length > 0 && filteredDiaspora.length === 0 && (
+												<tr>
+													<td colSpan={8}>
+														<div className={styles.emptyState}>
+															<i className="bi bi-search" />
+															<strong>No matching settlements</strong>
+															<span>
+																Try a different reference or payer name.
+															</span>
+														</div>
+													</td>
+												</tr>
+											)}
 										</tbody>
 									</table>
 								</div>
-							</div>
+								<div className={styles.tableFooter}>
+									<span>
+										Showing {filteredDiaspora.length} of {diaspora.length}{" "}
+										settlements
+									</span>
+									<button type="button" onClick={() => openM("bulkFxModal")}>
+										Bulk convert <i className="bi bi-arrow-right" />
+									</button>
+								</div>
+							</article>
 
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-arrow-left-right"
-									iconColor="var(--pm-primary)"
-									title="Conversion History"
-									sub={`${scopeTag} — every conversion and where it landed (float fuel or your own wallet).`}
-									actions={[
-										{
-											label: "Convert Now",
-											icon: "bi-arrow-right",
-											modal: "convertModal",
-											tone: "btnPmP",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="table-responsive">
+							<article
+								className={`${styles.card} ${styles.tableCard}`}
+								style={{ marginTop: "1rem" }}
+							>
+								<div className={styles.tableToolbar}>
+									<div className={styles.tableTitle}>
+										<h3>Conversion history</h3>
+										<span>
+											Every conversion and where it landed — float fuel or your
+											own wallet.
+										</span>
+									</div>
+									<div className={styles.tableTools}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+											onClick={() => openM("convertModal")}
+										>
+											<i className="bi bi-arrow-right" /> Convert now
+										</button>
+									</div>
+								</div>
+								<div className={styles.tableScroll}>
 									<table className={styles.tbl}>
 										<thead>
 											<tr>
@@ -1349,14 +1545,16 @@ export default function FxManagement() {
 												<th>Fee</th>
 												<th>Destination</th>
 												<th>Status</th>
-												<th>Action</th>
+												<th>
+													<span className={styles.srOnly}>Action</span>
+												</th>
 											</tr>
 										</thead>
 										<tbody>
 											{conversions.map((c) => (
 												<tr key={c.ref}>
 													<td>
-														<strong>{c.ref}</strong>
+														<code>{c.ref}</code>
 													</td>
 													<td>{c.business}</td>
 													<td>
@@ -1375,12 +1573,15 @@ export default function FxManagement() {
 														</span>
 													</td>
 													<td>
-														<span className={`${styles.badge} ${styles[c.tone]}`}>
+														<span
+															className={`${styles.badge} ${styles[c.tone]}`}
+														>
 															{c.status}
 														</span>
 													</td>
 													<td>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm}`}
 															onClick={() => openM("fxReceiptModal")}
 														>
@@ -1389,27 +1590,37 @@ export default function FxManagement() {
 													</td>
 												</tr>
 											))}
+											{conversions.length === 0 && (
+												<tr>
+													<td colSpan={8}>
+														<div className={styles.emptyState}>
+															<i className="bi bi-clock-history" />
+															<strong>No conversions in this scope</strong>
+															<span>Converted batches will appear here.</span>
+														</div>
+													</td>
+												</tr>
+											)}
 										</tbody>
 									</table>
 								</div>
-							</div>
+							</article>
 
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-shield-check"
-									iconColor="var(--pm-purple)"
-									title="Per-Business Conversion Limits"
-									sub="What you may convert and move per business — tied to your role on each account."
-									actions={[
-										{
-											label: "Edit Limits",
-											icon: "bi-pencil",
-											modal: "fxLimitsModal",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="row g-3">
+							<article className={styles.card} style={{ marginTop: "1rem" }}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Role limits</span>
+										<h3>Per-business conversion limits</h3>
+									</div>
+									<button
+										type="button"
+										className={styles.textButton}
+										onClick={() => openM("fxLimitsModal")}
+									>
+										Edit limits <i className="bi bi-arrow-right" />
+									</button>
+								</div>
+								<div className="row g-3" style={{ paddingTop: "1rem" }}>
 									{config.businesses.map((b) => (
 										<div className="col-lg-6" key={b.id}>
 											<div className={styles.bizSourceCard}>
@@ -1420,8 +1631,12 @@ export default function FxManagement() {
 															{b.role} · {b.customers} customers
 														</div>
 													</div>
-													<span className={`${styles.badge} ${b.id === "land" ? styles.badgeW : styles.badgeS}`}>
-														{b.id === "land" ? "Payouts ≤ KES 5M" : "Full access"}
+													<span
+														className={`${styles.badge} ${b.id === "land" ? styles.badgeW : styles.badgeS}`}
+													>
+														{b.id === "land"
+															? "Payouts ≤ KES 5M"
+															: "Full access"}
 													</span>
 												</div>
 												<div className={styles.bizSourceRow}>
@@ -1439,46 +1654,65 @@ export default function FxManagement() {
 													</strong>
 												</div>
 												<button
+													type="button"
 													className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
 													onClick={() => openM("fxLimitsModal")}
 												>
-													<i className="bi bi-pencil me-1" /> Edit {b.name} limits
+													<i className="bi bi-pencil me-1" /> Edit {b.name}{" "}
+													limits
 												</button>
 											</div>
 										</div>
 									))}
 								</div>
-							</div>
-						</>
+							</article>
+						</section>
 					)}
 
 					{/* ============================================================
-					    WORLD B — MY MULTI-CURRENCY WALLETS & STRUCTURE
+					    1.3 WORLD B — MY MULTI-CURRENCY WALLETS & STRUCTURE
 					    ============================================================ */}
 					{world === "my" && (
-						<>
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-diagram-3"
-									iconColor="var(--pm-primary)"
-									title="Wallet Structure"
-									sub="Your money hierarchy: platform master → business wallet → virtual wallet → currency sub-wallets → business floats."
-									actions={[
-										{
-											label: "Top Up Wallet",
-											icon: "bi-plus-circle",
-											modal: "walletTopUpModal",
-											tone: "btnPmP",
-										},
-										{
-											label: "Withdraw",
-											icon: "bi-box-arrow-up-right",
-											modal: "walletWithdrawModal",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="row g-3">
+						<section
+							className={styles.dashboardSection}
+							aria-labelledby="fx-wallets-heading"
+						>
+							<SectionHeading
+								id="fx-wallets-heading"
+								index="1.3"
+								title="My wallets & structure"
+								description="Your money hierarchy — platform master, business wallet, virtual wallet, currency sub-wallets and business floats."
+								action={
+									<div className={styles.headerButtonRow}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnPmP}`}
+											onClick={() => openM("walletTopUpModal")}
+										>
+											<i className="bi bi-plus-circle" /> Top up wallet
+										</button>
+										<button
+											type="button"
+											className={styles.btnPm}
+											onClick={() => openM("walletWithdrawModal")}
+										>
+											<i className="bi bi-box-arrow-up-right" /> Withdraw
+										</button>
+									</div>
+								}
+							/>
+
+							<article className={styles.card}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Hierarchy</span>
+										<h3>Wallet structure</h3>
+									</div>
+									<span className={`${styles.badge} ${styles.badgeI}`}>
+										<i className="bi bi-diagram-3" /> 3 accounts · 4 currencies
+									</span>
+								</div>
+								<div className="row g-3" style={{ paddingTop: "1rem" }}>
 									{[
 										{
 											name: "Paymo Master",
@@ -1500,50 +1734,81 @@ export default function FxManagement() {
 										},
 									].map((n) => (
 										<div className="col-lg-4" key={n.name}>
-											<div
-												className={styles.bizSourceCard}
-												style={{ cursor: "pointer" }}
+											<button
+												type="button"
+												className={`${styles.bizSourceCard} ${styles.bizSourceCardBtn}`}
+												onClick={() => openM("walletDetailModal")}
+											>
+												<span className={styles.walletNodeHead}>
+													<i className={`bi ${n.icon}`} /> {n.name}
+												</span>
+												<span
+													className={styles.walletNodeVal}
+													style={{ margin: "6px 0", display: "block" }}
+												>
+													{n.value}
+												</span>
+												<span className={styles.mutedSmall}>{n.meta}</span>
+												<span
+													className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
+													style={{
+														justifyContent: "center",
+														pointerEvents: "none",
+													}}
+												>
+													Manage
+												</span>
+											</button>
+										</div>
+									))}
+								</div>
+								<div className={styles.walletTree}>
+									{config.walletTree.map((n, i) => (
+										<div
+											className="d-flex align-items-stretch"
+											style={{ gap: 6 }}
+											key={n.name}
+										>
+											<button
+												type="button"
+												className={styles.walletNode}
 												onClick={() => openM("walletDetailModal")}
 											>
 												<div className={styles.walletNodeHead}>
 													<i className={`bi ${n.icon}`} /> {n.name}
 												</div>
-												<div className={styles.walletNodeVal} style={{ margin: "6px 0" }}>
-													{n.value}
-												</div>
-												<div className={styles.mutedSmall}>{n.meta}</div>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm} w-100 mt-3`}
-													onClick={(e) => {
-														e.stopPropagation();
-														openM("walletDetailModal");
-													}}
-												>
-													Manage
-												</button>
-											</div>
+												<div className={styles.walletNodeVal}>{n.value}</div>
+												<div className={styles.walletNodeMeta}>{n.meta}</div>
+											</button>
+											{i < config.walletTree.length - 1 && (
+												<span className={styles.walletArrow}>
+													<i className="bi bi-chevron-right" />
+												</span>
+											)}
 										</div>
 									))}
 								</div>
-							</div>
+								<p className={styles.mutedSmall} style={{ marginTop: 10 }}>
+									<i className="bi bi-info-circle me-1" />
+									Tap any wallet to manage, top up or withdraw.
+								</p>
+							</article>
 
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-currency-exchange"
-									iconColor="var(--pm-info)"
-									title="Currency Sub-Wallets"
-									sub="Foreign-currency balances you hold — from diaspora payments and the card rail."
-									actions={[
-										{
-											label: "New Wallet",
-											icon: "bi-plus-lg",
-											modal: "newWalletModal",
-											tone: "btnPmP",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="row g-3">
+							<article className={styles.card} style={{ marginTop: "1rem" }}>
+								<div className={styles.cardHeader}>
+									<div>
+										<span className={styles.cardKicker}>Balances</span>
+										<h3>Currency sub-wallets</h3>
+									</div>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("newWalletModal")}
+									>
+										<i className="bi bi-plus-lg" /> New wallet
+									</button>
+								</div>
+								<div className="row g-3" style={{ paddingTop: "1rem" }}>
 									{config.subWallets.map((w) => (
 										<div className="col-lg-3 col-md-6" key={w.ccy}>
 											<div className={styles.subWalletCard}>
@@ -1553,7 +1818,9 @@ export default function FxManagement() {
 														<div className={styles.subWalletName}>
 															{w.ccy} Wallet
 														</div>
-														<div className={styles.subWalletSrc}>{w.source}</div>
+														<div className={styles.subWalletSrc}>
+															{w.source}
+														</div>
 													</div>
 												</div>
 												<div className={styles.subWalletBal}>{w.balance}</div>
@@ -1562,8 +1829,9 @@ export default function FxManagement() {
 													<span
 														style={{
 															color: w.change.includes("+")
-																? "var(--pm-accent)"
+																? "var(--pm-green)"
 																: "var(--pm-danger)",
+															fontWeight: 700,
 														}}
 													>
 														{w.change}
@@ -1576,18 +1844,21 @@ export default function FxManagement() {
 												</div>
 												<div className="d-flex flex-wrap" style={{ gap: 6 }}>
 													<button
+														type="button"
 														className={`${styles.btnPm} ${styles.btnSm}`}
 														onClick={() => openM("convertModal")}
 													>
 														Convert
 													</button>
 													<button
+														type="button"
 														className={`${styles.btnPm} ${styles.btnSm}`}
 														onClick={() => openM("walletTopUpModal")}
 													>
-														Top Up
+														Top up
 													</button>
 													<button
+														type="button"
 														className={`${styles.btnPm} ${styles.btnSm}`}
 														onClick={() => openM("walletWithdrawModal")}
 													>
@@ -1598,48 +1869,59 @@ export default function FxManagement() {
 										</div>
 									))}
 								</div>
-							</div>
+							</article>
 
-							<div className={styles.card}>
-								<SectionHead
-									icon="bi-send"
-									iconColor="var(--pm-danger)"
-									title="Cross-Border Payments"
-									sub="Supplier, vendor and diaspora refund payments from your sub-wallets."
-									actions={[
-										{
-											label: "New Transfer",
-											icon: "bi-send",
-											modal: "fxTransferModal",
-											tone: "btnPmP",
-										},
-									]}
-									onOpen={openM}
-								/>
-								<div className="table-responsive">
+							<article
+								className={`${styles.card} ${styles.tableCard}`}
+								style={{ marginTop: "1rem" }}
+							>
+								<div className={styles.tableToolbar}>
+									<div className={styles.tableTitle}>
+										<h3>Cross-border payments</h3>
+										<span>
+											Supplier, vendor and diaspora refund payments from your
+											sub-wallets.
+										</span>
+									</div>
+									<div className={styles.tableTools}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+											onClick={() => openM("fxTransferModal")}
+										>
+											<i className="bi bi-send" /> New transfer
+										</button>
+									</div>
+								</div>
+								<div className={styles.tableScroll}>
 									<table className={styles.tbl}>
 										<thead>
 											<tr>
 												<th>Ref</th>
 												<th>Payment</th>
 												<th>Status</th>
-												<th>Action</th>
+												<th>
+													<span className={styles.srOnly}>Action</span>
+												</th>
 											</tr>
 										</thead>
 										<tbody>
 											{crossBorder.map((x) => (
 												<tr key={x.ref}>
 													<td>
-														<strong>{x.ref}</strong>
+														<code>{x.ref}</code>
 													</td>
 													<td>{x.detail}</td>
 													<td>
-														<span className={`${styles.badge} ${styles[x.tone]}`}>
+														<span
+															className={`${styles.badge} ${styles[x.tone]}`}
+														>
 															{x.status}
 														</span>
 													</td>
 													<td>
 														<button
+															type="button"
 															className={`${styles.btnPm} ${styles.btnSm}`}
 															onClick={() => openM(x.actionModal)}
 														>
@@ -1651,224 +1933,296 @@ export default function FxManagement() {
 										</tbody>
 									</table>
 								</div>
-							</div>
-						</>
+							</article>
+						</section>
 					)}
 
 					{/* ============================================================
-					    WORLD C — RATES, LOCKS, RULES & PERMISSIONS
+					    1.4 RATES, LOCKS & MARKET
 					    ============================================================ */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-graph-up-arrow"
-							iconColor="var(--pm-accent)"
-							title="Live FX Rates & Market Center"
-							sub="Real-time rates for your settlement currencies, plus the alerts watching them."
-							actions={[
-								{ label: "Alerts", icon: "bi-bell", modal: "rateAlertsModal" },
-								{
-									label: "Market Depth",
-									icon: "bi-globe",
-									modal: "fxMarketModal",
-								},
-							]}
-							onOpen={openM}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="fx-rates-heading"
+					>
+						<SectionHeading
+							id="fx-rates-heading"
+							index="1.4"
+							title="Rates, locks & market"
+							description="Real-time rates for your settlement currencies, plus the locks and analytics protecting your float fuel."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxMarketModal")}
+									>
+										<i className="bi bi-globe" /> Market depth
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("hedgeModal")}
+									>
+										<i className="bi bi-shield-lock" /> New lock
+									</button>
+								</div>
+							}
 						/>
-						<div className="row g-3">
-							<div className="col-lg-7">
-								<Ub title="Live Retail Rates (KES)">
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													<th>Pair</th>
-													<th>Buy</th>
-													<th>Sell</th>
-													<th>Spread</th>
-													<th>24h</th>
-													<th>Action</th>
-												</tr>
-											</thead>
-											<tbody>
-												{config.liveRates.map((r) => (
-													<tr key={r.pair}>
-														<td>
-															<strong>{r.pair}</strong>
-														</td>
-														<td>{r.buy}</td>
-														<td>{r.sell}</td>
-														<td>{r.spread}</td>
-														<td>
-															<span
-																style={{
-																	color: r.change.includes("+")
-																		? "var(--pm-accent)"
-																		: "var(--pm-danger)",
-																}}
-															>
-																{r.change}
-															</span>
-														</td>
-														<td>
-															<button
-																className={`${styles.btnPm} ${styles.btnSm}`}
-																onClick={() => openM("convertModal")}
-															>
-																Trade
-															</button>
-														</td>
+						<div className={styles.card}>
+							<div className="row g-3">
+								<div className="col-lg-7">
+									<Ub
+										title="Live retail rates (KES)"
+										action={
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("rateAlertsModal")}
+											>
+												<i className="bi bi-bell" /> Alerts
+											</button>
+										}
+									>
+										<div className={styles.tableScroll}>
+											<table className={styles.tbl} style={{ minWidth: 520 }}>
+												<thead>
+													<tr>
+														<th>Pair</th>
+														<th>Buy</th>
+														<th>Sell</th>
+														<th>Spread</th>
+														<th>24h</th>
+														<th>
+															<span className={styles.srOnly}>Action</span>
+														</th>
 													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</Ub>
-							</div>
-							<div className="col-lg-5">
-								<Ub title="Rate Alerts Active">
-									<SrRowList
-										rows={config.rateAlerts}
-										wideButton={{
-											label: "Manage All Alerts",
-											modal: "rateAlertsModal",
-										}}
-										onOpen={openM}
-									/>
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-shield-lock"
-							iconColor="var(--pm-purple)"
-							title="Rate Locks"
-							sub="Lock a rate for a scheduled payout so your float fuel costs exactly what you planned."
-							actions={[
-								{ label: "New Lock", modal: "hedgeModal" },
-								{ label: "Manage Locks", modal: "rateLockModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
-						/>
-						<div className={styles.lockStrip}>
-							<i className="bi bi-stars" />
-							<div style={{ flex: "1 1 240px", fontSize: 13 }}>
-								<strong>{config.lockStrip.text}</strong>{" "}
-								<span>{config.lockStrip.strong}</span>
-							</div>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
-								onClick={() => openM(config.lockStrip.modal)}
-							>
-								{config.lockStrip.btnLabel}
-							</button>
-						</div>
-						<div className="row g-3">
-							<div className="col-lg-6">
-								<Ub title="Active Rate Locks">
-									<SrRowList rows={config.rateLocks} onOpen={openM} />
-								</Ub>
-							</div>
-							<div className="col-lg-6">
-								<Ub
-									title="FX Analytics & Reporting"
-									action={
-										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("fxAnalyticsModal")}
-										>
-											<i className="bi bi-bar-chart me-1" /> Analytics
-										</button>
-									}
-								>
-									<div className="d-flex gap-4 flex-wrap">
-										<div className={styles.chartBars} style={{ height: 90, flex: "1 1 180px" }}>
-											{config.costBars.map((b) => (
-												<div
-													key={b.label}
-													className={styles.chartBar}
-													style={{ height: b.height, background: b.color }}
-												>
-													<span className={styles.barLabel}>{b.label}</span>
-												</div>
-											))}
+												</thead>
+												<tbody>
+													{config.liveRates.map((r) => (
+														<tr key={r.pair}>
+															<td>
+																<strong>{r.pair}</strong>
+															</td>
+															<td>{r.buy}</td>
+															<td>{r.sell}</td>
+															<td>{r.spread}</td>
+															<td>
+																<span
+																	style={{
+																		color: r.change.includes("+")
+																			? "var(--pm-green)"
+																			: "var(--pm-danger)",
+																		fontWeight: 700,
+																	}}
+																>
+																	{r.change}
+																</span>
+															</td>
+															<td>
+																<button
+																	type="button"
+																	className={`${styles.btnPm} ${styles.btnSm}`}
+																	onClick={() => openM("convertModal")}
+																>
+																	Trade
+																</button>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
 										</div>
-										<div style={{ flex: "1 1 200px" }}>
-											<div className="row g-2">
-												{config.keyMetrics.map((m) => (
-													<div className="col-12" key={m.label}>
-														<div className={styles.summaryBox}>
-															<div className={styles.mutedSmall}>{m.label}</div>
-															<div
-																style={{
-																	fontSize: 20,
-																	fontWeight: 700,
-																	color: m.color,
-																	fontFamily: "var(--pm-font-display)",
-																}}
-															>
-																{m.value}
-															</div>
-														</div>
+									</Ub>
+								</div>
+								<div className="col-lg-5">
+									<Ub title="Rate alerts active">
+										<SrRowList
+											rows={config.rateAlerts}
+											wideButton={{
+												label: "Manage all alerts",
+												modal: "rateAlertsModal",
+											}}
+											onOpen={openM}
+										/>
+									</Ub>
+								</div>
+							</div>
+						</div>
+
+						<article className={styles.card} style={{ marginTop: "1rem" }}>
+							<div className={styles.cardHeader}>
+								<div>
+									<span className={styles.cardKicker}>Protection</span>
+									<h3>Rate locks &amp; FX analytics</h3>
+								</div>
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxRiskModal")}
+									>
+										<i className="bi bi-activity" /> Exposure
+									</button>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxAnalyticsModal")}
+									>
+										<i className="bi bi-bar-chart" /> Analytics
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("rateLockModal")}
+									>
+										<i className="bi bi-sliders" /> Manage locks
+									</button>
+								</div>
+							</div>
+							<div className={styles.lockStrip} style={{ marginTop: "1rem" }}>
+								<i className="bi bi-stars" />
+								<div style={{ flex: "1 1 240px", fontSize: 13 }}>
+									<strong>{config.lockStrip.text}</strong>{" "}
+									<span className={styles.mutedSmall}>
+										{config.lockStrip.strong}
+									</span>
+								</div>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+									onClick={() => openM(config.lockStrip.modal)}
+								>
+									{config.lockStrip.btnLabel}
+								</button>
+							</div>
+							<div className="row g-3">
+								<div className="col-lg-6">
+									<Ub title="Active rate locks">
+										<SrRowList
+											rows={config.rateLocks}
+											wideButton={{
+												label: "Lock a rate",
+												modal: "hedgeModal",
+											}}
+											onOpen={openM}
+										/>
+									</Ub>
+								</div>
+								<div className="col-lg-6">
+									<Ub
+										title="Monthly FX cost"
+										action={
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("fxStatementModal")}
+											>
+												<i className="bi bi-download me-1" /> Export report
+											</button>
+										}
+									>
+										<div className="d-flex gap-4 flex-wrap">
+											<div
+												className={styles.chartBars}
+												style={{ height: 110, flex: "1 1 180px" }}
+											>
+												{config.costBars.map((b) => (
+													<div
+														key={b.label}
+														className={styles.chartBar}
+														style={{
+															height: b.height,
+															background: b.color,
+														}}
+													>
+														<span className={styles.barLabel}>{b.label}</span>
 													</div>
 												))}
 											</div>
-											<button
-												className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
-												onClick={() => openM("fxStatementModal")}
-											>
-												<i className="bi bi-download me-1" /> Export Report
-											</button>
+											<div style={{ flex: "1 1 200px" }}>
+												<div className="row g-2">
+													{config.keyMetrics.map((m) => (
+														<div className="col-12" key={m.label}>
+															<div className={styles.summaryBox}>
+																<div className={styles.mutedSmall}>
+																	{m.label}
+																</div>
+																<div
+																	style={{
+																		fontSize: 20,
+																		fontWeight: 700,
+																		color: m.color,
+																		fontFamily: "var(--pm-font-display)",
+																	}}
+																>
+																	{m.value}
+																</div>
+															</div>
+														</div>
+													))}
+												</div>
+											</div>
 										</div>
-									</div>
-								</Ub>
+									</Ub>
+								</div>
 							</div>
-						</div>
-					</div>
+						</article>
+					</section>
 
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-gear"
-							iconColor="var(--pm-muted)"
-							title="FX Automation & Preferences"
-							sub="Auto-conversion rules, rate alert channels and wallet display preferences."
-							actions={[
-								{
-									label: "Automation",
-									icon: "bi-robot",
-									modal: "fxAutomationModal",
-								},
-							]}
-							onOpen={openM}
+					{/* ============================================================
+					    1.5 AUTOMATION, PERMISSIONS & ACTIVITY
+					    ============================================================ */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="fx-rules-heading"
+					>
+						<SectionHeading
+							id="fx-rules-heading"
+							index="1.5"
+							title="Rules, permissions & activity"
+							description="Auto-conversion rules, alert channels, wallet preferences, your FX access and the recent ledger of conversions."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={styles.btnPm}
+										onClick={() => openM("fxAutomationModal")}
+									>
+										<i className="bi bi-robot" /> Automation
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnPmP}`}
+										onClick={() => openM("fxAccessModal")}
+									>
+										<i className="bi bi-shield-check" /> FX permissions
+									</button>
+								</div>
+							}
 						/>
-						<div className="row g-3">
-							<div className="col-lg-4">
-								<Ub title="Auto-Conversion Rules">
+						<div className={styles.card}>
+							<div className={styles.panelGrid}>
+								<Ub title="Auto-conversion rules">
 									<SrRowList
 										rows={config.autoRules}
 										wideButton={{
-											label: "Manage Rules",
+											label: "Manage rules",
 											modal: "fxAutomationModal",
 										}}
 										onOpen={openM}
 									/>
 								</Ub>
-							</div>
-							<div className="col-lg-4">
-								<Ub title="Rate Alert Settings">
+								<Ub title="Rate alert settings">
 									<SrRowList
 										rows={config.alertSettings}
 										wideButton={{
-											label: "Edit Alerts",
+											label: "Edit alerts",
 											modal: "rateAlertsModal",
 										}}
 										onOpen={openM}
 									/>
 								</Ub>
-							</div>
-							<div className="col-lg-4">
-								<Ub title="Wallet Preferences">
+								<Ub title="Wallet preferences">
 									<SrRowList
 										rows={config.walletPrefs}
 										wideButton={{
@@ -1880,127 +2234,162 @@ export default function FxManagement() {
 								</Ub>
 							</div>
 						</div>
-					</div>
 
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-shield-check"
-							iconColor="var(--pm-primary)"
-							title="FX Permissions & Access"
-							sub="What you can do across FX — convert customer money, lock rates, and move your own funds."
-							actions={[
-								{
-									label: "View Permissions",
-									icon: "bi-shield-check",
-									modal: "fxAccessModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
-						/>
-						{config.fxAccess.map((p) => (
-							<div className={styles.permItem} key={p.scope}>
-								<div
-									className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`}
-								/>
-								<div style={{ flex: "1 1 auto" }}>
-									<div className={styles.permTitle}>{p.scope}</div>
-									<div className={styles.permSub}>{p.desc}</div>
+						<article className={styles.card} style={{ marginTop: "1rem" }}>
+							<div className={styles.cardHeader}>
+								<div>
+									<span className={styles.cardKicker}>Access</span>
+									<h3>FX permissions &amp; access</h3>
 								</div>
-								{p.granted ? (
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										<i className="bi bi-check-lg" /> Granted
-									</span>
-								) : (
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("fxAccessModal")}
-									>
-										Request Access
-									</button>
-								)}
+								<span className={`${styles.badge} ${styles.badgeS}`}>
+									<i className="bi bi-shield-check" /> 3 of 5 granted
+								</span>
 							</div>
-						))}
-					</div>
+							<div style={{ paddingTop: "0.4rem" }}>
+								{config.fxAccess.map((p) => (
+									<div className={styles.permItem} key={p.scope}>
+										<div
+											className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`}
+										/>
+										<div style={{ flex: "1 1 auto" }}>
+											<div className={styles.permTitle}>{p.scope}</div>
+											<div className={styles.permSub}>{p.desc}</div>
+										</div>
+										{p.granted ? (
+											<span className={`${styles.badge} ${styles.badgeS}`}>
+												<i className="bi bi-check-lg" /> Granted
+											</span>
+										) : (
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("fxAccessModal")}
+											>
+												Request access
+											</button>
+										)}
+									</div>
+								))}
+							</div>
+						</article>
 
-					{/* ======================= RECENT FX ACTIVITY ======================= */}
-					<div className={styles.card}>
-						<div className="d-flex justify-content-between align-items-center mb-3">
-							<h3 className={styles.st}>
-								<i
-									className="bi bi-clock-history"
-									style={{ color: "var(--pm-muted)" }}
-								/>{" "}
-								Recent FX Activity
-							</h3>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("fxStatementModal")}
-							>
-								Full History
-							</button>
-						</div>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>World</th>
-										<th>Ref</th>
-										<th>Activity</th>
-										<th>Amount</th>
-										<th>Rate</th>
-										<th>Fee</th>
-										<th>Status</th>
-										<th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									{config.activity.map((a) => (
-										<tr key={a.ref}>
-											<td>{a.date}</td>
-											<td>
-												<span
-													className={`${styles.worldTag} ${a.world === "cust" ? styles.worldTagCust : styles.worldTagMy}`}
-												>
-													<i
-														className={`bi ${a.world === "cust" ? "bi-people" : "bi-wallet2"}`}
-													/>{" "}
-													{a.world === "cust" ? "Customer FX" : "My Wallets"}
-												</span>
-											</td>
-											<td>
-												<strong>{a.ref}</strong>
-											</td>
-											<td>{a.activity}</td>
-											<td>
-												<strong>{a.amount}</strong>
-											</td>
-											<td>{a.rate}</td>
-											<td>{a.fee}</td>
-											<td>
-												<span className={`${styles.badge} ${styles[a.tone]}`}>
-													{a.status}
-												</span>
-											</td>
-											<td>
-												<button
-													className={`${styles.btnPm} ${styles.btnSm}`}
-													onClick={() => openM("fxReceiptModal")}
-												>
-													Receipt
-												</button>
-											</td>
+						<article
+							className={`${styles.card} ${styles.tableCard}`}
+							style={{ marginTop: "1rem" }}
+						>
+							<div className={styles.tableToolbar}>
+								<div className={styles.tableTitle}>
+									<h3>Recent FX activity</h3>
+									<span>Every conversion, lock and cross-border payment.</span>
+								</div>
+								<div className={styles.tableTools}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("fxStatementModal")}
+									>
+										<i className="bi bi-clock-history" /> Full history
+									</button>
+								</div>
+							</div>
+							<div className={styles.tableScroll}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Date</th>
+											<th>World</th>
+											<th>Ref</th>
+											<th>Activity</th>
+											<th>Amount</th>
+											<th>Rate</th>
+											<th>Fee</th>
+											<th>Status</th>
+											<th>
+												<span className={styles.srOnly}>Action</span>
+											</th>
 										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
+									</thead>
+									<tbody>
+										{config.activity.map((a) => (
+											<tr key={a.ref}>
+												<td>{a.date}</td>
+												<td>
+													<span
+														className={`${styles.worldTag} ${a.world === "cust" ? styles.worldTagCust : styles.worldTagMy}`}
+													>
+														<i
+															className={`bi ${a.world === "cust" ? "bi-people" : "bi-wallet2"}`}
+														/>{" "}
+														{a.world === "cust" ? "Customer FX" : "My Wallets"}
+													</span>
+												</td>
+												<td>
+													<code>{a.ref}</code>
+												</td>
+												<td>{a.activity}</td>
+												<td>
+													<strong>{a.amount}</strong>
+												</td>
+												<td>{a.rate}</td>
+												<td>{a.fee}</td>
+												<td>
+													<span className={`${styles.badge} ${styles[a.tone]}`}>
+														{a.status}
+													</span>
+												</td>
+												<td>
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("fxReceiptModal")}
+													>
+														Receipt
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</article>
+					</section>
 				</div>
-				{/* content */}
-			</div>
-			{/* main */}
+
+				{/* ======================= FLOATING COMMAND BAR ======================= */}
+				<nav className={styles.floatingBar} aria-label="Quick FX actions">
+					<button
+						type="button"
+						className={styles.floatingPrimary}
+						onClick={() => openM("convertModal")}
+					>
+						<i className="bi bi-arrow-left-right" /> Instant convert
+					</button>
+					<button type="button" onClick={() => openM("hedgeModal")}>
+						<i className="bi bi-shield-lock" /> Rate lock
+					</button>
+					<button type="button" onClick={() => openM("bulkFxModal")}>
+						<i className="bi bi-collection" /> Bulk FX
+					</button>
+					<button type="button" onClick={() => openM("fxTransferModal")}>
+						<i className="bi bi-send" /> Cross-border
+					</button>
+					<button type="button" onClick={() => openM("rateAlertsModal")}>
+						<i className="bi bi-bell" /> Alerts
+					</button>
+				</nav>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-shield-check" /> Protected by PayMo secure
+						transaction controls
+					</span>
+					<nav aria-label="Footer links">
+						<a href="/pm/app/support">Support</a>
+						<Link to="/pm/app/settings">Preferences</Link>
+						<span>v2.4.0</span>
+					</nav>
+				</footer>
+			</main>
 
 			{/* ======================= ALL MODALS ======================= */}
 			<FxModals active={activeModal} onClose={closeM} onOpen={openM} />
