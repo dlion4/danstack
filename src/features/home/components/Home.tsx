@@ -28,7 +28,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// keeps modals/offcanvas/accordions alive — browser-only to avoid SSR `document` crash
+// keeps modals/offcanvas/accordions alive - browser-only to avoid SSR `document` crash
 if (typeof document !== "undefined") {
         import("bootstrap/dist/js/bootstrap.bundle.min.js");
 }
@@ -50,7 +50,7 @@ const initialMockData = {
                 badgeStrong: "Your Money",
                 badgeRest: "Made Simple",
                 titleStart:
-                        "Send, receive, and manage money across Africa and the world — with ",
+                        "Send, receive, and manage money across Africa and the world - with ",
                 titleAccent: "PayMO",
                 copy: "Paymo connects M-Pesa, banks, mobile money, and international payments in one simple platform. Perfect for businesses, freelancers, students, and anyone who needs to move money easily across Kenya and beyond.",
                 trustPills: [
@@ -2927,7 +2927,7 @@ export default function Home() {
                                                                 className={cx(s.textMutedPaymo, "mx-auto")}
                                                                 style={{ maxWidth: "780px" }}
                                                         >
-                                                                We deliver treasury management, virtual banking, built-in compliance, fast development tools, and deep regional coverage — all in one platform.
+                                                                We deliver treasury management, virtual banking, built-in compliance, fast development tools, and deep regional coverage - all in one platform.
                                                         </p>
                                                 </div>
                                                 <div className="row g-4">
